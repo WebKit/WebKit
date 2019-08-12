@@ -57,6 +57,8 @@ enum TimeType {
 };
 
 struct LocalTimeOffset {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     LocalTimeOffset()
         : isDST(false)
         , offset(0)

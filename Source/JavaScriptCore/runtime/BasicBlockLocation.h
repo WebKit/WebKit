@@ -36,6 +36,7 @@ class CCallHelpers;
 class LLIntOffsetsExtractor;
 
 class BasicBlockLocation {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef std::pair<int, int> Gap;
 

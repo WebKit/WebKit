@@ -41,6 +41,7 @@ namespace WTF {
 // It can be used in cross-platform code; will compile down to nothing for non-Cocoa platforms.
 
 class AutodrainedPool {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AutodrainedPool);
 
 public:

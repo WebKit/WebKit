@@ -53,6 +53,8 @@ ALWAYS_INLINE bool hasFence(std::memory_order order)
 
 template<typename T>
 struct Atomic {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     // Don't pass a non-default value for the order parameter unless you really know
     // what you are doing and have thought about it very hard. The cost of seq_cst
     // is usually not high enough to justify the risk.
@@ -346,6 +348,7 @@ inline InternalDependencyType opaqueMixture(T value, Arguments... arguments)
 }
 
 class Dependency {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Dependency()
         : m_value(0)
@@ -408,6 +411,8 @@ private:
 
 template<typename InputType, typename ValueType>
 struct InputAndValue {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     InputAndValue() { }
     
     InputAndValue(InputType input, ValueType value)

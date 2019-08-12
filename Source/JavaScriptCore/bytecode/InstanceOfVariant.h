@@ -33,6 +33,7 @@ namespace JSC {
 class InstanceOfStatus;
 
 class InstanceOfVariant {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InstanceOfVariant() = default;
     InstanceOfVariant(const StructureSet&, const ObjectPropertyConditionSet&, JSObject* prototype, bool isHit);

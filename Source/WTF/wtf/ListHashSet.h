@@ -45,7 +45,7 @@ template<typename ValueArg> struct ListHashSetNode;
 template<typename HashArg> struct ListHashSetNodeHashFunctions;
 template<typename HashArg> struct ListHashSetTranslator;
 
-template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet {
+template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 private:
     typedef ListHashSetNode<ValueArg> Node;
@@ -185,6 +185,7 @@ template<typename HashArg> struct ListHashSetNodeHashFunctions {
 };
 
 template<typename ValueArg, typename HashArg> class ListHashSetIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 private:
     typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
     typedef ListHashSetIterator<ValueArg, HashArg> iterator;
@@ -232,6 +233,7 @@ private:
 };
 
 template<typename ValueArg, typename HashArg> class ListHashSetConstIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 private:
     typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
     typedef ListHashSetIterator<ValueArg, HashArg> iterator;

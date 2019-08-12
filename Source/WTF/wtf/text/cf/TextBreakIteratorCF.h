@@ -26,6 +26,7 @@
 namespace WTF {
 
 class TextBreakIteratorCF {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode {
         Caret,

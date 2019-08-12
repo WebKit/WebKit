@@ -34,6 +34,7 @@ inline bool isPageAligned(size_t size) { return !(size & (pageSize() - 1)); }
 inline bool isPowerOfTwo(size_t size) { return !(size & (size - 1)); }
 
 class PageBlock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PageBlock();
     PageBlock(const PageBlock&);

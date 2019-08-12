@@ -37,6 +37,7 @@ namespace JSC { namespace DFG {
 
 template<typename AbstractStateType>
 class AbstractInterpreter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AbstractInterpreter(Graph&, AbstractStateType&);
     ~AbstractInterpreter();

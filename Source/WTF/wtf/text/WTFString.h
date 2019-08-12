@@ -78,7 +78,8 @@ template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpeci
 
 enum TrailingZerosTruncatingPolicy { KeepTrailingZeros, TruncateTrailingZeros };
 
-class String {
+class String final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Construct a null string, distinguishable from an empty string.
     String() = default;

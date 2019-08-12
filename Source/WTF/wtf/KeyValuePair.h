@@ -31,6 +31,8 @@ namespace WTF {
 
 template<typename KeyTypeArg, typename ValueTypeArg>
 struct KeyValuePair {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     using KeyType = KeyTypeArg;
     using ValueType = ValueTypeArg;
 

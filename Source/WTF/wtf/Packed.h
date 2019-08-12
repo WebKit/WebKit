@@ -34,6 +34,7 @@ namespace WTF {
 
 template<typename T>
 class Packed {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static constexpr bool isPackedType = true;
 
@@ -101,6 +102,7 @@ private:
 // we can use 4 bits in Darwin ARM64, we can compact cell pointer into 4 bytes (32 bits).
 template<typename T, size_t alignment = alignof(T)>
 class PackedAlignedPtr {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static_assert(hasOneBitSet(alignment), "Alignment needs to be power-of-two");
     static constexpr bool isPackedType = true;

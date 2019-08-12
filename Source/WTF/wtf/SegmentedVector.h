@@ -36,6 +36,7 @@ namespace WTF {
     // An iterator for SegmentedVector. It supports only the pre ++ operator
     template <typename T, size_t SegmentSize = 8> class SegmentedVector;
     template <typename T, size_t SegmentSize = 8> class SegmentedVectorIterator {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         friend class SegmentedVector<T, SegmentSize>;
     public:
@@ -87,7 +88,7 @@ namespace WTF {
     // optimized for segmented vectors that get large; you may want to use
     // SegmentedVector<thingy, 1> if you don't expect a lot of entries.
     template <typename T, size_t SegmentSize>
-    class SegmentedVector {
+    class SegmentedVector final {
         friend class SegmentedVectorIterator<T, SegmentSize>;
         WTF_MAKE_NONCOPYABLE(SegmentedVector);
         WTF_MAKE_FAST_ALLOCATED;

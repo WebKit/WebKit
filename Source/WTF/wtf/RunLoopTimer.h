@@ -38,6 +38,7 @@ namespace WTF {
 
 class WTF_EXPORT_PRIVATE RunLoopTimerBase {
     WTF_MAKE_NONCOPYABLE(RunLoopTimerBase);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RunLoopTimerBase() { }
     WTF_EXPORT_PRIVATE virtual ~RunLoopTimerBase();

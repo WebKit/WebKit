@@ -38,6 +38,7 @@ class PrintStream;
 inline size_t fastBitVectorArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 
 class FastBitVectorWordView {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef FastBitVectorWordView ViewType;
     
@@ -66,6 +67,7 @@ private:
 };
 
 class FastBitVectorWordOwner {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef FastBitVectorWordView ViewType;
     
@@ -166,6 +168,7 @@ private:
 
 template<typename Left, typename Right>
 class FastBitVectorAndWords {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef FastBitVectorAndWords ViewType;
     
@@ -195,6 +198,7 @@ private:
     
 template<typename Left, typename Right>
 class FastBitVectorOrWords {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef FastBitVectorOrWords ViewType;
     
@@ -224,6 +228,7 @@ private:
     
 template<typename View>
 class FastBitVectorNotWords {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef FastBitVectorNotWords ViewType;
     
@@ -252,6 +257,7 @@ class FastBitVector;
 
 template<typename Words>
 class FastBitVectorImpl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FastBitVectorImpl()
         : m_words()

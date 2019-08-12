@@ -29,6 +29,7 @@ namespace WTF {
 
 // Deprecated. Use Hasher instead.
 class IntegerHasher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void add(uint32_t integer)
     {
@@ -48,6 +49,7 @@ template<typename... Types> uint32_t computeHash(const Types&...);
 template<typename T, typename... OtherTypes> uint32_t computeHash(std::initializer_list<T>, std::initializer_list<OtherTypes>...);
 
 class Hasher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     template<typename... Types> friend uint32_t computeHash(const Types&... values)
     {

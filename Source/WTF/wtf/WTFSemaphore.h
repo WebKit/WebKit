@@ -31,7 +31,7 @@
 
 namespace WTF {
 
-class Semaphore {
+class Semaphore final {
     WTF_MAKE_NONCOPYABLE(Semaphore);
     WTF_MAKE_FAST_ALLOCATED;
 public:

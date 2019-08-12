@@ -39,6 +39,7 @@ namespace WTF {
 
 template<typename PassedType>
 class Range {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef PassedType Type;
     

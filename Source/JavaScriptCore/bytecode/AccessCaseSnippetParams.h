@@ -41,6 +41,7 @@ public:
     }
 
     class SlowPathCallGenerator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~SlowPathCallGenerator() { }
         virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&) = 0;

@@ -28,6 +28,7 @@
 #include <wtf/Assertions.h>
 
 class CheckedBoolean {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
 #if !ASSERT_DISABLED
     CheckedBoolean(const CheckedBoolean& other)

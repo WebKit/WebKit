@@ -27,7 +27,8 @@
 
 namespace WTF {
 
-template <typename Node> class SinglyLinkedList {
+template <typename Node>
+class SinglyLinkedList {
 public:
     SinglyLinkedList();
     

@@ -1,3 +1,703 @@
+2019-08-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF][JSC] Make JSC and WTF aggressively-fast-malloced
+        https://bugs.webkit.org/show_bug.cgi?id=200611
+
+        Reviewed by Saam Barati.
+
+        WTF has many data structures, in particular, containers. And these containers can be allocated like `std::make_unique<Container>()`.
+        Without WTF_MAKE_FAST_ALLOCATED, this container itself is allocated from the system malloc. This patch attaches WTF_MAKE_FAST_ALLOCATED
+        more aggressively not to allocate them from the system malloc. And we add some `final` to containers and classes that would be never inherited.
+
+        * wtf/Assertions.cpp:
+        * wtf/Atomics.h:
+        * wtf/AutodrainedPool.h:
+        * wtf/Bag.h:
+        (WTF::Bag::Bag): Deleted.
+        (WTF::Bag::~Bag): Deleted.
+        (WTF::Bag::clear): Deleted.
+        (WTF::Bag::add): Deleted.
+        (WTF::Bag::iterator::iterator): Deleted.
+        (WTF::Bag::iterator::operator! const): Deleted.
+        (WTF::Bag::iterator::operator* const): Deleted.
+        (WTF::Bag::iterator::operator++): Deleted.
+        (WTF::Bag::iterator::operator== const): Deleted.
+        (WTF::Bag::iterator::operator!= const): Deleted.
+        (WTF::Bag::begin): Deleted.
+        (WTF::Bag::begin const): Deleted.
+        (WTF::Bag::end const): Deleted.
+        (WTF::Bag::isEmpty const): Deleted.
+        (WTF::Bag::unwrappedHead const): Deleted.
+        * wtf/BitVector.h:
+        (WTF::BitVector::BitVector): Deleted.
+        (WTF::BitVector::~BitVector): Deleted.
+        (WTF::BitVector::operator=): Deleted.
+        (WTF::BitVector::size const): Deleted.
+        (WTF::BitVector::ensureSize): Deleted.
+        (WTF::BitVector::quickGet const): Deleted.
+        (WTF::BitVector::quickSet): Deleted.
+        (WTF::BitVector::quickClear): Deleted.
+        (WTF::BitVector::get const): Deleted.
+        (WTF::BitVector::contains const): Deleted.
+        (WTF::BitVector::set): Deleted.
+        (WTF::BitVector::add): Deleted.
+        (WTF::BitVector::ensureSizeAndSet): Deleted.
+        (WTF::BitVector::clear): Deleted.
+        (WTF::BitVector::remove): Deleted.
+        (WTF::BitVector::merge): Deleted.
+        (WTF::BitVector::filter): Deleted.
+        (WTF::BitVector::exclude): Deleted.
+        (WTF::BitVector::bitCount const): Deleted.
+        (WTF::BitVector::isEmpty const): Deleted.
+        (WTF::BitVector::findBit const): Deleted.
+        (WTF::BitVector::isEmptyValue const): Deleted.
+        (WTF::BitVector::isDeletedValue const): Deleted.
+        (WTF::BitVector::isEmptyOrDeletedValue const): Deleted.
+        (WTF::BitVector::operator== const): Deleted.
+        (WTF::BitVector::hash const): Deleted.
+        (WTF::BitVector::iterator::iterator): Deleted.
+        (WTF::BitVector::iterator::operator* const): Deleted.
+        (WTF::BitVector::iterator::operator++): Deleted.
+        (WTF::BitVector::iterator::isAtEnd const): Deleted.
+        (WTF::BitVector::iterator::operator== const): Deleted.
+        (WTF::BitVector::iterator::operator!= const): Deleted.
+        (WTF::BitVector::begin const): Deleted.
+        (WTF::BitVector::end const): Deleted.
+        (WTF::BitVector::bitsInPointer): Deleted.
+        (WTF::BitVector::maxInlineBits): Deleted.
+        (WTF::BitVector::byteCount): Deleted.
+        (WTF::BitVector::makeInlineBits): Deleted.
+        (WTF::BitVector::cleanseInlineBits): Deleted.
+        (WTF::BitVector::bitCount): Deleted.
+        (WTF::BitVector::findBitFast const): Deleted.
+        (WTF::BitVector::findBitSimple const): Deleted.
+        (WTF::BitVector::OutOfLineBits::numBits const): Deleted.
+        (WTF::BitVector::OutOfLineBits::numWords const): Deleted.
+        (WTF::BitVector::OutOfLineBits::bits): Deleted.
+        (WTF::BitVector::OutOfLineBits::bits const): Deleted.
+        (WTF::BitVector::OutOfLineBits::OutOfLineBits): Deleted.
+        (WTF::BitVector::isInline const): Deleted.
+        (WTF::BitVector::outOfLineBits const): Deleted.
+        (WTF::BitVector::outOfLineBits): Deleted.
+        (WTF::BitVector::bits): Deleted.
+        (WTF::BitVector::bits const): Deleted.
+        * wtf/Bitmap.h:
+        (WTF::Bitmap::size): Deleted.
+        (WTF::Bitmap::iterator::iterator): Deleted.
+        (WTF::Bitmap::iterator::operator* const): Deleted.
+        (WTF::Bitmap::iterator::operator++): Deleted.
+        (WTF::Bitmap::iterator::operator== const): Deleted.
+        (WTF::Bitmap::iterator::operator!= const): Deleted.
+        (WTF::Bitmap::begin const): Deleted.
+        (WTF::Bitmap::end const): Deleted.
+        * wtf/Box.h:
+        * wtf/BumpPointerAllocator.h:
+        * wtf/CPUTime.h:
+        * wtf/CheckedBoolean.h:
+        * wtf/CommaPrinter.h:
+        (WTF::CommaPrinter::CommaPrinter): Deleted.
+        (WTF::CommaPrinter::dump const): Deleted.
+        (WTF::CommaPrinter::didPrint const): Deleted.
+        * wtf/CompactPointerTuple.h:
+        (WTF::CompactPointerTuple::encodeType): Deleted.
+        (WTF::CompactPointerTuple::decodeType): Deleted.
+        (WTF::CompactPointerTuple::CompactPointerTuple): Deleted.
+        (WTF::CompactPointerTuple::pointer const): Deleted.
+        (WTF::CompactPointerTuple::setPointer): Deleted.
+        (WTF::CompactPointerTuple::type const): Deleted.
+        (WTF::CompactPointerTuple::setType): Deleted.
+        * wtf/CompilationThread.h:
+        (WTF::CompilationScope::CompilationScope): Deleted.
+        (WTF::CompilationScope::~CompilationScope): Deleted.
+        (WTF::CompilationScope::leaveEarly): Deleted.
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler<Out):
+        (WTF::Detail::CallableWrapper<CompletionHandler<Out):
+        (WTF::CompletionHandlerCallingScope::CompletionHandlerCallingScope): Deleted.
+        (WTF::CompletionHandlerCallingScope::~CompletionHandlerCallingScope): Deleted.
+        (WTF::CompletionHandlerCallingScope::CompletionHandler<void): Deleted.
+        * wtf/ConcurrentBuffer.h:
+        (WTF::ConcurrentBuffer::ConcurrentBuffer): Deleted.
+        (WTF::ConcurrentBuffer::~ConcurrentBuffer): Deleted.
+        (WTF::ConcurrentBuffer::growExact): Deleted.
+        (WTF::ConcurrentBuffer::grow): Deleted.
+        (WTF::ConcurrentBuffer::array const): Deleted.
+        (WTF::ConcurrentBuffer::operator[]): Deleted.
+        (WTF::ConcurrentBuffer::operator[] const): Deleted.
+        (WTF::ConcurrentBuffer::createArray): Deleted.
+        * wtf/ConcurrentPtrHashSet.h:
+        (WTF::ConcurrentPtrHashSet::contains): Deleted.
+        (WTF::ConcurrentPtrHashSet::add): Deleted.
+        (WTF::ConcurrentPtrHashSet::size const): Deleted.
+        (WTF::ConcurrentPtrHashSet::Table::maxLoad const): Deleted.
+        (WTF::ConcurrentPtrHashSet::hash): Deleted.
+        (WTF::ConcurrentPtrHashSet::cast): Deleted.
+        (WTF::ConcurrentPtrHashSet::containsImpl const): Deleted.
+        (WTF::ConcurrentPtrHashSet::addImpl): Deleted.
+        * wtf/ConcurrentVector.h:
+        (WTF::ConcurrentVector::~ConcurrentVector): Deleted.
+        (WTF::ConcurrentVector::size const): Deleted.
+        (WTF::ConcurrentVector::isEmpty const): Deleted.
+        (WTF::ConcurrentVector::at): Deleted.
+        (WTF::ConcurrentVector::at const): Deleted.
+        (WTF::ConcurrentVector::operator[]): Deleted.
+        (WTF::ConcurrentVector::operator[] const): Deleted.
+        (WTF::ConcurrentVector::first): Deleted.
+        (WTF::ConcurrentVector::first const): Deleted.
+        (WTF::ConcurrentVector::last): Deleted.
+        (WTF::ConcurrentVector::last const): Deleted.
+        (WTF::ConcurrentVector::takeLast): Deleted.
+        (WTF::ConcurrentVector::append): Deleted.
+        (WTF::ConcurrentVector::alloc): Deleted.
+        (WTF::ConcurrentVector::removeLast): Deleted.
+        (WTF::ConcurrentVector::grow): Deleted.
+        (WTF::ConcurrentVector::begin): Deleted.
+        (WTF::ConcurrentVector::end): Deleted.
+        (WTF::ConcurrentVector::segmentExistsFor): Deleted.
+        (WTF::ConcurrentVector::segmentFor): Deleted.
+        (WTF::ConcurrentVector::subscriptFor): Deleted.
+        (WTF::ConcurrentVector::ensureSegmentsFor): Deleted.
+        (WTF::ConcurrentVector::ensureSegment): Deleted.
+        (WTF::ConcurrentVector::allocateSegment): Deleted.
+        * wtf/Condition.h:
+        (WTF::Condition::waitUntil): Deleted.
+        (WTF::Condition::waitFor): Deleted.
+        (WTF::Condition::wait): Deleted.
+        (WTF::Condition::notifyOne): Deleted.
+        (WTF::Condition::notifyAll): Deleted.
+        * wtf/CountingLock.h:
+        (WTF::CountingLock::LockHooks::lockHook): Deleted.
+        (WTF::CountingLock::LockHooks::unlockHook): Deleted.
+        (WTF::CountingLock::LockHooks::parkHook): Deleted.
+        (WTF::CountingLock::LockHooks::handoffHook): Deleted.
+        (WTF::CountingLock::tryLock): Deleted.
+        (WTF::CountingLock::lock): Deleted.
+        (WTF::CountingLock::unlock): Deleted.
+        (WTF::CountingLock::isHeld const): Deleted.
+        (WTF::CountingLock::isLocked const): Deleted.
+        (WTF::CountingLock::Count::operator bool const): Deleted.
+        (WTF::CountingLock::Count::operator== const): Deleted.
+        (WTF::CountingLock::Count::operator!= const): Deleted.
+        (WTF::CountingLock::tryOptimisticRead): Deleted.
+        (WTF::CountingLock::validate): Deleted.
+        (WTF::CountingLock::doOptimizedRead): Deleted.
+        (WTF::CountingLock::tryOptimisticFencelessRead): Deleted.
+        (WTF::CountingLock::fencelessValidate): Deleted.
+        (WTF::CountingLock::doOptimizedFencelessRead): Deleted.
+        (WTF::CountingLock::getCount): Deleted.
+        * wtf/CrossThreadQueue.h:
+        * wtf/CrossThreadTask.h:
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/DataMutex.h:
+        * wtf/DateMath.h:
+        * wtf/Deque.h:
+        (WTF::Deque::size const): Deleted.
+        (WTF::Deque::isEmpty const): Deleted.
+        (WTF::Deque::begin): Deleted.
+        (WTF::Deque::end): Deleted.
+        (WTF::Deque::begin const): Deleted.
+        (WTF::Deque::end const): Deleted.
+        (WTF::Deque::rbegin): Deleted.
+        (WTF::Deque::rend): Deleted.
+        (WTF::Deque::rbegin const): Deleted.
+        (WTF::Deque::rend const): Deleted.
+        (WTF::Deque::first): Deleted.
+        (WTF::Deque::first const): Deleted.
+        (WTF::Deque::last): Deleted.
+        (WTF::Deque::last const): Deleted.
+        (WTF::Deque::append): Deleted.
+        * wtf/Dominators.h:
+        * wtf/DoublyLinkedList.h:
+        * wtf/Expected.h:
+        * wtf/FastBitVector.h:
+        * wtf/FileMetadata.h:
+        * wtf/FileSystem.h:
+        * wtf/GraphNodeWorklist.h:
+        * wtf/GregorianDateTime.h:
+        (WTF::GregorianDateTime::GregorianDateTime): Deleted.
+        (WTF::GregorianDateTime::year const): Deleted.
+        (WTF::GregorianDateTime::month const): Deleted.
+        (WTF::GregorianDateTime::yearDay const): Deleted.
+        (WTF::GregorianDateTime::monthDay const): Deleted.
+        (WTF::GregorianDateTime::weekDay const): Deleted.
+        (WTF::GregorianDateTime::hour const): Deleted.
+        (WTF::GregorianDateTime::minute const): Deleted.
+        (WTF::GregorianDateTime::second const): Deleted.
+        (WTF::GregorianDateTime::utcOffset const): Deleted.
+        (WTF::GregorianDateTime::isDST const): Deleted.
+        (WTF::GregorianDateTime::setYear): Deleted.
+        (WTF::GregorianDateTime::setMonth): Deleted.
+        (WTF::GregorianDateTime::setYearDay): Deleted.
+        (WTF::GregorianDateTime::setMonthDay): Deleted.
+        (WTF::GregorianDateTime::setWeekDay): Deleted.
+        (WTF::GregorianDateTime::setHour): Deleted.
+        (WTF::GregorianDateTime::setMinute): Deleted.
+        (WTF::GregorianDateTime::setSecond): Deleted.
+        (WTF::GregorianDateTime::setUtcOffset): Deleted.
+        (WTF::GregorianDateTime::setIsDST): Deleted.
+        (WTF::GregorianDateTime::operator tm const): Deleted.
+        (WTF::GregorianDateTime::copyFrom): Deleted.
+        * wtf/HashTable.h:
+        * wtf/Hasher.h:
+        * wtf/HexNumber.h:
+        * wtf/Indenter.h:
+        * wtf/IndexMap.h:
+        * wtf/IndexSet.h:
+        * wtf/IndexSparseSet.h:
+        * wtf/IndexedContainerIterator.h:
+        * wtf/Insertion.h:
+        * wtf/IteratorAdaptors.h:
+        * wtf/IteratorRange.h:
+        * wtf/KeyValuePair.h:
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSet::begin): Deleted.
+        (WTF::ListHashSet::end): Deleted.
+        (WTF::ListHashSet::begin const): Deleted.
+        (WTF::ListHashSet::end const): Deleted.
+        (WTF::ListHashSet::random): Deleted.
+        (WTF::ListHashSet::random const): Deleted.
+        (WTF::ListHashSet::rbegin): Deleted.
+        (WTF::ListHashSet::rend): Deleted.
+        (WTF::ListHashSet::rbegin const): Deleted.
+        (WTF::ListHashSet::rend const): Deleted.
+        * wtf/Liveness.h:
+        * wtf/LocklessBag.h:
+        (WTF::LocklessBag::LocklessBag): Deleted.
+        (WTF::LocklessBag::add): Deleted.
+        (WTF::LocklessBag::iterate): Deleted.
+        (WTF::LocklessBag::consumeAll): Deleted.
+        (WTF::LocklessBag::consumeAllWithNode): Deleted.
+        (WTF::LocklessBag::~LocklessBag): Deleted.
+        * wtf/LoggingHashID.h:
+        * wtf/MD5.h:
+        * wtf/MachSendRight.h:
+        * wtf/MainThreadData.h:
+        * wtf/Markable.h:
+        * wtf/MediaTime.h:
+        * wtf/MemoryPressureHandler.h:
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::MessageQueue): Deleted.
+        * wtf/MetaAllocator.h:
+        * wtf/MonotonicTime.h:
+        (WTF::MonotonicTime::MonotonicTime): Deleted.
+        (WTF::MonotonicTime::fromRawSeconds): Deleted.
+        (WTF::MonotonicTime::infinity): Deleted.
+        (WTF::MonotonicTime::nan): Deleted.
+        (WTF::MonotonicTime::secondsSinceEpoch const): Deleted.
+        (WTF::MonotonicTime::approximateMonotonicTime const): Deleted.
+        (WTF::MonotonicTime::operator bool const): Deleted.
+        (WTF::MonotonicTime::operator+ const): Deleted.
+        (WTF::MonotonicTime::operator- const): Deleted.
+        (WTF::MonotonicTime::operator% const): Deleted.
+        (WTF::MonotonicTime::operator+=): Deleted.
+        (WTF::MonotonicTime::operator-=): Deleted.
+        (WTF::MonotonicTime::operator== const): Deleted.
+        (WTF::MonotonicTime::operator!= const): Deleted.
+        (WTF::MonotonicTime::operator< const): Deleted.
+        (WTF::MonotonicTime::operator> const): Deleted.
+        (WTF::MonotonicTime::operator<= const): Deleted.
+        (WTF::MonotonicTime::operator>= const): Deleted.
+        (WTF::MonotonicTime::isolatedCopy const): Deleted.
+        (WTF::MonotonicTime::encode const): Deleted.
+        (WTF::MonotonicTime::decode): Deleted.
+        * wtf/NaturalLoops.h:
+        * wtf/NoLock.h:
+        * wtf/OSAllocator.h:
+        * wtf/OptionSet.h:
+        * wtf/Optional.h:
+        * wtf/OrderMaker.h:
+        * wtf/Packed.h:
+        (WTF::alignof):
+        * wtf/PackedIntVector.h:
+        (WTF::PackedIntVector::PackedIntVector): Deleted.
+        (WTF::PackedIntVector::operator=): Deleted.
+        (WTF::PackedIntVector::size const): Deleted.
+        (WTF::PackedIntVector::ensureSize): Deleted.
+        (WTF::PackedIntVector::resize): Deleted.
+        (WTF::PackedIntVector::clearAll): Deleted.
+        (WTF::PackedIntVector::get const): Deleted.
+        (WTF::PackedIntVector::set): Deleted.
+        (WTF::PackedIntVector::mask): Deleted.
+        * wtf/PageBlock.h:
+        * wtf/ParallelJobsOpenMP.h:
+        * wtf/ParkingLot.h:
+        * wtf/PriorityQueue.h:
+        (WTF::PriorityQueue::size const): Deleted.
+        (WTF::PriorityQueue::isEmpty const): Deleted.
+        (WTF::PriorityQueue::enqueue): Deleted.
+        (WTF::PriorityQueue::peek const): Deleted.
+        (WTF::PriorityQueue::dequeue): Deleted.
+        (WTF::PriorityQueue::decreaseKey): Deleted.
+        (WTF::PriorityQueue::increaseKey): Deleted.
+        (WTF::PriorityQueue::begin const): Deleted.
+        (WTF::PriorityQueue::end const): Deleted.
+        (WTF::PriorityQueue::isValidHeap const): Deleted.
+        (WTF::PriorityQueue::parentOf): Deleted.
+        (WTF::PriorityQueue::leftChildOf): Deleted.
+        (WTF::PriorityQueue::rightChildOf): Deleted.
+        (WTF::PriorityQueue::siftUp): Deleted.
+        (WTF::PriorityQueue::siftDown): Deleted.
+        * wtf/RandomDevice.h:
+        * wtf/Range.h:
+        * wtf/RangeSet.h:
+        (WTF::RangeSet::RangeSet): Deleted.
+        (WTF::RangeSet::~RangeSet): Deleted.
+        (WTF::RangeSet::add): Deleted.
+        (WTF::RangeSet::contains const): Deleted.
+        (WTF::RangeSet::overlaps const): Deleted.
+        (WTF::RangeSet::clear): Deleted.
+        (WTF::RangeSet::dump const): Deleted.
+        (WTF::RangeSet::dumpRaw const): Deleted.
+        (WTF::RangeSet::begin const): Deleted.
+        (WTF::RangeSet::end const): Deleted.
+        (WTF::RangeSet::addAll): Deleted.
+        (WTF::RangeSet::compact): Deleted.
+        (WTF::RangeSet::overlapsNonEmpty): Deleted.
+        (WTF::RangeSet::subsumesNonEmpty): Deleted.
+        (WTF::RangeSet::findRange const): Deleted.
+        * wtf/RecursableLambda.h:
+        * wtf/RedBlackTree.h:
+        (WTF::RedBlackTree::Node::successor const): Deleted.
+        (WTF::RedBlackTree::Node::predecessor const): Deleted.
+        (WTF::RedBlackTree::Node::successor): Deleted.
+        (WTF::RedBlackTree::Node::predecessor): Deleted.
+        (WTF::RedBlackTree::Node::reset): Deleted.
+        (WTF::RedBlackTree::Node::parent const): Deleted.
+        (WTF::RedBlackTree::Node::setParent): Deleted.
+        (WTF::RedBlackTree::Node::left const): Deleted.
+        (WTF::RedBlackTree::Node::setLeft): Deleted.
+        (WTF::RedBlackTree::Node::right const): Deleted.
+        (WTF::RedBlackTree::Node::setRight): Deleted.
+        (WTF::RedBlackTree::Node::color const): Deleted.
+        (WTF::RedBlackTree::Node::setColor): Deleted.
+        (WTF::RedBlackTree::RedBlackTree): Deleted.
+        (WTF::RedBlackTree::insert): Deleted.
+        (WTF::RedBlackTree::remove): Deleted.
+        (WTF::RedBlackTree::findExact const): Deleted.
+        (WTF::RedBlackTree::findLeastGreaterThanOrEqual const): Deleted.
+        (WTF::RedBlackTree::findGreatestLessThanOrEqual const): Deleted.
+        (WTF::RedBlackTree::first const): Deleted.
+        (WTF::RedBlackTree::last const): Deleted.
+        (WTF::RedBlackTree::size): Deleted.
+        (WTF::RedBlackTree::isEmpty): Deleted.
+        (WTF::RedBlackTree::treeMinimum): Deleted.
+        (WTF::RedBlackTree::treeMaximum): Deleted.
+        (WTF::RedBlackTree::treeInsert): Deleted.
+        (WTF::RedBlackTree::leftRotate): Deleted.
+        (WTF::RedBlackTree::rightRotate): Deleted.
+        (WTF::RedBlackTree::removeFixup): Deleted.
+        * wtf/ResourceUsage.h:
+        * wtf/RunLoop.cpp:
+        * wtf/RunLoopTimer.h:
+        * wtf/SHA1.h:
+        * wtf/Seconds.h:
+        (WTF::Seconds::Seconds): Deleted.
+        (WTF::Seconds::value const): Deleted.
+        (WTF::Seconds::minutes const): Deleted.
+        (WTF::Seconds::seconds const): Deleted.
+        (WTF::Seconds::milliseconds const): Deleted.
+        (WTF::Seconds::microseconds const): Deleted.
+        (WTF::Seconds::nanoseconds const): Deleted.
+        (WTF::Seconds::minutesAs const): Deleted.
+        (WTF::Seconds::secondsAs const): Deleted.
+        (WTF::Seconds::millisecondsAs const): Deleted.
+        (WTF::Seconds::microsecondsAs const): Deleted.
+        (WTF::Seconds::nanosecondsAs const): Deleted.
+        (WTF::Seconds::fromMinutes): Deleted.
+        (WTF::Seconds::fromHours): Deleted.
+        (WTF::Seconds::fromMilliseconds): Deleted.
+        (WTF::Seconds::fromMicroseconds): Deleted.
+        (WTF::Seconds::fromNanoseconds): Deleted.
+        (WTF::Seconds::infinity): Deleted.
+        (WTF::Seconds::nan): Deleted.
+        (WTF::Seconds::operator bool const): Deleted.
+        (WTF::Seconds::operator+ const): Deleted.
+        (WTF::Seconds::operator- const): Deleted.
+        (WTF::Seconds::operator* const): Deleted.
+        (WTF::Seconds::operator/ const): Deleted.
+        (WTF::Seconds::operator% const): Deleted.
+        (WTF::Seconds::operator+=): Deleted.
+        (WTF::Seconds::operator-=): Deleted.
+        (WTF::Seconds::operator*=): Deleted.
+        (WTF::Seconds::operator/=): Deleted.
+        (WTF::Seconds::operator%=): Deleted.
+        (WTF::Seconds::operator== const): Deleted.
+        (WTF::Seconds::operator!= const): Deleted.
+        (WTF::Seconds::operator< const): Deleted.
+        (WTF::Seconds::operator> const): Deleted.
+        (WTF::Seconds::operator<= const): Deleted.
+        (WTF::Seconds::operator>= const): Deleted.
+        (WTF::Seconds::isolatedCopy const): Deleted.
+        (WTF::Seconds::encode const): Deleted.
+        (WTF::Seconds::decode): Deleted.
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::~SegmentedVector): Deleted.
+        (WTF::SegmentedVector::size const): Deleted.
+        (WTF::SegmentedVector::isEmpty const): Deleted.
+        (WTF::SegmentedVector::at): Deleted.
+        (WTF::SegmentedVector::at const): Deleted.
+        (WTF::SegmentedVector::operator[]): Deleted.
+        (WTF::SegmentedVector::operator[] const): Deleted.
+        (WTF::SegmentedVector::first): Deleted.
+        (WTF::SegmentedVector::first const): Deleted.
+        (WTF::SegmentedVector::last): Deleted.
+        (WTF::SegmentedVector::last const): Deleted.
+        (WTF::SegmentedVector::takeLast): Deleted.
+        (WTF::SegmentedVector::append): Deleted.
+        (WTF::SegmentedVector::alloc): Deleted.
+        (WTF::SegmentedVector::removeLast): Deleted.
+        (WTF::SegmentedVector::grow): Deleted.
+        (WTF::SegmentedVector::clear): Deleted.
+        (WTF::SegmentedVector::begin): Deleted.
+        (WTF::SegmentedVector::end): Deleted.
+        (WTF::SegmentedVector::shrinkToFit): Deleted.
+        (WTF::SegmentedVector::deleteAllSegments): Deleted.
+        (WTF::SegmentedVector::segmentExistsFor): Deleted.
+        (WTF::SegmentedVector::segmentFor): Deleted.
+        (WTF::SegmentedVector::subscriptFor): Deleted.
+        (WTF::SegmentedVector::ensureSegmentsFor): Deleted.
+        (WTF::SegmentedVector::ensureSegment): Deleted.
+        (WTF::SegmentedVector::allocateSegment): Deleted.
+        * wtf/SetForScope.h:
+        * wtf/SingleRootGraph.h:
+        * wtf/SinglyLinkedList.h:
+        * wtf/SmallPtrSet.h:
+        * wtf/SpanningTree.h:
+        * wtf/Spectrum.h:
+        * wtf/StackBounds.h:
+        * wtf/StackShot.h:
+        * wtf/StackShotProfiler.h:
+        * wtf/StackStats.h:
+        * wtf/StackTrace.h:
+        * wtf/StreamBuffer.h:
+        * wtf/SynchronizedFixedQueue.h:
+        (WTF::SynchronizedFixedQueue::create): Deleted.
+        (WTF::SynchronizedFixedQueue::open): Deleted.
+        (WTF::SynchronizedFixedQueue::close): Deleted.
+        (WTF::SynchronizedFixedQueue::isOpen): Deleted.
+        (WTF::SynchronizedFixedQueue::enqueue): Deleted.
+        (WTF::SynchronizedFixedQueue::dequeue): Deleted.
+        (WTF::SynchronizedFixedQueue::SynchronizedFixedQueue): Deleted.
+        * wtf/SystemTracing.h:
+        * wtf/ThreadGroup.h:
+        (WTF::ThreadGroup::create): Deleted.
+        (WTF::ThreadGroup::threads const): Deleted.
+        (WTF::ThreadGroup::getLock): Deleted.
+        (WTF::ThreadGroup::weakFromThis): Deleted.
+        * wtf/ThreadSpecific.h:
+        * wtf/ThreadingPrimitives.h:
+        (WTF::Mutex::impl): Deleted.
+        * wtf/TimeWithDynamicClockType.h:
+        (WTF::TimeWithDynamicClockType::TimeWithDynamicClockType): Deleted.
+        (WTF::TimeWithDynamicClockType::fromRawSeconds): Deleted.
+        (WTF::TimeWithDynamicClockType::secondsSinceEpoch const): Deleted.
+        (WTF::TimeWithDynamicClockType::clockType const): Deleted.
+        (WTF::TimeWithDynamicClockType::withSameClockAndRawSeconds const): Deleted.
+        (WTF::TimeWithDynamicClockType::operator bool const): Deleted.
+        (WTF::TimeWithDynamicClockType::operator+ const): Deleted.
+        (WTF::TimeWithDynamicClockType::operator- const): Deleted.
+        (WTF::TimeWithDynamicClockType::operator+=): Deleted.
+        (WTF::TimeWithDynamicClockType::operator-=): Deleted.
+        (WTF::TimeWithDynamicClockType::operator== const): Deleted.
+        (WTF::TimeWithDynamicClockType::operator!= const): Deleted.
+        * wtf/TimingScope.h:
+        * wtf/TinyLRUCache.h:
+        * wtf/TinyPtrSet.h:
+        * wtf/URLParser.cpp:
+        * wtf/URLParser.h:
+        * wtf/Unexpected.h:
+        * wtf/Variant.h:
+        * wtf/WTFSemaphore.h:
+        (WTF::Semaphore::Semaphore): Deleted.
+        (WTF::Semaphore::signal): Deleted.
+        (WTF::Semaphore::waitUntil): Deleted.
+        (WTF::Semaphore::waitFor): Deleted.
+        (WTF::Semaphore::wait): Deleted.
+        * wtf/WallTime.h:
+        (WTF::WallTime::WallTime): Deleted.
+        (WTF::WallTime::fromRawSeconds): Deleted.
+        (WTF::WallTime::infinity): Deleted.
+        (WTF::WallTime::nan): Deleted.
+        (WTF::WallTime::secondsSinceEpoch const): Deleted.
+        (WTF::WallTime::approximateWallTime const): Deleted.
+        (WTF::WallTime::operator bool const): Deleted.
+        (WTF::WallTime::operator+ const): Deleted.
+        (WTF::WallTime::operator- const): Deleted.
+        (WTF::WallTime::operator+=): Deleted.
+        (WTF::WallTime::operator-=): Deleted.
+        (WTF::WallTime::operator== const): Deleted.
+        (WTF::WallTime::operator!= const): Deleted.
+        (WTF::WallTime::operator< const): Deleted.
+        (WTF::WallTime::operator> const): Deleted.
+        (WTF::WallTime::operator<= const): Deleted.
+        (WTF::WallTime::operator>= const): Deleted.
+        (WTF::WallTime::isolatedCopy const): Deleted.
+        * wtf/WeakHashSet.h:
+        (WTF::WeakHashSet::WeakHashSetConstIterator::WeakHashSetConstIterator): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::get const): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator* const): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator-> const): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator++): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::skipEmptyBuckets): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator== const): Deleted.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator!= const): Deleted.
+        (WTF::WeakHashSet::WeakHashSet): Deleted.
+        (WTF::WeakHashSet::begin const): Deleted.
+        (WTF::WeakHashSet::end const): Deleted.
+        (WTF::WeakHashSet::add): Deleted.
+        (WTF::WeakHashSet::remove): Deleted.
+        (WTF::WeakHashSet::contains const): Deleted.
+        (WTF::WeakHashSet::capacity const): Deleted.
+        (WTF::WeakHashSet::computesEmpty const): Deleted.
+        (WTF::WeakHashSet::hasNullReferences const): Deleted.
+        (WTF::WeakHashSet::computeSize const): Deleted.
+        (WTF::WeakHashSet::checkConsistency const): Deleted.
+        * wtf/WeakRandom.h:
+        (WTF::WeakRandom::WeakRandom): Deleted.
+        (WTF::WeakRandom::setSeed): Deleted.
+        (WTF::WeakRandom::seed const): Deleted.
+        (WTF::WeakRandom::get): Deleted.
+        (WTF::WeakRandom::getUint32): Deleted.
+        (WTF::WeakRandom::lowOffset): Deleted.
+        (WTF::WeakRandom::highOffset): Deleted.
+        (WTF::WeakRandom::nextState): Deleted.
+        (WTF::WeakRandom::generate): Deleted.
+        (WTF::WeakRandom::advance): Deleted.
+        * wtf/WordLock.h:
+        (WTF::WordLock::lock): Deleted.
+        (WTF::WordLock::unlock): Deleted.
+        (WTF::WordLock::isHeld const): Deleted.
+        (WTF::WordLock::isLocked const): Deleted.
+        (WTF::WordLock::isFullyReset const): Deleted.
+        * wtf/generic/MainThreadGeneric.cpp:
+        * wtf/glib/GMutexLocker.h:
+        * wtf/linux/CurrentProcessMemoryStatus.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Semaphore::Semaphore): Deleted.
+        (WTF::Semaphore::~Semaphore): Deleted.
+        (WTF::Semaphore::wait): Deleted.
+        (WTF::Semaphore::post): Deleted.
+        * wtf/text/ASCIILiteral.h:
+        (WTF::ASCIILiteral::operator const char* const): Deleted.
+        (WTF::ASCIILiteral::fromLiteralUnsafe): Deleted.
+        (WTF::ASCIILiteral::null): Deleted.
+        (WTF::ASCIILiteral::characters const): Deleted.
+        (WTF::ASCIILiteral::ASCIILiteral): Deleted.
+        * wtf/text/AtomString.h:
+        (WTF::AtomString::operator=): Deleted.
+        (WTF::AtomString::isHashTableDeletedValue const): Deleted.
+        (WTF::AtomString::existingHash const): Deleted.
+        (WTF::AtomString::operator const String& const): Deleted.
+        (WTF::AtomString::string const): Deleted.
+        (WTF::AtomString::impl const): Deleted.
+        (WTF::AtomString::is8Bit const): Deleted.
+        (WTF::AtomString::characters8 const): Deleted.
+        (WTF::AtomString::characters16 const): Deleted.
+        (WTF::AtomString::length const): Deleted.
+        (WTF::AtomString::operator[] const): Deleted.
+        (WTF::AtomString::contains const): Deleted.
+        (WTF::AtomString::containsIgnoringASCIICase const): Deleted.
+        (WTF::AtomString::find const): Deleted.
+        (WTF::AtomString::findIgnoringASCIICase const): Deleted.
+        (WTF::AtomString::startsWith const): Deleted.
+        (WTF::AtomString::startsWithIgnoringASCIICase const): Deleted.
+        (WTF::AtomString::endsWith const): Deleted.
+        (WTF::AtomString::endsWithIgnoringASCIICase const): Deleted.
+        (WTF::AtomString::toInt const): Deleted.
+        (WTF::AtomString::toDouble const): Deleted.
+        (WTF::AtomString::toFloat const): Deleted.
+        (WTF::AtomString::percentage const): Deleted.
+        (WTF::AtomString::isNull const): Deleted.
+        (WTF::AtomString::isEmpty const): Deleted.
+        (WTF::AtomString::operator NSString * const): Deleted.
+        * wtf/text/AtomStringImpl.h:
+        (WTF::AtomStringImpl::lookUp): Deleted.
+        (WTF::AtomStringImpl::add): Deleted.
+        (WTF::AtomStringImpl::addWithStringTableProvider): Deleted.
+        * wtf/text/CString.h:
+        (WTF::CStringBuffer::data): Deleted.
+        (WTF::CStringBuffer::length const): Deleted.
+        (WTF::CStringBuffer::CStringBuffer): Deleted.
+        (WTF::CStringBuffer::mutableData): Deleted.
+        (WTF::CString::CString): Deleted.
+        (WTF::CString::data const): Deleted.
+        (WTF::CString::length const): Deleted.
+        (WTF::CString::isNull const): Deleted.
+        (WTF::CString::buffer const): Deleted.
+        (WTF::CString::isHashTableDeletedValue const): Deleted.
+        * wtf/text/ExternalStringImpl.h:
+        (WTF::ExternalStringImpl::freeExternalBuffer): Deleted.
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        * wtf/text/NullTextBreakIterator.h:
+        * wtf/text/OrdinalNumber.h:
+        * wtf/text/StringBuffer.h:
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringConcatenateNumbers.h:
+        * wtf/text/StringHasher.h:
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringView.cpp:
+        * wtf/text/StringView.h:
+        (WTF::StringView::left const): Deleted.
+        (WTF::StringView::right const): Deleted.
+        (WTF::StringView::underlyingStringIsValid const): Deleted.
+        (WTF::StringView::setUnderlyingString): Deleted.
+        * wtf/text/SymbolImpl.h:
+        (WTF::SymbolImpl::StaticSymbolImpl::StaticSymbolImpl): Deleted.
+        (WTF::SymbolImpl::StaticSymbolImpl::operator SymbolImpl&): Deleted.
+        (WTF::PrivateSymbolImpl::PrivateSymbolImpl): Deleted.
+        (WTF::RegisteredSymbolImpl::symbolRegistry const): Deleted.
+        (WTF::RegisteredSymbolImpl::clearSymbolRegistry): Deleted.
+        (WTF::RegisteredSymbolImpl::RegisteredSymbolImpl): Deleted.
+        * wtf/text/SymbolRegistry.h:
+        * wtf/text/TextBreakIterator.h:
+        * wtf/text/TextPosition.h:
+        * wtf/text/TextStream.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::swap): Deleted.
+        (WTF::String::adopt): Deleted.
+        (WTF::String::isNull const): Deleted.
+        (WTF::String::isEmpty const): Deleted.
+        (WTF::String::impl const): Deleted.
+        (WTF::String::releaseImpl): Deleted.
+        (WTF::String::length const): Deleted.
+        (WTF::String::characters8 const): Deleted.
+        (WTF::String::characters16 const): Deleted.
+        (WTF::String::is8Bit const): Deleted.
+        (WTF::String::sizeInBytes const): Deleted.
+        (WTF::String::operator[] const): Deleted.
+        (WTF::String::find const): Deleted.
+        (WTF::String::findIgnoringASCIICase const): Deleted.
+        (WTF::String::reverseFind const): Deleted.
+        (WTF::String::contains const): Deleted.
+        (WTF::String::containsIgnoringASCIICase const): Deleted.
+        (WTF::String::startsWith const): Deleted.
+        (WTF::String::startsWithIgnoringASCIICase const): Deleted.
+        (WTF::String::hasInfixStartingAt const): Deleted.
+        (WTF::String::endsWith const): Deleted.
+        (WTF::String::endsWithIgnoringASCIICase const): Deleted.
+        (WTF::String::hasInfixEndingAt const): Deleted.
+        (WTF::String::append): Deleted.
+        (WTF::String::left const): Deleted.
+        (WTF::String::right const): Deleted.
+        (WTF::String::createUninitialized): Deleted.
+        (WTF::String::fromUTF8WithLatin1Fallback): Deleted.
+        (WTF::String::isAllASCII const): Deleted.
+        (WTF::String::isAllLatin1 const): Deleted.
+        (WTF::String::isSpecialCharacter const): Deleted.
+        (WTF::String::isHashTableDeletedValue const): Deleted.
+        (WTF::String::hash const): Deleted.
+        (WTF::String::existingHash const): Deleted.
+        * wtf/text/cf/TextBreakIteratorCF.h:
+        * wtf/text/icu/TextBreakIteratorICU.h:
+        * wtf/text/icu/UTextProviderLatin1.h:
+        * wtf/threads/BinarySemaphore.h:
+        (WTF::BinarySemaphore::waitFor): Deleted.
+        (WTF::BinarySemaphore::wait): Deleted.
+        * wtf/unicode/Collator.h:
+        * wtf/win/GDIObject.h:
+        * wtf/win/PathWalker.h:
+        * wtf/win/Win32Handle.h:
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix post landing review comments for r248533 from Darin.

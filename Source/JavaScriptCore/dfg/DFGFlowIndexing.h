@@ -36,6 +36,7 @@ namespace JSC { namespace DFG {
 // Node-keyed maps. The special part is that it also allocated indices for the shadow values of Phi
 // nodes, which is needed for any flow-sensitive analysis.
 class FlowIndexing {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FlowIndexing(Graph&);
     ~FlowIndexing();

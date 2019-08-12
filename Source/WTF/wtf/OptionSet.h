@@ -37,11 +37,13 @@ namespace WTF {
 // must be powers of two greater than 0. This class is useful as a replacement for passing a bitmask of
 // enumerators around.
 template<typename T> class OptionSet {
+    WTF_MAKE_FAST_ALLOCATED;
     static_assert(std::is_enum<T>::value, "T is not an enum type");
     typedef typename std::make_unsigned<typename std::underlying_type<T>::type>::type StorageType;
 
 public:
     template<typename StorageType> class Iterator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         // Isolate the rightmost set bit.
         T operator*() const { return static_cast<T>(m_value & -m_value); }

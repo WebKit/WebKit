@@ -39,6 +39,7 @@ struct TinyLRUCachePolicy {
 
 template<typename KeyType, typename ValueType, size_t capacity = 4, typename Policy = TinyLRUCachePolicy<KeyType, ValueType>>
 class TinyLRUCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     const ValueType& get(const KeyType& key)
     {

@@ -30,6 +30,7 @@
 namespace WTF {
 
 class PathWalker {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PathWalker);
 public:
     PathWalker(const WTF::String& directory, const WTF::String& pattern);

@@ -40,6 +40,7 @@ class CodeBlock;
 class StructureStubInfo;
 
 class InByIdStatus {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {
         // It's uncached so we have no information.

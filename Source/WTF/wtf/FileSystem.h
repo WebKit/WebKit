@@ -200,6 +200,7 @@ WTF_EXPORT_PRIVATE void makeSafeToUseMemoryMapForPath(const String&);
 WTF_EXPORT_PRIVATE bool unmapViewOfFile(void* buffer, size_t);
 
 class MappedFileData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MappedFileData() { }
     MappedFileData(MappedFileData&&);

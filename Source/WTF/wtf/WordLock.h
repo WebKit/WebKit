@@ -45,7 +45,7 @@ namespace WTF {
 // PrintStream uses this so that ParkingLot and Lock can use PrintStream. This means that if you
 // try to use dataLog to debug this code, you will have a bad time.
 
-class WordLock {
+class WordLock final {
     WTF_MAKE_NONCOPYABLE(WordLock);
     WTF_MAKE_FAST_ALLOCATED;
 public:

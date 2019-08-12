@@ -32,6 +32,7 @@
 namespace WTF {
 
 class MachSendRight {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE static MachSendRight adopt(mach_port_t);
     WTF_EXPORT_PRIVATE static MachSendRight create(mach_port_t);

@@ -388,6 +388,7 @@ enum CallbackType {
 namespace JSC {
 
 class ObjCCallbackFunctionImpl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)
         : m_type(type)

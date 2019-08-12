@@ -77,7 +77,10 @@ public:
     private:
         Lock m_lock;
 
-        struct PerVMData {
+        class PerVMData {
+            WTF_MAKE_FAST_ALLOCATED;
+            WTF_MAKE_NONCOPYABLE(PerVMData);
+        public:
 #if USE(CF)
             PerVMData(Manager&) { }
 #else

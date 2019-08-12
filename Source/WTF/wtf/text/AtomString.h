@@ -34,7 +34,8 @@ namespace WTF {
 
 struct AtomStringHash;
 
-class AtomString {
+class AtomString final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE static void init();
 

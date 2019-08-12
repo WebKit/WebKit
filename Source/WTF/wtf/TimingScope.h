@@ -37,6 +37,7 @@ namespace WTF {
 // Mean scope durations are printed using WTFLogAlways every Nth call, where N is specified by logIterationInterval.
 
 class TimingScope {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(TimingScope);
 public:
     TimingScope(const char* name, unsigned logIterationInterval = 1)

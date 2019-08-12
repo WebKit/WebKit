@@ -73,7 +73,7 @@ using ThreadSpecificKey = DWORD;
 #error "Not supported platform"
 #endif
 
-class Mutex {
+class Mutex final {
     WTF_MAKE_NONCOPYABLE(Mutex);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -96,7 +96,7 @@ private:
 
 typedef Locker<Mutex> MutexLocker;
 
-class ThreadCondition {
+class ThreadCondition final {
     WTF_MAKE_NONCOPYABLE(ThreadCondition);
     WTF_MAKE_FAST_ALLOCATED;
 public:

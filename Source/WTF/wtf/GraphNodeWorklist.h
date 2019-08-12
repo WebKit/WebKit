@@ -31,6 +31,7 @@ namespace WTF {
 
 template<typename Node, typename Set = HashSet<Node>>
 class GraphNodeWorklist {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphNodeWorklist() { }
     ~GraphNodeWorklist() { }
@@ -72,6 +73,8 @@ private:
 
 template<typename Node, typename T>
 struct GraphNodeWith {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     GraphNodeWith()
         : node()
         , data()
@@ -92,6 +95,7 @@ struct GraphNodeWith {
 
 template<typename Node, typename T, typename Set = HashSet<Node>>
 class ExtendedGraphNodeWorklist {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ExtendedGraphNodeWorklist() { }
 
@@ -141,6 +145,8 @@ enum class GraphVisitOrder : uint8_t {
 
 template<typename Node>
 struct GraphNodeWithOrder {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     GraphNodeWithOrder()
         : node()
         , order(GraphVisitOrder::Pre)
@@ -161,6 +167,7 @@ struct GraphNodeWithOrder {
 
 template<typename Node, typename Set = HashSet<Node>>
 class PostOrderGraphNodeWorklist {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PostOrderGraphNodeWorklist()
     {

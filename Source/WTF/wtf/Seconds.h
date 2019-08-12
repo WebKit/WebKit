@@ -35,7 +35,8 @@ class PrintStream;
 class TimeWithDynamicClockType;
 class WallTime;
 
-class Seconds {
+class Seconds final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     constexpr Seconds() { }
     

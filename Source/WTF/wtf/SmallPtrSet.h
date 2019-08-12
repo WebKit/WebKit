@@ -34,6 +34,7 @@ namespace WTF {
 
 template<typename PtrType, unsigned SmallArraySize = 8>
 class SmallPtrSet {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SmallPtrSet);
     static_assert(std::is_trivially_destructible<PtrType>::value, "We currently don't support non-trivially destructible pointer types.");
     static_assert(sizeof(PtrType) == sizeof(void*), "Only support pointer sized things.");
@@ -123,6 +124,7 @@ public:
     }
 
     class iterator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         iterator& operator++()
         {

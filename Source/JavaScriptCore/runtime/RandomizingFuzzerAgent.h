@@ -34,6 +34,7 @@ namespace JSC {
 class VM;
 
 class RandomizingFuzzerAgent final : public FuzzerAgent {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RandomizingFuzzerAgent(VM&);
 

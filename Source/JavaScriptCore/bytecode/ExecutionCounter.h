@@ -53,6 +53,8 @@ inline int32_t formattedTotalExecutionCount(float value)
 
 template<CountingVariant countingVariant>
 class ExecutionCounter {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONMOVABLE(ExecutionCounter);
 public:
     ExecutionCounter();
     void forceSlowPathConcurrently(); // If you use this, checkIfThresholdCrossedAndSet() may still return false.

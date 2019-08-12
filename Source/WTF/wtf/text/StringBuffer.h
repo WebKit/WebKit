@@ -38,6 +38,7 @@ namespace WTF {
 template <typename CharType>
 class StringBuffer {
     WTF_MAKE_NONCOPYABLE(StringBuffer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)

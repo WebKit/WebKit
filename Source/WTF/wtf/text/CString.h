@@ -34,7 +34,7 @@ namespace WTF {
 
 // CStringBuffer is the ref-counted storage class for the characters in a CString.
 // The data is implicitly allocated 1 character longer than length(), as it is zero-terminated.
-class CStringBuffer : public RefCounted<CStringBuffer> {
+class CStringBuffer final : public RefCounted<CStringBuffer> {
 public:
     const char* data() { return mutableData(); }
     size_t length() const { return m_length; }
@@ -52,7 +52,8 @@ private:
 
 // A container for a null-terminated char array supporting copy-on-write
 // assignment.  The contained char array may be null.
-class CString {
+class CString final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CString() { }
     WTF_EXPORT_PRIVATE CString(const char*);

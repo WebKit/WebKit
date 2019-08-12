@@ -36,6 +36,7 @@ namespace WTF {
 template<typename CharacterType> class CodePointIterator;
 
 class URLParser {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
     WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);

@@ -26,6 +26,7 @@ namespace WTF {
 
 template<typename T>
 class DataMutex {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DataMutex);
 public:
     template<typename ...Args>

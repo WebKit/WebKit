@@ -33,6 +33,7 @@ namespace WTF {
 
 template<typename T, typename CounterType = unsigned>
 class Spectrum {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef typename HashMap<T, CounterType>::iterator iterator;
     typedef typename HashMap<T, CounterType>::const_iterator const_iterator;
@@ -71,6 +72,7 @@ public:
     const_iterator end() const { return m_map.end(); }
     
     struct KeyAndCount {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         KeyAndCount() { }
         
         KeyAndCount(const T& key, CounterType count)

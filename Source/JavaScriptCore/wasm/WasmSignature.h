@@ -153,6 +153,7 @@ namespace JSC { namespace Wasm {
 // Note: signatures are never removed because that would require accounting for all WebAssembly.Module and which signatures they use. The maximum number of signatures is bounded, and isn't worth the counting overhead. We could clear everything when we reach zero outstanding WebAssembly.Module. https://bugs.webkit.org/show_bug.cgi?id=166037
 class SignatureInformation {
     WTF_MAKE_NONCOPYABLE(SignatureInformation);
+    WTF_MAKE_FAST_ALLOCATED;
 
     SignatureInformation();
 

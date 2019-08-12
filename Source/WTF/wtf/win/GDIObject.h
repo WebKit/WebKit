@@ -39,6 +39,7 @@ template<typename T> void deleteObject(T);
 
 template<typename T> class GDIObject {
     WTF_MAKE_NONCOPYABLE(GDIObject);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GDIObject() : m_object(0) { }
     GDIObject(std::nullptr_t) : m_object(0) { }

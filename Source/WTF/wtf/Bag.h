@@ -52,7 +52,7 @@ public:
 } // namespace Private
 
 template<typename T, typename PassedPtrTraits = DumbPtrTraits<T>>
-class Bag {
+class Bag final {
     WTF_MAKE_NONCOPYABLE(Bag);
     WTF_MAKE_FAST_ALLOCATED;
     using Node = Private::BagNode<T, PassedPtrTraits>;
@@ -95,6 +95,7 @@ public:
     }
     
     class iterator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         iterator()
             : m_node(0)

@@ -30,6 +30,7 @@ namespace WTF {
 // This type should be used instead of integer because 2 contradicting traditions can
 // call a first element '0' or '1' which makes integer type ambiguous.
 class OrdinalNumber {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static OrdinalNumber beforeFirst() { return OrdinalNumber(-1); }
     static OrdinalNumber fromZeroBasedInt(int zeroBasedInt) { return OrdinalNumber(zeroBasedInt); }

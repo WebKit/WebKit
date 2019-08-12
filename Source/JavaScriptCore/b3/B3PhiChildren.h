@@ -35,6 +35,7 @@
 namespace JSC { namespace B3 {
 
 class PhiChildren {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PhiChildren(Procedure&);
     ~PhiChildren();

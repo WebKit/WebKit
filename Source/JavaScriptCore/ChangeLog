@@ -1,3 +1,76 @@
+2019-08-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF][JSC] Make JSC and WTF aggressively-fast-malloced
+        https://bugs.webkit.org/show_bug.cgi?id=200611
+
+        Reviewed by Saam Barati.
+
+        This patch aggressively puts many classes into FastMalloc. In JSC side, we grep `std::make_unique` etc. to find potentially system-malloc-allocated classes.
+        After this patch, all the JSC related allocations in JetStream2 cli is done from bmalloc. In the future, it would be nice that we add `WTF::makeUnique<T>` helper
+        function and throw a compile error if `T` is not FastMalloc annotated[1].
+
+        Putting WebKit classes in FastMalloc has many benefits.
+
+        1. Simply, it is fast.
+        2. vmmap can tell the amount of memory used for WebKit.
+        3. bmalloc can isolate WebKit memory allocation from the rest of the world. This is useful since we can know more about what component is corrupting the memory
+           from the memory corruption crash.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        * API/ObjCCallbackFunction.mm:
+        * assembler/AbstractMacroAssembler.h:
+        * b3/B3PhiChildren.h:
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h:
+        * b3/air/AirDisassembler.h:
+        * bytecode/AccessCaseSnippetParams.h:
+        * bytecode/CallVariant.h:
+        * bytecode/DeferredSourceDump.h:
+        * bytecode/ExecutionCounter.h:
+        * bytecode/GetByIdStatus.h:
+        * bytecode/GetByIdVariant.h:
+        * bytecode/InByIdStatus.h:
+        * bytecode/InByIdVariant.h:
+        * bytecode/InstanceOfStatus.h:
+        * bytecode/InstanceOfVariant.h:
+        * bytecode/PutByIdStatus.h:
+        * bytecode/PutByIdVariant.h:
+        * bytecode/ValueProfile.h:
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::newVariableAccessData):
+        * dfg/DFGFlowIndexing.h:
+        * dfg/DFGFlowMap.h:
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::newVariableAccessData):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::MaximalFlushInsertionPhase::newVariableAccessData):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGVariableAccessData.h:
+        * disassembler/ARM64/A64DOpcode.h:
+        * inspector/remote/socket/RemoteInspectorMessageParser.h:
+        * inspector/remote/socket/RemoteInspectorSocket.h:
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+        * jit/PCToCodeOriginMap.h:
+        * runtime/BasicBlockLocation.h:
+        * runtime/DoublePredictionFuzzerAgent.h:
+        * runtime/JSRunLoopTimer.h:
+        * runtime/PromiseDeferredTimer.h:
+        (JSC::PromiseDeferredTimer::create): PromiseDeferredTimer should be allocated as `Ref<>` instead of `std::unique_ptr` since it is inheriting ThreadSafeRefCounted<>.
+        Holding such a class with std::unique_ptr could lead to potentially dangerous operations (like, someone holds it with Ref<> while it is deleted by std::unique_ptr<>).
+        * runtime/RandomizingFuzzerAgent.h:
+        * runtime/SymbolTable.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tools/JSDollarVM.cpp:
+        * tools/SigillCrashAnalyzer.cpp:
+        * wasm/WasmFormat.h:
+        * wasm/WasmMemory.cpp:
+        * wasm/WasmSignature.h:
+        * yarr/YarrJIT.h:
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertions to RefCounted

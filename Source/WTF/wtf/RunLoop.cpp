@@ -36,6 +36,7 @@ static RunLoop* s_mainRunLoop;
 
 // Helper class for ThreadSpecificData.
 class RunLoop::Holder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Holder()
         : m_runLoop(adoptRef(*new RunLoop))

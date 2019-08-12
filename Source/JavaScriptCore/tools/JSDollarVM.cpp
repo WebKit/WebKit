@@ -177,6 +177,7 @@ private:
 };
 
 class ElementHandleOwner : public WeakHandleOwner {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     bool isReachableFromOpaqueRoots(Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason) override
     {

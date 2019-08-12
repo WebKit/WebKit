@@ -27,6 +27,7 @@
 namespace WTF {
 
 class TextBreakIteratorICU {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode {
         Line,

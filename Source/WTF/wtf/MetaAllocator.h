@@ -82,6 +82,7 @@ public:
     
     // Atomic method for getting allocator statistics.
     struct Statistics {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         size_t bytesAllocated;
         size_t bytesReserved;
         size_t bytesCommitted;

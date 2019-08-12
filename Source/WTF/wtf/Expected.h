@@ -417,6 +417,7 @@ using base_select = typename std::conditional<
 
 template<class T, class E>
 class expected : private __expected_detail::base_select<T, E> {
+    WTF_MAKE_FAST_ALLOCATED;
     typedef __expected_detail::base_select<T, E> base;
 
 public:

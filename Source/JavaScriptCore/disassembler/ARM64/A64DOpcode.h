@@ -33,6 +33,7 @@ namespace JSC { namespace ARM64Disassembler {
 class A64DOpcode {
 private:
     class OpcodeGroup {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         OpcodeGroup(uint32_t opcodeMask, uint32_t opcodePattern, const char* (*format)(A64DOpcode*))
             : m_opcodeMask(opcodeMask)

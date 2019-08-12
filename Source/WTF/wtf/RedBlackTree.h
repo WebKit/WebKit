@@ -41,8 +41,9 @@ namespace WTF {
 // - The key type must implement operator< and ==.
 
 template<class NodeType, typename KeyType>
-class RedBlackTree {
+class RedBlackTree final {
     WTF_MAKE_NONCOPYABLE(RedBlackTree);
+    WTF_MAKE_FAST_ALLOCATED;
 private:
     enum Color {
         Red = 1,

@@ -53,7 +53,7 @@ public:
     WTF_EXPORT_PRIVATE static Ref<SymbolImpl> createNullSymbol();
     WTF_EXPORT_PRIVATE static Ref<SymbolImpl> create(StringImpl& rep);
 
-    class StaticSymbolImpl : private StringImplShape {
+    class StaticSymbolImpl final : private StringImplShape {
         WTF_MAKE_NONCOPYABLE(StaticSymbolImpl);
     public:
         template<unsigned characterCount>
@@ -124,7 +124,7 @@ protected:
 };
 static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl), "");
 
-class PrivateSymbolImpl : public SymbolImpl {
+class PrivateSymbolImpl final : public SymbolImpl {
 public:
     WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> createNullSymbol();
     WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> create(StringImpl& rep);
@@ -146,7 +146,7 @@ private:
     }
 };
 
-class RegisteredSymbolImpl : public SymbolImpl {
+class RegisteredSymbolImpl final : public SymbolImpl {
 private:
     friend class StringImpl;
     friend class SymbolImpl;

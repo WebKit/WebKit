@@ -40,6 +40,7 @@ class Code;
 struct Inst;
 
 class Disassembler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Disassembler() = default;
 

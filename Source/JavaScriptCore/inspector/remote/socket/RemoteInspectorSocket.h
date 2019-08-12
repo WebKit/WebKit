@@ -91,6 +91,7 @@ void markWaitingWritable(PollingDescriptor&);
 void clearWaitingWritable(PollingDescriptor&);
 
 struct Connection {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     std::unique_ptr<MessageParser> parser;
     Vector<uint8_t> sendBuffer;
     PlatformSocketType socket { INVALID_SOCKET_VALUE };

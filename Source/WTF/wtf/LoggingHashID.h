@@ -32,6 +32,7 @@
 namespace WTF {
 
 class LoggingHashID {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LoggingHashID);
     
 public:

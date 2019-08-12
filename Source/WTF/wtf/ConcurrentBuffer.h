@@ -37,7 +37,7 @@ namespace WTF {
 // ConcurrentBuffer is suitable for when you plan to store immutable data and sometimes append to it.
 // It supports storing data that is not copy-constructable but bit-copyable.
 template<typename T>
-class ConcurrentBuffer {
+class ConcurrentBuffer final {
     WTF_MAKE_NONCOPYABLE(ConcurrentBuffer);
     WTF_MAKE_FAST_ALLOCATED;
 public:

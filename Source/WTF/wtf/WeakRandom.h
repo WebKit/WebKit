@@ -38,7 +38,8 @@ namespace WTF {
 
 // The code used to generate random numbers are inlined manually in JIT code.
 // So it needs to stay in sync with the JIT one.
-class WeakRandom {
+class WeakRandom final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WeakRandom(unsigned seed = cryptographicallyRandomNumber())
     {

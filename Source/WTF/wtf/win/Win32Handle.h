@@ -31,6 +31,7 @@
 namespace WTF {
 
 class Win32Handle {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Win32Handle);
 
 public:

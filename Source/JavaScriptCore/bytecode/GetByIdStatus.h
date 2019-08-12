@@ -44,6 +44,7 @@ class ModuleNamespaceAccessCase;
 class StructureStubInfo;
 
 class GetByIdStatus {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State : uint8_t {
         // It's uncached so we have no information.

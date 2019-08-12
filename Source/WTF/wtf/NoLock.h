@@ -30,6 +30,7 @@
 namespace WTF {
 
 class NoLock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void lock() { }
     void unlock() { }

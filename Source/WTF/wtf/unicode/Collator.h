@@ -41,6 +41,7 @@ class StringView;
 #if UCONFIG_NO_COLLATION
 
 class Collator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Collator(const char* = nullptr, bool = false) { }
 
@@ -51,6 +52,7 @@ public:
 #else
 
 class Collator {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Collator);
 public:
     // The value nullptr is a special one meaning the system default locale.

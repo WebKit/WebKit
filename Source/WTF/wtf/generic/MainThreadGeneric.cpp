@@ -47,6 +47,7 @@ static pthread_t mainThread;
 #endif
 
 class MainThreadDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MainThreadDispatcher()
         : m_timer(RunLoop::main(), this, &MainThreadDispatcher::fired)

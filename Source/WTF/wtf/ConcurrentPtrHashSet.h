@@ -52,7 +52,7 @@ namespace WTF {
 //
 // ConcurrentPtrHashSet's main user, the GC, sees a 98% nop add rate in Speedometer. That's why this
 // focuses so much on cases where the table does not change.
-class ConcurrentPtrHashSet {
+class ConcurrentPtrHashSet final {
     WTF_MAKE_NONCOPYABLE(ConcurrentPtrHashSet);
     WTF_MAKE_FAST_ALLOCATED;
 

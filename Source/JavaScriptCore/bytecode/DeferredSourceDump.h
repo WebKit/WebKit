@@ -33,6 +33,7 @@ namespace JSC {
 class CodeBlock;
 
 class DeferredSourceDump {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DeferredSourceDump(CodeBlock*);
     DeferredSourceDump(CodeBlock*, CodeBlock* rootCodeBlock, JITType rootJITType, unsigned callerBytecodeIndex);

@@ -55,6 +55,7 @@ enum class CanBeGCThread {
 
 template<typename T, CanBeGCThread canBeGCThread = CanBeGCThread::False> class ThreadSpecific {
     WTF_MAKE_NONCOPYABLE(ThreadSpecific);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ThreadSpecific();
     bool isSet(); // Useful as a fast check to see if this thread has set this value.

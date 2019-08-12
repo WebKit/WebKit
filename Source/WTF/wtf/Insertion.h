@@ -29,6 +29,7 @@ namespace WTF {
 
 template<typename T>
 class Insertion {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Insertion() { }
 

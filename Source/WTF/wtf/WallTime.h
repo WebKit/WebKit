@@ -38,7 +38,8 @@ class PrintStream;
 // acceptable to use this to wrap NaN times, negative times, and infinite times, so long as they
 // are relative to the same clock. Use this only if wall clock time is needed. For elapsed time
 // measurement use MonotonicTime instead.
-class WallTime {
+class WallTime final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static const ClockType clockType = ClockType::Wall;
     

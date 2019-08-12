@@ -50,7 +50,8 @@ namespace WTF {
 // void T::dump(PrintStream&) const - some kind of dumping.
 
 template<typename RangeType>
-class RangeSet {
+class RangeSet final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef RangeType Range;
     typedef typename Range::Type Type;

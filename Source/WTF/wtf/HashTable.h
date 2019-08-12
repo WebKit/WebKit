@@ -105,6 +105,7 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableConstIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, const Value*, const Value&> {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
         typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
@@ -241,6 +242,7 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, Value*, Value&> {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
         typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
@@ -311,6 +313,8 @@ namespace WTF {
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         struct Stats {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
             Stats()
                 : numAccesses(0)
                 , numRehashes(0)

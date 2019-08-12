@@ -31,6 +31,7 @@
 namespace WTF {
 
 class OSAllocator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Usage {
         UnknownUsage = -1,

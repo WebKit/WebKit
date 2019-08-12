@@ -74,6 +74,7 @@ template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpeci
 #if STRING_STATS
 
 struct StringStats {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     void add8BitString(unsigned length, bool isSubString = false)
     {
         ++m_totalNumberStrings;

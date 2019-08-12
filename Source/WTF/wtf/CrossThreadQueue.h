@@ -36,7 +36,8 @@
 namespace WTF {
 
 template<typename DataType>
-class CrossThreadQueue {
+class CrossThreadQueue final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CrossThreadQueue);
 public:
     CrossThreadQueue() = default;

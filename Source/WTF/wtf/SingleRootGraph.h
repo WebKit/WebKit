@@ -34,6 +34,7 @@ namespace WTF {
 
 template <typename Graph>
 class SingleRootGraphNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // We use "#root" to refer to the synthetic root we have created.
     static const char* rootName() { return "#root"; };
@@ -82,6 +83,7 @@ private:
 
 template <typename Graph>
 class SingleRootGraphSet {
+    WTF_MAKE_FAST_ALLOCATED;
     using Node = SingleRootGraphNode<Graph>;
 public:
     SingleRootGraphSet() = default;
@@ -121,6 +123,7 @@ private:
 
 template<typename T, typename Graph>
 class SingleRootMap {
+    WTF_MAKE_FAST_ALLOCATED;
     using Node = SingleRootGraphNode<Graph>;
 public:
     SingleRootMap(Graph& graph)

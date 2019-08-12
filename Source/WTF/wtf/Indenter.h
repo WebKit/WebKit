@@ -31,6 +31,7 @@
 namespace WTF {
 
 class Indenter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Indenter(unsigned count = 0, String string = "  "_s)
         : m_count(count)

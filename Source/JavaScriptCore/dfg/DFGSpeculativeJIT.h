@@ -1747,6 +1747,7 @@ public:
 // in order to make space available for another.
 
 class JSValueOperand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit JSValueOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
@@ -1902,6 +1903,7 @@ private:
 };
 
 class StorageOperand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit StorageOperand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
@@ -1959,6 +1961,7 @@ private:
 enum ReuseTag { Reuse };
 
 class GPRTemporary {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GPRTemporary();
     GPRTemporary(SpeculativeJIT*);
@@ -2029,6 +2032,7 @@ private:
 };
 
 class JSValueRegsTemporary {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JSValueRegsTemporary();
     JSValueRegsTemporary(SpeculativeJIT*);
@@ -2049,7 +2053,7 @@ private:
 };
 
 class FPRTemporary {
-    WTF_MAKE_NONCOPYABLE(FPRTemporary);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FPRTemporary(FPRTemporary&&);
     FPRTemporary(SpeculativeJIT*);
@@ -2123,6 +2127,7 @@ private:
 };
 
 class JSValueRegsFlushedCallResult {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JSValueRegsFlushedCallResult(SpeculativeJIT* jit)
 #if USE(JSVALUE64)
@@ -2164,6 +2169,7 @@ private:
 // a bail-out to the non-speculative path will be taken.
 
 class SpeculateInt32Operand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateInt32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
@@ -2222,6 +2228,7 @@ private:
 };
 
 class SpeculateStrictInt32Operand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateStrictInt32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
@@ -2270,6 +2277,7 @@ private:
 
 // Gives you a canonical Int52 (i.e. it's left-shifted by 16, low bits zero).
 class SpeculateInt52Operand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateInt52Operand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
@@ -2317,6 +2325,7 @@ private:
 
 // Gives you a strict Int52 (i.e. the payload is in the low 48 bits, high 16 bits are sign-extended).
 class SpeculateStrictInt52Operand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateStrictInt52Operand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
@@ -2365,6 +2374,7 @@ private:
 enum OppositeShiftTag { OppositeShift };
 
 class SpeculateWhicheverInt52Operand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
@@ -2442,6 +2452,7 @@ private:
 };
 
 class SpeculateDoubleOperand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
@@ -2489,7 +2500,7 @@ private:
 };
 
 class SpeculateCellOperand {
-    WTF_MAKE_NONCOPYABLE(SpeculateCellOperand);
+    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
@@ -2554,6 +2565,7 @@ private:
 };
 
 class SpeculateBooleanOperand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculateBooleanOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)

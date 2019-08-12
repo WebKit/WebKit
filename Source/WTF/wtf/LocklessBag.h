@@ -33,7 +33,8 @@ namespace WTF {
 // This a simple single consumer, multiple producer Bag data structure.
 
 template<typename T>
-class LocklessBag {
+class LocklessBag final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LocklessBag);
 public:
     struct Node {

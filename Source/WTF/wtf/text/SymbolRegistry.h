@@ -76,6 +76,7 @@ template<> struct HashTraits<SymbolRegistryKey> : SimpleClassHashTraits<SymbolRe
 };
 
 class SymbolRegistry {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SymbolRegistry);
 public:
     SymbolRegistry() = default;

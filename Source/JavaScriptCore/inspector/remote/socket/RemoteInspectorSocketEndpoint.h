@@ -43,6 +43,7 @@ class MessageParser;
 class RemoteInspectorConnectionClient;
 
 class JS_EXPORT_PRIVATE RemoteInspectorSocketEndpoint {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<RemoteInspectorSocketEndpoint> create(RemoteInspectorConnectionClient* inspectorClient, const char* name)
     {

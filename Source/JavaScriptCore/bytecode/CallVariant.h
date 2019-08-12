@@ -61,6 +61,7 @@ namespace JSC {
 // cannot use WriteBarrier<> here because this gets used inside the compiler.
 
 class CallVariant {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CallVariant(JSCell* callee = nullptr)
         : m_callee(callee)

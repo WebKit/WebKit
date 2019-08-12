@@ -57,6 +57,7 @@ enum class Synchronous { No, Yes };
 typedef WTF::Function<void(Critical, Synchronous)> LowMemoryHandler;
 
 class MemoryPressureHandler {
+    WTF_MAKE_FAST_ALLOCATED;
     friend class WTF::NeverDestroyed<MemoryPressureHandler>;
 public:
     WTF_EXPORT_PRIVATE static MemoryPressureHandler& singleton();
@@ -95,6 +96,7 @@ public:
 #endif
 
     class ReliefLogger {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
@@ -122,6 +124,7 @@ public:
 
     private:
         struct MemoryUsage {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
             MemoryUsage() = default;
             MemoryUsage(size_t resident, size_t physical)
                 : resident(resident)

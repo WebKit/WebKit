@@ -43,6 +43,7 @@ class StructureStubInfo;
 typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 class PutByIdStatus {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {
         // It's uncached so we have no information.

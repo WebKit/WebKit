@@ -44,6 +44,7 @@ namespace WTF {
     
 template<typename CharacterType>
 class CodePointIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ALWAYS_INLINE CodePointIterator() { }
     ALWAYS_INLINE CodePointIterator(const CharacterType* begin, const CharacterType* end)

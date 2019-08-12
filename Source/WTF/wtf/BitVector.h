@@ -60,7 +60,8 @@ namespace WTF {
 // juggle a lot of variable-length BitVectors and you're worried about wasting
 // space.
 
-class BitVector {
+class BitVector final {
+    WTF_MAKE_FAST_ALLOCATED;
 public: 
     BitVector()
         : m_bitsOrPointer(makeInlineBits(0))
@@ -297,6 +298,7 @@ public:
     }
     
     class iterator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         iterator()
             : m_bitVector(nullptr)

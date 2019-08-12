@@ -127,6 +127,7 @@ inline void tracePoint(TracePointCode code, uint64_t data1 = 0, uint64_t data2 =
 }
 
 class TraceScope {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
 
     TraceScope(TracePointCode entryCode, TracePointCode exitCode, uint64_t data1 = 0, uint64_t data2 = 0, uint64_t data3 = 0, uint64_t data4 = 0)

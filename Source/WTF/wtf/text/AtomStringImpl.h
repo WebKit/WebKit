@@ -26,7 +26,7 @@ namespace WTF {
 
 class AtomStringTable;
 
-class AtomStringImpl : public UniquedStringImpl {
+class AtomStringImpl final : public UniquedStringImpl {
 public:
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(const UChar*, unsigned length);

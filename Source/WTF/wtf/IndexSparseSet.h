@@ -73,6 +73,7 @@ struct DefaultIndexSparseSetTraits<KeyValuePair<KeyType, ValueType>> {
 
 template<typename EntryType = unsigned, typename EntryTypeTraits = DefaultIndexSparseSetTraits<EntryType>, typename OverflowHandler = CrashOnOverflow>
 class IndexSparseSet {
+    WTF_MAKE_FAST_ALLOCATED;
     typedef Vector<EntryType, 0, OverflowHandler> ValueList;
 public:
     explicit IndexSparseSet(unsigned size);

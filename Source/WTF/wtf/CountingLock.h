@@ -54,7 +54,7 @@ namespace WTF {
 //
 // The latter is important for us because some GC paths are known to be sensitive to fences on ARM.
 
-class CountingLock {
+class CountingLock final {
     WTF_MAKE_NONCOPYABLE(CountingLock);
     WTF_MAKE_FAST_ALLOCATED;
 

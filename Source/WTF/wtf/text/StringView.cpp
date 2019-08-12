@@ -284,6 +284,7 @@ String normalizedNFC(const String& string)
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.
 
 struct StringView::UnderlyingString {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     std::atomic_uint refCount { 1u };
     bool isValid { true };
     const StringImpl& string;

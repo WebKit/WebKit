@@ -29,7 +29,7 @@
 namespace WTF {
 
 template<size_t bitmapSize, typename WordType = uint32_t>
-class Bitmap {
+class Bitmap final {
     WTF_MAKE_FAST_ALLOCATED;
     
     static_assert(sizeof(WordType) <= sizeof(unsigned), "WordType must not be bigger than unsigned");
@@ -70,6 +70,7 @@ public:
     size_t findBit(size_t startIndex, bool value) const;
     
     class iterator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         iterator()
             : m_bitmap(nullptr)

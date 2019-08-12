@@ -94,6 +94,8 @@ struct MemoryResult {
 };
 
 class MemoryManager {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(MemoryManager);
 public:
     MemoryManager()
         : m_maxFastMemoryCount(Options::maxNumWebAssemblyFastMemories())

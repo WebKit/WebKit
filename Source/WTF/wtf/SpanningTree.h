@@ -29,6 +29,7 @@
 
 template<typename Graph>
 class SpanningTree {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SpanningTree(Graph& graph)
         : m_graph(graph)
@@ -75,6 +76,7 @@ public:
 
 private:
     struct Data {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         size_t pre;
         size_t post;
     };

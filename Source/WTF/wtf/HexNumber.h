@@ -73,6 +73,8 @@ inline void appendUnsignedAsHexFixedSize(NumberType number, DestinationType& des
 }
 
 struct HexNumberBuffer {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     std::array<LChar, 16> characters;
     unsigned length;
 };

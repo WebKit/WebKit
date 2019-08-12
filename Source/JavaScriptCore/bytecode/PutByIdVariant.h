@@ -34,6 +34,7 @@ namespace JSC {
 class CallLinkStatus;
 
 class PutByIdVariant {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Kind {
         NotSet,

@@ -33,6 +33,7 @@ namespace WTF {
 const int UTextWithBufferInlineCapacity = 16;
 
 struct UTextWithBuffer {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     UText text;
     UChar buffer[UTextWithBufferInlineCapacity];
 };

@@ -34,6 +34,7 @@ namespace WTF {
 // count to it.
 template<typename T>
 class Box {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Box() = default;
     Box(Box&&) = default;

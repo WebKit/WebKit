@@ -32,6 +32,7 @@ namespace JSC {
 class VM;
 
 class DoublePredictionFuzzerAgent final : public FuzzerAgent {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DoublePredictionFuzzerAgent(VM&);
 

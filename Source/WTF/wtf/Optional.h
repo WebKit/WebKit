@@ -45,6 +45,7 @@
 # include <stdexcept>
 # include <wtf/Assertions.h>
 # include <wtf/Compiler.h>
+# include <wtf/FastMalloc.h>
 # include <wtf/StdLibExtras.h>
 
 # define TR2_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
@@ -364,6 +365,7 @@ using OptionalBase = typename std::conditional<
 template <class T>
 class Optional : private OptionalBase<T>
 {
+  WTF_MAKE_FAST_ALLOCATED;
   static_assert( !std::is_same<typename std::decay<T>::type, nullopt_t>::value, "bad T" );
   static_assert( !std::is_same<typename std::decay<T>::type, std::in_place_t>::value, "bad T" );
 
@@ -580,6 +582,7 @@ public:
 template <class T>
 class Optional<T&>
 {
+  WTF_MAKE_FAST_ALLOCATED;
   static_assert( !std::is_same<T, nullopt_t>::value, "bad T" );
   static_assert( !std::is_same<T, std::in_place_t>::value, "bad T" );
   T* ref;

@@ -40,6 +40,7 @@
 namespace WTF {
 
 class MD5 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE MD5();
 

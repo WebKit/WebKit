@@ -54,6 +54,7 @@ public:
     }
 
     class DemangleEntry {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         friend class StackTrace;
         const char* mangledName() const { return m_mangledName; }

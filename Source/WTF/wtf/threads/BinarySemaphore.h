@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-class BinarySemaphore {
+class BinarySemaphore final {
     WTF_MAKE_NONCOPYABLE(BinarySemaphore);
     WTF_MAKE_FAST_ALLOCATED;
 public:

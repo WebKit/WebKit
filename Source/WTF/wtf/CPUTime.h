@@ -31,6 +31,8 @@
 namespace WTF {
 
 struct CPUTime {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     MonotonicTime cpuTime;
     Seconds userTime;
     Seconds systemTime;

@@ -33,6 +33,8 @@
 namespace WTF {
 
 class StackBounds {
+    WTF_MAKE_FAST_ALLOCATED;
+
     // This 64k number was picked because a sampling of stack usage differences
     // between consecutive entries into one of the Interpreter::execute...()
     // functions was seen to be as high as 27k. Hence, 64k is chosen as a

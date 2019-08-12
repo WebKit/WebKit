@@ -43,6 +43,7 @@ typedef NullTextBreakIterator TextBreakIteratorPlatform;
 class TextBreakIteratorCache;
 
 class TextBreakIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode {
         Line,
@@ -108,6 +109,7 @@ private:
 class CachedTextBreakIterator;
 
 class TextBreakIteratorCache {
+    WTF_MAKE_FAST_ALLOCATED;
 // Use CachedTextBreakIterator instead of dealing with the cache directly.
 private:
     friend class NeverDestroyed<TextBreakIteratorCache>;
@@ -156,6 +158,7 @@ private:
 
 // RAII for TextBreakIterator and TextBreakIteratorCache.
 class CachedTextBreakIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CachedTextBreakIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
         : m_backing(TextBreakIteratorCache::singleton().take(string, mode, locale))
@@ -207,6 +210,7 @@ void closeLineBreakIterator(UBreakIterator*&);
 WTF_EXPORT_PRIVATE bool isWordTextBreak(UBreakIterator*);
 
 class LazyLineBreakIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LazyLineBreakIterator()
     {
@@ -322,6 +326,7 @@ private:
 // Use this for general text processing, e.g. string truncation.
 
 class NonSharedCharacterBreakIterator {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(NonSharedCharacterBreakIterator);
 public:
     WTF_EXPORT_PRIVATE NonSharedCharacterBreakIterator(StringView);

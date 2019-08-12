@@ -34,6 +34,7 @@
 namespace WTF {
 
 class CrossThreadTask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CrossThreadTask() = default;
 

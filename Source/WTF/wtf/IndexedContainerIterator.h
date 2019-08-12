@@ -31,6 +31,7 @@ namespace WTF {
 
 template<class Container>
 class IndexedContainerIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IndexedContainerIterator()
         : m_container(nullptr)

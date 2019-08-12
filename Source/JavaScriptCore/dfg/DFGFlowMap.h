@@ -38,6 +38,7 @@ namespace JSC { namespace DFG {
 // values of Phis. This makes it easy to do both of those things.
 template<typename T>
 class FlowMap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FlowMap(Graph& graph)
         : m_graph(graph)

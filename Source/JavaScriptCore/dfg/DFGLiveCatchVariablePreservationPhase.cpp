@@ -220,7 +220,7 @@ public:
     {
         ASSERT(!operand.isConstant());
         
-        m_graph.m_variableAccessData.append(VariableAccessData(operand));
+        m_graph.m_variableAccessData.append(operand);
         return &m_graph.m_variableAccessData.last();
     }
 };

@@ -54,6 +54,7 @@ struct OSRExit;
 }
 
 class AbstractMacroAssemblerBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum StatusCondition {
         Success,

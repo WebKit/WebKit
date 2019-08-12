@@ -361,6 +361,7 @@ void WTFReportError(const char* file, int line, const char* function, const char
 }
 
 class WTFLoggingAccumulator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void accumulate(const String&);
     void resetAccumulatedLogs();

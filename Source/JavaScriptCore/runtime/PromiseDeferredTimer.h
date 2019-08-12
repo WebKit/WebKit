@@ -42,8 +42,6 @@ class PromiseDeferredTimer : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
-    PromiseDeferredTimer(VM&);
-
     void doWork(VM&) override;
 
     void addPendingPromise(VM&, JSPromiseDeferred*, Vector<Strong<JSCell>>&& dependencies);
@@ -59,7 +57,14 @@ public:
 
     JS_EXPORT_PRIVATE void runRunLoop();
 
+    static Ref<PromiseDeferredTimer> create(VM& vm)
+    {
+        return adoptRef(*new PromiseDeferredTimer(vm));
+    }
+
 private:
+    PromiseDeferredTimer(VM&);
+
     HashMap<JSPromiseDeferred*, Vector<Strong<JSCell>>> m_pendingPromises;
     Lock m_taskLock;
     bool m_runTasks { true };

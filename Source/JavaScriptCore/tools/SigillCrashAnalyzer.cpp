@@ -44,6 +44,8 @@ namespace JSC {
 struct SignalContext;
 
 class SigillCrashAnalyzer {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(SigillCrashAnalyzer);
 public:
     static SigillCrashAnalyzer& instance();
 

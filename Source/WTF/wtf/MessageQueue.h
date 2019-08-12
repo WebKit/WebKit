@@ -49,7 +49,8 @@ namespace WTF {
     // when messages are fetched from the queue.
     // Essentially, MessageQueue acts as a queue of std::unique_ptr<DataType>.
     template<typename DataType>
-    class MessageQueue {
+    class MessageQueue final {
+        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(MessageQueue);
     public:
         MessageQueue() : m_killed(false) { }

@@ -37,7 +37,8 @@ namespace WTF {
 // are relying on the sign being preserved.
 
 template<typename T, unsigned bitCount>
-class PackedIntVector {
+class PackedIntVector final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static_assert(bitCount, "bitCount must not be zero!");
     static_assert(bitCount < sizeof(void*) * 8, "bitCount must not exceed the address space limit!");

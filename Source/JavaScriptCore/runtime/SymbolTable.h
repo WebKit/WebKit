@@ -721,6 +721,7 @@ private:
     unsigned m_scopeType : 3; // ScopeType
     
     struct SymbolTableRareData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         UniqueIDMap m_uniqueIDMap;
         OffsetToVariableMap m_offsetToVariableMap;
         UniqueTypeSetMap m_uniqueTypeSetMap;

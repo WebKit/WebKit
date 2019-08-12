@@ -39,6 +39,9 @@ namespace B3 { namespace Air {
 class Code;
 
 class GenerateAndAllocateRegisters {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONMOVABLE(GenerateAndAllocateRegisters);
+
     struct TmpData {
         StackSlot* spillSlot;
         Reg reg;

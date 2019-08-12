@@ -30,7 +30,8 @@
 
 namespace WTF {
 
-class GregorianDateTime {
+class GregorianDateTime final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GregorianDateTime);
 public:
     GregorianDateTime()

@@ -49,6 +49,7 @@ namespace WTF {
 class StringBuilder {
     // Disallow copying since it's expensive and we don't want code to do it by accident.
     WTF_MAKE_NONCOPYABLE(StringBuilder);
+    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     enum class OverflowHandler {

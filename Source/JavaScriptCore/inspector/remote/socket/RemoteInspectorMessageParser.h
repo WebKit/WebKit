@@ -33,6 +33,7 @@
 namespace Inspector {
 
 class MessageParser {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Vector<uint8_t> createMessage(const uint8_t*, size_t);
 

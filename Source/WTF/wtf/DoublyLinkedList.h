@@ -65,7 +65,8 @@ template<typename T> inline T* DoublyLinkedListNode<T>::next() const
     return static_cast<const T*>(this)->m_next;
 }
 
-template<typename T> class DoublyLinkedList {
+template<typename T>
+class DoublyLinkedList {
 public:
     DoublyLinkedList();
     

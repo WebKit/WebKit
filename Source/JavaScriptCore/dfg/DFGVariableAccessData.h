@@ -44,6 +44,8 @@ struct Node;
 enum DoubleBallot { VoteValue, VoteDouble };
 
 class VariableAccessData : public UnionFind<VariableAccessData> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(VariableAccessData);
 public:
     VariableAccessData();
     VariableAccessData(VirtualRegister local);

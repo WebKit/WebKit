@@ -73,6 +73,7 @@ inline namespace fundamentals_v3 {
 
 template<class E>
 class unexpected {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     unexpected() = delete;
     template <class U = E>

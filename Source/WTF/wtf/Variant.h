@@ -1440,6 +1440,7 @@ class Variant:
         private __variant_base<
     Variant<_Types...>,__all_trivially_destructible<_Types...>::__value>
 {
+    WTF_MAKE_FAST_ALLOCATED;
     typedef __variant_base<Variant<_Types...>,__all_trivially_destructible<_Types...>::__value> __base_type;
     friend __base_type;
     friend struct __copy_construct_op_table<Variant>;
@@ -1725,6 +1726,7 @@ public:
 template<>
 class Variant<>{
 public:
+    WTF_MAKE_FAST_ALLOCATED;
     Variant()=delete;
     
     constexpr bool valueless_by_exception() const __NOEXCEPT{

@@ -35,6 +35,7 @@ namespace WTF {
 
 class LineBreakIteratorPool {
     WTF_MAKE_NONCOPYABLE(LineBreakIteratorPool);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LineBreakIteratorPool() = default;
 

@@ -29,7 +29,7 @@ namespace WTF {
 
 class PrintStream;
 
-class ASCIILiteral {
+class ASCIILiteral final {
 public:
     operator const char*() const { return m_characters; }
 

@@ -33,7 +33,7 @@
 namespace WTF {
 
 template<typename T, size_t BufferSize>
-class SynchronizedFixedQueue : public ThreadSafeRefCounted<SynchronizedFixedQueue<T, BufferSize>> {
+class SynchronizedFixedQueue final : public ThreadSafeRefCounted<SynchronizedFixedQueue<T, BufferSize>> {
 public:
     static Ref<SynchronizedFixedQueue> create()
     {

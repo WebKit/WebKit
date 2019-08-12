@@ -181,6 +181,8 @@ struct ValueProfileAndOperand : public ValueProfile {
 };
 
 struct ValueProfileAndOperandBuffer {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     ValueProfileAndOperandBuffer(unsigned size)
         : m_size(size)
     {

@@ -40,6 +40,7 @@ namespace WTF {
 namespace {
 
 class ARC4Stream {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ARC4Stream();
 

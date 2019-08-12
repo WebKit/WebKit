@@ -29,7 +29,8 @@
 
 namespace WTF {
 
-class CompilationScope {
+class CompilationScope final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CompilationScope()
         : m_oldValue(Thread::exchangeIsCompilationThread(true))

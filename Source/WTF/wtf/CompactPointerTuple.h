@@ -35,7 +35,8 @@ namespace WTF {
 // In 64bit, we use the upper 5 bits and lower 3 bits (zero due to alignment) since these bits are safe to use even
 // with 5-level page tables where the effective pointer width is 57bits.
 template<typename PointerType, typename Type>
-class CompactPointerTuple {
+class CompactPointerTuple final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static_assert(sizeof(Type) == 1, "");
     static_assert(std::is_pointer<PointerType>::value, "");

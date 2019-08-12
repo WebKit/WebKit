@@ -40,6 +40,7 @@ class GetByIdStatus;
 struct DumpContext;
 
 class GetByIdVariant {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GetByIdVariant(
         const StructureSet& structureSet = StructureSet(), PropertyOffset offset = invalidOffset,

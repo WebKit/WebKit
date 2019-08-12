@@ -29,7 +29,8 @@
 
 namespace WTF {
 
-class CommaPrinter {
+class CommaPrinter final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CommaPrinter(const char* comma = ", ", const char* start = "")
         : m_comma(comma)

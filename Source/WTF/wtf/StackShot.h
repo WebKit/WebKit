@@ -32,6 +32,7 @@
 namespace WTF {
 
 class StackShot {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StackShot() { }
     
