@@ -1,5 +1,89 @@
 2019-08-12  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248491. rdar://problem/54130636
+
+    Don't allow cross-origin iframes to autofocus
+    https://bugs.webkit.org/show_bug.cgi?id=200515
+    <rdar://problem/54092988>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    According to Step 6 in the WhatWG Spec (https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofocusing-a-form-control:-the-autofocus-attribute),
+    the 'autofocus' attribute shouldn't work for cross-origin iframes.
+    
+    This change is based on the Blink change (patch by <mustaq@chromium.org>):
+    <https://chromium-review.googlesource.com/c/chromium/src/+/1593026>
+    
+    Also disallow cross-origin iframes from focusing programmatically without ever having
+    had any user interaction.
+    
+    * dom/Element.cpp: Check if an invalid frame is trying to grab the focus.
+    (WebCore::Element::focus):
+    * html/HTMLFormControlElement.cpp: Check if the focus is moving to an invalid frame.
+    (WebCore::shouldAutofocus):
+    * page/DOMWindow.cpp: Check if an invalid frame is trying to grab the focus.
+    (WebCore::DOMWindow::focus):
+    
+    Tools:
+    
+    Make WebKit.FocusedFrameAfterCrash use same-origin iframes instead
+    of cross-origin iframes, since it depends on focusing one of the
+    frames.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKit/many-same-origin-iframes.html: Added.
+    
+    LayoutTests:
+    
+    Add test coverage, and simulate user interaction in existing tests
+    that require focusing a cross-origin frame.
+    
+    * http/tests/security/clipboard/resources/copy-html.html:
+    * http/tests/security/clipboard/resources/copy-mso-list.html:
+    * http/tests/security/clipboard/resources/copy-url.html:
+    * http/wpt/html/interaction/focus/no-cross-origin-element-focus-expected.txt: Added.
+    * http/wpt/html/interaction/focus/no-cross-origin-element-focus.html: Added.
+    * http/wpt/html/interaction/focus/no-cross-origin-window-focus-expected.txt: Added.
+    * http/wpt/html/interaction/focus/no-cross-origin-window-focus.html: Added.
+    * http/wpt/html/interaction/focus/resources/child-focus-element.html: Added.
+    * http/wpt/html/interaction/focus/resources/child-focus-window.html: Added.
+    * http/wpt/html/semantics/forms/autofocus/no-cross-origin-autofocus.sub-expected.txt: Added.
+    * http/wpt/html/semantics/forms/autofocus/no-cross-origin-autofocus.sub.html: Added.
+    * http/wpt/html/semantics/forms/autofocus/resources/child-autofocus.html: Added.
+    * http/wpt/webauthn/resources/last-layer-frame.https.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248491 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-09  Ali Juma  <ajuma@chromium.org>
+
+            Don't allow cross-origin iframes to autofocus
+            https://bugs.webkit.org/show_bug.cgi?id=200515
+            <rdar://problem/54092988>
+
+            Reviewed by Ryosuke Niwa.
+
+            According to Step 6 in the WhatWG Spec (https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofocusing-a-form-control:-the-autofocus-attribute),
+            the 'autofocus' attribute shouldn't work for cross-origin iframes.
+
+            This change is based on the Blink change (patch by <mustaq@chromium.org>):
+            <https://chromium-review.googlesource.com/c/chromium/src/+/1593026>
+
+            Also disallow cross-origin iframes from focusing programmatically without ever having
+            had any user interaction.
+
+            * dom/Element.cpp: Check if an invalid frame is trying to grab the focus.
+            (WebCore::Element::focus):
+            * html/HTMLFormControlElement.cpp: Check if the focus is moving to an invalid frame.
+            (WebCore::shouldAutofocus):
+            * page/DOMWindow.cpp: Check if an invalid frame is trying to grab the focus.
+            (WebCore::DOMWindow::focus):
+
+2019-08-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248471. rdar://problem/54130624
 
     Disable CSSOM View Scrolling API for IMDb iOS app

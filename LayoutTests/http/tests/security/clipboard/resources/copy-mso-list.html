@@ -52,10 +52,12 @@ function paste(event) {
 }
 
 function runTest() {
-    document.getElementById('source').focus();
+    if (window.internals)
+        internals.withUserGesture(() => { document.getElementById('source').focus(); });
     document.execCommand('selectAll');
     document.execCommand('copy');
-    document.getElementById('destination').focus();
+    if (window.internals)
+        internals.withUserGesture(() => { document.getElementById('destination').focus(); });
     if (window.testRunner)
         document.execCommand('paste');
 }

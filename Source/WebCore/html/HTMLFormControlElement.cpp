@@ -212,6 +212,13 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         element->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
         return false;
     }
+
+    auto& document = element->document();
+    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().canAccess(document.securityOrigin())) {
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
+        return false;
+    }
+
     if (element->hasAutofocused())
         return false;
 
