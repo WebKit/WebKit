@@ -1270,7 +1270,6 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     SetForScope<BOOL> resigningFirstResponderScope { _resigningFirstResponder, YES };
 
     [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonResigningFirstResponder];
-    [self _cancelPendingAutocorrectionContextHandler];
 
     // If the user explicitly dismissed the keyboard then we will lose first responder
     // status only to gain it back again. Just don't resign in that case.
@@ -3908,7 +3907,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
 
-    [self _cancelPendingAutocorrectionContextHandler];
+    if (useSyncRequest && _pendingAutocorrectionContextHandler) {
+        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
+        return;
+    }
 
     _pendingAutocorrectionContextHandler = completionHandler;
     _page->requestAutocorrectionContext();
