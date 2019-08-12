@@ -1,3 +1,17 @@
+2019-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Web pages sometimes load at half width in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=200624
+        <rdar://problem/52694257>
+
+        Reviewed by Simon Fraser.
+
+        Add an API test to verify that after performing an animated resize and killing the web process, the subsequent
+        web page is created using the post-animated-resize web view dimensions, rather than the original layout
+        dimensions.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+
 2019-08-12  Daniel Bates  <dabates@apple.com>
 
         Add a test to ensure that we dispatch keydown and keyup events when multiple keys are pressed at the same time

@@ -1,3 +1,33 @@
+2019-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Web pages sometimes load at half width in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=200624
+        <rdar://problem/52694257>
+
+        Reviewed by Simon Fraser.
+
+        Whenever WKWebView's size changes, it normally notifies the web content process by calling into WebPageProxy::
+        setViewportConfigurationViewLayoutSize, which remembers this view layout size using a member variable,
+        m_viewportConfigurationViewLayoutSize. Later, m_viewportConfigurationViewLayoutSize is consulted as a part of
+        constructing the creation parameters used to set up a new page.
+
+        However, during animated resize, WKWebView avoids these calls to setViewportConfigurationViewLayoutSize via the
+        dynamic viewport update mode check in -[WKWebView _frameOrBoundsChanged]. Instead, the new view layout size is
+        pushed to the web process by calling WebPageProxy::dynamicViewportSizeUpdate.
+
+        Since dynamicViewportSizeUpdate doesn't update m_viewportConfigurationViewLayoutSize, the next
+        WebPageCreationParameters that are created with this WebPageProxy (e.g. after a process swap, or after
+        reloading, if the process was terminated) will use the size of the WKWebView prior to the most recent animated
+        resize.
+
+        To fix the bug, we simply make sure that m_viewportConfigurationViewLayoutSize is updated in the dynamic
+        viewport size update (i.e. animated resize) case as well.
+
+        Test: WebKit.CreateWebPageAfterAnimatedResize
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         Crash under NetworkResourceLoader::start()

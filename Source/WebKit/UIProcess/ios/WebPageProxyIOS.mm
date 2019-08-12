@@ -300,6 +300,7 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, co
 
     hideValidationMessage();
 
+    m_viewportConfigurationViewLayoutSize = viewLayoutSize;
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(viewLayoutSize,
         maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect,
         targetUnobscuredRectInScrollViewCoordinates, unobscuredSafeAreaInsets,
