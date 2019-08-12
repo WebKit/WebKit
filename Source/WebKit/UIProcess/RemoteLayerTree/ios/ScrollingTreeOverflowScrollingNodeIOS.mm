@@ -51,6 +51,11 @@ ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
 {
 }
 
+UIScrollView* ScrollingTreeOverflowScrollingNodeIOS::scrollView() const
+{
+    return m_scrollingNodeDelegate->scrollView();
+}
+
 void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
 {
     if (stateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))

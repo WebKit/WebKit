@@ -37,6 +37,8 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PerformanceLoggingClient.h"
+#include "RenderLayerCompositor.h"
+#include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingStateFixedNode.h"
@@ -787,6 +789,28 @@ bool AsyncScrollingCoordinator::asyncFrameOrOverflowScrollingEnabled() const
 {
     auto& settings = m_page->mainFrame().settings();
     return settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled();
+}
+
+ScrollingNodeID AsyncScrollingCoordinator::scrollableContainerNodeID(const RenderObject& renderer) const
+{
+    if (auto overflowScrollingNodeID = renderer.view().compositor().asyncScrollableContainerNodeID(renderer))
+        return overflowScrollingNodeID;
+
+    // If we're in a scrollable frame, return that.
+    auto* frameView = renderer.frame().view();
+    if (!frameView)
+        return 0;
+
+    if (auto scrollingNodeID = frameView->scrollingNodeID())
+        return scrollingNodeID;
+
+    // Otherwise, look for a scrollable element in the containing frame.
+    if (auto* ownerElement = renderer.document().ownerElement()) {
+        if (auto* frameRenderer = ownerElement->renderer())
+            return scrollableContainerNodeID(*frameRenderer);
+    }
+
+    return 0;
 }
 
 String AsyncScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior behavior) const
