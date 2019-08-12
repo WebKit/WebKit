@@ -1,3 +1,17 @@
+2019-08-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: Styles: add space between media query and style icon
+        https://bugs.webkit.org/show_bug.cgi?id=200623
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .header:not(:first-child), .spreadsheet-css-declaration .header:not(.editing-selector) .selector, .spreadsheet-css-declaration.has-icon .header.editing-selector .selector): Added.
+        (.spreadsheet-css-declaration .header.editing-selector .selector): Deleted.
+        Ensure the selector field doesn't shift vertically when entering/exiting editing mode.
+
 2019-08-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Address some ESLint warnings

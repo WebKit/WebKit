@@ -47,7 +47,9 @@
     padding-top: var(--css-declaration-vertical-padding);
 }
 
-.spreadsheet-css-declaration .header.editing-selector .selector {
+.spreadsheet-css-declaration .header:not(:first-child),
+.spreadsheet-css-declaration .header:not(.editing-selector) .selector,
+.spreadsheet-css-declaration.has-icon .header.editing-selector .selector {
     margin-top: 1px;
 }
 
@@ -172,3 +174,4 @@
         color: var(--text-color-secondary);
     }
 }
+

@@ -96,7 +96,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
                 break;
             }
             console.assert(iconClassName);
-            this._element.classList.add(iconClassName);
+            this._element.classList.add("has-icon", iconClassName);
         }
 
         this._headerElement = document.createElement("div");
