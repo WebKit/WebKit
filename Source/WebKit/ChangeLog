@@ -1,3 +1,13 @@
+2019-08-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Tapping buttons in Data Detectors lookup previews doesn't work (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=200579
+        <rdar://problem/54056519>
+
+        Reviewed by Megan Gardner.
+
+        * Platform/spi/ios/UIKitSPI.h: Add _UIContextMenuStyle SPI.
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertions to RefCounted

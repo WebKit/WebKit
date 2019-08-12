@@ -1082,6 +1082,9 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, strong) UIImage *image;
 @end
 
+@interface _UIContextMenuStyle : NSObject <NSCopying>
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UIGestureRecognizer (Staging_45970040)
