@@ -92,8 +92,10 @@ public:
     // This returns true if it has marked everything that it will ever mark.
     bool propagateTransitions(SlotVisitor&);
         
-    ALWAYS_INLINE bool considerCaching(CodeBlock* codeBlock, Structure* structure)
+    ALWAYS_INLINE bool considerCaching(VM& vm, CodeBlock* codeBlock, Structure* structure)
     {
+        DisallowGC disallowGC;
+
         // We never cache non-cells.
         if (!structure) {
             sawNonCell = true;
@@ -151,10 +153,8 @@ public:
             // the base's structure. That seems unlikely for the canonical use of instanceof, where
             // the prototype is fixed.
             bool isNewlyAdded = bufferedStructures.add(structure);
-            if (isNewlyAdded) {
-                VM& vm = *codeBlock->vm();
+            if (isNewlyAdded)
                 vm.heap.writeBarrier(codeBlock);
-            }
             return isNewlyAdded;
         }
         countdown--;

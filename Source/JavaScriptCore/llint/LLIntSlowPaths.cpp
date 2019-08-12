@@ -677,14 +677,13 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
             metadata.m_structureID = 0;
             metadata.m_offset = 0;
 
-            if (structure->propertyAccessesAreCacheable()
-                && !structure->needImpurePropertyWatchpoint()) {
+            if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
+                {
+                    ConcurrentJSLocker locker(codeBlock->m_lock);
+                    metadata.m_structureID = structure->id();
+                    metadata.m_offset = slot.cachedOffset();
+                }
                 vm.heap.writeBarrier(codeBlock);
-
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-
-                metadata.m_structureID = structure->id();
-                metadata.m_offset = slot.cachedOffset();
             }
         }
     }
@@ -737,15 +736,16 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, const Instructio
     auto result = watchpointMap.add(std::make_tuple(structure->id(), bytecodeOffset), WTFMove(watchpoints));
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    ConcurrentJSLocker locker(codeBlock->m_lock);
-
-    if (slot.isUnset()) {
-        metadata.m_modeMetadata.setUnsetMode(structure);
-        return;
+    {
+        ConcurrentJSLocker locker(codeBlock->m_lock);
+        if (slot.isUnset())
+            metadata.m_modeMetadata.setUnsetMode(structure);
+        else {
+            ASSERT(slot.isValue());
+            metadata.m_modeMetadata.setProtoLoadMode(structure, offset, slot.slotBase());
+        }
     }
-    ASSERT(slot.isValue());
-
-    metadata.m_modeMetadata.setProtoLoadMode(structure, offset, slot.slotBase());
+    vm.heap.writeBarrier(codeBlock);
 }
 
 
@@ -796,19 +796,16 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue() && slot.slotBase() == baseValue) {
             ConcurrentJSLocker locker(codeBlock->m_lock);
-
             // Start out by clearing out the old cache.
             metadata.m_modeMetadata.clearToDefaultModeWithoutCache();
 
             // Prevent the prototype cache from ever happening.
             metadata.m_modeMetadata.hitCountForLLIntCaching = 0;
         
-            if (structure->propertyAccessesAreCacheable()
-                && !structure->needImpurePropertyWatchpoint()) {
-                vm.heap.writeBarrier(codeBlock);
-
+            if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
                 metadata.m_modeMetadata.defaultMode.structureID = structure->id();
                 metadata.m_modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
+                vm.heap.writeBarrier(codeBlock);
             }
         } else if (UNLIKELY(metadata.m_modeMetadata.hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
             ASSERT(slot.slotBase() != baseValue);
@@ -816,12 +813,13 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             if (!(--metadata.m_modeMetadata.hitCountForLLIntCaching))
                 setupGetByIdPrototypeCache(exec, vm, pc, metadata, baseCell, slot, ident);
         }
-    } else if (!LLINT_ALWAYS_ACCESS_SLOW
-        && isJSArray(baseValue)
-        && ident == vm.propertyNames->length) {
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        metadata.m_modeMetadata.setArrayLengthMode();
-        metadata.m_modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
+    } else if (!LLINT_ALWAYS_ACCESS_SLOW && isJSArray(baseValue) && ident == vm.propertyNames->length) {
+        {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            metadata.m_modeMetadata.setArrayLengthMode();
+            metadata.m_modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
+        }
+        vm.heap.writeBarrier(codeBlock);
     }
 
     LLINT_PROFILE_VALUE(result);
@@ -872,15 +870,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure(vm);
         
-        if (!structure->isUncacheableDictionary()
-            && !structure->typeInfo().prohibitsPropertyCaching()
-            && baseCell == slot.base()) {
-
-            vm.heap.writeBarrier(codeBlock);
-            
+        if (!structure->isUncacheableDictionary() && !structure->typeInfo().prohibitsPropertyCaching() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
-            
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
 
@@ -896,12 +888,17 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                             ASSERT(chain);
                             metadata.m_structureChain.set(vm, codeBlock, chain);
                         }
+                        vm.heap.writeBarrier(codeBlock);
                     }
                 }
             } else {
                 structure->didCachePropertyReplacement(vm, slot.cachedOffset());
-                metadata.m_oldStructureID = structure->id();
-                metadata.m_offset = slot.cachedOffset();
+                {
+                    ConcurrentJSLocker locker(codeBlock->m_lock);
+                    metadata.m_oldStructureID = structure->id();
+                    metadata.m_offset = slot.cachedOffset();
+                }
+                vm.heap.writeBarrier(codeBlock);
             }
         }
     }

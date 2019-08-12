@@ -581,49 +581,56 @@ bool Plan::isStillValidOnMainThread()
 
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
-    // We will establish new references from the code block to things. So, we need a barrier.
-    m_vm->heap.writeBarrier(m_codeBlock);
+    // We perform multiple stores before emitting a write-barrier. To ensure that no GC happens between store and write-barrier, we should ensure that
+    // GC is deferred when this function is called.
+    ASSERT(m_vm->heap.isDeferred());
 
-    if (!isStillValidOnMainThread() || !isStillValid()) {
-        CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
-        return CompilationInvalidated;
-    }
-
-    bool result;
-    if (m_codeBlock->codeType() == FunctionCode)
-        result = m_finalizer->finalizeFunction();
-    else
-        result = m_finalizer->finalize();
-
-    if (!result) {
-        CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("failed"));
-        return CompilationFailed;
-    }
-
-    reallyAdd(m_codeBlock->jitCode()->dfgCommon());
-
-    if (validationEnabled()) {
-        TrackedReferences trackedReferences;
-
-        for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->weakReferences)
-            trackedReferences.add(reference.get());
-        for (WriteBarrier<Structure>& reference : m_codeBlock->jitCode()->dfgCommon()->weakStructureReferences)
-            trackedReferences.add(reference.get());
-        for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
-            trackedReferences.add(constant.get());
-
-        for (auto* inlineCallFrame : *m_inlineCallFrames) {
-            ASSERT(inlineCallFrame->baselineCodeBlock.get());
-            trackedReferences.add(inlineCallFrame->baselineCodeBlock.get());
+    CompilationResult result = [&] {
+        if (!isStillValidOnMainThread() || !isStillValid()) {
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
+            return CompilationInvalidated;
         }
 
-        // Check that any other references that we have anywhere in the JITCode are also
-        // tracked either strongly or weakly.
-        m_codeBlock->jitCode()->validateReferences(trackedReferences);
-    }
+        bool result;
+        if (m_codeBlock->codeType() == FunctionCode)
+            result = m_finalizer->finalizeFunction();
+        else
+            result = m_finalizer->finalize();
 
-    CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("succeeded"));
-    return CompilationSuccessful;
+        if (!result) {
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("failed"));
+            return CompilationFailed;
+        }
+
+        reallyAdd(m_codeBlock->jitCode()->dfgCommon());
+
+        if (validationEnabled()) {
+            TrackedReferences trackedReferences;
+
+            for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->weakReferences)
+                trackedReferences.add(reference.get());
+            for (WriteBarrier<Structure>& reference : m_codeBlock->jitCode()->dfgCommon()->weakStructureReferences)
+                trackedReferences.add(reference.get());
+            for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
+                trackedReferences.add(constant.get());
+
+            for (auto* inlineCallFrame : *m_inlineCallFrames) {
+                ASSERT(inlineCallFrame->baselineCodeBlock.get());
+                trackedReferences.add(inlineCallFrame->baselineCodeBlock.get());
+            }
+
+            // Check that any other references that we have anywhere in the JITCode are also
+            // tracked either strongly or weakly.
+            m_codeBlock->jitCode()->validateReferences(trackedReferences);
+        }
+
+        CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("succeeded"));
+        return CompilationSuccessful;
+    }();
+
+    // We will establish new references from the code block to things. So, we need a barrier.
+    m_vm->heap.writeBarrier(m_codeBlock);
+    return result;
 }
 
 void Plan::finalizeAndNotifyCallback()
