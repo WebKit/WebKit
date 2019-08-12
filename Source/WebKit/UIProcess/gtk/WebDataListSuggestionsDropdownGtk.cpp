@@ -28,7 +28,10 @@
 
 #if ENABLE(DATALIST_ELEMENT)
 
+#include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>
+#include <WebCore/GtkUtilities.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -149,7 +152,7 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
 
     GtkRequisition menuRequisition;
     gtk_widget_get_preferred_size(m_popup, &menuRequisition, nullptr);
-    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, information.elementRect.location());
+    WebCore::IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, information.elementRect.location());
     // FIXME: We can't ensure the menu will be on screen in Wayland.
     // https://blog.gtk.org/2016/07/15/future-of-relative-window-positioning/
     // https://gitlab.gnome.org/GNOME/gtk/issues/997

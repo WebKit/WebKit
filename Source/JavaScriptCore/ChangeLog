@@ -1,3 +1,13 @@
+2019-08-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Fix building without unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=200641
+
+        Reviewed by Žan Doberšek.
+
+        * b3/B3PatchpointSpecial.cpp: Add missing inclusion of the B3ProcedureInlines.h header.
+        * heap/SlotVisitor.cpp: Add missing inclusion of the BlockDirectoryInlines.h header.
+
 2019-08-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF][JSC] Make JSC and WTF aggressively-fast-malloced

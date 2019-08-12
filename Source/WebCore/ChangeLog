@@ -1,3 +1,15 @@
+2019-08-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Fix building without unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=200641
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt: Add WebCore as the list of libraries to link into WebCoreTestSupport, to
+        avoid underlinking, which makes it possible to link with LDFLAGS="-Wl,--no-undefined".
+        * editing/WebCorePasteboardFileReader.h: Add missing inclusion of the pal/SessionID.h
+        header.
+
 2019-08-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF][JSC] Make JSC and WTF aggressively-fast-malloced

@@ -1211,6 +1211,7 @@ set(WebCore_LIBRARIES
 )
 
 set(WebCoreTestSupport_LIBRARIES
+    WebCore
     WebKit::JavaScriptCore
 )
 

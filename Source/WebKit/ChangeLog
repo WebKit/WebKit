@@ -1,3 +1,16 @@
+2019-08-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Fix building without unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=200641
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp: Add missing inclusions for headers
+        WebCore/GtkUtilities.h (for convertWidgetPointToScreenPoint), WebCore/IntPoint.h, and
+        WebPageProxy.h (the two latter to avoid usage of undefined types).
+        (WebKit::WebDataListSuggestionsDropdownGtk::show): Add namespace prefix to use
+        WebCore::IntPoint.
+
 2019-08-12  Sihui Liu  <sihui_liu@apple.com>
 
         Clear m_sessionStorageNamespaces on the background thread

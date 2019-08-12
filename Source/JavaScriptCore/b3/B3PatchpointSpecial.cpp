@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirGenerationContext.h"
+#include "B3ProcedureInlines.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
 
