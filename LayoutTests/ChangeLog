@@ -1,5 +1,31 @@
 2019-08-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248600. rdar://problem/53779679
+
+    Reverting change in r248379
+    rdar://53779679
+    
+    Unreviewed Test Gardening.
+    Removed previously set TestExpectations.
+    
+    * platform/ios-12/TestExpectations:
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248600 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-13  Russell Epstein  <repstein@apple.com>
+
+            Reverting change in r248379
+            rdar://53779679
+
+            Unreviewed Test Gardening.
+            Removed previously set TestExpectations.
+
+            * platform/ios-12/TestExpectations:
+            * platform/ios/TestExpectations:
+
+2019-08-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248468. rdar://problem/54049321
 
     Correcting Expectation Typo from r248388.
