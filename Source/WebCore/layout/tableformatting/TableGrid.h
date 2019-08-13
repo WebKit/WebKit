@@ -27,32 +27,50 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
-#include "TableFormattingState.h"
+#include "IntPointHash.h"
+#include "LayoutBox.h"
+#include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {
 
-// This class implements the layout logic for table formatting contexts.
-// https://www.w3.org/TR/CSS22/tables.html
-class TableFormattingContext : public FormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
+class TableGrid {
+    WTF_MAKE_ISO_ALLOCATED(TableGrid);
 public:
-    TableFormattingContext(const Box& formattingContextRoot, TableFormattingState&);
-    void layout() const override;
+    TableGrid();
+
+    void appendCell(const Box&);
+    void insertCell(const Box&, const Box& before);
+    void removeCell(const Box&);
 
 private:
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
+    using SlotPosition = IntPoint;
+    using CellSize = IntSize;
+    using SlotLogicalSize = LayoutSize;
 
-    void ensureTableGrid() const;
-    void computePreferredWidthForColumns() const;
-    void computeTableWidth() const;
-    void distributeAvailabeWidth() const;
-    void computeTableHeight() const;
-    void distributeAvailableHeight() const;
+    struct CellInfo : public CanMakeWeakPtr<CellInfo> {
+        CellInfo(const Box& tableCellBox, SlotPosition, CellSize);
 
-    TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+        const Box& tableCellBox;
+        SlotPosition position;
+        CellSize size;
+    };
+
+    struct SlotInfo {
+        SlotInfo() = default;
+        SlotInfo(CellInfo&);
+
+        WeakPtr<CellInfo> cell;
+        SlotLogicalSize size;
+    };
+
+    using CellList = WTF::ListHashSet<std::unique_ptr<CellInfo>>;
+    using SlotMap = WTF::HashMap<SlotPosition, SlotInfo>;
+    SlotMap m_slotMap;
+    CellList m_cellList;
 };
 
 }

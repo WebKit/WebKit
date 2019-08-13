@@ -1,5 +1,52 @@
 2019-08-13  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Introduce TableGrid
+        https://bugs.webkit.org/show_bug.cgi?id=200656
+        <rdar://problem/54240833>
+
+        Reviewed by Antti Koivisto.
+
+        table grid:
+        A matrix containing as many rows and columns as needed to describe the position of all the table-rows
+        and table-cells of a table-root, as determined by the grid-dimensioning algorithm.
+        Each row of the grid might correspond to a table-row, and each column to a table-column.
+
+        slot of the table grid:
+        A slot (r,c) is an available space created by the intersection of a row r and a column c in the table grid.
+
+        https://www.w3.org/TR/css-tables-3/#terminology
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isTableHeader const):
+        (WebCore::Layout::Box::isTableBody const):
+        (WebCore::Layout::Box::isTableFooter const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout const):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid const):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns const):
+        (WebCore::Layout::TableFormattingContext::computeTableWidth const):
+        (WebCore::Layout::TableFormattingContext::distributeAvailabeWidth const):
+        (WebCore::Layout::TableFormattingContext::computeTableHeight const):
+        (WebCore::Layout::TableFormattingContext::distributeAvailableHeight const):
+        * layout/tableformatting/TableFormattingContext.h:
+        (WebCore::Layout::TableFormattingContext::formattingState const):
+        * layout/tableformatting/TableFormattingState.h:
+        (WebCore::Layout::TableFormattingState::tableGrid):
+        * layout/tableformatting/TableGrid.cpp: Added.
+        (WebCore::Layout::TableGrid::CellInfo::CellInfo):
+        (WebCore::Layout::TableGrid::SlotInfo::SlotInfo):
+        (WebCore::Layout::TableGrid::TableGrid):
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::insertCell):
+        (WebCore::Layout::TableGrid::removeCell):
+        * layout/tableformatting/TableGrid.h: Copied from Source/WebCore/layout/tableformatting/TableFormattingContext.h.
+
+2019-08-13  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add rowSpan and colSpan to Box
         https://bugs.webkit.org/show_bug.cgi?id=200654
         <rdar://problem/54239281>

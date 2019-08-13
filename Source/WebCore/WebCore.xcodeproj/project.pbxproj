@@ -9138,6 +9138,7 @@
 		6F3E1F5F2136141700A65A08 /* FloatBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatBox.cpp; sourceTree = "<group>"; };
 		6F3E1F612136141700A65A08 /* FloatBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatBox.h; sourceTree = "<group>"; };
 		6F4A5BD522F9F16B00A80F25 /* LayoutPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPhase.cpp; sourceTree = "<group>"; };
+		6F5B7EAA2300A79E0067D9C3 /* TableGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableGrid.cpp; sourceTree = "<group>"; };
 		6F73918C2106CEDD006AF262 /* LayoutUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutUnits.h; sourceTree = "<group>"; };
 		6F7CA3C4208C2956002F29AB /* LayoutState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		6F7CA3C5208C2956002F29AB /* LayoutState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
@@ -9172,6 +9173,7 @@
 		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
 		6FB11B5921783FCF00E2A574 /* TextUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtil.h; sourceTree = "<group>"; };
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
+		6FB22E30230097E300C20866 /* TableGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableGrid.h; sourceTree = "<group>"; };
 		6FB47E612277425A00C7BCB0 /* InlineLineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBox.h; sourceTree = "<group>"; };
 		6FB5E212221F2447003989CF /* ContentChangeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentChangeObserver.h; sourceTree = "<group>"; };
 		6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextGeometry.cpp; sourceTree = "<group>"; };
@@ -17084,8 +17086,8 @@
 				C21BF72021CD89DD00227979 /* WHLSLEnumerationDefinition.h */,
 				C21BF72621CD89E300227979 /* WHLSLEnumerationMember.h */,
 				C21BF70221CD89C400227979 /* WHLSLEnumerationMemberLiteral.h */,
-				C21BF70C21CD89CC00227979 /* WHLSLExpression.h */,
 				522D07A322FBAB4300B905BE /* WHLSLExpression.cpp */,
+				C21BF70C21CD89CC00227979 /* WHLSLExpression.h */,
 				C21BF70021CD89C200227979 /* WHLSLFallthrough.h */,
 				C21BF73521CD89F200227979 /* WHLSLFloatLiteral.h */,
 				1CB69B3821DF03E1006E846A /* WHLSLFloatLiteralType.cpp */,
@@ -20446,6 +20448,8 @@
 				6FC5CA9522E3599400B13E11 /* TableFormattingContext.h */,
 				6FC5CA9222E3599300B13E11 /* TableFormattingState.cpp */,
 				6FC5CA9622E3599500B13E11 /* TableFormattingState.h */,
+				6F5B7EAA2300A79E0067D9C3 /* TableGrid.cpp */,
+				6FB22E30230097E300C20866 /* TableGrid.h */,
 				6FC5CA9722E3599500B13E11 /* TableInvalidation.cpp */,
 				6FC5CA9322E3599300B13E11 /* TableInvalidation.h */,
 			);

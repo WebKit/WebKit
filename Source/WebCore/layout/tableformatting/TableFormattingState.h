@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingState.h"
+#include "TableGrid.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -39,6 +40,11 @@ class TableFormattingState : public FormattingState {
 public:
     TableFormattingState(Ref<FloatingState>&&, LayoutState&);
     virtual ~TableFormattingState();
+
+    TableGrid& tableGrid() { return m_tableGrid; }
+
+private:
+    TableGrid m_tableGrid;
 };
 
 }

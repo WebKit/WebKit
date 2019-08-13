@@ -52,6 +52,7 @@ public:
         TableColumnGroup,
         TableRowGroup,
         TableHeaderGroup,
+        TableBodyGroup,
         TableFooterGroup,
         Image,
         IFrame,
@@ -116,6 +117,9 @@ public:
     bool isTableWrapperBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableWrapperBox; }
     bool isTableBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableBox; }
     bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
+    bool isTableHeader() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableHeaderGroup; }
+    bool isTableBody() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableBodyGroup; }
+    bool isTableFooter() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableFooterGroup; }
     bool isTableRow() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableRow; }
     bool isTableCell() const { return style().display() == DisplayType::TableCell;; }
     bool isReplaced() const { return isImage() || isIFrame(); }

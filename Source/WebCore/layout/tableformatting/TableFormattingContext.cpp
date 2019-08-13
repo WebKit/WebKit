@@ -44,11 +44,63 @@ TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot,
 
 void TableFormattingContext::layout() const
 {
+    // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
+    // To layout a table, user agents must apply the following actions:
+
+    // 1. Ensure each cell slot is occupied by at least one cell.
+    ensureTableGrid();
+    // 2. Compute the minimum width of each column.
+    computePreferredWidthForColumns();
+    // 3. Compute the width of the table.
+    computeTableWidth();
+    // 4. Distribute the width of the table among columns.
+    distributeAvailabeWidth();
+    // 5. Compute the height of the table.
+    computeTableHeight();
+    // 6. Distribute the height of the table among rows.
+    distributeAvailableHeight();
 }
 
 FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints() const
 {
     return { };
+}
+
+void TableFormattingContext::ensureTableGrid() const
+{
+    auto& tableWrapperBox = downcast<Container>(root());
+    auto& tableGrid = formattingState().tableGrid();
+
+    for (auto* section = tableWrapperBox.firstChild(); section; section = section->nextSibling()) {
+        ASSERT(section->isTableHeader() || section->isTableBody() || section->isTableFooter());
+        for (auto* row = downcast<Container>(*section).firstChild(); row; row = row->nextSibling()) {
+            ASSERT(row->isTableRow());
+            for (auto* cell = downcast<Container>(*row).firstChild(); cell; cell = cell->nextSibling()) {
+                ASSERT(cell->isTableCell());
+                tableGrid.appendCell(*cell);
+            }
+        }
+    }
+}
+
+void TableFormattingContext::computePreferredWidthForColumns() const
+{
+}
+
+void TableFormattingContext::computeTableWidth() const
+{
+}
+
+void TableFormattingContext::distributeAvailabeWidth() const
+{
+}
+
+void TableFormattingContext::computeTableHeight() const
+{
+}
+
+void TableFormattingContext::distributeAvailableHeight() const
+{
 }
 
 }
