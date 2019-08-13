@@ -135,4 +135,27 @@ TEST(DragAndDropTests, DragImageFileIntoFileUpload)
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
 }
 
+TEST(DragAndDropTests, ProvideImageDataForMultiplePasteboards)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    NSPasteboard *dragPasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    NSPasteboard *uniquePasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [webView pasteboard:dragPasteboard provideDataForType:NSTIFFPboardType];
+    [webView pasteboard:uniquePasteboard provideDataForType:NSTIFFPboardType];
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    NSArray *allowedClasses = @[ NSImage.class ];
+    NSImage *imageFromDragPasteboard = [dragPasteboard readObjectsForClasses:allowedClasses options:nil].firstObject;
+    NSImage *imageFromUniquePasteboard = [uniquePasteboard readObjectsForClasses:allowedClasses options:nil].firstObject;
+
+    EXPECT_EQ(imageFromUniquePasteboard.TIFFRepresentation.length, imageFromDragPasteboard.TIFFRepresentation.length);
+    EXPECT_TRUE(NSEqualSizes(imageFromDragPasteboard.size, imageFromUniquePasteboard.size));
+    EXPECT_FALSE(NSEqualSizes(NSZeroSize, imageFromUniquePasteboard.size));
+}
+
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
