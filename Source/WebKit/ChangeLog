@@ -1,5 +1,23 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/54236234
+
+    2019-08-13  Chris Dumez  <cdumez@apple.com>
+
+            Crash under NetworkResourceLoader::start()
+            https://bugs.webkit.org/show_bug.cgi?id=200628
+            <rdar://problem/54220519>
+
+            Reviewed by Youenn Fablet.
+
+            Simplified version of r248540 for the branch.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::start):
+            * NetworkProcess/NetworkResourceLoader.h:
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248440. rdar://problem/54237795
 
     [Mac] Use the PID of the WebContent process when issuing local file read sandbox extensions
