@@ -6840,6 +6840,11 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return nil;
 }
 
+- (BOOL)supportsImagePaste
+{
+    return mayContainSelectableText(_focusedElementInformation.elementType);
+}
+
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 static inline OptionSet<WebKit::DocumentEditingContextRequest::Options> toWebDocumentRequestOptions(UIWKDocumentRequestFlags flags)
