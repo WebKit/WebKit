@@ -3056,6 +3056,8 @@ int jscmain(int argc, char** argv)
     // Need to override and enable restricted options before we start parsing options below.
     Options::enableRestrictedOptions(true);
 
+    WTF::initializeMainThread();
+
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     CommandLine options(argc, argv);
@@ -3063,7 +3065,6 @@ int jscmain(int argc, char** argv)
     processConfigFile(Options::configFile(), "jsc");
 
     // Initialize JSC before getting VM.
-    WTF::initializeMainThread();
     JSC::initializeThreading();
     startTimeoutThreadIfNeeded();
 #if ENABLE(WEBASSEMBLY)
