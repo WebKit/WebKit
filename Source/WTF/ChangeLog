@@ -1,3 +1,21 @@
+2019-08-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [WTF] Thread::removeFromThreadGroup leaks weak pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=199857
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix leaking of ThreadGroup's weak pointers.
+
+        Tests: WTF.ThreadGroupRemove API tests
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::didExit):
+        (WTF::Thread::addToThreadGroup):
+        (WTF::Thread::removeFromThreadGroup):
+        (WTF::Thread::numberOfThreadGroups):
+        * wtf/Threading.h:
+
 2019-08-12  Sam Weinig  <weinig@apple.com>
 
         Replace multiparameter overloads of append() in StringBuilder as a first step toward standardizinging on the flexibleAppend() implementation

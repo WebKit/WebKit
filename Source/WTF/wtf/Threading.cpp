@@ -211,10 +211,10 @@ void Thread::didExit()
             Vector<std::shared_ptr<ThreadGroup>> threadGroups;
             {
                 auto locker = holdLock(m_mutex);
-                for (auto& threadGroup : m_threadGroups) {
+                for (auto& threadGroupPointerPair : m_threadGroupMap) {
                     // If ThreadGroup is just being destroyed,
                     // we do not need to perform unregistering.
-                    if (auto retained = threadGroup.lock())
+                    if (auto retained = threadGroupPointerPair.value.lock())
                         threadGroups.append(WTFMove(retained));
                 }
                 m_isShuttingDown = true;
@@ -240,7 +240,7 @@ ThreadGroupAddResult Thread::addToThreadGroup(const AbstractLocker& threadGroupL
     if (m_isShuttingDown)
         return ThreadGroupAddResult::NotAdded;
     if (threadGroup.m_threads.add(*this).isNewEntry) {
-        m_threadGroups.append(threadGroup.weakFromThis());
+        m_threadGroupMap.add(&threadGroup, threadGroup.weakFromThis());
         return ThreadGroupAddResult::NewlyAdded;
     }
     return ThreadGroupAddResult::AlreadyAdded;
@@ -252,11 +252,13 @@ void Thread::removeFromThreadGroup(const AbstractLocker& threadGroupLocker, Thre
     auto locker = holdLock(m_mutex);
     if (m_isShuttingDown)
         return;
-    m_threadGroups.removeFirstMatching([&] (auto weakPtr) {
-        if (auto sharedPtr = weakPtr.lock())
-            return sharedPtr.get() == &threadGroup;
-        return false;
-    });
+    m_threadGroupMap.remove(&threadGroup);
+}
+
+unsigned Thread::numberOfThreadGroups()
+{
+    auto locker = holdLock(m_mutex);
+    return m_threadGroupMap.size();
 }
 
 bool Thread::exchangeIsCompilationThread(bool newValue)

@@ -142,4 +142,47 @@ TEST(WTF, ThreadGroupAddDuplicateThreads)
     }
 }
 
+static unsigned countThreadGroups(Vector<Ref<Thread>>& threads)
+{
+    unsigned count = 0;
+    for (auto& thread : threads)
+        count += thread->numberOfThreadGroups();
+
+    return count;
+}
+
+TEST(WTF, ThreadGroupRemove)
+{
+    const unsigned NumberOfThreads = 64;
+
+    Lock lock;
+    Condition threadRunningCondition;
+    bool threadRunning = true;
+
+    Vector<Ref<Thread>> threads;
+
+    auto threadGroup = ThreadGroup::create();
+    for (unsigned i = 0; i < NumberOfThreads; i++) {
+        auto thread = Thread::create("ThreadGroupWorker", [&]() {
+            auto locker = holdLock(lock);
+            threadRunningCondition.wait(lock, [&]() {
+                return !threadRunning;
+            });
+        });
+        threadGroup->add(thread.get());
+        threads.append(WTFMove(thread));
+    }
+
+    EXPECT_EQ(NumberOfThreads, countThreadGroups(threads));
+
+    threadGroup = nullptr;
+
+    EXPECT_EQ(0U, countThreadGroups(threads));
+
+    threadRunning = false;
+    threadRunningCondition.notifyAll();
+    for (unsigned i = 0; i < NumberOfThreads; i++)
+        threads[i]->waitForCompletion();
+}
+
 } // namespace TestWebKitAPI

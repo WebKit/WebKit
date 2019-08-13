@@ -36,6 +36,7 @@
 #include <wtf/Expected.h>
 #include <wtf/FastTLS.h>
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/Ref.h>
@@ -94,6 +95,8 @@ public:
     // Set of all WTF::Thread created threads.
     WTF_EXPORT_PRIVATE static HashSet<Thread*>& allThreads(const LockHolder&);
     WTF_EXPORT_PRIVATE static Lock& allThreadsMutex();
+
+    WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
 
 #if OS(WINDOWS)
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
@@ -290,7 +293,7 @@ protected:
     // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
     WordLock m_mutex;
     StackBounds m_stack { StackBounds::emptyBounds() };
-    Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
+    HashMap<ThreadGroup*, std::weak_ptr<ThreadGroup>> m_threadGroupMap;
     PlatformThreadHandle m_handle;
 #if OS(WINDOWS)
     ThreadIdentifier m_id { 0 };
