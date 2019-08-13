@@ -494,18 +494,21 @@ void ContentChangeObserver::adjustObservedState(Event event)
         ASSERT(!m_observedDomTimerIsBeingExecuted);
     };
 
-    auto adjustStateAndNotifyContentChangeIfNeeded = [&] {
-        // Demote to "no change" when there's no pending activity anymore.
+    auto notifyClientIfNeeded = [&] {
+        // First demote to "no change" if there's no pending activity anymore.
         if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
             setHasNoChangeState();
 
-        // Do not notify the client unless we couldn't make the decision synchronously.
+        if (isBetweenTouchEndAndMouseMoved()) {
+            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
+            return;
+        }
         if (m_mouseMovedEventIsBeingDispatched) {
             LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: in mouseMoved call. No need to notify the client.");
             return;
         }
-        if (isBetweenTouchEndAndMouseMoved()) {
-            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
+        if (isObservationTimeWindowActive()) {
+            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: Inside the fixed window observation. No need to notify the client.");
             return;
         }
         if (!hasDeterminateState()) {
@@ -551,7 +554,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::EndedFixedObservationTimeWindow) {
-            adjustStateAndNotifyContentChangeIfNeeded();
+            notifyClientIfNeeded();
             return;
         }
     }
@@ -563,8 +566,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::RemovedDOMTimer || event == Event::CanceledTransition) {
-            if (!isObservationTimeWindowActive())
-                adjustStateAndNotifyContentChangeIfNeeded();
+            notifyClientIfNeeded();
             return;
         }
         if (event == Event::StartedDOMTimerExecution) {
@@ -572,9 +574,11 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::EndedDOMTimerExecution) {
-            setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
-            if (!isObservationTimeWindowActive())
-                adjustStateAndNotifyContentChangeIfNeeded();
+            if (m_document.hasPendingStyleRecalc()) {
+                setShouldObserveNextStyleRecalc(true);
+                return;
+            }
+            notifyClientIfNeeded();
             return;
         }
         if (event == Event::EndedTransitionButFinalStyleIsNotDefiniteYet) {
@@ -583,15 +587,17 @@ void ContentChangeObserver::adjustObservedState(Event event)
             if (m_document.inStyleRecalc()) {
                 // We need to start observing this style change synchronously.
                 m_isInObservedStyleRecalc = true;
-            } else
-                setShouldObserveNextStyleRecalc(true);
+                return;
+            }
+            setShouldObserveNextStyleRecalc(true);
             return;
         }
         if (event == Event::CompletedTransition) {
-            if (m_document.inStyleRecalc())
+            if (m_document.inStyleRecalc()) {
                 m_isInObservedStyleRecalc = true;
-            else if (!isObservationTimeWindowActive())
-                adjustStateAndNotifyContentChangeIfNeeded();
+                return;
+            }
+            notifyClientIfNeeded();
             return;
         }
         if (event == Event::StartedStyleRecalc) {
@@ -600,8 +606,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::EndedStyleRecalc) {
-            if (!isObservationTimeWindowActive())
-                adjustStateAndNotifyContentChangeIfNeeded();
+            notifyClientIfNeeded();
             return;
         }
     }
