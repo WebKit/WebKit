@@ -156,6 +156,11 @@ private:
     void updateDefaultConfiguration();
     bool canOverrideConfigurationParameters() const;
 
+    constexpr bool layoutSizeIsExplicitlyScaled() const
+    {
+        return m_layoutSizeScaleFactor != 1;
+    }
+
     constexpr double forceAlwaysUserScalableMaximumScale() const
     {
         const double forceAlwaysUserScalableMaximumScaleIgnoringLayoutScaleFactor = 5;
