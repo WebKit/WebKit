@@ -540,15 +540,22 @@ AccessibilityObject* AccessibilityObject::nextSiblingUnignored(int limit) const
 
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
+    return WebCore::firstAccessibleObjectFromNode(node, [] (const AccessibilityObject& accessible) {
+        return !accessible.accessibilityIsIgnored();
+    });
+}
+
+AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible)
+{
     if (!node)
         return nullptr;
 
     AXObjectCache* cache = node->document().axObjectCache();
     if (!cache)
         return nullptr;
-    
+
     AccessibilityObject* accessibleObject = cache->getOrCreate(node->renderer());
-    while (accessibleObject && accessibleObject->accessibilityIsIgnored()) {
+    while (accessibleObject && !isAccessible(*accessibleObject)) {
         node = NodeTraversal::next(*node);
 
         while (node && !node->renderer())

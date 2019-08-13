@@ -1798,20 +1798,26 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
+
     // If this static text inside of a link, it should use its parent's linked element.
     AccessibilityObject* element = m_object;
     if (m_object->roleValue() == AccessibilityRole::StaticText && m_object->parentObjectUnignored()->isLink())
         element = m_object->parentObjectUnignored();
-    
-    AccessibilityObject::AccessibilityChildrenVector children;
-    element->linkedUIElements(children);
-    if (children.size() == 0)
-        return nil;
-    
-    return children[0]->wrapper();
-}
 
+    AccessibilityObject::AccessibilityChildrenVector linkedElements;
+    element->linkedUIElements(linkedElements);
+    if (!linkedElements.size() || !linkedElements[0])
+        return nil;
+
+    // AccessibilityObject::linkedUIElements may return an object that is
+    // exposed in other platforms but not on iOS, i.e., grouping or structure
+    // elements like <div> or <p>. Thus find the next accessible object that is
+    // exposed on iOS.
+    auto linkedElement = firstAccessibleObjectFromNode(linkedElements[0]->node(), [] (const AccessibilityObject& accessible) {
+        return accessible.wrapper().isAccessibilityElement;
+    });
+    return linkedElement ? linkedElement->wrapper() : nullptr;
+}
 
 - (BOOL)isAttachment
 {
