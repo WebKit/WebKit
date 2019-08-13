@@ -121,7 +121,7 @@ void GPUComputePassEncoder::useResource(const MTLResource *resource, unsigned us
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void GPUComputePassEncoder::setComputeBuffer(const MTLBuffer * buffer, unsigned offset, unsigned index)
+void GPUComputePassEncoder::setComputeBuffer(const MTLBuffer *buffer, NSUInteger offset, unsigned index)
 {
     ASSERT(m_platformComputePassEncoder);
 

@@ -6,26 +6,443 @@
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
 <script>
-promise_test(() => {
-    return getBasicDevice().then(function(device) {
-        // GPUBindGroupLayoutBindings
-        // FIXME: Also test sampled texture bindings.
-        const bufferLayoutBinding = {
-            binding: 1,
-            visibility: GPUShaderStageBit.VERTEX,
-            type: "storage-buffer"
-        };
+let tests = {};
 
-        const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding] });
+const basicBufferShader = `
+[numthreads(1, 1, 1)]
+compute void compute_main(device int[] buffer : register(u0))
+{
+    ++buffer[0];
+}
+`;
 
-        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE });
-        const bufferBinding = { buffer: buffer, size: 16 };
-        const bindGroupBinding = { binding: 1, resource: bufferBinding };
+let basicPipeline;
 
-        const bindGroup = device.createBindGroup({ layout: bindGroupLayout, bindings: [bindGroupBinding]});
-        assert_true(bindGroup instanceof GPUBindGroup, "GPUBindGroup successfully created.");
-    }, function() {
+tests["Create and use a basic GPUBindGroup."] = async device => {
+    const bufferLayoutBinding = {
+        binding: 0,
+        visibility: GPUShaderStageBit.COMPUTE,
+        type: "storage-buffer"
+    };
+
+    const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding] });
+
+    const basicBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
+    const bufferBinding = { buffer: basicBuffer, size: 4 };
+    const bindGroupBinding = { binding: 0, resource: bufferBinding };
+
+    const bindGroup = device.createBindGroup({ layout: bindGroupLayout, bindings: [bindGroupBinding] });
+
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+    const basicShaderModule = device.createShaderModule({ code: basicBufferShader, isWHLSL: true });
+    basicPipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        computeStage: {
+            module: basicShaderModule,
+            entryPoint: "compute_main"
+        }
     });
-}, "Create a basic GPUBindGroup via GPUDevice.")
+
+    const commandEncoder = device.createCommandEncoder();
+    const passEncoder = commandEncoder.beginComputePass();
+    passEncoder.setPipeline(basicPipeline);
+    passEncoder.setBindGroup(0, bindGroup);
+    passEncoder.dispatch(1, 1, 1);
+    passEncoder.endPass();
+    device.getQueue().submit([commandEncoder.finish()]);
+
+    const results = new Int32Array(await basicBuffer.mapReadAsync());
+    basicBuffer.unmap();
+    assert_equals(results[0], 1, "Storage buffer binding written to successfully.");
+};
+
+tests["Create and use many GPUBindGroups in a single compute pass."] = async device => {
+    const bufferLayoutBinding = {
+        binding: 0,
+        visibility: GPUShaderStageBit.COMPUTE,
+        type: "storage-buffer"
+    };
+
+    const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding] });
+
+    const basicBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
+    const bufferBinding = { buffer: basicBuffer, size: 4 };
+    const bindGroupBinding = { binding: 0, resource: bufferBinding };
+
+    const numGroups = 1000;
+    let bindGroups = new Array(numGroups);
+    for (let i = 0; i < numGroups; ++i)
+        bindGroups[i] = device.createBindGroup({ layout: bindGroupLayout, bindings: [bindGroupBinding] });
+
+    const commandEncoder = device.createCommandEncoder();
+    const passEncoder = commandEncoder.beginComputePass();
+
+    let j = 0;
+    for (; j < numGroups; ++j) {
+        passEncoder.setPipeline(basicPipeline);
+        passEncoder.setBindGroup(0, bindGroups[j]);
+        passEncoder.dispatch(1, 1, 1);
+    }
+
+    passEncoder.endPass();
+    device.getQueue().submit([commandEncoder.finish()]);
+
+    const results = new Int32Array(await basicBuffer.mapReadAsync());
+    basicBuffer.unmap();
+    assert_equals(results[0], j, "Storage buffer accessed successfully through multiple bind groups.");
+};
+
+const uniformBufferShader = `
+[numthreads(1, 1, 1)]
+compute void compute_main(constant int[] uniforms : register(b0), device int[] buffer : register(u1))
+{
+    buffer[0] += uniforms[0];
+}
+`;
+
+tests["Create and access a uniform-buffer in a GPUBindGroup."] = async device => {
+    const [uniformBuffer, writeArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.UNIFORM });
+    new Int32Array(writeArrayBuffer).set([42]);
+    uniformBuffer.unmap();
+
+    const storageBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "uniform-buffer"
+        }, {
+            binding: 1,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "storage-buffer"
+        }]
+    });
+
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        bindings: [{
+            binding: 0,
+            resource: {
+                buffer: uniformBuffer,
+                size: 4
+            }
+        }, {
+            binding: 1,
+            resource: {
+                buffer: storageBuffer,
+                size: 4
+            }
+        }]
+    });
+
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+    const shaderModule = device.createShaderModule({ code: uniformBufferShader, isWHLSL: true });
+
+    const pipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        computeStage: {
+            module: shaderModule,
+            entryPoint: "compute_main"
+        }
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    const passEncoder = commandEncoder.beginComputePass();
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, bindGroup);
+    passEncoder.dispatch(1, 1, 1);
+    passEncoder.endPass();
+    device.getQueue().submit([commandEncoder.finish()]);
+
+    const results = new Int32Array(await storageBuffer.mapReadAsync());
+    storageBuffer.unmap();
+    assert_equals(results[0], 42, "Storage buffer binding written to successfully.");
+};
+
+const sampledTextureShader = `
+[numthreads(1, 1, 1)]
+compute void compute_main(Texture2D<uint> inputTexture : register(t0), sampler inputSampler : register(s1), device uint[] output : register(u2))
+{
+    output[0] = Sample(inputTexture, inputSampler, float2(0, 0));
+}
+`;
+
+tests["Create and access a sampled texture in a GPUBindGroup."] = async device => {
+    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.TRANSFER_SRC });
+    new Uint32Array(textureArrayBuffer).set([42]);
+    textureDataBuffer.unmap();
+
+    const textureSize = { width: 1, height: 1, depth: 1 };
+    const texture = device.createTexture({
+        size: textureSize,
+        format: "rgba8uint",
+        usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_DST
+    });
+
+    const outputBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "sampled-texture"
+        }, {
+            binding: 1,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "sampler"
+        }, {
+            binding: 2,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "storage-buffer"
+        }]
+    });
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        bindings: [{
+            binding: 0,
+            resource: texture.createDefaultView()
+        }, {
+            binding: 1,
+            resource: device.createSampler({})
+        }, {
+            binding: 2,
+            resource: {
+                buffer: outputBuffer,
+                size: 4
+            }
+        }]
+    });
+
+    const shaderModule = device.createShaderModule({ code: sampledTextureShader, isWHLSL: true });
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+    const pipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        computeStage: {
+            module: shaderModule,
+            entryPoint: "compute_main"
+        }
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    commandEncoder.copyBufferToTexture({
+        buffer: textureDataBuffer,
+        rowPitch: 4,
+        imageHeight: 0
+    }, { texture: texture }, textureSize);
+
+    const passEncoder = commandEncoder.beginComputePass();
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, bindGroup);
+    passEncoder.dispatch(1, 1, 1);
+    passEncoder.endPass();
+
+    device.getQueue().submit([commandEncoder.finish()]);
+
+    const results = new Uint32Array(await outputBuffer.mapReadAsync());
+    outputBuffer.unmap();
+    assert_equals(results[0], 42, "Correct value sampled from a bound 2D texture.");
+};
+
+const comboShader = `
+[numthreads(1, 1, 1)]
+compute void compute_main(
+    Texture2D<uint> inputTexture : register(t0, space0), 
+    sampler inputSampler : register(s0, space1), 
+    constant uint[] input : register(b0, space2), 
+    device uint[] output : register(u0, space3))
+{
+    output[0] = input[0] + Sample(inputTexture, inputSampler, float2(0, 0));
+}
+`;
+
+tests["Create and use multiple GPUBindGroups in a single dispatch."] = async device => {
+    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.TRANSFER_SRC });
+    new Uint32Array(textureArrayBuffer).set([17]);
+    textureDataBuffer.unmap();
+
+    const textureSize = { width: 1, height: 1, depth: 1 };
+    const texture = device.createTexture({
+        size: textureSize,
+        format: "rgba8uint",
+        usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_DST
+    });
+
+    const [inputBuffer, inputArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.UNIFORM });
+    new Uint32Array(inputArrayBuffer).set([25]);
+    inputBuffer.unmap();
+
+    const outputBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
+
+    const bgl0 = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "sampled-texture"
+        }]
+    });
+    const bgl1 = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "sampler"
+        }]
+    });
+    const bgl2 = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "uniform-buffer"
+        }]
+    });
+    const bgl3 = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "storage-buffer"
+        }]
+    })
+
+    const bg0 = device.createBindGroup({
+        layout: bgl0,
+        bindings: [{
+            binding: 0,
+            resource: texture.createDefaultView()
+        }]
+    });
+    const bg1 = device.createBindGroup({
+        layout: bgl1,
+        bindings: [{
+            binding: 0,
+            resource: device.createSampler({})
+        }]
+    });
+    const bg2 = device.createBindGroup({
+        layout: bgl2,
+        bindings: [{
+            binding: 0,
+            resource: {
+                buffer: inputBuffer,
+                size: 4
+            }
+        }]
+    });
+    const bg3 = device.createBindGroup({
+        layout: bgl3,
+        bindings: [{
+            binding: 0,
+            resource: {
+                buffer: outputBuffer,
+                size: 4
+            }
+        }]
+    });
+
+    const shaderModule = device.createShaderModule({ code: comboShader, isWHLSL: true });
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bgl0, bgl1, bgl2, bgl3] });
+
+    const pipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        computeStage: {
+            module: shaderModule,
+            entryPoint: "compute_main"
+        }
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    commandEncoder.copyBufferToTexture({
+        buffer: textureDataBuffer,
+        rowPitch: 4,
+        imageHeight: 0
+    }, { texture: texture }, textureSize);
+
+    const passEncoder = commandEncoder.beginComputePass();
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, bg0);
+    passEncoder.setBindGroup(1, bg1);
+    passEncoder.setBindGroup(2, bg2);
+    passEncoder.setBindGroup(3, bg3);
+    passEncoder.dispatch(1, 1, 1);
+    passEncoder.endPass();
+
+    device.getQueue().submit([commandEncoder.finish()]);
+
+    const results = new Uint32Array(await outputBuffer.mapReadAsync());
+    outputBuffer.unmap();
+    assert_equals(results[0], 42, "Correct value sampled from a bound 2D texture.");
+};
+
+tests["Bind a single GPUBuffer with different offsets in different GPUBindGroups"] = async device => {
+    const numInputs = 4;
+    const [uniformBuffer, writeArrayBuffer] = device.createBufferMapped({ size: 4 * numInputs, usage: GPUBufferUsage.UNIFORM });
+    new Int32Array(writeArrayBuffer).set([1, 2, 3, 36]);
+    uniformBuffer.unmap();
+
+    const storageBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        bindings: [{
+            binding: 0,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "uniform-buffer"
+        }, {
+            binding: 1,
+            visibility: GPUShaderStageBit.COMPUTE,
+            type: "storage-buffer"
+        }]
+    });
+
+    let bindGroups = new Array(numInputs);
+    for (let i = 0; i < numInputs; ++i) {
+        bindGroups[i] = device.createBindGroup({
+            layout: bindGroupLayout,
+            bindings: [{
+                binding: 0,
+                resource: {
+                    buffer: uniformBuffer,
+                    offset: i * numInputs,
+                    size: 4
+                }
+            }, {
+                binding: 1,
+                resource: {
+                    buffer: storageBuffer,
+                    size: 4
+                }
+            }]
+        });
+    }
+
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+    const shaderModule = device.createShaderModule({ code: uniformBufferShader, isWHLSL: true });
+
+    const pipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        computeStage: {
+            module: shaderModule,
+            entryPoint: "compute_main"
+        }
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    const passEncoder = commandEncoder.beginComputePass();
+    passEncoder.setPipeline(pipeline);
+    for (let i = 0; i < numInputs; ++i) {
+        passEncoder.setBindGroup(0, bindGroups[i]);
+        passEncoder.dispatch(1, 1, 1);
+    }
+    passEncoder.endPass();
+    device.getQueue().submit([commandEncoder.finish()]);
+
+    const results = new Int32Array(await storageBuffer.mapReadAsync());
+    storageBuffer.unmap();
+    assert_equals(results[0], 42, "Storage buffer binding written to successfully.");
+};
+
+runTestsWithDevice(tests);
 </script>
 </body>

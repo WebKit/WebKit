@@ -30,7 +30,6 @@
 
 #import "GPURequestAdapterOptions.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>

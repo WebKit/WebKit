@@ -1,3 +1,66 @@
+2019-08-13  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Improve GPUBindGroup performance using one device-shared argument MTLBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=200606
+
+        Reviewed by Myles C. Maxfield.
+
+        Manage all argument buffer storage for GPUBindGroups in one large MTLBuffer for a GPUDevice.
+        Vastly improves GPUProgrammablePassEncoder.setBindGroup performance; in alpha MotionMark WebGPU benchmark,
+        score improves from ~12000 to ~90000.
+
+        No expected change in WebGPU behavior, though bind-groups.html has been updated to cover more cases.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBindGroup const):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBindGroup.h: No longer manages one unique MTLBuffer per MTLArgumentEncoder.
+        (WebCore::GPUBindGroup::argumentBuffer const): Delegates to GPUBindGroupAllocator for current argument buffer.
+        (WebCore::GPUBindGroup::vertexArgsBuffer const): Deleted.
+        (WebCore::GPUBindGroup::fragmentArgsBuffer const): Deleted.
+        (WebCore::GPUBindGroup::computeArgsBuffer const): Deleted.
+        * platform/graphics/gpu/GPUBindGroupAllocator.h: Added. Allocates MTLBuffer for and assigns offsets for argument buffers.
+        (WebCore::GPUBindGroupAllocator::argumentBuffer const):
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUBuffer.h: Move MTLResourceUsage calculation to GPUBuffer construction.
+        (WebCore::GPUBuffer::platformUsage const):
+        * platform/graphics/gpu/GPUComputePassEncoder.h: Prevent any potiential narrowing issues, as offset can be large.
+        * platform/graphics/gpu/GPUDevice.cpp: Now owns a GPUBindGroupAllocator for owning all its argument buffer storage.
+        (WebCore::GPUDevice::tryCreateBindGroup const):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        (WebCore::GPUProgrammablePassEncoder::setVertexBuffer):
+        (WebCore::GPUProgrammablePassEncoder::setFragmentBuffer):
+        (WebCore::GPUProgrammablePassEncoder::setComputeBuffer):
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPUTexture.h: Move MTLResourceUsage calculation to GPUTexture construction.
+        (WebCore::GPUTexture::platformUsage const):
+        * platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm: Added.
+        (WebCore::GPUBindGroupAllocator::create):
+        (WebCore::GPUBindGroupAllocator::GPUBindGroupAllocator):
+        (WebCore::GPUBindGroupAllocator::allocateAndSetEncoders): Ensures that MTLArgumentEncoders have appropriate allocation for encoding.
+        (WebCore::GPUBindGroupAllocator::reallocate): Create new MTLBuffer large enough for new encoder requirement, and copy over old argument buffer data.
+        (WebCore::GPUBindGroupAllocator::tryReset): For now, resets argument buffer if all GPUBindGroups created with this allocator are destroyed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::tryGetResourceAsBufferBinding): Add size check.
+        (WebCore::GPUBindGroup::tryCreate): No longer owns new MTLBuffers. Requests argument buffer space from GPUBindGroupAllocator.
+        (WebCore::GPUBindGroup::GPUBindGroup):
+        (WebCore::GPUBindGroup::~GPUBindGroup): Remind allocator to check for possible reset.
+        (WebCore::tryCreateArgumentBuffer): Deleted.
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::GPUBuffer):
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm:
+        (WebCore::GPUComputePassEncoder::setComputeBuffer):
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup): No need to recalculate usage every time. Set appropriate argument buffer and offsets for new bind group model.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setVertexBuffer):
+        (WebCore::GPURenderPassEncoder::setFragmentBuffer):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::GPUTexture::GPUTexture):
+
 2019-08-13  Antti Koivisto  <antti@apple.com>
 
         Event region collection should take clipping into account

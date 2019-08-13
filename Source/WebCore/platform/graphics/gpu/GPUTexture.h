@@ -56,6 +56,7 @@ public:
     bool isReadOnly() const { return m_usage.containsAny({ GPUTextureUsage::Flags::TransferSource, GPUTextureUsage::Flags::Sampled }); }
     bool isSampled() const { return m_usage.contains(GPUTextureUsage::Flags::Sampled); }
     bool isStorage() const { return m_usage.contains(GPUTextureUsage::Flags::Storage); }
+    unsigned platformUsage() const { return m_platformUsage; }
 
     RefPtr<GPUTexture> tryCreateDefaultTextureView();
     void destroy() { m_platformTexture = nullptr; }
@@ -66,6 +67,7 @@ private:
     PlatformTextureSmartPtr m_platformTexture;
 
     OptionSet<GPUTextureUsage::Flags> m_usage;
+    unsigned m_platformUsage;
 };
 
 } // namespace WebCore

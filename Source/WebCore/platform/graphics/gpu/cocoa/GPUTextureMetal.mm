@@ -178,6 +178,11 @@ GPUTexture::GPUTexture(RetainPtr<MTLTexture>&& texture, OptionSet<GPUTextureUsag
     : m_platformTexture(WTFMove(texture))
     , m_usage(usage)
 {
+    m_platformUsage = MTLResourceUsageRead;
+    if (isSampled())
+        m_platformUsage |= MTLResourceUsageSample;
+    else if (isStorage())
+        m_platformUsage |= MTLResourceUsageWrite;
 }
 
 RefPtr<GPUTexture> GPUTexture::tryCreateDefaultTextureView()

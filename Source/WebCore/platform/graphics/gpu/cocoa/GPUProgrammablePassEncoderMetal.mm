@@ -54,37 +54,25 @@ void GPUProgrammablePassEncoder::setBindGroup(unsigned index, GPUBindGroup& bind
         LOG(WebGPU, "GPUProgrammablePassEncoder::setBindGroup(): Invalid operation: Encoding is ended!");
         return;
     }
-    
-    if (bindGroup.vertexArgsBuffer())
-        setVertexBuffer(bindGroup.vertexArgsBuffer(), 0, index);
-    if (bindGroup.fragmentArgsBuffer())
-        setFragmentBuffer(bindGroup.fragmentArgsBuffer(), 0, index);
-    if (bindGroup.computeArgsBuffer())
-        setComputeBuffer(bindGroup.computeArgsBuffer(), 0, index);
 
-    for (auto& bufferRef : bindGroup.boundBuffers()) {
-        MTLResourceUsage usage = 0;
-        if (bufferRef->isUniform()) {
-            ASSERT(!bufferRef->isStorage());
-            usage = MTLResourceUsageRead;
-        } else if (bufferRef->isStorage()) {
-            ASSERT(!bufferRef->isUniform());
-            usage = MTLResourceUsageRead | MTLResourceUsageWrite;
-        }
-        useResource(bufferRef->platformBuffer(), usage);
-        m_commandBuffer->useBuffer(bufferRef.copyRef());
+    auto argumentBuffer = bindGroup.argumentBuffer();
+    if (!argumentBuffer.first)
+        return;
+
+    if (argumentBuffer.second.vertex)
+        setVertexBuffer(argumentBuffer.first, *argumentBuffer.second.vertex, index);
+    if (argumentBuffer.second.fragment)
+        setFragmentBuffer(argumentBuffer.first, *argumentBuffer.second.fragment, index);
+    if (argumentBuffer.second.compute)
+        setComputeBuffer(argumentBuffer.first, *argumentBuffer.second.compute, index);
+
+    for (auto& buffer : bindGroup.boundBuffers()) {
+        useResource(buffer->platformBuffer(), static_cast<MTLResourceUsage>(buffer->platformUsage()));
+        m_commandBuffer->useBuffer(buffer.copyRef());
     }
-    for (auto& textureRef : bindGroup.boundTextures()) {
-        MTLResourceUsage usage = 0;
-        if (textureRef->isSampled()) {
-            ASSERT(!textureRef->isStorage());
-            usage = MTLResourceUsageRead | MTLResourceUsageSample;
-        } else if (textureRef->isStorage()) {
-            ASSERT(!textureRef->isSampled());
-            usage = MTLResourceUsageRead | MTLResourceUsageWrite;
-        }
-        useResource(textureRef->platformTexture(), usage);
-        m_commandBuffer->useTexture(textureRef.copyRef());
+    for (auto& texture : bindGroup.boundTextures()) {
+        useResource(texture->platformTexture(), static_cast<MTLResourceUsage>(texture->platformUsage()));
+        m_commandBuffer->useTexture(texture.copyRef());
     }
 }
 

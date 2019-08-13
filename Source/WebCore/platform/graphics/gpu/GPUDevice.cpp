@@ -28,6 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBindGroup.h"
+#include "GPUBindGroupAllocator.h"
+#include "GPUBindGroupDescriptor.h"
 #include "GPUBindGroupLayout.h"
 #include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBuffer.h"
@@ -90,6 +93,14 @@ RefPtr<GPURenderPipeline> GPUDevice::tryCreateRenderPipeline(const GPURenderPipe
 RefPtr<GPUComputePipeline> GPUDevice::tryCreateComputePipeline(const GPUComputePipelineDescriptor& descriptor, GPUErrorScopes& errorScopes) const
 {
     return GPUComputePipeline::tryCreate(*this, descriptor, errorScopes);
+}
+
+RefPtr<GPUBindGroup> GPUDevice::tryCreateBindGroup(const GPUBindGroupDescriptor& descriptor, GPUErrorScopes& errorScopes) const
+{
+    if (!m_bindGroupAllocator)
+        m_bindGroupAllocator = GPUBindGroupAllocator::create(errorScopes);
+
+    return GPUBindGroup::tryCreate(descriptor, *m_bindGroupAllocator);
 }
 
 RefPtr<GPUCommandBuffer> GPUDevice::tryCreateCommandBuffer() const

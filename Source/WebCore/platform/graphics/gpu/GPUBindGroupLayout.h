@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUBindGroupLayoutDescriptor.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

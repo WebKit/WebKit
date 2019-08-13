@@ -70,8 +70,8 @@ private:
     void invalidateEncoder() final { m_platformRenderPassEncoder = nullptr; }
 #if USE(METAL)
     void useResource(const MTLResource *, unsigned usage) final;
-    void setVertexBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
-    void setFragmentBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
+    void setVertexBuffer(const MTLBuffer *, NSUInteger offset, unsigned index) final;
+    void setFragmentBuffer(const MTLBuffer *, NSUInteger offset, unsigned index) final;
 
     RefPtr<GPUBuffer> m_indexBuffer;
     uint64_t m_indexBufferOffset;

@@ -29,6 +29,7 @@
 
 #include "GPUBindGroupBinding.h"
 #include "GPUCommandBuffer.h"
+#include <objc/NSObjCRuntime.h>
 #include <wtf/RefCounted.h>
 
 #if USE(METAL)
@@ -63,10 +64,10 @@ private:
     virtual void useResource(const MTLResource *, unsigned) = 0;
 
     // Render command encoder methods.
-    virtual void setVertexBuffer(const MTLBuffer *, unsigned, unsigned) { }
-    virtual void setFragmentBuffer(const MTLBuffer *, unsigned, unsigned) { }
+    virtual void setVertexBuffer(const MTLBuffer *, NSUInteger, unsigned) { }
+    virtual void setFragmentBuffer(const MTLBuffer *, NSUInteger, unsigned) { }
     // Compute.
-    virtual void setComputeBuffer(const MTLBuffer *, unsigned, unsigned) { }
+    virtual void setComputeBuffer(const MTLBuffer *, NSUInteger, unsigned) { }
 #endif // USE(METAL)
 
     Ref<GPUCommandBuffer> m_commandBuffer;

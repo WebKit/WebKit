@@ -13934,6 +13934,8 @@
 		D0615FCC217FE5C6008A48A8 /* WebGPUShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModule.h; sourceTree = "<group>"; };
 		D0615FCD217FE5C6008A48A8 /* WebGPUShaderModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModule.cpp; sourceTree = "<group>"; };
 		D0615FCE217FE5C6008A48A8 /* WebGPUShaderModule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUShaderModule.idl; sourceTree = "<group>"; };
+		D065BE5722FB616D0076DD60 /* GPUBindGroupAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupAllocator.h; sourceTree = "<group>"; };
+		D065BE5822FB616D0076DD60 /* GPUBindGroupAllocatorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUBindGroupAllocatorMetal.mm; sourceTree = "<group>"; };
 		D06A9A2122026C7A0083C662 /* GPURequestAdapterOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURequestAdapterOptions.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
 		D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveFormatCommand.cpp; sourceTree = "<group>"; };
@@ -18273,6 +18275,7 @@
 			children = (
 				D087CE3721ACA94200BDE174 /* cocoa */,
 				D0BE105E21E6BAD300E42A89 /* GPUBindGroup.h */,
+				D065BE5722FB616D0076DD60 /* GPUBindGroupAllocator.h */,
 				D0BE104E21E695E200E42A89 /* GPUBindGroupBinding.h */,
 				D0BE105121E6A70E00E42A89 /* GPUBindGroupDescriptor.h */,
 				D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */,
@@ -26063,6 +26066,7 @@
 		D087CE3721ACA94200BDE174 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				D065BE5822FB616D0076DD60 /* GPUBindGroupAllocatorMetal.mm */,
 				D0232B5821CB49B7009483B9 /* GPUBindGroupLayoutMetal.mm */,
 				D085E64A2236DEAE00C3E1E2 /* GPUBindGroupMetal.mm */,
 				D0D8649121B760C4003C983C /* GPUBufferMetal.mm */,
@@ -28605,6 +28609,7 @@
 				E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */,
 				0F60F32B1DFBB10700416D6C /* CommonVM.h in Headers */,
 				7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */,
+				E4E94D6122FF158A00DD191F /* ComplexLineLayout.h in Headers */,
 				C2F4E78C1E45C3EF006D7105 /* ComplexTextController.h in Headers */,
 				E4BA50901BCFBD9500E34EF7 /* ComposedTreeAncestorIterator.h in Headers */,
 				E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */,
@@ -30819,7 +30824,6 @@
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
 				269397241A4A5B6400E8349D /* NFA.h in Headers */,
-				E4E94D6122FF158A00DD191F /* ComplexLineLayout.h in Headers */,
 				269397221A4A412F00E8349D /* NFANode.h in Headers */,
 				267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */,
 				BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */,

@@ -27,49 +27,48 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBindGroupAllocator.h"
-#include "GPUBuffer.h"
-#include "GPUTexture.h"
 #include <objc/NSObjCRuntime.h>
-#include <utility>
-#include <wtf/HashSet.h>
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(METAL)
+OBJC_PROTOCOL(MTLArgumentEncoder);
 OBJC_PROTOCOL(MTLBuffer);
-#endif
 
 namespace WebCore {
 
-struct GPUBindGroupDescriptor;
+class GPUErrorScopes;
 
-#if USE(METAL)
-using ArgumentBuffer = std::pair<const MTLBuffer *, const GPUBindGroupAllocator::ArgumentBufferOffsets&>;
-#endif
-
-class GPUBindGroup : public RefCounted<GPUBindGroup> {
+class GPUBindGroupAllocator : public RefCounted<GPUBindGroupAllocator> {
 public:
-    static RefPtr<GPUBindGroup> tryCreate(const GPUBindGroupDescriptor&, GPUBindGroupAllocator&);
+    static Ref<GPUBindGroupAllocator> create(GPUErrorScopes&);
 
-    ~GPUBindGroup();
-    
 #if USE(METAL)
-    const ArgumentBuffer argumentBuffer() const { return { m_allocator->argumentBuffer(), m_argumentBufferOffsets }; }
+    struct ArgumentBufferOffsets {
+        Optional<NSUInteger> vertex;
+        Optional<NSUInteger> fragment;
+        Optional<NSUInteger> compute;
+    };
+
+    Optional<ArgumentBufferOffsets> allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute);
+
+    void tryReset();
+
+    const MTLBuffer *argumentBuffer() const { return m_argumentBuffer.get(); }
 #endif
-    const HashSet<Ref<GPUBuffer>>& boundBuffers() const { return m_boundBuffers; }
-    const HashSet<Ref<GPUTexture>>& boundTextures() const { return m_boundTextures; }
 
 private:
+    explicit GPUBindGroupAllocator(GPUErrorScopes&);
+
 #if USE(METAL)
-    GPUBindGroup(GPUBindGroupAllocator::ArgumentBufferOffsets&&, GPUBindGroupAllocator&, HashSet<Ref<GPUBuffer>>&&, HashSet<Ref<GPUTexture>>&&);
-    
-    GPUBindGroupAllocator::ArgumentBufferOffsets m_argumentBufferOffsets;
-    Ref<GPUBindGroupAllocator> m_allocator;
+    bool reallocate(NSUInteger);
+
+    RetainPtr<MTLBuffer> m_argumentBuffer;
+    NSUInteger m_lastOffset { 0 };
 #endif
-    HashSet<Ref<GPUBuffer>> m_boundBuffers;
-    HashSet<Ref<GPUTexture>> m_boundTextures;
+
+    Ref<GPUErrorScopes> m_errorScopes;
 };
 
 } // namespace WebCore

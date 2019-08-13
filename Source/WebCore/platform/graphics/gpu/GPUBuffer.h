@@ -83,6 +83,7 @@ public:
     bool isStorage() const { return m_usage.contains(GPUBufferUsage::Flags::Storage); }
     bool isReadOnly() const;
     bool isMappable() const { return m_usage.containsAny({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead }); }
+    unsigned platformUsage() const { return m_platformUsage; }
     State state() const;
 
     JSC::ArrayBuffer* mapOnCreation();
@@ -132,6 +133,7 @@ private:
 
     size_t m_byteLength;
     OptionSet<GPUBufferUsage::Flags> m_usage;
+    unsigned m_platformUsage;
     unsigned m_numScheduledCommandBuffers { 0 };
     bool m_isMappedFromCreation { false };
 };

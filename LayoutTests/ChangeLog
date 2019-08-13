@@ -1,3 +1,15 @@
+2019-08-13  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Improve GPUBindGroup performance using one device-shared argument MTLBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=200606
+
+        Reviewed by Myles C. Maxfield.
+
+        Update bind-groups.html to better stress GPUBindGroup implementation.
+
+        * webgpu/bind-groups-expected.txt:
+        * webgpu/bind-groups.html:
+
 2019-08-13  Antti Koivisto  <antti@apple.com>
 
         Event regions collection should take clipping into account

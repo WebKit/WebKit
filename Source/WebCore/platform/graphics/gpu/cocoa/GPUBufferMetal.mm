@@ -118,6 +118,9 @@ GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, GPUDevice& device, size_t si
     , m_usage(usage)
     , m_isMappedFromCreation(isMapped == GPUBufferMappedOption::IsMapped)
 {
+    m_platformUsage = MTLResourceUsageRead;
+    if (isStorage())
+        m_platformUsage |= MTLResourceUsageWrite;
 }
 
 GPUBuffer::~GPUBuffer()

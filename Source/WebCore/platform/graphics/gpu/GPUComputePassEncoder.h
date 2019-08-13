@@ -56,7 +56,7 @@ private:
     void invalidateEncoder() final { m_platformComputePassEncoder = nullptr; }
 #if USE(METAL)
     void useResource(const MTLResource *, unsigned usage) final;
-    void setComputeBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
+    void setComputeBuffer(const MTLBuffer *, NSUInteger offset, unsigned index) final;
 #endif
 
     PlatformComputePassEncoderSmartPtr m_platformComputePassEncoder;

@@ -27,11 +27,14 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBindGroupAllocator.h"
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,6 +42,7 @@ OBJC_PROTOCOL(MTLDevice);
 
 namespace WebCore {
 
+class GPUBindGroup;
 class GPUBindGroupLayout;
 class GPUBuffer;
 class GPUCommandBuffer;
@@ -50,6 +54,7 @@ class GPUSampler;
 class GPUShaderModule;
 class GPUTexture;
 
+struct GPUBindGroupDescriptor;
 struct GPUBindGroupLayoutDescriptor;
 struct GPUBufferDescriptor;
 struct GPUComputePipelineDescriptor;
@@ -76,6 +81,7 @@ public:
 
     RefPtr<GPUBindGroupLayout> tryCreateBindGroupLayout(const GPUBindGroupLayoutDescriptor&) const;
     Ref<GPUPipelineLayout> createPipelineLayout(GPUPipelineLayoutDescriptor&&) const;
+    RefPtr<GPUBindGroup> tryCreateBindGroup(const GPUBindGroupDescriptor&, GPUErrorScopes&) const;
 
     RefPtr<GPUShaderModule> tryCreateShaderModule(const GPUShaderModuleDescriptor&) const;
     RefPtr<GPURenderPipeline> tryCreateRenderPipeline(const GPURenderPipelineDescriptor&, GPUErrorScopes&) const;
@@ -95,6 +101,7 @@ private:
     PlatformDeviceSmartPtr m_platformDevice;
     mutable RefPtr<GPUQueue> m_queue;
     RefPtr<GPUSwapChain> m_swapChain;
+    mutable RefPtr<GPUBindGroupAllocator> m_bindGroupAllocator;
 };
 
 } // namespace WebCore

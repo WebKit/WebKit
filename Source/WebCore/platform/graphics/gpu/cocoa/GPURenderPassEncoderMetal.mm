@@ -393,7 +393,7 @@ void GPURenderPassEncoder::useResource(const MTLResource *resource, unsigned usa
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void GPURenderPassEncoder::setVertexBuffer(const MTLBuffer *buffer, unsigned offset, unsigned index)
+void GPURenderPassEncoder::setVertexBuffer(const MTLBuffer *buffer, NSUInteger offset, unsigned index)
 {
     ASSERT(m_platformRenderPassEncoder);
 
@@ -402,7 +402,7 @@ void GPURenderPassEncoder::setVertexBuffer(const MTLBuffer *buffer, unsigned off
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void GPURenderPassEncoder::setFragmentBuffer(const MTLBuffer *buffer, unsigned offset, unsigned index)
+void GPURenderPassEncoder::setFragmentBuffer(const MTLBuffer *buffer, NSUInteger offset, unsigned index)
 {
     ASSERT(m_platformRenderPassEncoder);
 
