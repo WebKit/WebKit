@@ -1,5 +1,50 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248271. rdar://problem/54237771
+
+    JSC: assertion failure in SpeculativeJIT::compileGetByValOnIntTypedArray
+    https://bugs.webkit.org/show_bug.cgi?id=199997
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    New test.
+    
+    * stress/typedarray-no-alreadyChecked-assert.js: Added.
+    (checkIntArray):
+    (checkFloatArray):
+    
+    Source/JavaScriptCore:
+    
+    No need to ASSERT(node->arrayMode().alreadyChecked(...)) in SpeculativeJIT::compileGetByValOnIntTypedArray()
+    and compileGetByValOnFloatTypedArray() as the abstract interpreter is conservative and can insert a
+    CheckStructureOrEmpty which will fail the ASSERT as it checks for the SpecType of the array
+    and not for SpecEmpty.  If we added a check for the SpecEmpty in the ASSERT, there are cases where
+    it won't be set.
+    
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+    (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248271 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-05  Michael Saboff  <msaboff@apple.com>
+
+            JSC: assertion failure in SpeculativeJIT::compileGetByValOnIntTypedArray
+            https://bugs.webkit.org/show_bug.cgi?id=199997
+
+            Reviewed by Saam Barati.
+
+            New test.
+
+            * stress/typedarray-no-alreadyChecked-assert.js: Added.
+            (checkIntArray):
+            (checkFloatArray):
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248149. rdar://problem/54237692
 
     GetterSetter type confusion during DFG compilation
