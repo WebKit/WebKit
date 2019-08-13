@@ -1,3 +1,14 @@
+2019-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Blob registries should be keyed by session IDs
+        https://bugs.webkit.org/show_bug.cgi?id=200567
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::createBlobRegistry):
+        Ignore sessionID parameter for WK1.
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertions to RefCounted

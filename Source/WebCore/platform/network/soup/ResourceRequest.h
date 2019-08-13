@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+    class BlobRegistryImpl;
+
     class ResourceRequest : public ResourceRequestBase {
     public:
         ResourceRequest(const String& url)
@@ -87,7 +89,7 @@ namespace WebCore {
 
         void updateSoupMessageHeaders(SoupMessageHeaders*) const;
         void updateFromSoupMessageHeaders(SoupMessageHeaders*);
-        void updateSoupMessage(SoupMessage*) const;
+        void updateSoupMessage(SoupMessage*, BlobRegistryImpl&) const;
         void updateFromSoupMessage(SoupMessage*);
         void updateSoupRequest(SoupRequest*) const;
         void updateFromSoupRequest(SoupRequest*);
@@ -111,7 +113,7 @@ namespace WebCore {
         Optional<PageIdentifier> m_initiatingPageID;
 
         void updateSoupMessageMembers(SoupMessage*) const;
-        void updateSoupMessageBody(SoupMessage*) const;
+        void updateSoupMessageBody(SoupMessage*, BlobRegistryImpl&) const;
         void doUpdatePlatformRequest() { }
         void doUpdateResourceRequest() { }
         void doUpdatePlatformHTTPBody() { }

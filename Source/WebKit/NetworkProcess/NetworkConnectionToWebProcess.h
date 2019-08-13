@@ -138,8 +138,6 @@ public:
     Optional<NetworkActivityTracker> startTrackingResourceLoad(WebCore::PageIdentifier, ResourceLoadIdentifier resourceID, bool isMainResource, const PAL::SessionID&);
     void stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode);
 
-    WebCore::BlobRegistryImpl& blobRegistry();
-    Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(const URL&);
     Vector<RefPtr<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
 
     void webPageWasAdded(PAL::SessionID, WebCore::PageIdentifier, WebCore::PageIdentifier oldPageID);
@@ -183,14 +181,14 @@ private:
     void getRawCookies(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void deleteCookie(PAL::SessionID, const URL&, const String& cookieName);
 
-    void registerFileBlobURL(const URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);
-    void registerBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURLFromURL(const URL&, const URL& srcURL, bool shouldBypassConnectionCheck);
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
-    void registerBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end);
+    void registerFileBlobURL(PAL::SessionID, const URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);
+    void registerBlobURL(PAL::SessionID, const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
+    void registerBlobURLFromURL(PAL::SessionID, const URL&, const URL& srcURL);
+    void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
+    void registerBlobURLForSlice(PAL::SessionID, const URL&, const URL& srcURL, int64_t start, int64_t end);
     void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
-    void unregisterBlobURL(const URL&);
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
+    void unregisterBlobURL(PAL::SessionID, const URL&);
+    void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 

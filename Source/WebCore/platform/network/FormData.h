@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class BlobRegistry;
+class BlobRegistryImpl;
 class DOMFormData;
 class File;
 class SharedBuffer;
@@ -219,7 +219,7 @@ public:
 
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
-    WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistry&);
+    WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistryImpl*);
 
     WEBCORE_EXPORT FormDataForUpload prepareForUpload();
 

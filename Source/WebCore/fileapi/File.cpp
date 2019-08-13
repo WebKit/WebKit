@@ -53,7 +53,7 @@ Ref<File> File::create(PAL::SessionID sessionID, const String& path, const Strin
     computeNameAndContentType(path, nameOverride, name, type);
 
     auto internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerFileBlobURL(internalURL, path, type);
+    ThreadableBlobRegistry::registerFileBlobURL(sessionID, internalURL, path, type);
 
     return adoptRef(*new File(sessionID, WTFMove(internalURL), WTFMove(type), String { path }, WTFMove(name)));
 }

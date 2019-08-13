@@ -35,6 +35,7 @@
 #include <wtf/URL.h>
 #include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -102,6 +103,7 @@ private:
     String m_dataType;
 
     URL m_urlForReading;
+    Optional<PAL::SessionID> m_sessionID;
     RefPtr<ThreadableLoader> m_loader;
 
     RefPtr<JSC::ArrayBuffer> m_rawData;

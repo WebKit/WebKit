@@ -121,7 +121,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSo
         return nullptr;
 
     GRefPtr<SoupMessage> soupMessage = adoptGRef(soup_message_new_from_uri(SOUP_METHOD_GET, soupURI.get()));
-    request.updateSoupMessage(soupMessage.get());
+    request.updateSoupMessage(soupMessage.get(), blobRegistry());
     if (request.url().protocolIs("wss"))
         g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), nullptr);
     return std::make_unique<WebSocketTask>(channel, soupSession(), soupMessage.get(), protocol);

@@ -286,14 +286,14 @@ String FormData::flattenToString() const
     return Latin1Encoding().decode(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }
 
-static void appendBlobResolved(BlobRegistry& blobRegistry, FormData& formData, const URL& url)
+static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const URL& url)
 {
-    if (!blobRegistry.isBlobRegistryImpl()) {
+    if (!blobRegistry) {
         LOG_ERROR("Tried to resolve a blob without a usable registry");
         return;
     }
 
-    auto* blobData = static_cast<BlobRegistryImpl&>(blobRegistry).getBlobDataFromURL(url);
+    auto* blobData = blobRegistry->getBlobDataFromURL(url);
     if (!blobData) {
         LOG_ERROR("Could not get blob data from a registry");
         return;
@@ -310,7 +310,7 @@ static void appendBlobResolved(BlobRegistry& blobRegistry, FormData& formData, c
     }
 }
 
-Ref<FormData> FormData::resolveBlobReferences(BlobRegistry& blobRegistry)
+Ref<FormData> FormData::resolveBlobReferences(BlobRegistryImpl* blobRegistry)
 {
     // First check if any blobs needs to be resolved, or we can take the fast path.
     bool hasBlob = false;

@@ -301,9 +301,6 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
 
-    if (request.url().protocolIsBlob())
-        parameters.blobFileReferences = m_connection->filesInBlob(originalRequest().url());
-
     auto* networkSession = m_connection->networkProcess().networkSession(parameters.sessionID);
     if (!networkSession && parameters.sessionID.isEphemeral()) {
         m_connection->networkProcess().addWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(parameters.sessionID));
@@ -317,8 +314,11 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         return;
     }
 
+    if (request.url().protocolIsBlob())
+        parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url());
+
     parameters.request = WTFMove(request);
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, &m_connection->blobRegistry(), WTFMove(parameters), *networkSession);
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
 
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", description = %{public}s)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, m_networkLoad->description().utf8().data());
 }

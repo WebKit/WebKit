@@ -57,8 +57,6 @@ NetworkProcess/Downloads/DownloadMap.cpp
 NetworkProcess/Downloads/DownloadMonitor.cpp
 NetworkProcess/Downloads/PendingDownload.cpp
 
-NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
-
 NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
 
 NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @no-unify

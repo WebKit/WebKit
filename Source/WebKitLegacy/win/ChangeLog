@@ -1,3 +1,14 @@
+2019-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Blob registries should be keyed by session IDs
+        https://bugs.webkit.org/show_bug.cgi?id=200567
+        <rdar://problem/54120212>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createBlobRegistry):
+
 2019-08-12  Youenn Fablet  <youenn@apple.com>
 
         Remove IDB-specific quota

@@ -166,20 +166,4 @@ Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkCo
     return filesInBlob(url);
 }
 
-Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(const URL& url)
-{
-    ASSERT(m_blobRegistry.isBlobRegistryImpl());
-    BlobData* blobData = m_blobRegistry.getBlobDataFromURL(url);
-    if (!blobData)
-        return { };
-
-    Vector<RefPtr<BlobDataFileReference>> result;
-    for (const BlobDataItem& item : blobData->items()) {
-        if (item.type() == BlobDataItem::Type::File)
-            result.append(item.file());
-    }
-
-    return result;
-}
-
 }

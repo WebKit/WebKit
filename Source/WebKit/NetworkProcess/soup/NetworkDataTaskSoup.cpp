@@ -134,7 +134,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
 
     unsigned messageFlags = SOUP_MESSAGE_NO_REDIRECT;
 
-    m_currentRequest.updateSoupMessage(soupMessage.get());
+    m_currentRequest.updateSoupMessage(soupMessage.get(), m_session->blobRegistry());
     if (m_shouldContentSniff == ContentSniffingPolicy::DoNotSniffContent)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_CONTENT_SNIFFER);
     if (m_user.isEmpty() && m_password.isEmpty() && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse) {

@@ -612,6 +612,13 @@ void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
     m_storageQuotaManagers.remove(sessionID);
 }
 
+BlobRegistryImpl* NetworkProcess::blobRegistry(NetworkConnectionToWebProcess& connection)
+{
+    // FIXME: Deprecate this method and use sessionID -> NetworkSession -> blob registry.
+    auto* session = networkSessionByConnection(connection.connection());
+    return session ? &session->blobRegistry() : nullptr;
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {

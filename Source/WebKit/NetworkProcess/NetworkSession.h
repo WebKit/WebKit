@@ -29,6 +29,7 @@
 #include "SandboxExtension.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/AdClickAttribution.h>
+#include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
@@ -114,6 +115,8 @@ public:
     virtual void removeWebSocketTask(WebSocketTask&) { }
     virtual void addWebSocketTask(WebSocketTask&) { }
 
+    WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -143,6 +146,7 @@ protected:
     bool m_isInvalidated { false };
 #endif
     RefPtr<NetworkCache::Cache> m_cache;
+    WebCore::BlobRegistryImpl m_blobRegistry;
 };
 
 } // namespace WebKit

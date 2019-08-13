@@ -1,5 +1,51 @@
 2019-08-13  Youenn Fablet  <youenn@apple.com>
 
+        Blob registries should be keyed by session IDs
+        https://bugs.webkit.org/show_bug.cgi?id=200567
+        <rdar://problem/54120212>
+
+        Reviewed by Alex Christensen.
+
+        Pass session IDs to all BlobRegistry methods in particular ThreadableLoaderRegistry.
+        The only exception is blobSize which should be dealt with a follow-up patch.
+        blobSize blob registry is retrieved from the connection -> sessionID map in Network Process.
+        Covered by existing tests.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::~FetchLoader):
+        (WebCore::FetchLoader::startLoadingBlobURL):
+        * Modules/fetch/FetchLoader.h:
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::~FileReaderLoader):
+        (WebCore::FileReaderLoader::start):
+        * fileapi/FileReaderLoader.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked):
+        * fileapi/ThreadableBlobRegistry.h:
+        * html/PublicURLManager.cpp:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::extendBlobURLLifetimeIfNecessary const):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::createBlobResourceHandle):
+        (WebCore::loadBlobResourceSynchronously):
+        (WebCore::BlobRegistryImpl::filesInBlob const):
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/FormData.cpp:
+        (WebCore::appendBlobResolved):
+        (WebCore::FormData::resolveBlobReferences):
+        * platform/network/FormData.h:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::createHTTPBodyCFReadStream):
+        * platform/network/soup/ResourceRequest.h:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageBody const):
+        (WebCore::ResourceRequest::updateSoupMessage const):
+
+2019-08-13  Youenn Fablet  <youenn@apple.com>
+
         User Agent and SessionID should be given to NetworkRTCProvider to set up the correct proxy information
         https://bugs.webkit.org/show_bug.cgi?id=200583
 

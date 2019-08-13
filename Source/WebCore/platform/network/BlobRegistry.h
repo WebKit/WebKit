@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WebCore {
 class BlobDataFileReference;
 class BlobPart;
 class BlobRegistry;
+class BlobRegistryImpl;
 
 WEBCORE_EXPORT BlobRegistry& blobRegistry();
 
@@ -46,27 +48,27 @@ class WEBCORE_EXPORT BlobRegistry {
 public:
 
     // Registers a blob URL referring to the specified file.
-    virtual void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) = 0;
+    virtual void registerFileBlobURL(PAL::SessionID, const URL&, Ref<BlobDataFileReference>&&, const String& contentType) = 0;
 
     // Registers a blob URL referring to the specified blob data.
-    virtual void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) = 0;
+    virtual void registerBlobURL(PAL::SessionID, const URL&, Vector<BlobPart>&&, const String& contentType) = 0;
     
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
-    virtual void registerBlobURL(const URL&, const URL& srcURL) = 0;
+    virtual void registerBlobURL(PAL::SessionID, const URL&, const URL& srcURL) = 0;
 
     // Registers a new blob URL referring to the blob data identified by the specified srcURL or, if none found, referring to the file found at the given path.
-    virtual void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
+    virtual void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
 
     // Negative start and end values select from the end.
-    virtual void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) = 0;
+    virtual void registerBlobURLForSlice(PAL::SessionID, const URL&, const URL& srcURL, long long start, long long end) = 0;
 
-    virtual void unregisterBlobURL(const URL&) = 0;
+    virtual void unregisterBlobURL(PAL::SessionID, const URL&) = 0;
 
     virtual unsigned long long blobSize(const URL&) = 0;
 
-    virtual void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;
+    virtual void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;
 
-    virtual bool isBlobRegistryImpl() const { return false; }
+    virtual BlobRegistryImpl* blobRegistryImpl() { return nullptr; }
 
 protected:
     virtual ~BlobRegistry();

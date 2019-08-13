@@ -46,7 +46,7 @@ class ResourceRequest;
 class ThreadSafeDataBuffer;
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
-class WEBCORE_EXPORT BlobRegistryImpl final : public BlobRegistry {
+class WEBCORE_EXPORT BlobRegistryImpl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~BlobRegistryImpl();
@@ -58,17 +58,16 @@ public:
 
     void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
-    void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) override;
-    void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) override;
-    void registerBlobURL(const URL&, const URL& srcURL) override;
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) override;
-    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) override;
-    void unregisterBlobURL(const URL&) override;
-    bool isBlobRegistryImpl() const override { return true; }
+    void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType);
+    void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType);
+    void registerBlobURL(const URL&, const URL& srcURL);
+    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType);
+    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end);
+    void unregisterBlobURL(const URL&);
 
-    unsigned long long blobSize(const URL&) override;
+    unsigned long long blobSize(const URL&);
 
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) override;
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
     struct BlobForFileWriting {
         String blobURL;
@@ -76,6 +75,7 @@ public:
     };
 
     bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);
+    Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&) const;
 
 private:
     HashMap<String, RefPtr<BlobData>> m_blobs;

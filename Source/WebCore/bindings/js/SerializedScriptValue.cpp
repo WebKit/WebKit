@@ -3569,13 +3569,12 @@ Vector<String> SerializedScriptValue::blobURLsIsolatedCopy() const
     return result;
 }
 
-void SerializedScriptValue::writeBlobsToDiskForIndexedDB(PAL::SessionID, CompletionHandler<void(IDBValue&&)>&& completionHandler)
+void SerializedScriptValue::writeBlobsToDiskForIndexedDB(PAL::SessionID sessionID, CompletionHandler<void(IDBValue&&)>&& completionHandler)
 {
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());
 
-    // FIXME: Get the right blob registry from the given sessionID.
-    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& blobFilePaths) mutable {
+    blobRegistry().writeBlobsToTemporaryFiles(sessionID, m_blobURLs, [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& blobFilePaths) mutable {
         ASSERT(isMainThread());
 
         if (blobFilePaths.isEmpty()) {
@@ -3586,7 +3585,7 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(PAL::SessionID, Complet
         }
 
         ASSERT(m_blobURLs.size() == blobFilePaths.size());
-        
+
         completionHandler({ *this, m_blobURLs, blobFilePaths });
     });
 }

@@ -372,7 +372,7 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
 RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
 {
-    auto resolvedFormData = formData.resolveBlobReferences(blobRegistry());
+    auto resolvedFormData = formData.resolveBlobReferences(blobRegistry().blobRegistryImpl());
     auto dataForUpload = resolvedFormData->prepareForUpload();
 
     // Precompute the content length so CFNetwork doesn't use chunked mode.

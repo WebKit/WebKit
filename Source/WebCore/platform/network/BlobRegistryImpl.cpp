@@ -54,12 +54,12 @@ BlobRegistryImpl::~BlobRegistryImpl() = default;
 
 static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
-    return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);
+    return blobRegistry().blobRegistryImpl()->createResourceHandle(request, client);
 }
 
 static void loadBlobResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
+    auto* blobData = blobRegistry().blobRegistryImpl()->getBlobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);
 }
 
@@ -341,6 +341,21 @@ void BlobRegistryImpl::writeBlobToFilePath(const URL& blobURL, const String& pat
             completionHandler(success);
         });
     });
+}
+
+Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url) const
+{
+    auto* blobData = getBlobDataFromURL(url);
+    if (!blobData)
+        return { };
+
+    Vector<RefPtr<BlobDataFileReference>> result;
+    for (const BlobDataItem& item : blobData->items()) {
+        if (item.type() == BlobDataItem::Type::File)
+            result.append(item.file());
+    }
+
+    return result;
 }
 
 } // namespace WebCore

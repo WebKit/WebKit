@@ -1317,7 +1317,6 @@
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
 		A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1046E9F2079263100F0C5D8 /* WKPDFView.h */; };
-		A105D0D1212734B20034F6C7 /* NetworkBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A105D0D0212734B10034F6C7 /* NetworkBlobRegistry.h */; };
 		A115DC72191D82DA00DA8072 /* _WKWebViewPrintFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A118A9EF1907AD6F00F7C92B /* QuickLookDocumentData.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9ED1907AD6F00F7C92B /* QuickLookDocumentData.h */; };
 		A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3987,7 +3986,6 @@
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
 		A1046E9F2079263100F0C5D8 /* WKPDFView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKPDFView.h; path = ios/WKPDFView.h; sourceTree = "<group>"; };
 		A1046EA02079263100F0C5D8 /* WKPDFView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFView.mm; path = ios/WKPDFView.mm; sourceTree = "<group>"; };
-		A105D0D0212734B10034F6C7 /* NetworkBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkBlobRegistry.h; sourceTree = "<group>"; };
 		A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatter.h; sourceTree = "<group>"; };
 		A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuickLookDocumentData.cpp; path = ios/QuickLookDocumentData.cpp; sourceTree = "<group>"; };
@@ -4621,7 +4619,6 @@
 		E164A2F0191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobDataFileReferenceWithSandboxExtension.h; sourceTree = "<group>"; };
 		E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistryProxy.cpp; path = WebProcess/FileAPI/BlobRegistryProxy.cpp; sourceTree = "<group>"; };
 		E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistryProxy.h; path = WebProcess/FileAPI/BlobRegistryProxy.h; sourceTree = "<group>"; };
-		E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkBlobRegistry.cpp; sourceTree = "<group>"; };
 		E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.NetworkProcess.sb.in; sourceTree = "<group>"; };
 		E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebKit.NetworkProcess.sb; path = DerivedSources/WebKit2/com.apple.WebKit.NetworkProcess.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
@@ -6667,7 +6664,6 @@
 				5C1426F21C23F82D00D41183 /* CustomProtocols */,
 				5C1426F11C23F81700D41183 /* Downloads */,
 				BC82837C16B45DA500A278FE /* EntryPoint */,
-				E1798C7616E6815500240139 /* FileAPI */,
 				939288E021404DF000EBBA33 /* IndexedDB */,
 				2DA944BB188511DD00ED86DB /* ios */,
 				510CC7DC16138E2900D03ED3 /* mac */,
@@ -9027,15 +9023,6 @@
 			name = FileAPI;
 			sourceTree = "<group>";
 		};
-		E1798C7616E6815500240139 /* FileAPI */ = {
-			isa = PBXGroup;
-			children = (
-				E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */,
-				A105D0D0212734B10034F6C7 /* NetworkBlobRegistry.h */,
-			);
-			path = FileAPI;
-			sourceTree = "<group>";
-		};
 		E199875B142BF9CF00BB2DE7 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -9483,7 +9470,6 @@
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
 				535BCB922069C49C00CCCE02 /* NetworkActivityTracker.h in Headers */,
-				A105D0D1212734B20034F6C7 /* NetworkBlobRegistry.h in Headers */,
 				E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */,
 				E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */,
 				E489D28C1A0A2DB80078C06A /* NetworkCacheCoders.h in Headers */,

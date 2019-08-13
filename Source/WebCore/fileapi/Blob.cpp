@@ -58,12 +58,12 @@ public:
 void BlobURLRegistry::registerURL(ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
 {
     ASSERT(&blob.registry() == this);
-    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), publicURL, static_cast<Blob&>(blob).url());
+    ThreadableBlobRegistry::registerBlobURL(context.sessionID(), context.securityOrigin(), publicURL, static_cast<Blob&>(blob).url());
 }
 
-void BlobURLRegistry::unregisterURL(ScriptExecutionContext&, const URL& url)
+void BlobURLRegistry::unregisterURL(ScriptExecutionContext& context, const URL& url)
 {
-    ThreadableBlobRegistry::unregisterBlobURL(url);
+    ThreadableBlobRegistry::unregisterBlobURL(context.sessionID(), url);
 }
 
 URLRegistry& BlobURLRegistry::registry()
@@ -84,7 +84,7 @@ Blob::Blob(PAL::SessionID sessionID)
     , m_size(0)
 {
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { },  { });
+    ThreadableBlobRegistry::registerBlobURL(m_sessionID, m_internalURL, { },  { });
 }
 
 Blob::Blob(PAL::SessionID sessionID, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
@@ -101,7 +101,7 @@ Blob::Blob(PAL::SessionID sessionID, Vector<BlobPartVariant>&& blobPartVariants,
         );
     }
 
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, builder.finalize(), m_type);
+    ThreadableBlobRegistry::registerBlobURL(m_sessionID, m_internalURL, builder.finalize(), m_type);
 }
 
 Blob::Blob(PAL::SessionID sessionID, const SharedBuffer& buffer, const String& contentType)
@@ -115,7 +115,7 @@ Blob::Blob(PAL::SessionID sessionID, const SharedBuffer& buffer, const String& c
     Vector<BlobPart> blobParts;
     blobParts.append(BlobPart(WTFMove(data)));
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
+    ThreadableBlobRegistry::registerBlobURL(m_sessionID, m_internalURL, WTFMove(blobParts), contentType);
 }
 
 Blob::Blob(PAL::SessionID sessionID, Vector<uint8_t>&& data, const String& contentType)
@@ -126,7 +126,7 @@ Blob::Blob(PAL::SessionID sessionID, Vector<uint8_t>&& data, const String& conte
     Vector<BlobPart> blobParts;
     blobParts.append(BlobPart(WTFMove(data)));
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
+    ThreadableBlobRegistry::registerBlobURL(m_sessionID, m_internalURL, WTFMove(blobParts), contentType);
 }
 
 Blob::Blob(ReferencingExistingBlobConstructor, const Blob& blob)
@@ -135,7 +135,7 @@ Blob::Blob(ReferencingExistingBlobConstructor, const Blob& blob)
     , m_type(blob.type())
     , m_size(blob.size())
 {
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
+    ThreadableBlobRegistry::registerBlobURL(m_sessionID, m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
 Blob::Blob(DeserializationContructor, PAL::SessionID sessionID, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath)
@@ -145,9 +145,9 @@ Blob::Blob(DeserializationContructor, PAL::SessionID sessionID, const URL& srcUR
 {
     m_internalURL = BlobURL::createInternalURL();
     if (fileBackedPath.isEmpty())
-        ThreadableBlobRegistry::registerBlobURL(nullptr, m_internalURL, srcURL);
+        ThreadableBlobRegistry::registerBlobURL(m_sessionID, nullptr, m_internalURL, srcURL);
     else
-        ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
+        ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_sessionID, m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
 Blob::Blob(PAL::SessionID sessionID, const URL& srcURL, long long start, long long end, const String& type)
@@ -156,12 +156,12 @@ Blob::Blob(PAL::SessionID sessionID, const URL& srcURL, long long start, long lo
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
+    ThreadableBlobRegistry::registerBlobURLForSlice(m_sessionID, m_internalURL, srcURL, start, end);
 }
 
 Blob::~Blob()
 {
-    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
+    ThreadableBlobRegistry::unregisterBlobURL(m_sessionID, m_internalURL);
 }
 
 unsigned long long Blob::size() const

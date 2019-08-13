@@ -29,7 +29,6 @@
 #include "CacheModel.h"
 #include "DownloadManager.h"
 #include "LocalStorageDatabaseTracker.h"
-#include "NetworkBlobRegistry.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
@@ -327,7 +326,7 @@ public:
     void removeCacheEngine(const PAL::SessionID&);
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
 
-    NetworkBlobRegistry& networkBlobRegistry() override { return m_networkBlobRegistry; }
+    WebCore::BlobRegistryImpl* blobRegistry(NetworkConnectionToWebProcess&);
 
     void storeAdClickAttribution(PAL::SessionID, WebCore::AdClickAttribution&&);
     void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(String)>&&);
@@ -498,7 +497,6 @@ private:
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
-    NetworkBlobRegistry m_networkBlobRegistry;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

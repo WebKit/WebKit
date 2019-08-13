@@ -41,14 +41,14 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetRawCookies(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier> pageID) -> (Vector<WebCore::Cookie> cookies) Synchronous
     DeleteCookie(PAL::SessionID sessionID, URL url, String cookieName)
 
-    RegisterFileBlobURL(URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
-    RegisterBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
-    RegisterBlobURLFromURL(URL url, URL srcURL, bool shouldBypassConnectionCheck)
-    RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
-    RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end)
-    UnregisterBlobURL(URL url)
+    RegisterFileBlobURL(PAL::SessionID sessionID, URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterBlobURL(PAL::SessionID sessionID, URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
+    RegisterBlobURLFromURL(PAL::SessionID sessionID, URL url, URL srcURL)
+    RegisterBlobURLOptionallyFileBacked(PAL::SessionID sessionID, URL url, URL srcURL, String fileBackedPath, String contentType)
+    RegisterBlobURLForSlice(PAL::SessionID sessionID, URL url, URL srcURL, int64_t start, int64_t end)
+    UnregisterBlobURL(PAL::SessionID sessionID, URL url)
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
-    WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
+    WriteBlobsToTemporaryFiles(PAL::SessionID sessionID, Vector<String> blobURLs) -> (Vector<String> fileNames) Async
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 

@@ -26,8 +26,9 @@
 
 #include "config.h"
 #include "PublicURLManager.h"
-#include <wtf/URL.h>
+
 #include "URLRegistry.h"
+#include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

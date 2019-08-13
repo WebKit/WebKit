@@ -65,7 +65,7 @@ public:
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
 
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
+    void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
 #if ENABLE(INDEXED_DATABASE)
     WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) const { return m_webIDBConnectionsByIdentifier.get(identifier); };

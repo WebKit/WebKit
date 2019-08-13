@@ -48,7 +48,7 @@ namespace WebCore {
 FetchLoader::~FetchLoader()
 {
     if (!m_urlForReading.isEmpty())
-        ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
+        ThreadableBlobRegistry::unregisterBlobURL(*m_sessionID, m_urlForReading);
 }
 
 void FetchLoader::start(ScriptExecutionContext& context, const Blob& blob)
@@ -64,7 +64,8 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
         return;
     }
 
-    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), m_urlForReading, blobURL);
+    m_sessionID = context.sessionID();
+    ThreadableBlobRegistry::registerBlobURL(*m_sessionID, context.securityOrigin(), m_urlForReading, blobURL);
 
     ResourceRequest request(m_urlForReading);
     request.setInitiatorIdentifier(context.resourceRequestIdentifier());
