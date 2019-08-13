@@ -5754,6 +5754,16 @@
          "zhenyao"
       ]
    },
+   "Zhifei Fang" : {
+     "emails" : [
+         "zhifei_fang@apple.com"
+     ],
+     "nicks" : [
+         "zhifei_fang",
+         "z.f"
+     ],
+     "status" : "committer"
+   },
    "Zoltan Arvai" : {
       "emails" : [
          "zarvai@inf.u-szeged.hu"

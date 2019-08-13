@@ -1,3 +1,11 @@
+2019-08-13  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Update my status in contributors.json to committer.
+
+        Reviewed by Unreviewed
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-08-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Adds WebAuthn and AppSSO into watchlist
