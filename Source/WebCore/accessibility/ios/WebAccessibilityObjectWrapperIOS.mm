@@ -603,7 +603,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     return AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
         return object.roleValue() == AccessibilityRole::Cell;
-    });
+    }) != nullptr;
 }
 
 - (AccessibilityObjectWrapper*)_accessibilityFieldsetAncestor
