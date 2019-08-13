@@ -1,5 +1,18 @@
 2019-08-13  Chris Dumez  <cdumez@apple.com>
 
+        Fix potential thread safety issue under WebResourceLoadStatisticsStore::hasHadUserInteraction()
+        https://bugs.webkit.org/show_bug.cgi?id=200688
+
+        Reviewed by Alex Christensen.
+
+        Fix potential thread safety issue under WebResourceLoadStatisticsStore::hasHadUserInteraction().
+        It passes a RegistrableDomain to another thread without isolated copying it.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+
+2019-08-13  Chris Dumez  <cdumez@apple.com>
+
         Fix potential thread safety issue under StorageManager::getSessionStorageOrigins()
         https://bugs.webkit.org/show_bug.cgi?id=200684
 

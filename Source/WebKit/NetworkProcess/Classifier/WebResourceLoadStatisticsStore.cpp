@@ -600,7 +600,7 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(const RegistrableDoma
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, domain, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, domain = domain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool hadUserInteraction = m_statisticsStore ? m_statisticsStore->hasHadUserInteraction(domain, OperatingDatesWindow::Long) : false;
         postTaskReply([hadUserInteraction, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(hadUserInteraction);
