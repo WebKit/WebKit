@@ -1,3 +1,24 @@
+2019-08-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Make sure UniqueIDBDatabaseConnection unregister itself from IDBServer
+        https://bugs.webkit.org/show_bug.cgi?id=200650
+        <rdar://problem/54236010>
+
+        Reviewed by Youenn Fablet.
+
+        We register UniqueIDBDatabaseConnection unconditionally to IDBServer but fail to unregister if UniqueIDBDatabase
+        of UniqueIDBDatabaseConnection is gone.
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::server):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
 2019-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Introduce TableGrid
