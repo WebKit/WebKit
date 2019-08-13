@@ -31,6 +31,7 @@
 #include <memory>
 #include <windows.h>
 #include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {
