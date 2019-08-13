@@ -367,8 +367,7 @@ void ContentChangeObserver::renderTreeUpdateDidFinish()
 void ContentChangeObserver::stopObservingPendingActivities()
 {
     setShouldObserveNextStyleRecalc(false);
-    setShouldObserveDOMTimerScheduling(false);
-    setShouldObserveTransitions(false);
+    setShouldObserveDOMTimerSchedulingAndTransitions(false);
     clearObservedDOMTimers();
     clearObservedTransitions();
 }
@@ -490,8 +489,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         clearObservedTransitions();
         setIsBetweenTouchEndAndMouseMoved(false);
         setShouldObserveNextStyleRecalc(false);
-        setShouldObserveDOMTimerScheduling(false);
-        setShouldObserveTransitions(false);
+        setShouldObserveDOMTimerSchedulingAndTransitions(false);
         ASSERT(!m_isInObservedStyleRecalc);
         ASSERT(!m_observedDomTimerIsBeingExecuted);
     };
@@ -524,13 +522,11 @@ void ContentChangeObserver::adjustObservedState(Event event)
     {
         if (event == Event::StartedTouchStartEventDispatching) {
             resetToStartObserving();
-            setShouldObserveDOMTimerScheduling(true);
-            setShouldObserveTransitions(true);
+            setShouldObserveDOMTimerSchedulingAndTransitions(true);
             return;
         }
         if (event == Event::EndedTouchStartEventDispatching) {
-            setShouldObserveDOMTimerScheduling(false);
-            setShouldObserveTransitions(false);
+            setShouldObserveDOMTimerSchedulingAndTransitions(false);
             setIsBetweenTouchEndAndMouseMoved(true);
             return;
         }
@@ -539,13 +535,11 @@ void ContentChangeObserver::adjustObservedState(Event event)
             if (!isBetweenTouchEndAndMouseMoved())
                 resetToStartObserving();
             setIsBetweenTouchEndAndMouseMoved(false);
-            setShouldObserveDOMTimerScheduling(!hasVisibleChangeState());
-            setShouldObserveTransitions(!hasVisibleChangeState());
+            setShouldObserveDOMTimerSchedulingAndTransitions(!hasVisibleChangeState());
             return;
         }
         if (event == Event::EndedMouseMovedEventDispatching) {
-            setShouldObserveDOMTimerScheduling(false);
-            setShouldObserveTransitions(false);
+            setShouldObserveDOMTimerSchedulingAndTransitions(false);
             return;
         }
     }

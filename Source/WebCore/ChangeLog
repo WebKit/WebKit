@@ -1,5 +1,25 @@
 2019-08-13  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] setShouldObserveDOMTimerScheduling and setShouldObserveTransitions are always called in pairs.
+        https://bugs.webkit.org/show_bug.cgi?id=200685
+        <rdar://problem/54269778>
+
+        Reviewed by Simon Fraser.
+
+        Let's merge these 2 functions.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::stopObservingPendingActivities):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isObservingDOMTimerScheduling const):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+        (WebCore::ContentChangeObserver::setShouldObserveDOMTimerSchedulingAndTransitions):
+        (WebCore::ContentChangeObserver::setShouldObserveDOMTimerScheduling): Deleted.
+        (WebCore::ContentChangeObserver::setShouldObserveTransitions): Deleted.
+
+2019-08-13  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Scope events in adjustObservedState
         https://bugs.webkit.org/show_bug.cgi?id=200679
         <rdar://problem/54266172>

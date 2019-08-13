@@ -137,9 +137,8 @@ private:
 
     void contentVisibilityDidChange();
 
-    void setShouldObserveDOMTimerScheduling(bool observe) { m_isObservingDOMTimerScheduling = observe; }
+    void setShouldObserveDOMTimerSchedulingAndTransitions(bool);
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
-    void setShouldObserveTransitions(bool observe) { m_isObservingTransitions = observe; }
     bool isObservingTransitions() const { return m_isObservingTransitions; }
     bool isObservedPropertyForTransition(CSSPropertyID propertyId) const { return propertyId == CSSPropertyLeft || propertyId == CSSPropertyOpacity; }
     void domTimerExecuteDidStart(const DOMTimer&);
@@ -231,7 +230,13 @@ inline bool ContentChangeObserver::isObservingContentChanges() const
         || m_observedDomTimerIsBeingExecuted
         || m_isInObservedStyleRecalc
         || m_contentObservationTimer.isActive();
-    }
 }
 
+inline void ContentChangeObserver::setShouldObserveDOMTimerSchedulingAndTransitions(bool observe)
+{
+    m_isObservingDOMTimerScheduling = observe;
+    m_isObservingTransitions = observe;
+}
+
+}
 #endif
