@@ -1,0 +1,101 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 2408.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 2408.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=2408)
+      )
+      (children 6
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 350.00 350.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+            (touch-action
+              (none              
+                (rect (150,150) width=50 height=50)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 408.00)
+          (bounds 350.00 350.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+            (touch-action
+              (none              
+                (rect (150,150) width=50 height=50)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 808.00)
+          (bounds 350.00 350.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+            (touch-action
+              (none              
+                (rect (150,150) width=50 height=50)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 1208.00)
+          (bounds 350.00 350.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=150)
+            (rect (0,150) width=350 height=50)
+            (rect (150,200) width=200 height=150)
+            (touch-action
+              (none              
+                (rect (150,150) width=50 height=50)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 1608.00)
+          (bounds 350.00 350.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=150)
+            (rect (0,150) width=350 height=50)
+            (rect (150,200) width=200 height=150)
+            (touch-action
+              (none              
+                (rect (150,150) width=50 height=50)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 2008.00)
+          (bounds 200.00 200.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=150)
+            (rect (0,150) width=350 height=50)
+            (rect (150,200) width=200 height=150)
+            (touch-action
+              (none              
+                (rect (150,150) width=50 height=50)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
