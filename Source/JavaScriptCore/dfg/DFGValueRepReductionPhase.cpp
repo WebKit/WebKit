@@ -143,9 +143,9 @@ private:
                         return;
                     dataLogLn(description);
                     dataLog("   candidate: ");
-                    m_graph.dump(WTF::dataFile(), "", candidate);
+                    m_graph.dump(WTF::dataFile(), Prefix::noString, candidate);
                     dataLog("   reason: ");
-                    m_graph.dump(WTF::dataFile(), "", node);
+                    m_graph.dump(WTF::dataFile(), Prefix::noString, node);
                     dataLogLn();
                 };
 

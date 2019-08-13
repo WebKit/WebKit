@@ -53,6 +53,8 @@ public:
     
     // Each phase must have a run() method.
     
+    Prefix prefix;
+
 protected:
     // Things you need to have a DFG compiler phase.
     Graph& m_graph;
@@ -82,7 +84,7 @@ bool runAndLog(PhaseType& phase)
     bool result = phase.run();
 
     if (result && logCompilationChanges(phase.graph().m_plan.mode()))
-        dataLogF("Phase %s changed the IR.\n", phase.name());
+        dataLogLn(phase.graph().prefix(), "Phase ", phase.name(), " changed the IR.\n");
     return result;
 }
 

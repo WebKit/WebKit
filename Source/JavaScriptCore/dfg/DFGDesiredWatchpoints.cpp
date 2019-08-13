@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "ArrayBufferNeuteringWatchpointSet.h"
 #include "CodeBlock.h"
+#include "DFGGraph.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
@@ -139,13 +140,15 @@ bool DesiredWatchpoints::areStillValid() const
 
 void DesiredWatchpoints::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print("Desired watchpoints:\n");
-    out.print("    Watchpoint sets: ", inContext(m_sets, context), "\n");
-    out.print("    Inline watchpoint sets: ", inContext(m_inlineSets, context), "\n");
-    out.print("    SymbolTables: ", inContext(m_symbolTables, context), "\n");
-    out.print("    FunctionExecutables: ", inContext(m_functionExecutables, context), "\n");
-    out.print("    Buffer views: ", inContext(m_bufferViews, context), "\n");
-    out.print("    Object property conditions: ", inContext(m_adaptiveStructureSets, context), "\n");
+    Prefix noPrefix(Prefix::NoHeader);
+    Prefix& prefix = context && context->graph ? context->graph->prefix() : noPrefix;
+    out.print(prefix, "Desired watchpoints:\n");
+    out.print(prefix, "    Watchpoint sets: ", inContext(m_sets, context), "\n");
+    out.print(prefix, "    Inline watchpoint sets: ", inContext(m_inlineSets, context), "\n");
+    out.print(prefix, "    SymbolTables: ", inContext(m_symbolTables, context), "\n");
+    out.print(prefix, "    FunctionExecutables: ", inContext(m_functionExecutables, context), "\n");
+    out.print(prefix, "    Buffer views: ", inContext(m_bufferViews, context), "\n");
+    out.print(prefix, "    Object property conditions: ", inContext(m_adaptiveStructureSets, context), "\n");
 }
 
 } } // namespace JSC::DFG

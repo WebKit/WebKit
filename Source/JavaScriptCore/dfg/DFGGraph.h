@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,6 +119,40 @@ enum AddSpeculationMode {
     SpeculateInt32
 };
 
+struct Prefix {
+    enum NoHeaderTag { NoHeader };
+
+    Prefix() { }
+
+    Prefix(const char* prefixStr, NoHeaderTag tag = NoHeader)
+        : prefixStr(prefixStr)
+        , noHeader(tag == NoHeader)
+    { }
+
+    Prefix(NoHeaderTag)
+        : noHeader(true)
+    { }
+
+    void dump(PrintStream& out) const;
+
+    void clearBlockIndex() { blockIndex = -1; }
+    void clearNodeIndex() { nodeIndex = -1; }
+
+    void enable() { m_enabled = true; }
+    void disable() { m_enabled = false; }
+
+    int32_t phaseNumber { -1 };
+    int32_t blockIndex { -1 };
+    int32_t nodeIndex { -1 };
+    const char* prefixStr { nullptr };
+    bool noHeader { false };
+
+    static constexpr const char* noString = nullptr;
+
+private:
+    bool m_enabled { true };
+};
+
 //
 // === Graph ===
 //
@@ -222,7 +256,7 @@ public:
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(PrintStream& = WTF::dataFile(), DumpContext* = 0);
-    
+
     bool terminalsAreValid();
     
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
@@ -969,6 +1003,9 @@ public:
         return result;
     }
 
+    Prefix& prefix() { return m_prefix; }
+    void nextPhase() { m_prefix.phaseNumber++; }
+
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;
@@ -1119,6 +1156,7 @@ private:
 
     B3::SparseCollection<Node> m_nodes;
     SegmentedVector<RegisteredStructureSet, 16> m_structureSets;
+    Prefix m_prefix;
 };
 
 } } // namespace JSC::DFG

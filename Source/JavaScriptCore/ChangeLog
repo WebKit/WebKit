@@ -1,3 +1,84 @@
+2019-08-13  Mark Lam  <mark.lam@apple.com>
+
+        Add phase, block, and node numbers to left margin of DFG graph dumps.
+        https://bugs.webkit.org/show_bug.cgi?id=200693
+
+        Reviewed by Saam Barati.
+
+        When scrolling through the DFG graph dumps, it's easy to get lost as to which phase
+        or block one is looking at, especially if the blocks are long.  This patch adds
+        node index, block number, and phase number on the left margin of the dumps.
+        Here's a sample:
+
+               53:     %Bd:Function                   = 0x1079fd960:[Function, {}, NonArray, Proto:0x1079d8000, Leaf]
+               53:     %Bf:Function                   = 0x1079b0700:[Function, {name:100, prototype:101, length:102, stackTraceLimit:103}, NonArray, Proto:0x1079d8000, Leaf]
+               53:     %Bj:Function                   = 0x1079fd5e0:[Function, {name:100, length:101, toString:102, apply:103, call:104, bind:105, Symbol.hasInstance:106, caller:107, arguments:108, constructor:109}, NonArray, Proto:0x1079c0000, Leaf]
+               53:     %CV:JSGlobalLexicalEnvironment = 0x1079fd6c0:[JSGlobalLexicalEnvironment, {}, NonArray, Leaf]
+
+               53: Phase liveness analysis changed the IR.
+
+               54: Beginning DFG phase OSR availability analysis.
+               54: Before OSR availability analysis:
+
+               54: DFG for foo#DXMNag:[0x1079a4850->0x1079a4130->0x1079c7600, DFGFunctionCall, 204 (NeverInline)]:
+               54:   Fixpoint state: FixpointConverged; Form: SSA; Unification state: GloballyUnified; Ref count state: ExactRefCount
+               54:   Argument formats for entrypoint index: 0 : FlushedJSValue, FlushedCell, FlushedJSValue
+
+             0 54: Block #0 (bc#0): (OSR target)
+             0 54:   Execution count: 1.000000
+             0 54:   Predecessors:
+             0 54:   Successors:
+             0 54:   Dominated by: #0
+             0 54:   Dominates: #0
+             0 54:   Dominance Frontier: 
+             0 54:   Iterated Dominance Frontier: 
+             0 54:   Backwards dominates by: #root #0
+             0 54:   Backwards dominates: #0
+             0 54:   Control equivalent to: #0
+             0 54:   States: StructuresAreWatched
+             0 54:   Live:
+             0 54:   Values 
+          0  0 54:   53:< 1:-> JSConstant(JS|UseAsOther, Other, Null, bc#0, ExitValid)
+          1  0 54:   64:< 2:-> JSConstant(JS|UseAsOther, NonBoolInt32, Int32: 10, bc#0, ExitValid)
+          2  0 54:    3:< 5:-> JSConstant(JS|PureInt, Other, Undefined, bc#0, ExitValid)
+          3  0 54:   32:< 1:-> JSConstant(JS|UseAsOther, Bool, False, bc#0, ExitValid)
+          4  0 54:   19:< 2:-> JSConstant(JS|UseAsOther, OtherObj, Weak:Object: 0x1079d4000 with butterfly 0x0 (Structure %CV:JSGlobalLexicalEnvironment), StructureID: 31423, bc#0, ExitValid)
+
+        The numbers in the left margin before the ':' are node index (i.e. the index of the
+        node in the block, not to be confused with node->index() which is the node ID), block
+        number, and phase number respectively.  Now, we can scroll thru the dumps quickly
+        and tell at a glance when we've scrolled passed the end of a phase, or block.
+        These sets of numbers can also serve as a positional marker that we can search for
+        to return to a node in the dump after scrolling away.
+
+        Currently, these numbers are only added to the DFG part.  The FTL (from lowering
+        to B3 onwards) does not have this feature yet.
+
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::DesiredWatchpoints::dumpInContext const):
+        * dfg/DFGDesiredWatchpoints.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Prefix::dump const):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Prefix::Prefix):
+        (JSC::DFG::Prefix::clearBlockIndex):
+        (JSC::DFG::Prefix::clearNodeIndex):
+        (JSC::DFG::Prefix::enable):
+        (JSC::DFG::Prefix::disable):
+        (JSC::DFG::Graph::prefix):
+        (JSC::DFG::Graph::nextPhase):
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::beginPhase):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGValueRepReductionPhase.cpp:
+        (JSC::DFG::ValueRepReductionPhase::convertValueRepsToDouble):
+
 2019-08-13  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r248533): JSC Command - Need to initializeMainThread() before processing config file

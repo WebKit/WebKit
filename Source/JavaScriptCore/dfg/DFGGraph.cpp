@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,8 +109,11 @@ static void printWhiteSpace(PrintStream& out, unsigned amount)
         out.print(" ");
 }
 
-bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node*& previousNodeRef, Node* currentNode, DumpContext* context)
+bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefixStr, Node*& previousNodeRef, Node* currentNode, DumpContext* context)
 {
+    Prefix myPrefix(prefixStr);
+    Prefix& prefix = prefixStr ? myPrefix : m_prefix;
+
     if (!currentNode->origin.semantic)
         return false;
     
@@ -165,8 +168,11 @@ void Graph::printNodeWhiteSpace(PrintStream& out, Node* node)
     printWhiteSpace(out, amountOfNodeWhiteSpace(node));
 }
 
-void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* context)
+void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContext* context)
 {
+    Prefix myPrefix(prefixStr);
+    Prefix& prefix = prefixStr ? myPrefix : m_prefix;
+
     NodeType op = node->op();
 
     unsigned refCount = node->refCount();
@@ -423,8 +429,11 @@ bool Graph::terminalsAreValid()
 static BasicBlock* unboxLoopNode(const CPSCFG::Node& node) { return node.node(); }
 static BasicBlock* unboxLoopNode(BasicBlock* block) { return block; }
 
-void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
+void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
 {
+    Prefix myPrefix(prefixStr);
+    Prefix& prefix = prefixStr ? myPrefix : m_prefix;
+
     out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "):",
         block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "", block->isCatchEntrypoint ? " (Catch Entrypoint)" : "", "\n");
     if (block->executionCount == block->executionCount)
@@ -519,21 +528,22 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
 
 void Graph::dump(PrintStream& out, DumpContext* context)
 {
+    Prefix& prefix = m_prefix;
     DumpContext myContext;
     myContext.graph = this;
     if (!context)
         context = &myContext;
     
     out.print("\n");
-    out.print("DFG for ", CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT), ":\n");
-    out.print("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
+    out.print(prefix, "DFG for ", CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT), ":\n");
+    out.print(prefix, "  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
     if (m_form == SSA) {
         for (unsigned entrypointIndex = 0; entrypointIndex < m_argumentFormats.size(); ++entrypointIndex)
-            out.print("  Argument formats for entrypoint index: ", entrypointIndex, " : ", listDump(m_argumentFormats[entrypointIndex]), "\n");
+            out.print(prefix, "  Argument formats for entrypoint index: ", entrypointIndex, " : ", listDump(m_argumentFormats[entrypointIndex]), "\n");
     }
     else {
         for (auto pair : m_rootToArguments)
-            out.print("  Arguments for block#", pair.key->index, ": ", listDump(pair.value), "\n");
+            out.print(prefix, "  Arguments for block#", pair.key->index, ": ", listDump(pair.value), "\n");
     }
     out.print("\n");
     
@@ -542,8 +552,9 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         BasicBlock* block = m_blocks[b].get();
         if (!block)
             continue;
-        dumpBlockHeader(out, "", block, DumpAllPhis, context);
-        out.print("  States: ", block->cfaStructureClobberStateAtHead);
+        prefix.blockIndex = block->index;
+        dumpBlockHeader(out, Prefix::noString, block, DumpAllPhis, context);
+        out.print(prefix, "  States: ", block->cfaStructureClobberStateAtHead);
         if (!block->cfaHasVisited)
             out.print(", CurrentlyCFAUnreachable");
         if (!block->intersectionOfCFAHasVisited)
@@ -552,72 +563,78 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         switch (m_form) {
         case LoadStore:
         case ThreadedCPS: {
-            out.print("  Vars Before: ");
+            out.print(prefix, "  Vars Before: ");
             if (block->cfaHasVisited)
                 out.print(inContext(block->valuesAtHead, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  Intersected Vars Before: ");
+            out.print(prefix, "  Intersected Vars Before: ");
             if (block->intersectionOfCFAHasVisited)
                 out.print(inContext(block->intersectionOfPastValuesAtHead, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  Var Links: ", block->variablesAtHead, "\n");
+            out.print(prefix, "  Var Links: ", block->variablesAtHead, "\n");
             break;
         }
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
             if (dumpOSRAvailabilityData)
-                out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
-            out.print("  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
-            out.print("  Values: ", nodeValuePairListDump(block->ssa->valuesAtHead, context), "\n");
+                out.print(prefix, "  Availability: ", block->ssa->availabilityAtHead, "\n");
+            out.print(prefix, "  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
+            out.print(prefix, "  Values: ", nodeValuePairListDump(block->ssa->valuesAtHead, context), "\n");
             break;
         } }
         for (size_t i = 0; i < block->size(); ++i) {
-            dumpCodeOrigin(out, "", lastNode, block->at(i), context);
-            dump(out, "", block->at(i), context);
+            prefix.clearNodeIndex();
+            dumpCodeOrigin(out, Prefix::noString, lastNode, block->at(i), context);
+            prefix.nodeIndex = i;
+            dump(out, Prefix::noString, block->at(i), context);
         }
-        out.print("  States: ", block->cfaBranchDirection, ", ", block->cfaStructureClobberStateAtTail);
+        prefix.clearNodeIndex();
+        out.print(prefix, "  States: ", block->cfaBranchDirection, ", ", block->cfaStructureClobberStateAtTail);
         if (!block->cfaDidFinish)
             out.print(", CFAInvalidated");
         out.print("\n");
         switch (m_form) {
         case LoadStore:
         case ThreadedCPS: {
-            out.print("  Vars After: ");
+            out.print(prefix, "  Vars After: ");
             if (block->cfaHasVisited)
                 out.print(inContext(block->valuesAtTail, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  Var Links: ", block->variablesAtTail, "\n");
+            out.print(prefix, "  Var Links: ", block->variablesAtTail, "\n");
             break;
         }
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
             if (dumpOSRAvailabilityData)
-                out.print("  Availability: ", block->ssa->availabilityAtTail, "\n");
-            out.print("  Live: ", nodeListDump(block->ssa->liveAtTail), "\n");
-            out.print("  Values: ", nodeValuePairListDump(block->ssa->valuesAtTail, context), "\n");
+                out.print(prefix, "  Availability: ", block->ssa->availabilityAtTail, "\n");
+            out.print(prefix, "  Live: ", nodeListDump(block->ssa->liveAtTail), "\n");
+            out.print(prefix, "  Values: ", nodeValuePairListDump(block->ssa->valuesAtTail, context), "\n");
             break;
         } }
         out.print("\n");
     }
-    
-    out.print("GC Values:\n");
+    prefix.clearBlockIndex();
+
+    out.print(prefix, "GC Values:\n");
     for (FrozenValue* value : m_frozenValues) {
         if (value->pointsToHeap())
-            out.print("    ", inContext(*value, &myContext), "\n");
+            out.print(prefix, "    ", inContext(*value, &myContext), "\n");
     }
 
     out.print(inContext(watchpoints(), &myContext));
     
     if (!myContext.isEmpty()) {
-        myContext.dump(out);
+        StringPrintStream prefixStr;
+        prefixStr.print(prefix);
+        myContext.dump(out, prefixStr.toCString().data());
         out.print("\n");
     }
 }
@@ -1785,6 +1802,31 @@ void Graph::clearCPSCFGData()
     m_cpsNaturalLoops = nullptr;
     m_cpsDominators = nullptr;
     m_cpsCFG = nullptr;
+}
+
+void Prefix::dump(PrintStream& out) const
+{
+    if (!m_enabled)
+        return;
+
+    if (!noHeader) {
+        if (nodeIndex >= 0)
+            out.printf("%3d ", nodeIndex);
+        else
+            out.printf("    ");
+
+        if (blockIndex >= 0)
+            out.printf("%2d ", blockIndex);
+        else
+            out.printf("   ");
+
+        if (phaseNumber >= 0)
+            out.printf("%2d: ", phaseNumber);
+        else
+            out.printf("  : ");
+    }
+    if (prefixStr)
+        out.printf("%s", prefixStr);
 }
 
 } } // namespace JSC::DFG
