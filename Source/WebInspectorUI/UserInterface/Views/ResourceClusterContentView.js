@@ -342,7 +342,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     _canUseJSONContentViewForContent(content)
     {
-        return content.isJSON((json) => json && (typeof json === "object" || Array.isArray(json)));
+        return typeof content === "string" && content.isJSON((json) => json && (typeof json === "object" || Array.isArray(json)));
     }
 
     _tryEnableCustomRequestContentView()
