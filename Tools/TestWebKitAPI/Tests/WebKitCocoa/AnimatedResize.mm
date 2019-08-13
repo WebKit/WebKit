@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -426,6 +427,34 @@ TEST(WebKit, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
 
     TestWebKitAPI::Util::run(&didEndAnimatedResize);
     TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
+}
+
+TEST(WebKit, CreateWebPageAfterAnimatedResize)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);
+    [webView synchronouslyLoadTestPageNamed:@"large-red-square-image"];
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, 768, 1024)];
+    }];
+
+    __block bool doneWaitingForPresentationUpdate = false;
+    [webView _doAfterNextPresentationUpdate:^{
+        doneWaitingForPresentationUpdate = true;
+    }];
+
+    [webView _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:^{
+        [webView _endAnimatedResize];
+    }];
+
+    TestWebKitAPI::Util::run(&doneWaitingForPresentationUpdate);
+
+    [webView _killWebContentProcessAndResetState];
+    [webView synchronouslyLoadTestPageNamed:@"large-red-square-image"];
+
+    NSArray<NSNumber *> *dimensions = [webView objectByEvaluatingJavaScript:@"[innerWidth, innerHeight]"];
+    EXPECT_EQ(768, dimensions.firstObject.intValue);
+    EXPECT_EQ(1024, dimensions.lastObject.intValue);
 }
 
 #endif
