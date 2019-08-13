@@ -1,5 +1,21 @@
 2019-08-12  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: DOMDebugger: breakpoints are forcibly enabled when resolving DOM breakpoints for newly added nodes
+        https://bugs.webkit.org/show_bug.cgi?id=200639
+
+        Reviewed by Joseph Pecoraro.
+
+        Since DOM breakpoints revolve around a given DOM node, we attempt to restore DOM breakpoints
+        whenever new nodes are added by matching them to the path of the DOM breakpoint. When doing
+        so, we should be in a "temporarily restoring breakpoints" mode so that we don't forcibly
+        enable all breakpoints.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype._speculativelyResolveDOMBreakpointsForURL):
+        (WI.DOMDebuggerManager.prototype._nodeInserted):
+
+2019-08-12  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: add space between media query and style icon
         https://bugs.webkit.org/show_bug.cgi?id=200623
 

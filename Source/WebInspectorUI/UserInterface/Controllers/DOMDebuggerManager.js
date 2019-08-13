@@ -561,8 +561,12 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                     return;
                 }
 
-                if (nodeIdentifier)
-                    this._resolveDOMBreakpoint(breakpoint, nodeIdentifier);
+                if (!nodeIdentifier)
+                    return;
+
+                this._restoringBreakpoints = true;
+                this._resolveDOMBreakpoint(breakpoint, nodeIdentifier);
+                this._restoringBreakpoints = false;
             });
         }
     }
@@ -826,7 +830,9 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             if (breakpoint.path !== node.path())
                 continue;
 
+            this._restoringBreakpoints = true;
             this._resolveDOMBreakpoint(breakpoint, node.id);
+            this._restoringBreakpoints = false;
         }
     }
 
