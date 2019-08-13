@@ -240,7 +240,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeDownload:
         return [UIImage systemImageNamed:@"arrow.down.circle"];
     case _WKElementActionToggleShowLinkPreviews:
-        return [UIImage systemImageNamed:@"safari"];
+        return nil; // Intentionally empty.
     }
 }
 

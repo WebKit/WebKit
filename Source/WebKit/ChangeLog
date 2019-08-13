@@ -1,5 +1,35 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248550. rdar://problem/54237677
+
+    Contextual menu Hide and Show Link Previews should not have a symbol
+    https://bugs.webkit.org/show_bug.cgi?id=200645
+    <rdar://problem/54129647>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Don't use an image on the UIMenuItem.
+    
+    * UIProcess/API/Cocoa/_WKElementAction.mm:
+    (+[_WKElementAction imageForElementActionType:]): Return nil for Show/Hide Link Previews.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248550 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-12  Dean Jackson  <dino@apple.com>
+
+            Contextual menu Hide and Show Link Previews should not have a symbol
+            https://bugs.webkit.org/show_bug.cgi?id=200645
+            <rdar://problem/54129647>
+
+            Reviewed by Wenson Hsieh.
+
+            Don't use an image on the UIMenuItem.
+
+            * UIProcess/API/Cocoa/_WKElementAction.mm:
+            (+[_WKElementAction imageForElementActionType:]): Return nil for Show/Hide Link Previews.
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248541. rdar://problem/54237768
 
     [iPadOS] Web pages sometimes load at half width in Safari
