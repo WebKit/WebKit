@@ -37,10 +37,10 @@ WI.settings.engineeringPauseForInternalScripts.addEventListener(WI.Setting.Event
         WI.settings.engineeringShowInternalScripts.value = true;
 }, WI.settings.engineeringShowInternalScripts);
 
+WI.showDebugUISetting = new WI.Setting("show-debug-ui", false);
+
 // This function is invoked after the inspector has loaded and has a backend target.
 WI.runBootstrapOperations = function() {
-    WI.showDebugUISetting = new WI.Setting("show-debug-ui", false);
-
     // Toggle Debug UI setting.
     new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Option | WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "D", () => {
         WI.showDebugUISetting.value = !WI.showDebugUISetting.value;

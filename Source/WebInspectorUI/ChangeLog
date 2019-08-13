@@ -1,5 +1,24 @@
 2019-08-12  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION(r248391): Web Inspector: changing Layout Direction Debug setting no longer adds dir="ltr" to body element
+        https://bugs.webkit.org/show_bug.cgi?id=200564
+
+        Reviewed by Joseph Pecoraro.
+
+        `WI.resolvedLayoutDirection` was called before `WI.runBootstrapOperations`, which is what
+        instantiates `WI.showDebugUISetting`. Without it, `WI.resolvedLayoutDirection` will ignore
+        the value of `WI.settings.debugLayoutDirection` and instead use the system.
+
+        Moving the instantiation of `WI.showDebugUISetting` outside `WI.runBootstrapOperations`
+        allows the setting to be created when the Bootstrap.js script is loaded, rather than after
+        the `DOMContentLoaded` event is fired. This means that it's guaranteed to exist before any
+        interface/view code runs.
+
+        * UserInterface/Debug/Bootstrap.js:
+        (WI.runBootstrapOperations):
+
+2019-08-12  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: remove WI.DeprecatedRemoteObjectProperty
         https://bugs.webkit.org/show_bug.cgi?id=200549
 
