@@ -30,6 +30,7 @@
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @implementation WKSyntheticTapGestureRecognizer {
     id _gestureIdentifiedTarget;
@@ -39,6 +40,7 @@
     id _resetTarget;
     SEL _resetAction;
     RetainPtr<NSNumber> _lastActiveTouchIdentifier;
+    WeakObjCPtr<UIScrollView> _lastTouchedScrollView;
 }
 
 - (void)setGestureIdentifiedTarget:(id)target action:(SEL)action
@@ -75,6 +77,19 @@
 #if ENABLE(POINTER_EVENTS) 
     _lastActiveTouchIdentifier = nil;
 #endif
+    _lastTouchedScrollView = nil;
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+
+    for (UITouch *touch in touches) {
+        if ([touch.view isKindOfClass:UIScrollView.class]) {
+            _lastTouchedScrollView = (UIScrollView *)touch.view;
+            break;
+        }
+    }
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -94,6 +109,11 @@
         }
     }
 #endif
+}
+
+- (UIScrollView *)lastTouchedScrollView
+{
+    return _lastTouchedScrollView.get().get();
 }
 
 - (NSNumber*)lastActiveTouchIdentifier
