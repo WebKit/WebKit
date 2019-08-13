@@ -34,11 +34,11 @@ layer at (0,0) size 800x152
         RenderText {#text} at (0,0) size 379x18
           text run at (0,0) width 283: "This sentence should also be underlined, as "
           text run at (282,0) width 97: "well as italics, "
-        RenderInline {STRONG} at (0,0) size 138x18
-          RenderText {#text} at (378,0) size 138x18
-            text run at (378,0) width 138: "including this part"
-        RenderText {#text} at (515,0) size 5x18
-          text run at (515,0) width 5: "."
+        RenderInline {STRONG} at (0,0) size 123x18
+          RenderText {#text} at (378,0) size 123x18
+            text run at (378,0) width 123: "including this part"
+        RenderText {#text} at (500,0) size 5x18
+          text run at (500,0) width 5: "."
       RenderBlock {P} at (0,102) size 784x18
         RenderText {#text} at (0,0) size 343x18
           text run at (0,0) width 343: "This sentence should be blue but not underlined, like "

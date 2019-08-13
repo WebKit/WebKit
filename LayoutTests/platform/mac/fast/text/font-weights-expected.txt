@@ -841,17 +841,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 240x18
           text run at (0,0) width 240: "Font: Avenir Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,5201) size 769x18
-        RenderText {#text} at (0,0) size 278x18
-          text run at (0,0) width 278: "Font: Avenir Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 247x18
+          text run at (0,0) width 247: "Font: Avenir Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,5219) size 769x18
-        RenderText {#text} at (0,0) size 278x18
-          text run at (0,0) width 278: "Font: Avenir Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 247x18
+          text run at (0,0) width 247: "Font: Avenir Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,5237) size 769x18
-        RenderText {#text} at (0,0) size 278x18
-          text run at (0,0) width 278: "Font: Avenir Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 247x18
+          text run at (0,0) width 247: "Font: Avenir Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,5255) size 769x18
-        RenderText {#text} at (0,0) size 278x18
-          text run at (0,0) width 278: "Font: Avenir Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 247x18
+          text run at (0,0) width 247: "Font: Avenir Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,5273) size 769x18
         RenderText {#text} at (0,0) size 279x18
           text run at (0,0) width 279: "Font: Avenir-Light Weight: 100 Style: italic"
@@ -868,17 +868,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 279x18
           text run at (0,0) width 279: "Font: Avenir-Light Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,5363) size 769x18
-        RenderText {#text} at (0,0) size 323x18
-          text run at (0,0) width 323: "Font: Avenir-Light Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Light Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,5381) size 769x18
-        RenderText {#text} at (0,0) size 323x18
-          text run at (0,0) width 323: "Font: Avenir-Light Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Light Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,5399) size 769x18
-        RenderText {#text} at (0,0) size 323x18
-          text run at (0,0) width 323: "Font: Avenir-Light Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Light Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,5417) size 769x18
-        RenderText {#text} at (0,0) size 323x18
-          text run at (0,0) width 323: "Font: Avenir-Light Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Light Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,5435) size 769x18
         RenderText {#text} at (0,0) size 278x18
           text run at (0,0) width 278: "Font: Avenir-Book Weight: 100 Style: italic"
@@ -895,17 +895,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 278x18
           text run at (0,0) width 278: "Font: Avenir-Book Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,5525) size 769x18
-        RenderText {#text} at (0,0) size 321x18
-          text run at (0,0) width 321: "Font: Avenir-Book Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Book Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,5543) size 769x18
-        RenderText {#text} at (0,0) size 321x18
-          text run at (0,0) width 321: "Font: Avenir-Book Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Book Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,5561) size 769x18
-        RenderText {#text} at (0,0) size 321x18
-          text run at (0,0) width 321: "Font: Avenir-Book Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Book Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,5579) size 769x18
-        RenderText {#text} at (0,0) size 321x18
-          text run at (0,0) width 321: "Font: Avenir-Book Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "Font: Avenir-Book Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,5597) size 769x18
         RenderText {#text} at (0,0) size 298x18
           text run at (0,0) width 298: "Font: Avenir-Medium Weight: 100 Style: italic"
@@ -922,17 +922,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 298x18
           text run at (0,0) width 298: "Font: Avenir-Medium Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,5687) size 769x18
-        RenderText {#text} at (0,0) size 343x18
-          text run at (0,0) width 343: "Font: Avenir-Medium Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 307x18
+          text run at (0,0) width 307: "Font: Avenir-Medium Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,5705) size 769x18
-        RenderText {#text} at (0,0) size 343x18
-          text run at (0,0) width 343: "Font: Avenir-Medium Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 307x18
+          text run at (0,0) width 307: "Font: Avenir-Medium Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,5723) size 769x18
-        RenderText {#text} at (0,0) size 343x18
-          text run at (0,0) width 343: "Font: Avenir-Medium Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 307x18
+          text run at (0,0) width 307: "Font: Avenir-Medium Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,5741) size 769x18
-        RenderText {#text} at (0,0) size 343x18
-          text run at (0,0) width 343: "Font: Avenir-Medium Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 307x18
+          text run at (0,0) width 307: "Font: Avenir-Medium Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,5759) size 769x18
         RenderText {#text} at (0,0) size 282x18
           text run at (0,0) width 282: "Font: Avenir-Black Weight: 100 Style: italic"
@@ -949,17 +949,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 282x18
           text run at (0,0) width 282: "Font: Avenir-Black Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,5849) size 769x18
-        RenderText {#text} at (0,0) size 326x18
-          text run at (0,0) width 326: "Font: Avenir-Black Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 290x18
+          text run at (0,0) width 290: "Font: Avenir-Black Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,5867) size 769x18
-        RenderText {#text} at (0,0) size 326x18
-          text run at (0,0) width 326: "Font: Avenir-Black Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 290x18
+          text run at (0,0) width 290: "Font: Avenir-Black Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,5885) size 769x18
-        RenderText {#text} at (0,0) size 326x18
-          text run at (0,0) width 326: "Font: Avenir-Black Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 290x18
+          text run at (0,0) width 290: "Font: Avenir-Black Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,5903) size 769x18
-        RenderText {#text} at (0,0) size 326x18
-          text run at (0,0) width 326: "Font: Avenir-Black Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 290x18
+          text run at (0,0) width 290: "Font: Avenir-Black Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,5921) size 769x18
         RenderText {#text} at (0,0) size 286x18
           text run at (0,0) width 286: "Font: Avenir-Heavy Weight: 100 Style: italic"
@@ -976,17 +976,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 286x18
           text run at (0,0) width 286: "Font: Avenir-Heavy Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6011) size 769x18
-        RenderText {#text} at (0,0) size 330x18
-          text run at (0,0) width 330: "Font: Avenir-Heavy Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 294x18
+          text run at (0,0) width 294: "Font: Avenir-Heavy Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,6029) size 769x18
-        RenderText {#text} at (0,0) size 330x18
-          text run at (0,0) width 330: "Font: Avenir-Heavy Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 294x18
+          text run at (0,0) width 294: "Font: Avenir-Heavy Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,6047) size 769x18
-        RenderText {#text} at (0,0) size 330x18
-          text run at (0,0) width 330: "Font: Avenir-Heavy Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 294x18
+          text run at (0,0) width 294: "Font: Avenir-Heavy Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,6065) size 769x18
-        RenderText {#text} at (0,0) size 330x18
-          text run at (0,0) width 330: "Font: Avenir-Heavy Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 294x18
+          text run at (0,0) width 294: "Font: Avenir-Heavy Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6083) size 769x18
         RenderText {#text} at (0,0) size 331x18
           text run at (0,0) width 331: "Font: Avenir-LightOblique Weight: 100 Style: italic"
@@ -1003,17 +1003,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 331x18
           text run at (0,0) width 331: "Font: Avenir-LightOblique Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6173) size 769x18
-        RenderText {#text} at (0,0) size 382x18
-          text run at (0,0) width 382: "Font: Avenir-LightOblique Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 340x18
+          text run at (0,0) width 340: "Font: Avenir-LightOblique Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,6191) size 769x18
-        RenderText {#text} at (0,0) size 382x18
-          text run at (0,0) width 382: "Font: Avenir-LightOblique Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 340x18
+          text run at (0,0) width 340: "Font: Avenir-LightOblique Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,6209) size 769x18
-        RenderText {#text} at (0,0) size 382x18
-          text run at (0,0) width 382: "Font: Avenir-LightOblique Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 340x18
+          text run at (0,0) width 340: "Font: Avenir-LightOblique Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,6227) size 769x18
-        RenderText {#text} at (0,0) size 382x18
-          text run at (0,0) width 382: "Font: Avenir-LightOblique Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 340x18
+          text run at (0,0) width 340: "Font: Avenir-LightOblique Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6245) size 769x18
         RenderText {#text} at (0,0) size 330x18
           text run at (0,0) width 330: "Font: Avenir-BookOblique Weight: 100 Style: italic"
@@ -1030,17 +1030,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 330x18
           text run at (0,0) width 330: "Font: Avenir-BookOblique Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6335) size 769x18
-        RenderText {#text} at (0,0) size 380x18
-          text run at (0,0) width 380: "Font: Avenir-BookOblique Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 339x18
+          text run at (0,0) width 339: "Font: Avenir-BookOblique Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,6353) size 769x18
-        RenderText {#text} at (0,0) size 380x18
-          text run at (0,0) width 380: "Font: Avenir-BookOblique Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 339x18
+          text run at (0,0) width 339: "Font: Avenir-BookOblique Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,6371) size 769x18
-        RenderText {#text} at (0,0) size 380x18
-          text run at (0,0) width 380: "Font: Avenir-BookOblique Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 339x18
+          text run at (0,0) width 339: "Font: Avenir-BookOblique Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,6389) size 769x18
-        RenderText {#text} at (0,0) size 380x18
-          text run at (0,0) width 380: "Font: Avenir-BookOblique Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 339x18
+          text run at (0,0) width 339: "Font: Avenir-BookOblique Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6407) size 769x18
         RenderText {#text} at (0,0) size 349x18
           text run at (0,0) width 349: "Font: Avenir-MediumOblique Weight: 100 Style: italic"
@@ -1057,17 +1057,17 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 349x18
           text run at (0,0) width 349: "Font: Avenir-MediumOblique Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6497) size 769x18
-        RenderText {#text} at (0,0) size 401x18
-          text run at (0,0) width 401: "Font: Avenir-MediumOblique Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 359x18
+          text run at (0,0) width 359: "Font: Avenir-MediumOblique Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,6515) size 769x18
-        RenderText {#text} at (0,0) size 401x18
-          text run at (0,0) width 401: "Font: Avenir-MediumOblique Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 359x18
+          text run at (0,0) width 359: "Font: Avenir-MediumOblique Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,6533) size 769x18
-        RenderText {#text} at (0,0) size 401x18
-          text run at (0,0) width 401: "Font: Avenir-MediumOblique Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 359x18
+          text run at (0,0) width 359: "Font: Avenir-MediumOblique Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,6551) size 769x18
-        RenderText {#text} at (0,0) size 401x18
-          text run at (0,0) width 401: "Font: Avenir-MediumOblique Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 359x18
+          text run at (0,0) width 359: "Font: Avenir-MediumOblique Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6569) size 769x18
         RenderText {#text} at (0,0) size 333x18
           text run at (0,0) width 333: "Font: Avenir-BlackOblique Weight: 100 Style: italic"
@@ -1084,14 +1084,14 @@ layer at (0,0) size 785x6747
         RenderText {#text} at (0,0) size 333x18
           text run at (0,0) width 333: "Font: Avenir-BlackOblique Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6659) size 769x18
-        RenderText {#text} at (0,0) size 384x18
-          text run at (0,0) width 384: "Font: Avenir-BlackOblique Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 343x18
+          text run at (0,0) width 343: "Font: Avenir-BlackOblique Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,6677) size 769x18
-        RenderText {#text} at (0,0) size 384x18
-          text run at (0,0) width 384: "Font: Avenir-BlackOblique Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 343x18
+          text run at (0,0) width 343: "Font: Avenir-BlackOblique Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,6695) size 769x18
-        RenderText {#text} at (0,0) size 384x18
-          text run at (0,0) width 384: "Font: Avenir-BlackOblique Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 343x18
+          text run at (0,0) width 343: "Font: Avenir-BlackOblique Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,6713) size 769x18
-        RenderText {#text} at (0,0) size 384x18
-          text run at (0,0) width 384: "Font: Avenir-BlackOblique Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 343x18
+          text run at (0,0) width 343: "Font: Avenir-BlackOblique Weight: 900 Style: italic"

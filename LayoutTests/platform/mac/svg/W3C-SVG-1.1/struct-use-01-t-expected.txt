@@ -74,10 +74,10 @@ layer at (0,0) size 480x360
           RenderSVGPath {path} at (150,205) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M 0 0 L 20 0 L 20 20 L 0 20 Z"]
         RenderSVGContainer {use} at (150,235) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
           RenderSVGImage {image} at (150,235) size 20x20
-        RenderSVGContainer {use} at (150,262) size 48x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
-          RenderSVGText {text} at (0,-23) size 48x30 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 48x29
-              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 47.04: "Text"
+        RenderSVGContainer {use} at (150,262) size 46x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
+          RenderSVGText {text} at (0,-23) size 46x30 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 46x29
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 45.81: "Text"
         RenderSVGContainer {use} at (330,25) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,0.00)}]
           RenderSVGContainer {g} at (330,25) size 20x20
             RenderSVGRect {rect} at (330,25) size 10x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=10.00] [height=20.00]

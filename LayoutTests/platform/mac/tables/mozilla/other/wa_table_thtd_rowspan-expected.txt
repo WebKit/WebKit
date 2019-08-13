@@ -136,11 +136,11 @@ layer at (0,0) size 785x2358
                     text run at (105,11) width 316: "table with header cells spanning multiple rows"
                 RenderText {#text} at (420,11) size 5x18
                   text run at (420,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 608x31
-                  RenderInline {I} at (0,0) size 608x31
-                    RenderText {#text} at (424,13) size 608x31
-                      text run at (424,13) width 195: "(using <TH ROWSPAN=integer"
-                      text run at (11,29) width 73: "value> tag)"
+                RenderInline {FONT} at (0,0) size 587x31
+                  RenderInline {I} at (0,0) size 587x31
+                    RenderText {#text} at (424,13) size 587x31
+                      text run at (424,13) width 174: "(using <TH ROWSPAN=integer"
+                      text run at (11,29) width 61: "value> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,608) size 769x137
         RenderBlock (anonymous) at (0,0) size 769x18
@@ -496,11 +496,11 @@ layer at (0,0) size 785x2358
                     text run at (105,11) width 300: "table with data cells spanning multiple rows"
                 RenderText {#text} at (404,11) size 5x18
                   text run at (404,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 591x31
-                  RenderInline {I} at (0,0) size 591x31
-                    RenderText {#text} at (408,13) size 591x31
-                      text run at (408,13) width 194: "(using <TD ROWSPAN=integer"
-                      text run at (11,29) width 73: "value> tag)"
+                RenderInline {FONT} at (0,0) size 609x31
+                  RenderInline {I} at (0,0) size 609x31
+                    RenderText {#text} at (408,13) size 609x31
+                      text run at (408,13) width 212: "(using <TD ROWSPAN=integer value>"
+                      text run at (11,29) width 21: "tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1185) size 769x137
         RenderBlock (anonymous) at (0,0) size 769x18
@@ -886,11 +886,11 @@ layer at (0,0) size 785x2358
                     text run at (105,11) width 416: "table with nested header & data cells spanning multiple rows"
                 RenderText {#text} at (520,11) size 5x18
                   text run at (520,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 585x31
-                  RenderInline {I} at (0,0) size 585x31
-                    RenderText {#text} at (524,13) size 585x31
-                      text run at (524,13) width 72: "(using <TH"
-                      text run at (11,29) width 397: "ROWSPAN=integer value> <TD ROWSPAN=integer value> tag)"
+                RenderInline {FONT} at (0,0) size 576x31
+                  RenderInline {I} at (0,0) size 576x31
+                    RenderText {#text} at (524,13) size 576x31
+                      text run at (524,13) width 63: "(using <TH"
+                      text run at (11,29) width 349: "ROWSPAN=integer value> <TD ROWSPAN=integer value> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1762) size 769x37
         RenderBR {BR} at (0,0) size 0x18
