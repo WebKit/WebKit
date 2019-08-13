@@ -1,5 +1,32 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248189. rdar://problem/54237682
+
+    [ Mac ] Layout Test accessibility/mac/press-not-work-for-disabled-menu-list.html is a flaky failure
+    https://bugs.webkit.org/show_bug.cgi?id=196505
+    <rdar://problem/49532620>
+    
+    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-08-02
+    Reviewed by Chris Fleizach.
+    
+    Re-wrote test in a timing independent way. This should fix the intermittent failures.
+    * accessibility/mac/press-not-work-for-disabled-menu-list.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248189 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+            [ Mac ] Layout Test accessibility/mac/press-not-work-for-disabled-menu-list.html is a flaky failure
+            https://bugs.webkit.org/show_bug.cgi?id=196505
+            <rdar://problem/49532620>
+
+            Reviewed by Chris Fleizach.
+
+            Re-wrote test in a timing independent way. This should fix the intermittent failures.
+            * accessibility/mac/press-not-work-for-disabled-menu-list.html:
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248169. rdar://problem/54237663
 
     Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.
