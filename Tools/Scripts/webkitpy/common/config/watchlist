@@ -348,6 +348,21 @@
         "NetworkCache": {
             "filename": r"Source/WebKit/NetworkProcess/cache/",
         },
+        "AppSSO": {
+            "filename": r"Source/WebKit/UIProcess/Cocoa/SOAuthorization/"
+                        r"|Tools/TestWebKitAPI/Tests/WebKitCocoa/.*SOAuthorization.*",
+        },
+        "WebAuthenticationAPI": {
+            "filename": r"Source/WebCore/Modules/webauthn/"
+                        r"|Source/WebKit/UIProcess/WebAuthentication/"
+                        r"|Source/WebKit/WebProcess/WebAuthentication/"
+                        r"|Tools/TestWebKitAPI/Tests/WebCore/.*Apdu.*"
+                        r"|Tools/TestWebKitAPI/Tests/WebCore/.*CBOR.*"
+                        r"|Tools/TestWebKitAPI/Tests/WebCore/.*Ctap.*"
+                        r"|Tools/TestWebKitAPI/Tests/WebCore/.*U2f.*"
+                        r"|LayoutTests/http/wpt/webauthn/"
+                        r"|Source/WebCore/Modules/credentialmanagement/",
+        },
         "WebCryptoAPI": {
             "filename": r"Source/WebCore/crypto/"
                         r"|Source/WebCore/bindings/js/.*Crypto.*"
@@ -443,6 +458,8 @@
         "XSS": [ "dbates@webkit.org" ],
         "webkitperl": [ "dbates@webkit.org" ],
         "webkitpy": [ "glenn@skynav.com" ],
+        "AppSSO": [ "jiewen_tan@apple.com" ],
+        "WebAuthenticationAPI": [ "jiewen_tan@apple.com" ],
         "WebCryptoAPI": [ "jiewen_tan@apple.com" ],
         "WebGPU": [ "mmaxfield@apple.com" ],
         "WebRTC": [ "eric.carlson@apple.com" ],
