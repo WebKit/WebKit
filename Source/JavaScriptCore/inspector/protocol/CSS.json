@@ -144,7 +144,7 @@
                 { "name": "sourceLine", "type": "integer", "description": "Line ordinal of the rule selector start character in the resource."},
                 { "name": "origin", "$ref": "StyleSheetOrigin", "description": "Parent stylesheet's origin."},
                 { "name": "style", "$ref": "CSSStyle", "description": "Associated style declaration." },
-                { "name": "media", "type": "array", "items": { "$ref": "CSSMedia" }, "optional": true, "description": "Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards." }
+                { "name": "groupings", "type": "array", "items": { "$ref": "Grouping" }, "optional": true, "description": "Grouping list array (for rules involving @media/@supports). The array enumerates CSS groupings starting with the innermost one, going outwards." }
             ]
         },
         {
@@ -221,14 +221,13 @@
             ]
         },
         {
-            "id": "CSSMedia",
+            "id": "Grouping",
             "type": "object",
-            "description": "CSS media query descriptor.",
+            "description": "CSS @media (as well as other users of media queries, like @import, <style>, <link>, etc.) and @supports descriptor.",
             "properties": [
                 { "name": "text", "type": "string", "description": "Media query text." },
-                { "name": "source", "type": "string", "enum": ["mediaRule", "importRule", "linkedSheet", "inlineSheet"], "description": "Source of the media query: \"mediaRule\" if specified by a @media rule, \"importRule\" if specified by an @import rule, \"linkedSheet\" if specified by a \"media\" attribute in a linked stylesheet's LINK tag, \"inlineSheet\" if specified by a \"media\" attribute in an inline stylesheet's STYLE tag." },
-                { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the media query description." },
-                { "name": "sourceLine", "type": "integer", "optional": true, "description": "Line in the document containing the media query (not defined for the \"stylesheet\" source)." }
+                { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, ." },
+                { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." }
             ]
         }
     ],

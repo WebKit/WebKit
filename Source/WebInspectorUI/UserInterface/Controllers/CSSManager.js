@@ -81,21 +81,22 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
     }
 
-    static protocolMediaSourceToEnum(source)
+    static protocolGroupingTypeToEnum(type)
     {
-        switch (source) {
-        case CSSAgent.CSSMediaSource.MediaRule:
-            return WI.CSSMedia.Type.MediaRule;
-        case CSSAgent.CSSMediaSource.ImportRule:
-            return WI.CSSMedia.Type.ImportRule;
-        case CSSAgent.CSSMediaSource.LinkedSheet:
-            return WI.CSSMedia.Type.LinkedStyleSheet;
-        case CSSAgent.CSSMediaSource.InlineSheet:
-            return WI.CSSMedia.Type.InlineStyleSheet;
-        default:
-            console.assert(false, "Unknown CSS.CSSMediaSource", source);
-            return WI.CSSMedia.Type.MediaRule;
+        // COMPATIBILITY (iOS 13): CSS.Grouping did not exist yet.
+        if (!InspectorBackend.domains.CSS.Grouping) {
+            switch (type) {
+            case "mediaRule":
+                return WI.CSSGrouping.Type.MediaRule;
+            case "importRule":
+                return WI.CSSGrouping.Type.MediaImportRule;
+            case "linkedSheet":
+                return WI.CSSGrouping.Type.MediaLinkNode;
+            case "inlineSheet":
+                return WI.CSSGrouping.Type.MediaStyleNode;
+            }
         }
+        return type;
     }
 
     static displayNameForPseudoId(pseudoId)

@@ -36,7 +36,9 @@ ${includes}
 """)
 
     HeaderPostlude = (
-    """""")
+    """
+${includes}
+""")
 
     TypeConversionsHeaderPrelude = (
     """${includes}

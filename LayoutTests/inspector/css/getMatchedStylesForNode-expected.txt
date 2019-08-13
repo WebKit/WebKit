@@ -790,9 +790,9 @@ Inherited:
           "style": {
             "cssProperties": [
               {
-                "name": "z-index",
-                "value": "0",
-                "text": "z-index: 0;",
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
                 "range": "<filtered>",
                 "implicit": false,
                 "status": "active"
@@ -803,10 +803,265 @@ Inherited:
             "width": "",
             "height": "",
             "range": "<filtered>",
-            "cssText": " z-index: 0; "
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 0px)",
+              "type": "media-import-rule",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",
           "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 1px)",
+              "type": "media-rule",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(display: block)",
+              "type": "supports-rule",
+              "sourceURL": "<filtered>"
+            },
+            {
+              "text": "(min-width: 2px)",
+              "type": "media-rule",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red;"
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 3px)",
+              "type": "media-style-node",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 4px)",
+              "type": "media-link-node",
+              "sourceURL": "<filtered>"
+            }
+          ]
         },
         "matchingSelectors": [
           0
