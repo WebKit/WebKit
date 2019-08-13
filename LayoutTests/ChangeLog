@@ -1,3 +1,12 @@
+2019-08-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [WebAuthN] Enable LocalAuthenticator for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=182772
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Skip tests that are only expected to run on internal bots.
+
 2019-08-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, land test expectations for rdar://49790831.
