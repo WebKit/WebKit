@@ -3356,10 +3356,6 @@ http/tests/local/fileapi/file-last-modified-using-open-panel.html [ Pass Timeout
 http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html [ Pass Timeout ]
 http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass Timeout ]
 
-# rdar://53779679 (REGRESSION: http/tests/quicklook/submit-form-blocked.html and http/tests/quicklook/base-url-blocked.html are Failing)
-http/tests/quicklook/base-url-blocked.html [ Pass Failure ]
-http/tests/quicklook/submit-form-blocked.html [ Pass Failure ]
-
 # rdar://54049321 (REGRESSION: editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html Failing)
 editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html [ Failure ]
 

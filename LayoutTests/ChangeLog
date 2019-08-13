@@ -1,3 +1,14 @@
+2019-08-13  Russell Epstein  <repstein@apple.com>
+
+        Reverting change in r248379
+        rdar://53779679
+
+        Unreviewed Test Gardening.
+        Removed previously set TestExpectations.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-13  Chris Lord  <clord@igalia.com>
 
         Incorrect head in fast/canvas/webgl/gl-get-calls.html causes test failure
