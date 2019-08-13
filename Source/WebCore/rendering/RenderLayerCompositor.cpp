@@ -691,7 +691,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     m_updateCompositingLayersTimer.stop();
 
-    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
+    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache
+        || m_renderView.document().pageCacheState() == Document::AboutToEnterPageCache);
     
     // Compositing layers will be updated in Document::setVisualUpdatesAllowed(bool) if suppressed here.
     if (!m_renderView.document().visualUpdatesAllowed())

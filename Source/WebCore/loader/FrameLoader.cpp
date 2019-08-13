@@ -118,6 +118,7 @@
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "ShouldTreatAsContinuingLoad.h"
+#include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
@@ -2297,11 +2298,10 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
         url.setPath("/");
 
     started();
-    Document* document = cachedFrame.document();
-    ASSERT(document);
+    auto document = makeRef(*cachedFrame.document());
     ASSERT(document->domWindow());
 
-    clear(document, true, true, cachedFrame.isMainFrame());
+    clear(document.ptr(), true, true, cachedFrame.isMainFrame());
 
     document->attachToCachedFrame(cachedFrame);
     document->setPageCacheState(Document::NotInPageCache);
@@ -2324,13 +2324,15 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     if (previousViewFrameRect)
         view->setFrameRect(previousViewFrameRect.value());
 
-    {
-        // Setting the document builds the render tree and runs post style resolution callbacks that can do anything,
-        // including loading a child frame before its been re-attached to the frame tree as part of this restore.
-        // For example, the HTML object element may load its content into a frame in a post style resolution callback.
-        NavigationDisabler disableNavigation { &m_frame };
-        m_frame.setDocument(document);
-    }
+
+    // Setting the document builds the render tree and runs post style resolution callbacks that can do anything,
+    // including loading a child frame before its been re-attached to the frame tree as part of this restore.
+    // For example, the HTML object element may load its content into a frame in a post style resolution callback.
+    Style::PostResolutionCallbackDisabler disabler(document.get());
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+    NavigationDisabler disableNavigation { &m_frame };
+    
+    m_frame.setDocument(document.copyRef());
 
     document->domWindow()->resumeFromPageCache();
 

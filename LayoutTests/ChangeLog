@@ -1,3 +1,16 @@
+2019-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        FrameLoader::open can execute scritps via style recalc in Frame::setDocument
+        https://bugs.webkit.org/show_bug.cgi?id=200377
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test.
+
+        * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update-expected.txt: Added.
+        * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html: Added.
+        * platform/win/TestExpectations: Skip the newly added test.
+
 2019-08-12  Daniel Bates  <dabates@apple.com>
 
         Add a test to ensure that we dispatch keydown and keyup events when multiple keys are pressed at the same time

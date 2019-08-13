@@ -1,3 +1,28 @@
+2019-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        FrameLoader::open can execute scritps via style recalc in Frame::setDocument
+        https://bugs.webkit.org/show_bug.cgi?id=200377
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the bug that FrameLoader::open can execute arbitrary author scripts via post style update callbacks
+        by adding PostResolutionCallbackDisabler, WidgetHierarchyUpdatesSuspensionScope, and NavigationDisabler
+        to CachedFrameBase::restore and FrameLoader::open.
+
+        This ensures all frames are restored from the page cache before any of them would start running scripts.
+
+        Test: fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout): Fixed the debug assertion. The layout of a document may be
+        updated while we're preparing to put a page into the page cache.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Ditto.
+
 2019-08-12  Sam Weinig  <weinig@apple.com>
 
         Replace multiparameter overloads of append() in StringBuilder as a first step toward standardizinging on the flexibleAppend() implementation
