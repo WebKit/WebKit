@@ -1,3 +1,18 @@
+2019-08-13  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Scope events in adjustObservedState
+        https://bugs.webkit.org/show_bug.cgi?id=200679
+        <rdar://problem/54266172>
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation for simplifying adjustObservedState.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didFinishTransition):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+
 2019-08-13  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Improve GPUBindGroup performance using one device-shared argument MTLBuffer

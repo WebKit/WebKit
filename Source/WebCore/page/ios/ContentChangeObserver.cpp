@@ -250,7 +250,9 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
             weakThis->adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
             return;
         }
-        weakThis->adjustObservedState(isConsideredClickable(*targetElement, ElementHadRenderer::Yes) ? Event::CompletedTransitionWithClickableContent : Event::CompletedTransitionWithoutClickableContent);
+        if (isConsideredClickable(*targetElement, ElementHadRenderer::Yes))
+            weakThis->contentVisibilityDidChange();
+        weakThis->adjustObservedState(Event::CompletedTransition);
     });
 }
 
@@ -518,80 +520,108 @@ void ContentChangeObserver::adjustObservedState(Event event)
         m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame(), observedContentChange());
     };
 
-    switch (event) {
-    case Event::StartedTouchStartEventDispatching:
-        resetToStartObserving();
-        setShouldObserveDOMTimerScheduling(true);
-        setShouldObserveTransitions(true);
-        break;
-    case Event::EndedTouchStartEventDispatching:
-        setShouldObserveDOMTimerScheduling(false);
-        setShouldObserveTransitions(false);
-        setIsBetweenTouchEndAndMouseMoved(true);
-        break;
-    case Event::WillNotProceedWithClick:
-        reset();
-        break;
-    case Event::StartedMouseMovedEventDispatching:
-        ASSERT(!m_document.hasPendingStyleRecalc());
-        if (!isBetweenTouchEndAndMouseMoved())
+    // These user initiated events trigger content observation (touchStart and mouseMove). 
+    {
+        if (event == Event::StartedTouchStartEventDispatching) {
             resetToStartObserving();
-        setIsBetweenTouchEndAndMouseMoved(false);
-        setShouldObserveDOMTimerScheduling(!hasVisibleChangeState());
-        setShouldObserveTransitions(!hasVisibleChangeState());
-        break;
-    case Event::EndedMouseMovedEventDispatching:
-        setShouldObserveDOMTimerScheduling(false);
-        setShouldObserveTransitions(false);
-        break;
-    case Event::StartedStyleRecalc:
-        setShouldObserveNextStyleRecalc(false);
-        FALLTHROUGH;
-    case Event::StartedDOMTimerExecution:
-        ASSERT(isObservationTimeWindowActive() || observedContentChange() == WKContentIndeterminateChange);
-        break;
-    case Event::InstalledDOMTimer:
-    case Event::StartedFixedObservationTimeWindow:
-    case Event::AddedTransition:
-        ASSERT(!hasVisibleChangeState());
-        setHasIndeterminateState();
-        break;
-    case Event::EndedDOMTimerExecution:
-        setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
-        FALLTHROUGH;
-    case Event::EndedStyleRecalc:
-    case Event::RemovedDOMTimer:
-    case Event::CanceledTransition:
-        if (!isObservationTimeWindowActive())
+            setShouldObserveDOMTimerScheduling(true);
+            setShouldObserveTransitions(true);
+            return;
+        }
+        if (event == Event::EndedTouchStartEventDispatching) {
+            setShouldObserveDOMTimerScheduling(false);
+            setShouldObserveTransitions(false);
+            setIsBetweenTouchEndAndMouseMoved(true);
+            return;
+        }
+        if (event == Event::StartedMouseMovedEventDispatching) {
+            ASSERT(!m_document.hasPendingStyleRecalc());
+            if (!isBetweenTouchEndAndMouseMoved())
+                resetToStartObserving();
+            setIsBetweenTouchEndAndMouseMoved(false);
+            setShouldObserveDOMTimerScheduling(!hasVisibleChangeState());
+            setShouldObserveTransitions(!hasVisibleChangeState());
+            return;
+        }
+        if (event == Event::EndedMouseMovedEventDispatching) {
+            setShouldObserveDOMTimerScheduling(false);
+            setShouldObserveTransitions(false);
+            return;
+        }
+    }
+    // Fixed window observation starts soon after mouseMove when we don't have a definite answer to whether we should proceed with hover or click.
+    {
+        if (event == Event::StartedFixedObservationTimeWindow) {
+            ASSERT(!hasVisibleChangeState());
+            setHasIndeterminateState();
+            return;
+        }
+        if (event == Event::EndedFixedObservationTimeWindow) {
             adjustStateAndNotifyContentChangeIfNeeded();
-        break;
-    case Event::EndedTransitionButFinalStyleIsNotDefiniteYet:
-        // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
-        // asynchronously right before the style update is issued. It also means we don't know whether this animation ends up producing visible content yet. 
-        if (m_document.inStyleRecalc()) {
-            // We need to start observing this style change synchronously.
-            m_isInObservedStyleRecalc = true;
-        } else
-            setShouldObserveNextStyleRecalc(true);
-        break;
-    case Event::CompletedTransitionWithClickableContent:
-        // Set visibility flag on and report visible change synchronously or asynchronously depending whether we are in the middle of style recalc.
-        contentVisibilityDidChange();
-        FALLTHROUGH;
-    case Event::CompletedTransitionWithoutClickableContent:
-        if (m_document.inStyleRecalc())
-            m_isInObservedStyleRecalc = true;
-        else if (!isObservationTimeWindowActive())
-            adjustStateAndNotifyContentChangeIfNeeded();
-        break;
-    case Event::EndedFixedObservationTimeWindow:
-        adjustStateAndNotifyContentChangeIfNeeded();
-        break;
-    case Event::ContentVisibilityChanged:
+            return;
+        }
+    }
+    // These events (DOM timer, transition and style recalc) could trigger style changes that are candidates to visibility checking.
+    {
+        if (event == Event::InstalledDOMTimer || event == Event::AddedTransition) {
+            ASSERT(!hasVisibleChangeState());
+            setHasIndeterminateState();
+            return;
+        }
+        if (event == Event::RemovedDOMTimer || event == Event::CanceledTransition) {
+            if (!isObservationTimeWindowActive())
+                adjustStateAndNotifyContentChangeIfNeeded();
+            return;
+        }
+        if (event == Event::StartedDOMTimerExecution) {
+            ASSERT(isObservationTimeWindowActive() || observedContentChange() == WKContentIndeterminateChange);
+            return;
+        }
+        if (event == Event::EndedDOMTimerExecution) {
+            setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
+            if (!isObservationTimeWindowActive())
+                adjustStateAndNotifyContentChangeIfNeeded();
+            return;
+        }
+        if (event == Event::EndedTransitionButFinalStyleIsNotDefiniteYet) {
+            // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
+            // asynchronously right before the style update is issued. It also means we don't know whether this animation ends up producing visible content yet. 
+            if (m_document.inStyleRecalc()) {
+                // We need to start observing this style change synchronously.
+                m_isInObservedStyleRecalc = true;
+            } else
+                setShouldObserveNextStyleRecalc(true);
+            return;
+        }
+        if (event == Event::CompletedTransition) {
+            if (m_document.inStyleRecalc())
+                m_isInObservedStyleRecalc = true;
+            else if (!isObservationTimeWindowActive())
+                adjustStateAndNotifyContentChangeIfNeeded();
+            return;
+        }
+        if (event == Event::StartedStyleRecalc) {
+            setShouldObserveNextStyleRecalc(false);
+            ASSERT(isObservationTimeWindowActive() || observedContentChange() == WKContentIndeterminateChange);
+            return;
+        }
+        if (event == Event::EndedStyleRecalc) {
+            if (!isObservationTimeWindowActive())
+                adjustStateAndNotifyContentChangeIfNeeded();
+            return;
+        }
+    }
+    // Either the page decided to call preventDefault on the touch action or the tap gesture evolved to some other gesture (long press, double tap). 
+    if (event == Event::WillNotProceedWithClick) {
+        reset();
+        return;
+    }
+    // The page produced an visible change on an actionable content.
+    if (event == Event::ContentVisibilityChanged) {
         setHasVisibleChangeState();
         // Stop pending activities. We don't need to observe them anymore.
         stopObservingPendingActivities();
-        break;
+        return;
     }
 }
 
