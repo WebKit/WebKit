@@ -290,7 +290,7 @@ let InjectedScript = class InjectedScript
             let callArgument = InjectedScriptHost.evaluate("(" + callArgumentJSON + ")");
             let value = this._resolveCallArgument(callArgument);
             this._saveResult(value);
-        } catch (e) {}
+        } catch { }
 
         return this._savedResultIndex;
     }
@@ -514,7 +514,7 @@ let InjectedScript = class InjectedScript
         let remoteObject = RemoteObject.create(value, objectGroup);
         try {
             remoteObject.description = toStringDescription(value);
-        } catch (e) {}
+        } catch { }
         return {
             wasThrown: true,
             result: remoteObject
@@ -744,7 +744,7 @@ let InjectedScript = class InjectedScript
         let isArrayLike = false;
         try {
             isArrayLike = RemoteObject.subtype(object) === "array" && isFinite(object.length) && object.length > 0;
-        } catch(e) {}
+        } catch { }
 
         for (let o = object; isDefined(o); o = Object.getPrototypeOf(o)) {
             let isOwnProperty = o === object;
@@ -765,7 +765,7 @@ let InjectedScript = class InjectedScript
         try {
             if (object.__proto__)
                 descriptors.push({name: "__proto__", value: object.__proto__, writable: true, configurable: true, enumerable: false, isOwn: true});
-        } catch (e) {}
+        } catch { }
 
         return descriptors;
     }
@@ -866,7 +866,7 @@ let InjectedScript = class InjectedScript
     {
         return this._savedResults[index];
     }
-}
+};
 
 InjectedScript.CollectionMode = {
     OwnProperties: 1 << 0,          // own properties.
@@ -980,7 +980,7 @@ let RemoteObject = class RemoteObject
         try {
             if (typeof value.splice === "function" && isFinite(value.length))
                 return "array";
-        } catch (e) {}
+        } catch { }
 
         return null;
     }
@@ -1134,7 +1134,7 @@ let RemoteObject = class RemoteObject
             this._appendPropertyPreviews(object, preview, descriptors, false, propertiesThreshold, firstLevelKeys, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;
-        } catch (e) {
+        } catch {
             preview.lossless = false;
         }
 
@@ -1386,7 +1386,7 @@ let RemoteObject = class RemoteObject
 
         return string.substr(0, maxLength) + "\u2026";
     }
-}
+};
 
 // -------
 
@@ -1398,7 +1398,7 @@ InjectedScript.CallFrameProxy = function(ordinal, callFrame)
     this.scopeChain = this._wrapScopeChain(callFrame);
     this.this = RemoteObject.create(callFrame.thisObject, "backtrace");
     this.isTailDeleted = callFrame.isTailDeleted;
-}
+};
 
 InjectedScript.CallFrameProxy.prototype = {
     _wrapScopeChain(callFrame)
@@ -1411,7 +1411,7 @@ InjectedScript.CallFrameProxy.prototype = {
             scopeChainProxy[i] = InjectedScript.CallFrameProxy._createScopeJson(scopeChain[i], scopeDescriptions[i], "backtrace");
         return scopeChainProxy;
     }
-}
+};
 
 InjectedScript.CallFrameProxy._scopeTypeNames = {
     0: "global", // GLOBAL_SCOPE
@@ -1482,8 +1482,7 @@ function BasicCommandLineAPI(callFrame)
     // Command Line API methods.
     for (let i = 0; i < BasicCommandLineAPI.methods.length; ++i) {
         let method = BasicCommandLineAPI.methods[i];
-        this[method] = bind(commandLineAPIImpl[method], commandLineAPIImpl);
-        this[method].toString = function() { return "function " + method + "() { [Command Line API] }" };
+        this[method.name] = method;
     }
 }
 

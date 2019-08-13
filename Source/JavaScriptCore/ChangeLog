@@ -1,3 +1,18 @@
+2019-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Basic CommandLineAPI doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=200659
+        <rdar://problem/54245476>
+
+        Reviewed by Brian Burg.
+
+        * inspector/InjectedScriptSource.js:
+        (BasicCommandLineAPI):
+        Use `method` directly since it already has been setup nicely and doesn't
+        need to be bound. Technically this allows someone to add properties to
+        the CommandLineAPI methods in basic mode (`dir.property = 1`) but that
+        seems harmless.
+
 2019-08-12  Sam Weinig  <weinig@apple.com>
 
         Replace multiparameter overloads of append() in StringBuilder as a first step toward standardizinging on the flexibleAppend() implementation
