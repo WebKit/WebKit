@@ -1,3 +1,15 @@
+2019-08-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under IPC::Connection::markCurrentlyDispatchedMessageAsInvalid()
+        https://bugs.webkit.org/show_bug.cgi?id=200674
+        <rdar://problem/50692748>
+
+        Reviewed by Geoff Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-08-12  Takashi Komori  <Takashi.Komori@sony.com>
 
         [WTF] Thread::removeFromThreadGroup leaks weak pointers.

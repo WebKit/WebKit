@@ -1,3 +1,22 @@
+2019-08-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under IPC::Connection::markCurrentlyDispatchedMessageAsInvalid()
+        https://bugs.webkit.org/show_bug.cgi?id=200674
+        <rdar://problem/50692748>
+
+        Reviewed by Geoff Garen.
+
+        When the client terminates a provisional process (e.g. via the [WKWebView _killWebContentProcessAndResetState]
+        SPI), the WebProcessProxy would notify its associated WebPageProxy objects that it had terminated but would fail
+        to notify its associated ProvisionalPageProxy objects. As a result, those objects would not get destroyed and
+        would still think that they were in the middle of a provisional load the next time a load started. This inconsistent
+        state would lead to crashes such as the one in the radar.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::cancel):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+
 2019-08-13  Youenn Fablet  <youenn@apple.com>
 
         Blob registries should be keyed by session IDs
