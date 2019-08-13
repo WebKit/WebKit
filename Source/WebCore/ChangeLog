@@ -1,5 +1,111 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248301. rdar://problem/54237793
+
+    Adopt -expectMinimumUpcomingSampleBufferPresentationTime:
+    https://bugs.webkit.org/show_bug.cgi?id=200457
+    <rdar://problem/53961130>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-minimumupcomingpresentationtime.html
+    
+    Adopt a new API vended by AVSampleBufferDisplayLayer, piped from SourceBuffer down
+    through SourceBufferPrivate to SourceBufferPrivateAVFObjC. This value should be
+    reset and updated when new samples are appended.
+    
+    * Modules/mediasource/SourceBuffer.cpp:
+    (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+    (WebCore::SourceBuffer::provideMediaData):
+    (WebCore::SourceBuffer::updateMinimumUpcomingPresentationTime):
+    (WebCore::SourceBuffer::resetMinimumUpcomingPresentationTime):
+    (WebCore::SourceBuffer::minimumUpcomingPresentationTimeForTrackID):
+    (WebCore::SourceBuffer::setMaximumQueueDepthForTrackID):
+    * Modules/mediasource/SourceBuffer.h:
+    * platform/graphics/SourceBufferPrivate.h:
+    (WebCore::SourceBufferPrivate::canSetMinimumUpcomingPresentationTime const):
+    (WebCore::SourceBufferPrivate::setMinimumUpcomingPresentationTime):
+    (WebCore::SourceBufferPrivate::clearMinimumUpcomingPresentationTime):
+    (WebCore::SourceBufferPrivate::enqueuedSamplesForTrackID):
+    (WebCore::SourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID):
+    (WebCore::SourceBufferPrivate::setMaximumQueueDepthForTrackID):
+    * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+    * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+    (WebCore::SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime const):
+    (WebCore::SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime):
+    (WebCore::SourceBufferPrivateAVFObjC::clearMinimumUpcomingPresentationTime):
+    * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+    (WebCore::MockSourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID):
+    (WebCore::MockSourceBufferPrivate::setMaximumQueueDepthForTrackID):
+    (WebCore::MockSourceBufferPrivate::canSetMinimumUpcomingPresentationTime const):
+    (WebCore::MockSourceBufferPrivate::setMinimumUpcomingPresentationTime):
+    (WebCore::MockSourceBufferPrivate::clearMinimumUpcomingPresentationTime):
+    * platform/mock/mediasource/MockSourceBufferPrivate.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::minimumUpcomingPresentationTimeForTrackID):
+    (WebCore::Internals::setMaximumQueueDepthForTrackID):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-minimumupcomingpresentationtime-expected.txt: Added.
+    * media/media-source/media-source-minimumupcomingpresentationtime.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248301 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Jer Noble  <jer.noble@apple.com>
+
+            Adopt -expectMinimumUpcomingSampleBufferPresentationTime:
+            https://bugs.webkit.org/show_bug.cgi?id=200457
+            <rdar://problem/53961130>
+
+            Reviewed by Eric Carlson.
+
+            Test: media/media-source/media-source-minimumupcomingpresentationtime.html
+
+            Adopt a new API vended by AVSampleBufferDisplayLayer, piped from SourceBuffer down
+            through SourceBufferPrivate to SourceBufferPrivateAVFObjC. This value should be
+            reset and updated when new samples are appended.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+            (WebCore::SourceBuffer::provideMediaData):
+            (WebCore::SourceBuffer::updateMinimumUpcomingPresentationTime):
+            (WebCore::SourceBuffer::resetMinimumUpcomingPresentationTime):
+            (WebCore::SourceBuffer::minimumUpcomingPresentationTimeForTrackID):
+            (WebCore::SourceBuffer::setMaximumQueueDepthForTrackID):
+            * Modules/mediasource/SourceBuffer.h:
+            * platform/graphics/SourceBufferPrivate.h:
+            (WebCore::SourceBufferPrivate::canSetMinimumUpcomingPresentationTime const):
+            (WebCore::SourceBufferPrivate::setMinimumUpcomingPresentationTime):
+            (WebCore::SourceBufferPrivate::clearMinimumUpcomingPresentationTime):
+            (WebCore::SourceBufferPrivate::enqueuedSamplesForTrackID):
+            (WebCore::SourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID):
+            (WebCore::SourceBufferPrivate::setMaximumQueueDepthForTrackID):
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (WebCore::SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime const):
+            (WebCore::SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime):
+            (WebCore::SourceBufferPrivateAVFObjC::clearMinimumUpcomingPresentationTime):
+            * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+            (WebCore::MockSourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID):
+            (WebCore::MockSourceBufferPrivate::setMaximumQueueDepthForTrackID):
+            (WebCore::MockSourceBufferPrivate::canSetMinimumUpcomingPresentationTime const):
+            (WebCore::MockSourceBufferPrivate::setMinimumUpcomingPresentationTime):
+            (WebCore::MockSourceBufferPrivate::clearMinimumUpcomingPresentationTime):
+            * platform/mock/mediasource/MockSourceBufferPrivate.h:
+            * testing/Internals.cpp:
+            (WebCore::Internals::minimumUpcomingPresentationTimeForTrackID):
+            (WebCore::Internals::setMaximumQueueDepthForTrackID):
+            * testing/Internals.h:
+            * testing/Internals.idl:
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248295. rdar://problem/54237762
 
     REGRESSION: Cannot tap on any buttons on m.naver.com home screen on iPad

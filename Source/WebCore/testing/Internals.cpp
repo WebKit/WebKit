@@ -3739,9 +3739,19 @@ Vector<String> Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const 
     return buffer.enqueuedSamplesForTrackID(trackID);
 }
 
+double Internals::minimumUpcomingPresentationTimeForTrackID(SourceBuffer& buffer, const AtomString& trackID)
+{
+    return buffer.minimumUpcomingPresentationTimeForTrackID(trackID).toDouble();
+}
+
 void Internals::setShouldGenerateTimestamps(SourceBuffer& buffer, bool flag)
 {
     buffer.setShouldGenerateTimestamps(flag);
+}
+
+void Internals::setMaximumQueueDepthForTrackID(SourceBuffer& buffer, const AtomString& trackID, size_t maxQueueDepth)
+{
+    buffer.setMaximumQueueDepthForTrackID(trackID, maxQueueDepth);
 }
 
 #endif

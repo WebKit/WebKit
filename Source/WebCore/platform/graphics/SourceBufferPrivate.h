@@ -62,9 +62,15 @@ public:
     virtual void setActive(bool) { }
     virtual void notifyClientWhenReadyForMoreSamples(const AtomString&) { }
 
-    virtual Vector<String> enqueuedSamplesForTrackID(const AtomString&) { return { }; }
-
+    virtual bool canSetMinimumUpcomingPresentationTime(const AtomString&) const { return false; }
+    virtual void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) { }
+    virtual void clearMinimumUpcomingPresentationTime(const AtomString&) { }
     virtual bool canSwitchToType(const ContentType&) { return false; }
+
+    // Internals Utility methods:
+    virtual Vector<String> enqueuedSamplesForTrackID(const AtomString&) { return { }; }
+    virtual MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) { return MediaTime::invalidTime(); }
+    virtual void setMaximumQueueDepthForTrackID(const AtomString&, size_t) { }
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& sourceBufferLogger() const = 0;
