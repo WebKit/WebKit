@@ -30,6 +30,7 @@
 
 #include "DisplayBox.h"
 #include "DisplayRun.h"
+#include "HTMLTableCellElement.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
@@ -46,6 +47,7 @@
 #include "RenderStyle.h"
 #include "RenderTable.h"
 #include "RenderTableCaption.h"
+#include "RenderTableCell.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
 
@@ -178,6 +180,18 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
             return { };
         }
     }
+
+    if (is<RenderTableCell>(renderer)) {
+        auto& cellElement = downcast<HTMLTableCellElement>(*renderer.element());
+        auto rowSpan = cellElement.rowSpan();
+        if (rowSpan > 1)
+            childLayoutBox->setRowSpan(rowSpan);
+
+        auto columnSpan = cellElement.colSpan();
+        if (columnSpan > 1)
+            childLayoutBox->setColumnSpan(columnSpan);
+    }
+
     return childLayoutBox;
 }
 

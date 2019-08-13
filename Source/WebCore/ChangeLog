@@ -1,3 +1,22 @@
+2019-08-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add rowSpan and colSpan to Box
+        https://bugs.webkit.org/show_bug.cgi?id=200654
+        <rdar://problem/54239281>
+
+        Reviewed by Antti Koivisto.
+
+        colSpan and rowSpan are not part of the RenderStyle. We eventually need to find a more appropriate place for the "random DOM things".
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::setRowSpan):
+        (WebCore::Layout::Box::setColumnSpan):
+        (WebCore::Layout::Box::rowSpan const):
+        (WebCore::Layout::Box::columnSpan const):
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
 2019-08-13  Youenn Fablet  <youenn@apple.com>
 
         Blob registries should be keyed by session IDs

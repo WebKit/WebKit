@@ -146,6 +146,12 @@ public:
     bool hasTextContent() const;
     String textContent() const;
 
+    // FIXME: Find a better place for random DOM things.
+    void setRowSpan(unsigned);
+    void setColumnSpan(unsigned);
+    unsigned rowSpan() const;
+    unsigned columnSpan() const;
+
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
     void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
@@ -163,6 +169,8 @@ private:
 
         String textContent;
         std::unique_ptr<Replaced> replaced;
+        unsigned rowSpan { 1 };
+        unsigned columnSpan { 1 };
     };
 
     bool hasRareData() const { return m_hasRareData; }

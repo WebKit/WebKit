@@ -408,6 +408,30 @@ Replaced* Box::replaced()
     return rareData().replaced.get();
 }
 
+void Box::setRowSpan(unsigned rowSpan)
+{
+    ensureRareData().rowSpan = rowSpan;
+}
+
+void Box::setColumnSpan(unsigned columnSpan)
+{
+    ensureRareData().columnSpan = columnSpan;
+}
+
+unsigned Box::rowSpan() const
+{
+    if (!hasRareData())
+        return 1;
+    return rareData().rowSpan;
+}
+
+unsigned Box::columnSpan() const
+{
+    if (!hasRareData())
+        return 1;
+    return rareData().columnSpan;
+}
+
 Box::RareDataMap& Box::rareDataMap()
 {
     static NeverDestroyed<RareDataMap> map;
