@@ -288,7 +288,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             if (this.domNode !== domNode)
                 return;
 
-            object.deprecatedGetOwnProperties(fillSection.bind(this));
+            object.getPropertyDescriptors(fillSection.bind(this), {ownProperties: true});
         }
 
         function fillSection(prototypes)

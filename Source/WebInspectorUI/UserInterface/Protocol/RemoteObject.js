@@ -309,52 +309,6 @@ WI.RemoteObject = class RemoteObject
         this._target.RuntimeAgent.getDisplayableProperties(this._objectId, true, this._getPropertyDescriptorsResolver.bind(this, callback));
     }
 
-    // FIXME: Phase out these deprecated functions. They return DeprecatedRemoteObjectProperty instead of PropertyDescriptors.
-    deprecatedGetOwnProperties(callback)
-    {
-        this._deprecatedGetProperties(true, callback);
-    }
-
-    deprecatedGetAllProperties(callback)
-    {
-        this._deprecatedGetProperties(false, callback);
-    }
-
-    deprecatedGetDisplayableProperties(callback)
-    {
-        if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
-            callback([]);
-            return;
-        }
-
-        // COMPATIBILITY (iOS 8): RuntimeAgent.getProperties did not support ownerAndGetterProperties.
-        // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (!this._target.RuntimeAgent.getDisplayableProperties) {
-            this._target.RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
-                var ownOrGetterPropertiesList = [];
-                if (allProperties) {
-                    for (var property of allProperties) {
-                        if (property.isOwn || property.get || property.name === "__proto__") {
-                            // Own property or getter property in prototype chain.
-                            ownOrGetterPropertiesList.push(property);
-                        } else if (property.value && property.name !== property.name.toUpperCase()) {
-                            var type = property.value.type;
-                            if (type && type !== "function" && property.name !== "constructor") {
-                                // Possible native binding getter property converted to a value. Also, no CONSTANT name style and not "constructor".
-                                ownOrGetterPropertiesList.push(property);
-                            }
-                        }
-                    }
-                }
-
-                this._deprecatedGetPropertiesResolver(callback, error, ownOrGetterPropertiesList);
-            }.bind(this));
-            return;
-        }
-
-        this._target.RuntimeAgent.getDisplayableProperties(this._objectId, this._deprecatedGetPropertiesResolver.bind(this, callback));
-    }
-
     setPropertyValue(name, value, callback)
     {
         if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
@@ -670,49 +624,6 @@ WI.RemoteObject = class RemoteObject
 
         callback(descriptors);
     }
-
-    // FIXME: Phase out these deprecated functions. They return DeprecatedRemoteObjectProperty instead of PropertyDescriptors.
-    _deprecatedGetProperties(ownProperties, callback)
-    {
-        if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
-            callback([]);
-            return;
-        }
-
-        this._target.RuntimeAgent.getProperties(this._objectId, ownProperties, this._deprecatedGetPropertiesResolver.bind(this, callback));
-    }
-
-    _deprecatedGetPropertiesResolver(callback, error, properties, internalProperties)
-    {
-        if (error) {
-            callback(null);
-            return;
-        }
-
-        if (internalProperties) {
-            properties = properties.concat(internalProperties.map(function(descriptor) {
-                descriptor.writable = false;
-                descriptor.configurable = false;
-                descriptor.enumerable = false;
-                descriptor.isOwn = true;
-                return descriptor;
-            }));
-        }
-
-        var result = [];
-        for (var i = 0; properties && i < properties.length; ++i) {
-            var property = properties[i];
-            if (property.get || property.set) {
-                if (property.get)
-                    result.push(new WI.DeprecatedRemoteObjectProperty("get " + property.name, WI.RemoteObject.fromPayload(property.get, this._target), property));
-                if (property.set)
-                    result.push(new WI.DeprecatedRemoteObjectProperty("set " + property.name, WI.RemoteObject.fromPayload(property.set, this._target), property));
-            } else
-                result.push(new WI.DeprecatedRemoteObjectProperty(property.name, WI.RemoteObject.fromPayload(property.value, this._target), property));
-        }
-
-        callback(result);
-    }
 };
 
 WI.RemoteObject.FakeRemoteObjectId = "fake-remote-object";
@@ -720,25 +631,4 @@ WI.RemoteObject.FakeRemoteObjectId = "fake-remote-object";
 WI.RemoteObject.SourceCodeLocationPromise = {
     NoSourceFound: "remote-object-source-code-location-promise-no-source-found",
     MissingObjectId: "remote-object-source-code-location-promise-missing-object-id"
-};
-
-// FIXME: Phase out this deprecated class.
-WI.DeprecatedRemoteObjectProperty = class DeprecatedRemoteObjectProperty
-{
-    constructor(name, value, descriptor)
-    {
-        this.name = name;
-        this.value = value;
-        this.enumerable = descriptor ? !!descriptor.enumerable : true;
-        this.writable = descriptor ? !!descriptor.writable : true;
-        if (descriptor && descriptor.wasThrown)
-            this.wasThrown = true;
-    }
-
-    // Static
-
-    fromPrimitiveValue(name, value)
-    {
-        return new WI.DeprecatedRemoteObjectProperty(name, WI.RemoteObject.fromPrimitiveValue(value));
-    }
 };

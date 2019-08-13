@@ -86,7 +86,7 @@ WI.CallFrame = class CallFrame
         }
 
         for (var i = 0; i < this._scopeChain.length; ++i)
-            this._scopeChain[i].objects[0].deprecatedGetAllProperties(propertiesCollected);
+            this._scopeChain[i].objects[0].getPropertyDescriptors(propertiesCollected);
     }
 
     mergedScopeChain()
