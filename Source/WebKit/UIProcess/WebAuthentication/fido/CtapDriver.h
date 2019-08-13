@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,36 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include <WebCore/FidoConstants.h>
+#include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class CtapHidDriver;
-
-class CtapHidAuthenticator final : public Authenticator {
+class CtapDriver : public CanMakeWeakPtr<CtapDriver> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CtapDriver);
 public:
-    static Ref<CtapHidAuthenticator> create(std::unique_ptr<CtapHidDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapHidAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+    using ResponseCallback = Function<void(Vector<uint8_t>&&)>;
+
+    CtapDriver() = default;
+    virtual ~CtapDriver() = default;
+
+    void setProtocol(fido::ProtocolVersion protocol) { m_protocol = protocol; }
+
+    virtual void transact(Vector<uint8_t>&& data, ResponseCallback&&) = 0;
+
+protected:
+    fido::ProtocolVersion protocol() const { return m_protocol; }
 
 private:
-    explicit CtapHidAuthenticator(std::unique_ptr<CtapHidDriver>&&, fido::AuthenticatorGetInfoResponse&&);
-
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapHidDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
+    fido::ProtocolVersion m_protocol { fido::ProtocolVersion::kCtap };
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)

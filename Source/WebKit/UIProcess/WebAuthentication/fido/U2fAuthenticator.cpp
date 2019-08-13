@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "U2fHidAuthenticator.h"
+#include "U2fAuthenticator.h"
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#include "CtapHidDriver.h"
+#include "CtapDriver.h"
 #include <WebCore/ApduResponse.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/U2fCommandConstructor.h>
@@ -45,15 +45,15 @@ namespace {
 const unsigned retryTimeOutValueMs = 200;
 }
 
-U2fHidAuthenticator::U2fHidAuthenticator(std::unique_ptr<CtapHidDriver>&& driver)
+U2fAuthenticator::U2fAuthenticator(std::unique_ptr<CtapDriver>&& driver)
     : m_driver(WTFMove(driver))
-    , m_retryTimer(RunLoop::main(), this, &U2fHidAuthenticator::retryLastCommand)
+    , m_retryTimer(RunLoop::main(), this, &U2fAuthenticator::retryLastCommand)
 {
     // FIXME(191520): We need a way to convert std::unique_ptr to UniqueRef.
     ASSERT(m_driver);
 }
 
-void U2fHidAuthenticator::makeCredential()
+void U2fAuthenticator::makeCredential()
 {
     if (!isConvertibleToU2fRegisterCommand(requestData().creationOptions)) {
         receiveRespond(ExceptionData { NotSupportedError, "Cannot convert the request to U2F command."_s });
@@ -67,7 +67,7 @@ void U2fHidAuthenticator::makeCredential()
     issueRegisterCommand();
 }
 
-void U2fHidAuthenticator::checkExcludeList(size_t index)
+void U2fAuthenticator::checkExcludeList(size_t index)
 {
     if (index >= requestData().creationOptions.excludeCredentials.size()) {
         issueRegisterCommand();
@@ -78,14 +78,14 @@ void U2fHidAuthenticator::checkExcludeList(size_t index)
     issueNewCommand(WTFMove(*u2fCmd), CommandType::CheckOnlyCommand);
 }
 
-void U2fHidAuthenticator::issueRegisterCommand()
+void U2fAuthenticator::issueRegisterCommand()
 {
     auto u2fCmd = convertToU2fRegisterCommand(requestData().hash, requestData().creationOptions);
     ASSERT(u2fCmd);
     issueNewCommand(WTFMove(*u2fCmd), CommandType::RegisterCommand);
 }
 
-void U2fHidAuthenticator::getAssertion()
+void U2fAuthenticator::getAssertion()
 {
     if (!isConvertibleToU2fSignCommand(requestData().requestOptions)) {
         receiveRespond(ExceptionData { NotSupportedError, "Cannot convert the request to U2F command."_s });
@@ -95,7 +95,7 @@ void U2fHidAuthenticator::getAssertion()
     issueSignCommand(m_nextListIndex++);
 }
 
-void U2fHidAuthenticator::issueSignCommand(size_t index)
+void U2fAuthenticator::issueSignCommand(size_t index)
 {
     if (index >= requestData().requestOptions.allowCredentials.size()) {
         receiveRespond(ExceptionData { NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
@@ -106,14 +106,14 @@ void U2fHidAuthenticator::issueSignCommand(size_t index)
     issueNewCommand(WTFMove(*u2fCmd), CommandType::SignCommand);
 }
 
-void U2fHidAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType type)
+void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType type)
 {
     m_lastCommand = WTFMove(command);
     m_lastCommandType = type;
     issueCommand(m_lastCommand, m_lastCommandType);
 }
 
-void U2fHidAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType type)
+void U2fAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType type)
 {
     m_driver->transact(Vector<uint8_t>(command), [weakThis = makeWeakPtr(*this), type](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
@@ -123,7 +123,7 @@ void U2fHidAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandTy
     });
 }
 
-void U2fHidAuthenticator::responseReceived(Vector<uint8_t>&& response, CommandType type)
+void U2fAuthenticator::responseReceived(Vector<uint8_t>&& response, CommandType type)
 {
     auto apduResponse = ApduResponse::createFromMessage(response);
     if (!apduResponse) {
@@ -148,7 +148,7 @@ void U2fHidAuthenticator::responseReceived(Vector<uint8_t>&& response, CommandTy
     ASSERT_NOT_REACHED();
 }
 
-void U2fHidAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse&& apduResponse)
+void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
@@ -169,7 +169,7 @@ void U2fHidAuthenticator::continueRegisterCommandAfterResponseReceived(ApduRespo
     }
 }
 
-void U2fHidAuthenticator::continueCheckOnlyCommandAfterResponseReceived(ApduResponse&& apduResponse)
+void U2fAuthenticator::continueCheckOnlyCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
@@ -181,7 +181,7 @@ void U2fHidAuthenticator::continueCheckOnlyCommandAfterResponseReceived(ApduResp
     }
 }
 
-void U2fHidAuthenticator::continueBogusCommandAfterResponseReceived(ApduResponse&& apduResponse)
+void U2fAuthenticator::continueBogusCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
@@ -196,7 +196,7 @@ void U2fHidAuthenticator::continueBogusCommandAfterResponseReceived(ApduResponse
     }
 }
 
-void U2fHidAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& apduResponse)
+void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {

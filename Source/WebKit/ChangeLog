@@ -1,3 +1,48 @@
+2019-08-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Make CtapHidAuthenticator/U2fHidAuthenticator to CtapAuthenticator/U2fAuthenticator
+        https://bugs.webkit.org/show_bug.cgi?id=191527
+        <rdar://problem/54237146>
+
+        Reviewed by Chris Dumez.
+
+        This patch makes an ABC CtapDriver, which services as an abstract interface for CtapAuthenticator/U2fAuthenticator to talk to
+        the actual object that implement the specific CTAP protocol that mananges communications over different transports, for example,
+        CtapHidDriver, such that CtapAuthenticator/U2fAuthenticator can be shared across different transports.
+
+        This patch also renames CtapHidAuthenticator/U2fHidAuthenticator to CtapAuthenticator/U2fAuthenticator correspondingly.
+
+        * Sources.txt:
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::continueAddDeviceAfterGetInfo):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp: Renamed from Source/WebKit/UIProcess/WebAuthentication/fido/CtapHidAuthenticator.cpp.
+        (WebKit::CtapAuthenticator::CtapAuthenticator):
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived const):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::tryDowngrade):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h: Copied from Source/WebKit/UIProcess/WebAuthentication/fido/CtapHidAuthenticator.h.
+        * UIProcess/WebAuthentication/fido/CtapDriver.h: Renamed from Source/WebKit/UIProcess/WebAuthentication/fido/CtapHidAuthenticator.h.
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.h:
+        (WebKit::CtapHidDriver::setProtocol):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp: Renamed from Source/WebKit/UIProcess/WebAuthentication/fido/U2fHidAuthenticator.cpp.
+        (WebKit::U2fAuthenticator::U2fAuthenticator):
+        (WebKit::U2fAuthenticator::makeCredential):
+        (WebKit::U2fAuthenticator::checkExcludeList):
+        (WebKit::U2fAuthenticator::issueRegisterCommand):
+        (WebKit::U2fAuthenticator::getAssertion):
+        (WebKit::U2fAuthenticator::issueSignCommand):
+        (WebKit::U2fAuthenticator::issueNewCommand):
+        (WebKit::U2fAuthenticator::issueCommand):
+        (WebKit::U2fAuthenticator::responseReceived):
+        (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+        (WebKit::U2fAuthenticator::continueCheckOnlyCommandAfterResponseReceived):
+        (WebKit::U2fAuthenticator::continueBogusCommandAfterResponseReceived):
+        (WebKit::U2fAuthenticator::continueSignCommandAfterResponseReceived):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.h: Renamed from Source/WebKit/UIProcess/WebAuthentication/fido/U2fHidAuthenticator.h.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-08-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under IPC::Connection::markCurrentlyDispatchedMessageAsInvalid()

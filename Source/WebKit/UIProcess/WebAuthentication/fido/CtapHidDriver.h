@@ -27,26 +27,18 @@
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
+#include "CtapDriver.h"
 #include "HidConnection.h"
-#include <WebCore/FidoConstants.h>
 #include <WebCore/FidoHidMessage.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 // The following implements the CTAP HID protocol:
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#usb
 // FSM: Idle => AllocateChannel => Ready
-class CtapHidDriver : public CanMakeWeakPtr<CtapHidDriver> {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(CtapHidDriver);
+class CtapHidDriver : public CtapDriver {
 public:
-    using ResponseCallback = Function<void(Vector<uint8_t>&&)>;
-
     enum class State : uint8_t {
         Idle,
         AllocateChannel,
@@ -57,8 +49,7 @@ public:
 
     explicit CtapHidDriver(UniqueRef<HidConnection>&&);
 
-    void setProtocol(fido::ProtocolVersion protocol) { m_protocol = protocol; }
-    void transact(Vector<uint8_t>&& data, ResponseCallback&&);
+    void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
 
 private:
     // Worker is the helper that maintains the transaction.
@@ -104,7 +95,6 @@ private:
     Vector<uint8_t> m_requestData;
     ResponseCallback m_responseCallback;
     Vector<uint8_t> m_nonce;
-    fido::ProtocolVersion m_protocol { fido::ProtocolVersion::kCtap };
 };
 
 } // namespace WebKit
