@@ -333,6 +333,7 @@ interface TestRunner {
     boolean isStatisticsHasLocalStorage(DOMString hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState(object completionHandler);
+    boolean hasStatisticsIsolatedSession(DOMString hostName);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

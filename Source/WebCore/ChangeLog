@@ -1,3 +1,32 @@
+2019-08-13  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Switch NSURLSession on top navigation to prevalent resource with user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=200642
+        <rdar://problem/53962073>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.html
+               http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.html
+
+        This patch splits m_registrableDomainsToBlockCookieFor in WebCore:NetworkStorageSession into:
+        - m_registrableDomainsToBlockAndDeleteCookiesFor
+        - m_registrableDomainsToBlockButKeepCookiesFor
+        ... to support different network load policies based on this distinction.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setITPSessionSwitchingEnabled):
+        (WebCore::RuntimeEnabledFeatures::itpSessionSwitchingEnabled const):
+        * page/Settings.yaml:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookies const):
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor const):
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor):
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockButKeepCookiesFor):
+        (WebCore::NetworkStorageSession::removePrevalentDomains):
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor): Deleted.
+        * platform/network/NetworkStorageSession.h:
+
 2019-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] setShouldObserveDOMTimerScheduling and setShouldObserveTransitions are always called in pairs.

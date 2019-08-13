@@ -103,6 +103,8 @@ typedef void (*WKWebsiteDataStoreStatisticsHasLocalStorageFunction)(bool hasLoca
 WK_EXPORT void WKWebsiteDataStoreStatisticsHasLocalStorage(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsHasLocalStorageFunction callback);
 typedef void (*WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap(WKWebsiteDataStoreRef dataStoreRef, double seconds, void* context, WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction);
+typedef void (*WKWebsiteDataStoreStatisticsHasIsolatedSessionFunction)(bool hasIsolatedSession, void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreStatisticsHasIsolatedSession(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsHasIsolatedSessionFunction callback);
 typedef void (*WKWebsiteDataStoreStatisticsResetToConsistentStateFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler);
 

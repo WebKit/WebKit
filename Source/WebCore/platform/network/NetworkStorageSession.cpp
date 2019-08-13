@@ -63,7 +63,20 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookies(const RegistrableDomain
     if (registrableDomain.isEmpty())
         return false;
 
-    return m_registrableDomainsToBlockCookieFor.contains(registrableDomain);
+    ASSERT(!(m_registrableDomainsToBlockAndDeleteCookiesFor.contains(registrableDomain) && m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain)));
+
+    return m_registrableDomainsToBlockAndDeleteCookiesFor.contains(registrableDomain)
+        || m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain);
+}
+
+bool NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(const RegistrableDomain& registrableDomain) const
+{
+    if (registrableDomain.isEmpty())
+        return false;
+
+    ASSERT(!(m_registrableDomainsToBlockAndDeleteCookiesFor.contains(registrableDomain) && m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain)));
+
+    return m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain);
 }
 
 bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
@@ -103,16 +116,24 @@ void NetworkStorageSession::setAgeCapForClientSideCookies(Optional<Seconds> seco
     m_ageCapForClientSideCookiesShort = seconds ? Seconds { seconds->seconds() / 7. } : seconds;
 }
 
-void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<RegistrableDomain>& domains)
+void NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor(const Vector<RegistrableDomain>& domains)
 {
-    m_registrableDomainsToBlockCookieFor.clear();
-    m_registrableDomainsToBlockCookieFor.add(domains.begin(), domains.end());
+    m_registrableDomainsToBlockAndDeleteCookiesFor.clear();
+    m_registrableDomainsToBlockAndDeleteCookiesFor.add(domains.begin(), domains.end());
+}
+
+void NetworkStorageSession::setPrevalentDomainsToBlockButKeepCookiesFor(const Vector<RegistrableDomain>& domains)
+{
+    m_registrableDomainsToBlockButKeepCookiesFor.clear();
+    m_registrableDomainsToBlockButKeepCookiesFor.add(domains.begin(), domains.end());
 }
 
 void NetworkStorageSession::removePrevalentDomains(const Vector<RegistrableDomain>& domains)
 {
-    for (auto& domain : domains)
-        m_registrableDomainsToBlockCookieFor.remove(domain);
+    for (auto& domain : domains) {
+        m_registrableDomainsToBlockAndDeleteCookiesFor.remove(domain);
+        m_registrableDomainsToBlockButKeepCookiesFor.remove(domain);
+    }
 }
 
 bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID) const

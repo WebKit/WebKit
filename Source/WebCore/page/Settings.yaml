@@ -861,6 +861,9 @@ webRTCEncryptionEnabled:
   initial: true
   inspectorOverride: true
 
+isITPSessionSwitchingEnabled:
+  initial: true
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

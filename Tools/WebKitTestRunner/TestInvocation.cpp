@@ -1462,6 +1462,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "HasStatisticsIsolatedSession")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        
+        WKStringRef hostName = static_cast<WKStringRef>(messageBody);
+        bool hasIsolatedSession = TestController::singleton().hasStatisticsIsolatedSession(hostName);
+        auto result = adoptWK(WKBooleanCreate(hasIsolatedSession));
+        return result;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials")) {
         TestController::singleton().removeAllSessionCredentials();
         return nullptr;

@@ -1,3 +1,93 @@
+2019-08-13  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Switch NSURLSession on top navigation to prevalent resource with user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=200642
+        <rdar://problem/53962073>
+
+        Reviewed by Alex Christensen.
+
+        Since prevalent resources with user interaction get to keep their cookies and website
+        data, we should use a different NSURLSessions for when they are first-party websites
+        and have access to that data. This patch achieves that.
+
+        The WebKit::NetworkDataTaskCocoa constructor now checks with the network storage session
+        if the first party for this load should be isolated. The category for which this is true
+        is checked in the new function
+        WebCore:NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor()
+        which in turn is backed by a new split of m_registrableDomainsToBlockCookieFor into:
+        - m_registrableDomainsToBlockAndDeleteCookiesFor
+        - m_registrableDomainsToBlockButKeepCookiesFor
+        ... in WebCore:NetworkStorageSession.
+
+        Non-isolated sessions are now picked up through the convenience function
+        WebKit::NetworkSessionCocoa::session() whereas isolated sessions are created lazily and
+        picked up through WebKit::NetworkSessionCocoa::isolatedSession().
+
+        The number of isolated NSURLSessions in memory is capped to 10. When the cap is hit,
+        the session that's been unused the longest is aged out.
+
+        The C API changes are test infrastructure.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clear):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsToBlockAndDeleteCookiesFor const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsToBlockButKeepCookiesFor const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsToBlock const): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsStore::debugLogDomainsInBatches):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains): Deleted.
+            Dead code.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::RegistrableDomainsToBlockCookiesFor::isolatedCopy const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::NetworkProcess::scheduleClearInMemoryAndPersistent):
+        (WebKit::NetworkProcess::hasIsolatedSession const):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::shouldIsolateSessionsForPrevalentTopFrames const):
+        (WebKit::NetworkSession::hasIsolatedSession const):
+        (WebKit::NetworkSession::clearIsolatedSessions):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::session):
+        (WebKit::NetworkSessionCocoa::isolatedSession):
+        (WebKit::NetworkSessionCocoa::hasIsolatedSession const):
+        (WebKit::NetworkSessionCocoa::clearIsolatedSessions):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel):
+        (WebKit::NetworkSessionCocoa::clearCredentials):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsHasIsolatedSession):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasIsolatedSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasLocalStorageForTesting const):
+        (WebKit::WebsiteDataStore::hasIsolatedSessionForTesting const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-08-13  Chris Dumez  <cdumez@apple.com>
 
         Fix potential thread safety issue under WebResourceLoadStatisticsStore::hasHadUserInteraction()

@@ -413,7 +413,7 @@ void ResourceLoadStatisticsStore::setDataRecordsBeingRemoved(bool value)
         m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
 }
 
-void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
+void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const RegistrableDomainsToBlockCookiesFor& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     
@@ -571,8 +571,11 @@ void ResourceLoadStatisticsStore::didCreateNetworkProcess()
     updateClientSideCookiesAgeCap();
 }
 
-void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, const Vector<RegistrableDomain>& domains)
+void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, const RegistrableDomainsToBlockCookiesFor& domainsToBlock)
 {
+    Vector<RegistrableDomain> domains;
+    domains.appendVector(domainsToBlock.domainsToBlockAndDeleteCookiesFor);
+    domains.appendVector(domainsToBlock.domainsToBlockButKeepCookiesFor);
     static const auto maxNumberOfDomainsInOneLogStatement = 50;
     if (domains.isEmpty())
         return;

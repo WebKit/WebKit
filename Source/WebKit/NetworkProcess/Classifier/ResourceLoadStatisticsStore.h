@@ -98,7 +98,7 @@ public:
     virtual bool isEmpty() const = 0;
 
     virtual void updateCookieBlocking(CompletionHandler<void()>&&) = 0;
-    void updateCookieBlockingForDomains(const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&&);
+    void updateCookieBlockingForDomains(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);
     void clearBlockingStateForDomains(const Vector<RegistrableDomain>& domains, CompletionHandler<void()>&&);
 
     void includeTodayAsOperatingDateIfNecessary();
@@ -186,7 +186,7 @@ public:
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);
     static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates);
-    static void debugLogDomainsInBatches(const char* action, const Vector<RegistrableDomain>& domains);
+    static void debugLogDomainsInBatches(const char* action, const RegistrableDomainsToBlockCookiesFor&);
 
     ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
     

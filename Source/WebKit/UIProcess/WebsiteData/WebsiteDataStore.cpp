@@ -1684,6 +1684,18 @@ void WebsiteDataStore::hasLocalStorageForTesting(const URL& url, CompletionHandl
     }
     ASSERT(!completionHandler);
 }
+
+void WebsiteDataStore::hasIsolatedSessionForTesting(const URL& url, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess()) {
+            networkProcess->hasIsolatedSession(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
+            ASSERT(processPools().size() == 1);
+            break;
+        }
+    }
+    ASSERT(!completionHandler);
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)

@@ -117,7 +117,8 @@ private:
 #endif
     void updateLastSeen(const RegistrableDomain&, WallTime);
     void setUserInteraction(const RegistrableDomain&, bool hadUserInteraction, WallTime);
-    Vector<RegistrableDomain> domainsToBlock() const;
+    Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor() const;
+    Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
 
     struct PrevalentDomainData {
         unsigned domainID;

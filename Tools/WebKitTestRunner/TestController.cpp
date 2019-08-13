@@ -3511,6 +3511,15 @@ void TestController::setStatisticsCacheMaxAgeCap(double seconds)
     runUntil(context.done, noTimeout);
 }
 
+bool TestController::hasStatisticsIsolatedSession(WKStringRef host)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreStatisticsHasIsolatedSession(dataStore, host, &context, resourceStatisticsBooleanResultCallback);
+    runUntil(context.done, noTimeout);
+    return context.result;
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

@@ -974,6 +974,16 @@ void NetworkProcessProxy::deleteWebsiteDataInUIProcessForRegistrableDomains(PAL:
     });
 }
 
+void NetworkProcessProxy::hasIsolatedSession(PAL::SessionID sessionID, const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(false);
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::HasIsolatedSession(sessionID, domain), WTFMove(completionHandler));
+}
+
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()

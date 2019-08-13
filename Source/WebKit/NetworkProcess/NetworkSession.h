@@ -93,6 +93,9 @@ public:
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
     bool enableResourceLoadStatisticsLogTestingEvent() const { return m_enableResourceLoadStatisticsLogTestingEvent; }
     void setResourceLoadStatisticsLogTestingEvent(bool log) { m_enableResourceLoadStatisticsLogTestingEvent = log; }
+    bool shouldIsolateSessionsForPrevalentTopFrames() const { return m_enableResourceLoadStatisticsNSURLSessionSwitching == EnableResourceLoadStatisticsNSURLSessionSwitching::Yes; }
+    virtual bool hasIsolatedSession(const WebCore::RegistrableDomain) const { return false; }
+    virtual void clearIsolatedSessions() { }
 #endif
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
@@ -133,6 +136,7 @@ protected:
     ShouldIncludeLocalhost m_shouldIncludeLocalhostInResourceLoadStatistics { ShouldIncludeLocalhost::Yes };
     EnableResourceLoadStatisticsDebugMode m_enableResourceLoadStatisticsDebugMode { EnableResourceLoadStatisticsDebugMode::No };
     WebCore::RegistrableDomain m_resourceLoadStatisticsManualPrevalentResource;
+    EnableResourceLoadStatisticsNSURLSessionSwitching m_enableResourceLoadStatisticsNSURLSessionSwitching { EnableResourceLoadStatisticsNSURLSessionSwitching::No };
     bool m_enableResourceLoadStatisticsLogTestingEvent;
 #endif
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;

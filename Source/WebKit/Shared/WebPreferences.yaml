@@ -1723,6 +1723,14 @@ LazyImageLoadingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
+IsITPSessionSwitchingEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "ITP Session Switching"
+  humanReadableDescription: "Enable session switching for domains classified by ITP"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

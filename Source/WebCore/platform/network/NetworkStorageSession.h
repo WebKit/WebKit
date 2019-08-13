@@ -143,7 +143,9 @@ public:
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, Optional<uint64_t> frameID, Optional<PageIdentifier>) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<PageIdentifier>) const;
     WEBCORE_EXPORT bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
-    WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<RegistrableDomain>&);
+    WEBCORE_EXPORT bool shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(const RegistrableDomain&) const;
+    WEBCORE_EXPORT void setPrevalentDomainsToBlockAndDeleteCookiesFor(const Vector<RegistrableDomain>&);
+    WEBCORE_EXPORT void setPrevalentDomainsToBlockButKeepCookiesFor(const Vector<RegistrableDomain>&);
     WEBCORE_EXPORT void setAgeCapForClientSideCookies(Optional<Seconds>);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<RegistrableDomain>& domains);
     WEBCORE_EXPORT bool hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier) const;
@@ -181,7 +183,8 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     Optional<Seconds> clientSideCookieCap(const RegistrableDomain& firstParty, Optional<PageIdentifier>) const;
-    HashSet<RegistrableDomain> m_registrableDomainsToBlockCookieFor;
+    HashSet<RegistrableDomain> m_registrableDomainsToBlockAndDeleteCookiesFor;
+    HashSet<RegistrableDomain> m_registrableDomainsToBlockButKeepCookiesFor;
     HashMap<PageIdentifier, HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>> m_framesGrantedStorageAccess;
     HashMap<PageIdentifier, HashMap<RegistrableDomain, RegistrableDomain>> m_pagesGrantedStorageAccess;
     Optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };

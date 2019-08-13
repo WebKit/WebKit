@@ -2066,6 +2066,16 @@ void TestRunner::setStatisticsCacheMaxAgeCap(double seconds)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+bool TestRunner::hasStatisticsIsolatedSession(JSStringRef hostName)
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("HasStatisticsIsolatedSession"));
+    auto messageBody = adoptWK(WKStringCreateWithJSString(hostName));
+    WKTypeRef returnData = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
+    ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()
 {
     callTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID);

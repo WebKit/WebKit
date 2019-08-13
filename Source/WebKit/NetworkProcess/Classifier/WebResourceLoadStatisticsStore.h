@@ -63,10 +63,16 @@ class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
+enum class EnableResourceLoadStatisticsNSURLSessionSwitching : bool { No, Yes };
 enum class WebsiteDataToRemove : uint8_t {
     All,
     AllButHttpOnlyCookies,
     AllButCookies
+};
+struct RegistrableDomainsToBlockCookiesFor {
+    Vector<WebCore::RegistrableDomain> domainsToBlockAndDeleteCookiesFor;
+    Vector<WebCore::RegistrableDomain> domainsToBlockButKeepCookiesFor;
+    RegistrableDomainsToBlockCookiesFor isolatedCopy() const { return { domainsToBlockAndDeleteCookiesFor.isolatedCopy(), domainsToBlockButKeepCookiesFor.isolatedCopy() }; }
 };
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
@@ -168,7 +174,7 @@ public:
     void logTestingEvent(const String&);
     void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
-    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
+    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);
     void callRemoveDomainsHandler(const Vector<RegistrableDomain>&);
     void callHasStorageAccessForFrameHandler(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
 

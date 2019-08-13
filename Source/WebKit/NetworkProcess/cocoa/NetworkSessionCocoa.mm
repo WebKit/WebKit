@@ -67,6 +67,8 @@ using namespace WebKit;
 CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
 CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
 
+constexpr unsigned maxNumberOfIsolatedSessions { 10 };
+
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
@@ -1034,6 +1036,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.shouldIncludeLocalhostInResourceLoadStatistics ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
     m_enableResourceLoadStatisticsDebugMode = parameters.enableResourceLoadStatisticsDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
     m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsManualPrevalentResource;
+    m_enableResourceLoadStatisticsNSURLSessionSwitching = parameters.enableResourceLoadStatisticsNSURLSessionSwitching ? EnableResourceLoadStatisticsNSURLSessionSwitching::Yes : EnableResourceLoadStatisticsNSURLSessionSwitching::No;
     setResourceLoadStatisticsEnabled(parameters.enableResourceLoadStatistics);
 #endif
 
@@ -1068,6 +1071,75 @@ void NetworkSessionCocoa::initializeEphemeralStatelessCookielessSession()
     m_ephemeralStatelessCookielessSession = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_ephemeralStatelessCookielessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
 
+NSURLSession* NetworkSessionCocoa::session(WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+    switch (storedCredentialsPolicy) {
+    case WebCore::StoredCredentialsPolicy::Use:
+        return m_sessionWithCredentialStorage.get();
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
+        return m_statelessSession.get();
+    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
+        if (!m_ephemeralStatelessCookielessSession)
+            initializeEphemeralStatelessCookielessSession();
+        return m_ephemeralStatelessCookielessSession.get();
+    }
+}
+
+NSURLSession* NetworkSessionCocoa::isolatedSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain firstPartyDomain)
+{
+    auto entry = m_isolatedSessions.ensure(firstPartyDomain, [this] {
+        IsolatedSession newEntry { };
+        newEntry.sessionWithCredentialStorageDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:true]);
+        newEntry.sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(newEntry.sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+
+        newEntry.statelessSessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
+        newEntry.statelessSession = [NSURLSession sessionWithConfiguration:m_statelessSession.get().configuration delegate:static_cast<id>(newEntry.statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+
+        return newEntry;
+    }).iterator->value;
+
+    entry.lastUsed = WallTime::now();
+
+    if (m_isolatedSessions.size() > maxNumberOfIsolatedSessions) {
+        WebCore::RegistrableDomain keyToRemove;
+        auto oldestTimestamp = WallTime::now();
+        for (auto& key : m_isolatedSessions.keys()) {
+            auto timestamp = m_isolatedSessions.get(key).lastUsed;
+            if (timestamp < oldestTimestamp) {
+                oldestTimestamp = timestamp;
+                keyToRemove = key;
+            }
+        }
+        LOG(NetworkSession, "About to remove isolated NSURLSession.");
+        m_isolatedSessions.remove(keyToRemove);
+    }
+
+    RELEASE_ASSERT(m_isolatedSessions.size() <= maxNumberOfIsolatedSessions);
+
+    switch (storedCredentialsPolicy) {
+    case WebCore::StoredCredentialsPolicy::Use:
+        LOG(NetworkSession, "Using isolated NSURLSession with credential storage.");
+        return entry.sessionWithCredentialStorage.get();
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
+        LOG(NetworkSession, "Using isolated NSURLSession without credential storage.");
+        return entry.statelessSession.get();
+    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
+        if (!m_ephemeralStatelessCookielessSession)
+            initializeEphemeralStatelessCookielessSession();
+        return m_ephemeralStatelessCookielessSession.get();
+    }
+}
+
+bool NetworkSessionCocoa::hasIsolatedSession(const WebCore::RegistrableDomain domain) const
+{
+    return m_isolatedSessions.contains(domain);
+}
+
+void NetworkSessionCocoa::clearIsolatedSessions()
+{
+    m_isolatedSessions.clear();
+}
+
 void NetworkSessionCocoa::invalidateAndCancel()
 {
     NetworkSession::invalidateAndCancel();
@@ -1078,6 +1150,12 @@ void NetworkSessionCocoa::invalidateAndCancel()
     [m_sessionWithCredentialStorageDelegate sessionInvalidated];
     [m_statelessSessionDelegate sessionInvalidated];
     [m_ephemeralStatelessCookielessSessionDelegate sessionInvalidated];
+
+    for (auto& session : m_isolatedSessions.values()) {
+        [session.sessionWithCredentialStorage invalidateAndCancel];
+        [session.sessionWithCredentialStorageDelegate sessionInvalidated];
+    }
+    m_isolatedSessions.clear();
 }
 
 void NetworkSessionCocoa::clearCredentials()
@@ -1089,6 +1167,8 @@ void NetworkSessionCocoa::clearCredentials()
     // FIXME: Use resetWithCompletionHandler instead.
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
     m_statelessSession = [NSURLSession sessionWithConfiguration:m_statelessSession.get().configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+    for (auto& entry : m_isolatedSessions.values())
+        entry.session = [NSURLSession sessionWithConfiguration:entry.session.get().configuration delegate:static_cast<id>(entry.delegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 #endif
 }
 

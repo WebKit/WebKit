@@ -712,8 +712,9 @@ void ResourceLoadStatisticsMemoryStore::clear(CompletionHandler<void()>&& comple
 
     removeAllStorageAccess([callbackAggregator = callbackAggregator.copyRef()] { });
 
-    auto primaryDomainsToBlock = ensurePrevalentResourcesForDebugMode();
-    updateCookieBlockingForDomains(primaryDomainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
+    auto registrableDomainsToBlockAndDeleteCookiesFor = ensurePrevalentResourcesForDebugMode();
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { } };
+    updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 bool ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const
@@ -761,18 +762,25 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<RegistrableDomain> domainsToBlock;
+    Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor;
+    Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (resourceStatistic.isPrevalentResource)
-            domainsToBlock.append(resourceStatistic.registrableDomain);
+        if (resourceStatistic.isPrevalentResource) {
+            if (hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long))
+                domainsToBlockButKeepCookiesFor.append(resourceStatistic.registrableDomain);
+            else
+                domainsToBlockAndDeleteCookiesFor.append(resourceStatistic.registrableDomain);
+        }
     }
 
-    if (domainsToBlock.isEmpty() && !debugModeEnabled()) {
+    if (domainsToBlockAndDeleteCookiesFor.isEmpty() && domainsToBlockButKeepCookiesFor.isEmpty() && !debugModeEnabled()) {
         completionHandler();
         return;
     }
 
-    if (debugLoggingEnabled() && !domainsToBlock.isEmpty())
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { domainsToBlockAndDeleteCookiesFor, domainsToBlockButKeepCookiesFor };
+
+    if (debugLoggingEnabled() && !domainsToBlockAndDeleteCookiesFor.isEmpty() && !domainsToBlockButKeepCookiesFor.isEmpty())
         debugLogDomainsInBatches("block", domainsToBlock);
 
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(store()), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {

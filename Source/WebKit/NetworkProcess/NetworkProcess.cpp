@@ -636,7 +636,7 @@ void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, Comple
 void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
-        networkStorageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+        networkStorageSession->setPrevalentDomainsToBlockAndDeleteCookiesFor(domainsToBlock);
     completionHandler();
 }
 
@@ -780,6 +780,7 @@ void NetworkProcess::scheduleCookieBlockingUpdate(PAL::SessionID sessionID, Comp
 void NetworkProcess::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
+        networkSession->clearIsolatedSessions();
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             if (modifiedSince)
                 resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince.value(), shouldGrandfather, WTFMove(completionHandler));
@@ -1234,6 +1235,14 @@ void NetworkProcess::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::Sessio
     else
         ASSERT_NOT_REACHED();
     completionHandler();
+}
+
+void NetworkProcess::hasIsolatedSession(PAL::SessionID sessionID, const WebCore::RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    bool result = false;
+    if (auto* networkSession = this->networkSession(sessionID))
+        result = networkSession->hasIsolatedSession(domain);
+    completionHandler(result);
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

@@ -472,6 +472,17 @@ void WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap(WKWebsiteDataStoreRef dataSto
 #endif
 }
 
+void WKWebsiteDataStoreStatisticsHasIsolatedSession(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsHasIsolatedSessionFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().hasIsolatedSessionForTesting(URL(URL(), WebKit::toImpl(host)->string()), [context, callback](bool hasIsolatedSession) {
+        callback(hasIsolatedSession, context);
+    });
+#else
+    callback(false, context);
+#endif
+}
+
 void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
