@@ -1,5 +1,44 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248543. rdar://problem/54237801
+
+    Clear m_sessionStorageNamespaces on the background thread
+    https://bugs.webkit.org/show_bug.cgi?id=200631
+    <rdar://problem/54149638>
+    
+    Reviewed by Chris Dumez.
+    
+    Network process receives messages about web page state from web process and destroys sessionStorageNamespace if
+    needed. It also receives messages about session state from UI process and destroys StorageManager, which owns
+    SessionStorageNamespaces, if needed. Because of the race in receiving the messages from different processes,
+    network process may decide to destroy StorageManager before destroying all SessionStorageNamespaces, and
+    SessionStorageNamespaces are destroyed with StorageManager on the main thread.
+    
+    * NetworkProcess/WebStorage/StorageManager.cpp:
+    (WebKit::StorageManager::waitUntilTasksFinished):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248543 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-12  Sihui Liu  <sihui_liu@apple.com>
+
+            Clear m_sessionStorageNamespaces on the background thread
+            https://bugs.webkit.org/show_bug.cgi?id=200631
+            <rdar://problem/54149638>
+
+            Reviewed by Chris Dumez.
+
+            Network process receives messages about web page state from web process and destroys sessionStorageNamespace if
+            needed. It also receives messages about session state from UI process and destroys StorageManager, which owns
+            SessionStorageNamespaces, if needed. Because of the race in receiving the messages from different processes,
+            network process may decide to destroy StorageManager before destroying all SessionStorageNamespaces, and
+            SessionStorageNamespaces are destroyed with StorageManager on the main thread.
+
+            * NetworkProcess/WebStorage/StorageManager.cpp:
+            (WebKit::StorageManager::waitUntilTasksFinished):
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248166. rdar://problem/54237837
 
     [macOS 10.15] Image dragged from Safari does not appear in Notes
