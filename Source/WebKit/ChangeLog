@@ -1,3 +1,16 @@
+2019-08-12  Chris Dumez  <cdumez@apple.com>
+
+        Fix bad RELEASE_LOG_ERROR under ProvisionalPageProxy::ProvisionalPageProxy()
+        https://bugs.webkit.org/show_bug.cgi?id=200646
+
+        Reviewed by Alex Christensen.
+
+        Fix bad RELEASE_LOG_ERROR under ProvisionalPageProxy::ProvisionalPageProxy(). Should be a
+        simple RELEASE_LOG() as this is not an error.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+
 2019-08-12  Sam Weinig  <weinig@apple.com>
 
         Replace multiparameter overloads of append() in StringBuilder as a first step toward standardizinging on the flexibleAppend() implementation

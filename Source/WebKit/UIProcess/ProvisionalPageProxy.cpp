@@ -63,7 +63,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_suspensionToken(m_process->throttler().foregroundActivityToken())
 #endif
 {
-    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: pageID = %" PRIu64 " navigationID = %" PRIu64 " suspendedPage: %p", m_page.pageID().toUInt64(), navigationID, suspendedPage.get());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: pageID = %" PRIu64 " navigationID = %" PRIu64 " suspendedPage: %p", m_page.pageID().toUInt64(), navigationID, suspendedPage.get());
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID(), *this);
     m_process->addProvisionalPageProxy(*this);
