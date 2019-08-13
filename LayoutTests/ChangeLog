@@ -1,5 +1,29 @@
 2019-08-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248468. rdar://problem/54049321
+
+    Correcting Expectation Typo from r248388.
+    rdar://54049321
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ios-12/TestExpectations:
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248468 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-09  Russell Epstein  <repstein@apple.com>
+
+            Correcting Expectation Typo from r248388.
+            rdar://54049321
+
+            Unreviewed Test Gardening.
+
+            * platform/ios-12/TestExpectations:
+            * platform/ios/TestExpectations:
+
+2019-08-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248424. rdar://problem/53836015
 
     Add Catalina Baselines for Font-related Tests.
