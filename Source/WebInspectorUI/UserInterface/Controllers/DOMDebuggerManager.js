@@ -368,7 +368,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     addEventBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WI.EventBreakpoint);
+        console.assert(breakpoint instanceof WI.EventBreakpoint, breakpoint);
         if (!breakpoint)
             return;
 
@@ -377,9 +377,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
         }
 
-        console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
+        console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener, breakpoint);
+        console.assert(breakpoint.eventName, breakpoint);
 
-        if (this.listenerBreakpointForEventName(breakpoint.eventName))
+        if (this._listenerBreakpoints.find((existing) => existing.eventName === breakpoint.eventName))
             return;
 
         this._listenerBreakpoints.push(breakpoint);
@@ -397,7 +398,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     removeEventBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WI.EventBreakpoint);
+        console.assert(breakpoint instanceof WI.EventBreakpoint, breakpoint);
         if (!breakpoint)
             return;
 
@@ -407,8 +408,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
         }
 
-        console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
+        console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener, breakpoint);
+        console.assert(breakpoint.eventName, breakpoint);
 
+        console.assert(this._listenerBreakpoints.includes(breakpoint), breakpoint);
         if (!this._listenerBreakpoints.includes(breakpoint))
             return;
 
