@@ -1,3 +1,59 @@
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248169. rdar://problem/54237663
+
+    Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.
+    https://bugs.webkit.org/show_bug.cgi?id=200394
+    <rdar://problem/52914964>
+    
+    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-08-02
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Test: accessibility/ios-simulator/element-in-table-cell.html
+    
+    Added _accessibilityIsInTableCell needed for iOS accessibility client.
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+    (-[WebAccessibilityObjectWrapper _accessibilityIsInTableCell]):
+    
+    Tools:
+    
+    Glue code to exercise new method [WebAccessibilityObjectWrapper _accessibilityIsInTableCell].
+    
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+    (WTR::AccessibilityUIElement::isInTableCell const):
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+    * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+    * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+    (WTR::AccessibilityUIElement::isInTableCell const):
+    
+    LayoutTests:
+    
+    New test that exercises [WebAccessibilityObjectWrapper _accessibilityIsInTableCell].
+    
+    * accessibility/ios-simulator/element-in-table-cell-expected.txt: Added.
+    * accessibility/ios-simulator/element-in-table-cell.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248169 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+            Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.
+            https://bugs.webkit.org/show_bug.cgi?id=200394
+            <rdar://problem/52914964>
+
+            Reviewed by Chris Fleizach.
+
+            Glue code to exercise new method [WebAccessibilityObjectWrapper _accessibilityIsInTableCell].
+
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+            (WTR::AccessibilityUIElement::isInTableCell const):
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+            * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+            (WTR::AccessibilityUIElement::isInTableCell const):
+
 2019-08-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248491. rdar://problem/54130636

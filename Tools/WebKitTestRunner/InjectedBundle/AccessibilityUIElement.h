@@ -189,6 +189,7 @@ public:
     JSRetainPtr<JSStringRef> attributesOfRows();
     JSRetainPtr<JSStringRef> attributesOfVisibleCells();
     JSRetainPtr<JSStringRef> attributesOfHeader();
+    bool isInTableCell() const;
     int indexInTable();
     JSRetainPtr<JSStringRef> rowIndexRange();
     JSRetainPtr<JSStringRef> columnIndexRange();

@@ -150,6 +150,7 @@
     AccessibilityUIElement disclosedByRow();
     AccessibilityUIElement disclosedRowAtIndex(unsigned long index);
     AccessibilityUIElement rowAtIndex(unsigned long index);
+    boolean isInTableCell();
     long indexInTable();
     DOMString rowIndexRange();
     DOMString columnIndexRange();
