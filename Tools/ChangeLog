@@ -1,3 +1,15 @@
+2019-08-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        AX: Homebrew is not allowed to run any script under sudo.
+        https://bugs.webkit.org/show_bug.cgi?id=173801
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Latest versions of Homebrew throw an error when run as root.
+        Dependencies are successfully installed w/o `sudo` on macOS, so skip it.
+
+        * gtk/install-dependencies:
+
 2019-08-12  Jonathan Bedard  <jbedard@apple.com>
 
         [REGRESSION] run-webkit-tests: No PID defined when searching for simulator crashlogs

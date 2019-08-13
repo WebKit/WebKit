@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# This script needs to be run with root rights.
-if [ $UID -ne 0 ]; then
+# On Linux systems, this script needs to be run with root rights.
+if [ `uname` != "Darwin" ] && [ $UID -ne 0 ]; then
     sudo $0
     exit 0
 fi
