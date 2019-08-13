@@ -54,6 +54,7 @@ public:
     bool shouldDispatchSimulatedMouseEvents() const;
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
     Optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
+    bool shouldMakeTouchEventNonCancelableForTarget(EventTarget*) const;
 #endif
     bool shouldDisablePointerEventsQuirk() const;
     bool shouldIgnoreContentChange(const Element&) const;

@@ -1,5 +1,38 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248499. rdar://problem/54237800
+
+    Can’t sort videos on a YouTube channel page on iPad
+    https://bugs.webkit.org/show_bug.cgi?id=200573
+    <rdar://problem/53415195>
+    
+    Reviewed by Darin Adler.
+    
+    Add a quirk to make touch events non-cancelable (preventDefault() does nothing).
+    
+    * page/Quirks.cpp:
+    (WebCore::Quirks::shouldMakeTouchEventNonCancelableForTarget const):
+    * page/Quirks.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248499 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-10  Antti Koivisto  <antti@apple.com>
+
+            Can’t sort videos on a YouTube channel page on iPad
+            https://bugs.webkit.org/show_bug.cgi?id=200573
+            <rdar://problem/53415195>
+
+            Reviewed by Darin Adler.
+
+            Add a quirk to make touch events non-cancelable (preventDefault() does nothing).
+
+            * page/Quirks.cpp:
+            (WebCore::Quirks::shouldMakeTouchEventNonCancelableForTarget const):
+            * page/Quirks.h:
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248513. rdar://problem/54237806
 
     Accessibility client cannot navigate to internal links targets on iOS.
