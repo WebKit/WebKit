@@ -1,3 +1,12 @@
+2019-08-13  Chris Lord  <clord@igalia.com>
+
+        Incorrect head in fast/canvas/webgl/gl-get-calls.html causes test failure
+        https://bugs.webkit.org/show_bug.cgi?id=200673
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/canvas/webgl/gl-get-calls.html:
+
 2019-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         FrameLoader::open can execute scritps via style recalc in Frame::setDocument
