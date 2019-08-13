@@ -31,6 +31,7 @@
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
+#include <pal/SessionID.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <wtf/HashMap.h>
@@ -47,6 +48,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class NetworkRTCResolver;
 class NetworkRTCSocket;
+class NetworkSession;
 
 class NetworkRTCProvider : public ThreadSafeRefCounted<NetworkRTCProvider>, public rtc::MessageHandler {
 public:
@@ -75,7 +77,7 @@ private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
 
     void createUDPSocket(uint64_t, const RTCNetwork::SocketAddress&, uint16_t, uint16_t);
-    void createClientTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, int);
+    void createClientTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, PAL::SessionID, String&& userAgent, int);
     void createServerTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, uint16_t minPort, uint16_t maxPort, int);
     void wrapNewTCPConnection(uint64_t identifier, uint64_t newConnectionSocketIdentifier);
 
@@ -87,6 +89,8 @@ private:
     void createSocket(uint64_t identifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, LibWebRTCSocketClient::Type);
 
     void OnMessage(rtc::Message*);
+
+    static rtc::ProxyInfo proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&);
 
     HashMap<uint64_t, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
     HashMap<uint64_t, std::unique_ptr<LibWebRTCSocketClient>> m_sockets;

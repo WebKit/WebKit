@@ -129,10 +129,22 @@ void NetworkRTCProvider::createServerTCPSocket(uint64_t identifier, const RTCNet
     });
 }
 
-void NetworkRTCProvider::createClientTCPSocket(uint64_t identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, int options)
+#if !PLATFORM(COCOA)
+rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&)
 {
-    callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), options]() {
-        std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, { }, { }, options));
+    return { };
+}
+#endif
+
+void NetworkRTCProvider::createClientTCPSocket(uint64_t identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, PAL::SessionID sessionID, String&& userAgent, int options)
+{
+    auto* session = m_connection->networkProcess().networkSession(sessionID);
+    if (!session) {
+        m_connection->connection().send(Messages::WebRTCSocket::SignalClose(1), identifier);
+        return;
+    }
+    callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() {
+        std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, proxyInfo, userAgent.utf8().data(), options));
         createSocket(identifier, WTFMove(socket), LibWebRTCSocketClient::Type::ClientTCP);
     });
 }

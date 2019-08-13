@@ -81,6 +81,8 @@ public:
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
     DMFWebsitePolicyMonitor *deviceManagementPolicyMonitor();
 
+    CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
+
 private:
     void invalidateAndCancel() override;
     void clearCredentials() override;

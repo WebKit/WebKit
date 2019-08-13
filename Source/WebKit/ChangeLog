@@ -1,3 +1,33 @@
+2019-08-13  Youenn Fablet  <youenn@apple.com>
+
+        User Agent and SessionID should be given to NetworkRTCProvider to set up the correct proxy information
+        https://bugs.webkit.org/show_bug.cgi?id=200583
+
+        Reviewed by Eric Carlson.
+
+        Pass session id and user agent whenever creating a TCP client socket.
+        Use this information to get the proxy information from NetworkSession and pass it to libwebrtc socket creation.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::proxyInfoFromSession):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * NetworkProcess/webrtc/NetworkRTCProvider.mm: Added.
+        (WebKit::NetworkRTCProvider::proxyInfoFromSession):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createAsyncResolver):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         Fix bad RELEASE_LOG_ERROR under ProvisionalPageProxy::ProvisionalPageProxy()

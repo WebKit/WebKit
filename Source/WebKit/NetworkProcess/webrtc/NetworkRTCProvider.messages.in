@@ -25,7 +25,7 @@
 messages -> NetworkRTCProvider {
     CreateUDPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort)
     CreateServerTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, int options)
-    CreateClientTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, int options)
+    CreateClientTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, PAL::SessionID sessionID, String userAgent, int options)
     CreateResolver(uint64_t identifier, String address)
     StopResolver(uint64_t identifier)
     WrapNewTCPConnection(uint64_t identifier, uint64_t newConnectionSocketIdentifier)

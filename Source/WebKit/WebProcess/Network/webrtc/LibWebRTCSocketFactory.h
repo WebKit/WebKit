@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-class LibWebRTCSocketFactory final : public rtc::PacketSocketFactory {
+class LibWebRTCSocketFactory {
 public:
     LibWebRTCSocketFactory() { }
 
@@ -51,13 +51,12 @@ public:
 
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
-    rtc::AsyncResolverInterface* createAsyncResolver() { return CreateAsyncResolver(); }
+    rtc::AsyncPacketSocket* createUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort);
+    rtc::AsyncPacketSocket* createServerTcpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options);
+    rtc::AsyncPacketSocket* createClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, PAL::SessionID, String&& userAgent, int options);
+    rtc::AsyncResolverInterface* createAsyncResolver();
 
 private:
-    rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
-    rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t min_port, uint16_t max_port, int options) final;
-    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, int options);
-    rtc::AsyncResolverInterface* CreateAsyncResolver() final;
 
     // We cannot own sockets, clients of the factory are responsible to free them.
     HashMap<uint64_t, LibWebRTCSocket*> m_sockets;

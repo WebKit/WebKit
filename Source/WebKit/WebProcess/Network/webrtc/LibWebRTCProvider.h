@@ -50,7 +50,9 @@ public:
     LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
 
 private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
+    std::unique_ptr<rtc::PacketSocketFactory> createSocketFactory(PAL::SessionID, String&& /* userAgent */) final;
+
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 
     void unregisterMDNSNames(uint64_t documentIdentifier) final;
     void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;

@@ -1,3 +1,16 @@
+2019-08-13  Youenn Fablet  <youenn@apple.com>
+
+        User Agent and SessionID should be given to NetworkRTCProvider to set up the correct proxy information
+        https://bugs.webkit.org/show_bug.cgi?id=200583
+
+        Reviewed by Eric Carlson.
+
+        Export of some symbols.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2019-08-02  Youenn Fablet  <youenn@apple.com>
 
         Add build check for libwebrtc ObjectiveC names

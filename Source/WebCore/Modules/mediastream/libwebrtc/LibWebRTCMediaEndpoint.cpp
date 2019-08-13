@@ -86,7 +86,11 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
         configuration.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
 
     if (!m_backend) {
-        m_backend = client.createPeerConnection(*this, WTFMove(configuration));
+        if (!m_rtcSocketFactory) {
+            auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());
+            m_rtcSocketFactory = client.createSocketFactory(document.sessionID(), document.userAgent(document.url()));
+        }
+        m_backend = client.createPeerConnection(*this, m_rtcSocketFactory.get(), WTFMove(configuration));
         return !!m_backend;
     }
     auto oldConfiguration = m_backend->GetConfiguration();

@@ -44,9 +44,9 @@ private:
     }
 };
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory(), WTFMove(configuration), std::make_unique<AsyncResolverFactory>());
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), *socketFactory, WTFMove(configuration), std::make_unique<AsyncResolverFactory>());
 }
 
 void LibWebRTCProvider::disableNonLocalhostConnections()
@@ -62,6 +62,47 @@ void LibWebRTCProvider::unregisterMDNSNames(uint64_t documentIdentifier)
 void LibWebRTCProvider::registerMDNSName(PAL::SessionID sessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(sessionID, documentIdentifier, ipAddress, WTFMove(callback));
+}
+
+class RTCSocketFactory final : public rtc::PacketSocketFactory {
+public:
+    RTCSocketFactory(PAL::SessionID sessionID, String&& userAgent)
+        : m_sessionID(sessionID)
+        , m_userAgent(WTFMove(userAgent))
+    {
+    }
+
+private:
+    rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort) final
+    {
+        return factory().createUdpSocket(address, minPort, maxPort);
+    }
+
+    rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options) final
+    {
+        return factory().createServerTcpSocket(address, minPort, maxPort, options);
+    }
+
+    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, int options) final
+    {
+        return factory().createClientTcpSocket(localAddress, remoteAddress, m_sessionID, String { m_userAgent }, options);
+    }
+
+    rtc::AsyncResolverInterface* CreateAsyncResolver() final
+    {
+        return factory().createAsyncResolver();
+    }
+
+    LibWebRTCSocketFactory& factory() { return WebProcess::singleton().libWebRTCNetwork().socketFactory(); }
+
+private:
+    PAL::SessionID m_sessionID;
+    String m_userAgent;
+};
+
+std::unique_ptr<rtc::PacketSocketFactory> LibWebRTCProvider::createSocketFactory(PAL::SessionID sessionID, String&& userAgent)
+{
+    return std::make_unique<RTCSocketFactory>(sessionID, WTFMove(userAgent));
 }
 
 } // namespace WebKit

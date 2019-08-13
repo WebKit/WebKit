@@ -281,7 +281,7 @@ void LibWebRTCProvider::enableEnumeratingAllNetworkInterfaces()
     m_enableEnumeratingAllNetworkInterfaces = true;
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
     // Default WK1 implementation.
     ASSERT(m_useNetworkThreadWithSocketServer);

@@ -1,3 +1,21 @@
+2019-08-13  Youenn Fablet  <youenn@apple.com>
+
+        User Agent and SessionID should be given to NetworkRTCProvider to set up the correct proxy information
+        https://bugs.webkit.org/show_bug.cgi?id=200583
+
+        Reviewed by Eric Carlson.
+
+        Use a socket factory that is specific to the user agent and session ID.
+        This factory is stored in the media endpoint.
+        Not testable without proxy infrastructure.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::setConfiguration):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2019-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         FrameLoader::open can execute scritps via style recalc in Frame::setDocument

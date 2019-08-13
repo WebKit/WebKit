@@ -883,6 +883,7 @@
 		414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
 		414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */; };
 		4157E4B020E2ECDF00A6C0D7 /* com.google.o1dbrowserplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */; };
+		4176901422FDD41B00B1576D /* NetworkRTCProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */; };
 		417915AF2256BB7500D6F97E /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 417915AD2256BB7400D6F97E /* WebSocketChannel.h */; };
 		417915B12256C0D600D6F97E /* WebSocketChannelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 417915B02256C0D600D6F97E /* WebSocketChannelManager.h */; };
 		417915B92257046F00D6F97E /* NetworkSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 417915B62257046E00D6F97E /* NetworkSocketChannel.h */; };
@@ -3127,6 +3128,7 @@
 		4151E5C31FBB90A900E47E2D /* FormDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataReference.h; sourceTree = "<group>"; };
 		4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-webcontent-resources-to-private-headers.sh"; sourceTree = "<group>"; };
 		4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.o1dbrowserplugin.sb; sourceTree = "<group>"; };
+		4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCProvider.mm; sourceTree = "<group>"; };
 		417915AC2256BB7400D6F97E /* WebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketChannel.cpp; path = Network/WebSocketChannel.cpp; sourceTree = "<group>"; };
 		417915AD2256BB7400D6F97E /* WebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketChannel.h; path = Network/WebSocketChannel.h; sourceTree = "<group>"; };
 		417915B02256C0D600D6F97E /* WebSocketChannelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketChannelManager.h; path = Network/WebSocketChannelManager.h; sourceTree = "<group>"; };
@@ -6550,6 +6552,7 @@
 				41DC45951E3D6E1E00B11F51 /* NetworkRTCProvider.cpp */,
 				41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */,
 				41DC45981E3D6ED600B11F51 /* NetworkRTCProvider.messages.in */,
+				4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */,
 				4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */,
 				4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */,
 				4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */,
@@ -11143,6 +11146,7 @@
 				513A163C163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281E /* NetworkRTCMonitorMessageReceiver.cpp in Sources */,
+				4176901422FDD41B00B1576D /* NetworkRTCProvider.mm in Sources */,
 				51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281D /* NetworkRTCSocketMessageReceiver.cpp in Sources */,
 				31F060E11654318500F3281C /* NetworkSocketChannelMessageReceiver.cpp in Sources */,
