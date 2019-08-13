@@ -3361,3 +3361,9 @@ editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.htm
 
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]
+
+# rdar://49790831 (REGRESSION: 4 http/tests/contentdispositionattachmentsandbox/referer-header-stripped layout tests timing out)
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Skip ]

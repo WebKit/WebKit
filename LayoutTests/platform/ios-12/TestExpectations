@@ -28,3 +28,7 @@ http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass ]
 # rdar://54049321 (REGRESSION: editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html Failing)
 editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html [ Pass ]
 
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html [ Pass ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html [ Pass ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html [ Pass ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Pass ]

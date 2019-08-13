@@ -1,3 +1,10 @@
+2019-08-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, land test expectations for rdar://49790831.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-13  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Improve GPUBindGroup performance using one device-shared argument MTLBuffer
