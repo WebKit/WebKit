@@ -859,14 +859,6 @@ public:
         return jsDynamicCast<T>(vm, asCell());
     }
     
-    template<typename T>
-    T castConstant(VM& vm)
-    {
-        T result = dynamicCastConstant<T>(vm);
-        RELEASE_ASSERT(result);
-        return result;
-    }
-
     bool hasLazyJSValue()
     {
         return op() == LazyJSConstant;
