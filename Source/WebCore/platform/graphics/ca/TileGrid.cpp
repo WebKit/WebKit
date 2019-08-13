@@ -557,8 +557,6 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
     if (!m_controller.isInWindow())
         return IntRect();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " ensureTilesForRect: " << rect);
-
     FloatRect scaledRect(rect);
     scaledRect.scale(m_scale);
     IntRect rectInTileCoords(enclosingIntRect(scaledRect));
@@ -608,9 +606,11 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                 m_containerLayer.get().appendSublayer(*tileInfo.layer);
         }
     }
-    
+
     if (tilesInCohort)
         startedNewCohort(currCohort);
+
+    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (bounds " << m_controller.bounds() << ") ensureTilesForRect: " << rect << " covered " << coverageRect);
 
     return coverageRect;
 }
