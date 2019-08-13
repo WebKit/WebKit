@@ -180,7 +180,7 @@ void StorageManager::getSessionStorageOrigins(Function<void(HashSet<WebCore::Sec
 
         for (const auto& sessionStorageNamespace : m_sessionStorageNamespaces.values()) {
             for (auto& origin : sessionStorageNamespace->origins())
-                origins.add(origin);
+                origins.add(crossThreadCopy(origin));
         }
 
         RunLoop::main().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {

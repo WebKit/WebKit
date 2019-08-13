@@ -1,3 +1,16 @@
+2019-08-13  Chris Dumez  <cdumez@apple.com>
+
+        Fix potential thread safety issue under StorageManager::getSessionStorageOrigins()
+        https://bugs.webkit.org/show_bug.cgi?id=200684
+
+        Reviewed by Geoffrey Garen.
+
+        Fix potential thread safety issue under StorageManager::getSessionStorageOrigins(). The origins are being
+        passed from the background queue to the main thread without isolated copy.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::getSessionStorageOrigins):
+
 2019-08-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Make CtapHidAuthenticator/U2fHidAuthenticator to CtapAuthenticator/U2fAuthenticator
