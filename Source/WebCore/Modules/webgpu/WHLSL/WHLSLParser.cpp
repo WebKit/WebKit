@@ -1163,7 +1163,7 @@ auto Parser::parseForLoop() -> Expected<AST::ForLoop, Error>
     CONSUME_TYPE(origin, For);
     CONSUME_TYPE(leftParenthesis, LeftParenthesis);
 
-    auto parseRemainder = [&](Variant<UniqueRef<AST::Statement>, UniqueRef<AST::Expression>>&& initialization) -> Expected<AST::ForLoop, Error> {
+    auto parseRemainder = [&](UniqueRef<AST::Statement>&& initialization) -> Expected<AST::ForLoop, Error> {
         CONSUME_TYPE(semicolon, Semicolon);
 
         std::unique_ptr<AST::Expression> condition(nullptr);
@@ -1356,13 +1356,13 @@ auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
     }
 
     {
-        auto effectfulExpression = backtrackingScope<Expected<UniqueRef<AST::Expression>, Error>>([&]() -> Expected<UniqueRef<AST::Expression>, Error> {
+        auto effectfulExpression = backtrackingScope<Expected<UniqueRef<AST::Statement>, Error>>([&]() -> Expected<UniqueRef<AST::Statement>, Error> {
             PARSE(result, EffectfulExpression);
             CONSUME_TYPE(semicolon, Semicolon);
             return result;
         });
         if (effectfulExpression)
-            return { makeUniqueRef<AST::EffectfulExpressionStatement>(WTFMove(*effectfulExpression)) };
+            return WTFMove(*effectfulExpression);
     }
 
     PARSE(variableDeclarations, VariableDeclarations);
@@ -1370,13 +1370,13 @@ auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
     return { makeUniqueRef<AST::VariableDeclarationsStatement>(WTFMove(*variableDeclarations)) };
 }
 
-auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Expression>, Error>
+auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Statement>, Error>
 {
     PEEK(origin);
-    Vector<UniqueRef<AST::Expression>> expressions;
     if (origin->type == Token::Type::Semicolon)
-        return { makeUniqueRef<AST::CommaExpression>(*origin, WTFMove(expressions)) };
+        return { makeUniqueRef<AST::Block>(*origin, Vector<UniqueRef<AST::Statement>>()) };
 
+    Vector<UniqueRef<AST::Expression>> expressions;
     PARSE(effectfulExpression, EffectfulAssignment);
     expressions.append(WTFMove(*effectfulExpression));
 
@@ -1386,10 +1386,11 @@ auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Expression>, 
     }
 
     if (expressions.size() == 1)
-        return WTFMove(expressions[0]);
+        return { makeUniqueRef<AST::EffectfulExpressionStatement>(WTFMove(expressions[0])) };
     unsigned endOffset = m_lexer.peek().startOffset();
     CodeLocation location(origin->startOffset(), endOffset);
-    return { makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions)) };
+    auto commaExpression = makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions));
+    return { makeUniqueRef<AST::EffectfulExpressionStatement>(WTFMove(commaExpression)) };
 }
 
 auto Parser::parseEffectfulAssignment() -> Expected<UniqueRef<AST::Expression>, Error>

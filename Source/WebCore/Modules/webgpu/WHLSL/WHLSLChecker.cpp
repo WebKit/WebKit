@@ -1443,11 +1443,7 @@ void Checker::visit(AST::DoWhileLoop& doWhileLoop)
 
 void Checker::visit(AST::ForLoop& forLoop)
 {
-    WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::Statement>& statement) {
-        checkErrorAndVisit(statement);
-    }, [&](UniqueRef<AST::Expression>& expression) {
-        checkErrorAndVisit(expression);
-    }), forLoop.initialization());
+    checkErrorAndVisit(forLoop.initialization());
     if (hasError())
         return;
     if (forLoop.condition()) {

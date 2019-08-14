@@ -1,3 +1,34 @@
+2019-08-13  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Don't generate empty comma expressions for bare ';'
+        https://bugs.webkit.org/show_bug.cgi?id=200681
+
+        Reviewed by Myles C. Maxfield.
+
+        Currently we emit a comma expression with no sub-expression for bare ';', as well as for the initialization of for loops with no initializers.
+        This crashes the Checker, as it tries to access the last sub-expression of comma expressions.
+        Instead we should generate an empty statement block for that case.
+
+        This problem was found (and originally fixed before the commit was reverted) in https://bugs.webkit.org/show_bug.cgi?id=199726.
+        I am just isolating the fix here for easier review and debugging.
+
+        New test: LayoutTests/webgpu/whlsl/for-loop.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp:
+        (WebCore::WHLSL::ASTDumper::visit):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseStatement):
+        (WebCore::WHLSL::Parser::parseEffectfulExpression):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+
 2019-08-13  Daniel Bates  <dabates@apple.com>
 
         Focus rings are black

@@ -356,14 +356,7 @@ void FunctionDefinitionWriter::visit(AST::WhileLoop& whileLoop)
 void FunctionDefinitionWriter::visit(AST::ForLoop& forLoop)
 {
     m_stringBuilder.append("{\n");
-
-    WTF::visit(WTF::makeVisitor([&](AST::Statement& statement) {
-        checkErrorAndVisit(statement);
-    }, [&](UniqueRef<AST::Expression>& expression) {
-        checkErrorAndVisit(expression);
-        takeLastValue(); // We don't need to do anything with the result.
-    }), forLoop.initialization());
-
+    checkErrorAndVisit(forLoop.initialization());
     emitLoop(LoopConditionLocation::BeforeBody, forLoop.condition(), forLoop.increment(), forLoop.body());
     m_stringBuilder.append("}\n");
 }

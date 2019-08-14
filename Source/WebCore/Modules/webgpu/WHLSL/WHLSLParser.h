@@ -131,7 +131,7 @@ private:
     Expected<AST::VariableDeclarationsStatement, Error> parseVariableDeclarations();
     Expected<UniqueRef<AST::Statement>, Error> parseStatement();
 
-    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulExpression();
+    Expected<UniqueRef<AST::Statement>, Error> parseEffectfulExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseEffectfulAssignment();
     struct SuffixExpression {
         SuffixExpression(UniqueRef<AST::Expression>&& result, bool success)
