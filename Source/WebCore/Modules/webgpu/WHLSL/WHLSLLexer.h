@@ -265,43 +265,11 @@ private:
     };
     static LineAndColumn lineAndColumnNumberFromOffset(const StringView&, unsigned offset);
 
-    Optional<Token::Type> recognizeKeyword(unsigned end);
-
-    Optional<unsigned> coreDecimalIntLiteral(unsigned) const;
-    Optional<unsigned> decimalIntLiteral(unsigned) const;
-    Optional<unsigned> decimalUintLiteral(unsigned) const;
-    Optional<unsigned> coreHexadecimalIntLiteral(unsigned) const;
-    Optional<unsigned> hexadecimalIntLiteral(unsigned) const;
-    Optional<unsigned> hexadecimalUintLiteral(unsigned) const;
-    Optional<unsigned> intLiteral(unsigned) const;
-    Optional<unsigned> uintLiteral(unsigned) const;
-    Optional<unsigned> digit(unsigned) const;
-    unsigned digitStar(unsigned) const;
-    Optional<unsigned> character(char, unsigned) const;
-    Optional<unsigned> coreFloatLiteralType1(unsigned) const;
-    Optional<unsigned> coreFloatLiteral(unsigned) const;
-    Optional<unsigned> floatLiteral(unsigned) const;
-    template<unsigned length> Optional<unsigned> string(const char (&string)[length], unsigned) const;
-    Optional<unsigned> validIdentifier(unsigned) const;
-    Optional<unsigned> identifier(unsigned) const;
-    Optional<unsigned> completeOperatorName(unsigned) const;
-
     StringView m_stringView;
     Token m_ringBuffer[2];
     unsigned m_ringBufferIndex { 0 };
     unsigned m_offset { 0 };
 };
-
-template<unsigned length> Optional<unsigned> Lexer::string(const char (&string)[length], unsigned offset) const
-{
-    if (offset + length > m_stringView.length())
-        return WTF::nullopt;
-    for (unsigned i = 0; i < length - 1; ++i) {
-        if (m_stringView[offset + i] != string[i])
-            return WTF::nullopt;
-    }
-    return offset + length - 1;
-}
 
 StringView Token::stringView(const Lexer& lexer) const
 {

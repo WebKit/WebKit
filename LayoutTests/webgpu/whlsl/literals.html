@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test prefix/postfix.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.literals = async () => {
+    let program = `
+        int a()
+        {
+            return -10;
+        }
+        int b()
+        {
+            return 10;
+        }
+        int c()
+        {
+            return 0;
+        }
+        float d()
+        {
+            return .1;
+        }
+        float e()
+        {
+            return 1.9;
+        }
+        float f()
+        {
+            return -.1;
+        }
+        float g()
+        {
+            return -1.9;
+        }
+        int h()
+        {
+            return 0xb4dB33F;
+        }
+        int i()
+        {
+            return -0xb4dB33F;
+        }
+    `;
+
+    assert_equals(await callIntFunction(program,  "a", []), -10);
+    assert_equals(await callIntFunction(program,  "b", []), 10);
+    assert_equals(await callIntFunction(program,  "c", []), 0);
+
+    assert_approx_equals(await callFloatFunction(program,  "d", []), 0.1, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "e", []), 1.9, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "f", []), -0.1, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "g", []), -1.9, epsilon);
+
+    assert_equals(await callIntFunction(program,  "h", []), 0xb4dB33F);
+    assert_equals(await callIntFunction(program,  "i", []), -0xb4dB33F);
+};
+
+runTests(whlslTests);
+</script>
+</html>

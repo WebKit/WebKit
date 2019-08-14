@@ -1,3 +1,56 @@
+2019-08-13  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make lexing faster
+        https://bugs.webkit.org/show_bug.cgi?id=200596
+
+        Reviewed by Myles C. Maxfield.
+
+        Previously, our lexer would just branch on a series of string compares.
+        We'd have code like this to match keywords:
+        ```
+        ...
+        if (matchCurrent("false"))
+            return FalseToken;
+        if (matchCurrent("true"))
+            return TrueToken;
+        ...
+        ```
+        
+        However, this is extremely inefficient. We now lex using a trie, which means
+        we never backtrack in the lexer.
+        
+        This patch is a 3ms speedup in compute_boids.
+
+        Tests: webgpu/whlsl/lexing.html
+               webgpu/whlsl/literals.html
+
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::isValidIdentifierStart):
+        (WebCore::WHLSL::isValidNonStartingIdentifierChar):
+        (WebCore::WHLSL::isHexadecimalCharacter):
+        (WebCore::WHLSL::isDigit):
+        (WebCore::WHLSL::Lexer::consumeTokenFromStream):
+        (WebCore::WHLSL::Lexer::recognizeKeyword): Deleted.
+        (WebCore::WHLSL::Lexer::coreDecimalIntLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::decimalIntLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::decimalUintLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::coreHexadecimalIntLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::hexadecimalIntLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::hexadecimalUintLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::intLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::uintLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::digit const): Deleted.
+        (WebCore::WHLSL::Lexer::digitStar const): Deleted.
+        (WebCore::WHLSL::Lexer::character const): Deleted.
+        (WebCore::WHLSL::Lexer::coreFloatLiteralType1 const): Deleted.
+        (WebCore::WHLSL::Lexer::coreFloatLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::floatLiteral const): Deleted.
+        (WebCore::WHLSL::Lexer::validIdentifier const): Deleted.
+        (WebCore::WHLSL::Lexer::identifier const): Deleted.
+        (WebCore::WHLSL::Lexer::completeOperatorName const): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLLexer.h:
+        (WebCore::WHLSL::Lexer::string const): Deleted.
+
 2019-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         shouldRespectImageOrientation should be a value in ImageOrientation

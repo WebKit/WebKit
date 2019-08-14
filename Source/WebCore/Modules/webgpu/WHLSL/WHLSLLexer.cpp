@@ -252,250 +252,1427 @@ const char* Token::typeName(Type type)
     }
 }
 
-auto Lexer::recognizeKeyword(unsigned end) -> Optional<Token::Type>
+static ALWAYS_INLINE bool isValidIdentifierStart(UChar theChar)
 {
-    auto substring = m_stringView.substring(m_offset, end - m_offset);
-    if (substring == "struct")
-        return Token::Type::Struct;
-    if (substring == "typedef")
-        return Token::Type::Typedef;
-    if (substring == "enum")
-        return Token::Type::Enum;
-    if (substring == "operator")
-        return Token::Type::Operator;
-    if (substring == "if")
-        return Token::Type::If;
-    if (substring == "else")
-        return Token::Type::Else;
-    if (substring == "continue")
-        return Token::Type::Continue;
-    if (substring == "break")
-        return Token::Type::Break;
-    if (substring == "switch")
-        return Token::Type::Switch;
-    if (substring == "case")
-        return Token::Type::Case;
-    if (substring == "default")
-        return Token::Type::Default;
-    if (substring == "fallthrough")
-        return Token::Type::Fallthrough;
-    if (substring == "for")
-        return Token::Type::For;
-    if (substring == "while")
-        return Token::Type::While;
-    if (substring == "do")
-        return Token::Type::Do;
-    if (substring == "return")
-        return Token::Type::Return;
-    if (substring == "null")
-        return Token::Type::Null;
-    if (substring == "true")
-        return Token::Type::True;
-    if (substring == "false")
-        return Token::Type::False;
-    if (substring == "constant")
-        return Token::Type::Constant;
-    if (substring == "device")
-        return Token::Type::Device;
-    if (substring == "threadgroup")
-        return Token::Type::Threadgroup;
-    if (substring == "thread")
-        return Token::Type::Thread;
-    if (substring == "space")
-        return Token::Type::Space;
-    if (substring == "vertex")
-        return Token::Type::Vertex;
-    if (substring == "fragment")
-        return Token::Type::Fragment;
-    if (substring == "compute")
-        return Token::Type::Compute;
-    if (substring == "numthreads")
-        return Token::Type::NumThreads;
-    if (substring == "SV_InstanceID")
-        return Token::Type::SVInstanceID;
-    if (substring == "SV_VertexID")
-        return Token::Type::SVVertexID;
-    if (substring == "PSIZE")
-        return Token::Type::PSize;
-    if (substring == "SV_Position")
-        return Token::Type::SVPosition;
-    if (substring == "SV_IsFrontFace")
-        return Token::Type::SVIsFrontFace;
-    if (substring == "SV_SampleIndex")
-        return Token::Type::SVSampleIndex;
-    if (substring == "SV_InnerCoverage")
-        return Token::Type::SVInnerCoverage;
-    if (substring == "SV_Target") // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195807 Make this work with strings like "SV_Target0".
-        return Token::Type::SVTarget;
-    if (substring == "SV_Depth")
-        return Token::Type::SVDepth;
-    if (substring == "SV_Coverage")
-        return Token::Type::SVCoverage;
-    if (substring == "SV_DispatchThreadID")
-        return Token::Type::SVDispatchThreadID;
-    if (substring == "SV_GroupID")
-        return Token::Type::SVGroupID;
-    if (substring == "SV_GroupIndex")
-        return Token::Type::SVGroupIndex;
-    if (substring == "SV_GroupThreadID")
-        return Token::Type::SVGroupThreadID;
-    if (substring == "attribute")
-        return Token::Type::Attribute;
-    if (substring == "register")
-        return Token::Type::Register;
-    if (substring == "specialized")
-        return Token::Type::Specialized;
-    if (substring == "native")
-        return Token::Type::Native;
-    if (substring == "restricted")
-        return Token::Type::Restricted;
-    if (substring == "_")
-        return Token::Type::Underscore;
-    if (substring == "auto")
-        return Token::Type::Auto;
-    if (substring == "protocol")
-        return Token::Type::Protocol;
-    if (substring == "const")
-        return Token::Type::Const;
-    if (substring == "static")
-        return Token::Type::Static;
-    if (substring == "nointerpolation")
-        return Token::Type::Qualifier;
-    if (substring == "noperspective")
-        return Token::Type::Qualifier;
-    if (substring == "uniform")
-        return Token::Type::Qualifier;
-    if (substring == "centroid")
-        return Token::Type::Qualifier;
-    if (substring == "sample")
-        return Token::Type::Qualifier;
-    return WTF::nullopt;
+    return (theChar >= 'a' && theChar <= 'z')
+        || (theChar >= 'A' && theChar <= 'Z')
+        || (theChar == '_');
+}
+
+static ALWAYS_INLINE bool isValidNonStartingIdentifierChar(UChar theChar)
+{
+    return (theChar >= 'a' && theChar <= 'z')
+        || (theChar >= 'A' && theChar <= 'Z')
+        || (theChar >= '0' && theChar <= '9')
+        || (theChar == '_');
+}
+
+static ALWAYS_INLINE bool isHexadecimalCharacter(UChar character)
+{
+    return (character >= '0' && character <= '9')
+        || (character >= 'a' && character <= 'f')
+        || (character >= 'A' && character <= 'F');
+}
+
+static ALWAYS_INLINE bool isDigit(UChar theChar)
+{
+    return theChar >= '0' && theChar <= '9';
 }
 
 auto Lexer::consumeTokenFromStream() -> Token
 {
-    auto prepare = [&](unsigned newOffset, Token::Type type) -> Token {
-        auto oldOffset = m_offset;
-        m_offset = newOffset;
-        skipWhitespaceAndComments();
-        return { { oldOffset, newOffset }, type };
+    UChar current = 0;
+    unsigned offset = m_offset;
+
+    auto peek = [&] () -> UChar {
+        if (offset < m_stringView.length())
+            return m_stringView[offset];
+        return 0;
     };
 
-    if (auto newOffset = identifier(m_offset)) {
-        if (auto result = recognizeKeyword(*newOffset)) {
-            if (*result == Token::Type::Operator) {
-                if (auto newerOffset = completeOperatorName(*newOffset))
-                    return prepare(*newerOffset, Token::Type::OperatorName);
-            }
-            return prepare(*newOffset, *result);
+    auto shift = [&] {
+        if (offset < m_stringView.length()) {
+            current = m_stringView[offset];
+            ++offset;
+            return current;
         }
-        return prepare(*newOffset, Token::Type::Identifier);
+        current = 0;
+        return current;
+    };
+
+    auto consume = [&] (UChar theChar) {
+        if (peek() == theChar) {
+            shift();
+            return true;
+        }
+        return false;
+    };
+
+    auto nextIsIdentifier = [&] {
+        return isValidNonStartingIdentifierChar(peek());
+    };
+
+    auto token = [&] (Token::Type type) -> Token {
+        auto oldOffset = m_offset;
+        m_offset = offset;
+        skipWhitespaceAndComments();
+        return { { oldOffset, offset }, type };
+    };
+
+    switch (shift()) {
+    case 'A':
+    case 'B':
+    case 'C':
+    case 'D':
+    case 'E':
+    case 'F':
+    case 'G':
+    case 'H':
+    case 'I':
+    case 'J':
+    case 'K':
+    case 'L':
+    case 'M':
+    case 'N':
+    case 'O':
+    case 'Q':
+    case 'R':
+    case 'T':
+    case 'U':
+    case 'V':
+    case 'W':
+    case 'X':
+    case 'Y':
+    case 'Z':
+    case 'g':
+    case 'h':
+    case 'j':
+    case 'k':
+    case 'l':
+    case 'm':
+    case 'q':
+    case 'x':
+    case 'y':
+    case 'z':
+parseIdentifier:
+        while (isValidNonStartingIdentifierChar(peek()))
+            shift();
+        return token(Token::Type::Identifier);
+
+    case 's':
+        switch (peek()) {
+        case 'a':
+            shift();
+            if (!consume('m'))
+                goto parseIdentifier;
+            if (!consume('p'))
+                goto parseIdentifier;
+            if (!consume('l'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Qualifier);
+
+        case 'w':
+            shift();
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('c'))
+                goto parseIdentifier;
+            if (!consume('h'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Switch);
+
+        case 't':
+            shift();
+            switch (peek()) {
+            case 'r':
+                shift();
+                if (!consume('u'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Struct);
+            case 'a':
+                shift();
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Static);
+            default:
+                goto parseIdentifier;
+            }
+            break;
+
+        case 'p':
+            shift();
+            switch (peek()) {
+            case 'a':
+                shift();
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Space);
+            case 'e':
+                shift();
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('l'))
+                    goto parseIdentifier;
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('z'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('d'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Specialized);
+            default:
+                goto parseIdentifier;
+            }
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'S':
+        if (!consume('V'))
+            goto parseIdentifier;
+        if (!consume('_'))
+            goto parseIdentifier;
+
+        switch (peek()) {
+        case 'G':
+            shift();
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (!consume('u'))
+                goto parseIdentifier;
+            if (!consume('p'))
+                goto parseIdentifier;
+
+            switch (peek()) {
+            case 'I':
+                shift();
+                switch (peek()) {
+                case 'D':
+                    shift();
+                    if (nextIsIdentifier())
+                        goto parseIdentifier;
+                    return token(Token::Type::SVGroupID);
+                case 'n':
+                    shift();
+                    if (!consume('d'))
+                        goto parseIdentifier;
+                    if (!consume('e'))
+                        goto parseIdentifier;
+                    if (!consume('x'))
+                        goto parseIdentifier;
+                    if (nextIsIdentifier())
+                        goto parseIdentifier;
+                    return token(Token::Type::SVGroupIndex);
+
+                default:
+                    goto parseIdentifier;
+                }
+
+            case 'T':
+                shift();
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('d'))
+                    goto parseIdentifier;
+                if (!consume('I'))
+                    goto parseIdentifier;
+                if (!consume('D'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::SVGroupThreadID);
+
+            default:
+                goto parseIdentifier;
+            }
+        case 'D':
+            shift();
+            switch (peek()) {
+            case 'e':
+                shift();
+                if (!consume('p'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::SVDepth);
+            case 'i':
+                shift();
+                if (!consume('s'))
+                    goto parseIdentifier;
+                if (!consume('p'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (!consume('T'))
+                    goto parseIdentifier;
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('d'))
+                    goto parseIdentifier;
+                if (!consume('I'))
+                    goto parseIdentifier;
+                if (!consume('D'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::SVDispatchThreadID);
+            default:
+                goto parseIdentifier;
+            }
+        case 'C':
+            shift();
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (!consume('v'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('a'))
+                goto parseIdentifier;
+            if (!consume('g'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::SVCoverage);
+        case 'T':
+            shift();
+            if (!consume('a'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('g'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::SVTarget);
+        case 'S':
+            shift();
+            if (!consume('a'))
+                goto parseIdentifier;
+            if (!consume('m'))
+                goto parseIdentifier;
+            if (!consume('p'))
+                goto parseIdentifier;
+            if (!consume('l'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('I'))
+                goto parseIdentifier;
+            if (!consume('n'))
+                goto parseIdentifier;
+            if (!consume('d'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('x'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::SVSampleIndex);
+        case 'P':
+            shift();
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (!consume('s'))
+                goto parseIdentifier;
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (!consume('n'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::SVPosition);
+        case 'V':
+            shift();
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('x'))
+                goto parseIdentifier;
+            if (!consume('I'))
+                goto parseIdentifier;
+            if (!consume('D'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::SVVertexID);
+        case 'I':
+            shift();
+            switch (peek()) {
+            case 's':
+                shift();
+                if (!consume('F'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('o'))
+                    goto parseIdentifier;
+                if (!consume('n'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('F'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::SVIsFrontFace);
+            case 'n':
+                shift();
+                switch (peek()) {
+                case 'n':
+                    shift();
+                    if (!consume('e'))
+                        goto parseIdentifier;
+                    if (!consume('r'))
+                        goto parseIdentifier;
+                    if (!consume('C'))
+                        goto parseIdentifier;
+                    if (!consume('o'))
+                        goto parseIdentifier;
+                    if (!consume('v'))
+                        goto parseIdentifier;
+                    if (!consume('e'))
+                        goto parseIdentifier;
+                    if (!consume('r'))
+                        goto parseIdentifier;
+                    if (!consume('a'))
+                        goto parseIdentifier;
+                    if (!consume('g'))
+                        goto parseIdentifier;
+                    if (!consume('e'))
+                        goto parseIdentifier;
+                    if (nextIsIdentifier())
+                        goto parseIdentifier;
+                    return token(Token::Type::SVInnerCoverage);
+                case 's':
+                    shift();
+                    if (!consume('t'))
+                        goto parseIdentifier;
+                    if (!consume('a'))
+                        goto parseIdentifier;
+                    if (!consume('n'))
+                        goto parseIdentifier;
+                    if (!consume('c'))
+                        goto parseIdentifier;
+                    if (!consume('e'))
+                        goto parseIdentifier;
+                    if (!consume('I'))
+                        goto parseIdentifier;
+                    if (!consume('D'))
+                        goto parseIdentifier;
+                    if (nextIsIdentifier())
+                        goto parseIdentifier;
+                    return token(Token::Type::SVInstanceID);
+                default:
+                    goto parseIdentifier;
+                }
+
+            default:
+                goto parseIdentifier;
+            }
+        default:
+            goto parseIdentifier;
+        }
+
+    case 't':
+        switch (peek()) {
+        case 'r':
+            shift();
+            if (!consume('u'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::True);
+        case 'y':
+            shift();
+            if (!consume('p'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('d'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('f'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Typedef);
+        case 'h':
+            shift();
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('a'))
+                goto parseIdentifier;
+            if (!consume('d'))
+                goto parseIdentifier;
+
+            if (!nextIsIdentifier())
+                return token(Token::Type::Thread);
+
+            if (peek() != 'g')
+                goto parseIdentifier;
+
+            shift();
+            RELEASE_ASSERT(current == 'g');
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (!consume('u'))
+                goto parseIdentifier;
+            if (!consume('p'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Threadgroup);
+
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'e':
+        switch (peek()) {
+        case 'n':
+            shift();
+            if (!consume('u'))
+                goto parseIdentifier;
+            if (!consume('m'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Enum);
+        case 'l':
+            shift();
+            if (!consume('s'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Else);
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'o':
+        if (!consume('p'))
+            goto parseIdentifier;
+        if (!consume('e'))
+            goto parseIdentifier;
+        if (!consume('r'))
+            goto parseIdentifier;
+        if (!consume('a'))
+            goto parseIdentifier;
+        if (!consume('t'))
+            goto parseIdentifier;
+        if (!consume('o'))
+            goto parseIdentifier;
+        if (!consume('r'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+
+        switch (peek()) {
+        case '&':
+            shift();
+            switch (peek()) {
+            case '[':
+                shift();
+                if (consume(']'))
+                    return token(Token::Type::OperatorName);
+                return token(Token::Type::Invalid);
+            case '&':
+                shift();
+                return token(Token::Type::OperatorName);
+            case '.':
+                shift();
+                if (!isValidIdentifierStart(peek()))
+                    return token(Token::Type::Invalid);
+                shift();
+                while (isValidNonStartingIdentifierChar(peek()))
+                    shift();
+                return token(Token::Type::OperatorName);
+            default:
+                return token(Token::Type::OperatorName);
+            }
+
+        case '[':
+            shift();
+            if (!consume(']'))
+                return token(Token::Type::Invalid);
+            consume('=');
+            return token(Token::Type::OperatorName);
+
+        case '>':
+            shift();
+            if (consume('>'))
+                return token(Token::Type::OperatorName);
+            if (consume('='))
+                return token(Token::Type::OperatorName);
+            return token(Token::Type::OperatorName);
+
+        case '<':
+            shift();
+            if (consume('<'))
+                return token(Token::Type::OperatorName);
+            if (consume('='))
+                return token(Token::Type::OperatorName);
+            return token(Token::Type::OperatorName);
+
+        case '+':
+            shift();
+            consume('+');
+            return token(Token::Type::OperatorName);
+
+        case '-':
+            shift();
+            consume('-');
+            return token(Token::Type::OperatorName);
+
+        case '|':
+            shift();
+            consume('|');
+            return token(Token::Type::OperatorName);
+
+        case '=':
+            shift();
+            if (!consume('='))
+                return token(Token::Type::Invalid);
+            return token(Token::Type::OperatorName);
+
+        case '*':
+            shift();
+            return token(Token::Type::OperatorName);
+
+        case '/':
+            shift();
+            return token(Token::Type::OperatorName);
+
+        case '%':
+            shift();
+            return token(Token::Type::OperatorName);
+
+        case '!':
+            shift();
+            return token(Token::Type::OperatorName);
+
+        case '~':
+            shift();
+            return token(Token::Type::OperatorName);
+
+        case '^':
+            shift();
+            return token(Token::Type::OperatorName);
+
+        case '.':
+            shift();
+            if (!isValidIdentifierStart(peek()))
+                return token(Token::Type::Invalid);
+            shift();
+            while (isValidNonStartingIdentifierChar(peek()))
+                shift();
+            consume('=');
+            return token(Token::Type::OperatorName);
+        default:
+            break;
+        }
+
+        return token(Token::Type::Operator);
+
+    case 'i':
+        if (!consume('f'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::If);
+
+    case 'c':
+        switch (peek()) {
+        case 'a':
+            shift();
+            if (!consume('s'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Case);
+
+        case 'e':
+            shift();
+            if (!consume('n'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('d'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Qualifier);
+        case 'o':
+            shift();
+            switch (peek()) {
+            case 'm':
+                shift();
+                if (!consume('p'))
+                    goto parseIdentifier;
+                if (!consume('u'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Compute);
+            case 'n':
+                shift();
+                switch (peek()) {
+                case 't':
+                    shift();
+                    if (!consume('i'))
+                        goto parseIdentifier;
+                    if (!consume('n'))
+                        goto parseIdentifier;
+                    if (!consume('u'))
+                        goto parseIdentifier;
+                    if (!consume('e'))
+                        goto parseIdentifier;
+                    if (nextIsIdentifier())
+                        goto parseIdentifier;
+                    return token(Token::Type::Continue);
+                case 's':
+                    shift();
+                    if (!consume('t'))
+                        goto parseIdentifier;
+
+                    if (!nextIsIdentifier())
+                        return token(Token::Type::Const);
+
+                    if (!consume('a'))
+                        goto parseIdentifier;
+                    if (!consume('n'))
+                        goto parseIdentifier;
+                    if (!consume('t'))
+                        goto parseIdentifier;
+                    if (nextIsIdentifier())
+                        goto parseIdentifier;
+                    return token(Token::Type::Constant);
+
+                default:
+                    goto parseIdentifier;
+                }
+
+            default:
+                goto parseIdentifier;
+            }
+
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'b':
+        if (!consume('r'))
+            goto parseIdentifier;
+        if (!consume('e'))
+            goto parseIdentifier;
+        if (!consume('a'))
+            goto parseIdentifier;
+        if (!consume('k'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::Break);
+
+    case 'd':
+        switch (peek()) {
+        case 'o':
+            shift();
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Do);
+        case 'e':
+            shift();
+            switch (peek()) {
+            case 'f':
+                shift();
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('u'))
+                    goto parseIdentifier;
+                if (!consume('l'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Default);
+            case 'v':
+                shift();
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Device);
+            default:
+                goto parseIdentifier;
+            }
+
+        default:
+            goto parseIdentifier;
+        }
+
+
+    case 'f':
+        switch (peek()) {
+        case 'o':
+            shift();
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::For);
+        case 'r':
+            shift();
+            if (!consume('a'))
+                goto parseIdentifier;
+            if (!consume('g'))
+                goto parseIdentifier;
+            if (!consume('m'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('n'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Fragment);
+        case 'a':
+            shift();
+            if (!consume('l'))
+                goto parseIdentifier;
+
+            switch (peek()) {
+            case 'l':
+                shift();
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('o'))
+                    goto parseIdentifier;
+                if (!consume('u'))
+                    goto parseIdentifier;
+                if (!consume('g'))
+                    goto parseIdentifier;
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Fallthrough);
+
+            case 's':
+                shift();
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::False);
+            default:
+                goto parseIdentifier;
+            }
+        case 'e':
+            shift();
+            switch (peek()) {
+            case 'f':
+                shift();
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('u'))
+                    goto parseIdentifier;
+                if (!consume('l'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Default);
+            case 'v':
+                shift();
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Device);
+            default:
+                goto parseIdentifier;
+            }
+
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'w':
+        if (!consume('h'))
+            goto parseIdentifier;
+        if (!consume('i'))
+            goto parseIdentifier;
+        if (!consume('l'))
+            goto parseIdentifier;
+        if (!consume('e'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::While);
+
+    case 'r':
+        if (!consume('e'))
+            goto parseIdentifier;
+        switch (peek()) {
+        case 't':
+            shift();
+            if (!consume('u'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('n'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Return);
+        case 'g':
+            shift();
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('s'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Register);
+        case 's':
+            shift();
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('c'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (!consume('d'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Restricted);
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'n':
+        switch (peek()) {
+        case 'a':
+            shift();
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('v'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Native);
+        case 'u':
+            shift();
+            switch (peek()) {
+            case 'l':
+                shift();
+                if (!consume('l'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Null);
+            case 'm':
+                shift();
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('h'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('d'))
+                    goto parseIdentifier;
+                if (!consume('s'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::NumThreads);
+            default:
+                goto parseIdentifier;
+            }
+
+        case 'o':
+            shift();
+            switch (peek()) {
+            case 'i':
+                shift();
+                if (!consume('n'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('p'))
+                    goto parseIdentifier;
+                if (!consume('o'))
+                    goto parseIdentifier;
+                if (!consume('l'))
+                    goto parseIdentifier;
+                if (!consume('a'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('o'))
+                    goto parseIdentifier;
+                if (!consume('n'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Qualifier);
+            case 'p':
+                shift();
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('r'))
+                    goto parseIdentifier;
+                if (!consume('s'))
+                    goto parseIdentifier;
+                if (!consume('p'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (!consume('c'))
+                    goto parseIdentifier;
+                if (!consume('t'))
+                    goto parseIdentifier;
+                if (!consume('i'))
+                    goto parseIdentifier;
+                if (!consume('v'))
+                    goto parseIdentifier;
+                if (!consume('e'))
+                    goto parseIdentifier;
+                if (nextIsIdentifier())
+                    goto parseIdentifier;
+                return token(Token::Type::Qualifier);
+            default:
+                goto parseIdentifier;
+            }
+
+        default:
+            goto parseIdentifier;
+        }
+
+    case 'v':
+        if (!consume('e'))
+            goto parseIdentifier;
+        if (!consume('r'))
+            goto parseIdentifier;
+        if (!consume('t'))
+            goto parseIdentifier;
+        if (!consume('e'))
+            goto parseIdentifier;
+        if (!consume('x'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::Vertex);
+
+    case 'P':
+        if (!consume('S'))
+            goto parseIdentifier;
+        if (!consume('I'))
+            goto parseIdentifier;
+        if (!consume('Z'))
+            goto parseIdentifier;
+        if (!consume('E'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::PSize);
+
+    case 'u':
+        if (!consume('n'))
+            goto parseIdentifier;
+        if (!consume('i'))
+            goto parseIdentifier;
+        if (!consume('f'))
+            goto parseIdentifier;
+        if (!consume('o'))
+            goto parseIdentifier;
+        if (!consume('r'))
+            goto parseIdentifier;
+        if (!consume('m'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::Qualifier);
+
+    case 'p':
+        if (!consume('r'))
+            goto parseIdentifier;
+        if (!consume('o'))
+            goto parseIdentifier;
+        if (!consume('t'))
+            goto parseIdentifier;
+        if (!consume('o'))
+            goto parseIdentifier;
+        if (!consume('c'))
+            goto parseIdentifier;
+        if (!consume('o'))
+            goto parseIdentifier;
+        if (!consume('l'))
+            goto parseIdentifier;
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::Protocol);
+
+    case '_':
+        if (nextIsIdentifier())
+            goto parseIdentifier;
+        return token(Token::Type::Underscore);
+
+    case 'a':
+        switch (peek()) {
+        case 't':
+            shift();
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('r'))
+                goto parseIdentifier;
+            if (!consume('i'))
+                goto parseIdentifier;
+            if (!consume('b'))
+                goto parseIdentifier;
+            if (!consume('u'))
+                goto parseIdentifier;
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('e'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Attribute);
+        case 'u':
+            shift();
+            if (!consume('t'))
+                goto parseIdentifier;
+            if (!consume('o'))
+                goto parseIdentifier;
+            if (nextIsIdentifier())
+                goto parseIdentifier;
+            return token(Token::Type::Auto);
+        default:
+            goto parseIdentifier;
+        }
+
+    case '>':
+        if (consume('>')) {
+            if (consume('='))
+                return token(Token::Type::RightShiftEquals);
+            return token(Token::Type::RightShift);
+        }
+        if (consume('='))
+            return token(Token::Type::GreaterThanOrEqualTo);
+        return token(Token::Type::GreaterThanSign);
+    case '<':
+        if (consume('<')) {
+            if (consume('='))
+                return token(Token::Type::LeftShiftEquals);
+            return token(Token::Type::LeftShift);
+        }
+        if (consume('='))
+            return token(Token::Type::LessThanOrEqualTo);
+        return token(Token::Type::LessThanSign);
+
+    case '+':
+        if (consume('='))
+            return token(Token::Type::PlusEquals);
+        if (consume('+'))
+            return token(Token::Type::PlusPlus);
+        return token(Token::Type::Plus);
+
+    case '-':
+        if (consume('='))
+            return token(Token::Type::MinusEquals);
+        if (consume('-'))
+            return token(Token::Type::MinusMinus);
+        if (consume('>'))
+            return token(Token::Type::Arrow);
+        if (isDigit(peek())) {
+            shift();
+            goto parseNumber;
+        }
+        if (consume('.'))
+            goto parseFloatAfterDot;
+        return token(Token::Type::Minus);
+
+    case '*':
+        if (consume('='))
+            return token(Token::Type::TimesEquals);
+        return token(Token::Type::Star);
+
+    case '/':
+        if (consume('='))
+            return token(Token::Type::DivideEquals);
+        return token(Token::Type::Divide);
+
+    case '%':
+        if (consume('='))
+            return token(Token::Type::ModEquals);
+        return token(Token::Type::Mod);
+
+    case '^':
+        if (consume('='))
+            return token(Token::Type::XorEquals);
+        return token(Token::Type::Xor);
+
+    case '&':
+        if (consume('='))
+            return token(Token::Type::AndEquals);
+        if (consume('&'))
+            return token(Token::Type::AndAnd);
+        return token(Token::Type::And);
+
+    case '|':
+        if (consume('='))
+            return token(Token::Type::OrEquals);
+        if (consume('|'))
+            return token(Token::Type::OrOr);
+        return token(Token::Type::Or);
+
+    case '[':
+        if (consume(']'))
+            return token(Token::Type::SquareBracketPair);
+        return token(Token::Type::LeftSquareBracket);
+
+    case '=':
+        if (consume('='))
+            return token(Token::Type::EqualComparison);
+        return token(Token::Type::EqualsSign);
+
+    case '!':
+        if (consume('='))
+            return token(Token::Type::NotEqual);
+        return token(Token::Type::ExclamationPoint);
+
+    case ';':
+        return token(Token::Type::Semicolon);
+
+    case '{':
+        return token(Token::Type::LeftCurlyBracket);
+
+    case '}':
+        return token(Token::Type::RightCurlyBracket);
+
+    case ':':
+        return token(Token::Type::Colon);
+
+    case ',':
+        return token(Token::Type::Comma);
+
+    case '(':
+        return token(Token::Type::LeftParenthesis);
+
+    case ')':
+        return token(Token::Type::RightParenthesis);
+
+    case ']':
+        return token(Token::Type::RightSquareBracket);
+
+    case '.':
+        if (isDigit(peek()))
+            goto parseFloatAfterDot;
+        return token(Token::Type::FullStop);
+
+    case '?':
+        return token(Token::Type::QuestionMark);
+
+    case '~':
+        return token(Token::Type::Tilde);
+
+    case '@':
+        return token(Token::Type::At);
+
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9': {
+parseNumber:
+        if (current == '0' && consume('x')) {
+            while (isHexadecimalCharacter(peek()))
+                shift();
+            if (consume('u'))
+                return token(Token::Type::UintLiteral);
+            return token(Token::Type::IntLiteral);
+        }
+
+        while (isDigit(peek()))
+            shift();
+
+        if (consume('.')) {
+parseFloatAfterDot:
+            while (isDigit(peek()))
+                shift();
+            consume('f');
+            return token(Token::Type::FloatLiteral);
+        }
+
+        if (consume('f'))
+            return token(Token::Type::FloatLiteral);
+
+        if (consume('u'))
+            return token(Token::Type::UintLiteral);
+
+        return token(Token::Type::IntLiteral);
     }
-    if (auto newOffset = floatLiteral(m_offset))
-        return prepare(*newOffset, Token::Type::FloatLiteral);
-    if (auto newOffset = uintLiteral(m_offset))
-        return prepare(*newOffset, Token::Type::UintLiteral);
-    if (auto newOffset = intLiteral(m_offset))
-        return prepare(*newOffset, Token::Type::IntLiteral);
-    // Sorted by length, so longer matches are preferable to shorter matches.
-    if (auto newOffset = string(">>=", m_offset))
-        return prepare(*newOffset, Token::Type::RightShiftEquals);
-    if (auto newOffset = string("<<=", m_offset))
-        return prepare(*newOffset, Token::Type::LeftShiftEquals);
-    if (auto newOffset = string("+=", m_offset))
-        return prepare(*newOffset, Token::Type::PlusEquals);
-    if (auto newOffset = string("-=", m_offset))
-        return prepare(*newOffset, Token::Type::MinusEquals);
-    if (auto newOffset = string("*=", m_offset))
-        return prepare(*newOffset, Token::Type::TimesEquals);
-    if (auto newOffset = string("/=", m_offset))
-        return prepare(*newOffset, Token::Type::DivideEquals);
-    if (auto newOffset = string("%=", m_offset))
-        return prepare(*newOffset, Token::Type::ModEquals);
-    if (auto newOffset = string("^=", m_offset))
-        return prepare(*newOffset, Token::Type::XorEquals);
-    if (auto newOffset = string("&=", m_offset))
-        return prepare(*newOffset, Token::Type::AndEquals);
-    if (auto newOffset = string("|=", m_offset))
-        return prepare(*newOffset, Token::Type::OrEquals);
-    if (auto newOffset = string("++", m_offset))
-        return prepare(*newOffset, Token::Type::PlusPlus);
-    if (auto newOffset = string("--", m_offset))
-        return prepare(*newOffset, Token::Type::MinusMinus);
-    if (auto newOffset = string("->", m_offset))
-        return prepare(*newOffset, Token::Type::Arrow);
-    if (auto newOffset = string("[]", m_offset))
-        return prepare(*newOffset, Token::Type::SquareBracketPair);
-    if (auto newOffset = string("||", m_offset))
-        return prepare(*newOffset, Token::Type::OrOr);
-    if (auto newOffset = string("&&", m_offset))
-        return prepare(*newOffset, Token::Type::AndAnd);
-    if (auto newOffset = string("<=", m_offset))
-        return prepare(*newOffset, Token::Type::LessThanOrEqualTo);
-    if (auto newOffset = string(">=", m_offset))
-        return prepare(*newOffset, Token::Type::GreaterThanOrEqualTo);
-    if (auto newOffset = string("==", m_offset))
-        return prepare(*newOffset, Token::Type::EqualComparison);
-    if (auto newOffset = string("!=", m_offset))
-        return prepare(*newOffset, Token::Type::NotEqual);
-    if (auto newOffset = string(">>", m_offset))
-        return prepare(*newOffset, Token::Type::RightShift);
-    if (auto newOffset = string("<<", m_offset))
-        return prepare(*newOffset, Token::Type::LeftShift);
-    if (auto newOffset = character('=', m_offset))
-        return prepare(*newOffset, Token::Type::EqualsSign);
-    if (auto newOffset = character(';', m_offset))
-        return prepare(*newOffset, Token::Type::Semicolon);
-    if (auto newOffset = character('{', m_offset))
-        return prepare(*newOffset, Token::Type::LeftCurlyBracket);
-    if (auto newOffset = character('}', m_offset))
-        return prepare(*newOffset, Token::Type::RightCurlyBracket);
-    if (auto newOffset = character(':', m_offset))
-        return prepare(*newOffset, Token::Type::Colon);
-    if (auto newOffset = character(',', m_offset))
-        return prepare(*newOffset, Token::Type::Comma);
-    if (auto newOffset = character('(', m_offset))
-        return prepare(*newOffset, Token::Type::LeftParenthesis);
-    if (auto newOffset = character(')', m_offset))
-        return prepare(*newOffset, Token::Type::RightParenthesis);
-    if (auto newOffset = character('[', m_offset))
-        return prepare(*newOffset, Token::Type::LeftSquareBracket);
-    if (auto newOffset = character(']', m_offset))
-        return prepare(*newOffset, Token::Type::RightSquareBracket);
-    if (auto newOffset = character('*', m_offset))
-        return prepare(*newOffset, Token::Type::Star);
-    if (auto newOffset = character('<', m_offset))
-        return prepare(*newOffset, Token::Type::LessThanSign);
-    if (auto newOffset = character('>', m_offset))
-        return prepare(*newOffset, Token::Type::GreaterThanSign);
-    if (auto newOffset = character('.', m_offset))
-        return prepare(*newOffset, Token::Type::FullStop);
-    if (auto newOffset = character('?', m_offset))
-        return prepare(*newOffset, Token::Type::QuestionMark);
-    if (auto newOffset = character('|', m_offset))
-        return prepare(*newOffset, Token::Type::Or);
-    if (auto newOffset = character('^', m_offset))
-        return prepare(*newOffset, Token::Type::Xor);
-    if (auto newOffset = character('&', m_offset))
-        return prepare(*newOffset, Token::Type::And);
-    if (auto newOffset = character('+', m_offset))
-        return prepare(*newOffset, Token::Type::Plus);
-    if (auto newOffset = character('-', m_offset))
-        return prepare(*newOffset, Token::Type::Minus);
-    if (auto newOffset = character('/', m_offset))
-        return prepare(*newOffset, Token::Type::Divide);
-    if (auto newOffset = character('%', m_offset))
-        return prepare(*newOffset, Token::Type::Mod);
-    if (auto newOffset = character('~', m_offset))
-        return prepare(*newOffset, Token::Type::Tilde);
-    if (auto newOffset = character('!', m_offset))
-        return prepare(*newOffset, Token::Type::ExclamationPoint);
-    if (auto newOffset = character('@', m_offset))
-        return prepare(*newOffset, Token::Type::At);
+
+    default: 
+        break;
+    }
 
     if (m_offset == m_stringView.length())
-        return prepare(m_offset, Token::Type::EndOfFile);
-    return prepare(m_offset, Token::Type::Invalid);
+        return token(Token::Type::EndOfFile);
+    return token(Token::Type::Invalid);
 }
 
 
@@ -578,243 +1755,6 @@ void Lexer::skipWhitespaceAndComments()
         } else
             break;
     }
-}
-
-// Regular expression are unnecessary; we shouldn't need to compile them.
-
-Optional<unsigned> Lexer::coreDecimalIntLiteral(unsigned offset) const
-{
-    if (offset >= m_stringView.length())
-        return WTF::nullopt;
-    if (m_stringView[offset] == '0')
-        return offset + 1;
-    if (m_stringView[offset] >= '1' && m_stringView[offset] <= '9') {
-        ++offset;
-        for ( ; offset < m_stringView.length() && m_stringView[offset] >= '0' && m_stringView[offset] <= '9'; ++offset) {
-        }
-        return offset;
-    }
-    return WTF::nullopt;
-}
-
-Optional<unsigned> Lexer::decimalIntLiteral(unsigned offset) const
-{
-    if (offset < m_stringView.length() && m_stringView[offset] == '-')
-        ++offset;
-    return coreDecimalIntLiteral(offset);
-}
-
-Optional<unsigned> Lexer::decimalUintLiteral(unsigned offset) const
-{
-    auto result = coreDecimalIntLiteral(offset);
-    if (!result)
-        return WTF::nullopt;
-    if (*result < m_stringView.length() && m_stringView[*result] == 'u')
-        return *result + 1;
-    return WTF::nullopt;
-}
-
-static inline bool isHexadecimalCharacter(UChar character)
-{
-    return (character >= '0' && character <= '9')
-        || (character >= 'a' && character <= 'f')
-        || (character >= 'A' && character <= 'F');
-}
-
-Optional<unsigned> Lexer::coreHexadecimalIntLiteral(unsigned offset) const
-{
-    if (offset + 1 >= m_stringView.length() || m_stringView[offset] != '0' || m_stringView[offset + 1] != 'x')
-        return WTF::nullopt;
-
-    offset += 2;
-    if (offset >= m_stringView.length() || !isHexadecimalCharacter(m_stringView[offset]))
-        return WTF::nullopt;
-    ++offset;
-    for ( ; offset < m_stringView.length() && isHexadecimalCharacter(m_stringView[offset]); ++offset) {
-    }
-    return offset;
-}
-
-Optional<unsigned> Lexer::hexadecimalIntLiteral(unsigned offset) const
-{
-    if (offset < m_stringView.length() && m_stringView[offset] == '-')
-        ++offset;
-    return coreHexadecimalIntLiteral(offset);
-}
-
-Optional<unsigned> Lexer::hexadecimalUintLiteral(unsigned offset) const
-{
-    auto result = coreHexadecimalIntLiteral(offset);
-    if (!result)
-        return WTF::nullopt;
-    if (*result < m_stringView.length() && m_stringView[*result] == 'u')
-        return *result + 1;
-    return WTF::nullopt;
-}
-
-Optional<unsigned> Lexer::intLiteral(unsigned offset) const
-{
-    if (auto result = decimalIntLiteral(offset))
-        return result;
-    if (auto result = hexadecimalIntLiteral(offset))
-        return result;
-    return WTF::nullopt;
-}
-
-Optional<unsigned> Lexer::uintLiteral(unsigned offset) const
-{
-    if (auto result = decimalUintLiteral(offset))
-        return result;
-    if (auto result = hexadecimalUintLiteral(offset))
-        return result;
-    return WTF::nullopt;
-}
-
-Optional<unsigned> Lexer::digit(unsigned offset) const
-{
-    if (offset < m_stringView.length() && m_stringView[offset] >= '0' && m_stringView[offset] <= '9')
-        return offset + 1;
-    return WTF::nullopt;
-}
-
-unsigned Lexer::digitStar(unsigned offset) const
-{
-    while (auto result = digit(offset))
-        offset = *result;
-    return offset;
-}
-
-Optional<unsigned> Lexer::character(char character, unsigned offset) const
-{
-    if (offset < m_stringView.length() && m_stringView[offset] == character)
-        return offset + 1;
-    return WTF::nullopt;
-}
-
-Optional<unsigned> Lexer::coreFloatLiteralType1(unsigned offset) const
-{
-    auto result = digit(offset);
-    if (!result)
-        return WTF::nullopt;
-    auto result2 = digitStar(*result);
-    auto result3 = character('.', result2);
-    if (!result3)
-        return WTF::nullopt;
-    return digitStar(*result3);
-}
-
-Optional<unsigned> Lexer::coreFloatLiteral(unsigned offset) const
-{
-    if (auto type1 = coreFloatLiteralType1(offset))
-        return type1;
-    auto result = digitStar(offset);
-    auto result2 = character('.', result);
-    if (!result2)
-        return WTF::nullopt;
-    auto result3 = digit(*result2);
-    if (!result3)
-        return WTF::nullopt;
-    return digitStar(*result3);
-}
-
-Optional<unsigned> Lexer::floatLiteral(unsigned offset) const
-{
-    if (offset < m_stringView.length() && m_stringView[offset] == '-')
-        ++offset;
-    auto result = coreFloatLiteral(offset);
-    if (!result)
-        return WTF::nullopt;
-    offset = *result;
-    if (offset < m_stringView.length() && m_stringView[offset] == 'f')
-        ++offset;
-    return offset;
-}
-
-Optional<unsigned> Lexer::validIdentifier(unsigned offset) const
-{
-    if (offset >= m_stringView.length()
-        || !((m_stringView[offset] >= 'a' && m_stringView[offset] <= 'z')
-            || (m_stringView[offset] >= 'A' && m_stringView[offset] <= 'Z')
-            || (m_stringView[offset] == '_')))
-        return WTF::nullopt;
-    ++offset;
-    while (true) {
-        if (offset >= m_stringView.length()
-            || !((m_stringView[offset] >= 'a' && m_stringView[offset] <= 'z')
-                || (m_stringView[offset] >= 'A' && m_stringView[offset] <= 'Z')
-                || (m_stringView[offset] >= '0' && m_stringView[offset] <= '9')
-                || (m_stringView[offset] == '_')))
-            return offset;
-        ++offset;
-    }
-}
-
-Optional<unsigned> Lexer::identifier(unsigned offset) const
-{
-    return validIdentifier(offset);
-}
-
-Optional<unsigned> Lexer::completeOperatorName(unsigned offset) const
-{
-    // Sorted by length, so longer matches are preferable to shorter matches.
-    if (auto result = string("&[]", offset))
-        return result;
-    if (auto result = string("[]=", offset))
-        return result;
-    if (auto result = string(">>", offset))
-        return result;
-    if (auto result = string("<<", offset))
-        return result;
-    if (auto result = string("++", offset))
-        return result;
-    if (auto result = string("--", offset))
-        return result;
-    if (auto result = string("&&", offset))
-        return result;
-    if (auto result = string("||", offset))
-        return result;
-    if (auto result = string(">=", offset))
-        return result;
-    if (auto result = string("<=", offset))
-        return result;
-    if (auto result = string("==", offset))
-        return result;
-    if (auto result = string("[]", offset))
-        return result;
-    if (auto result = string("&.", offset))
-        return validIdentifier(*result);
-    if (auto result = character('+', offset))
-        return result;
-    if (auto result = character('-', offset))
-        return result;
-    if (auto result = character('*', offset))
-        return result;
-    if (auto result = character('/', offset))
-        return result;
-    if (auto result = character('%', offset))
-        return result;
-    if (auto result = character('<', offset))
-        return result;
-    if (auto result = character('>', offset))
-        return result;
-    if (auto result = character('!', offset))
-        return result;
-    if (auto result = character('~', offset))
-        return result;
-    if (auto result = character('&', offset))
-        return result;
-    if (auto result = character('^', offset))
-        return result;
-    if (auto result = character('|', offset))
-        return result;
-    if (auto result = character('.', offset)) {
-        if (auto result2 = validIdentifier(*result)) {
-            if (auto result3 = character('=', *result2))
-                return result3;
-            return *result2;
-        }
-    }
-    return WTF::nullopt;
 }
 
 } // namespace WHLSL

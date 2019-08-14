@@ -1,3 +1,15 @@
+2019-08-13  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make lexing faster
+        https://bugs.webkit.org/show_bug.cgi?id=200596
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl/lexing-expected.txt: Added.
+        * webgpu/whlsl/lexing.html: Added.
+        * webgpu/whlsl/literals-expected.txt: Added.
+        * webgpu/whlsl/literals.html: Added.
+
 2019-08-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Re-sync web-platform-tests/dom/events from upstream
