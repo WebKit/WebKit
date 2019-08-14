@@ -1626,9 +1626,9 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
     page->getWindowFrameWithCallback([this, protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRef(*page), x, y, mouseInteractionString, mouseButtonString, keyModifiers](WebCore::FloatRect windowFrame) mutable {
 
         x = std::min(std::max(0.0f, x), windowFrame.size().width());
-        y = std::min(std::max(0.0f, y + page->topContentInset()), windowFrame.size().height());
+        y = std::min(std::max(0.0f, y), windowFrame.size().height());
 
-        WebCore::IntPoint positionInView = WebCore::IntPoint(static_cast<int>(x), static_cast<int>(y));
+        WebCore::IntPoint locationInViewport = WebCore::IntPoint(static_cast<int>(x), static_cast<int>(y));
 
         auto parsedInteraction = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseInteraction>(mouseInteractionString);
         if (!parsedInteraction)
@@ -1654,7 +1654,7 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, parsedInteraction.value(), protocolMouseButtonToWebMouseEventButton(parsedButton.value()), positionInView, keyModifiers);
+        platformSimulateMouseInteraction(page, parsedInteraction.value(), protocolMouseButtonToWebMouseEventButton(parsedButton.value()), locationInViewport, keyModifiers);
 
         // If the event location was previously clipped and does not hit test anything in the window, then it will not be processed.
         // For compatibility with pre-W3C driver implementations, don't make this a hard error; just do nothing silently.

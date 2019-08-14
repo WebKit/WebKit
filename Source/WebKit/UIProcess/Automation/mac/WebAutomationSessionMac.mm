@@ -121,9 +121,10 @@ bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 #pragma mark Platform-dependent Implementations
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier> keyModifiers)
 {
     IntRect windowRect;
+    IntPoint locationInView = WebCore::IntPoint(locationInViewport.x(), locationInViewport.y() + page.topContentInset());
     page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
     IntPoint locationInWindow = windowRect.location();
 

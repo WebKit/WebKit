@@ -1,3 +1,25 @@
+2019-08-14  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r245320): Web Automation: Perform Actions hangs when pointerdown happens near top of page
+        https://bugs.webkit.org/show_bug.cgi?id=200728
+        <rdar://problem/54260518>
+
+        Reviewed by Devin Rousso.
+
+        In the last major refactoring for this code, it seems that the argument to
+        platformSimulateMouseInteraction was not unified to use viewport coordinates
+        in all code paths. This patch fixes both callers to *not* add in topContentInset,
+        and instead this is added back in when doing platform-specific event simulation.
+
+        This has no effect on iOS since it's guarded by ENABLE(WEBDRIVER_MOUSE_INTERACTIONS),
+        which is only built on macOS.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+
 2019-08-14  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add some WKA extension points
