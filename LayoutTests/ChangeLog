@@ -1,3 +1,15 @@
+2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r248638.
+
+        These test expectations aren't necessary
+
+        Reverted changeset:
+
+        "Unreviewed test gardening, land test expectations for
+        rdar://49790831."
+        https://trac.webkit.org/changeset/248638
+
 2019-08-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support `console.screenshot` with dataURL strings
