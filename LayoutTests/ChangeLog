@@ -1,3 +1,14 @@
+2019-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Any previously destroyed renderer should not be considered a candidate for content observation.
+        https://bugs.webkit.org/show_bug.cgi?id=200732
+        <rdar://problem/54319654>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/visible-content-gains-new-renderer2-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/visible-content-gains-new-renderer2.html: Added.
+
 2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r248638.

@@ -26,6 +26,9 @@
 #include "RenderElement.h"
 
 #include "AXObjectCache.h"
+#if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
+#endif
 #include "ContentData.h"
 #include "CursorList.h"
 #include "ElementChildIterator.h"
@@ -919,6 +922,10 @@ inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
 
 void RenderElement::willBeDestroyed()
 {
+#if PLATFORM(IOS_FAMILY)
+    if (!renderTreeBeingDestroyed() && element())
+        document().contentChangeObserver().rendererWillBeDestroyed(*element());
+#endif
     if (m_style.hasFixedBackgroundImage() && !settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(*this);
 

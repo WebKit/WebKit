@@ -67,7 +67,7 @@ public:
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
-    void willDestroyRenderer(const Element&);
+    void rendererWillBeDestroyed(const Element&);
     void willNotProceedWithClick();
 
     void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = makeWeakPtr(targetElement); }
@@ -98,14 +98,6 @@ public:
     public:
         WEBCORE_EXPORT MouseMovedScope(Document&);
         WEBCORE_EXPORT ~MouseMovedScope();
-    private:
-        ContentChangeObserver& m_contentChangeObserver;
-    };
-
-    class RenderTreeUpdateScope {
-    public:
-        RenderTreeUpdateScope(Document&);
-        ~RenderTreeUpdateScope();
     private:
         ContentChangeObserver& m_contentChangeObserver;
     };
@@ -177,8 +169,6 @@ private:
 
     void completeDurationBasedContentObservation();
 
-    void renderTreeUpdateDidStart();
-    void renderTreeUpdateDidFinish();
     bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(&element); }
     bool shouldObserveVisibilityChangeForElement(const Element&);
 
@@ -220,7 +210,6 @@ private:
     bool m_mouseMovedEventIsBeingDispatched { false };
     bool m_isBetweenTouchEndAndMouseMoved { false };
     bool m_isObservingTransitions { false };
-    bool m_isInObservedRenderTreeUpdate { false };
 };
 
 inline bool ContentChangeObserver::isObservingContentChanges() const
