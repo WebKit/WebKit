@@ -120,6 +120,8 @@ void ProvisionalPageProxy::cancel()
     // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
     if (m_provisionalLoadURL.isEmpty())
         return;
+        
+    ASSERT(m_process->state() == WebProcessProxy::State::Running);
 
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame for pageID = %" PRIu64, m_page.pageID().toUInt64());
     ASSERT(m_mainFrame);
