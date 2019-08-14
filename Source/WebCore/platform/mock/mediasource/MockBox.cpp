@@ -51,7 +51,7 @@ String MockBox::peekType(ArrayBuffer* data)
     StringBuilder builder;
     auto array = JSC::Int8Array::create(data, 0, 4);
     for (int i = 0; i < 4; ++i)
-        builder.append(array->item(i));
+        builder.append(static_cast<char>(array->item(i)));
     return builder.toString();
 }
 
@@ -72,7 +72,7 @@ MockTrackBox::MockTrackBox(ArrayBuffer* data)
     StringBuilder builder;
     auto array = JSC::Int8Array::create(data, 12, 4);
     for (int i = 0; i < 4; ++i)
-        builder.append(array->item(i));
+        builder.append(static_cast<char>(array->item(i)));
     m_codec = builder.toString();
 
     m_kind = static_cast<TrackKind>(view->get<uint8_t>(16, true));

@@ -1033,7 +1033,7 @@ private:
 
         if (isIdentifierStart(ch)) {
             StringBuilder identifierBuilder;
-            identifierBuilder.append(ch);
+            identifierBuilder.appendCharacter(ch);
 
             while (!atEndOfPattern()) {
                 ch = tryConsumeIdentifierCharacter();
@@ -1043,7 +1043,7 @@ private:
                 if (!isIdentifierPart(ch))
                     break;
 
-                identifierBuilder.append(ch);
+                identifierBuilder.appendCharacter(ch);
             }
         }
 
@@ -1064,7 +1064,7 @@ private:
         bool foundEquals = false;
         unsigned errors = 0;
 
-        expressionBuilder.append(consume());
+        expressionBuilder.appendCharacter(consume());
 
         while (!atEndOfPattern()) {
             int ch = peek();
@@ -1099,7 +1099,7 @@ private:
             } else if (!isUnicodePropertyValueExpressionChar(ch))
                 errors++;
             else
-                expressionBuilder.append(ch);
+                expressionBuilder.appendCharacter(ch);
         }
 
         m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;

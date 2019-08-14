@@ -162,6 +162,7 @@ public:
             appendCharacters(characters, strlen(characters));
     }
 
+    void appendCharacter(UChar) = delete;
     void append(UChar c)
     {
         if (hasOverflowed())
@@ -183,6 +184,7 @@ public:
         appendCharacters(&c, 1);
     }
 
+    void appendCharacter(LChar) = delete;
     void append(LChar c)
     {
         if (hasOverflowed())
@@ -198,12 +200,13 @@ public:
             appendCharacters(&c, 1);
     }
 
+    void appendCharacter(char) = delete;
     void append(char c)
     {
         append(static_cast<LChar>(c));
     }
 
-    void append(UChar32 c)
+    void appendCharacter(UChar32 c)
     {
         if (U_IS_BMP(c)) {
             append(static_cast<UChar>(c));

@@ -99,9 +99,9 @@ public:
         if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
             || !additionalAllowedCharacter
             || !(isASCIIAlphanumeric(cc) || cc == '=')) {
-            decodedEntity.append(entitySearch.mostRecentMatch()->firstValue);
+            decodedEntity.appendCharacter(entitySearch.mostRecentMatch()->firstValue);
             if (entitySearch.mostRecentMatch()->secondValue)
-                decodedEntity.append(entitySearch.mostRecentMatch()->secondValue);
+                decodedEntity.appendCharacter(entitySearch.mostRecentMatch()->secondValue);
             return true;
         }
         unconsumeCharacters(source, consumedCharacters);

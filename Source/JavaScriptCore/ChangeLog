@@ -1,3 +1,15 @@
+2019-08-13  Sam Weinig  <weinig@apple.com>
+
+        Rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) to avoid accidental change in behavior when replacing append with flexibleAppend
+        https://bugs.webkit.org/show_bug.cgi?id=200675
+
+        Reviewed by Darin Adler.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::tryConsumeGroupName):
+        (JSC::Yarr::Parser::tryConsumeUnicodePropertyExpression):
+        Update for rename from StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32).
+
 2019-08-13  Mark Lam  <mark.lam@apple.com>
 
         Add phase, block, and node numbers to left margin of DFG graph dumps.

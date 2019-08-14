@@ -171,7 +171,7 @@ String capitalize(const String& string, UChar previousCharacter)
     int32_t endOfWord;
     for (endOfWord = ubrk_next(breakIterator); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(breakIterator)) {
         if (startOfWord) // Do not append the first character, since it's the previous character, not from this string.
-            result.append(u_totitle(stringImpl[startOfWord - 1]));
+            result.appendCharacter(u_totitle(stringImpl[startOfWord - 1]));
         for (int i = startOfWord + 1; i < endOfWord; i++)
             result.append(stringImpl[i - 1]);
     }

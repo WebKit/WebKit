@@ -30,6 +30,7 @@
 #include "CSSParserIdioms.h"
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -72,7 +73,7 @@ static bool isCSSTokenizerIdentifier(const String& string)
 static void serializeCharacter(UChar32 c, StringBuilder& appendTo)
 {
     appendTo.append('\\');
-    appendTo.append(c);
+    appendTo.appendCharacter(c);
 }
 
 static void serializeCharacterAsCodePoint(UChar32 c, StringBuilder& appendTo)
@@ -98,13 +99,13 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo, bool
         index += U16_LENGTH(c);
 
         if (!c)
-            appendTo.append(0xfffd);
+            appendTo.append(replacementCharacter);
         else if (c <= 0x1f || c == 0x7f || (0x30 <= c && c <= 0x39 && (isFirst || (isSecond && isFirstCharHyphen))))
             serializeCharacterAsCodePoint(c, appendTo);
         else if (c == 0x2d && isFirst && index == identifier.length())
             serializeCharacter(c, appendTo);
         else if (0x80 <= c || c == 0x2d || c == 0x5f || (0x30 <= c && c <= 0x39) || (0x41 <= c && c <= 0x5a) || (0x61 <= c && c <= 0x7a))
-            appendTo.append(c);
+            appendTo.appendCharacter(c);
         else
             serializeCharacter(c, appendTo);
 
@@ -131,7 +132,7 @@ void serializeString(const String& string, StringBuilder& appendTo)
         else if (c == 0x22 || c == 0x5c)
             serializeCharacter(c, appendTo);
         else
-            appendTo.append(c);
+            appendTo.appendCharacter(c);
     }
 
     appendTo.append('"');

@@ -111,11 +111,11 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);
@@ -130,11 +130,11 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);

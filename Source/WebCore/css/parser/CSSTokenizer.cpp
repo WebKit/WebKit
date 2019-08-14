@@ -617,7 +617,7 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(UChar endingCodePoint)
             if (isNewLine(m_input.peekWithoutReplacement(0)))
                 consumeSingleWhitespaceIfNext(); // This handles \r\n for us
             else
-                output.append(consumeEscape());
+                output.appendCharacter(consumeEscape());
         } else
             output.append(cc);
     }
@@ -695,7 +695,7 @@ CSSParserToken CSSTokenizer::consumeUrlToken()
 
         if (cc == '\\') {
             if (twoCharsAreValidEscape(cc, m_input.peekWithoutReplacement(0))) {
-                result.append(consumeEscape());
+                result.appendCharacter(consumeEscape());
                 continue;
             }
             break;
@@ -787,7 +787,7 @@ StringView CSSTokenizer::consumeName()
             continue;
         }
         if (twoCharsAreValidEscape(cc, m_input.peekWithoutReplacement(0))) {
-            result.append(consumeEscape());
+            result.appendCharacter(consumeEscape());
             continue;
         }
         reconsume(cc);

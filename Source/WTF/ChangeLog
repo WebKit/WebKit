@@ -1,3 +1,25 @@
+2019-08-13  Sam Weinig  <weinig@apple.com>
+
+        Rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) to avoid accidental change in behavior when replacing append with flexibleAppend
+        https://bugs.webkit.org/show_bug.cgi?id=200675
+
+        Reviewed by Darin Adler.
+
+        When we switch StringBuilder::append(...) to be based on the StringConcatenate/makeString flexibleAppend 
+        implementation, if we don't change anything, the behavior of StringBuilder::append(UChar32) will go from 
+        appending a character to appending a stringified number.
+
+        To work around this, we can rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) 
+        and update all the call sites.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendCharacter):
+        Renamed StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32).
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::decodeFromFilename):
+        Update for new name.
+
 2019-08-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for Windows

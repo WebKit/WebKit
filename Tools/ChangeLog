@@ -1,3 +1,14 @@
+2019-08-13  Sam Weinig  <weinig@apple.com>
+
+        Rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) to avoid accidental change in behavior when replacing append with flexibleAppend
+        https://bugs.webkit.org/show_bug.cgi?id=200675
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::TEST):
+        Update for rename from StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32).
+
 2019-08-13  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org Timeline] Performance improvement - Skip render offscreen canvas
