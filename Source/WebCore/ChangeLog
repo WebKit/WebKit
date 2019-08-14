@@ -1,3 +1,18 @@
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
+        Update Worker::notifyFinished to not use emptySessionID
+        https://bugs.webkit.org/show_bug.cgi?id=200710
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Exit early if context is gone since we should not dispatch events or create worker.
+        Make sure to unset pending activity using a ScopeExit.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+
 2019-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Implement TableFormattingContext::computePreferredWidthForColumns

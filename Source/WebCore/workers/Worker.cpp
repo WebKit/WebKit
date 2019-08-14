@@ -43,6 +43,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -181,20 +182,24 @@ void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse
 
 void Worker::notifyFinished()
 {
+    auto clearLoader = makeScopeExit([this] {
+        m_scriptLoader = nullptr;
+        unsetPendingActivity(*this);
+    });
+
     auto* context = scriptExecutionContext();
-    PAL::SessionID sessionID = context ? context->sessionID() : PAL::SessionID::emptySessionID();
+    if (!context)
+        return;
 
-    if (m_scriptLoader->failed() || !sessionID.isValid())
+    if (m_scriptLoader->failed()) {
         dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
-    else {
-        bool isOnline = platformStrategies()->loaderStrategy()->isOnLine();
-        const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : scriptExecutionContext()->contentSecurityPolicy()->responseHeaders();
-        m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), m_name, scriptExecutionContext()->userAgent(m_scriptLoader->url()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags, sessionID);
-        InspectorInstrumentation::scriptImported(*scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
+        return;
     }
-    m_scriptLoader = nullptr;
 
-    unsetPendingActivity(*this);
+    bool isOnline = platformStrategies()->loaderStrategy()->isOnLine();
+    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->contentSecurityPolicy()->responseHeaders();
+    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), m_name, context->userAgent(m_scriptLoader->url()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags, context->sessionID());
+    InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script());
 }
 
 } // namespace WebCore
