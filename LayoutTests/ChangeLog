@@ -1,3 +1,12 @@
+2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [WebAuthN] Enable LocalAuthenticator for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=182772
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Skip two more tests that are only expected to run on internal bots.
+
 2019-08-13  Antoine Quint  <graouts@apple.com>
 
         [iPadOS] slides.google.com: Cannot dismiss the context menu by tapping on the canvas
