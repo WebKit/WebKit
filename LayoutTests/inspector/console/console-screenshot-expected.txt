@@ -6,6 +6,9 @@ CONSOLE MESSAGE: [object HTMLDivElement]
 CONSOLE MESSAGE: [object ImageData]
 CONSOLE MESSAGE: [object ImageBitmap]
 CONSOLE MESSAGE: [object CanvasRenderingContext2D]
+CONSOLE MESSAGE: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=
+CONSOLE MESSAGE: Viewport
+CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport
 Tests for the console.screenshot API.
@@ -56,6 +59,24 @@ PASS: The added message should be an image.
 PASS: The image should not be empty.
 PASS: The image width should be 2px.
 PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.String.Base64.Valid
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.String.Base64.NoContent
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be greater than 2px.
+PASS: The image height should be greater than 2px.
+
+-- Running test case: console.screenshot.String.Base64.Invalid
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be greater than 2px.
+PASS: The image height should be greater than 2px.
 
 -- Running test case: console.screenshot.NonScreenshotableTarget
 PASS: The added message should be an image.

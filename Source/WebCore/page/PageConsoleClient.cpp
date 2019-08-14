@@ -64,6 +64,7 @@
 #include "Settings.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
@@ -367,6 +368,15 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
             }
 
             // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
+        } else {
+            String base64;
+            if (possibleTarget.getString(state, base64)) {
+                JSC::Yarr::RegularExpression regex("^data:image/(?:[^;]+;)+base64,.+$"_s, JSC::Yarr::TextCaseSensitivity::TextCaseInsensitive);
+                if (regex.match(base64) != -1) {
+                    target = possibleTarget;
+                    dataURL = base64;
+                }
+            }
         }
     }
 

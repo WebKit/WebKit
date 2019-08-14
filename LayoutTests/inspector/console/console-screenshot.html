@@ -52,32 +52,33 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("console.screenshot");
 
-    function addTest({name, expression, imageMessageAddedCallback, shouldError}) {
+    function addTest({name, expression, imageMessageAddedCallback, shouldCaptureViewport, shouldError}) {
         suite.addTestCase({
             name,
-            test(resolve, reject) {
-                let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, async (event) => {
-                    let {message} = event.data;
+            async test() {
+                let [event] = await Promise.all([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                    InspectorTest.evaluateInPage(expression),
+                ]);
 
-                    let isError = message.level === WI.ConsoleMessage.MessageLevel.Error;
-                    if (isError || message.type === WI.ConsoleMessage.MessageType.Image) {
-                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                let {message} = event.data;
 
-                        if (isError)
-                            InspectorTest.expectThat(shouldError, message.messageText);
-                        else
-                            InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+                if (message.level === WI.ConsoleMessage.MessageLevel.Error) {
+                    InspectorTest.expectThat(shouldError, message.messageText);
+                    return;
+                }
 
-                        if (imageMessageAddedCallback)
-                            await imageMessageAddedCallback(message);
+                InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+                InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
 
-                        resolve();
-                        return;
-                    }
-                });
-
-                InspectorTest.evaluateInPage(expression)
-                .catch(reject);
+                let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+                if (shouldCaptureViewport) {
+                    InspectorTest.expectGreaterThan(img.width, 2, "The image width should be greater than 2px.");
+                    InspectorTest.expectGreaterThan(img.height, 2, "The image height should be greater than 2px.");
+                } else {
+                    InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+                    InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+                }
             },
         });
     }
@@ -85,49 +86,21 @@ function test()
     addTest({
         name: "console.screenshot.Node.SingleArgument",
         expression: `console.screenshot(document.querySelector("#testNode"))`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
     });
 
     addTest({
         name: "console.screenshot.Node.MultipleArguments",
         expression: `console.screenshot(document.querySelector("#testNode"), "test")`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
     });
 
     addTest({
         name: "console.screenshot.Node.DetachedScreenshotable.Image",
         expression: `testHTMLImageElement()`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
     });
 
     addTest({
         name: "console.screenshot.Node.DetachedScreenshotable.Picture",
         expression: `testHTMLPictureElement()`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
     });
 
     addTest({
@@ -139,61 +112,45 @@ function test()
     addTest({
         name: "console.screenshot.ImageData",
         expression: `console.screenshot(new ImageData(2, 2))`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
     });
 
     addTest({
         name: "console.screenshot.ImageBitmap",
         expression: `testImageBitmap()`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
     });
 
     addTest({
         name: "console.screenshot.CanvasRenderingContext2D",
         expression: `console.screenshot(createCanvas2DTest())`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+    });
 
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
-        },
+    addTest({
+        name: "console.screenshot.String.Base64.Valid",
+        expression: `console.screenshot("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=")`, // 2x2 red square
+    });
+
+    addTest({
+        name: "console.screenshot.String.Base64.NoContent",
+        expression: `console.screenshot("data:image/png;a1=b2;base64,")`,
+        shouldCaptureViewport: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.Base64.Invalid",
+        expression: `console.screenshot("invalid")`,
+        shouldCaptureViewport: true,
     });
 
     addTest({
         name: "console.screenshot.NonScreenshotableTarget",
         expression: `console.screenshot(42)`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectGreaterThan(img.width, 2, "The image width should be greater than 2px.");
-            InspectorTest.expectGreaterThan(img.height, 2, "The image height should be greater than 2px.");
-        },
+        shouldCaptureViewport: true,
     });
 
     addTest({
         name: "console.screenshot.NoArguments",
         expression: `console.screenshot()`,
-        async imageMessageAddedCallback(message) {
-            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
-
-            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.expectGreaterThan(img.width, 2, "The image width should be greater than 2px.");
-            InspectorTest.expectGreaterThan(img.height, 2, "The image height should be greater than 2px.");
-        },
+        shouldCaptureViewport: true,
     });
 
     suite.runTestCasesAndFinish();
