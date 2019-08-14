@@ -32,6 +32,7 @@ namespace WebKit {
 
 void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << sessionID;
     encoder << viewSize;
     encoder << activityState;
 
@@ -52,7 +53,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << paginationLineGridEnabled;
     encoder << userAgent;
     encoder << itemStates;
-    encoder << sessionID;
     encoder << userContentControllerID;
     encoder << visitedLinkTableID;
     encoder << websiteDataStoreID;
@@ -137,7 +137,13 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
 {
-    WebPageCreationParameters parameters;
+    Optional<PAL::SessionID> sessionID;
+    decoder >> sessionID;
+    if (!sessionID)
+        return WTF::nullopt;
+
+    WebPageCreationParameters parameters { *sessionID };
+
     if (!decoder.decode(parameters.viewSize))
         return WTF::nullopt;
     if (!decoder.decode(parameters.activityState))
@@ -190,9 +196,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!itemStates)
         return WTF::nullopt;
     parameters.itemStates = WTFMove(*itemStates);
-
-    if (!decoder.decode(parameters.sessionID))
-        return WTF::nullopt;
 
     Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
