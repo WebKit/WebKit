@@ -1,3 +1,15 @@
+2019-08-13  Saam Barati  <sbarati@apple.com>
+
+        Add a way to opt out of kern TCSM for layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=200649
+        <rdar://problem/51304923>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * assembler/CPU.cpp:
+        (JSC::isKernTCSMAvailable):
+        * runtime/Options.h:
+
 2019-08-13  Sam Weinig  <weinig@apple.com>
 
         Rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) to avoid accidental change in behavior when replacing append with flexibleAppend

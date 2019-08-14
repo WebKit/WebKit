@@ -36,6 +36,9 @@ namespace JSC {
 #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
 bool isKernTCSMAvailable()
 {
+    if (!Options::useKernTCSM())
+        return false;
+
     uint32_t val = 0;
     size_t valSize = sizeof(val);
     int rc = sysctlbyname("kern.tcsm_available", &val, &valSize, NULL, 0);
