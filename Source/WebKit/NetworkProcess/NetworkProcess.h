@@ -535,7 +535,7 @@ private:
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
-    HashMap<WebCore::SWServerConnectionIdentifier, WebSWServerConnection*> m_swServerConnections;
+    HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swServerConnections;
 #endif
 
 #if PLATFORM(COCOA)

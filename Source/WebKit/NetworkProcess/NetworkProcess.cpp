@@ -2484,13 +2484,13 @@ void NetworkProcess::createServerToContextConnection(const RegistrableDomain& re
 
 void NetworkProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    if (auto* connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))
+    if (auto connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))
         connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
 }
 
 void NetworkProcess::postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&& message, const WebCore::ServiceWorkerOrClientIdentifier& source, SWServerConnectionIdentifier connectionIdentifier)
 {
-    if (auto* connection = m_swServerConnections.get(connectionIdentifier))
+    if (auto connection = m_swServerConnections.get(connectionIdentifier))
         connection->postMessageToServiceWorker(destination, WTFMove(message), source);
 }
 
@@ -2498,7 +2498,7 @@ void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connectio
 {
     ASSERT(parentProcessHasServiceWorkerEntitlement());
     ASSERT(!m_swServerConnections.contains(connection.identifier()));
-    m_swServerConnections.add(connection.identifier(), &connection);
+    m_swServerConnections.add(connection.identifier(), makeWeakPtr(connection));
     auto* store = existingSWOriginStoreForSession(connection.sessionID());
     ASSERT(store);
     if (store)
@@ -2507,7 +2507,7 @@ void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connectio
 
 void NetworkProcess::unregisterSWServerConnection(WebSWServerConnection& connection)
 {
-    ASSERT(m_swServerConnections.get(connection.identifier()) == &connection);
+    ASSERT(m_swServerConnections.get(connection.identifier()).get() == &connection);
     m_swServerConnections.remove(connection.identifier());
     if (auto* store = existingSWOriginStoreForSession(connection.sessionID()))
         store->unregisterSWServerConnection(connection);
