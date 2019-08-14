@@ -45,17 +45,18 @@ Ref<UniqueIDBDatabaseConnection> UniqueIDBDatabaseConnection::create(UniqueIDBDa
 
 UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection(UniqueIDBDatabase& database, ServerOpenDBRequest& request)
     : m_database(makeWeakPtr(database))
+    , m_server(makeWeakPtr(m_database->server()))
     , m_connectionToClient(request.connection())
     , m_openRequestIdentifier(request.requestData().requestIdentifier())
 {
-    m_database->server().registerDatabaseConnection(*this);
+    m_server->registerDatabaseConnection(*this);
     m_connectionToClient->registerDatabaseConnection(*this);
 }
 
 UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection()
 {
-    if (m_database)
-        m_database->server().unregisterDatabaseConnection(*this);
+    if (m_server)
+        m_server->unregisterDatabaseConnection(*this);
     m_connectionToClient->unregisterDatabaseConnection(*this);
 }
 
