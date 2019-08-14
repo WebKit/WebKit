@@ -29,7 +29,7 @@
 
 #include "SharedStringHashStore.h"
 #include <WebCore/SWOriginStore.h>
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -55,7 +55,7 @@ private:
 
     SharedStringHashStore m_store;
     bool m_isImported { false };
-    HashSet<WebSWServerConnection*> m_webSWServerConnections;
+    WeakHashSet<WebSWServerConnection> m_webSWServerConnections;
 };
 
 } // namespace WebKit
