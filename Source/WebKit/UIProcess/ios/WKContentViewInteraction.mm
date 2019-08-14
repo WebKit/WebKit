@@ -7932,6 +7932,9 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 
 - (void)continueContextMenuInteraction:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
+    if (!self.window)
+        return continueWithContextMenuConfiguration(nil);
+
     if (!_positionInformation.touchCalloutEnabled)
         return continueWithContextMenuConfiguration(nil);
 

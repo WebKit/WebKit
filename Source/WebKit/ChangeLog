@@ -1,3 +1,18 @@
+2019-08-14  Luming Yin  <luming_yin@apple.com>
+
+        v3: CrashTracer: Regression : MobileSafari at UIKitCore: -[UITargetedPreview initWithView:parameters:]
+        https://bugs.webkit.org/show_bug.cgi?id=200634
+
+        Reviewed by Simon Fraser.
+
+        Under rare race conditions, the WKContentView may no longer have an associated window. However, 
+        UIContextMenuInteraction may still attempt initialize a UITargetedPreview with the orphaned 
+        WKContentView. Speculative fix for crashes under such scenarios, so that we can continue without 
+        a context menu configuration to prevent the UIKit exception.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView continueContextMenuInteraction:]):
+
 2019-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Stop content change observation explicitly.
