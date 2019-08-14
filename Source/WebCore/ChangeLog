@@ -1,5 +1,18 @@
 2019-08-13  Robin Morisset  <rmorisset@apple.com>
 
+        [WHLSL] Move Qualifiers and Semantic from VariableDeclaration to VariableDeclaration::RareData
+        https://bugs.webkit.org/show_bug.cgi?id=200696
+
+        Reviewed by Myles C. Maxfield.
+
+        Shrinking VariableDeclaration by 16 bytes in the common case.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+
+2019-08-13  Robin Morisset  <rmorisset@apple.com>
+
         [WHLSL] Don't generate empty comma expressions for bare ';'
         https://bugs.webkit.org/show_bug.cgi?id=200681
 

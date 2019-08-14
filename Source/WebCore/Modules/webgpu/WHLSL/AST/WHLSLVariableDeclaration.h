@@ -47,14 +47,24 @@ class VariableDeclaration final {
     WTF_MAKE_FAST_ALLOCATED;
 // Final because we made the destructor non-virtual.
 public:
+    struct RareData {
+        RareData(Qualifiers&& qualifiersArgument, std::unique_ptr<Semantic>&& semanticArgument)
+            : qualifiers(WTFMove(qualifiersArgument))
+            , semantic(WTFMove(semanticArgument))
+        {
+        }
+        Qualifiers qualifiers;
+        std::unique_ptr<Semantic> semantic;
+    };
+
     VariableDeclaration(CodeLocation codeLocation, Qualifiers&& qualifiers, RefPtr<UnnamedType> type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)
         : m_codeLocation(codeLocation)
-        , m_qualifiers(WTFMove(qualifiers))
         , m_type(WTFMove(type))
-        , m_name(WTFMove(name))
-        , m_semantic(WTFMove(semantic))
         , m_initializer(WTFMove(initializer))
+        , m_name(WTFMove(name))
     {
+        if (semantic || !qualifiers.isEmpty())
+            m_rareData = std::make_unique<RareData>(WTFMove(qualifiers), WTFMove(semantic));
     }
 
     ~VariableDeclaration() = default;
@@ -74,7 +84,6 @@ public:
     }
     const RefPtr<UnnamedType>& type() const { return m_type; }
     UnnamedType* type() { return m_type ? &*m_type : nullptr; }
-    Semantic* semantic() { return m_semantic.get(); }
     Expression* initializer() { return m_initializer.get(); }
     bool isAnonymous() const { return m_name.isNull(); }
     std::unique_ptr<Expression> takeInitializer() { return WTFMove(m_initializer); }
@@ -86,13 +95,14 @@ public:
     }
     CodeLocation codeLocation() const { return m_codeLocation; }
 
+    Semantic* semantic() { return m_rareData ? m_rareData->semantic.get() : nullptr; }
+
 private:
     CodeLocation m_codeLocation;
-    Qualifiers m_qualifiers;
     RefPtr<UnnamedType> m_type;
-    String m_name;
-    std::unique_ptr<Semantic> m_semantic;
     std::unique_ptr<Expression> m_initializer;
+    std::unique_ptr<RareData> m_rareData { nullptr };
+    String m_name;
 };
 
 using VariableDeclarations = Vector<UniqueRef<VariableDeclaration>>;
