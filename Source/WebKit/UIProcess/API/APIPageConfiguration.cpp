@@ -49,7 +49,6 @@ Ref<PageConfiguration> PageConfiguration::create()
 }
 
 PageConfiguration::PageConfiguration()
-    : m_sessionID(PAL::SessionID::emptySessionID())
 {
 }
 
@@ -69,7 +68,6 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_relatedPage = this->m_relatedPage;
     copy->m_visitedLinkStore = this->m_visitedLinkStore;
     copy->m_websiteDataStore = this->m_websiteDataStore;
-    copy->m_sessionID = this->m_sessionID;
     copy->m_treatsSHA1SignedCertificatesAsInsecure = this->m_treatsSHA1SignedCertificatesAsInsecure;
 #if PLATFORM(IOS_FAMILY)
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
@@ -161,11 +159,6 @@ API::WebsiteDataStore* PageConfiguration::websiteDataStore()
 void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataStore)
 {
     m_websiteDataStore = websiteDataStore;
-
-    if (m_websiteDataStore)
-        m_sessionID = m_websiteDataStore->websiteDataStore().sessionID();
-    else
-        m_sessionID = PAL::SessionID::emptySessionID();
 }
 
 WebsitePolicies* PageConfiguration::defaultWebsitePolicies() const
@@ -176,18 +169,6 @@ WebsitePolicies* PageConfiguration::defaultWebsitePolicies() const
 void PageConfiguration::setDefaultWebsitePolicies(WebsitePolicies* policies)
 {
     m_defaultWebsitePolicies = policies;
-}
-
-PAL::SessionID PageConfiguration::sessionID()
-{
-    ASSERT(!m_websiteDataStore || m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID || m_sessionID == PAL::SessionID::legacyPrivateSessionID());
-
-    return m_sessionID;
-}
-
-void PageConfiguration::setSessionID(PAL::SessionID sessionID)
-{
-    m_sessionID = sessionID;
 }
 
 RefPtr<WebKit::WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(const WTF::String& scheme)

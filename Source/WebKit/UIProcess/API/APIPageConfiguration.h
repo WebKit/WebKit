@@ -90,10 +90,6 @@ public:
     WebsitePolicies* defaultWebsitePolicies() const;
     void setDefaultWebsitePolicies(WebsitePolicies*);
 
-    // FIXME: Once PageConfigurations *always* have a data store, get rid of the separate sessionID.
-    PAL::SessionID sessionID();
-    void setSessionID(PAL::SessionID);
-
     bool treatsSHA1SignedCertificatesAsInsecure() { return m_treatsSHA1SignedCertificatesAsInsecure; }
     void setTreatsSHA1SignedCertificatesAsInsecure(bool treatsSHA1SignedCertificatesAsInsecure) { m_treatsSHA1SignedCertificatesAsInsecure = treatsSHA1SignedCertificatesAsInsecure; } 
 
@@ -151,9 +147,6 @@ private:
 
     RefPtr<WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
-    // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.
-    // Once we get rid of it we should get rid of this configuration parameter as well.
-    PAL::SessionID m_sessionID;
 
     bool m_treatsSHA1SignedCertificatesAsInsecure { true };
 #if PLATFORM(IOS_FAMILY)

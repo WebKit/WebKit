@@ -1760,7 +1760,6 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     if (!manager)
         manager = context->priv->websiteDataManager.get();
     pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
-    pageConfiguration->setSessionID(pageConfiguration->websiteDataStore()->websiteDataStore().sessionID());
     webkitWebViewCreatePage(webView, WTFMove(pageConfiguration));
 
     context->priv->webViews.set(webkit_web_view_get_page_id(webView), webView);
