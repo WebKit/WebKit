@@ -432,7 +432,7 @@ String PlatformKeyboardEvent::keyValueForWPEKeyCode(unsigned keyCode)
     UChar32 unicodeCharacter = wpe_key_code_to_unicode(keyCode);
     if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter)) {
         StringBuilder builder;
-        builder.append(unicodeCharacter);
+        builder.appendCharacter(unicodeCharacter);
         return builder.toString();
     }
 
@@ -1309,7 +1309,7 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
     UChar32 unicodeCharacter = wpe_key_code_to_unicode(val);
     if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter)) {
         StringBuilder builder;
-        builder.append(unicodeCharacter);
+        builder.appendCharacter(unicodeCharacter);
         return builder.toString();
     }
 
