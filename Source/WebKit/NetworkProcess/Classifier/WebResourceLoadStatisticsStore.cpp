@@ -585,7 +585,7 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const RegistrableDomai
 
 void WebResourceLoadStatisticsStore::hasHadUserInteraction(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    postTask([this, domain, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, domain = domain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool hadUserInteraction = m_statisticsStore ? m_statisticsStore->hasHadUserInteraction(domain, OperatingDatesWindow::Long) : false;
         postTaskReply([hadUserInteraction, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(hadUserInteraction);
