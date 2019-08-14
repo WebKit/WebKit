@@ -561,7 +561,7 @@ WebRTCUnifiedPlanEnabled:
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC Unified Plan"
   humanReadableDescription: "Use WebRTC Unified Plan"
-  category: experimental
+  category: internal
 
 WebRTCVP8CodecEnabled:
   type: bool
@@ -570,7 +570,7 @@ WebRTCVP8CodecEnabled:
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC VP8 codec"
   humanReadableDescription: "Enable WebRTC VP8 codec"
-  category: experimental
+  category: internal
 
 WebRTCDTMFEnabled:
   type: bool
@@ -588,7 +588,7 @@ WebRTCH264SimulcastEnabled:
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC H264 Simulcast"
   humanReadableDescription: "Enable WebRTC H264 Simulcast"
-  category: experimental
+  category: internal
 
 WebRTCMDNSICECandidatesEnabled:
   type: bool
