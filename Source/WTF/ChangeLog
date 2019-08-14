@@ -1,3 +1,15 @@
+2019-08-14  Samuel Groß  <saelo@google.com>
+
+        [JSCOnly] JSCOnly port doesn't build on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=200667
+
+        spi/darwin/ProcessMemoryFootprint.h is required by jsc.cpp so we add it to the WTF_PUBLIC_HEADERS.
+
+        Reviewed by Alex Christensen.
+
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+
 2019-08-13  Sam Weinig  <weinig@apple.com>
 
         Rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) to avoid accidental change in behavior when replacing append with flexibleAppend
