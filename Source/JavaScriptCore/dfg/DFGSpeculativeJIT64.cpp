@@ -5097,7 +5097,7 @@ void SpeculativeJIT::compile(Node* node)
                 osrEnter.link(&m_jit);
             }
             m_jit.emitRestoreCalleeSaves();
-            m_jit.jump(tempGPR, GPRInfo::callFrameRegister);
+            m_jit.farJump(tempGPR, GPRInfo::callFrameRegister);
         });
         break;
     }

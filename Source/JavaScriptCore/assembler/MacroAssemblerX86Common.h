@@ -2745,26 +2745,26 @@ public:
         return Jump(m_assembler.jmp());
     }
 
-    void jump(RegisterID target, PtrTag)
+    void farJump(RegisterID target, PtrTag)
     {
         m_assembler.jmp_r(target);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(Address address, PtrTag)
+    void farJump(Address address, PtrTag)
     {
         m_assembler.jmp_m(address.offset, address.base);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(BaseIndex address, PtrTag)
+    void farJump(BaseIndex address, PtrTag)
     {
         m_assembler.jmp_m(address.offset, address.base, address.index, address.scale);
     }
 
-    ALWAYS_INLINE void jump(RegisterID target, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(target, NoPtrTag); }
-    ALWAYS_INLINE void jump(Address address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
-    ALWAYS_INLINE void jump(BaseIndex address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
+    ALWAYS_INLINE void farJump(RegisterID target, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(target, NoPtrTag); }
+    ALWAYS_INLINE void farJump(Address address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
+    ALWAYS_INLINE void farJump(BaseIndex address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
 
     // Arithmetic control flow operations:
     //

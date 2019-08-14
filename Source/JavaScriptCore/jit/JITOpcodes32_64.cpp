@@ -917,7 +917,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
         callOperation(operationTryOSREnterAtCatchAndValueProfile, m_bytecodeOffset);
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
-    jump(returnValueGPR, NoPtrTag);
+    farJump(returnValueGPR, NoPtrTag);
     skipOSREntry.link(this);
     if (buffer && shouldEmitProfiling()) {
         buffer->forEach([&] (ValueProfileAndOperand& profile) {
@@ -957,7 +957,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
-    jump(returnValueGPR, NoPtrTag);
+    farJump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_switch_char(const Instruction* currentInstruction)
@@ -974,7 +974,7 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
-    jump(returnValueGPR, NoPtrTag);
+    farJump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_switch_string(const Instruction* currentInstruction)
@@ -990,7 +990,7 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
-    jump(returnValueGPR, NoPtrTag);
+    farJump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_debug(const Instruction* currentInstruction)

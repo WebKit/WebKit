@@ -366,15 +366,6 @@ public:
         return readPointer(reinterpret_cast<int*>(from) - callInstruction - NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
     }
 
-    ALWAYS_INLINE void ret() { retab(); }
-
-    // Needed because we need to call our overloaded ret() above.
-    ALWAYS_INLINE void ret(RegisterID rn)
-    {
-        RELEASE_ASSERT(rn == ARM64Registers::lr);
-        ret();
-    }
-
     static constexpr ptrdiff_t MAX_POINTER_BITS = 64;
     static constexpr ptrdiff_t BITS_ENCODEABLE_PER_INSTRUCTION = 16;
     static constexpr ptrdiff_t NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS = MAX_POINTER_BITS / BITS_ENCODEABLE_PER_INSTRUCTION;

@@ -76,7 +76,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
 
     // Tail call into the callee WebAssembly function.
     jit.loadPtr(scratch, scratch);
-    jit.jump(scratch, WasmEntryPtrTag);
+    jit.farJump(scratch, WasmEntryPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
     if (UNLIKELY(patchBuffer.didFailToAllocate()))

@@ -1,3 +1,90 @@
+2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make PAC jump and return more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=200703
+
+        Reviewed by Mark Lam.
+
+        This patch refactors our macro assembler, mainly related to PAC.
+
+        1. Make far-jump explicit by renaming `jump` to `farJump`.
+        2. Remove unused makeTailRecursiveCall and tailRecursiveCall.
+        3. Do not make `ARM64EAssembler::ret` as `retab`. MacroAssemblerARM64E should call `retab` explicitly instead.
+
+        * assembler/ARM64EAssembler.h:
+        (JSC::ARM64EAssembler::ret): Deleted.
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::farJump):
+        (JSC::MacroAssemblerARM64::makeTailRecursiveCall): Deleted.
+        (JSC::MacroAssemblerARM64::tailRecursiveCall): Deleted.
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::farJump):
+        (JSC::MacroAssemblerARM64E::ret):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::farJump):
+        (JSC::MacroAssemblerARMv7::relativeTableJump):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall): Deleted.
+        (JSC::MacroAssemblerARMv7::makeTailRecursiveCall): Deleted.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::farJump):
+        (JSC::MacroAssemblerMIPS::tailRecursiveCall): Deleted.
+        (JSC::MacroAssemblerMIPS::makeTailRecursiveCall): Deleted.
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::farJump):
+        (JSC::MacroAssemblerX86::jump): Deleted.
+        (JSC::MacroAssemblerX86::tailRecursiveCall): Deleted.
+        (JSC::MacroAssemblerX86::makeTailRecursiveCall): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::farJump):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::farJump):
+        (JSC::MacroAssemblerX86_64::jump): Deleted.
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall): Deleted.
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall): Deleted.
+        * b3/B3LowerMacros.cpp:
+        * b3/testb3_6.cpp:
+        (testInterpreter):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        * jit/ThunkGenerators.cpp:
+        (JSC::slowPathFor):
+        (JSC::virtualThunkFor):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::emitThrowWasmToJSException):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::loadFromFrameAndJump):
+
 2019-08-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove bad semicolon in generation of ObjC methods

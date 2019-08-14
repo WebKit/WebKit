@@ -1680,7 +1680,7 @@ void testInterpreter()
 
             jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
             jit.load64(CCallHelpers::BaseIndex(scratch, params[0].gpr(), CCallHelpers::timesPtr()), scratch);
-            jit.jump(scratch, B3CompilationPtrTag);
+            jit.farJump(scratch, B3CompilationPtrTag);
 
             jit.addLinkTask(
                 [&, jumpTable, labels] (LinkBuffer& linkBuffer) {

@@ -725,7 +725,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
         callOperation(operationTryOSREnterAtCatchAndValueProfile, m_bytecodeOffset);
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
-    jump(returnValueGPR, ExceptionHandlerPtrTag);
+    farJump(returnValueGPR, ExceptionHandlerPtrTag);
     skipOSREntry.link(this);
     if (buffer && shouldEmitProfiling()) {
         buffer->forEach([&] (ValueProfileAndOperand& profile) {
@@ -765,7 +765,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR, JSSwitchPtrTag);
+    farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
 void JIT::emit_op_switch_char(const Instruction* currentInstruction)
@@ -782,7 +782,7 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR, JSSwitchPtrTag);
+    farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
 void JIT::emit_op_switch_string(const Instruction* currentInstruction)
@@ -798,7 +798,7 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR, JSSwitchPtrTag);
+    farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
 void JIT::emit_op_debug(const Instruction* currentInstruction)
@@ -1043,7 +1043,7 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
             abortWithReason(JITUnreasonableLoopHintJumpTarget);
             ok.link(this);
         }
-        jump(returnValueGPR, GPRInfo::callFrameRegister);
+        farJump(returnValueGPR, GPRInfo::callFrameRegister);
         noOptimizedEntry.link(this);
 
         emitJumpSlowToHot(jump(), currentInstruction->size());

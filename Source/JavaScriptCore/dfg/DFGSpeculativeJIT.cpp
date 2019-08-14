@@ -10645,7 +10645,7 @@ void SpeculativeJIT::emitSwitchIntJump(
     m_jit.move(TrustedImmPtr(table.ctiOffsets.begin()), scratch);
     m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::timesPtr()), scratch);
     
-    m_jit.jump(scratch, JSSwitchPtrTag);
+    m_jit.farJump(scratch, JSSwitchPtrTag);
     data->didUseJumpTable = true;
 }
 
@@ -10676,7 +10676,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
         silentFillAllRegisters();
 
-        m_jit.jump(scratch, JSSwitchPtrTag);
+        m_jit.farJump(scratch, JSSwitchPtrTag);
         noResult(node, UseChildrenCalledExplicitly);
         break;
     }
@@ -10933,7 +10933,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
         callOperation(
             operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
         m_jit.exceptionCheck();
-        m_jit.jump(string, JSSwitchPtrTag);
+        m_jit.farJump(string, JSSwitchPtrTag);
         return;
     }
     
@@ -10971,7 +10971,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     callOperation(operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
     silentFillAllRegisters();
     m_jit.exceptionCheck();
-    m_jit.jump(string, JSSwitchPtrTag);
+    m_jit.farJump(string, JSSwitchPtrTag);
 }
 
 void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)

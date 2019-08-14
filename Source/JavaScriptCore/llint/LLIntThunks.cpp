@@ -61,7 +61,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> generateThunkWithJumpTo(OpcodeID op
     assertIsTaggedWith(target, JSEntryPtrTag);
 
     jit.move(JSInterfaceJIT::TrustedImmPtr(target), JSInterfaceJIT::regT0);
-    jit.jump(JSInterfaceJIT::regT0, JSEntryPtrTag);
+    jit.farJump(JSInterfaceJIT::regT0, JSEntryPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "LLInt %s prologue thunk", thunkKind);

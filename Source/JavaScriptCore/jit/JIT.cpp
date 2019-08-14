@@ -106,7 +106,7 @@ void JIT::emitEnterOptimizationCheck()
 
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
-    jump(returnValueGPR, GPRInfo::callFrameRegister);
+    farJump(returnValueGPR, GPRInfo::callFrameRegister);
     skipOptimize.link(this);
 }
 #endif

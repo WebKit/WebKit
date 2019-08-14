@@ -51,6 +51,7 @@ public:
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
     using MacroAssemblerX86Common::jump;
+    using MacroAssemblerX86Common::farJump;
     using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::storeDouble;
@@ -219,23 +220,12 @@ public:
     ALWAYS_INLINE Call call(RegisterID callTag) { return UNUSED_PARAM(callTag), call(NoPtrTag); }
 
     // Address is a memory location containing the address to jump to
-    void jump(AbsoluteAddress address, PtrTag)
+    void farJump(AbsoluteAddress address, PtrTag)
     {
         m_assembler.jmp_m(address.m_ptr);
     }
 
-    ALWAYS_INLINE void jump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
-
-    Call tailRecursiveCall()
-    {
-        return Call::fromTailJump(jump());
-    }
-
-    Call makeTailRecursiveCall(Jump oldJump)
-    {
-        return Call::fromTailJump(oldJump);
-    }
-
+    ALWAYS_INLINE void farJump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
 
     DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {

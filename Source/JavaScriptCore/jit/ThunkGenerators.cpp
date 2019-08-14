@@ -128,7 +128,7 @@ static void slowPathFor(CCallHelpers& jit, VM* vm, Sprt_JITOperation_ECli slowPa
     jit.prepareForTailCallSlow(GPRInfo::returnValueGPR);
 
     doNotTrash.link(&jit);
-    jit.jump(GPRInfo::returnValueGPR, JSEntryPtrTag);
+    jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM* vm)
@@ -217,7 +217,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM* vm, CallLinkInfo
         jit.preserveReturnAddressAfterCall(GPRInfo::regT0);
         jit.prepareForTailCallSlow(GPRInfo::regT4);
     }
-    jit.jump(GPRInfo::regT4, JSEntryPtrTag);
+    jit.farJump(GPRInfo::regT4, JSEntryPtrTag);
 
     notJSFunction.link(&jit);
     slowCase.append(jit.branchIfNotType(GPRInfo::regT0, InternalFunctionType));

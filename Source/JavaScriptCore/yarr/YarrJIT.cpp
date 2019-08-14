@@ -639,7 +639,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
     void loadFromFrameAndJump(unsigned frameLocation)
     {
-        jump(Address(stackPointerRegister, frameLocation * sizeof(void*)), YarrBacktrackPtrTag);
+        farJump(Address(stackPointerRegister, frameLocation * sizeof(void*)), YarrBacktrackPtrTag);
     }
 
     unsigned alignCallFrameSizeInBytes(unsigned callFrameSize)

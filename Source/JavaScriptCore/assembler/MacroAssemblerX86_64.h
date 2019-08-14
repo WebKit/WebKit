@@ -54,6 +54,7 @@ public:
     using MacroAssemblerX86Common::store8;
     using MacroAssemblerX86Common::call;
     using MacroAssemblerX86Common::jump;
+    using MacroAssemblerX86Common::farJump;
     using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
@@ -243,30 +244,13 @@ public:
     ALWAYS_INLINE Call call(RegisterID callTag) { return UNUSED_PARAM(callTag), call(NoPtrTag); }
 
     // Address is a memory location containing the address to jump to
-    void jump(AbsoluteAddress address, PtrTag tag)
+    void farJump(AbsoluteAddress address, PtrTag tag)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        jump(Address(scratchRegister()), tag);
+        farJump(Address(scratchRegister()), tag);
     }
 
-    ALWAYS_INLINE void jump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
-
-    Call tailRecursiveCall()
-    {
-        DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
-        Jump newJump = Jump(m_assembler.jmp_r(scratchRegister()));
-        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPATCH_OFFSET_CALL_R11);
-        return Call::fromTailJump(newJump);
-    }
-
-    Call makeTailRecursiveCall(Jump oldJump)
-    {
-        oldJump.link(this);
-        DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
-        Jump newJump = Jump(m_assembler.jmp_r(scratchRegister()));
-        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPATCH_OFFSET_CALL_R11);
-        return Call::fromTailJump(newJump);
-    }
+    ALWAYS_INLINE void farJump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
 
     Call threadSafePatchableNearCall()
     {

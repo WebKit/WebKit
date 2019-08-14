@@ -322,7 +322,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     }
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
-    jit.jump(GPRInfo::regT2, OSRExitPtrTag);
+    jit.farJump(GPRInfo::regT2, OSRExitPtrTag);
 }
 
 } } // namespace JSC::DFG

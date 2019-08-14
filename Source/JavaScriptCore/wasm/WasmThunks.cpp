@@ -53,7 +53,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
     CCallHelpers::Call call = jit.call(OperationPtrTag);
-    jit.jump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+    jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.breakpoint(); // We should not reach this.
 
     ThrowWasmException throwWasmException = Thunks::singleton().throwWasmException();

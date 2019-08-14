@@ -128,6 +128,7 @@ public:
 
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
+    using MacroAssemblerBase::farJump;
     using MacroAssemblerBase::branch32;
     using MacroAssemblerBase::compare32;
     using MacroAssemblerBase::move;

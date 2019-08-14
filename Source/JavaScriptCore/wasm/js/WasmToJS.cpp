@@ -712,7 +712,7 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
 
     CCallHelpers::Call call = jit.call(OperationPtrTag);
 
-    jit.jump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+    jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.breakpoint(); // We should not reach this.
 
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {

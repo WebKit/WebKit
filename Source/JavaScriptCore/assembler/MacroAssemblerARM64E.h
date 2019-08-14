@@ -190,7 +190,7 @@ public:
 
     ALWAYS_INLINE Jump jump() { return MacroAssemblerARM64::jump(); }
 
-    void jump(RegisterID target, PtrTag tag)
+    void farJump(RegisterID target, PtrTag tag)
     {
         if (tag == NoPtrTag)
             return MacroAssemblerARM64::jump(target, tag);
@@ -201,13 +201,13 @@ public:
         jump(target, diversityGPR);
     }
 
-    void jump(RegisterID target, RegisterID tag)
+    void farJump(RegisterID target, RegisterID tag)
     {
         ASSERT(tag != target);
         m_assembler.brab(target, tag);
     }
 
-    void jump(Address address, PtrTag tag)
+    void farJump(Address address, PtrTag tag)
     {
         if (tag == NoPtrTag)
             return MacroAssemblerARM64::jump(address, tag);
@@ -220,7 +220,7 @@ public:
         m_assembler.brab(targetGPR, diversityGPR);
     }
 
-    void jump(Address address, RegisterID tag)
+    void farJump(Address address, RegisterID tag)
     {
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         ASSERT(tag != targetGPR);
@@ -228,7 +228,7 @@ public:
         m_assembler.brab(targetGPR, tag);
     }
 
-    void jump(BaseIndex address, PtrTag tag)
+    void farJump(BaseIndex address, PtrTag tag)
     {
         if (tag == NoPtrTag)
             return MacroAssemblerARM64::jump(address, tag);
@@ -241,7 +241,7 @@ public:
         m_assembler.brab(targetGPR, diversityGPR);
     }
 
-    void jump(BaseIndex address, RegisterID tag)
+    void farJump(BaseIndex address, RegisterID tag)
     {
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         ASSERT(tag != targetGPR);
@@ -249,7 +249,7 @@ public:
         m_assembler.brab(targetGPR, tag);
     }
 
-    void jump(AbsoluteAddress address, PtrTag tag)
+    void farJump(AbsoluteAddress address, PtrTag tag)
     {
         if (tag == NoPtrTag)
             return MacroAssemblerARM64::jump(address, tag);
@@ -262,13 +262,18 @@ public:
         m_assembler.brab(targetGPR, diversityGPR);
     }
 
-    void jump(AbsoluteAddress address, RegisterID tag)
+    void farJump(AbsoluteAddress address, RegisterID tag)
     {
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         ASSERT(tag != targetGPR);
         move(TrustedImmPtr(address.m_ptr), targetGPR);
         load64(Address(targetGPR), targetGPR);
         m_assembler.brab(targetGPR, tag);
+    }
+
+    ALWAYS_INLINE void ret()
+    {
+        m_assembler.retab();
     }
 };
 

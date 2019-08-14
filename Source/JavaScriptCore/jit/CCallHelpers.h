@@ -742,7 +742,7 @@ public:
         // genericUnwind() leaves the handler CallFrame* in vm->callFrameForCatch,
         // and the address of the handler in vm->targetMachinePCForThrow.
         loadPtr(&vm.targetMachinePCForThrow, GPRInfo::regT1);
-        jump(GPRInfo::regT1, ExceptionHandlerPtrTag);
+        farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
     void prepareForTailCallSlow(GPRReg calleeGPR = InvalidGPRReg)

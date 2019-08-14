@@ -1921,14 +1921,14 @@ public:
         return branchEqual(MIPSRegisters::zero, MIPSRegisters::zero);
     }
 
-    void jump(RegisterID target, PtrTag)
+    void farJump(RegisterID target, PtrTag)
     {
         move(target, MIPSRegisters::t9);
         m_assembler.jr(MIPSRegisters::t9);
         m_assembler.nop();
     }
 
-    void jump(Address address, PtrTag)
+    void farJump(Address address, PtrTag)
     {
         m_fixedWidth = true;
         load32(address, MIPSRegisters::t9);
@@ -1937,7 +1937,7 @@ public:
         m_fixedWidth = false;
     }
 
-    void jump(AbsoluteAddress address, PtrTag)
+    void farJump(AbsoluteAddress address, PtrTag)
     {
         m_fixedWidth = true;
         load32(address.m_ptr, MIPSRegisters::t9);
@@ -1946,9 +1946,9 @@ public:
         m_fixedWidth = false;
     }
 
-    ALWAYS_INLINE void jump(RegisterID target, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(target, NoPtrTag); }
-    ALWAYS_INLINE void jump(Address address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
-    ALWAYS_INLINE void jump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
+    ALWAYS_INLINE void farJump(RegisterID target, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(target, NoPtrTag); }
+    ALWAYS_INLINE void farJump(Address address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
+    ALWAYS_INLINE void farJump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
 
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
@@ -2702,23 +2702,6 @@ public:
     DataLabelPtr storePtrWithPatch(ImplicitAddress address)
     {
         return storePtrWithPatch(TrustedImmPtr(nullptr), address);
-    }
-
-    Call tailRecursiveCall()
-    {
-        // Like a normal call, but don't update the returned address register
-        m_fixedWidth = true;
-        move(TrustedImm32(0), MIPSRegisters::t9);
-        m_assembler.jr(MIPSRegisters::t9);
-        m_assembler.nop();
-        m_fixedWidth = false;
-        return Call(m_assembler.label(), Call::Linkable);
-    }
-
-    Call makeTailRecursiveCall(Jump oldJump)
-    {
-        oldJump.link(this);
-        return tailRecursiveCall();
     }
 
     void loadFloat(BaseIndex address, FPRegisterID dest)

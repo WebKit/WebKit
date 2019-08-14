@@ -1631,28 +1631,28 @@ public:
         return branchTest32(cond, addressTempRegister, mask8);
     }
 
-    void jump(RegisterID target, PtrTag)
+    void farJump(RegisterID target, PtrTag)
     {
         m_assembler.bx(target);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(Address address, PtrTag)
+    void farJump(Address address, PtrTag)
     {
         load32(address, dataTempRegister);
         m_assembler.bx(dataTempRegister);
     }
     
-    void jump(AbsoluteAddress address, PtrTag)
+    void farJump(AbsoluteAddress address, PtrTag)
     {
         move(TrustedImmPtr(address.m_ptr), dataTempRegister);
         load32(Address(dataTempRegister), dataTempRegister);
         m_assembler.bx(dataTempRegister);
     }
 
-    ALWAYS_INLINE void jump(RegisterID target, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(target, NoPtrTag); }
-    ALWAYS_INLINE void jump(Address address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
-    ALWAYS_INLINE void jump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
+    ALWAYS_INLINE void farJump(RegisterID target, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(target, NoPtrTag); }
+    ALWAYS_INLINE void farJump(Address address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
+    ALWAYS_INLINE void farJump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), farJump(address, NoPtrTag); }
 
     // Arithmetic control flow operations:
     //
@@ -1798,7 +1798,7 @@ public:
 
         ShiftTypeAndAmount shift(SRType_LSL, scale);
         m_assembler.add(dataTempRegister, dataTempRegister, index, shift);
-        jump(dataTempRegister, NoPtrTag);
+        farJump(dataTempRegister, NoPtrTag);
     }
 
     // Miscellaneous operations:
@@ -2006,20 +2006,6 @@ public:
         return label;
     }
     ALWAYS_INLINE DataLabelPtr storePtrWithPatch(ImplicitAddress address) { return storePtrWithPatch(TrustedImmPtr(nullptr), address); }
-
-
-    ALWAYS_INLINE Call tailRecursiveCall()
-    {
-        // Like a normal call, but don't link.
-        moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Call(m_assembler.bx(dataTempRegister), Call::Linkable);
-    }
-
-    ALWAYS_INLINE Call makeTailRecursiveCall(Jump oldJump)
-    {
-        oldJump.link(this);
-        return tailRecursiveCall();
-    }
 
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
