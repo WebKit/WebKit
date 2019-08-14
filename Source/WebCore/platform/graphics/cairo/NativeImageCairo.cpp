@@ -57,7 +57,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return colorFromPremultipliedARGB(*pixel);
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, CompositeOperator compositeOperator, BlendMode blendMode, const ImageOrientation& orientation)
+void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
 {
     context.drawNativeImage(image, imageSize, destRect, srcRect, compositeOperator, blendMode, orientation);
 }

@@ -193,7 +193,7 @@ static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
         }
     }
 
-    return ImageOrientation();
+    return ImageOrientation::None;
 }
 
 class JPEGImageReader {

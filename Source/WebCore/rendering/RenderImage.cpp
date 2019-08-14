@@ -469,11 +469,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                     centerY = 0;
                 imageOffset = LayoutSize(leftBorder + leftPad + centerX + missingImageBorderWidth, topBorder + topPad + centerY + missingImageBorderWidth);
 
-                ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-                orientationDescription.setImageOrientationEnum(style().imageOrientation());
-#endif
-                context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
+                context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), imageOrientation());
                 errorPictureDrawn = true;
             }
 
@@ -635,9 +631,8 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (is<BitmapImage>(image))
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
-    ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
     auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
-    auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendMode::Normal, decodingMode, orientationDescription, interpolation));
+    auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendMode::Normal, decodingMode, imageOrientation(), interpolation));
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
 

@@ -156,7 +156,7 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     ASSERT(imageProperties);
     CFNumberRef orientationProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyOrientation);
     if (!orientationProperty)
-        return ImageOrientation();
+        return ImageOrientation::None;
     
     int exifValue;
     CFNumberGetValue(orientationProperty, kCFNumberIntType, &exifValue);
@@ -350,7 +350,7 @@ ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
-        return ImageOrientation();
+        return ImageOrientation::None;
     
     return orientationFromProperties(properties.get());
 }

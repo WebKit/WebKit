@@ -185,7 +185,7 @@ public:
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
 
-    void setVideoSourceOrientation(const ImageOrientation&);
+    void setVideoSourceOrientation(ImageOrientation);
     GstElement* pipeline() const { return m_pipeline.get(); }
 
     virtual bool handleSyncMessage(GstMessage*);

@@ -145,8 +145,7 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
         return;
 
     InterpolationQuality interpolation = chooseInterpolationQuality(context, *image, image, alignedRect.size());
-    ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
-    context.drawImage(*image, alignedRect, ImagePaintingOptions(orientationDescription, interpolation));
+    context.drawImage(*image, alignedRect, ImagePaintingOptions(imageOrientation(), interpolation));
 }
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const

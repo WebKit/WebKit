@@ -81,7 +81,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
         if (image && clampTo<int>(imageSize.height()) == static_cast<int>(srcSize.height()) && clampTo<int>(imageSize.width()) == static_cast<int>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
-            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientationDescription());
+            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None);
             m_currentFrame = currentFrame;
             return;
         }
@@ -89,7 +89,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 
     // No image of the correct size was found, fallback to drawing the current frame
     FloatSize imageSize = BitmapImage::size();
-    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientationDescription());
+    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None);
 }
 
 } // namespace WebCore

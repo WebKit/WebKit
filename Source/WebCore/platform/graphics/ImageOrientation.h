@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,107 +24,100 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageOrientation_h
-#define ImageOrientation_h
+#pragma once
+
+#include "AffineTransform.h"
+#include "FloatSize.h"
 
 namespace WebCore {
 
-class AffineTransform;
-class FloatSize;
+struct ImageOrientation {
+    enum Orientation {
+        FromImage         = 0, // Orientation from the image should be respected.
 
-// This enum intentionally matches the orientation values from the EXIF spec.
-// See JEITA CP-3451, page 18. http://www.exif.org/Exif2-2.PDF
-enum ImageOrientationEnum {
-    // "TopLeft" means that the 0 row starts at the Top, the 0 column starts at the Left.
-    OriginTopLeft = 1, // default
-    OriginTopRight = 2, // mirror along y-axis
-    OriginBottomRight = 3, // 180 degree rotation
-    OriginBottomLeft = 4, // mirror along the x-axis
-    OriginLeftTop = 5, // mirror along x-axis + 270 degree CW rotation
-    OriginRightTop = 6, // 90 degree CW rotation
-    OriginRightBottom = 7, // mirror along x-axis + 90 degree CW rotation
-    OriginLeftBottom = 8, // 270 degree CW rotation
-    // All other values are "reserved" as of EXIF 2.2
-    DefaultImageOrientation = OriginTopLeft,
-};
+        // This range intentionally matches the orientation values from the EXIF spec.
+        // See JEITA CP-3451, page 18. http://www.exif.org/Exif2-2.PDF
+        OriginTopLeft     = 1, // default
+        OriginTopRight    = 2, // mirror along y-axis
+        OriginBottomRight = 3, // 180 degree rotation
+        OriginBottomLeft  = 4, // mirror along the x-axis
+        OriginLeftTop     = 5, // mirror along x-axis + 270 degree CW rotation
+        OriginRightTop    = 6, // 90 degree CW rotation
+        OriginRightBottom = 7, // mirror along x-axis + 90 degree CW rotation
+        OriginLeftBottom  = 8, // 270 degree CW rotation
 
-enum RespectImageOrientationEnum {
-    DoNotRespectImageOrientation = 0,
-    RespectImageOrientation = 1
-};
+        None              = OriginTopLeft
+    };
 
-struct ImageOrientationDescription {
-    ImageOrientationDescription(RespectImageOrientationEnum shouldRespectImageOrientation,
-        ImageOrientationEnum orientation)
-        : m_respectOrientation(shouldRespectImageOrientation)
-        , m_orientation(orientation)
-    {
-    }
+    ImageOrientation() = default;
 
-    ImageOrientationDescription()
-        : m_respectOrientation(DoNotRespectImageOrientation)
-        , m_orientation(DefaultImageOrientation)
-    {
-    }
-
-    ImageOrientationDescription(RespectImageOrientationEnum shouldRespectImageOrientation)
-        : m_respectOrientation(shouldRespectImageOrientation)
-        , m_orientation(DefaultImageOrientation)
-    {
-    }
-
-    void setRespectImageOrientation(RespectImageOrientationEnum shouldRespectImageOrientation) { m_respectOrientation = shouldRespectImageOrientation; }
-    RespectImageOrientationEnum respectImageOrientation() { return m_respectOrientation; }
-
-    void setImageOrientationEnum(ImageOrientationEnum orientation) { m_orientation = orientation; }
-    ImageOrientationEnum imageOrientation() { return m_orientation; }
-
-    RespectImageOrientationEnum m_respectOrientation;
-    ImageOrientationEnum m_orientation;
-};
-
-class ImageOrientation {
-public:
-    ImageOrientation()
-        : m_orientation(DefaultImageOrientation)
-    {
-    }
-
-    explicit ImageOrientation(ImageOrientationEnum orientation)
+    ImageOrientation(Orientation orientation)
         : m_orientation(orientation)
     {
     }
 
+    static Orientation fromEXIFValue(int exifValue)
+    {
+        return isValidEXIFOrientation(exifValue) ? static_cast<Orientation>(exifValue) : None;
+    }
+
+    operator Orientation() const { return m_orientation; }
+
     bool usesWidthAsHeight() const
     {
+        ASSERT(isValidEXIFOrientation(m_orientation));
         // Values 5 through 8 all flip the width/height.
-        return m_orientation >= OriginLeftTop;
+        return m_orientation >= OriginLeftTop && m_orientation <= OriginLeftBottom;
     }
 
-    // ImageOrientationEnum currently matches EXIF values, however code outside
-    // this function should never assume that.
-    static ImageOrientation fromEXIFValue(int exifValue)
+    AffineTransform transformFromDefault(const FloatSize& drawnSize) const
     {
-        // Values direct from images may be invalid, in which case we use the default.
-        if (exifValue < OriginTopLeft || exifValue > OriginLeftBottom)
-            return ImageOrientation();
-        return ImageOrientation(static_cast<ImageOrientationEnum>(exifValue));
+        float w = drawnSize.width();
+        float h = drawnSize.height();
+
+        switch (m_orientation) {
+        case FromImage:
+            ASSERT_NOT_REACHED();
+            return AffineTransform();
+        case OriginTopLeft:
+            return AffineTransform();
+        case OriginTopRight:
+            return AffineTransform(-1,  0,  0,  1,  w, 0);
+        case OriginBottomRight:
+            return AffineTransform(-1,  0,  0, -1,  w, h);
+        case OriginBottomLeft:
+            return AffineTransform( 1,  0,  0, -1,  0, h);
+        case OriginLeftTop:
+            return AffineTransform( 0,  1,  1,  0,  0, 0);
+        case OriginRightTop:
+            return AffineTransform( 0,  1, -1,  0,  w, 0);
+        case OriginRightBottom:
+            return AffineTransform( 0, -1, -1,  0,  w, h);
+        case OriginLeftBottom:
+            return AffineTransform( 0, -1,  1,  0,  0, h);
+        }
+
+        ASSERT_NOT_REACHED();
+        return AffineTransform();
     }
-
-    // This transform can be used for drawing an image according to the orientation.
-    // It should be used in a right-handed coordinate system.
-    AffineTransform transformFromDefault(const FloatSize& drawnSize) const;
-
-    inline operator ImageOrientationEnum() const { return m_orientation; }
-    
-    inline bool operator==(const ImageOrientation& other) const { return other.m_orientation == m_orientation; }
-    inline bool operator!=(const ImageOrientation& other) const { return !(*this == other); }
 
 private:
-    // FIXME: This only needs to be one byte.
-    ImageOrientationEnum m_orientation;
+    static const Orientation EXIFFirst = OriginTopLeft;
+    static const Orientation EXIFLast = OriginLeftBottom;
+    static const Orientation First = FromImage;
+    static const Orientation Last = EXIFLast;
+
+    static bool isValidOrientation(int orientation)
+    {
+        return orientation >= static_cast<int>(First) && orientation <= static_cast<int>(Last);
+    }
+
+    static bool isValidEXIFOrientation(int orientation)
+    {
+        return orientation >= static_cast<int>(EXIFFirst) && orientation <= static_cast<int>(EXIFLast);
+    }
+
+    Orientation m_orientation { None };
 };
 
 } // namespace WebCore
-
-#endif // ImageOrientation_h

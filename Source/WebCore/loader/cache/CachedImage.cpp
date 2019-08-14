@@ -280,7 +280,7 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
     if (!m_image)
         return { };
 
-    if (is<BitmapImage>(*m_image) && renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation)
+    if (is<BitmapImage>(*m_image) && renderer && renderer->imageOrientation() == ImageOrientation::FromImage)
         return downcast<BitmapImage>(*m_image).sizeRespectingOrientation();
 
     if (is<SVGImage>(*m_image) && sizeType == UsedSize)

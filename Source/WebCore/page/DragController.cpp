@@ -1197,10 +1197,10 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
     if (!element.renderer())
         return;
 
-    ImageOrientationDescription orientationDescription(element.renderer()->shouldRespectImageOrientation(), element.renderer()->style().imageOrientation());
+    ImageOrientation orientation = element.renderer()->imageOrientation();
 
     Image* image = getImage(element);
-    if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image) && (dragImage = DragImage { createDragImageFromImage(image, element.renderer() ? orientationDescription : ImageOrientationDescription()) })) {
+    if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image) && (dragImage = DragImage { createDragImageFromImage(image, orientation) })) {
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
         IntSize fittedSize = dragImageSize(dragImage.get());
 

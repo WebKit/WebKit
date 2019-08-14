@@ -46,7 +46,7 @@ public:
     void destroyDecodedData(bool /*destroyAll*/ = true) override { }
 
 protected:
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) override = 0;
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientation) override = 0;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) override = 0;
 

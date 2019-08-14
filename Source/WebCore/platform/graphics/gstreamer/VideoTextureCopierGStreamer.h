@@ -43,7 +43,7 @@ public:
     VideoTextureCopierGStreamer(ColorConversion);
     ~VideoTextureCopierGStreamer();
 
-    bool copyVideoTextureToPlatformTexture(GLuint inputTexture, IntSize& frameSize, GLuint outputTexture, GLenum outputTarget, GLint level, GLenum internalFormat, GLenum format, GLenum type, bool flipY, ImageOrientation& sourceOrientation);
+    bool copyVideoTextureToPlatformTexture(GLuint inputTexture, IntSize& frameSize, GLuint outputTexture, GLenum outputTarget, GLint level, GLenum internalFormat, GLenum format, GLenum type, bool flipY, ImageOrientation sourceOrientation);
     void updateColorConversionMatrix(ColorConversion);
     void updateTextureSpaceMatrix();
     void updateTransformationMatrix();

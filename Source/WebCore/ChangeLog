@@ -1,3 +1,180 @@
+2019-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        shouldRespectImageOrientation should be a value in ImageOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=200553
+
+        Reviewed by Simon Fraser.
+
+        This patch is a step towards implementing the css image-orientation.
+
+        Instead of having ImageOrientationEnum, ImageOrientationDescription,
+        ImageOrientation and RespectImageOrientationEnum we are going to have a
+        single structure named 'ImageOrientation' which is a wrapper for the enum
+        type "Orientation".
+
+        This structure will have a constructor and casting operator such that
+        assigning an enum value and comparing with an enum value will be done
+        implicitly.
+
+        RespectImageOrientation is represented as a new enum value 'FromImage'.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ImageOrientation const):
+        (WebCore::CSSPrimitiveValue::operator ImageOrientationEnum const): Deleted.
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::createDragImage const):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer const):
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageFromSnapshot):
+        (WebCore::createDragImageFromImage):
+        * platform/DragImage.h:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::draw):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::draw):
+        * platform/graphics/CustomPaintImage.h:
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::draw):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions):
+        * platform/graphics/GraphicsContextImpl.cpp:
+        (WebCore::GraphicsContextImpl::drawImageImpl):
+        (WebCore::GraphicsContextImpl::drawTiledImageImpl):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageFrame.h:
+        * platform/graphics/ImageOrientation.cpp: Removed.
+        * platform/graphics/ImageOrientation.h:
+        (WebCore::ImageOrientation::ImageOrientation):
+        (WebCore::ImageOrientation::fromEXIFValue):
+        (WebCore::ImageOrientation::operator Orientation const):
+        (WebCore::ImageOrientation::usesWidthAsHeight const):
+        (WebCore::ImageOrientation::transformFromDefault const):
+        (WebCore::ImageOrientation::isValidOrientation):
+        (WebCore::ImageOrientation::isValidEXIFOrientation):
+        (WebCore::ImageOrientationDescription::ImageOrientationDescription): Deleted.
+        (WebCore::ImageOrientationDescription::setRespectImageOrientation): Deleted.
+        (WebCore::ImageOrientationDescription::respectImageOrientation): Deleted.
+        (WebCore::ImageOrientationDescription::setImageOrientationEnum): Deleted.
+        (WebCore::ImageOrientationDescription::imageOrientation): Deleted.
+        (WebCore::ImageOrientation::operator ImageOrientationEnum const): Deleted.
+        (WebCore::ImageOrientation::operator== const): Deleted.
+        (WebCore::ImageOrientation::operator!= const): Deleted.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::dump):
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw):
+        * platform/graphics/NamedImageGeneratedImage.h:
+        * platform/graphics/NativeImage.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::frameOrientationAtIndex const):
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowLayerBuffer):
+        (WebCore::Cairo::drawShadowImage):
+        (WebCore::Cairo::drawNativeImage):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::drawNativeImage):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::orientationFromProperties):
+        (WebCore::ImageDecoderCG::frameOrientationAtIndex const):
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::drawNativeImage):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        (WebCore::VideoTextureCopierGStreamer::updateTextureSpaceMatrix):
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h:
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::drawNativeImage):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoderDirect2D::frameOrientationAtIndex const):
+        * platform/graphics/win/ImageDirect2D.cpp:
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::drawNativeImage):
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/image-decoders/ScalableImageDecoderFrame.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::readImageOrientation):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageFromImage):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageDirect2D.cpp:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::imageOrientation const):
+        (WebCore::RenderElement::shouldRespectImageOrientation const): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage const):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setImageOrientation):
+        (WebCore::RenderStyle::initialImageOrientation):
+        (WebCore::RenderStyle::imageOrientation const):
+        * rendering/style/StyleRareInheritedData.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawForContainer):
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        (WebCore::SVGImage::nativeImage):
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::draw):
+        * svg/graphics/SVGImageForContainer.h:
+
 2019-08-13  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Move Qualifiers and Semantic from VariableDeclaration to VariableDeclaration::RareData

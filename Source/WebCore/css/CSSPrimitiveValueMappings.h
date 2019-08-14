@@ -4874,49 +4874,50 @@ template<> inline CSSPrimitiveValue::operator MaskType() const
 
 #if ENABLE(CSS_IMAGE_ORIENTATION)
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ImageOrientationEnum e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ImageOrientation e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_DEG;
     switch (e) {
-    case OriginTopLeft:
+    case ImageOrientation::OriginTopLeft:
         m_value.num = 0;
         break;
-    case OriginRightTop:
+    case ImageOrientation::OriginRightTop:
         m_value.num = 90;
         break;
-    case OriginBottomRight:
+    case ImageOrientation::OriginBottomRight:
         m_value.num = 180;
         break;
-    case OriginLeftBottom:
+    case ImageOrientation::OriginLeftBottom:
         m_value.num = 270;
         break;
-    case OriginTopRight:
-    case OriginLeftTop:
-    case OriginBottomLeft:
-    case OriginRightBottom:
+    case ImageOrientation::FromImage:
+    case ImageOrientation::OriginTopRight:
+    case ImageOrientation::OriginLeftTop:
+    case ImageOrientation::OriginBottomLeft:
+    case ImageOrientation::OriginRightBottom:
         ASSERT_NOT_REACHED();
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ImageOrientationEnum() const
+template<> inline CSSPrimitiveValue::operator ImageOrientation() const
 {
     ASSERT(isAngle());
     double quarters = 4 * doubleValue(CSS_TURN);
     int orientation = 3 & static_cast<int>(quarters < 0 ? floor(quarters) : ceil(quarters));
     switch (orientation) {
     case 0:
-        return OriginTopLeft;
+        return ImageOrientation::OriginTopLeft;
     case 1:
-        return OriginRightTop;
+        return ImageOrientation::OriginRightTop;
     case 2:
-        return OriginBottomRight;
+        return ImageOrientation::OriginBottomRight;
     case 3:
-        return OriginLeftBottom;
+        return ImageOrientation::OriginLeftBottom;
     }
 
     ASSERT_NOT_REACHED();
-    return OriginTopLeft;
+    return ImageOrientation::None;
 }
 
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)

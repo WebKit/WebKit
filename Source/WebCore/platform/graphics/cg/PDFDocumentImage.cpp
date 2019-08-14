@@ -257,7 +257,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     decodedSizeChanged(internalSize.unclampedArea() * 4);
 }
 
-ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, DecodingMode, ImageOrientation)
 {
     if (!m_document || !m_hasPage)
         return ImageDrawResult::DidNothing;

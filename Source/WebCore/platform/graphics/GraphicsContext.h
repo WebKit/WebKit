@@ -211,29 +211,29 @@ struct GraphicsContextState {
 };
 
 struct ImagePaintingOptions {
-    ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendMode::Normal, DecodingMode decodingMode = DecodingMode::Synchronous, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), InterpolationQuality interpolationQuality = InterpolationDefault)
+    ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendMode::Normal, DecodingMode decodingMode = DecodingMode::Synchronous, ImageOrientation orientation = ImageOrientation::None, InterpolationQuality interpolationQuality = InterpolationDefault)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
         , m_decodingMode(decodingMode)
-        , m_orientationDescription(orientationDescription)
+        , m_orientation(orientation)
         , m_interpolationQuality(interpolationQuality)
     {
     }
 
-    ImagePaintingOptions(ImageOrientationDescription orientationDescription, InterpolationQuality interpolationQuality = InterpolationDefault, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendMode::Normal, DecodingMode decodingMode = DecodingMode::Synchronous)
+    ImagePaintingOptions(ImageOrientation orientation, InterpolationQuality interpolationQuality = InterpolationDefault, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendMode::Normal, DecodingMode decodingMode = DecodingMode::Synchronous)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
         , m_decodingMode(decodingMode)
-        , m_orientationDescription(orientationDescription)
+        , m_orientation(orientation)
         , m_interpolationQuality(interpolationQuality)
     {
     }
 
-    ImagePaintingOptions(InterpolationQuality interpolationQuality, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendMode::Normal, DecodingMode decodingMode = DecodingMode::Synchronous)
+    ImagePaintingOptions(InterpolationQuality interpolationQuality, ImageOrientation orientation = ImageOrientation::None, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendMode::Normal, DecodingMode decodingMode = DecodingMode::Synchronous)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
         , m_decodingMode(decodingMode)
-        , m_orientationDescription(orientationDescription)
+        , m_orientation(orientation)
         , m_interpolationQuality(interpolationQuality)
     {
     }
@@ -243,7 +243,7 @@ struct ImagePaintingOptions {
     CompositeOperator m_compositeOperator;
     BlendMode m_blendMode;
     DecodingMode m_decodingMode;
-    ImageOrientationDescription m_orientationDescription;
+    ImageOrientation m_orientation;
     InterpolationQuality m_interpolationQuality;
 };
 
@@ -347,7 +347,7 @@ public:
     const GraphicsContextState& state() const { return m_state; }
 
 #if USE(CG) || USE(DIRECT2D) || USE(CAIRO)
-    WEBCORE_EXPORT void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendMode::Normal, ImageOrientation = ImageOrientation());
+    WEBCORE_EXPORT void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendMode::Normal, ImageOrientation = ImageOrientation::None);
 #endif
 
 #if USE(CG) || USE(DIRECT2D)

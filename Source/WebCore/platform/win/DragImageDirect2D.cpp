@@ -89,7 +89,7 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     return hbmp.leak();
 }
 
-DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
+DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
 {
     HWndDC dc(nullptr);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));

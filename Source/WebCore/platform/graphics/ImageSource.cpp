@@ -689,7 +689,7 @@ void ImageSource::dump(TextStream& ts)
     ts.dumpProperty("solid-color", singlePixelSolidColor());
 
     ImageOrientation orientation = frameOrientationAtIndex(0);
-    if (orientation != OriginTopLeft)
+    if (orientation != ImageOrientation::None)
         ts.dumpProperty("orientation", orientation);
 }
 

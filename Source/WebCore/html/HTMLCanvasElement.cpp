@@ -610,17 +610,10 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
-                ImageBuffer* imageBuffer = buffer();
-                if (imageBuffer) {
-                    if (m_presentedImage) {
-                        ImageOrientationDescription orientationDescription;
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-                        orientationDescription.setImageOrientationEnum(renderer()->style().imageOrientation());
-#endif
-                        context.drawImage(*m_presentedImage, snappedIntRect(r), ImagePaintingOptions(orientationDescription));
-                    } else
-                        context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
-                }
+                if (m_presentedImage)
+                    context.drawImage(*m_presentedImage, snappedIntRect(r), renderer()->imageOrientation());
+                else if (ImageBuffer* imageBuffer = buffer())
+                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
             }
 
             if (isGPUBased())

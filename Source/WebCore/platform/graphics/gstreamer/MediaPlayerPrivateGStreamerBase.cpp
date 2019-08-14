@@ -887,7 +887,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
 
     ImagePaintingOptions paintingOptions(CompositeCopy);
     if (m_renderingCanBeAccelerated)
-        paintingOptions.m_orientationDescription.setImageOrientationEnum(m_videoSourceOrientation);
+        paintingOptions.m_orientation = m_videoSourceOrientation;
 
     auto gstImage = ImageGStreamer::createImage(m_sample.get());
     if (!gstImage)
@@ -965,7 +965,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
 }
 #endif // USE(GSTREAMER_GL)
 
-void MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation(const ImageOrientation& orientation)
+void MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation(ImageOrientation orientation)
 {
     if (m_videoSourceOrientation == orientation)
         return;
@@ -980,16 +980,16 @@ void MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation(const ImageOrien
 void MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags()
 {
     switch (m_videoSourceOrientation) {
-    case DefaultImageOrientation:
+    case ImageOrientation::OriginTopLeft:
         m_textureMapperFlags = 0;
         break;
-    case OriginRightTop:
+    case ImageOrientation::OriginRightTop:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture90;
         break;
-    case OriginBottomRight:
+    case ImageOrientation::OriginBottomRight:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture180;
         break;
-    case OriginLeftBottom:
+    case ImageOrientation::OriginLeftBottom:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture270;
         break;
     default:

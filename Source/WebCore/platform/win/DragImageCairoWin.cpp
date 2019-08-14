@@ -146,7 +146,7 @@ exit:
     return hbmp.leak();
 }
     
-DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
+DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
 {
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));

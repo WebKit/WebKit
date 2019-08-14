@@ -53,7 +53,7 @@ public:
         m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
+    ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, DecodingMode, ImageOrientation) final;
 
     void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, BlendMode) final;
 

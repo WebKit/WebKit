@@ -159,20 +159,20 @@ bool ImageDecoderDirect2D::frameIsCompleteAtIndex(size_t index) const
 ImageOrientation ImageDecoderDirect2D::frameOrientationAtIndex(size_t index) const
 {
     if (!m_nativeDecoder)
-        return ImageOrientation();
+        return ImageOrientation::None;
 
     COMPtr<IWICBitmapFrameDecode> frame;
     HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
     if (!SUCCEEDED(hr))
-        return ImageOrientation();
+        return ImageOrientation::None;
 
     COMPtr<IWICMetadataQueryReader> metadata;
     hr = frame->GetMetadataQueryReader(&metadata);
     if (!SUCCEEDED(hr))
-        return ImageOrientation();
+        return ImageOrientation::None;
 
     // FIXME: Identify image type, and ask proper orientation.
-    return ImageOrientation();
+    return ImageOrientation::None;
 }
 
 Seconds ImageDecoderDirect2D::frameDurationAtIndex(size_t index) const

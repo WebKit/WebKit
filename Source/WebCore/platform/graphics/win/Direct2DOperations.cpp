@@ -813,7 +813,7 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* imag
     context->SetTransform(transform);
     adjustedDestRect.setLocation(FloatPoint());
 
-    if (orientation != DefaultImageOrientation) {
+    if (orientation != ImageOrientation::None) {
         concatCTM(platformContext, orientation.transformFromDefault(adjustedDestRect.size()));
         if (orientation.usesWidthAsHeight()) {
             // The destination rect will have it's width and height already reversed for the orientation of

@@ -1,3 +1,13 @@
+2019-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        shouldRespectImageOrientation should be a value in ImageOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=200553
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+
 2019-08-13  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Switch NSURLSession on top navigation to prevalent resource with user interaction

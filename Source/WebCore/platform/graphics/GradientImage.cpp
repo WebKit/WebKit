@@ -39,7 +39,7 @@ GradientImage::GradientImage(Gradient& generator, const FloatSize& size)
 
 GradientImage::~GradientImage() = default;
 
-ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientation)
 {
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(compositeOp, blendMode);

@@ -2639,8 +2639,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     if (!graphicsContext)
         return;
 
-    auto shouldRespectImageOrientation = renderImage.shouldRespectImageOrientation();
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), ImageOrientationDescription(shouldRespectImageOrientation));
+    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), renderImage.imageOrientation());
     info.image = sharedBitmap;
 }
 

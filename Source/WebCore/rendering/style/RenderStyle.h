@@ -752,7 +752,7 @@ public:
     bool isFlippedLinesWritingMode() const { return WebCore::isFlippedLinesWritingMode(writingMode()); }
     bool isFlippedBlocksWritingMode() const { return WebCore::isFlippedWritingMode(writingMode()); }
 
-    ImageOrientationEnum imageOrientation() const;
+    ImageOrientation imageOrientation() const;
 
     ImageRendering imageRendering() const { return static_cast<ImageRendering>(m_rareInheritedData->imageRendering); }
 
@@ -951,7 +951,7 @@ public:
 #endif
 
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    void setImageOrientation(ImageOrientationEnum v) { SET_VAR(m_rareInheritedData, imageOrientation, static_cast<int>(v)); }
+    void setImageOrientation(ImageOrientation v) { SET_VAR(m_rareInheritedData, imageOrientation, static_cast<int>(v)); }
 #endif
 
     void setImageRendering(ImageRendering v) { SET_VAR(m_rareInheritedData, imageRendering, static_cast<unsigned>(v)); }
@@ -1582,7 +1582,7 @@ public:
     static OptionSet<TextEmphasisPosition> initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
     static RubyPosition initialRubyPosition() { return RubyPosition::Before; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
-    static ImageOrientationEnum initialImageOrientation() { return OriginTopLeft; }
+    static ImageOrientation initialImageOrientation() { return ImageOrientation::None; }
     static ImageRendering initialImageRendering() { return ImageRendering::Auto; }
     static ImageResolutionSource initialImageResolutionSource() { return ImageResolutionSource::Specified; }
     static ImageResolutionSnap initialImageResolutionSnap() { return ImageResolutionSnap::None; }
@@ -2091,12 +2091,12 @@ inline bool RenderStyle::hasInlineColumnAxis() const
     return axis == ColumnAxis::Auto || isHorizontalWritingMode() == (axis == ColumnAxis::Horizontal);
 }
 
-inline ImageOrientationEnum RenderStyle::imageOrientation() const
+inline ImageOrientation RenderStyle::imageOrientation() const
 {
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    return static_cast<ImageOrientationEnum>(m_rareInheritedData->imageOrientation);
+    return ImageOrientation(m_rareInheritedData->imageOrientation);
 #else
-    return DefaultImageOrientation;
+    return ImageOrientation::None;
 #endif
 }
 

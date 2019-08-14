@@ -69,7 +69,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, CompositeOperator op, BlendMode mode, const ImageOrientation& orientation)
+void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, CompositeOperator op, BlendMode mode, ImageOrientation orientation)
 {
     // Subsampling may have given us an image that is smaller than size().
     IntSize subsampledImageSize = nativeImageSize(image);

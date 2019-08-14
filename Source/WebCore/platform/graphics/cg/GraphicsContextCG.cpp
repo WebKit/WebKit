@@ -364,7 +364,7 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint());
 
-    if (orientation != DefaultImageOrientation) {
+    if (orientation != ImageOrientation::None) {
         CGContextConcatCTM(context, orientation.transformFromDefault(adjustedDestRect.size()));
         if (orientation.usesWidthAsHeight()) {
             // The destination rect will have it's width and height already reversed for the orientation of

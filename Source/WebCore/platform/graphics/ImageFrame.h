@@ -91,7 +91,7 @@ private:
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
     DecodingOptions m_decodingOptions;
 
-    ImageOrientation m_orientation { DefaultImageOrientation };
+    ImageOrientation m_orientation { ImageOrientation::None };
     Seconds m_duration;
     bool m_hasAlpha { true };
 };

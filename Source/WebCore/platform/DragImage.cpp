@@ -102,20 +102,15 @@ static DragImageRef createDragImageFromSnapshot(std::unique_ptr<ImageBuffer> sna
     if (!snapshot)
         return nullptr;
 
-    ImageOrientationDescription orientation;
-#if ENABLE(CSS_IMAGE_ORIENTATION)
+    ImageOrientation orientation;
     if (node) {
         RenderObject* renderer = node->renderer();
         if (!renderer || !is<RenderElement>(renderer))
             return nullptr;
 
-        auto& renderElement = downcast<RenderElement>(*renderer);
-        orientation.setRespectImageOrientation(renderElement.shouldRespectImageOrientation());
-        orientation.setImageOrientationEnum(renderElement.style().imageOrientation());
+        orientation = downcast<RenderElement>(*renderer).imageOrientation();
     }
-#else
-    UNUSED_PARAM(node);
-#endif
+
     RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTFMove(snapshot), PreserveResolution::Yes);
     if (!image)
         return nullptr;
@@ -305,7 +300,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef, float)
     return nullptr;
 }
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription)
+DragImageRef createDragImageFromImage(Image*, ImageOrientation)
 {
     notImplemented();
     return nullptr;

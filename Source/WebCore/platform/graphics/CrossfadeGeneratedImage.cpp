@@ -86,7 +86,7 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext& context)
     context.endTransparencyLayer();
 }
 
-ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientation)
 {
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(compositeOp, blendMode);

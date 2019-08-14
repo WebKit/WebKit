@@ -179,7 +179,7 @@ static void drawShadowLayerBuffer(PlatformContextCairo& platformContext, ImageBu
         return;
 
     if (auto surface = image->nativeImageForCurrentFrame()) {
-        drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), shadowState.globalCompositeOperator, BlendMode::Normal, ImageOrientation(),
+        drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), shadowState.globalCompositeOperator, BlendMode::Normal, ImageOrientation::None,
             InterpolationDefault, shadowState.globalAlpha, ShadowState());
     }
 }
@@ -192,7 +192,7 @@ static void drawShadowImage(PlatformContextCairo& platformContext, ImageBuffer& 
         return;
 
     if (auto surface = image->nativeImageForCurrentFrame()) {
-        drawNativeImage(platformContext, surface.get(), destRect, srcRect, shadowState.globalCompositeOperator, BlendMode::Normal, ImageOrientation(),
+        drawNativeImage(platformContext, surface.get(), destRect, srcRect, shadowState.globalCompositeOperator, BlendMode::Normal, ImageOrientation::None,
             InterpolationDefault, shadowState.globalAlpha, ShadowState());
     }
 }
@@ -889,7 +889,7 @@ void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* sur
         Cairo::State::setCompositeOperation(platformContext, compositeOperator, blendMode);
 
     FloatRect dst = destRect;
-    if (orientation != DefaultImageOrientation) {
+    if (orientation != ImageOrientation::None) {
         // ImageOrientation expects the origin to be at (0, 0).
         Cairo::translate(platformContext, dst.x(), dst.y());
         dst.setLocation(FloatPoint());

@@ -78,7 +78,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 
 static float maximumAllowedDragImageArea = 600 * 1024;
 
-DragImageRef createDragImageFromImage(Image* image, ImageOrientationDescription orientation)
+DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation)
 {
     if (!image || !image->width() || !image->height())
         return nil;
@@ -96,9 +96,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientationDescription 
         GraphicsContext context(rendererContext.CGContext);
         context.translate(0, imageSize.height);
         context.scale({ adjustedImageScale, -adjustedImageScale });
-        ImagePaintingOptions paintingOptions;
-        paintingOptions.m_orientationDescription = orientation;
-        context.drawImage(*image, FloatPoint(), paintingOptions);
+        context.drawImage(*image, FloatPoint(), ImagePaintingOptions(orientation));
     }];
     return imageCopy.CGImage;
 }
@@ -274,7 +272,7 @@ RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
     return nullptr;
 }
 
-RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientationDescription)
+RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientation)
 {
     return nullptr;
 }

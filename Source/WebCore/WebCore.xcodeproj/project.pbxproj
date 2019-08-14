@@ -11791,7 +11791,6 @@
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
 		A8748BDF12CBF2DC001FBA41 /* HashTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashTools.h; sourceTree = "<group>"; };
 		A8748D6612CC3763001FBA41 /* ImageOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageOrientation.h; sourceTree = "<group>"; };
-		A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageOrientation.cpp; sourceTree = "<group>"; };
 		A8805AF116C96AEA000E9D98 /* InputStreamPreprocessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputStreamPreprocessor.h; sourceTree = "<group>"; };
 		A882DA1F1593846A000115ED /* CSSToStyleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSToStyleMap.cpp; sourceTree = "<group>"; };
 		A882DA221593848D000115ED /* CSSToStyleMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSToStyleMap.h; sourceTree = "<group>"; };
@@ -24551,7 +24550,6 @@
 				5576A5621D88A70800CCC04C /* ImageFrame.cpp */,
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
-				A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
 				49291E4A134172C800E753DE /* ImageRenderingMode.h */,
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,

@@ -84,7 +84,7 @@ DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
 DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef, float deviceScaleFactor);
 DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription);
+DragImageRef createDragImageFromImage(Image*, ImageOrientation);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
 WEBCORE_EXPORT DragImageRef createDragImageForNode(Frame&, Node&);

@@ -97,17 +97,17 @@ void VideoTextureCopierGStreamer::updateTextureSpaceMatrix()
     m_textureSpaceMatrix.makeIdentity();
 
     switch (m_orientation) {
-    case DefaultImageOrientation:
+    case ImageOrientation::OriginTopLeft:
         break;
-    case OriginRightTop:
+    case ImageOrientation::OriginRightTop:
         m_textureSpaceMatrix.rotate(-90);
         m_textureSpaceMatrix.translate(-1, 0);
         break;
-    case OriginBottomRight:
+    case ImageOrientation::OriginBottomRight:
         m_textureSpaceMatrix.rotate(180);
         m_textureSpaceMatrix.translate(-1, -1);
         break;
-    case OriginLeftBottom:
+    case ImageOrientation::OriginLeftBottom:
         m_textureSpaceMatrix.rotate(-270);
         m_textureSpaceMatrix.translate(0, -1);
         break;
@@ -137,7 +137,7 @@ void VideoTextureCopierGStreamer::updateTransformationMatrix()
         -1, 1, -(farValue + nearValue) / (farValue - nearValue), 1);
 }
 
-bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(GLuint inputTexture, IntSize& frameSize, GLuint outputTexture, GLenum outputTarget, GLint level, GLenum internalFormat, GLenum format, GLenum type, bool flipY, ImageOrientation& sourceOrientation)
+bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(GLuint inputTexture, IntSize& frameSize, GLuint outputTexture, GLenum outputTarget, GLint level, GLenum internalFormat, GLenum format, GLenum type, bool flipY, ImageOrientation sourceOrientation)
 {
     if (!m_shaderProgram || !m_framebuffer || !m_vbo || frameSize.isEmpty())
         return false;

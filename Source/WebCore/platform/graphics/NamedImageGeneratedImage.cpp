@@ -40,7 +40,7 @@ NamedImageGeneratedImage::NamedImageGeneratedImage(String name, const FloatSize&
     setContainerSize(size);
 }
 
-ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientation)
 {
 #if USE(NEW_THEME) || PLATFORM(IOS_FAMILY)
     GraphicsContextStateSaver stateSaver(context);

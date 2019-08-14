@@ -52,7 +52,7 @@ private:
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientation) final;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) final;
 
     WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;

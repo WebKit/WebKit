@@ -149,7 +149,7 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
         imageObserver()->didDraw(*this);
 }
 
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode, DecodingMode decodingMode)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode, DecodingMode decodingMode, ImageOrientation orientation)
 {
     Color color = singlePixelSolidColor();
     if (color.isValid()) {
@@ -184,7 +184,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
         visibleSrcRect.setWidth(destRect.width() / scale.width());
         visibleSrcRect.setHeight(destRect.height() / scale.height());
-        return draw(ctxt, destRect, visibleSrcRect, op, blendMode, decodingMode, ImageOrientationDescription());
+        return draw(ctxt, destRect, visibleSrcRect, op, blendMode, decodingMode, orientation);
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -196,7 +196,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            return draw(ctxt, destRect, visibleSrcRect, op, BlendMode::Normal, decodingMode, ImageOrientationDescription());
+            return draw(ctxt, destRect, visibleSrcRect, op, BlendMode::Normal, decodingMode, orientation);
         }
         if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
             FloatRect visibleSrcRect;
@@ -204,7 +204,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            return draw(ctxt, destRect, visibleSrcRect, op, BlendMode::Normal, decodingMode, ImageOrientationDescription());
+            return draw(ctxt, destRect, visibleSrcRect, op, BlendMode::Normal, decodingMode, orientation);
         }
     }
 #endif
@@ -236,7 +236,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                result = draw(ctxt, toRect, fromRect, op, BlendMode::Normal, decodingMode, ImageOrientationDescription());
+                result = draw(ctxt, toRect, fromRect, op, BlendMode::Normal, decodingMode, orientation);
                 if (result == ImageDrawResult::DidRequestDecoding)
                     return result;
                 toX += currentTileRect.width();

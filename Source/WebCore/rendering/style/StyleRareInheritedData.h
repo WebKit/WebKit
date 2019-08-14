@@ -121,7 +121,7 @@ public:
     unsigned lineBoxContain: 7; // LineBoxContain
     // CSS Image Values Level 3
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    unsigned imageOrientation : 4; // ImageOrientationEnum
+    unsigned imageOrientation : 4; // ImageOrientation
 #endif
     unsigned imageRendering : 3; // ImageRendering
     unsigned lineSnap : 2; // LineSnap

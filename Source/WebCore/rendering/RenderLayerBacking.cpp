@@ -2476,7 +2476,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (!is<BitmapImage>(image))
             return false;
 
-        if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != DefaultImageOrientation)
+        if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::None)
             return false;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE))

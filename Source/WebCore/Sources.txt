@@ -1820,7 +1820,6 @@ platform/graphics/Image.cpp
 platform/graphics/ImageBuffer.cpp
 platform/graphics/ImageDecoder.cpp
 platform/graphics/ImageFrame.cpp
-platform/graphics/ImageOrientation.cpp
 platform/graphics/ImageSource.cpp
 platform/graphics/IntPoint.cpp
 platform/graphics/IntRect.cpp

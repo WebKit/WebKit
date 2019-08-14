@@ -183,7 +183,7 @@ bool BitmapImage::notSolidColor()
 }
 #endif
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode mode, DecodingMode decodingMode, ImageOrientationDescription description)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode mode, DecodingMode decodingMode, ImageOrientation orientation)
 {
     if (destRect.isEmpty() || srcRect.isEmpty())
         return ImageDrawResult::DidNothing;
@@ -268,8 +268,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         return result;
     }
 
-    ImageOrientation orientation(description.imageOrientation());
-    if (description.respectImageOrientation() == RespectImageOrientation)
+    if (orientation == ImageOrientation::FromImage)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
     drawNativeImage(image, context, destRect, srcRect, IntSize(size()), op, mode, orientation);
@@ -306,7 +305,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
         setImageObserver(nullptr);
 
-        draw(buffer->context(), tileRect, tileRect, op, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
+        draw(buffer->context(), tileRect, tileRect, op, blendMode, DecodingMode::Synchronous, ImageOrientation::None);
 
         setImageObserver(observer);
         buffer->convertToLuminanceMask();
