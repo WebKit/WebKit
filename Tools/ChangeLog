@@ -1,5 +1,15 @@
 2019-08-14  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: 500 errors on API endpoints don't return JSON
+        https://bugs.webkit.org/show_bug.cgi?id=200722
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/controller/api_routes.py:
+        (APIRoutes.response_500): We should return the response, instead of abort.
+
+2019-08-14  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Don't save configuration multiple times in upload
         https://bugs.webkit.org/show_bug.cgi?id=200719
 

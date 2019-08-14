@@ -85,4 +85,4 @@ class APIRoutes(AuthedBlueprint):
         response = jsonify(status='error', error='Internal Server Error', description=str(error))
         response.status = 'error.Internal Server Error'
         response.status_code = 500
-        abort(response)
+        return response
