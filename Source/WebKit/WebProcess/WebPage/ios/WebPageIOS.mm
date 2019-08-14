@@ -716,7 +716,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         m_pendingSyntheticClickPointerId = pointerId;
         return;
     }
-
+    contentChangeObserver.stopContentObservation();
     callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;

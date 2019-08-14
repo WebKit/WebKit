@@ -48,6 +48,7 @@ public:
     ContentChangeObserver(Document&);
 
     WEBCORE_EXPORT void startContentObservationForDuration(Seconds duration);
+    WEBCORE_EXPORT void stopContentObservation();
     WKContentChange observedContentChange() const { return m_observedContentState; }
     WEBCORE_EXPORT static bool isConsideredVisible(const Node&);
     static bool isVisuallyHidden(const Node&);
@@ -229,7 +230,7 @@ inline bool ContentChangeObserver::isObservingContentChanges() const
         || m_mouseMovedEventIsBeingDispatched
         || m_observedDomTimerIsBeingExecuted
         || m_isInObservedStyleRecalc
-        || m_contentObservationTimer.isActive();
+        || isObservationTimeWindowActive();
 }
 
 inline void ContentChangeObserver::setShouldObserveDOMTimerSchedulingAndTransitions(bool observe)

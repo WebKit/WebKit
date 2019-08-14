@@ -1,3 +1,23 @@
+2019-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Stop content change observation explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=200689
+        <rdar://problem/54274887>
+
+        Reviewed by Simon Fraser.
+
+        This helps to clean up some temporary state. There are 2 exit points when content observation needs to stop.
+        1. Soon after the synthetic mouseMove event when we decide not to continue with further observation (see WebPage::handleSyntheticClick)
+        2. When we asynchronously notify the client about the visible content change after all pending events have been processed.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::stopContentObservation):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::stopContentObservation const):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+        (WebCore::ContentChangeObserver::observedContentChange const): Deleted.
+
 2019-08-14  Youenn Fablet  <youenn@apple.com>
 
         Update Worker::notifyFinished to not use emptySessionID

@@ -372,6 +372,11 @@ void ContentChangeObserver::stopObservingPendingActivities()
     clearObservedTransitions();
 }
 
+void ContentChangeObserver::stopContentObservation()
+{
+    reset();
+}
+
 void ContentChangeObserver::reset()
 {
     stopObservingPendingActivities();
@@ -519,6 +524,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         ASSERT(m_document.page());
         ASSERT(m_document.frame());
         m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame(), observedContentChange());
+        stopContentObservation();
     };
 
     // These user initiated events trigger content observation (touchStart and mouseMove). 
