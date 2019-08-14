@@ -163,12 +163,11 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
 
     static uint64_t identifier = 0;
     
-    NetworkResourceLoadParameters loadParameters;
+    NetworkResourceLoadParameters loadParameters { PAL::SessionID::defaultSessionID() };
     loadParameters.identifier = ++identifier;
     loadParameters.request = request;
     loadParameters.sourceOrigin = SecurityOrigin::create(conversionReferrerURL);
     loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.sessionID = PAL::SessionID::defaultSessionID();
     loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStatelessCookieless;
     loadParameters.options = options;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;

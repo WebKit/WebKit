@@ -1,5 +1,38 @@
 2019-08-14  Youenn Fablet  <youenn@apple.com>
 
+        Remove use of emptySessionID from NetworkLoadParameters
+        https://bugs.webkit.org/show_bug.cgi?id=200712
+
+        Reviewed by Alex Christensen.
+
+        Make NetworkLoadParameters constructor take a session ID.
+        Update call sites accordingly.
+
+        * NetworkProcess/AdClickAttributionManager.cpp:
+        (WebKit::AdClickAttributionManager::fireConversionRequest):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+        * NetworkProcess/NetworkLoadParameters.h:
+        (WebKit::NetworkLoadParameters::NetworkLoadParameters):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
         Remove use of emptySessionID from WebPageCreationParameters
         https://bugs.webkit.org/show_bug.cgi?id=200708
 

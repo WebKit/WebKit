@@ -52,10 +52,9 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
 {
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
-    NetworkLoadParameters parameters;
+    NetworkLoadParameters parameters { PAL::SessionID::defaultSessionID() };
     parameters.webPageID = globalFrameID.first;
     parameters.webFrameID = globalFrameID.second;
-    parameters.sessionID = PAL::SessionID::defaultSessionID();
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;

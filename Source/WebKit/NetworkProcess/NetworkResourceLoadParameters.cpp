@@ -33,11 +33,11 @@ using namespace WebCore;
 
 void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << sessionID;
     encoder << identifier;
     encoder << webPageID;
     encoder << webFrameID;
     encoder << parentPID;
-    encoder << sessionID;
     encoder << request;
 
     encoder << static_cast<bool>(request.httpBody());
@@ -103,43 +103,48 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourceLoadParameters& result)
+Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
 {
+    Optional<PAL::SessionID> sessionID;
+    decoder >> sessionID;
+
+    if (!sessionID)
+        return WTF::nullopt;
+
+    NetworkResourceLoadParameters result { *sessionID };
+
     if (!decoder.decode(result.identifier))
-        return false;
+        return WTF::nullopt;
 
     Optional<PageIdentifier> webPageID;
     decoder >> webPageID;
     if (!webPageID)
-        return false;
+        return WTF::nullopt;
     result.webPageID = *webPageID;
 
     if (!decoder.decode(result.webFrameID))
-        return false;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.parentPID))
-        return false;
-
-    if (!decoder.decode(result.sessionID))
-        return false;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.request))
-        return false;
+        return WTF::nullopt;
 
     bool hasHTTPBody;
     if (!decoder.decode(hasHTTPBody))
-        return false;
+        return WTF::nullopt;
 
     if (hasHTTPBody) {
         RefPtr<FormData> formData = FormData::decode(decoder);
         if (!formData)
-            return false;
+            return WTF::nullopt;
         result.request.setHTTPBody(WTFMove(formData));
 
         Optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
         decoder >> requestBodySandboxExtensionHandles;
         if (!requestBodySandboxExtensionHandles)
-            return false;
+            return WTF::nullopt;
         for (size_t i = 0; i < requestBodySandboxExtensionHandles->size(); ++i) {
             if (auto extension = SandboxExtension::create(WTFMove(requestBodySandboxExtensionHandles->at(i))))
                 result.requestBodySandboxExtensions.append(WTFMove(extension));
@@ -150,87 +155,87 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
         Optional<SandboxExtension::Handle> resourceSandboxExtensionHandle;
         decoder >> resourceSandboxExtensionHandle;
         if (!resourceSandboxExtensionHandle)
-            return false;
+            return WTF::nullopt;
         result.resourceSandboxExtension = SandboxExtension::create(WTFMove(*resourceSandboxExtensionHandle));
     }
 
     if (!decoder.decodeEnum(result.contentSniffingPolicy))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(result.contentEncodingSniffingPolicy))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(result.storedCredentialsPolicy))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(result.clientCredentialPolicy))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(result.shouldPreconnectOnly))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decode(result.needsCertificateInfo))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decode(result.isMainFrameNavigation))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decode(result.isMainResourceNavigationForAnyFrame))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decode(result.maximumBufferingTime))
-        return false;
+        return WTF::nullopt;
 
     bool hasSourceOrigin;
     if (!decoder.decode(hasSourceOrigin))
-        return false;
+        return WTF::nullopt;
     if (hasSourceOrigin) {
         result.sourceOrigin = SecurityOrigin::decode(decoder);
         if (!result.sourceOrigin)
-            return false;
+            return WTF::nullopt;
     }
 
     Optional<FetchOptions> options;
     decoder >> options;
     if (!options)
-        return false;
+        return WTF::nullopt;
     result.options = *options;
 
     if (!decoder.decode(result.cspResponseHeaders))
-        return false;
+        return WTF::nullopt;
     if (!decoder.decode(result.originalRequestHeaders))
-        return false;
+        return WTF::nullopt;
 
     Optional<bool> shouldRestrictHTTPResponseAccess;
     decoder >> shouldRestrictHTTPResponseAccess;
     if (!shouldRestrictHTTPResponseAccess)
-        return false;
+        return WTF::nullopt;
     result.shouldRestrictHTTPResponseAccess = *shouldRestrictHTTPResponseAccess;
 
     if (!decoder.decodeEnum(result.preflightPolicy))
-        return false;
+        return WTF::nullopt;
 
     Optional<bool> shouldEnableCrossOriginResourcePolicy;
     decoder >> shouldEnableCrossOriginResourcePolicy;
     if (!shouldEnableCrossOriginResourcePolicy)
-        return false;
+        return WTF::nullopt;
     result.shouldEnableCrossOriginResourcePolicy = *shouldEnableCrossOriginResourcePolicy;
 
     if (!decoder.decode(result.frameAncestorOrigins))
-        return false;
+        return WTF::nullopt;
 
     Optional<bool> isHTTPSUpgradeEnabled;
     decoder >> isHTTPSUpgradeEnabled;
     if (!isHTTPSUpgradeEnabled)
-        return false;
+        return WTF::nullopt;
     result.isHTTPSUpgradeEnabled = *isHTTPSUpgradeEnabled;
     
 #if ENABLE(CONTENT_EXTENSIONS)
     if (!decoder.decode(result.mainDocumentURL))
-        return false;
+        return WTF::nullopt;
 
     Optional<Optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
-        return false;
+        return WTF::nullopt;
     result.userContentControllerIdentifier = *userContentControllerIdentifier;
 #endif
 
-    return true;
+    return result;
 }
     
 } // namespace WebKit

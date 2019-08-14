@@ -63,8 +63,7 @@ void NetworkCORSPreflightChecker::startPreflight()
 {
     RELEASE_LOG_IF_ALLOWED("startPreflight");
 
-    NetworkLoadParameters loadParameters;
-    loadParameters.sessionID = m_parameters.sessionID;
+    NetworkLoadParameters loadParameters { m_parameters.sessionID };
     loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
     if (!m_parameters.userAgent.isNull())
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);

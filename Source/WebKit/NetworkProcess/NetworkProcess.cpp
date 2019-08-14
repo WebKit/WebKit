@@ -2223,9 +2223,8 @@ void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, String&
 void NetworkProcess::preconnectTo(const URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
 #if ENABLE(SERVER_PRECONNECT)
-    NetworkLoadParameters parameters;
+    NetworkLoadParameters parameters { PAL::SessionID::defaultSessionID() };
     parameters.request = ResourceRequest { url };
-    parameters.sessionID = PAL::SessionID::defaultSessionID();
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 

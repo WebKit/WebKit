@@ -44,8 +44,13 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
 public:
+    explicit NetworkResourceLoadParameters(PAL::SessionID sessionID)
+        : NetworkLoadParameters(sessionID)
+    {
+    }
+
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, NetworkResourceLoadParameters&);
+    static Optional<NetworkResourceLoadParameters> decode(IPC::Decoder&);
 
     ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.

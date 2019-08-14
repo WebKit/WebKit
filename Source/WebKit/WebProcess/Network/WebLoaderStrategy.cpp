@@ -266,12 +266,11 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy = resourceLoader.shouldSniffContentEncoding() ? ContentEncodingSniffingPolicy::Sniff : ContentEncodingSniffingPolicy::DoNotSniff;
     StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
-    NetworkResourceLoadParameters loadParameters;
+    NetworkResourceLoadParameters loadParameters { sessionID };
     loadParameters.identifier = identifier;
     loadParameters.webPageID = trackingParameters.pageID;
     loadParameters.webFrameID = trackingParameters.frameID;
     loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.sessionID = sessionID;
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.contentEncodingSniffingPolicy = contentEncodingSniffingPolicy;
@@ -539,12 +538,11 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
         return;
     }
 
-    NetworkResourceLoadParameters loadParameters;
+    NetworkResourceLoadParameters loadParameters { sessionID };
     loadParameters.identifier = resourceLoadIdentifier;
     loadParameters.webPageID = pageID;
     loadParameters.webFrameID = frameID;
     loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.sessionID = sessionID;
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
     loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
@@ -607,12 +605,11 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
         return;
     }
 
-    NetworkResourceLoadParameters loadParameters;
+    NetworkResourceLoadParameters loadParameters { frame.page() ? frame.page()->sessionID() : PAL::SessionID::defaultSessionID() };
     loadParameters.identifier = generateLoadIdentifier();
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
     loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.sessionID = frame.page() ? frame.page()->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.options = options;
     loadParameters.originalRequestHeaders = originalRequestHeaders;
@@ -667,12 +664,11 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
         return;
     }
 
-    NetworkResourceLoadParameters parameters;
+    NetworkResourceLoadParameters parameters { webPage->sessionID() };
     parameters.request = ResourceRequest { url };
     parameters.webPageID = webPage->pageID();
     parameters.webFrameID = webFrame->frameID();
     parameters.parentPID = presentingApplicationPID();
-    parameters.sessionID = webPage->sessionID();
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();

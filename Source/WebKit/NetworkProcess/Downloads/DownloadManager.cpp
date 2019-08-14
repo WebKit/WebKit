@@ -49,8 +49,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
     if (!networkSession)
         return;
 
-    NetworkLoadParameters parameters;
-    parameters.sessionID = sessionID;
+    NetworkLoadParameters parameters { sessionID };
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
     if (request.url().protocolIsBlob())
