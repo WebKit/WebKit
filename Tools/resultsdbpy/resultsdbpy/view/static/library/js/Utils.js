@@ -70,7 +70,7 @@ function isDarkMode () {
 function createInsertionObservers(element, callback=()=>{}, startThreshold=0.0, endTreshold=1.0, step=0.1, option={}) {
     const useOption = {};
     useOption.root = option.root instanceof HTMLElement ? option.root : null;
-    useOption.rootMargin = option.rootMargin ? option.rootMargin : "0";
+    useOption.rootMargin = option.rootMargin ? option.rootMargin : "0%";
     const thresholdArray = [];
     for (let i = startThreshold; i <= endTreshold; i+= step) {
         thresholdArray.push(i);

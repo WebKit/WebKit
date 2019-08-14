@@ -1,3 +1,27 @@
+2019-08-13  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org Timeline] Performance improvement - Skip render offscreen canvas
+        https://bugs.webkit.org/show_bug.cgi?id=200456
+
+        Reviewed by Jonathan Bedard.
+
+        This patch disable use the new batch draw method to render canvas directly without any caches, this will save a lot of memory, so that we won't go into the "low memory mode".
+
+        This patch also change the axis label collision detact box from a rect to polygon, so that we can dectact click more accurate.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/Utils.js:
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (pointPolygonCollisionDetect): Detact
+        (pointRightRayLineSegmentCollisionDetect):
+        (ColorBatchRender):
+        (ColorBatchRender.prototype.lazyCreateColorSeqs):
+        (ColorBatchRender.prototype.addSeq):
+        (ColorBatchRender.prototype.batchRender):
+        (ColorBatchRender.prototype.clear):
+        (xScrollStreamRenderFactory):
+        (Timeline.CanvasSeriesComponent):
+        (offscreenCachedRenderFactory): Deleted.
+
 2019-08-13  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Switch NSURLSession on top navigation to prevalent resource with user interaction
