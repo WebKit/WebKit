@@ -43,12 +43,16 @@ public:
     void pushTransform(const AffineTransform&);
     void popTransform();
 
+    void pushClip(const IntRect&);
+    void popClip();
+
     void unite(const Region&, const RenderStyle&);
     bool contains(const IntRect&) const;
 
 private:
     EventRegion& m_eventRegion;
     Vector<AffineTransform> m_transformStack;
+    Vector<IntRect> m_clipStack;
 };
 
 class EventRegion {

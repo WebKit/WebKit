@@ -1804,12 +1804,19 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     if (style().hasBorderRadius())
         paintInfo.context().clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
     paintInfo.context().clip(clipRect);
+
+    if (paintInfo.phase == PaintPhase::EventRegion)
+        paintInfo.eventRegionContext->pushClip(enclosingIntRect(clipRect));
+
     return true;
 }
 
 void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, const LayoutPoint& accumulatedOffset)
 {
     ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
+
+    if (paintInfo.phase == PaintPhase::EventRegion)
+        paintInfo.eventRegionContext->popClip();
 
     paintInfo.context().restore();
     if (originalPhase == PaintPhase::Outline) {

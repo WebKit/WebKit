@@ -4010,7 +4010,11 @@ void RenderLayer::clipToRect(GraphicsContext& context, const LayerPaintingInfo& 
     if (needsClipping) {
         LayoutRect adjustedClipRect = clipRect.rect();
         adjustedClipRect.move(paintingInfo.subpixelOffset);
-        context.clip(snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor));
+        auto snappedClipRect = snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor);
+        context.clip(snappedClipRect);
+
+        if (paintingInfo.eventRegionContext)
+            paintingInfo.eventRegionContext->pushClip(enclosingIntRect(snappedClipRect));
     }
 
     if (clipRect.affectedByRadius()) {
@@ -4036,8 +4040,12 @@ void RenderLayer::clipToRect(GraphicsContext& context, const LayerPaintingInfo& 
 
 void RenderLayer::restoreClip(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const ClipRect& clipRect)
 {
-    if ((!clipRect.isInfinite() && clipRect.rect() != paintingInfo.paintDirtyRect) || clipRect.affectedByRadius())
+    if ((!clipRect.isInfinite() && clipRect.rect() != paintingInfo.paintDirtyRect) || clipRect.affectedByRadius()) {
         context.restore();
+
+        if (paintingInfo.eventRegionContext)
+            paintingInfo.eventRegionContext->popClip();
+    }
 }
 
 static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, const RenderLayer* rootLayer, const RenderLayer* layer)

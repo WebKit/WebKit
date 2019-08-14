@@ -45,15 +45,45 @@ void EventRegionContext::pushTransform(const AffineTransform& transform)
 
 void EventRegionContext::popTransform()
 {
+    if (m_transformStack.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     m_transformStack.removeLast();
+}
+
+void EventRegionContext::pushClip(const IntRect& clipRect)
+{
+    auto transformedClip = m_transformStack.isEmpty() ? clipRect : m_transformStack.last().mapRect(clipRect);
+
+    if (m_clipStack.isEmpty())
+        m_clipStack.append(transformedClip);
+    else
+        m_clipStack.append(intersection(m_clipStack.last(), transformedClip));
+}
+
+void EventRegionContext::popClip()
+{
+    if (m_clipStack.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_clipStack.removeLast();
 }
 
 void EventRegionContext::unite(const Region& region, const RenderStyle& style)
 {
-    if (m_transformStack.isEmpty())
+    if (m_transformStack.isEmpty() && m_clipStack.isEmpty()) {
         m_eventRegion.unite(region, style);
-    else
-        m_eventRegion.unite(m_transformStack.last().mapRegion(region), style);
+        return;
+    }
+
+    auto transformedAndClippedRegion = m_transformStack.isEmpty() ? region : m_transformStack.last().mapRegion(region);
+
+    if (!m_clipStack.isEmpty())
+        transformedAndClippedRegion.intersect(m_clipStack.last());
+
+    m_eventRegion.unite(transformedAndClippedRegion, style);
 }
 
 bool EventRegionContext::contains(const IntRect& rect) const
