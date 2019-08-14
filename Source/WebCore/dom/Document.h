@@ -1092,7 +1092,7 @@ public:
     void registerForPrivateBrowsingStateChangedCallbacks(Element&);
     void unregisterForPrivateBrowsingStateChangedCallbacks(Element&);
     void storageBlockingStateDidChange();
-    void privateBrowsingStateDidChange();
+    void privateBrowsingStateDidChange(PAL::SessionID);
 
 #if ENABLE(VIDEO_TRACK)
     void registerForCaptionPreferencesChangedCallbacks(Element&);

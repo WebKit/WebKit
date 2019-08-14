@@ -5262,19 +5262,19 @@ void Document::storageBlockingStateDidChange()
     securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
 }
 
-void Document::privateBrowsingStateDidChange() 
+void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
-    m_sessionID = SessionID::emptySessionID();
+    m_sessionID = sessionID;
     if (m_logger)
-        m_logger->setEnabled(this, sessionID().isAlwaysOnLoggingAllowed());
+        m_logger->setEnabled(this, sessionID.isAlwaysOnLoggingAllowed());
 
     for (auto* element : m_privateBrowsingStateChangedElements)
-        element->privateBrowsingStateDidChange();
+        element->privateBrowsingStateDidChange(sessionID);
 
 #if ENABLE(SERVICE_WORKER)
-    ASSERT(sessionID().isValid());
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && m_serviceWorkerConnection && sessionID().isValid())
-        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID()));
+    ASSERT(sessionID.isValid());
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && m_serviceWorkerConnection && sessionID.isValid())
+        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID));
 #endif
 }
 

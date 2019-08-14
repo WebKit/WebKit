@@ -6436,13 +6436,12 @@ void HTMLMediaElement::resetMediaEngines()
     MediaPlayer::resetMediaEngines();
 }
 
-void HTMLMediaElement::privateBrowsingStateDidChange()
+void HTMLMediaElement::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
     if (!m_player)
         return;
 
-    bool privateMode = document().page() && document().page()->usesEphemeralSession();
-    m_player->setPrivateBrowsingMode(privateMode);
+    m_player->setPrivateBrowsingMode(sessionID.isEphemeral());
 }
 
 MediaControls* HTMLMediaElement::mediaControls() const

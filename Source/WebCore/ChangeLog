@@ -1,3 +1,25 @@
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
+        Make privateBrowsingStateDidChange take an explicit SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=200666
+
+        Reviewed by Alex Christensen.
+
+        Instead of stating that the page session ID changed and get it from the page,
+        pass it directly to privateBrowsingStateDidChange.
+        No change of behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::privateBrowsingStateDidChange):
+        * dom/Document.h:
+        * dom/Element.h:
+        (WebCore::Element::privateBrowsingStateDidChange):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::privateBrowsingStateDidChange):
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::setSessionID):
+
 2019-08-13  Sam Weinig  <weinig@apple.com>
 
         Fix the WPE build.

@@ -2517,7 +2517,7 @@ void Page::setSessionID(PAL::SessionID sessionID)
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
-        frame->document()->privateBrowsingStateDidChange();
+        frame->document()->privateBrowsingStateDidChange(m_sessionID);
     }
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes

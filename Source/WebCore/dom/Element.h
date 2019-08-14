@@ -419,7 +419,7 @@ public:
     virtual void mediaVolumeDidChange() { }
 
     // Use Document::registerForPrivateBrowsingStateChangedCallbacks() to subscribe to this.
-    virtual void privateBrowsingStateDidChange() { }
+    virtual void privateBrowsingStateDidChange(PAL::SessionID) { }
 
     virtual void willBecomeFullscreenElement();
     virtual void ancestorWillEnterFullscreen() { }

@@ -456,7 +456,7 @@ public:
     void sourceWasRemoved(HTMLSourceElement&);
     void sourceWasAdded(HTMLSourceElement&);
 
-    void privateBrowsingStateDidChange() override;
+    void privateBrowsingStateDidChange(PAL::SessionID) override;
 
     // Media cache management.
     WEBCORE_EXPORT static void setMediaCacheDirectory(const String&);
