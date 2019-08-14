@@ -28,9 +28,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-click.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-detached-click.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-handlers-changed.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-listener-order.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-cancelBubble.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-stopPropagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-omitted-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-order.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-other-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-propagation-stopped.html
@@ -41,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-throwing.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-init-while-dispatching.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-initEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-isTrusted.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-propagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-returnValue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors.html
@@ -48,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-safe-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-addEventListener.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-handleEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-2.sub.html
@@ -61,8 +65,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-extra.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/legacy-pre-activation-behavior.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/relatedTarget.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/shadow-relatedTarget.html

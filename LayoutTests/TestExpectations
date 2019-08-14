@@ -654,6 +654,7 @@ fast/web-share [ Skip ]
 fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
 
 # Only supported on iOS
+imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents [ Skip ]
 

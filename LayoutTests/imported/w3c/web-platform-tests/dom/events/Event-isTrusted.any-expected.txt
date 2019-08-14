@@ -1,0 +1,7 @@
+
+FAIL Untitled assert_equals: expected function "function isTrusted() {
+    [native code]
+}" but got function "function isTrusted() {
+    [native code]
+}"
+

@@ -92,6 +92,8 @@
     "web-platform-tests/custom-elements": "import", 
     "web-platform-tests/custom-elements/v0": "skip", 
     "web-platform-tests/dom": "import", 
+    "web-platform-tests/dom/events": "import", 
+    "web-platform-tests/dom/events/scrolling": "skip", 
     "web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html": "skip", 
     "web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg": "skip", 
     "web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml": "skip", 

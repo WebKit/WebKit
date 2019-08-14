@@ -21,6 +21,8 @@ fast/zooming/ios [ Pass ]
 http/tests/preload/viewport [ Pass ]
 http/tests/gzip-content-encoding [ Pass ]
 
+imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

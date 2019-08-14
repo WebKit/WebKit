@@ -1,0 +1,14 @@
+ 
+
+Harness Error (TIMEOUT), message = null
+
+PASS Can dispatch untrusted 'click' Events at disabled HTML elements. 
+PASS Can dispatch untrusted Events at disabled HTML elements. 
+PASS Can dispatch CustomEvents at disabled HTML elements. 
+PASS Calling click() on disabled elements must not dispatch events. 
+PASS CSS Transitions transitionrun, transitionstart, transitionend events fire on disabled form elements 
+PASS CSS Transitions transitioncancel event fires on disabled form elements 
+TIMEOUT CSS Animation animationstart, animationiteration, animationend fire on disabled form elements Test timed out
+NOTRUN CSS Animation's animationcancel event fires on disabled form elements 
+NOTRUN Real clicks on disabled elements must not dispatch events. 
+
