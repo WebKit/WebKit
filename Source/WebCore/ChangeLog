@@ -1,3 +1,16 @@
+2019-08-13  Daniel Bates  <dabates@apple.com>
+
+        Focus rings are black
+        https://bugs.webkit.org/show_bug.cgi?id=200593
+        <rdar://problem/54145925>
+
+        Reviewed by Wenson Hsieh.
+
+        Work around <rdar://problem/50838886> and make focus rings a pretty blue.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::platformFocusRingColor const):
+
 2019-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] adjustStateAndNotifyContentChangeIfNeeded should check isObservationTimeWindowActive()
