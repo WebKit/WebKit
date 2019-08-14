@@ -1,5 +1,36 @@
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248633. rdar://problem/54282803
+
+    Fix potential thread safety issue under StorageManager::getSessionStorageOrigins()
+    https://bugs.webkit.org/show_bug.cgi?id=200684
+    
+    Reviewed by Geoffrey Garen.
+    
+    Fix potential thread safety issue under StorageManager::getSessionStorageOrigins(). The origins are being
+    passed from the background queue to the main thread without isolated copy.
+    
+    * NetworkProcess/WebStorage/StorageManager.cpp:
+    (WebKit::StorageManager::getSessionStorageOrigins):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248633 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-13  Chris Dumez  <cdumez@apple.com>
+
+            Fix potential thread safety issue under StorageManager::getSessionStorageOrigins()
+            https://bugs.webkit.org/show_bug.cgi?id=200684
+
+            Reviewed by Geoffrey Garen.
+
+            Fix potential thread safety issue under StorageManager::getSessionStorageOrigins(). The origins are being
+            passed from the background queue to the main thread without isolated copy.
+
+            * NetworkProcess/WebStorage/StorageManager.cpp:
+            (WebKit::StorageManager::getSessionStorageOrigins):
+
+2019-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248598. rdar://problem/54282797
 
     Crash under IPC::Connection::markCurrentlyDispatchedMessageAsInvalid()
