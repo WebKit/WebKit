@@ -37,6 +37,14 @@
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPaymentCoordinatorProxyCocoaAdditions.mm>
+#else
+namespace WebKit {
+static void finishCreating(PKPaymentRequest *, const WebCore::ApplePaySessionPaymentRequest&) { }
+}
+#endif
+
 // FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be removed.
 @interface PKPaymentRequest ()
 @property (nonatomic, strong) NSURL *thumbnailURL;
@@ -327,6 +335,8 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     if (!serviceType.isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
         [result setCTDataConnectionServiceType:serviceType];
 #endif
+
+    finishCreating(result.get(), paymentRequest);
 
     return result;
 }

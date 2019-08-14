@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,10 @@
 #include "ApplePayPaymentContact.h"
 #include "ApplePayPaymentMethod.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayPaymentAdditions.h>
+#endif
+
 namespace WebCore {
 
 struct ApplePayPayment {
@@ -42,6 +46,11 @@ struct ApplePayPayment {
     Token token;
     Optional<ApplePayPaymentContact> billingContact;
     Optional<ApplePayPaymentContact> shippingContact;
+
+#if defined(APPLEPAYPAYMENT_ADDITIONS)
+APPLEPAYPAYMENT_ADDITIONS
+#undef APPLEPAYPAYMENT_ADDITIONS
+#endif
 };
 
 }
