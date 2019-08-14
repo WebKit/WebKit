@@ -83,7 +83,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         lines.append('    AugmentableInspectorController* _controller;')
         lines.append('}')
         lines.append('')
-        lines.append('- (instancetype)initWithController:(AugmentableInspectorController*)controller;')
+        lines.append('- (instancetype)initWithController:(AugmentableInspectorController*)controller')
         lines.append('{')
         lines.append('    self = [super init];')
         lines.append('    if (!self)')

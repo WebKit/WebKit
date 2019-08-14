@@ -836,7 +836,7 @@ using namespace Inspector;
     AugmentableInspectorController* _controller;
 }
 
-- (instancetype)initWithController:(AugmentableInspectorController*)controller;
+- (instancetype)initWithController:(AugmentableInspectorController*)controller
 {
     self = [super init];
     if (!self)

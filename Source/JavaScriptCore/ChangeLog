@@ -1,3 +1,21 @@
+2019-08-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove bad semicolon in generation of ObjC methods
+        https://bugs.webkit.org/show_bug.cgi?id=200655
+
+        Reviewed by Devin Rousso.
+
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_dispatcher_implementations):
+        Do not include a semicolon in the method implementation.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Updated results.
+
 2019-08-13  Saam Barati  <sbarati@apple.com>
 
         Add a way to opt out of kern TCSM for layout tests
