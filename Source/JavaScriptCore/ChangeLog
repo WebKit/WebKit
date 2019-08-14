@@ -1,5 +1,13 @@
 2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, build fix for MacroAssemblerARM64E change
+        https://bugs.webkit.org/show_bug.cgi?id=200703
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::farJump):
+
+2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Less contended MetaAllocator
         https://bugs.webkit.org/show_bug.cgi?id=200278
 

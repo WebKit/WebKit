@@ -193,12 +193,12 @@ public:
     void farJump(RegisterID target, PtrTag tag)
     {
         if (tag == NoPtrTag)
-            return MacroAssemblerARM64::jump(target, tag);
+            return MacroAssemblerARM64::farJump(target, tag);
 
         ASSERT(tag != CFunctionPtrTag);
         RegisterID diversityGPR = getCachedDataTempRegisterIDAndInvalidate();
         move(TrustedImm64(tag), diversityGPR);
-        jump(target, diversityGPR);
+        farJump(target, diversityGPR);
     }
 
     void farJump(RegisterID target, RegisterID tag)
@@ -210,7 +210,7 @@ public:
     void farJump(Address address, PtrTag tag)
     {
         if (tag == NoPtrTag)
-            return MacroAssemblerARM64::jump(address, tag);
+            return MacroAssemblerARM64::farJump(address, tag);
 
         ASSERT(tag != CFunctionPtrTag);
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
@@ -231,7 +231,7 @@ public:
     void farJump(BaseIndex address, PtrTag tag)
     {
         if (tag == NoPtrTag)
-            return MacroAssemblerARM64::jump(address, tag);
+            return MacroAssemblerARM64::farJump(address, tag);
 
         ASSERT(tag != CFunctionPtrTag);
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
@@ -252,7 +252,7 @@ public:
     void farJump(AbsoluteAddress address, PtrTag tag)
     {
         if (tag == NoPtrTag)
-            return MacroAssemblerARM64::jump(address, tag);
+            return MacroAssemblerARM64::farJump(address, tag);
 
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         RegisterID diversityGPR = getCachedMemoryTempRegisterIDAndInvalidate();
