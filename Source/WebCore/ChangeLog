@@ -1,3 +1,21 @@
+2019-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Implement TableFormattingContext::computePreferredWidthForColumns
+        https://bugs.webkit.org/show_bug.cgi?id=200701
+        <rdar://problem/54287828>
+
+        Reviewed by Antti Koivisto.
+
+        Compute cells' min/max width first.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns const):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::slot):
+        (WebCore::Layout::TableGrid::appendCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::cells):
+
 2019-08-14  Youenn Fablet  <youenn@apple.com>
 
         ThreadableBlobRegistry::blobSize should take a SessionID as parameter

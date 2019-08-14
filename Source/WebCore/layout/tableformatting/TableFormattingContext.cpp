@@ -85,6 +85,25 @@ void TableFormattingContext::ensureTableGrid() const
 
 void TableFormattingContext::computePreferredWidthForColumns() const
 {
+    auto& formattingState = this->formattingState();
+    auto& grid = formattingState.tableGrid();
+
+    // 1. Calculate the minimum content width (MCW) of each cell: the formatted content may span any number of lines but may not overflow the cell box.
+    //    If the specified 'width' (W) of the cell is greater than MCW, W is the minimum cell width. A value of 'auto' means that MCW is the minimum cell width.
+    //    Also, calculate the "maximum" cell width of each cell: formatting the content without breaking lines other than where explicit line breaks occur.
+    for (auto& cell : grid.cells()) {
+        ASSERT(cell->tableCellBox.establishesFormattingContext());
+
+        auto intrinsicWidth = layoutState().createFormattingContext(cell->tableCellBox)->computedIntrinsicWidthConstraints();
+        intrinsicWidth = Geometry::constrainByMinMaxWidth(cell->tableCellBox, intrinsicWidth);
+        formattingState.setIntrinsicWidthConstraints(intrinsicWidth);
+
+        auto columnSpan = cell->size.width();
+        auto slotIntrinsicWidth = FormattingContext::IntrinsicWidthConstraints { intrinsicWidth.minimum / columnSpan, intrinsicWidth.maximum / columnSpan };
+        auto initialPosition = cell->position;
+        for (auto i = 0; i < columnSpan; ++i)
+            grid.slot({ initialPosition.x() + i, initialPosition.y() })->widthConstraints = slotIntrinsicWidth;
+    }
 }
 
 void TableFormattingContext::computeTableWidth() const

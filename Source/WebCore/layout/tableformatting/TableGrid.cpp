@@ -51,6 +51,11 @@ TableGrid::TableGrid()
 {
 }
 
+TableGrid::SlotInfo* TableGrid::slot(SlotPosition position)
+{
+    return m_slotMap.get(position);
+}
+
 void TableGrid::appendCell(const Box& tableCellBox)
 {
     int rowSpan = tableCellBox.rowSpan();
@@ -79,7 +84,7 @@ void TableGrid::appendCell(const Box& tableCellBox)
         for (int column = 1; column <= columnSpan; ++column) {
             auto position = SlotPosition { initialSlotPosition.x() + row - 1, initialSlotPosition.y() + column - 1 };
             ASSERT(!m_slotMap.contains(position));
-            m_slotMap.add(position, SlotInfo { *cellInfo });
+            m_slotMap.add(position, std::make_unique<SlotInfo>(*cellInfo));
         }
     }
     m_cellList.add(WTFMove(cellInfo));

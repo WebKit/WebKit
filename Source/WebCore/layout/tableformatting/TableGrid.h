@@ -46,11 +46,8 @@ public:
     void insertCell(const Box&, const Box& before);
     void removeCell(const Box&);
 
-private:
     using SlotPosition = IntPoint;
     using CellSize = IntSize;
-    using SlotLogicalSize = LayoutSize;
-
     struct CellInfo : public CanMakeWeakPtr<CellInfo> {
         CellInfo(const Box& tableCellBox, SlotPosition, CellSize);
 
@@ -58,17 +55,22 @@ private:
         SlotPosition position;
         CellSize size;
     };
+    using CellList = WTF::ListHashSet<std::unique_ptr<CellInfo>>;
+    CellList& cells() { return m_cellList; }
 
+    using SlotLogicalSize = LayoutSize;
     struct SlotInfo {
         SlotInfo() = default;
         SlotInfo(CellInfo&);
 
         WeakPtr<CellInfo> cell;
+        FormattingContext::IntrinsicWidthConstraints widthConstraints;
         SlotLogicalSize size;
     };
+    SlotInfo* slot(SlotPosition);
 
-    using CellList = WTF::ListHashSet<std::unique_ptr<CellInfo>>;
-    using SlotMap = WTF::HashMap<SlotPosition, SlotInfo>;
+private:
+    using SlotMap = WTF::HashMap<SlotPosition, std::unique_ptr<SlotInfo>>;
     SlotMap m_slotMap;
     CellList m_cellList;
 };
