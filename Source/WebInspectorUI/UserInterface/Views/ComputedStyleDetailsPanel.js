@@ -116,7 +116,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         let variablesRow = new WI.DetailsSectionRow;
         let variablesGroup = new WI.DetailsSectionGroup([variablesRow]);
-        this._variablesSection = new WI.DetailsSection("computed-style-properties", WI.UIString("Variables"), [variablesGroup]);
+        this._variablesSection = new WI.DetailsSection("computed-style-variables", WI.UIString("Variables"), [variablesGroup]);
         this._variablesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleVariablesSectionCollapsedStateChanged, this);
 
         this.addSubview(this._variablesTextEditor);
