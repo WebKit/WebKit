@@ -1,3 +1,15 @@
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
+        Reenable Update ContentFiltering.LazilyLoadPlatformFrameworks test for NetworkExtension
+        https://bugs.webkit.org/show_bug.cgi?id=200706
+
+        Reviewed by Alex Christensen.
+
+        Libwebrtc is now soft-linked so we can reenable this test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:networkExtensionLoaded:]):
+
 2019-08-13  Sam Weinig  <weinig@apple.com>
 
         Rename StringBuilder::append(UChar32) to StringBuilder::appendCharacter(UChar32) to avoid accidental change in behavior when replacing append with flexibleAppend
