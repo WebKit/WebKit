@@ -227,8 +227,9 @@ class UploadContext(object):
         branches = self.commit_context.branch_keys_for_commits(commits)
 
         with self:
+            self.configuration_context.register_configuration(configuration, timestamp=timestamp)
+
             for branch in branches:
-                self.configuration_context.register_configuration(configuration, timestamp=timestamp)
                 self.configuration_context.insert_row_with_configuration(
                     self.SuitesByConfiguration.__table_name__, configuration, suite=suite,
                     ttl=int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,
