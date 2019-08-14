@@ -42,7 +42,7 @@
 
 .computed-style-section .computed-property-item.expanded {
     padding-bottom: 2px;
-    background-color: var(--background-color-code);
+    background-color: hsl(0, 0%, 97%);
     border-top-color: var(--text-color-quaternary);
 }
 

@@ -1,3 +1,29 @@
+2019-08-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: Computed: the background of the Properties/Variables sections should match the Box Model section when expanded
+        https://bugs.webkit.org/show_bug.cgi?id=200724
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section:not(.collapsed) > :matches(.header, .content)): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-style-properties): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-style-properties .property .go-to-arrow): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-style-properties .property:hover .go-to-arrow): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) > .content): Added.
+        (.details-section:matches(.computed-style-properties, .computed-style-box-model):not(.collapsed) > :matches(.header, .content)): Deleted.
+        (.computed-style-properties): Deleted.
+        (.computed-style-properties .property .go-to-arrow): Deleted.
+        (.computed-style-properties .property:hover .go-to-arrow): Deleted.
+        (.details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content)): Deleted.
+        (.details-section.computed-style-properties > .content): Deleted.
+        (@media (prefers-color-scheme: dark)): Deleted.
+        Use more specific selectors to match overall Web Inspector style.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item.expanded):
+        Darken the background of any expanded computed property in light mode.
+
 2019-08-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: content.isJSON is not a function selecting image resource
