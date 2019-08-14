@@ -1,3 +1,20 @@
+2019-08-13  Antoine Quint  <graouts@apple.com>
+
+        [iPadOS] slides.google.com: Cannot dismiss the context menu by tapping on the canvas
+        https://bugs.webkit.org/show_bug.cgi?id=200219
+        <rdar://problem/53650423>
+
+        Reviewed by Zalan Bujtas.
+
+        While the code change for this bug is all in code private to Safari, we add tests that check that removing implicit pointer capture
+        or removing the original target element while the pointer is active correctly fires the "pointerup" event at the element that hit tests
+        at the touch release point.
+
+        * pointerevents/ios/pointer-events-implicit-capture-element-removed-while-pointer-active-expected.txt: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-element-removed-while-pointer-active.html: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-released-while-pointer-active-expected.txt: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-released-while-pointer-active.html: Added.
+
 2019-08-13  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make lexing faster
