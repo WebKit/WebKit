@@ -1,3 +1,14 @@
+2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Less contended MetaAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=200278
+
+        Reviewed by Mark Lam.
+
+        Update the interface.
+
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+
 2019-08-14  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: 500 errors on API endpoints don't return JSON

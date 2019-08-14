@@ -105,23 +105,27 @@ public:
             }
         }
         
-        virtual void notifyNeedPage(void* page)
+        virtual void notifyNeedPage(void* page, size_t count)
         {
             // the page should be both free and unmapped.
-            EXPECT_TRUE(!m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize()));
-            for (uintptr_t address = reinterpret_cast<uintptr_t>(page); address < reinterpret_cast<uintptr_t>(page) + pageSize(); ++address)
+            for (size_t i = 0; i < count; ++i)
+                EXPECT_TRUE(!m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize() + i));
+            for (uintptr_t address = reinterpret_cast<uintptr_t>(page); address < reinterpret_cast<uintptr_t>(page) + pageSize() * count; ++address)
                 EXPECT_TRUE(!m_parent->byteState(reinterpret_cast<void*>(address)));
-            m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize()) = true;
+            for (size_t i = 0; i < count; ++i)
+                m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize() + i) = true;
         }
         
-        virtual void notifyPageIsFree(void* page)
+        virtual void notifyPageIsFree(void* page, size_t count)
         {
             // the page should be free of objects at this point, but it should still
             // be mapped.
-            EXPECT_TRUE(m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize()));
-            for (uintptr_t address = reinterpret_cast<uintptr_t>(page); address < reinterpret_cast<uintptr_t>(page) + pageSize(); ++address)
+            for (size_t i = 0; i < count; ++i)
+                EXPECT_TRUE(m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize() + i));
+            for (uintptr_t address = reinterpret_cast<uintptr_t>(page); address < reinterpret_cast<uintptr_t>(page) + pageSize() * count; ++address)
                 EXPECT_TRUE(!m_parent->byteState(reinterpret_cast<void*>(address)));
-            m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize()) = false;
+            for (size_t i = 0; i < count; ++i)
+                m_parent->pageState(reinterpret_cast<uintptr_t>(page) / pageSize() + i) = false;
         }
         
     private:

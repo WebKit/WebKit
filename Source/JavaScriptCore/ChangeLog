@@ -1,5 +1,36 @@
 2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Less contended MetaAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=200278
+
+        Reviewed by Mark Lam.
+
+        The profiler result of JetStream2/bomb-workers shows that we are having contention under MetaAllocator::currentStatistics.
+        This function is called in ExecutableAllocator::memoryPressureMultiplier, and it is called from ExecutableCounter's threshold
+        calculation. But MetaAllocator::currentStatistics takes a global lock inside MetaAllocator and causes contention. However,
+        we do not need to have a lock actually: clients of MetaAllocator::currentStatistics typically use bytesReserved and bytesAllocated
+        information. However, since our executable allocator is fixed-sized, bytesReserved is always the fixed size. So just reading bytesAllocated
+        racily is enough.
+
+        This patch attempts to reduce the contention by the following two things.
+
+        1. Read bytesAllocated racily instead of calling MetaAllocator::currentStatistics. Then ExecutableCounter does not need to take a lock.
+        2. page lifetime management APIs of MetaAllocator should take a second `count` parameter to batch the system calls.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator): Deleted.
+        (JSC::FixedVMPoolExecutableAllocator::memoryStart): Deleted.
+        (JSC::FixedVMPoolExecutableAllocator::memoryEnd): Deleted.
+        (JSC::FixedVMPoolExecutableAllocator::isJITPC): Deleted.
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps): Deleted.
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator): Deleted.
+        (JSC::FixedVMPoolExecutableAllocator::genericWriteToJITRegion): Deleted.
+
+2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make PAC jump and return more explicit
         https://bugs.webkit.org/show_bug.cgi?id=200703
 

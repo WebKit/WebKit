@@ -114,10 +114,10 @@ protected:
     virtual FreeSpacePtr allocateNewSpace(size_t& numPages) = 0;
 
     // Commit a page.
-    virtual void notifyNeedPage(void* page) = 0;
+    virtual void notifyNeedPage(void* page, size_t) = 0;
     
     // Uncommit a page.
-    virtual void notifyPageIsFree(void* page) = 0;
+    virtual void notifyPageIsFree(void* page, size_t) = 0;
     
     // NOTE: none of the above methods are called during allocator
     // destruction, in part because a MetaAllocator cannot die so long

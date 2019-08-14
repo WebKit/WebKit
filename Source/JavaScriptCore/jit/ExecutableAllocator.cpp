@@ -154,7 +154,7 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 #endif
 }
 
-class FixedVMPoolExecutableAllocator : public MetaAllocator {
+class FixedVMPoolExecutableAllocator final : public MetaAllocator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FixedVMPoolExecutableAllocator()
@@ -208,6 +208,8 @@ public:
 
             addFreshFreeSpace(reservationBase, reservationSize);
 
+            ASSERT(bytesReserved() == reservationSize); // Since our executable memory is fixed-sized, bytesReserved is never changed after initialization.
+
             void* reservationEnd = reinterpret_cast<uint8_t*>(reservationBase) + reservationSize;
 
             m_memoryStart = MacroAssemblerCodePtr<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(reservationBase));
@@ -228,20 +230,21 @@ protected:
         return nullptr;
     }
 
-    void notifyNeedPage(void* page) override
+    void notifyNeedPage(void* page, size_t count) override
     {
 #if USE(MADV_FREE_FOR_JIT_MEMORY)
         UNUSED_PARAM(page);
+        UNUSED_PARAM(count);
 #else
-        m_reservation.commit(page, pageSize());
+        m_reservation.commit(page, pageSize() * count);
 #endif
     }
 
-    void notifyPageIsFree(void* page) override
+    void notifyPageIsFree(void* page, size_t count) override
     {
 #if USE(MADV_FREE_FOR_JIT_MEMORY)
         for (;;) {
-            int result = madvise(page, pageSize(), MADV_FREE);
+            int result = madvise(page, pageSize() * count, MADV_FREE);
             if (!result)
                 return;
             ASSERT(result == -1);
@@ -251,7 +254,7 @@ protected:
             }
         }
 #else
-        m_reservation.decommit(page, pageSize());
+        m_reservation.decommit(page, pageSize() * count);
 #endif
     }
 
@@ -431,19 +434,17 @@ bool ExecutableAllocator::underMemoryPressure()
 {
     if (!allocator)
         return Base::underMemoryPressure();
-    MetaAllocator::Statistics statistics = allocator->currentStatistics();
-    return statistics.bytesAllocated > statistics.bytesReserved / 2;
+    return allocator->bytesAllocated() > allocator->bytesReserved() / 2;
 }
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 {
     if (!allocator)
         return Base::memoryPressureMultiplier(addedMemoryUsage);
-    MetaAllocator::Statistics statistics = allocator->currentStatistics();
-    ASSERT(statistics.bytesAllocated <= statistics.bytesReserved);
-    size_t bytesAllocated = statistics.bytesAllocated + addedMemoryUsage;
+    ASSERT(allocator->bytesAllocated() <= allocator->bytesReserved());
+    size_t bytesAllocated = allocator->bytesAllocated() + addedMemoryUsage;
     size_t bytesAvailable = static_cast<size_t>(
-        statistics.bytesReserved * (1 - executablePoolReservationFraction));
+        allocator->bytesReserved() * (1 - executablePoolReservationFraction));
     if (bytesAllocated >= bytesAvailable)
         bytesAllocated = bytesAvailable;
     double result = 1.0;
@@ -475,10 +476,9 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
 
     if (effort == JITCompilationCanFail) {
         // Don't allow allocations if we are down to reserve.
-        MetaAllocator::Statistics statistics = allocator->currentStatistics();
-        size_t bytesAllocated = statistics.bytesAllocated + sizeInBytes;
+        size_t bytesAllocated = allocator->bytesAllocated() + sizeInBytes;
         size_t bytesAvailable = static_cast<size_t>(
-            statistics.bytesReserved * (1 - executablePoolReservationFraction));
+            allocator->bytesReserved() * (1 - executablePoolReservationFraction));
         if (bytesAllocated > bytesAvailable) {
             if (Options::logExecutableAllocation())
                 dataLog("Allocation failed because bytes allocated ", bytesAllocated,  " > ", bytesAvailable, " bytes available.\n");
