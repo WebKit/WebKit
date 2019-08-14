@@ -1,3 +1,18 @@
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
+        Fail decoding an invalid SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=200663
+
+        Reviewed by Alex Christensen.
+
+        * pal/SessionID.h:
+        (PAL::SessionID::isValid const):
+        (PAL::SessionID::isValidSessionIDValue):
+        (PAL::SessionID::encode const):
+        Add a release assert to catch bad sessionID senders.
+        (PAL::SessionID::decode):
+        Fail decoding if session ID is not a valid value.
+
 2019-08-09  Tim Horton  <timothy_horton@apple.com>
 
         Tapping buttons in Data Detectors lookup previews doesn't work

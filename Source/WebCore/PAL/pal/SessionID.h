@@ -50,7 +50,7 @@ public:
     static SessionID defaultSessionID() { return SessionID(DefaultSessionID); }
     static SessionID legacyPrivateSessionID() { return SessionID(LegacyPrivateSessionID); }
 
-    bool isValid() const { return m_sessionID != HashTableEmptyValueID && m_sessionID != HashTableDeletedValueID; }
+    bool isValid() const { return isValidSessionIDValue(m_sessionID); }
     bool isEphemeral() const { return m_sessionID & EphemeralSessionMask && m_sessionID != HashTableDeletedValueID; }
 
     PAL_EXPORT static SessionID generateEphemeralSessionID();
@@ -74,13 +74,16 @@ private:
     {
     }
 
+    static bool isValidSessionIDValue(uint64_t sessionID) { return sessionID != HashTableEmptyValueID && sessionID != HashTableDeletedValueID; }
+
     uint64_t m_sessionID;
 };
 
 template<class Encoder>
 void SessionID::encode(Encoder& encoder) const
 {
-    ASSERT(isValid());
+    // FIXME: Change to a regular ASSERT.
+    RELEASE_ASSERT(isValid());
     encoder << m_sessionID;
 }
 
@@ -92,7 +95,7 @@ bool SessionID::decode(Decoder& decoder, SessionID& sessionID)
     if (!decodedSessionID)
         return false;
 
-    sessionID = decodedSessionID.value();
+    sessionID = *decodedSessionID;
     return true;
 }
 
@@ -101,11 +104,9 @@ Optional<SessionID> SessionID::decode(Decoder& decoder)
 {
     Optional<uint64_t> sessionID;
     decoder >> sessionID;
-    if (!sessionID)
+    if (!sessionID || !isValidSessionIDValue(*sessionID))
         return WTF::nullopt;
 
-    // FIXME: We should fail to decode an invalid sessionID.
-    ASSERT(SessionID { *sessionID }.isValid());
     return SessionID { *sessionID };
 }
 
