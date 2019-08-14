@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOrigin.h"
+#include "ServiceWorkerRegistrationKey.h"
 #include <pal/SessionID.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -52,8 +53,7 @@ public:
 
     ~RegistrationDatabase();
 
-
-    void pushChanges(Vector<ServiceWorkerContextData>&&, CompletionHandler<void()>&&);
+    void pushChanges(const HashMap<ServiceWorkerRegistrationKey, Optional<ServiceWorkerContextData>>&, CompletionHandler<void()>&&);
     void clearAll(CompletionHandler<void()>&&);
     void close(CompletionHandler<void()>&&);
 
@@ -67,7 +67,7 @@ private:
     String ensureValidRecordsTable();
     String importRecords();
     void importRecordsIfNecessary();
-    void doPushChanges(Vector<ServiceWorkerContextData>&&);
+    void doPushChanges(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
     void doClearOrigin(const SecurityOrigin&);
 
     // Replies to the main thread.

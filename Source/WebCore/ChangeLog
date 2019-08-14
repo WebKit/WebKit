@@ -1,5 +1,43 @@
 2019-08-14  Youenn Fablet  <youenn@apple.com>
 
+        Remove SessionID default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=200669
+
+        Reviewed by Alex Christensen.
+
+        Remove SessionID default constructor
+
+        Update CookieRequestHeaderFiledProxy decoder to use an Optional<SessionID>.
+        Update ServiceWorkerContextData accordingly.
+        Update RegistrationStore/RegistrationDatabase to store a map of changed registration as follows:
+        - The RegistrationStore map contains an Optional value. In case of removing, the map will contain WTF::nullopt.
+        - RegistrationDatabase computes two vectors for removed registrations and updated registrations.
+
+        No change of behavior.
+
+        * dom/Document.cpp:
+        * loader/CookieJar.cpp:
+        (WebCore::CookieJar::cookieRequestHeaderFieldProxy):
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        (WebCore::CookieRequestHeaderFieldProxy::decode):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::pushChanges):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        * workers/service/server/RegistrationDatabase.h:
+        * workers/service/server/RegistrationStore.cpp:
+        (WebCore::RegistrationStore::pushChangesToDatabase):
+        (WebCore::RegistrationStore::clearAll):
+        (WebCore::RegistrationStore::flushChanges):
+        (WebCore::RegistrationStore::startSuspension):
+        (WebCore::RegistrationStore::removeRegistration):
+        * workers/service/server/RegistrationStore.h:
+
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
         Make privateBrowsingStateDidChange take an explicit SessionID
         https://bugs.webkit.org/show_bug.cgi?id=200666
 

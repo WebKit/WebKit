@@ -560,6 +560,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
+    , m_sessionID(PAL::SessionID::emptySessionID())
     , m_identifier(DocumentIdentifier::generate())
     , m_undoManager(UndoManager::create(*this))
 {

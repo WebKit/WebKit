@@ -49,6 +49,7 @@ Ref<PageConfiguration> PageConfiguration::create()
 }
 
 PageConfiguration::PageConfiguration()
+    : m_sessionID(PAL::SessionID::emptySessionID())
 {
 }
 
@@ -164,7 +165,7 @@ void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataSt
     if (m_websiteDataStore)
         m_sessionID = m_websiteDataStore->websiteDataStore().sessionID();
     else
-        m_sessionID = PAL::SessionID();
+        m_sessionID = PAL::SessionID::emptySessionID();
 }
 
 WebsitePolicies* PageConfiguration::defaultWebsitePolicies() const

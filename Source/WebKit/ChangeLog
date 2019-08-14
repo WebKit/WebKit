@@ -1,5 +1,23 @@
 2019-08-14  Youenn Fablet  <youenn@apple.com>
 
+        Remove SessionID default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=200669
+
+        Reviewed by Alex Christensen.
+
+        Update IPC decoder to use an Optional<SessionID>.
+        Update PageConfiguration to use emptySessionID instead of default constructor.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::PageConfiguration):
+        (API::PageConfiguration::sessionID): Deleted.
+        (API::PageConfiguration::setSessionID): Deleted.
+
+2019-08-14  Youenn Fablet  <youenn@apple.com>
+
         Make WebSWOriginStore::m_webSWServerConnections a WeakHashSet
         https://bugs.webkit.org/show_bug.cgi?id=200661
 

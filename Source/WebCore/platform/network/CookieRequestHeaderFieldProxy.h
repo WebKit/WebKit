@@ -61,25 +61,37 @@ void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
 {
-    CookieRequestHeaderFieldProxy result;
-    if (!decoder.decode(result.sessionID))
+    Optional<PAL::SessionID> sessionID;
+    decoder >> sessionID;
+    if (!sessionID)
+        return { };
+
+    URL firstParty;
+    if (!decoder.decode(firstParty))
         return WTF::nullopt;
-    if (!decoder.decode(result.firstParty))
+
+    SameSiteInfo sameSiteInfo;
+    if (!decoder.decode(sameSiteInfo))
         return WTF::nullopt;
-    if (!decoder.decode(result.sameSiteInfo))
+
+    URL url;
+    if (!decoder.decode(url))
         return WTF::nullopt;
-    if (!decoder.decode(result.url))
+
+    Optional<uint64_t> frameID;
+    if (!decoder.decode(frameID))
         return WTF::nullopt;
-    if (!decoder.decode(result.frameID))
-        return WTF::nullopt;
+
     Optional<Optional<PageIdentifier>> pageID;
     decoder >> pageID;
     if (!pageID)
         return WTF::nullopt;
-    result.pageID = *pageID;
-    if (!decoder.decode(result.includeSecureCookies))
+
+    IncludeSecureCookies includeSecureCookies;
+    if (!decoder.decode(includeSecureCookies))
         return WTF::nullopt;
-    return result;
+
+    return CookieRequestHeaderFieldProxy { *sessionID, WTFMove(firstParty), WTFMove(sameSiteInfo), WTFMove(url), frameID, *pageID, includeSecureCookies };
 }
 
 } // namespace WebCore

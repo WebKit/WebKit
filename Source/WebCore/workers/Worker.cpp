@@ -182,7 +182,7 @@ void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse
 void Worker::notifyFinished()
 {
     auto* context = scriptExecutionContext();
-    PAL::SessionID sessionID = context ? context->sessionID() : PAL::SessionID();
+    PAL::SessionID sessionID = context ? context->sessionID() : PAL::SessionID::emptySessionID();
 
     if (m_scriptLoader->failed() || !sessionID.isValid())
         dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));

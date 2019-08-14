@@ -32,10 +32,7 @@ namespace PAL {
 
 class SessionID {
 public:
-    SessionID()
-        : SessionID(emptySessionID())
-    {
-    }
+    SessionID() = delete;
 
     enum SessionConstants : uint64_t {
         EphemeralSessionMask    = 0x8000000000000000,

@@ -273,10 +273,19 @@ static Optional<WorkerType> stringToWorkerType(const String& type)
     return WTF::nullopt;
 }
 
-void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas, CompletionHandler<void()>&& completionHandler)
+void RegistrationDatabase::pushChanges(const HashMap<ServiceWorkerRegistrationKey, Optional<ServiceWorkerContextData>>& changedRegistrations, CompletionHandler<void()>&& completionHandler)
 {
-    postTaskToWorkQueue([this, datas = crossThreadCopy(datas), completionHandler = WTFMove(completionHandler)]() mutable {
-        doPushChanges(WTFMove(datas));
+    Vector<ServiceWorkerContextData> updatedRegistrations;
+    Vector<ServiceWorkerRegistrationKey> removedRegistrations;
+    for (auto& keyValue : changedRegistrations) {
+        if (keyValue.value)
+            updatedRegistrations.append(keyValue.value->isolatedCopy());
+        else
+            removedRegistrations.append(keyValue.key.isolatedCopy());
+    }
+
+    postTaskToWorkQueue([this, updatedRegistrations = WTFMove(updatedRegistrations), removedRegistrations = WTFMove(removedRegistrations), completionHandler = WTFMove(completionHandler)]() mutable {
+        doPushChanges(updatedRegistrations, removedRegistrations);
 
         if (!completionHandler)
             return;
@@ -305,7 +314,7 @@ void RegistrationDatabase::clearAll(CompletionHandler<void()>&& completionHandle
     });
 }
 
-void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& datas)
+void RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>& updatedRegistrations, const Vector<ServiceWorkerRegistrationKey>& removedRegistrations)
 {
     if (!m_database) {
         openSQLiteDatabase(m_databaseFilePath);
@@ -322,19 +331,17 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
         return;
     }
 
-    for (auto& data : datas) {
-        if (data.registration.identifier == ServiceWorkerRegistrationIdentifier()) {
-            SQLiteStatement sql(*m_database, "DELETE FROM Records WHERE key = ?");
-            if (sql.prepare() != SQLITE_OK
-                || sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
-                || sql.step() != SQLITE_DONE) {
-                RELEASE_LOG_ERROR(ServiceWorker, "Failed to remove registration data from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
-                return;
-            }
-
-            continue;
+    for (auto& registration : removedRegistrations) {
+        SQLiteStatement sql(*m_database, "DELETE FROM Records WHERE key = ?");
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindText(1, registration.toDatabaseKey()) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(ServiceWorker, "Failed to remove registration data from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+            return;
         }
+    }
 
+    for (auto& data : updatedRegistrations) {
         WTF::Persistence::Encoder cspEncoder;
         data.contentSecurityPolicy.encode(cspEncoder);
 
@@ -361,7 +368,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
 
     transaction.commit();
 
-    LOG(ServiceWorker, "Pushed %zu changes to ServiceWorker registration database", datas.size());
+    LOG(ServiceWorker, "Updated ServiceWorker registration database (%zu added/updated registrations and %zu removed registrations", updatedRegistrations.size(), removedRegistrations.size());
 }
 
 String RegistrationDatabase::importRecords()

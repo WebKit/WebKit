@@ -97,7 +97,7 @@ struct WebPageCreationParameters {
     String userAgent;
 
     Vector<BackForwardListItemState> itemStates;
-    PAL::SessionID sessionID;
+    PAL::SessionID sessionID { PAL::SessionID::emptySessionID() };
 
     UserContentControllerIdentifier userContentControllerID;
     uint64_t visitedLinkTableID;

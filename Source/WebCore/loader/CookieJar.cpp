@@ -94,17 +94,14 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
-    CookieRequestHeaderFieldProxy proxy;
-    proxy.sessionID = document.sessionID();
-    proxy.firstParty = document.firstPartyForCookies();
-    proxy.sameSiteInfo = sameSiteInfo(document);
-    proxy.url = url;
-    proxy.includeSecureCookies = shouldIncludeSecureCookies(document, url);
+    Optional<uint64_t> frameID;
+    Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
-        proxy.frameID = frame->loader().client().frameID();
-        proxy.pageID = frame->loader().client().pageID();
+        frameID = frame->loader().client().frameID();
+        pageID = frame->loader().client().pageID();
     }
-    return proxy;
+
+    return { document.sessionID(), document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
 }
 
 void CookieJar::setCookies(Document& document, const URL& url, const String& cookieString)

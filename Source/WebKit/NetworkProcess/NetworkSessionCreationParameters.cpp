@@ -95,8 +95,9 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
 {
-    PAL::SessionID sessionID;
-    if (!decoder.decode(sessionID))
+    Optional<PAL::SessionID> sessionID;
+    decoder >> sessionID;
+    if (!sessionID)
         return WTF::nullopt;
     
     Optional<String> boundInterfaceIdentifier;
@@ -245,7 +246,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         return WTF::nullopt;
 
     return {{
-        sessionID
+        *sessionID
         , WTFMove(*boundInterfaceIdentifier)
         , WTFMove(*allowsCellularAccess)
 #if PLATFORM(COCOA)

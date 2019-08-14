@@ -45,7 +45,7 @@ class SWServerRegistration;
 class RegistrationStore : public CanMakeWeakPtr<RegistrationStore> {
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RegistrationStore(SWServer&, String&& databaseDirectory);
+    RegistrationStore(SWServer&, String&& databaseDirectory);
     ~RegistrationStore();
 
     void clearAll(CompletionHandler<void()>&&);
@@ -68,13 +68,13 @@ public:
 
 private:
     void scheduleDatabasePushIfNecessary();
-    void pushChangesToDatabase(WTF::CompletionHandler<void()>&&);
+    void pushChangesToDatabase(CompletionHandler<void()>&&);
     void pushChangesToDatabase() { pushChangesToDatabase({ }); }
 
     SWServer& m_server;
     Ref<RegistrationDatabase> m_database;
 
-    HashMap<ServiceWorkerRegistrationKey, ServiceWorkerContextData> m_updatedRegistrations;
+    HashMap<ServiceWorkerRegistrationKey, Optional<ServiceWorkerContextData>> m_updatedRegistrations;
     Timer m_databasePushTimer;
 
     bool m_isSuspended { false };

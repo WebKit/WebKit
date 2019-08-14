@@ -40,7 +40,6 @@
 namespace WebCore {
 
 struct ServiceWorkerContextData {
-
     struct ImportedScript {
         String script;
         URL responseURL;
@@ -132,8 +131,9 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decodeEnum(workerType))
         return WTF::nullopt;
 
-    PAL::SessionID sessionID;
-    if (!decoder.decode(sessionID))
+    Optional<PAL::SessionID> sessionID;
+    decoder >> sessionID;
+    if (!sessionID)
         return WTF::nullopt;
 
     bool loadedFromDisk;
@@ -144,7 +144,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(scriptResourceMap))
         return WTF::nullopt;
 
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), workerType, sessionID, loadedFromDisk, WTFMove(scriptResourceMap) }};
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), workerType, *sessionID, loadedFromDisk, WTFMove(scriptResourceMap) }};
 }
 
 } // namespace WebCore
