@@ -600,12 +600,6 @@ public:
 
     ElementIdentifier createElementIdentifier();
 
-#if ENABLE(POINTER_EVENTS)
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    ScrollingNodeID nearestScrollingNodeIDUsingTouchOverflowScrolling() const;
-#endif
-#endif
-
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 

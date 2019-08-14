@@ -4329,24 +4329,4 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 }
 #endif
 
-#if ENABLE(POINTER_EVENTS)
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-ScrollingNodeID Element::nearestScrollingNodeIDUsingTouchOverflowScrolling() const
-{
-    if (!renderer())
-        return 0;
-
-    // We are not interested in the root, so check that we also have a valid parent.
-    for (auto* layer = renderer()->enclosingLayer(); layer && layer->parent(); layer = layer->parent()) {
-        if (layer->isComposited()) {
-            if (auto scrollingNodeID = layer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
-                return scrollingNodeID;
-        }
-    }
-
-    return 0;
-}
-#endif
-#endif
-
 } // namespace WebCore

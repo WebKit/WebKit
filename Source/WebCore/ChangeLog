@@ -1,3 +1,15 @@
+2019-08-14  Antti Koivisto  <antti@apple.com>
+
+        Remove TouchActionData
+        https://bugs.webkit.org/show_bug.cgi?id=199668
+
+        * dom/Element.cpp:
+        (WebCore::Element::nearestScrollingNodeIDUsingTouchOverflowScrolling const): Deleted.
+
+        As a follow-up also remove this now-unused function.
+
+        * dom/Element.h:
+
 2019-08-14  Youenn Fablet  <youenn@apple.com>
 
         Remove SessionID default constructor
