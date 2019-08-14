@@ -67,6 +67,8 @@ private:
     void engineRepresentation(CompletionHandler<void(const String&)>&&) final;
     void updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin&) final;
 
+    PAL::SessionID sessionID() const final { return m_sessionID; }
+
     WebCacheStorageProvider& m_provider;
     PAL::SessionID m_sessionID;
 };

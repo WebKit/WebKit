@@ -68,7 +68,7 @@ private:
     void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& reference, const String& contentType) final { m_blobRegistry.registerBlobURLOptionallyFileBacked(url, srcURL, WTFMove(reference), contentType); }
     void registerBlobURLForSlice(PAL::SessionID, const URL& url, const URL& srcURL, long long start, long long end) final { m_blobRegistry.registerBlobURLForSlice(url, srcURL, start, end); }
     void unregisterBlobURL(PAL::SessionID, const URL& url) final { m_blobRegistry.unregisterBlobURL(url); }
-    unsigned long long blobSize(const URL& url) final { return m_blobRegistry.blobSize(url); }
+    unsigned long long blobSize(PAL::SessionID, const URL& url) final { return m_blobRegistry.blobSize(url); }
     void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler) final { m_blobRegistry.writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler)); }
 
     BlobRegistryImpl* blobRegistryImpl() final { return &m_blobRegistry; }

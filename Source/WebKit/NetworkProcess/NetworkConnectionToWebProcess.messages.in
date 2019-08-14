@@ -47,7 +47,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterBlobURLOptionallyFileBacked(PAL::SessionID sessionID, URL url, URL srcURL, String fileBackedPath, String contentType)
     RegisterBlobURLForSlice(PAL::SessionID sessionID, URL url, URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(PAL::SessionID sessionID, URL url)
-    BlobSize(URL url) -> (uint64_t resultSize) Synchronous
+    BlobSize(PAL::SessionID sessionID, URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFiles(PAL::SessionID sessionID, Vector<String> blobURLs) -> (Vector<String> fileNames) Async
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)

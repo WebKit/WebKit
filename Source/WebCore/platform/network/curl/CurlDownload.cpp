@@ -76,7 +76,8 @@ bool CurlDownload::cancel()
 
 Ref<CurlRequest> CurlDownload::createCurlRequest(ResourceRequest& request)
 {
-    auto curlRequest = CurlRequest::create(request, *this);
+    // FIXME: Use a correct sessionID.
+    auto curlRequest = CurlRequest::create(request, *this, PAL::SessionID::emptySessionID());
     return curlRequest;
 }
 

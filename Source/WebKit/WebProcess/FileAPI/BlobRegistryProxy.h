@@ -37,7 +37,7 @@ public:
     void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
     void unregisterBlobURL(PAL::SessionID, const URL&) final;
     void registerBlobURLForSlice(PAL::SessionID, const URL&, const URL& srcURL, long long start, long long end) final;
-    unsigned long long blobSize(const URL&) final;
+    unsigned long long blobSize(PAL::SessionID, const URL&) final;
     void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
 };
 

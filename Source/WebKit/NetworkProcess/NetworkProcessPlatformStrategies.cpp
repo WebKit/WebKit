@@ -58,7 +58,7 @@ BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
         void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
         void registerBlobURLForSlice(PAL::SessionID, const URL&, const URL& srcURL, long long start, long long end) final { ASSERT_NOT_REACHED(); }
         void unregisterBlobURL(PAL::SessionID, const URL&) final { ASSERT_NOT_REACHED(); }
-        unsigned long long blobSize(const URL&) final { ASSERT_NOT_REACHED(); return 0; }
+        unsigned long long blobSize(PAL::SessionID, const URL&) final { ASSERT_NOT_REACHED(); return 0; }
         void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final { ASSERT_NOT_REACHED(); }
     };
     static NeverDestroyed<EmptyBlobRegistry> blobRegistry;

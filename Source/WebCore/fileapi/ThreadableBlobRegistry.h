@@ -47,7 +47,7 @@ public:
     static void registerBlobURLForSlice(PAL::SessionID, const URL& newURL, const URL& srcURL, long long start, long long end);
     static void unregisterBlobURL(PAL::SessionID, const URL&);
 
-    static unsigned long long blobSize(const URL&);
+    static unsigned long long blobSize(PAL::SessionID, const URL&);
 
     // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL
     // in the blob URL.

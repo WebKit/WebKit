@@ -73,10 +73,10 @@ void BlobRegistryProxy::registerBlobURLForSlice(PAL::SessionID sessionID, const 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(sessionID, url, srcURL, start, end), 0);
 }
 
-unsigned long long BlobRegistryProxy::blobSize(const URL& url)
+unsigned long long BlobRegistryProxy::blobSize(PAL::SessionID sessionID, const URL& url)
 {
     uint64_t resultSize;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(url), Messages::NetworkConnectionToWebProcess::BlobSize::Reply(resultSize), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(sessionID, url), Messages::NetworkConnectionToWebProcess::BlobSize::Reply(resultSize), 0))
         return 0;
     return resultSize;
 }

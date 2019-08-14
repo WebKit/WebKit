@@ -134,6 +134,11 @@ WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
         callOnMainThread([mainThreadConnection = WTFMove(m_mainThreadConnection)]() mutable { });
 }
 
+PAL::SessionID WorkerCacheStorageConnection::sessionID() const
+{
+    return m_scope.sessionID();
+}
+
 void WorkerCacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;

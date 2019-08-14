@@ -32,6 +32,7 @@
 #include "CurlResponse.h"
 #include "ProtectionSpace.h"
 #include "ResourceRequest.h"
+#include <pal/SessionID.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/MonotonicTime.h>
@@ -63,9 +64,9 @@ public:
         Extended
     };
 
-    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, CaptureNetworkLoadMetrics captureMetrics = CaptureNetworkLoadMetrics::Basic, MessageQueue<Function<void()>>* messageQueue = nullptr)
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, PAL::SessionID sessionID, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, CaptureNetworkLoadMetrics captureMetrics = CaptureNetworkLoadMetrics::Basic, MessageQueue<Function<void()>>* messageQueue = nullptr)
     {
-        return adoptRef(*new CurlRequest(request, &client, shouldSuspend, enableMultipart, captureMetrics, messageQueue));
+        return adoptRef(*new CurlRequest(request, &client, sessionID, shouldSuspend, enableMultipart, captureMetrics, messageQueue));
     }
 
     virtual ~CurlRequest() = default;
@@ -105,7 +106,7 @@ private:
         FinishTransfer
     };
 
-    CurlRequest(const ResourceRequest&, CurlRequestClient*, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, MessageQueue<Function<void()>>*);
+    CurlRequest(const ResourceRequest&, CurlRequestClient*, PAL::SessionID, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, MessageQueue<Function<void()>>*);
 
     void retain() override { ref(); }
     void release() override { deref(); }

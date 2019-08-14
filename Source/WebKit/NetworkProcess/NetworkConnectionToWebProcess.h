@@ -186,7 +186,7 @@ private:
     void registerBlobURLFromURL(PAL::SessionID, const URL&, const URL& srcURL);
     void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
     void registerBlobURLForSlice(PAL::SessionID, const URL&, const URL& srcURL, int64_t start, int64_t end);
-    void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
+    void blobSize(PAL::SessionID, const URL&, CompletionHandler<void(uint64_t)>&&);
     void unregisterBlobURL(PAL::SessionID, const URL&);
     void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 

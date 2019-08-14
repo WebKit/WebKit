@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CurlFormDataStream {
 public:
-    CurlFormDataStream(const FormData*);
+    CurlFormDataStream(const FormData*, PAL::SessionID);
     WEBCORE_EXPORT ~CurlFormDataStream();
 
     void clean();
@@ -54,6 +54,7 @@ private:
     Optional<size_t> readFromFile(const FormDataElement::EncodedFileData&, char*, size_t);
     Optional<size_t> readFromData(const Vector<char>&, char*, size_t);
 
+    PAL::SessionID m_sessionID;
     RefPtr<FormData> m_formData;
 
     std::unique_ptr<Vector<char>> m_postData;

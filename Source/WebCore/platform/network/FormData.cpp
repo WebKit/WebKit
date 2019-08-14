@@ -124,9 +124,9 @@ Ref<FormData> FormData::isolatedCopy() const
     return formData;
 }
 
-uint64_t FormDataElement::lengthInBytes() const
+static inline uint64_t computeLengthInBytes(const FormDataElement& element, const Function<uint64_t(const URL&)>& blobSize)
 {
-    return switchOn(data,
+    return switchOn(element.data,
         [] (const Vector<char>& bytes) {
             return static_cast<uint64_t>(bytes.size());
         }, [] (const FormDataElement::EncodedFileData& fileData) {
@@ -136,10 +136,24 @@ uint64_t FormDataElement::lengthInBytes() const
             if (FileSystem::getFileSize(fileData.filename, fileSize))
                 return static_cast<uint64_t>(fileSize);
             return static_cast<uint64_t>(0);
-        }, [] (const FormDataElement::EncodedBlobData& blobData) {
-            return ThreadableBlobRegistry::blobSize(blobData.url);
+        }, [&blobSize] (const FormDataElement::EncodedBlobData& blobData) {
+            return blobSize(blobData.url);
         }
     );
+}
+
+uint64_t FormDataElement::lengthInBytes(BlobRegistryImpl* blobRegistry) const
+{
+    return computeLengthInBytes(*this, [&](auto& url) {
+        return blobRegistry ? blobRegistry->blobSize(url) : 0;
+    });
+}
+
+uint64_t FormDataElement::lengthInBytes(PAL::SessionID sessionID) const
+{
+    return computeLengthInBytes(*this, [&](auto& url) {
+        return blobRegistry().blobSize(sessionID, url);
+    });
 }
 
 FormDataElement FormDataElement::isolatedCopy() const
@@ -380,12 +394,12 @@ FormDataForUpload::~FormDataForUpload()
         FileSystem::deleteFile(file);
 }
 
-uint64_t FormData::lengthInBytes() const
+uint64_t FormData::lengthInBytes(PAL::SessionID sessionID) const
 {
     if (!m_lengthInBytes) {
         uint64_t length = 0;
         for (auto& element : m_elements)
-            length += element.lengthInBytes();
+            length += element.lengthInBytes(sessionID);
         m_lengthInBytes = length;
     }
     return *m_lengthInBytes;

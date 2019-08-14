@@ -378,7 +378,7 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
     // Precompute the content length so CFNetwork doesn't use chunked mode.
     unsigned long long length = 0;
     for (auto& element : dataForUpload.data().elements())
-        length += element.lengthInBytes();
+        length += element.lengthInBytes(blobRegistry().blobRegistryImpl());
 
     FormCreationContext* formContext = new FormCreationContext { WTFMove(dataForUpload), length };
     CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, nullptr, formOpen, nullptr, formRead, nullptr, formCanRead, formClose, formCopyProperty, nullptr, nullptr, formSchedule, formUnschedule };

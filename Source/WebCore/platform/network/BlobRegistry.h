@@ -64,7 +64,7 @@ public:
 
     virtual void unregisterBlobURL(PAL::SessionID, const URL&) = 0;
 
-    virtual unsigned long long blobSize(const URL&) = 0;
+    virtual unsigned long long blobSize(PAL::SessionID, const URL&) = 0;
 
     virtual void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;
 

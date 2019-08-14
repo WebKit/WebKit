@@ -627,20 +627,17 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(PAL::SessionID sessionID, 
     session->blobRegistry().unregisterBlobURL(url);
 }
 
-void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<void(uint64_t)>&& completionHandler)
+void NetworkConnectionToWebProcess::blobSize(PAL::SessionID sessionID, const URL& url, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    auto* blobRegistry = networkProcess().blobRegistry(*this);
-    if (!blobRegistry)
-        return;
-
-    completionHandler(blobRegistry->blobSize(url));
+    auto* session = networkProcess().networkSession(sessionID);
+    completionHandler(session ? session->blobRegistry().blobSize(url) : 0);
 }
 
 void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(PAL::SessionID sessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto* session = networkProcess().networkSession(sessionID);
     if (!session)
-        return;
+        return completionHandler({ });
 
     Vector<RefPtr<BlobDataFileReference>> fileReferences;
     for (auto& url : blobURLs)
