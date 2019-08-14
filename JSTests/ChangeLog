@@ -1,3 +1,13 @@
+2019-08-14  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in string compare.
+        https://bugs.webkit.org/show_bug.cgi?id=200743
+        <rdar://problem/53975356>
+
+        Reviewed by Michael Saboff.
+
+        * stress/missing-exception-check-in-string-compare.js: Added.
+
 2019-08-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add "jump if (not) undefined or null" bytecode ops

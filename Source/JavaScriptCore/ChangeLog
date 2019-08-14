@@ -1,3 +1,14 @@
+2019-08-14  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in string compare.
+        https://bugs.webkit.org/show_bug.cgi?id=200743
+        <rdar://problem/53975356>
+
+        Reviewed by Michael Saboff.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::equalSlowCase const):
+
 2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for MacroAssemblerARM64E change
