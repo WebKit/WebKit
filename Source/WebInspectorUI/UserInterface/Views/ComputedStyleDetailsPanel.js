@@ -82,6 +82,13 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     initialLayout()
     {
+        this._boxModelDiagramRow = new WI.BoxModelDetailsSectionRow;
+
+        let boxModelGroup = new WI.DetailsSectionGroup([this._boxModelDiagramRow]);
+        let boxModelSection = new WI.DetailsSection("computed-style-box-model", WI.UIString("Box Model"), [boxModelGroup]);
+
+        this.element.appendChild(boxModelSection.element);
+
         let computedStyleShowAllLabel = document.createElement("label");
         computedStyleShowAllLabel.textContent = WI.UIString("Show All");
 
@@ -125,13 +132,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this.element.appendChild(this._propertiesSection.element);
         this.element.appendChild(this._variablesSection.element);
-
-        this._boxModelDiagramRow = new WI.BoxModelDetailsSectionRow;
-
-        let boxModelGroup = new WI.DetailsSectionGroup([this._boxModelDiagramRow]);
-        let boxModelSection = new WI.DetailsSection("computed-style-box-model", WI.UIString("Box Model"), [boxModelGroup]);
-
-        this.element.appendChild(boxModelSection.element);
     }
 
     filterDidChange(filterBar)
