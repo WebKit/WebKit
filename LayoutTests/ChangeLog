@@ -1,3 +1,14 @@
+2019-08-15  Antti Koivisto  <antti@apple.com>
+
+        Negative size box with border radius causes hang under WebCore::approximateAsRegion
+        https://bugs.webkit.org/show_bug.cgi?id=200769
+        <rdar://problem/53380674>
+
+        Reviewed by Alex Christensen.
+
+        * fast/css/border-radius-negative-size-expected.txt: Added.
+        * fast/css/border-radius-negative-size.html: Added.
+
 2019-08-15  Youenn Fablet  <youenn@apple.com>
 
         Make mock libwebrtc tests run with unified plan

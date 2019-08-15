@@ -1,3 +1,22 @@
+2019-08-15  Antti Koivisto  <antti@apple.com>
+
+        Negative size box with border radius causes hang under WebCore::approximateAsRegion
+        https://bugs.webkit.org/show_bug.cgi?id=200769
+        <rdar://problem/53380674>
+
+        Reviewed by Alex Christensen.
+
+        If a box's width or height computes negative the rounded border rect will also be negative.
+        This caused near-infinite loop during rounded border region approximation.
+
+        Test: fast/css/border-radius-negative-size.html
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::approximateAsRegion):
+
+        Bail out if the region is empty (which includes negative sizes).
+        For safety also limit the number of rectangles we generate for corner arc approximation.
+
 2019-08-15  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Deal with slow buffer consumption in GStreamerMediaStreamSource

@@ -310,6 +310,9 @@ Region approximateAsRegion(const RoundedRect& roundedRect, unsigned stepLength)
 {
     Region region;
 
+    if (roundedRect.isEmpty())
+        return region;
+
     auto& rect = roundedRect.rect();
     region.unite(enclosingIntRect(rect));
 
@@ -331,6 +334,9 @@ Region approximateAsRegion(const RoundedRect& roundedRect, unsigned stepLength)
         // Substract more rects for longer, more rounded arcs.
         auto arcLengthFactor = roundToInt(std::min(axes.width(), axes.height()));
         auto count = (arcLengthFactor + (stepLength / 2)) / stepLength;
+
+        constexpr auto maximumCount = 20u;
+        count = std::min(maximumCount, count);
 
         for (auto i = 0u; i < count; ++i) {
             auto angle = fromAngle + (i + 1) * (toAngle - fromAngle) / (count + 1);
