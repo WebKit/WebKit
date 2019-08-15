@@ -246,6 +246,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
@@ -9525,6 +9526,8 @@ bool LayerFlushController::flushLayers()
         [self _setTextIndicator:textIndicator withLifetime:TextIndicatorWindowLifetime::Permanent];
     }, [self](FloatRect rectInRootViewCoordinates) {
         return [self _convertRectFromRootView:rectInRootViewCoordinates];
+    }, [weakSelf = WeakObjCPtr<WebView>(self)]() {
+        [weakSelf.get() _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
     });
 }
 
