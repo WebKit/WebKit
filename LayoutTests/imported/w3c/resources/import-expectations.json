@@ -132,6 +132,7 @@
     "web-platform-tests/dom/nodes/Element-siblingElement-null.xhtml": "skip", 
     "web-platform-tests/dom/nodes/Node-nodeName.xhtml": "skip", 
     "web-platform-tests/dom/nodes/ParentNode-querySelector-All.xht": "skip", 
+    "web-platform-tests/dom/traversal": "import", 
     "web-platform-tests/dom/traversal/unfinished": "skip", 
     "web-platform-tests/domparsing": "import", 
     "web-platform-tests/domparsing/DOMParser-parseFromString-xml-doctype.html": "skip", 

@@ -6,7 +6,8 @@ PASS Testing with undefined filter
 PASS Testing with object lacking acceptNode property 
 PASS Testing with object with non-function acceptNode property 
 PASS Testing with function having acceptNode function 
-PASS Testing acceptNode callee 
 PASS Testing with filter function that throws 
+FAIL rethrows errors when getting `acceptNode` assert_throws: function "function () { walker.firstChild(); }" threw object "TypeError: Type error" ("TypeError") expected object "[object Object]" ("test")
+PASS performs `Get` on every traverse 
 PASS Testing with filter object that throws 
 Test JS objects as NodeFilters
