@@ -90,8 +90,6 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
-
 @class PKPaymentAuthorizationResult;
 @class PKPaymentRequestUpdate;
 @class PKPaymentRequestPaymentMethodUpdate;
@@ -108,8 +106,6 @@ typedef NS_ERROR_ENUM(PKPaymentErrorDomain, PKPaymentErrorCode) {
     PKPaymentBillingContactInvalidError,
     PKPaymentShippingAddressUnserviceableError,
 };
-
-#endif
 
 typedef NS_OPTIONS(NSUInteger, PKAddressField) {
     PKAddressFieldNone = 0UL,
@@ -237,11 +233,9 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, copy, nullable) NSArray<PKShippingMethod *> *shippingMethods;
 @property (nonatomic, assign) PKShippingType shippingType;
 @property (nonatomic, copy, nullable) NSData *applicationData;
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 @property (nonatomic, copy, nullable) NSSet<NSString *> *supportedCountries;
 @property (nonatomic, strong) NSSet<PKContactField> *requiredShippingContactFields;
 @property (nonatomic, strong) NSSet<PKContactField> *requiredBillingContactFields;
-#endif
 @end
 
 @interface PKPaymentAuthorizationViewController : NSViewController
@@ -253,11 +247,7 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @protocol PKPaymentAuthorizationViewControllerDelegate <NSObject>
 @required
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion;
-#else
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus status))completion;
-#endif
 
 - (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller;
 
@@ -343,7 +333,7 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
 };
 #endif
 
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -485,14 +485,12 @@ public:
         @NO, WebKitJavaScriptCanAccessClipboardPreferenceKey,
         @YES, WebKitXSSAuditorEnabledPreferenceKey,
         @YES, WebKitAcceleratedCompositingEnabledPreferenceKey,
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if PLATFORM(MAC)
 #define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED YES
 #else
 #define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED NO
 #endif
         [NSNumber numberWithBool:DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED], WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey,
-
         @NO, WebKitDisplayListDrawingEnabledPreferenceKey,
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
         @YES, WebKitAcceleratedDrawingEnabledPreferenceKey,

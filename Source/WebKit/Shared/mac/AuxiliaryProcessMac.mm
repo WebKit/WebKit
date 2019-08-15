@@ -60,7 +60,7 @@
 #import <rootless.h>
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if PLATFORM(MAC)
 #define USE_CACHE_COMPILED_SANDBOX 1
 #else
 #define USE_CACHE_COMPILED_SANDBOX 0

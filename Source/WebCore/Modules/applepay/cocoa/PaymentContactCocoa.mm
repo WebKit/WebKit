@@ -42,11 +42,7 @@ namespace WebCore {
 
 static NSString *subLocality(CNPostalAddress *address)
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    if (![address respondsToSelector:@selector(subLocality)])
-        return nil;
-#endif
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     return address.subLocality;
 #else
     UNUSED_PARAM(address);
@@ -56,11 +52,7 @@ static NSString *subLocality(CNPostalAddress *address)
 
 static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocality)
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    if (![address respondsToSelector:@selector(setSubLocality:)])
-        return;
-#endif
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     address.subLocality = subLocality;
 #else
     UNUSED_PARAM(address);
@@ -70,11 +62,7 @@ static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocalit
 
 static NSString *subAdministrativeArea(CNPostalAddress *address)
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    if (![address respondsToSelector:@selector(subAdministrativeArea)])
-        return nil;
-#endif
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     return address.subAdministrativeArea;
 #else
     UNUSED_PARAM(address);
@@ -84,11 +72,7 @@ static NSString *subAdministrativeArea(CNPostalAddress *address)
 
 static void setSubAdministrativeArea(CNMutablePostalAddress *address, NSString *subAdministrativeArea)
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    if (![address respondsToSelector:@selector(setSubAdministrativeArea:)])
-        return;
-#endif
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     address.subAdministrativeArea = subAdministrativeArea;
 #else
     UNUSED_PARAM(address);

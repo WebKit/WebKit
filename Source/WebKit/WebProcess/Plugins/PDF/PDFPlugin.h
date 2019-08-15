@@ -254,11 +254,6 @@ private:
 
     WebFrame* webFrame() const { return m_frame; }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    enum UpdateCursorMode { UpdateIfNeeded, ForceUpdate };
-    void updateCursor(const WebMouseEvent&, UpdateCursorMode = UpdateIfNeeded);
-#endif
-
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
@@ -294,11 +289,6 @@ private:
     String m_temporaryPDFUUID;
 
     String m_lastFoundString;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    enum HitTestResult { None, Text };
-    HitTestResult m_lastHitTestResult { None };
-#endif
 
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 

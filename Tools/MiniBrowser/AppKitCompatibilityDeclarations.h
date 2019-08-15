@@ -25,13 +25,3 @@
 
 #pragma once
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
-
-#import <AppKit/AppKit.h>
-
-typedef NSInteger NSControlStateValue;
-static const NSControlStateValue NSControlStateValueOff = NSOffState;
-static const NSControlStateValue NSControlStateValueOn = NSOnState;
-
-#endif
-

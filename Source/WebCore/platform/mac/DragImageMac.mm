@@ -48,7 +48,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 
-#if !HAVE(URL_FORMATTING) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if !HAVE(URL_FORMATTING)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
 #endif
 
@@ -160,13 +160,8 @@ const CGFloat linkImageCornerRadius = 5;
 const CGFloat linkImageMaximumWidth = 400;
 const CGFloat linkImageFontSize = 11;
 const CFIndex linkImageTitleMaximumLineCount = 2;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 const int linkImageShadowRadius = 0;
 const int linkImageShadowOffsetY = 0;
-#else
-const int linkImageShadowRadius = 9;
-const int linkImageShadowOffsetY = -3;
-#endif
 const int linkImageDragCornerOutsetX = 6 - linkImageShadowRadius;
 const int linkImageDragCornerOutsetY = 10 - linkImageShadowRadius + linkImageShadowOffsetY;
 
@@ -203,7 +198,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     NSString *domain = absoluteURLString;
 #if HAVE(URL_FORMATTING)
     domain = [cocoaURL _lp_simplifiedDisplayString];
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#else
     if (LinkPresentationLibrary())
         domain = [cocoaURL _lp_simplifiedDisplayString];
 #endif
@@ -302,9 +297,6 @@ DragImageRef createDragImageForLink(Element& element, URL& url, const String& ti
     LocalDefaultSystemAppearance localAppearance(element.document().useDarkAppearance(element.computedStyle()));
 
     auto imageSize = layout.boundingRect.size();
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    imageSize.expand(2 * linkImageShadowRadius, 2 * linkImageShadowRadius - linkImageShadowOffsetY);
-#endif
     RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:imageSize]);
     [dragImage _web_lockFocusWithDeviceScaleFactor:deviceScaleFactor];
 
@@ -312,14 +304,7 @@ DragImageRef createDragImageForLink(Element& element, URL& url, const String& ti
     GraphicsContext context((CGContextRef)[NSGraphicsContext currentContext].graphicsPort);
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    context.translate(linkImageShadowRadius, linkImageShadowRadius - linkImageShadowOffsetY);
-    context.setShadow({ 0, linkImageShadowOffsetY }, linkImageShadowRadius, { 0.f, 0.f, 0.f, .25 });
-#endif
     context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), colorFromNSColor([NSColor controlBackgroundColor]));
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    context.clearShadow();
-#endif
 
     for (const auto& label : layout.labels) {
         GraphicsContextStateSaver saver(context);

@@ -191,13 +191,8 @@ private:
     RetainPtr<NSCandidateListTouchBarItem> _plainTextCandidateListTouchBarItem;
     RetainPtr<NSCandidateListTouchBarItem> _passwordTextCandidateListTouchBarItem;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     RetainPtr<AVTouchBarPlaybackControlsProvider> mediaTouchBarProvider;
     RetainPtr<AVTouchBarScrubber> mediaPlaybackControlsView;
-#else
-    RetainPtr<AVFunctionBarPlaybackControlsProvider> mediaTouchBarProvider;
-    RetainPtr<AVFunctionBarScrubber> mediaPlaybackControlsView;
-#endif
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
     BOOL _canCreateTouchBars;

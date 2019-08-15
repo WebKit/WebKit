@@ -199,6 +199,6 @@
 
 #define BATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 
-#if (BPLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || BPLATFORM(IOS)
+#if BPLATFORM(MAC) || BPLATFORM(IOS)
 #define BUSE_OS_LOG 1
 #endif

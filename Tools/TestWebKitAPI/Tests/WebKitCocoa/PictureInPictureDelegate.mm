@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"

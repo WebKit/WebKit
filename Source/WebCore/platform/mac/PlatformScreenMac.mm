@@ -129,10 +129,8 @@ ScreenProperties collectScreenProperties()
         uint32_t displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
         IORegistryGPUID gpuID = 0;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         if (displayMask)
             gpuID = gpuIDForDisplayMask(displayMask);
-#endif
 
         screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome, displayMask, gpuID });
 
@@ -181,7 +179,6 @@ uint32_t displayMaskForDisplay(PlatformDisplayID displayID)
     return 0;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 IORegistryGPUID primaryGPUID()
 {
     return gpuIDForDisplay(screenProperties().primaryDisplayID);
@@ -232,7 +229,6 @@ IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)
     CGLDestroyRendererInfo(rendererInfo);
     return (IORegistryGPUID) gpuIDHigh << 32 | gpuIDLow;
 }
-#endif // !__MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 static ScreenData getScreenProperties(Widget* widget)
 {

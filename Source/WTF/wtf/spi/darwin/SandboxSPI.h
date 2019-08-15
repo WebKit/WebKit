@@ -46,9 +46,6 @@ typedef struct {
     char* builtin;
     unsigned char* data;
     size_t size;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-    char* trace;
-#endif
 } *sandbox_profile_t;
 
 typedef struct {

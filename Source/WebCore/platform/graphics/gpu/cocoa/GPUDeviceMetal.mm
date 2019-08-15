@@ -38,17 +38,8 @@ namespace WebCore {
 
 static bool isAcceptableDevice(id <MTLDevice> device)
 {
-#if USE(INTEL_METAL_WORKAROUND)
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([[static_cast<id <MTLDeviceSPI>>(device) vendorName] isEqualToString:@"Intel(R)"] && [[static_cast<id <MTLDeviceSPI>>(device) familyName] isEqualToString:@"Iris(TM) Graphics"])
-        return false;
-    return true;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return false;
-#else
     UNUSED_PARAM(device);
     return true;
-#endif
 }
 
 RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>& options)

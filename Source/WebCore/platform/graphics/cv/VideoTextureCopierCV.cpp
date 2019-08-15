@@ -61,18 +61,6 @@ enum class TransferFunction {
     kITU_R_2020,
 };
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-enum {
-    kCVPixelFormatType_ARGB2101010LEPacked = 'l10r',
-    kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange = 'x420',
-    kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange = 'x422',
-    kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange = 'x444',
-    kCVPixelFormatType_420YpCbCr10BiPlanarFullRange  = 'xf20',
-    kCVPixelFormatType_422YpCbCr10BiPlanarFullRange  = 'xf22',
-    kCVPixelFormatType_444YpCbCr10BiPlanarFullRange  = 'xf44',
-};
-#endif
-
 static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
 {
     switch (pixelFormat) {

@@ -1,3 +1,20 @@
+2019-08-14  Keith Rollin  <krollin@apple.com>
+
+        Remove support for macOS < 10.13
+        https://bugs.webkit.org/show_bug.cgi?id=200694
+        <rdar://problem/54278851>
+
+        Reviewed by Youenn Fablet.
+
+        Update conditionals that reference __MAC_OS_X_VERSION_MIN_REQUIRED and
+        __MAC_OS_X_VERSION_MAX_ALLOWED, assuming that they both have values >=
+        101300. This means that expressions like
+        "__MAC_OS_X_VERSION_MIN_REQUIRED < 101300" are always False and
+        "__MAC_OS_X_VERSION_MIN_REQUIRED >= 101300" are always True.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * WebKit/libwebrtc.diff:
+
 2019-08-13  Youenn Fablet  <youenn@apple.com>
 
         User Agent and SessionID should be given to NetworkRTCProvider to set up the correct proxy information

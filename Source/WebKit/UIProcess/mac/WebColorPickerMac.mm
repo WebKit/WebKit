@@ -48,11 +48,7 @@ static const CGFloat colorPickerMatrixNumColumns = 12.0;
 static const CGFloat colorPickerMatrixBorderWidth = 1.0;
 
 // FIXME: <rdar://problem/41173525> We should not have to track changes in NSPopoverColorWell's implementation.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 static const CGFloat colorPickerMatrixSwatchWidth = 13.0;
-#else
-static const CGFloat colorPickerMatrixSwatchWidth = 12.0;
-#endif
 
 @protocol WKPopoverColorWellDelegate <NSObject>
 - (void)didClosePopover;

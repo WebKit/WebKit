@@ -30,11 +30,6 @@
 
 #import <objc/runtime.h>
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
-static const NSCellStateValue NSControlStateValueOff = NSOffState;
-static const NSCellStateValue NSControlStateValueOn = NSOnState;
-#endif
-
 @interface NSBox (NSFontEffectsBox)
 // Invoked after a font effect (e.g. single strike-through) is chosen.
 - (void)_openEffectsButton:(id)sender;

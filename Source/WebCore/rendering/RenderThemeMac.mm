@@ -490,13 +490,8 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
 
 Color RenderThemeMac::platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor findHighlightColor]);
-#else
-    UNUSED_PARAM(options);
-    return Color(255, 255, 0); // Yellow.
-#endif
 }
 
 Color RenderThemeMac::platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
@@ -751,12 +746,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             case CSSValueAppleSystemPlaceholderText:
                 return @selector(placeholderTextColor);
             case CSSValueAppleSystemFindHighlightBackground:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
                 return @selector(findHighlightColor);
-#else
-                // Handled below.
-                return nullptr;
-#endif
             case CSSValueAppleSystemContainerBorder:
 #if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(containerBorderColor);
@@ -851,11 +841,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             if (localAppearance.usingDarkAppearance())
                 return Color(0xCC3F638B, Color::Semantic);
             return Color(0x9980BCFE, Color::Semantic);
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-        case CSSValueAppleSystemFindHighlightBackground:
-            return platformActiveTextSearchHighlightColor(options);
-#endif
 
 #if !HAVE(OS_DARK_MODE_SUPPORT)
         case CSSValueAppleSystemContainerBorder:

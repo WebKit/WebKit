@@ -296,15 +296,11 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 #if !defined(HAVE_PASSKIT_GRANULAR_ERRORS)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #define HAVE_PASSKIT_GRANULAR_ERRORS 1
-#endif
 #endif
 
 #if !defined(HAVE_PASSKIT_API_TYPE)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304
 #define HAVE_PASSKIT_API_TYPE 1
-#endif
 #endif
 
 #if !defined(HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER)

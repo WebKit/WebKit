@@ -159,7 +159,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
 
-#if PLATFORM(IOS_FAMILY) || (__MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
+#if PLATFORM(IOS_FAMILY)
     int retryCount = 30;
     while (retryCount--) {
         if ([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path])

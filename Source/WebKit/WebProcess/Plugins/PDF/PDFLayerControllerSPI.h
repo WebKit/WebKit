@@ -101,9 +101,7 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 - (void)mouseEntered:(NSEvent *)event;
 - (void)mouseExited:(NSEvent *)event;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 - (NSMenu *)menuForEvent:(NSEvent *)event withUserInterfaceLayoutDirection:(NSUserInterfaceLayoutDirection)direction;
-#endif
 - (NSMenu *)menuForEvent:(NSEvent *)event;
 
 - (NSArray *)findString:(NSString *)string caseSensitive:(BOOL)isCaseSensitive highlightMatches:(BOOL)shouldHighlightMatches;
@@ -163,22 +161,18 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 - (NSValue *)accessibilityRangeForLineAttributeForParameter:(id)parameter;
 - (NSString *)accessibilityStringForRangeAttributeForParameter:(id)parameter;
 - (NSValue *)accessibilityBoundsForRangeAttributeForParameter:(id)parameter;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 - (NSArray *)accessibilityChildren;
 - (void)setAccessibilityParent:(id)parent;
 - (id)accessibilityElementForAnnotation:(PDFAnnotation *)annotation;
-#endif
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 - (void)setDeviceColorSpace:(CGColorSpaceRef)colorSpace;
 #endif
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 @interface PDFAnnotation (AccessibilityPrivate)
 - (id)accessibilityNode;
 @end
-#endif
 
 #endif
 

@@ -172,7 +172,7 @@
 
 #ifdef __cplusplus
 
-#if !PLATFORM(WIN) && (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300)
+#if !PLATFORM(WIN)
 #import <wtf/FastMalloc.h>
 #import <wtf/Optional.h>
 #import <wtf/StdLibExtras.h>

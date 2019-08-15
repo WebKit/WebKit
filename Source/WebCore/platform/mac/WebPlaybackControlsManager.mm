@@ -37,11 +37,7 @@
 IGNORE_WARNINGS_BEGIN("nullability-completeness")
 
 SOFT_LINK_FRAMEWORK(AVKit)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTouchBarMediaSelectionOption)
-#else
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 using WebCore::MediaSelectionOption;
 using WebCore::PlaybackSessionInterfaceMac;
@@ -135,38 +131,6 @@ using WebCore::PlaybackSessionInterfaceMac;
     _playbackSessionInterfaceMac->endScrubbing();
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-
-- (void)generateFunctionBarThumbnailsForTimes:(NSArray<NSNumber *> *)thumbnailTimes size:(NSSize)size completionHandler:(void (^)(NSArray<AVThumbnail *> *thumbnails, NSError *error))completionHandler
-{
-    UNUSED_PARAM(thumbnailTimes);
-    UNUSED_PARAM(size);
-    completionHandler(@[ ], nil);
-}
-
-- (void)generateFunctionBarAudioAmplitudeSamples:(NSInteger)numberOfSamples completionHandler:(void (^)(NSArray<NSNumber *> *audioAmplitudeSamples,  NSError *error))completionHandler
-{
-    UNUSED_PARAM(numberOfSamples);
-    completionHandler(@[ ], nil);
-}
-
-- (BOOL)canBeginFunctionBarScrubbing
-{
-    return [self canBeginTouchBarScrubbing];
-}
-
-- (void)beginFunctionBarScrubbing
-{
-    [self beginTouchBarScrubbing];
-}
-
-- (void)endFunctionBarScrubbing
-{
-    [self endTouchBarScrubbing];
-}
-
-#endif
-
 - (NSArray<AVTouchBarMediaSelectionOption *> *)audioTouchBarMediaSelectionOptions
 {
     return _audioTouchBarMediaSelectionOptions.get();
@@ -229,7 +193,6 @@ using WebCore::PlaybackSessionInterfaceMac;
         model->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::Type type)
 {
     switch (type) {
@@ -244,17 +207,12 @@ static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(M
     ASSERT_NOT_REACHED();
     return AVTouchBarMediaSelectionOptionTypeRegular;
 }
-#endif
 
 static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         if (auto webOption = adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName type:toAVTouchBarMediaSelectionOptionType(option.type)]))
-#else
-        if (auto webOption = adoptNS([allocAVFunctionBarMediaSelectionOptionInstance() initWithTitle:option.displayName]))
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
             [webOptions addObject:webOption.get()];
     }
     return webOptions;

@@ -54,14 +54,14 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerLayer.h>
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerItem ()
 @property (nonatomic, readonly) NSTimeInterval seekableTimeRangesLastModifiedTime NS_AVAILABLE(10_13, 11_0);
 @property (nonatomic, readonly) NSTimeInterval liveUpdateInterval;
 @end
 NS_ASSUME_NONNULL_END
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
 
@@ -240,15 +240,7 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
-#import <AVFoundation/AVQueuedSampleBufferRendering.h>
-@class AVVideoPerformanceMetrics;
-NS_ASSUME_NONNULL_BEGIN
-@interface AVSampleBufferDisplayLayer (VideoPerformanceMetrics)
-- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
-@end
-NS_ASSUME_NONNULL_END
-#elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
+#if __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
 #import <AVFoundation/AVSampleBufferDisplayLayer_Private.h>
 #elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
@@ -278,9 +270,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
-// Nothing to do, AVfoundation/AVQueuedSampleBufferRendering.h was imported above.
-#elif __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
+#if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>
 #else
 
@@ -303,7 +293,7 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 
-#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
+#if !USE(APPLE_INTERNAL_SDK)
 @interface AVVideoPerformanceMetrics : NSObject
 @property (nonatomic, readonly) unsigned long totalNumberOfVideoFrames;
 @property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;

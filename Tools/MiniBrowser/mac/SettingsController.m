@@ -104,9 +104,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         UseWebKit2ByDefaultPreferenceKey,
         AcceleratedDrawingEnabledPreferenceKey,
         SimpleLineLayoutEnabledPreferenceKey,
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         SubpixelAntialiasedLayerTextEnabledPreferenceKey,
-#endif
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
     ];

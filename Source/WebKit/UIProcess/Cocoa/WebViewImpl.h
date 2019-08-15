@@ -573,11 +573,7 @@ public:
     void togglePictureInPicture();
     void updateMediaPlaybackControlsManager();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     AVTouchBarScrubber *mediaPlaybackControlsView() const;
-#else
-    AVFunctionBarScrubber *mediaPlaybackControlsView() const;
-#endif
 #endif
     NSTouchBar *textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
@@ -631,13 +627,8 @@ private:
     RetainPtr<NSCustomTouchBarItem> m_exitFullScreenButton;
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     RetainPtr<AVTouchBarPlaybackControlsProvider> m_mediaTouchBarProvider;
     RetainPtr<AVTouchBarScrubber> m_mediaPlaybackControlsView;
-#else
-    RetainPtr<AVFunctionBarPlaybackControlsProvider> m_mediaTouchBarProvider;
-    RetainPtr<AVFunctionBarScrubber> m_mediaPlaybackControlsView;
-#endif
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #endif // HAVE(TOUCH_BAR)
 

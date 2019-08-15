@@ -121,14 +121,8 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family,
     }
 
     if (equalLettersIgnoringASCIICase(family, "lastresort")) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         static const CTFontDescriptorRef lastResort = CTFontDescriptorCreateLastResort();
         return adoptCF(CTFontCreateWithFontDescriptor(lastResort, size, nullptr));
-#else
-        // LastResort is special, so it's important to look this exact string up, and not some case-folded version.
-        // We handle this here so any caching and case folding we do in our general text codepath is bypassed.
-        return adoptCF(CTFontCreateWithName(CFSTR("LastResort"), size, nullptr));
-#endif
     }
 
     return nullptr;

@@ -29,12 +29,8 @@
 
 #else
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-
 @interface PDFView ()
 - (PDFKitPlatformScrollView *)documentScrollView;
 @end
-
-#endif
 
 #endif

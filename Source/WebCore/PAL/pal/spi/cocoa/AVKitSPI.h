@@ -233,22 +233,14 @@ NS_ASSUME_NONNULL_END
 OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
 OBJC_CLASS AVFunctionBarScrubber;
 OBJC_CLASS AVFunctionBarMediaSelectionOption;
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 OBJC_CLASS AVTouchBarPlaybackControlsProvider;
 OBJC_CLASS AVTouchBarScrubber;
 OBJC_CLASS AVTouchBarMediaSelectionOption;
-#else
-typedef AVFunctionBarMediaSelectionOption AVTouchBarMediaSelectionOption;
-#endif
 
 #if USE(APPLE_INTERNAL_SDK)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+
 #import <AVKit/AVTouchBarPlaybackControlsProvider.h>
 #import <AVKit/AVTouchBarScrubber.h>
-#else
-#import <AVKit/AVFunctionBarPlaybackControlsProvider.h>
-#import <AVKit/AVFunctionBarScrubber.h>
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 #else
 
@@ -274,8 +266,6 @@ __attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBa
 __attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBarScrubber : NSView
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 
 @protocol AVTouchBarPlaybackControlsControlling <NSObject>
 @property (readonly) NSTimeInterval contentDuration;
@@ -313,8 +303,6 @@ typedef NS_ENUM(NSInteger, AVTouchBarMediaSelectionOptionType) {
 @end
 
 @class AVThumbnail;
-
-#endif
 
 NS_ASSUME_NONNULL_END
 

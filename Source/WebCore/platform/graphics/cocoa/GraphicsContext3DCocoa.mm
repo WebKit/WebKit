@@ -131,7 +131,6 @@ Ref<GraphicsContext3D> GraphicsContext3D::createShared(GraphicsContext3D& shared
 
 #if PLATFORM(MAC) && USE(OPENGL) // FIXME: This probably should be just USE(OPENGL) - see <rdar://53062794>.
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
 {
     // When the WebProcess does not have access to the WindowServer, there is no way for OpenGL to tell which GPU is connected to a display.
@@ -177,36 +176,6 @@ static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFor
         LOG(WebGL, "RegistryID (%lld) not matched; Context (%p) set to virtual screen (%d).", preferredGPUID, contextObj, firstAcceleratedScreen);
     }
 }
-#else // __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-static void setGPUByDisplayMask(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, uint32_t preferredDisplayMask)
-{
-    // A common case for multiple GPUs, external GPUs, is not supported before macOS 10.13.4.
-    // In the rarer case where there are still multiple displays plugged into multiple GPUs, this should still work.
-    // See code example at https://developer.apple.com/library/content/technotes/tn2229/_index.html#//apple_ref/doc/uid/DTS40008924-CH1-SUBSECTION7
-    // FIXME: Window server is not blocked before 10.14. There might be a more straightforward way to detect the correct GPU.
-
-    if (!contextObj || !preferredDisplayMask)
-        return;
-
-    GLint virtualScreenCount = 0;
-    CGLError error = CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount, &virtualScreenCount);
-    ASSERT(error == kCGLNoError);
-
-    for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen) {
-        GLint displayMask = 0;
-        error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask, &displayMask);
-        ASSERT(error == kCGLNoError);
-        if (error != kCGLNoError)
-            continue;
-
-        if (displayMask & preferredDisplayMask) {
-            error = CGLSetVirtualScreen(contextObj, virtualScreen);
-            ASSERT(error == kCGLNoError);
-            return;
-        }
-    }
-}
-#endif
 
 #endif // PLATFORM(MAC) && USE(OPENGL)
 
@@ -292,16 +261,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     
 #if PLATFORM(MAC) // FIXME: This probably should be USE(OPENGL) - see <rdar://53062794>.
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
     setGPUByRegistryID(m_contextObj, pixelFormatObj, gpuID);
-#else
-    if (auto displayMask = primaryOpenGLDisplayMask()) {
-        if (hostWindow && hostWindow->displayID())
-            displayMask = displayMaskForDisplay(hostWindow->displayID());
-        setGPUByDisplayMask(m_contextObj, pixelFormatObj, displayMask);
-    }
-#endif
 
 #else
     UNUSED_PARAM(hostWindow);
@@ -782,15 +743,11 @@ void GraphicsContext3D::screenDidChange(PlatformDisplayID displayID)
 #if USE(ANGLE)
     UNUSED_PARAM(displayID);
 #else
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     // FIXME: figure out whether to integrate more code into ANGLE to have this effect.
 #if USE(OPENGL)
     if (!m_hasSwitchedToHighPerformanceGPU)
         setGPUByRegistryID(m_contextObj, CGLGetPixelFormat(m_contextObj), gpuIDForDisplay(displayID));
 #endif
-#else
-    setGPUByDisplayMask(m_contextObj, CGLGetPixelFormat(m_contextObj), displayMaskForDisplay(displayID));
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #endif // USE(ANGLE)
 }
 #endif // !PLATFORM(MAC)

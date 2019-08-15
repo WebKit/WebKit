@@ -1,3 +1,50 @@
+2019-08-14  Keith Rollin  <krollin@apple.com>
+
+        Remove support for macOS < 10.13
+        https://bugs.webkit.org/show_bug.cgi?id=200694
+        <rdar://problem/54278851>
+
+        Reviewed by Youenn Fablet.
+
+        Update conditionals that reference __MAC_OS_X_VERSION_MIN_REQUIRED and
+        __MAC_OS_X_VERSION_MAX_ALLOWED, assuming that they both have values >=
+        101300. This means that expressions like
+        "__MAC_OS_X_VERSION_MIN_REQUIRED < 101300" are always False and
+        "__MAC_OS_X_VERSION_MIN_REQUIRED >= 101300" are always True.
+
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm:
+        (-[WKDownloadProgress initWithDownloadTask:download:URL:sandboxExtension:]):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCustomPasteboardDataEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextTouchBarItemController itemForIdentifier:]):
+        (WebKit::WebViewImpl::mediaPlaybackControlsView const):
+        (WebKit::WebViewImpl::updateMediaTouchBar):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject setPdfLayerController:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:]):
+        (-[WKPDFPluginAccessibilityObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKPDFPluginAccessibilityObject accessibilityFocusedUIElement]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAssociatedControlForAnnotation:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityHitTest:]):
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+        (WebKit::PDFPlugin::handleMouseEvent):
+        (WebKit::PDFPlugin::handleMouseEnterEvent):
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        (WebKit::PDFPlugin::pluginHandlesContentOffsetForAccessibilityHitTest const):
+        (WebKit::PDFPlugin::accessibilityAssociatedPluginParentForElement const):
+        (WebKit::PDFPlugin::updateCursor): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2019-08-14  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r245320): Web Automation: Perform Actions hangs when pointerdown happens near top of page

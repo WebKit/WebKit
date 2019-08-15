@@ -62,13 +62,8 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     [task addObserver:self forKeyPath:countOfBytesReceivedKeyPath options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:WKDownloadProgressBytesReceivedContext];
 
     self.kind = NSProgressKindFile;
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     self.fileOperationKind = NSProgressFileOperationKindDownloading;
     self.fileURL = fileURL;
-#else
-    [self setUserInfoObject:NSProgressFileOperationKindDownloading forKey:NSProgressFileOperationKindKey];
-    [self setUserInfoObject:fileURL forKey:NSProgressFileURLKey];
-#endif
     m_sandboxExtension = sandboxExtension;
 
     self.cancellable = YES;

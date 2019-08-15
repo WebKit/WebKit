@@ -123,8 +123,8 @@ static CFDictionaryRef cascadeToLastResortAttributesDictionary()
 
 static RetainPtr<CTFontDescriptorRef> cascadeToLastResortAndVariationsFontDescriptor(CTFontRef originalFont)
 {
-// FIXME: Remove this when <rdar://problem/28449441> is fixed.
-#define WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG (ENABLE(VARIATION_FONTS) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)))
+// FIXME: Remove this when <rdar://problem/28449441> is fixed. NOTE: That radar was fixed 11/16/16, so this can be removed. TBD.
+#define WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG (ENABLE(VARIATION_FONTS) && (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
 
     CFDictionaryRef attributes = cascadeToLastResortAttributesDictionary();
 #if WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG

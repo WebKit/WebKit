@@ -126,13 +126,8 @@
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
 SOFT_LINK_CLASS(AVKit, AVTouchBarScrubber)
-#else
-SOFT_LINK_CLASS(AVKit, AVFunctionBarPlaybackControlsProvider)
-SOFT_LINK_CLASS(AVKit, AVFunctionBarScrubber)
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem";
 #endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -152,7 +147,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 - (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
 @end
 
-#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 // FIXME: Remove this once -setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
 @interface AVTouchBarScrubber ()
 - (void)setCanShowMediaSelectionButton:(BOOL)canShowMediaSelectionButton;
@@ -660,9 +655,7 @@ static const NSUInteger orderedListSegment = 2;
         colorPickerItem.target = self;
         colorPickerItem.action = @selector(_wkChangeColor:);
         colorPickerItem.showsAlpha = NO;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         colorPickerItem.allowedColorSpaces = @[ [NSColorSpace sRGBColorSpace] ];
-#endif
     }
 
     return item;
@@ -949,11 +942,7 @@ NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
 }
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 AVTouchBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
-#else
-AVFunctionBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
-#endif
 {
     if (m_page->hasActiveVideoForControlsManager())
         return m_mediaPlaybackControlsView.get();
@@ -1207,22 +1196,14 @@ void WebViewImpl::updateMediaTouchBar()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (!m_mediaTouchBarProvider) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         m_mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]);
-#else
-        m_mediaTouchBarProvider = adoptNS([allocAVFunctionBarPlaybackControlsProviderInstance() init]);
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     }
 
     if (!m_mediaPlaybackControlsView) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
         // FIXME: Remove this once setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
         if ([m_mediaPlaybackControlsView respondsToSelector:@selector(setCanShowMediaSelectionButton:)])
             [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
-#else
-        m_mediaPlaybackControlsView = adoptNS([allocAVFunctionBarScrubberInstance() init]);
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     }
 
     updateMediaPlaybackControlsManager();
