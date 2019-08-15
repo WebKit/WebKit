@@ -1,3 +1,13 @@
+2019-08-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed WinCairo build fix after r248713.
+
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+
 2019-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Use ObjectIdentifier<FrameIdentifierType> for frameIDs
