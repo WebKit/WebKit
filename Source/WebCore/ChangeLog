@@ -1,3 +1,10 @@
+2019-08-15  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Debug build fix after r248730.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support `console.screenshot` with detached <canvas>

@@ -253,7 +253,7 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         auto& typeReference = downcast<AST::TypeReference>(*nativeFunctionDeclaration.parameters()[0]->type());
         auto& vectorType = downcast<AST::NativeTypeDeclaration>(downcast<AST::TypeReference>(downcast<AST::TypeDefinition>(typeReference.resolvedType()).type()).resolvedType());
         ASSERT(vectorType.name() == "vector");
-        ASSERT(matrixType.typeArguments().size() == 2);
+        ASSERT(vectorType.typeArguments().size() == 2);
         return WTF::get<AST::ConstantExpression>(vectorType.typeArguments()[1]).integerLiteral().value();
     };
     auto matrixDimension = [&] (unsigned typeArgumentIndex) -> unsigned {
