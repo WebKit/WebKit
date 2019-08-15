@@ -28,7 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
-void testPatchpointManyImms()
+void testPatchpointManyWarmAnyImms()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -36,18 +36,54 @@ void testPatchpointManyImms()
     Value* arg2 = root->appendNew<Const64Value>(proc, Origin(), 43);
     Value* arg3 = root->appendNew<Const64Value>(proc, Origin(), 43000000000000ll);
     Value* arg4 = root->appendNew<ConstDoubleValue>(proc, Origin(), 42.5);
+    Value* arg5 = root->appendNew<ConstFloatValue>(proc, Origin(), -42.5f);
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
     patchpoint->append(ConstrainedValue(arg1, ValueRep::WarmAny));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::WarmAny));
     patchpoint->append(ConstrainedValue(arg3, ValueRep::WarmAny));
     patchpoint->append(ConstrainedValue(arg4, ValueRep::WarmAny));
+    patchpoint->append(ConstrainedValue(arg5, ValueRep::WarmAny));
     patchpoint->setGenerator(
         [&] (CCallHelpers&, const StackmapGenerationParams& params) {
-            CHECK(params.size() == 4);
+            CHECK(params.size() == 5);
             CHECK(params[0] == ValueRep::constant(42));
             CHECK(params[1] == ValueRep::constant(43));
             CHECK(params[2] == ValueRep::constant(43000000000000ll));
-            CHECK(params[3] == ValueRep::constant(bitwise_cast<int64_t>(42.5)));
+            CHECK(params[3] == ValueRep::constantDouble(42.5));
+            CHECK(params[4] == ValueRep::constantFloat(-42.5f));
+            CHECK(params[4].floatValue() == -42.5f);
+        });
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+}
+
+void testPatchpointManyColdAnyImms()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<Const32Value>(proc, Origin(), 42);
+    Value* arg2 = root->appendNew<Const64Value>(proc, Origin(), 43);
+    Value* arg3 = root->appendNew<Const64Value>(proc, Origin(), 43000000000000ll);
+    Value* arg4 = root->appendNew<ConstDoubleValue>(proc, Origin(), 42.5);
+    Value* arg5 = root->appendNew<ConstFloatValue>(proc, Origin(), -42.5f);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->append(ConstrainedValue(arg1, ValueRep::ColdAny));
+    patchpoint->append(ConstrainedValue(arg2, ValueRep::ColdAny));
+    patchpoint->append(ConstrainedValue(arg3, ValueRep::ColdAny));
+    patchpoint->append(ConstrainedValue(arg4, ValueRep::ColdAny));
+    patchpoint->append(ConstrainedValue(arg5, ValueRep::ColdAny));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers&, const StackmapGenerationParams& params) {
+            CHECK(params.size() == 5);
+            CHECK(params[0] == ValueRep::constant(42));
+            CHECK(params[1] == ValueRep::constant(43));
+            CHECK(params[2] == ValueRep::constant(43000000000000ll));
+            CHECK(params[3] == ValueRep::constantDouble(42.5));
+            CHECK(params[4] == ValueRep::constantFloat(-42.5f));
+            CHECK(params[4].floatValue() == -42.5f);
         });
     root->appendNewControlValue(
         proc, Return, Origin(),

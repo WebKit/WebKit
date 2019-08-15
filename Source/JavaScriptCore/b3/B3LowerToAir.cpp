@@ -1338,6 +1338,9 @@ private:
                 else if (value.value()->hasDouble() && canBeInternal(value.value())) {
                     commitInternal(value.value());
                     arg = Arg::bigImm(bitwise_cast<int64_t>(value.value()->asDouble()));
+                } else if (value.value()->hasFloat() && canBeInternal(value.value())) {
+                    commitInternal(value.value());
+                    arg = Arg::bigImm(static_cast<uint64_t>(bitwise_cast<uint32_t>(value.value()->asFloat())));
                 } else
                     arg = tmp(value.value());
                 break;

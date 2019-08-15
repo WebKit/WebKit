@@ -1,3 +1,38 @@
+2019-08-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Air does not appropriately propagate ConstFloatValue to stackmap
+        https://bugs.webkit.org/show_bug.cgi?id=200759
+
+        Reviewed by Saam Barati.
+
+        In B3MoveConstant phase, we convert ConstFloatValue and ConstDoubleValue to memory access to the table
+        to avoid large immediates *except for* stackmap argument case. This is because materializing constant doubles
+        and floats as memory-access before passing it to stackmap is wasteful: the stackmap may not use it actually, or
+        stackmap can do better job if it knows the parameter is constant.
+
+        Based on the above operation, B3LowerToAir phase strongly assumes that all ConstFloatValue and ConstDoubleValue
+        are removed except for the case used for parameter of stackmap. With r192377, B3LowerToAir catch this case, and
+        propagate constant double value as ValueRep in stackmap. While B3LowerToAir does this correctly for ConstDoubleValue,
+        we missed adding this support for ConstFloatValue.
+
+        This patch adds r192377's support for ConstFloatValue to propagate ConstFloatValue correctly to the stackmap.
+        This issue starts appearing since Wasm BBQ-B3 OSR starts putting ConstFloatValue to OSR-tier-up patchpoint.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::floatValue const):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::constantFloat):
+        (JSC::B3::ValueRep::floatValue const):
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_5.cpp:
+        (testPatchpointManyWarmAnyImms):
+        (testPatchpointManyColdAnyImms):
+        (testPatchpointManyImms): Deleted.
+
 2019-08-14  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13

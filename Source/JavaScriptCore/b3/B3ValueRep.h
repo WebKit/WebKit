@@ -159,6 +159,11 @@ public:
         return ValueRep::constant(bitwise_cast<int64_t>(value));
     }
 
+    static ValueRep constantFloat(float value)
+    {
+        return ValueRep::constant(static_cast<uint64_t>(bitwise_cast<uint32_t>(value)));
+    }
+
     Kind kind() const { return m_kind; }
 
     bool operator==(const ValueRep& other) const
@@ -230,6 +235,11 @@ public:
     double doubleValue() const
     {
         return bitwise_cast<double>(value());
+    }
+
+    float floatValue() const
+    {
+        return bitwise_cast<float>(static_cast<uint32_t>(static_cast<uint64_t>(value())));
     }
 
     ValueRep withOffset(intptr_t offset) const
