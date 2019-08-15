@@ -8369,7 +8369,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
     // FIXME: This delegate is being called more than once by UIKit. <rdar://problem/51550291>
     // This conditional avoids the WKUIDelegate being called twice too.
-    if (!_contextMenuElementInfo) {
+    if (_contextMenuElementInfo) {
         auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
         if ([uiDelegate respondsToSelector:@selector(webView:contextMenuDidEndForElement:)])
             [uiDelegate webView:_webView contextMenuDidEndForElement:_contextMenuElementInfo.get()];
