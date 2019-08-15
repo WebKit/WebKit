@@ -529,6 +529,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String source = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, nullptr);
     unsigned sourceLen = source.length();
     RETURN_IF_EXCEPTION(scope, nullptr);
     RegExpObject* regExpObject = jsCast<RegExpObject*>(searchValue);
@@ -754,11 +755,13 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     CallData callData;
     String replacementString = replaceString->value(exec);
-    return replaceUsingRegExpSearch(
-        vm, exec, thisValue, searchValue, callData, CallType::None, replacementString, replaceString);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(
+        vm, exec, thisValue, searchValue, callData, CallType::None, replacementString, replaceString));
 }
 
 static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, ExecState* exec, JSString* string, JSValue searchValue, JSValue replaceValue)
@@ -1125,7 +1128,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
         return JSValue::encode(jsNumber(-1));
 
     String thisString = thisJSString->value(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String otherString = otherJSString->value(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     size_t result;
     if (!startPosition)
         result = thisString.startsWith(otherString) ? 0 : notFound;
@@ -1446,6 +1451,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     JSString* sVal = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String s = sVal->value(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String lowercasedString = s.convertToLowercaseWithoutLocale();
     if (lowercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
@@ -1463,6 +1469,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
     JSString* sVal = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String s = sVal->value(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String uppercasedString = s.convertToUppercaseWithoutLocale();
     if (uppercasedString.impl() == s.impl())
         return JSValue::encode(sVal);

@@ -1,3 +1,15 @@
+2019-08-15  Mark Lam  <mark.lam@apple.com>
+
+        More missing exception checks in String.prototype.
+        https://bugs.webkit.org/show_bug.cgi?id=200762
+        <rdar://problem/54333896>
+
+        Reviewed by Michael Saboff.
+
+        * stress/missing-exception-check-in-string-lastIndexOf.js: Added.
+        * stress/missing-exception-check-in-string-toLower.js: Added.
+        * stress/missing-exception-check-in-string-toUpper.js: Added.
+
 2019-08-14  Mark Lam  <mark.lam@apple.com>
 
         ProxyObject should not be allow to access its target's private properties.
