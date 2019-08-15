@@ -1,3 +1,13 @@
+2019-08-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Variables shouldn't be able to have void type
+        https://bugs.webkit.org/show_bug.cgi?id=200751
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl/void-variable-parameter-expected.txt: Added.
+        * webgpu/whlsl/void-variable-parameter.html: Added.
+
 2019-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Any previously destroyed renderer should not be considered a candidate for content observation.

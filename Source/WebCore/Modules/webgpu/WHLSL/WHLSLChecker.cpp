@@ -952,6 +952,10 @@ void Checker::visit(AST::VariableDeclaration& variableDeclaration)
     // ReadModifyWriteExpressions are the only place where anonymous variables exist,
     // and that doesn't recurse on the anonymous variables, so we can assume the variable has a type.
     checkErrorAndVisit(*variableDeclaration.type());
+    if (matches(*variableDeclaration.type(), m_intrinsics.voidType())) {
+        setError(Error("Variables can't have void type.", variableDeclaration.codeLocation()));
+        return;
+    }
     if (variableDeclaration.initializer()) {
         auto& lhsType = *variableDeclaration.type();
         auto initializerInfo = recurseAndGetInfo(*variableDeclaration.initializer());

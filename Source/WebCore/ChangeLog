@@ -1,3 +1,17 @@
+2019-08-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Variables shouldn't be able to have void type
+        https://bugs.webkit.org/show_bug.cgi?id=200751
+
+        Reviewed by Robin Morisset.
+
+        Trivial fix. Found by https://github.com/gpuweb/WHLSL/issues/320.
+
+        Test: webgpu/whlsl/void-variable-parameter.html
+
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::visit):
+
 2019-08-14  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Use of WebGPU should not force discrete GPU
