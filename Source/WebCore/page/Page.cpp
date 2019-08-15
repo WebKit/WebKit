@@ -289,7 +289,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     updateTimerThrottlingState();
 
     m_pluginInfoProvider->addPage(*this);
-    m_storageNamespaceProvider->addPage(*this);
     m_userContentProvider->addPage(*this);
     m_visitedLinkStore->addPage(*this);
 
@@ -367,7 +366,6 @@ Page::~Page()
 #endif
 
     m_pluginInfoProvider->removePage(*this);
-    m_storageNamespaceProvider->removePage(*this);
     m_userContentProvider->removePage(*this);
     m_visitedLinkStore->removePage(*this);
 }
@@ -1510,19 +1508,6 @@ void Page::setSessionStorage(RefPtr<StorageNamespace>&& newStorage)
     m_sessionStorage = WTFMove(newStorage);
 }
 
-StorageNamespace* Page::ephemeralLocalStorage(bool optionalCreate)
-{
-    if (!m_ephemeralLocalStorage && optionalCreate)
-        m_ephemeralLocalStorage = m_storageNamespaceProvider->createEphemeralLocalStorageNamespace(*this, m_settings->sessionStorageQuota());
-
-    return m_ephemeralLocalStorage.get();
-}
-
-void Page::setEphemeralLocalStorage(RefPtr<StorageNamespace>&& newStorage)
-{
-    m_ephemeralLocalStorage = WTFMove(newStorage);
-}
-
 bool Page::hasCustomHTMLTokenizerTimeDelay() const
 {
     return m_settings->maxParseDuration() != -1;
@@ -2470,15 +2455,6 @@ void Page::setUserContentProvider(Ref<UserContentProvider>&& userContentProvider
     invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
-void Page::setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&& storageNamespaceProvider)
-{
-    m_storageNamespaceProvider->removePage(*this);
-    m_storageNamespaceProvider = WTFMove(storageNamespaceProvider);
-    m_storageNamespaceProvider->addPage(*this);
-
-    // This needs to reset all the local storage namespaces of all the pages.
-}
-
 VisitedLinkStore& Page::visitedLinkStore()
 {
     return m_visitedLinkStore;
@@ -2506,6 +2482,9 @@ void Page::setSessionID(PAL::SessionID sessionID)
     if (sessionID != m_sessionID)
         m_idbConnectionToServer = nullptr;
 #endif
+
+    if (sessionID != m_sessionID && m_sessionStorage)
+        m_sessionStorage->setSessionIDForTesting(sessionID);
 
     bool privateBrowsingStateChanged = (sessionID.isEphemeral() != m_sessionID.isEphemeral());
 

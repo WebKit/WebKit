@@ -342,6 +342,13 @@ void TestRunner::setDatabaseQuota(uint64_t quota)
     return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
 }
 
+void TestRunner::syncLocalStorage()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SyncLocalStorage"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(true));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 void TestRunner::clearAllApplicationCaches()
 {
     WKBundlePageClearApplicationCache(InjectedBundle::singleton().page()->page());

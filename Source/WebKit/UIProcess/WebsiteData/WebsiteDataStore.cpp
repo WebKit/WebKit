@@ -1969,8 +1969,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     auto localStorageDirectory = resolvedLocalStorageDirectory();
     if (!localStorageDirectory.isEmpty()) {
-        parameters.networkSessionParameters.localStorageDirectory = localStorageDirectory;
-        SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, parameters.networkSessionParameters.localStorageDirectoryExtensionHandle);
+        parameters.localStorageDirectory = localStorageDirectory;
+        SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
     }
 
 #if ENABLE(INDEXED_DATABASE)

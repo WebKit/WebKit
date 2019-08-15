@@ -32,6 +32,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class SecurityOrigin;
@@ -43,7 +44,7 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap : public RefCounted<StorageAreaMap>, private IPC::MessageReceiver {
+class StorageAreaMap : public RefCounted<StorageAreaMap>, private IPC::MessageReceiver, public CanMakeWeakPtr<StorageAreaMap> {
 public:
     static Ref<StorageAreaMap> create(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();
@@ -57,7 +58,6 @@ public:
     void removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key);
     void clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea);
     bool contains(const String& key);
-    bool prewarm();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -71,7 +71,6 @@ public:
 private:
     StorageAreaMap(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
 
-    void didGetValues(uint64_t storageMapSeed);
     void didSetItem(uint64_t storageMapSeed, const String& key, bool quotaError);
     void didRemoveItem(uint64_t storageMapSeed, const String& key);
     void didClear(uint64_t storageMapSeed);
@@ -88,12 +87,11 @@ private:
     void dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
-    Ref<StorageNamespaceImpl> m_storageNamespace;
+    StorageNamespaceImpl* m_storageNamespace;
 
     uint64_t m_storageMapID;
 
     WebCore::StorageType m_storageType;
-    uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
     Ref<WebCore::SecurityOrigin> m_securityOrigin;
 
@@ -101,11 +99,7 @@ private:
 
     uint64_t m_currentSeed;
     bool m_hasPendingClear;
-    bool m_hasPendingGetValues;
     HashCountedSet<String> m_pendingValueChanges;
-
-    bool m_isDisconnected { true };
-    bool m_didPrewarm { false };
 };
 
 } // namespace WebKit

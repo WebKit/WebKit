@@ -507,9 +507,6 @@ public:
     StorageNamespace* sessionStorage(bool optionalCreate = true);
     void setSessionStorage(RefPtr<StorageNamespace>&&);
 
-    StorageNamespace* ephemeralLocalStorage(bool optionalCreate = true);
-    void setEphemeralLocalStorage(RefPtr<StorageNamespace>&&);
-
     bool hasCustomHTMLTokenizerTimeDelay() const;
     double customHTMLTokenizerTimeDelay() const;
 
@@ -599,7 +596,6 @@ public:
     CookieJar& cookieJar() { return m_cookieJar.get(); }
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
-    void setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&&);
 
     PluginInfoProvider& pluginInfoProvider();
 
@@ -877,7 +873,6 @@ private:
     bool m_canStartMedia { true };
 
     RefPtr<StorageNamespace> m_sessionStorage;
-    RefPtr<StorageNamespace> m_ephemeralLocalStorage;
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
     MonotonicTime m_timerThrottlingStateLastChangedTime;

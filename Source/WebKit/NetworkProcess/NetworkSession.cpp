@@ -33,7 +33,6 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "PingLoad.h"
-#include "StorageManager.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
@@ -85,7 +84,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_enableResourceLoadStatisticsLogTestingEvent(parameters.enableResourceLoadStatisticsLogTestingEvent)
 #endif
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(parameters.sessionID))
-    , m_storageManager(StorageManager::create(String(parameters.localStorageDirectory)))
 {
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;
@@ -99,7 +97,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
             RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
     }
 
-    SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
             return;
@@ -113,9 +110,6 @@ NetworkSession::~NetworkSession()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     destroyResourceLoadStatistics();
 #endif
-
-    m_storageManager->resume();
-    m_storageManager->waitUntilTasksFinished();
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

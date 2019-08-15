@@ -28,6 +28,10 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class Page;
@@ -39,6 +43,9 @@ public:
     virtual ~StorageNamespace() = default;
     virtual Ref<StorageArea> storageArea(const SecurityOriginData&) = 0;
     virtual Ref<StorageNamespace> copy(Page* newPage) = 0;
+
+    virtual PAL::SessionID sessionID() const = 0;
+    virtual void setSessionIDForTesting(PAL::SessionID) = 0;
 };
 
 } // namespace WebCore

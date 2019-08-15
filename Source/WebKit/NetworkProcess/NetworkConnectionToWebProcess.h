@@ -141,10 +141,6 @@ public:
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
 
-    void webPageWasAdded(PAL::SessionID, WebCore::PageIdentifier, WebCore::PageIdentifier oldPageID);
-    void webPageWasRemoved(PAL::SessionID, WebCore::PageIdentifier);
-    void webProcessSessionChanged(PAL::SessionID newSessionID, const Vector<WebCore::PageIdentifier>& pages);
-
     void removeSocketChannel(uint64_t identifier);
 
 private:

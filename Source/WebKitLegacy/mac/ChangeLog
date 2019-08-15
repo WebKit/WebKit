@@ -1,3 +1,13 @@
+2019-08-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Some improvements on web storage
+        https://bugs.webkit.org/show_bug.cgi?id=200373
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): notify storageNamespaceProvider about session change.
+
 2019-08-15  Youenn Fablet  <youenn@apple.com>
 
         Always create a Document with a valid SessionID

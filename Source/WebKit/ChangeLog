@@ -1,3 +1,303 @@
+2019-08-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Some improvements on web storage
+        https://bugs.webkit.org/show_bug.cgi?id=200373
+
+        Reviewed by Geoffrey Garen.
+
+        Fix some issues in web storage architecture. For example, sessionStorageNameSpace for web page is prepared and 
+        destroyed in the network process when the page comes and goes, even though the page may not use sessionStorage 
+        at all. The messages about page state sent from web process to network process can be waste.
+
+        Here are some general ideas of this patch:
+        1. Network process owns the web storage, and web process keeps a small local copy (based on session and 
+        origins that are visited). There is a virtual connection from the local copy in the web process to the original
+        copy in the network process. The connection is created by web process when some page asks for web storage.
+        2. If connection is lost because network process is gone, storage in memory will be lost. The local copy in web
+        processs will be discarded.
+        3. (SessionID, StorageNamespaceID, SecurityOrigin) is used to identify a storage area. If session is changed in
+        web process (like enabling private browsing in layout test now), a re-connection with different sessionID would 
+        suffice to load another copy of storage.
+        4. localStorage in ephemeral session has the same behavior as localStorage instead of sessionStorage, which
+        means different pages in the same ephemeral session share the same localStorage.
+
+        Also, this patch introduces StorageManagerSet to network process. It handles web storage stuff, including
+        receiving storage messages from web process, on one background thread. Previously each session has its own
+        StorageManager and each StorageManager has its own WorkQueue.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp: remove message handlers that are no longer needed. Network
+        process no longer needs to know page states from web process.
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::webPageWasAdded): Deleted.
+        (WebKit::NetworkConnectionToWebProcess::webPageWasRemoved): Deleted.
+        (WebKit::NetworkConnectionToWebProcess::webProcessSessionChanged): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * NetworkProcess/NetworkProcess.cpp: NetworkProcess uses StorageManagerSet instead of StorageManager from 
+        different sessions to deal with web storage.
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess): StorageManagerSet starts handling 
+        StorageManagerSet messages from the new connection.
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::hasLocalStorage):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::syncLocalStorage):
+        (WebKit::NetworkProcess::clearLegacyPrivateBrowsingLocalStorage): added for clearing in-memory ephemeral
+        localStorage.
+        (WebKit::NetworkProcess::getLocalStorageOriginDetails):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        (WebKit::NetworkProcess::webPageWasAdded): Deleted.
+        (WebKit::NetworkProcess::webPageWasRemoved): Deleted.
+        (WebKit::NetworkProcess::webProcessWasDisconnected): Deleted.
+        (WebKit::NetworkProcess::webProcessSessionChanged): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/NetworkSession.cpp: StorageManager is moved out of NetworkSession. It is now managed by 
+        StorageManagerSet.
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::storageManager): Deleted.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp: creation parameters of StorageManager is moved out of
+        NetworkSessionCreationParameters.
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::updateDatabase): remove an assertion that is no longer true as we can force an
+        update with syncLocalStorage now.
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h: make updateDatabase public for syncLocalStorage.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp: LocalStorageDatabaseTracker is created on the
+        background thread now, so it does not hold WorkQueue to do the file operation.
+        (WebKit::LocalStorageDatabaseTracker::create):
+        (WebKit::LocalStorageDatabaseTracker::LocalStorageDatabaseTracker):
+        (WebKit::LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker):
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::LocalStorageNamespace::cloneTo): Deleted.
+        * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+        * NetworkProcess/WebStorage/SessionStorageNamespace.cpp:
+        (WebKit::SessionStorageNamespace::getOrCreateStorageArea):
+        (WebKit::SessionStorageNamespace::addAllowedConnection): Deleted.
+        (WebKit::SessionStorageNamespace::removeAllowedConnection): Deleted.
+        * NetworkProcess/WebStorage/SessionStorageNamespace.h:
+        (WebKit::SessionStorageNamespace::allowedConnections const): Deleted.
+
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::generateStorageAreaIdentifier): each StorageArea has an identifier. StorageAreaMap in web process uses
+        this identifier to indicate which StorageArea it is connecting to.
+        (WebKit::StorageArea::StorageArea):
+        (WebKit::StorageArea::~StorageArea): StorageArea may still have listeners because StorageArea should be 
+        destroyed by requests from UI process, and listeners are connections to web processses.
+        (WebKit::StorageArea::addListener): load localStorageDatabase in advance if there is some connection to this 
+        LocalStorage area.
+        (WebKit::StorageArea::removeListener):
+        (WebKit::StorageArea::hasListener const):
+        (WebKit::StorageArea::clear):
+        (WebKit::StorageArea::openDatabaseAndImportItemsIfNeeded const):
+        (WebKit::StorageArea::dispatchEvents const):
+        (WebKit::StorageArea::syncToDatabase):
+        (WebKit::StorageArea::setItems): Deleted. Stop syncing from web process to network process after network process
+        is relaunched.
+        * NetworkProcess/WebStorage/StorageArea.h:
+        (WebKit::StorageArea::identifier):
+        (WebKit::StorageArea::setWorkQueue):
+
+        * NetworkProcess/WebStorage/StorageManager.cpp: StorageManager should be accessed by only background thread now.
+        (WebKit::StorageManager::StorageManager):
+        (WebKit::StorageManager::~StorageManager):
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::destroySessionStorageNamespace): this is not used now but keep it for future 
+        improvement to remove in-memory sessionStorage in network process if we know some web page is gone forever.
+        (WebKit::StorageManager::cloneSessionStorageNamespace): previously each page had its own ephemeral 
+        localStorageNamespace and now all pages in the same session share one localStorage, so we don't need to clone
+        localStorageNamespace.
+        (WebKit::StorageManager::getSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageEntriesForOrigins):
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        (WebKit::StorageManager::getLocalStorageOriginDetails):
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+        (WebKit::StorageManager::createLocalStorageArea):
+        (WebKit::StorageManager::createTransientLocalStorageArea):
+        (WebKit::StorageManager::createSessionStorageArea):
+        (WebKit::StorageManager::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateTransientLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateSessionStorageNamespace):
+        (WebKit::StorageManager::clearStorageNamespaces):
+        (WebKit::StorageManager::addAllowedSessionStorageNamespaceConnection): Deleted.
+        (WebKit::StorageManager::removeAllowedSessionStorageNamespaceConnection): Deleted.
+        (WebKit::StorageManager::processDidCloseConnection): Deleted.
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigin): Deleted.
+        (WebKit::StorageManager::createLocalStorageMap): Deleted.
+        (WebKit::StorageManager::createTransientLocalStorageMap): Deleted.
+        (WebKit::StorageManager::createSessionStorageMap): Deleted.
+        (WebKit::StorageManager::destroyStorageMap): Deleted.
+        (WebKit::StorageManager::prewarm): Deleted.
+        (WebKit::StorageManager::getValues): Deleted.
+        (WebKit::StorageManager::setItem): Deleted.
+        (WebKit::StorageManager::setItems): Deleted.
+        (WebKit::StorageManager::removeItem): Deleted.
+        (WebKit::StorageManager::clear): Deleted.
+        (WebKit::StorageManager::waitUntilTasksFinished): Deleted.
+        (WebKit::StorageManager::suspend): Deleted.
+        (WebKit::StorageManager::resume): Deleted.
+        (WebKit::StorageManager::findStorageArea const): Deleted.
+        * NetworkProcess/WebStorage/StorageManager.h:
+        (WebKit::StorageManager::workQueue const): Deleted.
+        (): Deleted.
+
+        * NetworkProcess/WebStorage/StorageManager.messages.in: Removed. Moved to StorageManagerSet.messages.in.
+
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp: Added.
+        (WebKit::StorageManagerSet::create):
+        (WebKit::StorageManagerSet::StorageManagerSet):
+        (WebKit::StorageManagerSet::~StorageManagerSet):
+        (WebKit::StorageManagerSet::add):
+        (WebKit::StorageManagerSet::remove):
+        (WebKit::StorageManagerSet::contains):
+        (WebKit::StorageManagerSet::addConnection):
+        (WebKit::StorageManagerSet::removeConnection):
+        (WebKit::StorageManagerSet::waitUntilTasksFinished):
+        (WebKit::StorageManagerSet::waitUntilSyncingLocalStorageFinished):
+        (WebKit::StorageManagerSet::suspend):
+        (WebKit::StorageManagerSet::resume):
+        (WebKit::StorageManagerSet::getSessionStorageOrigins):
+        (WebKit::StorageManagerSet::deleteSessionStorage):
+        (WebKit::StorageManagerSet::deleteSessionStorageForOrigins):
+        (WebKit::StorageManagerSet::getLocalStorageOrigins):
+        (WebKit::StorageManagerSet::deleteLocalStorageModifiedSince):
+        (WebKit::StorageManagerSet::deleteLocalStorageForOrigins):
+        (WebKit::StorageManagerSet::getLocalStorageOriginDetails):
+        (WebKit::StorageManagerSet::connectToLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToTransientLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToSessionStorageArea):
+        (WebKit::StorageManagerSet::disconnectFromStorageArea):
+        (WebKit::StorageManagerSet::getValues):
+        (WebKit::StorageManagerSet::setItem):
+        (WebKit::StorageManagerSet::removeItem):
+        (WebKit::StorageManagerSet::clear):
+        (WebKit::StorageManagerSet::cloneSessionStorageNamespace):
+        * NetworkProcess/WebStorage/StorageManagerSet.h: Added.
+        * NetworkProcess/WebStorage/StorageManagerSet.messages.in: Added.
+
+        * Shared/WebsiteDataStoreParameters.cpp: creation parameters of StorageManager are moved to 
+        WebsiteDataStoreParameters.
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * Shared/WebsiteDataStoreParameters.h:
+        * Sources.txt:
+
+        * UIProcess/API/C/WKContext.cpp: add SPI for tests.
+        (WKContextSyncLocalStorage):
+        (WKContextClearLegacyPrivateBrowsingLocalStorage):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveLocalStorage):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::syncLocalStorage):
+        (WebKit::WebProcessPool::clearLegacyPrivateBrowsingLocalStorage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: session change of web storage is done via 
+        WebStorageNamespaceProvider instead of WebProcess now.
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebProcess.cpp: web process no longer sends messsages about page state to network process.
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::removeWebPage):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::storageAreaMap const):
+        (WebKit::WebProcess::enablePrivateBrowsingForTesting): Deleted. This was used for changing session via 
+        WebProcess.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::length):
+        (WebKit::StorageAreaImpl::key):
+        (WebKit::StorageAreaImpl::item):
+        (WebKit::StorageAreaImpl::setItem):
+        (WebKit::StorageAreaImpl::removeItem):
+        (WebKit::StorageAreaImpl::clear):
+        (WebKit::StorageAreaImpl::contains):
+        (WebKit::StorageAreaImpl::storageType const):
+        (WebKit::StorageAreaImpl::incrementAccessCount):
+        (WebKit::StorageAreaImpl::decrementAccessCount):
+        (WebKit::StorageAreaImpl::prewarm): Deleted.
+        (WebKit::StorageAreaImpl::securityOrigin const): Deleted.
+
+        * WebProcess/WebStorage/StorageAreaImpl.h: make StorageAreaImpl hold a weak reference to StorageAreaMap and 
+        StorageNamespaceImpl hold a strong reference. In this way lifeime of localStorage StorageAreraMap stays align 
+        with StorageNameSpaceProvider and Page.
+
+        * WebProcess/WebStorage/StorageAreaMap.cpp: identifier of StorageAreaMap is the same as identifier of 
+        StorageArea it connects to. If the identifier is 0, it means the StorageAreaMap is disconnected.
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::~StorageAreaMap):
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::resetValues):
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+        (WebKit::StorageAreaMap::applyChange):
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        (WebKit::StorageAreaMap::connect):
+        (WebKit::StorageAreaMap::disconnect):
+        (WebKit::generateStorageMapID): Deleted.
+        (WebKit::StorageAreaMap::prewarm): Deleted.
+        (WebKit::StorageAreaMap::didGetValues): Deleted. This is useless as GetValues is a synchronous operation.
+        * WebProcess/WebStorage/StorageAreaMap.h:
+        (): Deleted.
+
+        * WebProcess/WebStorage/StorageAreaMap.messages.in: there are two synchronous messages, one for connection and 
+        one for getting values. We may merge them into one in future improvement.
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createTransientLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebKit::StorageNamespaceImpl::storageArea):
+        (WebKit::StorageNamespaceImpl::copy):
+        (WebKit::StorageNamespaceImpl::setSessionIDForTesting):
+        (WebKit::StorageNamespaceImpl::createEphemeralLocalStorageNamespace): Deleted.
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createLocalStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createTransientLocalStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace): Deleted.
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.h:
+
 2019-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Occasional hang under -[UIKeyboardTaskQueue lockWhenReadyForMainThread] when long-pressing non-editable text

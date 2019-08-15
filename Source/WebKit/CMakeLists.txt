@@ -118,7 +118,7 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
     NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 
-    NetworkProcess/WebStorage/StorageManager.messages.in
+    NetworkProcess/WebStorage/StorageManagerSet.messages.in
 
     NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 

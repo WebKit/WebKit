@@ -67,22 +67,17 @@ WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
 {
-    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(&page)->pageID().toUInt64(), quota);
+    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(&page)->pageID().toUInt64(), quota, page.sessionID());
 }
 
-Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page& page, unsigned quota)
+Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota, PAL::SessionID sessionID)
 {
-    return StorageNamespaceImpl::createEphemeralLocalStorageNamespace(WebPage::fromCorePage(&page)->pageID().toUInt64(), quota);
+    return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota, sessionID);
 }
 
-Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
+Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota, PAL::SessionID sessionID)
 {
-    return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota, StorageNamespaceImpl::IsEphemeral::No);
-}
-
-Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota)
-{
-    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_identifier, topLevelOrigin, quota);
+    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_identifier, topLevelOrigin, quota, sessionID);
 }
 
 }

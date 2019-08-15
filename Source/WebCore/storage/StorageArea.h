@@ -58,9 +58,6 @@ public:
     virtual void incrementAccessCount() { }
     virtual void decrementAccessCount() { }
     virtual void closeDatabaseIfIdle() { }
-    virtual bool prewarm() { return false; }
-
-    virtual const SecurityOriginData& securityOrigin() const = 0;
 };
 
 } // namespace WebCore

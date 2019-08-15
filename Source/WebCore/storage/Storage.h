@@ -46,7 +46,6 @@ public:
     ExceptionOr<void> removeItem(const String& key);
     ExceptionOr<void> clear();
     bool contains(const String& key) const;
-    bool prewarm();
 
     // Bindings support functions.
     bool isSupportedPropertyName(const String&) const;

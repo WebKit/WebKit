@@ -45,10 +45,6 @@ public:
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    const HashSet<IPC::Connection::UniqueID>& allowedConnections() const { return m_allowedConnections; }
-    void addAllowedConnection(IPC::Connection::UniqueID);
-    void removeAllowedConnection(IPC::Connection::UniqueID);
-
     Ref<StorageArea> getOrCreateStorageArea(WebCore::SecurityOriginData&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
@@ -61,7 +57,6 @@ public:
 private:
     explicit SessionStorageNamespace(unsigned quotaInBytes);
 
-    HashSet<IPC::Connection::UniqueID> m_allowedConnections;
     unsigned m_quotaInBytes { 0 };
 
     HashMap<WebCore::SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;

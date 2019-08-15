@@ -109,11 +109,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!resourceLoadStatisticsDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
 
-    auto localStorageDirectory = resolvedLocalStorageDirectory();
-    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
-    if (!localStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, localStorageDirectoryExtensionHandle);
-
     auto networkCacheDirectory = resolvedNetworkCacheDirectory();
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
     if (!networkCacheDirectory.isEmpty())
@@ -143,8 +138,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
-        WTFMove(localStorageDirectory),
-        WTFMove(localStorageDirectoryExtensionHandle),
         WTFMove(networkCacheDirectory),
         WTFMove(networkCacheDirectoryExtensionHandle),
     };
@@ -179,6 +172,10 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
+
+    parameters.localStorageDirectory = resolvedLocalStorageDirectory();
+    if (!parameters.localStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
 
     parameters.perOriginStorageQuota = perOriginStorageQuota();
     parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();

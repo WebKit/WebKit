@@ -86,8 +86,4 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier) Synchronous
 #endif
-
-    WebPageWasAdded(PAL::SessionID sessionID, WebCore::PageIdentifier pageID, WebCore::PageIdentifier oldPageID)
-    WebPageWasRemoved(PAL::SessionID sessionID, WebCore::PageIdentifier pageID)
-    WebProcessSessionChanged(PAL::SessionID newSessionID, Vector<WebCore::PageIdentifier> pages)
 }

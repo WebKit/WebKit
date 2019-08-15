@@ -35,9 +35,9 @@
 
 namespace WebKit {
 
-class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker, WTF::DestructionThread::MainRunLoop> {
+class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
 public:
-    static Ref<LocalStorageDatabaseTracker> create(Ref<WorkQueue>&&, String&& localStorageDirectory);
+    static Ref<LocalStorageDatabaseTracker> create(String&& localStorageDirectory);
     ~LocalStorageDatabaseTracker();
 
     String databasePath(const WebCore::SecurityOriginData&) const;
@@ -64,7 +64,7 @@ public:
     Vector<OriginDetails> originDetails();
 
 private:
-    LocalStorageDatabaseTracker(Ref<WorkQueue>&&, String&& localStorageDirectory);
+    LocalStorageDatabaseTracker(String&& localStorageDirectory);
 
     String databasePath(const String& filename) const;
     String localStorageDirectory() const;
@@ -73,8 +73,6 @@ private:
         CreateIfNonExistent,
         SkipIfNonExistent
     };
-
-    Ref<WorkQueue> m_queue;
     
     // It is not safe to use this member from a background thread, call localStorageDirectory() instead.
     const String m_localStorageDirectory;

@@ -159,6 +159,7 @@ public:
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
     JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
+    void syncLocalStorage();
 
     // Application Cache
     void clearAllApplicationCaches();

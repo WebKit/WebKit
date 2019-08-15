@@ -43,20 +43,7 @@ SessionStorageNamespace::~SessionStorageNamespace()
     ASSERT(!RunLoop::isMain());
 }
 
-void SessionStorageNamespace::addAllowedConnection(IPC::Connection::UniqueID allowedConnection)
-{
-    ASSERT(!RunLoop::isMain());
-    m_allowedConnections.add(allowedConnection);
-}
-
-
-void SessionStorageNamespace::removeAllowedConnection(IPC::Connection::UniqueID allowedConnection)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(m_allowedConnections.contains(allowedConnection));
-    m_allowedConnections.remove(allowedConnection);
-}
-auto SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin) -> Ref<StorageArea>
+Ref<StorageArea> SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin)
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [this, &securityOrigin]() mutable {

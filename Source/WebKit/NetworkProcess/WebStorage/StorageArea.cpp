@@ -36,11 +36,18 @@ namespace WebKit {
 
 using namespace WebCore;
 
+static uint64_t generateStorageAreaIdentifier()
+{
+    static uint64_t identifier;
+    return ++identifier;
+}
+
 StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
     : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
+    , m_identifier(generateStorageAreaIdentifier())
 {
     ASSERT(!RunLoop::isMain());
 }
@@ -48,30 +55,32 @@ StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const Sec
 StorageArea::~StorageArea()
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_eventListeners.isEmpty());
 
     if (m_localStorageDatabase)
         m_localStorageDatabase->close();
 }
 
-void StorageArea::addListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
+void StorageArea::addListener(IPC::Connection::UniqueID connectionID)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(!m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
-    m_eventListeners.add(std::make_pair(connectionID, storageMapID));
+    ASSERT(!m_eventListeners.contains(connectionID));
+
+    if (m_eventListeners.isEmpty() && !isEphemeral())
+        openDatabaseAndImportItemsIfNeeded();
+
+    m_eventListeners.add(connectionID);
 }
 
-void StorageArea::removeListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
+void StorageArea::removeListener(IPC::Connection::UniqueID connectionID)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(isEphemeral() || m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
-    m_eventListeners.remove(std::make_pair(connectionID, storageMapID));
+    m_eventListeners.remove(connectionID);
 }
 
-bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID) const
+bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID) const
 {
     ASSERT(!RunLoop::isMain());
-    return m_eventListeners.contains(std::make_pair(connectionID, storageMapID));
+    return m_eventListeners.contains(connectionID);
 }
 
 Ref<StorageArea> StorageArea::clone() const
@@ -103,25 +112,6 @@ void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t s
         m_localStorageDatabase->setItem(key, value);
 
     dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
-}
-
-void StorageArea::setItems(const HashMap<String, String>& items)
-{
-    ASSERT(!RunLoop::isMain());
-    // Import items from web process if items are not stored on disk.
-    if (!isEphemeral())
-        return;
-
-    for (auto& item : items) {
-        String oldValue;
-        bool quotaException;
-        auto newStorageMap = m_storageMap->setItem(item.key, item.value, oldValue, quotaException);
-        if (newStorageMap)
-            m_storageMap = WTFMove(newStorageMap);
-        
-        if (quotaException)
-            return;
-    }
 }
 
 void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
@@ -178,7 +168,7 @@ void StorageArea::clear()
     }
 
     for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        RunLoop::main().dispatch([connectionID = it->first, destinationStorageAreaID = it->second] {
+        RunLoop::main().dispatch([connectionID = *it, destinationStorageAreaID = m_identifier] {
             if (auto* connection = IPC::Connection::connection(connectionID))
                 connection->send(Messages::StorageAreaMap::ClearCache(), destinationStorageAreaID);
         });
@@ -192,9 +182,10 @@ void StorageArea::openDatabaseAndImportItemsIfNeeded() const
         return;
 
     ASSERT(m_localStorageNamespace->storageManager()->localStorageDatabaseTracker());
+    ASSERT(m_queue);
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->workQueue(), *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin);
+        m_localStorageDatabase = LocalStorageDatabase::create(*m_queue, *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin);
 
     if (m_didImportItemsFromDatabase)
         return;
@@ -207,13 +198,21 @@ void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, uin
 {
     ASSERT(!RunLoop::isMain());
     for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        sourceStorageAreaID = it->first == sourceConnection ? sourceStorageAreaID : 0;
+        sourceStorageAreaID = *it == sourceConnection ? sourceStorageAreaID : 0;
 
-        RunLoop::main().dispatch([connectionID = it->first, sourceStorageAreaID, destinationStorageAreaID = it->second, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy()] {
+        RunLoop::main().dispatch([connectionID = *it, sourceStorageAreaID, destinationStorageAreaID = m_identifier, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy()] {
             if (auto* connection = IPC::Connection::connection(connectionID))
                 connection->send(Messages::StorageAreaMap::DispatchStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString), destinationStorageAreaID);
         });
     }
+}
+
+void StorageArea::syncToDatabase()
+{
+    if (!m_localStorageDatabase)
+        return;
+
+    m_localStorageDatabase->updateDatabase();
 }
 
 } // namespace WebKit

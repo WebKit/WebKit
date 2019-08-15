@@ -25,7 +25,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkSocketStream.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
-$(PROJECT_DIR)/NetworkProcess/WebStorage/StorageManager.messages.in
+$(PROJECT_DIR)/NetworkProcess/WebStorage/StorageManagerSet.messages.in
 $(PROJECT_DIR)/NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
@@ -83,7 +83,6 @@ $(PROJECT_DIR)/UIProcess/WebPageProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebPasteboardProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessPool.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessProxy.messages.in
-$(PROJECT_DIR)/UIProcess/WebStorage/StorageManager.messages.in
 $(PROJECT_DIR)/UIProcess/ios/EditableImageController.messages.in
 $(PROJECT_DIR)/UIProcess/ios/SmartMagnificationController.messages.in
 $(PROJECT_DIR)/UIProcess/mac/SecItemShimProxy.messages.in

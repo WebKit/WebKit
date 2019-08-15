@@ -46,6 +46,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
+#include "WebStorageNamespaceProvider.h"
 #include "WebUserContentController.h"
 #include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/APICast.h>
@@ -348,9 +349,13 @@ void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGrou
 void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    WebProcess::singleton().enablePrivateBrowsingForTesting(enabled);
+    if (enabled)
+        WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
 
     PageGroup::pageGroup(pageGroup->identifier())->enableLegacyPrivateBrowsingForTesting(enabled);
+
+    auto webStorageNameSpaceProvider = WebStorageNamespaceProvider::getOrCreate(pageGroup->pageGroupID());
+    webStorageNameSpaceProvider->enableLegacyPrivateBrowsingForTesting(enabled);
 }
 
 void InjectedBundle::setPopupBlockingEnabled(WebPageGroupProxy* pageGroup, bool enabled)

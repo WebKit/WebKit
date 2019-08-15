@@ -30,13 +30,12 @@ namespace WebCore {
 enum class StorageType {
     Session,
     Local,
-    EphemeralLocal,
     TransientLocal,
 };
 
 inline bool isLocalStorage(StorageType storageType)
 {
-    return storageType == StorageType::Local || storageType == StorageType::TransientLocal || storageType == StorageType::EphemeralLocal;
+    return storageType == StorageType::Local || storageType == StorageType::TransientLocal;
 }
 
 inline bool isPersistentLocalStorage(StorageType storageType)

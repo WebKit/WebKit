@@ -390,18 +390,19 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         bool contains(const String&) final { return false; }
         StorageType storageType() const final { return StorageType::Local; }
         size_t memoryBytesUsedByCache() final { return 0; }
-        const SecurityOriginData& securityOrigin() const final { static NeverDestroyed<SecurityOriginData> origin; return origin.get(); }
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
         Ref<StorageArea> storageArea(const SecurityOriginData&) final { return adoptRef(*new EmptyStorageArea); }
         Ref<StorageNamespace> copy(Page*) final { return adoptRef(*new EmptyStorageNamespace); }
+        PAL::SessionID sessionID() const { return PAL::SessionID::emptySessionID(); }
+        void setSessionIDForTesting(PAL::SessionID) { };
     };
 
     Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
-    Ref<StorageNamespace> createLocalStorageNamespace(unsigned) final;
-    Ref<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned) final;
-    Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) final;
+    Ref<StorageNamespace> createLocalStorageNamespace(unsigned, PAL::SessionID) final;
+    Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned, PAL::SessionID) final;
+
 };
 
 class EmptyUserContentProvider final : public UserContentProvider {
@@ -525,17 +526,12 @@ Ref<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespa
     return adoptRef(*new EmptyStorageNamespace);
 }
 
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned, PAL::SessionID)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }
 
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned)
-{
-    return adoptRef(*new EmptyStorageNamespace);
-}
-
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned, PAL::SessionID)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }

@@ -43,21 +43,6 @@ StorageNamespaceProvider::StorageNamespaceProvider()
 
 StorageNamespaceProvider::~StorageNamespaceProvider()
 {
-    ASSERT(m_pages.isEmpty());
-}
-
-void StorageNamespaceProvider::addPage(Page& page)
-{
-    ASSERT(!m_pages.contains(&page));
-
-    m_pages.add(&page);
-}
-
-void StorageNamespaceProvider::removePage(Page& page)
-{
-    ASSERT(m_pages.contains(&page));
-
-    m_pages.remove(&page);
 }
 
 Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
@@ -66,36 +51,47 @@ Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
     // so the Document had better still actually have a Page.
     ASSERT(document.page());
 
-    bool ephemeral = document.page()->usesEphemeralSession();
     bool transient = !document.securityOrigin().canAccessLocalStorage(&document.topOrigin());
 
     RefPtr<StorageNamespace> storageNamespace;
 
     if (transient)
-        storageNamespace = &transientLocalStorageNamespace(document.topOrigin());
-    else if (ephemeral)
-        storageNamespace = document.page()->ephemeralLocalStorage();
+        storageNamespace = &transientLocalStorageNamespace(document.topOrigin(), document.page()->sessionID());
     else
-        storageNamespace = &localStorageNamespace();
+        storageNamespace = &localStorageNamespace(document.page()->sessionID());
 
     return storageNamespace->storageArea(document.securityOrigin().data());
 }
 
-StorageNamespace& StorageNamespaceProvider::localStorageNamespace()
+StorageNamespace& StorageNamespaceProvider::localStorageNamespace(PAL::SessionID sessionID)
 {
     if (!m_localStorageNamespace)
-        m_localStorageNamespace = createLocalStorageNamespace(localStorageDatabaseQuotaInBytes);
+        m_localStorageNamespace = createLocalStorageNamespace(localStorageDatabaseQuotaInBytes, sessionID);
 
+    ASSERT(m_localStorageNamespace->sessionID() == sessionID);
     return *m_localStorageNamespace;
 }
 
-StorageNamespace& StorageNamespaceProvider::transientLocalStorageNamespace(SecurityOrigin& securityOrigin)
+StorageNamespace& StorageNamespaceProvider::transientLocalStorageNamespace(SecurityOrigin& securityOrigin, PAL::SessionID sessionID)
 {
-    auto& slot = m_transientLocalStorageMap.add(&securityOrigin, nullptr).iterator->value;
+    auto& slot = m_transientLocalStorageNamespaces.add(securityOrigin.data(), nullptr).iterator->value;
     if (!slot)
-        slot = createTransientLocalStorageNamespace(securityOrigin, localStorageDatabaseQuotaInBytes);
+        slot = createTransientLocalStorageNamespace(securityOrigin, localStorageDatabaseQuotaInBytes, sessionID);
 
+    ASSERT(slot->sessionID() == sessionID);
     return *slot;
+}
+
+void StorageNamespaceProvider::enableLegacyPrivateBrowsingForTesting(bool enabled)
+{
+    auto newSessionID = enabled ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID();
+    if (m_localStorageNamespace && newSessionID != m_localStorageNamespace->sessionID())
+        m_localStorageNamespace->setSessionIDForTesting(newSessionID);
+    
+    for (auto& transientLocalStorageNamespace : m_transientLocalStorageNamespaces.values()) {
+        if (newSessionID != transientLocalStorageNamespace->sessionID())
+            m_localStorageNamespace->setSessionIDForTesting(newSessionID);
+    }
 }
 
 }

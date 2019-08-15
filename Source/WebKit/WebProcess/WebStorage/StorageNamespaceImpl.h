@@ -39,12 +39,9 @@ class WebPage;
 
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
-    static Ref<StorageNamespaceImpl> createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
-    static Ref<StorageNamespaceImpl> createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
-
-    enum class IsEphemeral : bool { No, Yes };
-    static Ref<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes, IsEphemeral isEphemeral);
-    static Ref<StorageNamespaceImpl> createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes);
+    static Ref<StorageNamespaceImpl> createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes, PAL::SessionID);
+    static Ref<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes, PAL::SessionID);
+    static Ref<StorageNamespaceImpl> createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes, PAL::SessionID);
 
     virtual ~StorageNamespaceImpl();
 
@@ -52,11 +49,14 @@ public:
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
     WebCore::SecurityOrigin* topLevelOrigin() const { return m_topLevelOrigin.get(); }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
+    PAL::SessionID sessionID() const override { return m_sessionID; }
 
     void didDestroyStorageAreaMap(StorageAreaMap&);
 
+    void setSessionIDForTesting(PAL::SessionID) override;
+
 private:
-    explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
+    explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, PAL::SessionID);
 
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
     Ref<WebCore::StorageNamespace> copy(WebCore::Page*) override;
@@ -69,7 +69,9 @@ private:
 
     const unsigned m_quotaInBytes;
 
-    HashMap<WebCore::SecurityOriginData, StorageAreaMap*> m_storageAreaMaps;
+    PAL::SessionID m_sessionID;
+
+    HashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaMap>> m_storageAreaMaps;
 };
 
 } // namespace WebKit

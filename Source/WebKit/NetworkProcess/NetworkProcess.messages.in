@@ -163,6 +163,10 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(INDEXED_DATABASE)
     SetIDBPerOriginQuota(uint64_t quota)
 #endif
+
+    SyncLocalStorage() -> () Synchronous
+    ClearLegacyPrivateBrowsingLocalStorage()
+
     UpdateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin)
 
     StoreAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution adClickAttribution)

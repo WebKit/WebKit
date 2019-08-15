@@ -31,6 +31,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class Document;
@@ -45,27 +49,23 @@ public:
     WEBCORE_EXPORT virtual ~StorageNamespaceProvider();
 
     virtual Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
-    virtual Ref<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned quota) = 0;
 
     Ref<StorageArea> localStorageArea(Document&);
 
-    void addPage(Page&);
-    void removePage(Page&);
+    WEBCORE_EXPORT void enableLegacyPrivateBrowsingForTesting(bool enabled);
 
 protected:
     StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }
 
 private:
-    StorageNamespace& localStorageNamespace();
-    StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&);
+    StorageNamespace& localStorageNamespace(PAL::SessionID);
+    StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&, PAL::SessionID);
 
-    virtual Ref<StorageNamespace> createLocalStorageNamespace(unsigned quota) = 0;
-    virtual Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota) = 0;
-
-    HashSet<Page*> m_pages;
+    virtual Ref<StorageNamespace> createLocalStorageNamespace(unsigned quota, PAL::SessionID) = 0;
+    virtual Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota, PAL::SessionID) = 0;
 
     RefPtr<StorageNamespace> m_localStorageNamespace;
-    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
+    HashMap<SecurityOriginData, RefPtr<StorageNamespace>> m_transientLocalStorageNamespaces;
 };
 
 } // namespace WebCore

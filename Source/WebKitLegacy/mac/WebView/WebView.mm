@@ -2888,6 +2888,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLocalStorageEnabled([preferences localStorageEnabled]);
 
     _private->page->enableLegacyPrivateBrowsing([preferences privateBrowsingEnabled]);
+    _private->group->storageNamespaceProvider().enableLegacyPrivateBrowsingForTesting([preferences privateBrowsingEnabled]);
     settings.setSansSerifFontFamily([preferences sansSerifFontFamily]);
     settings.setSerifFontFamily([preferences serifFontFamily]);
     settings.setStandardFontFamily([preferences standardFontFamily]);

@@ -8,7 +8,7 @@ ALERT: localStorage's length is: 1
 ALERT: The item in new window starts out as: ChangedValue
 ALERT: The item in new window is now: NewWindowValue
 ALERT: Back in parent window, localStorage's length is: 1
-ALERT: Back in parent window, testItem is: ChangedValue
+ALERT: Back in parent window, testItem is: NewWindowValue
 ALERT: Final window, localStorage's length is: 1
 ALERT: Final window, item is: Persistent item!
 

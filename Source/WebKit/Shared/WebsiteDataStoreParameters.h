@@ -70,6 +70,9 @@ struct WebsiteDataStoreParameters {
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
 #endif
 
+    String localStorageDirectory;
+    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
+
     uint64_t perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
     uint64_t perThirdPartyOriginStorageQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
 };

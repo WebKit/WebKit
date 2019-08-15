@@ -142,6 +142,7 @@ interface TestRunner {
     void clearAllDatabases();
     void setDatabaseQuota(unsigned long long quota);
     DOMString pathToLocalResource(DOMString url);
+    void syncLocalStorage();
 
     attribute double databaseDefaultQuota;
     attribute double databaseMaxQuota;

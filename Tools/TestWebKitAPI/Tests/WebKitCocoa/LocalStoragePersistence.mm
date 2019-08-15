@@ -104,9 +104,10 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
+    // If network process crashes, sessionStorage would be lost.
     readyToContinue = false;
     [webView evaluateJavaScript:@"window.sessionStorage.getItem('session')" completionHandler:^(id result, NSError *) {
-        EXPECT_TRUE([@"storage" isEqualToString:result]);
+        EXPECT_TRUE([result isEqual:NSNull.null]);
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);

@@ -61,8 +61,6 @@ public:
     void decrementAccessCount() override;
     void closeDatabaseIfIdle() override;
 
-    const WebCore::SecurityOriginData& securityOrigin() const override { return m_securityOrigin; }
-
     Ref<StorageAreaImpl> copy();
     void close();
 
@@ -73,6 +71,8 @@ public:
     void clearForOriginDeletion();
 
     void sync();
+
+    void sessionChanged(bool isNewSessionPersistent);
 
 private:
     StorageAreaImpl(WebCore::StorageType, const WebCore::SecurityOriginData&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);

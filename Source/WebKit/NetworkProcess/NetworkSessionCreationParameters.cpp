@@ -50,7 +50,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if USE(CURL)
         , { }, { }
 #endif
-        , { }, { }, false, false, { }, { }, { }, { }, { }, { }, { }, { }, { }, { }
+        , { }, { }, false, false, { }, { }, { }, { }, { }, { }, { }, { }
     };
 }
 
@@ -86,7 +86,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << resourceLoadStatisticsManualPrevalentResource;
     encoder << enableResourceLoadStatisticsNSURLSessionSwitching;
 
-    encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
     encoder << networkCacheDirectory << networkCacheDirectoryExtensionHandle;
 
     encoder << deviceManagementRestrictionsEnabled;
@@ -214,16 +213,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     decoder >> enableResourceLoadStatisticsNSURLSessionSwitching;
     if (!enableResourceLoadStatisticsNSURLSessionSwitching)
         return WTF::nullopt;
-    
-    Optional<String> localStorageDirectory;
-    decoder >> localStorageDirectory;
-    if (!localStorageDirectory)
-        return WTF::nullopt;
-
-    Optional<SandboxExtension::Handle> localStorageDirectoryExtensionHandle;
-    decoder >> localStorageDirectoryExtensionHandle;
-    if (!localStorageDirectoryExtensionHandle)
-        return WTF::nullopt;
 
     Optional<String> networkCacheDirectory;
     decoder >> networkCacheDirectory;
@@ -277,8 +266,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*deviceManagementRestrictionsEnabled)
         , WTFMove(*allLoadsBlockedByDeviceManagementRestrictionsForTesting)
         , WTFMove(*resourceLoadStatisticsManualPrevalentResource)
-        , WTFMove(*localStorageDirectory)
-        , WTFMove(*localStorageDirectoryExtensionHandle)
         , WTFMove(*networkCacheDirectory)
         , WTFMove(*networkCacheDirectoryExtensionHandle)
     }};

@@ -939,8 +939,10 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     auto websiteDataStore = WKContextGetWebsiteDataStore(TestController::singleton().context());
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore);
 
-    ClearIndexedDatabases();
     setIDBPerOriginQuota(50 * MB);
+
+    clearIndexedDatabases();
+    clearLocalStorage();
 
     clearServiceWorkerRegistrations();
     clearDOMCaches();
@@ -3069,8 +3071,8 @@ void TestController::setIDBPerOriginQuota(uint64_t quota)
     WKContextSetIDBPerOriginQuota(platformContext(), quota);
 }
 
-struct RemoveAllIndexedDatabasesCallbackContext {
-    explicit RemoveAllIndexedDatabasesCallbackContext(TestController& controller)
+struct StorageVoidCallbackContext {
+    explicit StorageVoidCallbackContext(TestController& controller)
         : testController(controller)
     {
     }
@@ -3079,18 +3081,37 @@ struct RemoveAllIndexedDatabasesCallbackContext {
     bool done { false };
 };
 
-static void RemoveAllIndexedDatabasesCallback(void* userData)
+static void StorageVoidCallback(void* userData)
 {
-    auto* context = static_cast<RemoveAllIndexedDatabasesCallbackContext*>(userData);
+    auto* context = static_cast<StorageVoidCallbackContext*>(userData);
     context->done = true;
     context->testController.notifyDone();
 }
 
-void TestController::ClearIndexedDatabases()
+void TestController::clearIndexedDatabases()
 {
     auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
-    RemoveAllIndexedDatabasesCallbackContext context(*this);
-    WKWebsiteDataStoreRemoveAllIndexedDatabases(websiteDataStore, &context, RemoveAllIndexedDatabasesCallback);
+    StorageVoidCallbackContext context(*this);
+    WKWebsiteDataStoreRemoveAllIndexedDatabases(websiteDataStore, &context, StorageVoidCallback);
+    runUntil(context.done, noTimeout);
+}
+
+void TestController::clearLocalStorage()
+{
+    auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
+    StorageVoidCallbackContext context(*this);
+    WKWebsiteDataStoreRemoveLocalStorage(websiteDataStore, &context, StorageVoidCallback);
+    runUntil(context.done, noTimeout);
+
+    StorageVoidCallbackContext legacyContext(*this);
+    WKContextClearLegacyPrivateBrowsingLocalStorage(platformContext(), &legacyContext, StorageVoidCallback);
+    runUntil(legacyContext.done, noTimeout);
+}
+
+void TestController::syncLocalStorage()
+{
+    StorageVoidCallbackContext context(*this);
+    WKContextSyncLocalStorage(platformContext(), &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 

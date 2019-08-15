@@ -52,7 +52,6 @@ class AdClickAttributionManager;
 class NetworkDataTask;
 class NetworkProcess;
 class NetworkResourceLoader;
-class StorageManager;
 class NetworkSocketChannel;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
@@ -80,8 +79,6 @@ public:
 
     void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
     void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
-
-    StorageManager& storageManager() { return m_storageManager.get(); }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
@@ -145,7 +142,6 @@ protected:
 
     PrefetchCache m_prefetchCache;
 
-    Ref<StorageManager> m_storageManager;
 #if !ASSERT_DISABLED
     bool m_isInvalidated { false };
 #endif

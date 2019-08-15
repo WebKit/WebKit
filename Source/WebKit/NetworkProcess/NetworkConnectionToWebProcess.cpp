@@ -49,7 +49,6 @@
 #include "PingLoad.h"
 #include "PreconnectTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
-#include "StorageManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebIDBConnectionToClient.h"
@@ -299,7 +298,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     // root activity trackers.
     stopAllNetworkActivityTracking();
 
-    m_networkProcess->webProcessWasDisconnected(connection);
+    m_networkProcess->connectionToWebProcessClosed(connection);
 
     m_networkProcess->removeNetworkConnectionToWebProcess(*this);
 
@@ -914,20 +913,5 @@ void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID s
     completionHandler(WTFMove(serverConnectionIdentifier));
 }
 #endif
-
-void NetworkConnectionToWebProcess::webPageWasAdded(PAL::SessionID sessionID, PageIdentifier pageID, WebCore::PageIdentifier oldPageID)
-{
-    m_networkProcess->webPageWasAdded(m_connection.get(), sessionID, pageID, oldPageID);
-}
-
-void NetworkConnectionToWebProcess::webPageWasRemoved(PAL::SessionID sessionID, PageIdentifier pageID)
-{
-    m_networkProcess->webPageWasRemoved(m_connection.get(), sessionID, pageID);
-}
-
-void NetworkConnectionToWebProcess::webProcessSessionChanged(PAL::SessionID newSessionID, const Vector<PageIdentifier>& pages)
-{
-    m_networkProcess->webProcessSessionChanged(m_connection.get(), newSessionID, pages);
-}
 
 } // namespace WebKit

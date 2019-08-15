@@ -54,7 +54,6 @@ public:
     void clearAllStorageAreas();
 
     Vector<WebCore::SecurityOriginData> ephemeralOrigins() const;
-    void cloneTo(LocalStorageNamespace& newLocalStorageNamespace);
 
 private:
     LocalStorageNamespace(StorageManager&, uint64_t storageManagerID);

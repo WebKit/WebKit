@@ -669,3 +669,19 @@ void WKContextClearCurrentModifierStateForTesting(WKContextRef contextRef)
 {
     WebKit::toImpl(contextRef)->clearCurrentModifierStateForTesting();
 }
+
+void WKContextSyncLocalStorage(WKContextRef contextRef, void* context, WKContextSyncLocalStorageCallback callback)
+{
+    WebKit::toImpl(contextRef)->syncLocalStorage([context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
+void WKContextClearLegacyPrivateBrowsingLocalStorage(WKContextRef contextRef, void* context, WKContextClearLegacyPrivateBrowsingLocalStorageCallback callback)
+{
+    WebKit::toImpl(contextRef)->clearLegacyPrivateBrowsingLocalStorage([context, callback] {
+        if (callback)
+            callback(context);
+    });
+}

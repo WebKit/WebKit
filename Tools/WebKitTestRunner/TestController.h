@@ -262,7 +262,9 @@ public:
 
     void removeAllSessionCredentials();
 
-    void ClearIndexedDatabases();
+    void clearIndexedDatabases();
+    void clearLocalStorage();
+    void syncLocalStorage();
 
     void clearServiceWorkerRegistrations();
 

@@ -1,2 +1,2 @@
-PASS sessionStorage[storageKey] is "Made it"
+PASS localStorage[storageKey] is "Made it"
 Successfully opened database with version 3.

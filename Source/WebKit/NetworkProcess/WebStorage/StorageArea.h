@@ -49,15 +49,15 @@ public:
     ~StorageArea();
 
     const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
+    uint64_t identifier() { return m_identifier; }
 
-    void addListener(IPC::Connection::UniqueID, uint64_t storageMapID);
-    void removeListener(IPC::Connection::UniqueID, uint64_t storageMapID);
-    bool hasListener(IPC::Connection::UniqueID, uint64_t storageMapID) const;
+    void addListener(IPC::Connection::UniqueID);
+    void removeListener(IPC::Connection::UniqueID);
+    bool hasListener(IPC::Connection::UniqueID connectionID) const;
 
     Ref<StorageArea> clone() const;
 
     void setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
-    void setItems(const HashMap<String, String>&);
     void removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
     void clear(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
 
@@ -67,6 +67,10 @@ public:
     bool isEphemeral() const { return !m_localStorageNamespace; }
 
     void openDatabaseAndImportItemsIfNeeded() const;
+
+    void setWorkQueue(RefPtr<WorkQueue>&& queue) { m_queue = WTFMove(queue); }
+
+    void syncToDatabase();
 
 private:
     StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
@@ -82,7 +86,10 @@ private:
     unsigned m_quotaInBytes { 0 };
 
     RefPtr<WebCore::StorageMap> m_storageMap;
-    HashSet<std::pair<IPC::Connection::UniqueID, uint64_t>> m_eventListeners;
+    HashSet<IPC::Connection::UniqueID> m_eventListeners;
+
+    uint64_t m_identifier;
+    RefPtr<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

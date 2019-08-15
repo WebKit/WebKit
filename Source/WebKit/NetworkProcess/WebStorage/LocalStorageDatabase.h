@@ -55,6 +55,8 @@ public:
     void removeItem(const String& key);
     void clear();
 
+    void updateDatabase();
+
     // Will block until all pending changes have been written to disk.
     void close();
 
@@ -73,7 +75,6 @@ private:
     void itemDidChange(const String& key, const String& value);
 
     void scheduleDatabaseUpdate();
-    void updateDatabase();
     void updateDatabaseWithChangedItems(const HashMap<String, String>&);
 
     bool databaseIsEmpty();

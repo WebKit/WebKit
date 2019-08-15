@@ -1,3 +1,36 @@
+2019-08-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Some improvements on web storage
+        https://bugs.webkit.org/show_bug.cgi?id=200373
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST): update expectation for behavior change.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: new SPI to synchronously flush localStorage to 
+        database file.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::syncLocalStorage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+        * WebKitTestRunner/TestController.cpp: clear local storage between test runs to make each test isolated.
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::StorageVoidCallbackContext::StorageVoidCallbackContext):
+        (WTR::StorageVoidCallback):
+        (WTR::TestController::clearIndexedDatabases):
+        (WTR::TestController::clearLocalStorage):
+        (WTR::TestController::syncLocalStorage):
+        (WTR::RemoveAllIndexedDatabasesCallbackContext::RemoveAllIndexedDatabasesCallbackContext): Deleted. Replaced
+        with StorageVoidCallbackContext for general usage.
+        (WTR::RemoveAllIndexedDatabasesCallback): Deleted. Replaced with StorageVoidCallback.
+        (WTR::TestController::ClearIndexedDatabases): Deleted. Use lowercase for consistent style.
+        * WebKitTestRunner/TestController.h:
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle): add handler for new message 
+        SyncLocalStorage.
+
 2019-08-15  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Add content hook to FlaskRequestsResponse

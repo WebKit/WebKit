@@ -47,7 +47,7 @@ LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(!RunLoop::isMain());
 }
 
-auto LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral) -> Ref<StorageArea>
+Ref<StorageArea> LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral)
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
@@ -79,13 +79,6 @@ Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
             origins.append(storageArea->securityOrigin());
     }
     return origins;
-}
-
-void LocalStorageNamespace::cloneTo(LocalStorageNamespace& newLocalStorageNamespace)
-{
-    ASSERT(!RunLoop::isMain());
-    for (auto& pair : m_storageAreaMap)
-        newLocalStorageNamespace.m_storageAreaMap.add(pair.key, pair.value->clone());
 }
 
 } // namespace WebKit

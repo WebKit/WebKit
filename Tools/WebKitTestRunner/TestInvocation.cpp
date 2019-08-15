@@ -1666,6 +1666,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SyncLocalStorage")) {
+        TestController::singleton().syncLocalStorage();
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

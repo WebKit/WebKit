@@ -120,6 +120,12 @@ WK_EXPORT void WKContextSetIDBPerOriginQuota(WKContextRef context, uint64_t quot
 
 WK_EXPORT void WKContextClearCurrentModifierStateForTesting(WKContextRef context);
 
+typedef void (*WKContextSyncLocalStorageCallback)(void* functionContext);
+WK_EXPORT void WKContextSyncLocalStorage(WKContextRef contextRef, void* context, WKContextSyncLocalStorageCallback callback);
+
+typedef void (*WKContextClearLegacyPrivateBrowsingLocalStorageCallback)(void* functionContext);
+WK_EXPORT void WKContextClearLegacyPrivateBrowsingLocalStorage(WKContextRef contextRef, void* context, WKContextClearLegacyPrivateBrowsingLocalStorageCallback callback);
+
 #ifdef __cplusplus
 }
 #endif

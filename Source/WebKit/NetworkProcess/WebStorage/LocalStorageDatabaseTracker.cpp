@@ -39,24 +39,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(Ref<WorkQueue>&& queue, String&& localStorageDirectory)
+Ref<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(String&& localStorageDirectory)
 {
-    return adoptRef(*new LocalStorageDatabaseTracker(WTFMove(queue), WTFMove(localStorageDirectory)));
+    return adoptRef(*new LocalStorageDatabaseTracker(WTFMove(localStorageDirectory)));
 }
 
-LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue, String&& localStorageDirectory)
-    : m_queue(WTFMove(queue))
-    , m_localStorageDirectory(WTFMove(localStorageDirectory))
+LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(String&& localStorageDirectory)
+    : m_localStorageDirectory(WTFMove(localStorageDirectory))
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT(!RunLoop::isMain());
 
-    // Make sure the encoding is initialized before we start dispatching things to the queue.
-    UTF8Encoding();
-
-    m_queue->dispatch([protectedThis = makeRef(*this)]() mutable {
-        // Delete legacy storageTracker database file.
-        SQLiteFileSystem::deleteDatabaseFile(protectedThis->databasePath("StorageTracker.db"));
-    });
+    SQLiteFileSystem::deleteDatabaseFile(databasePath("StorageTracker.db"));
 }
 
 String LocalStorageDatabaseTracker::localStorageDirectory() const
@@ -66,7 +59,7 @@ String LocalStorageDatabaseTracker::localStorageDirectory() const
 
 LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT(!RunLoop::isMain());
 }
 
 String LocalStorageDatabaseTracker::databasePath(const SecurityOriginData& securityOrigin) const

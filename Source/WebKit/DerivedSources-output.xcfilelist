@@ -88,8 +88,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessage
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageAreaMapMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageAreaMapMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageManagerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageManagerSetMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageManagerSetMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/TextCheckingControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/TextCheckingControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/UserMediaCaptureManagerMessageReceiver.cpp

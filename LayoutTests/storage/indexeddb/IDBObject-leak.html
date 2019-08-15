@@ -13,7 +13,7 @@ function test() {
         return;
     }
 
-    if (sessionStorage.doneFirstLoad) {
+    if (localStorage.doneFirstLoad) {
         gc();
         shouldBeEqualToNumber("internals.numberOfIDBTransactions()", 0);
         finishJSTest();
@@ -23,16 +23,21 @@ function test() {
     var dbname = setDBNameFromPath() + Date();
     var request =  window.indexedDB.open(dbname);
     request.onupgradeneeded = function(evt) {
-        sessionStorage.doneFirstLoad = true;
+        localStorage.doneFirstLoad = true;
         if (!window.testRunner || !testRunner.terminateNetworkProcess) {
             testFailed('This test requires access to the TestRunner object and terminateNetworkProcess() function');
             finishJSTest();
             return;
         } 
+
+        // Make sure localStorage is flushed to disk before crashing network process.
+        testRunner.syncLocalStorage();
         testRunner.terminateNetworkProcess();
-        setTimeout((()=> {
-            location.reload();
-        }), 0);
+        evt.target.result.onerror = function(e) {
+            setTimeout((()=> {
+                location.reload();
+            }), 0);
+        }
     }
 }
 

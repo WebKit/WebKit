@@ -21,7 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageAreaMap {
-    DidGetValues(uint64_t storageMapSeed)
     DidSetItem(uint64_t storageMapSeed, String key, bool quotaException)
     DidRemoveItem(uint64_t storageMapSeed, String key)
     DidClear(uint64_t storageMapSeed)

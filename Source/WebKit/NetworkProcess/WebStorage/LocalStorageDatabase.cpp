@@ -259,7 +259,6 @@ void LocalStorageDatabase::updateDatabase()
     if (m_isClosed)
         return;
 
-    ASSERT(m_didScheduleDatabaseUpdate);
     m_didScheduleDatabaseUpdate = false;
 
     HashMap<String, String> changedItems;

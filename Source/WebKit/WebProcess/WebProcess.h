@@ -215,8 +215,6 @@ public:
     void unregisterStorageAreaMap(StorageAreaMap&);
     StorageAreaMap* storageAreaMap(uint64_t identifier) const;
 
-    void enablePrivateBrowsingForTesting(bool);
-
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void destroyRenderingResources();

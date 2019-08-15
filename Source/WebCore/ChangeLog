@@ -1,3 +1,59 @@
+2019-08-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Some improvements on web storage
+        https://bugs.webkit.org/show_bug.cgi?id=200373
+
+        Reviewed by Geoffrey Garen.
+
+        Remove storage type EphemeralLocalStorage, which is used for localStorage in ephemeral session, and use 
+        LocalStorage instead.
+
+        Add SessionID to StorageNamespace to make StorageNamespace session-specific.
+
+        No new test, updating existing tests for new behavior.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyStorageNamespaceProvider::createLocalStorageNamespace):
+        (WebCore::EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace):
+        (WebCore::EmptyStorageNamespaceProvider::createEphemeralLocalStorageNamespace): Deleted.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow const): ephemeral localStorage of different windows will connect to the same 
+        StorageArea in network process, so no need to copy from parent window to child window.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::prewarmLocalStorageIfNecessary): localStorage will be prewarmed in network process in the
+        initialization of StorageAreaMap.
+
+        * page/Page.cpp:
+        (WebCore::m_applicationManifest):
+        (WebCore::Page::~Page):
+        (WebCore::Page::setSessionID):
+        (WebCore::Page::ephemeralLocalStorage): Deleted.
+        (WebCore::Page::setEphemeralLocalStorage): Deleted.
+        (WebCore::Page::setStorageNamespaceProvider): Deleted.
+        * page/Page.h:
+        (WebCore::Page::storageNamespaceProvider):
+        * storage/Storage.cpp:
+        (WebCore::Storage::prewarm): Deleted.
+        * storage/Storage.h:
+        * storage/StorageArea.h:
+        (WebCore::StorageArea::closeDatabaseIfIdle):
+        (WebCore::StorageArea::prewarm): Deleted.
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::~StorageNamespaceProvider):
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        (WebCore::StorageNamespaceProvider::localStorageNamespace):
+        (WebCore::StorageNamespaceProvider::transientLocalStorageNamespace):
+        (WebCore::StorageNamespaceProvider::enableLegacyPrivateBrowsingForTesting): change SessionID of storageNamespace
+        and update every StorageArea in this namespace.
+        (WebCore::StorageNamespaceProvider::addPage): Deleted.
+        (WebCore::StorageNamespaceProvider::removePage): Deleted.
+        * storage/StorageNamespaceProvider.h:
+        * storage/StorageType.h:
+        (WebCore::isLocalStorage):
+
 2019-08-15  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make length, clamp, operator+, operator-, operator*, operator/, operator[], operator[]=, operator.xy, operator.xy=, native

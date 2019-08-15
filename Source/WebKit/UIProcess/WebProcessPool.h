@@ -317,6 +317,8 @@ public:
     void disableServiceWorkerProcessTerminationDelay();
 
     void syncNetworkProcessCookies();
+    void syncLocalStorage(CompletionHandler<void()>&& callback);
+    void clearLegacyPrivateBrowsingLocalStorage(CompletionHandler<void()>&& callback);
 
     void setIDBPerOriginQuota(uint64_t);
 

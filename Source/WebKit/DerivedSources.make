@@ -136,7 +136,7 @@ MESSAGE_RECEIVERS = \
     ServiceWorkerFetchTask \
     SmartMagnificationController \
     StorageAreaMap \
-    StorageManager \
+    StorageManagerSet \
     TextCheckingControllerProxy \
     UserMediaCaptureManager \
     UserMediaCaptureManagerProxy \

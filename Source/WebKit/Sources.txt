@@ -70,6 +70,7 @@ NetworkProcess/WebStorage/LocalStorageNamespace.cpp
 NetworkProcess/WebStorage/SessionStorageNamespace.cpp
 NetworkProcess/WebStorage/StorageArea.cpp
 NetworkProcess/WebStorage/StorageManager.cpp
+NetworkProcess/WebStorage/StorageManagerSet.cpp
 NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp
 
 NetworkProcess/cache/CacheStorageEngine.cpp

@@ -292,4 +292,22 @@ void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldV
         StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, m_securityOrigin, sourceFrame);
 }
 
+void StorageAreaImpl::sessionChanged(bool isNewSessionPersistent)
+{
+    ASSERT(isMainThread());
+
+    unsigned quota = m_storageMap->quota();
+    m_storageMap = StorageMap::create(quota);
+
+    if (isNewSessionPersistent && !m_storageAreaSync && m_storageSyncManager) {
+        m_storageAreaSync = StorageAreaSync::create(m_storageSyncManager.get(), *this, m_securityOrigin.databaseIdentifier());
+        return;
+    }
+
+    if (!isNewSessionPersistent && m_storageAreaSync) {
+        m_storageAreaSync->scheduleFinalSync();
+        m_storageAreaSync = nullptr;
+    }
+}
+
 } // namespace WebCore

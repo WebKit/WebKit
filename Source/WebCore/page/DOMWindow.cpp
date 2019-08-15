@@ -442,8 +442,7 @@ void DOMWindow::prewarmLocalStorageIfNecessary()
     if (!localStorage)
         return;
 
-    if (localStorage->prewarm())
-        page->mainFrame().didPrewarmLocalStorage();
+    page->mainFrame().didPrewarmLocalStorage();
 }
 
 DOMWindow::~DOMWindow()

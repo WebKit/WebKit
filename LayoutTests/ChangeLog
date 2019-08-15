@@ -1,3 +1,24 @@
+2019-08-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Some improvements on web storage
+        https://bugs.webkit.org/show_bug.cgi?id=200373
+
+        Reviewed by Geoffrey Garen.
+ 
+        Modify tests for a behavior change: sessionStorage will be lost when network process crashes.
+
+        For tests which use sessionStorage to store items, crash network process, then read from sessionStorage and 
+        expect items to be in sessionStorage, replace sessionStorage with localStorage. Also, to make sure localStorage
+        is stored persistently before network process gets terminated, adopt a newly introduced SPI to 
+        synchronously flush localStorage content to disk before terminating network process.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * storage/domstorage/localstorage/private-browsing-affects-storage-expected.txt:
+        * storage/indexeddb/IDBObject-leak.html:
+        * storage/indexeddb/modern/opendatabase-after-storage-crash-expected.txt:
+        * storage/indexeddb/modern/opendatabase-after-storage-crash.html:
+
 2019-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Occasional hang under -[UIKeyboardTaskQueue lockWhenReadyForMainThread] when long-pressing non-editable text

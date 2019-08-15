@@ -20,31 +20,31 @@ function continueTest()
 	request.onerror = function(e) {
 		// Good, we received an expected error.
 		// Now reload to see if a new document connects successfully
-		if (sessionStorage[storageKey]) {
+		if (localStorage[storageKey]) {
 			document.body.innerHTML = "Received error more than once unexpectedly. Database: name " + dbname + ", version 2.";
 			if (window.testRunner)
 				testRunner.notifyDone();
 			return;
 		}
 
-		sessionStorage[storageKey] = "Made it";
+		localStorage[storageKey] = "Made it";
 		location.reload();
 	}
 
 	request.onsuccess = function(e) {
-		document.body.innerHTML = "Unexpected upgradeneeded after storage process termination. Database: name " + dbname + ", version 2. SessionStorage value: " + sessionStorage[storageKey] + ".";
+		document.body.innerHTML = "Unexpected upgradeneeded after storage process termination. Database: name " + dbname + ", version 2. localStorage value: " + sessionStorage[storageKey] + ".";
 		if (window.testRunner)
 			testRunner.notifyDone();
 	}
 }
 
-var versionToOpen = sessionStorage.doneFirstLoad ? 3 : 1;
+var versionToOpen = localStorage.doneFirstLoad ? 3 : 1;
 var request = window.indexedDB.open(dbname, versionToOpen);
 
 request.onupgradeneeded = function(e) {
-	if (sessionStorage.doneFirstLoad) {
+	if (localStorage.doneFirstLoad) {
 		document.body.innerHTML = "Successfully opened database with version " + versionToOpen + ".";
-		shouldBeEqualToString('sessionStorage[storageKey]', 'Made it');
+		shouldBeEqualToString('localStorage[storageKey]', 'Made it');
 
 		if (window.testRunner) {
 			testRunner.notifyDone();
@@ -52,7 +52,7 @@ request.onupgradeneeded = function(e) {
 		}
 	}
 
-	sessionStorage.doneFirstLoad = true;
+	localStorage.doneFirstLoad = true;
 
 	// Set an error handler on the database connection so once the storage process terminates we know to continue the test
 	e.target.result.onerror = function(e) {
@@ -61,6 +61,8 @@ request.onupgradeneeded = function(e) {
 
 	if (window.testRunner) {
 		testRunner.waitUntilDone();
+		// Make sure localStorage is flushed to disk before crashing network process.
+		testRunner.syncLocalStorage();
 		testRunner.terminateNetworkProcess();
 	}
 }

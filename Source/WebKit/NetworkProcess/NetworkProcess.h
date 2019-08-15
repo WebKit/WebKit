@@ -97,6 +97,7 @@ class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
+class StorageManagerSet;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 enum class ShouldGrandfatherStatistics : bool;
@@ -269,10 +270,7 @@ public:
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 
-    void webPageWasAdded(IPC::Connection&, PAL::SessionID, WebCore::PageIdentifier, WebCore::PageIdentifier);
-    void webPageWasRemoved(IPC::Connection&, PAL::SessionID, WebCore::PageIdentifier);
-    void webProcessWasDisconnected(IPC::Connection&);
-    void webProcessSessionChanged(IPC::Connection&, PAL::SessionID, const Vector<WebCore::PageIdentifier>&);
+    void connectionToWebProcessClosed(IPC::Connection&);
     void getLocalStorageOriginDetails(PAL::SessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -285,6 +283,10 @@ public:
     void accessToTemporaryFileComplete(const String& path) final;
     void setIDBPerOriginQuota(uint64_t);
 #endif
+
+    void syncLocalStorage(CompletionHandler<void()>&&);
+    void clearLegacyPrivateBrowsingLocalStorage();
+
     void updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID, const WebCore::ClientOrigin&);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -498,6 +500,8 @@ private:
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
+
+    RefPtr<StorageManagerSet> m_storageManagerSet;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);
