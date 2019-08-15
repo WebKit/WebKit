@@ -354,7 +354,7 @@ gst_webrtc_video_encoder_class_init (GstWebrtcVideoEncoderClass * klass)
   register_known_encoder (ENCODER_OPENH264, "openh264enc", "h264parse",
       "video/x-h264",
       "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
-      setup_openh264enc, "bitrate", set_bitrate_kbit_per_sec, "gop-size");
+      setup_openh264enc, "bitrate", set_bitrate_bit_per_sec, "gop-size");
 }
 
 static void
