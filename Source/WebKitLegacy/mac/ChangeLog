@@ -1,3 +1,16 @@
+2019-08-15  Tim Horton  <timothy_horton@apple.com>
+
+        Yellow Lookup highlight gets stuck over Mail messages
+        https://bugs.webkit.org/show_bug.cgi?id=200778
+        <rdar://problem/53868514>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebView/WebView.mm:
+        (-[WebView _showDictionaryLookupPopup:]):
+        Add a dismissal callback so that when Reveal hides the panel, it also
+        dismisses the yellow indicator. This matches the behavior in modern WebKit.
+
 2019-08-15  Sihui Liu  <sihui_liu@apple.com>
 
         Some improvements on web storage
