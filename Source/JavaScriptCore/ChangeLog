@@ -16,6 +16,22 @@
 
 2019-08-14  Mark Lam  <mark.lam@apple.com>
 
+        ProxyObject should not be allow to access its target's private properties.
+        https://bugs.webkit.org/show_bug.cgi?id=200739
+        <rdar://problem/53972768>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performDefineOwnProperty):
+
+2019-08-14  Mark Lam  <mark.lam@apple.com>
+
         Missing exception check in string compare.
         https://bugs.webkit.org/show_bug.cgi?id=200743
         <rdar://problem/53975356>
