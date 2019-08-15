@@ -1,5 +1,55 @@
 2019-08-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248722. rdar://problem/54360866
+
+    Negative size box with border radius causes hang under WebCore::approximateAsRegion
+    https://bugs.webkit.org/show_bug.cgi?id=200769
+    <rdar://problem/53380674>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    If a box's width or height computes negative the rounded border rect will also be negative.
+    This caused near-infinite loop during rounded border region approximation.
+    
+    Test: fast/css/border-radius-negative-size.html
+    
+    * platform/graphics/RoundedRect.cpp:
+    (WebCore::approximateAsRegion):
+    
+    Bail out if the region is empty (which includes negative sizes).
+    For safety also limit the number of rectangles we generate for corner arc approximation.
+    
+    LayoutTests:
+    
+    * fast/css/border-radius-negative-size-expected.txt: Added.
+    * fast/css/border-radius-negative-size.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248722 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-15  Antti Koivisto  <antti@apple.com>
+
+            Negative size box with border radius causes hang under WebCore::approximateAsRegion
+            https://bugs.webkit.org/show_bug.cgi?id=200769
+            <rdar://problem/53380674>
+
+            Reviewed by Alex Christensen.
+
+            If a box's width or height computes negative the rounded border rect will also be negative.
+            This caused near-infinite loop during rounded border region approximation.
+
+            Test: fast/css/border-radius-negative-size.html
+
+            * platform/graphics/RoundedRect.cpp:
+            (WebCore::approximateAsRegion):
+
+            Bail out if the region is empty (which includes negative sizes).
+            For safety also limit the number of rectangles we generate for corner arc approximation.
+
+2019-08-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248648. rdar://problem/54333931
 
     Focus rings are black
