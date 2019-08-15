@@ -1323,7 +1323,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     m_statementDepth++;
 
     if (match(AWAIT)) {
-        semanticFailIfFalse(currentScope()->isAsyncFunction(), "for-await-of can't be used only in async function or async generator.");
+        semanticFailIfFalse(currentScope()->isAsyncFunction(), "for-await-of can only be used in an async function or async generator");
         isAwaitFor = true;
         next();
     }
