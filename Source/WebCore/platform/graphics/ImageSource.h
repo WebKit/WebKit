@@ -40,7 +40,7 @@ class BitmapImage;
 class GraphicsContext;
 class ImageDecoder;
 
-class ImageSource : public ThreadSafeRefCounted<ImageSource>, public CanMakeWeakPtr<ImageSource> {
+class ImageSource : public ThreadSafeRefCounted<ImageSource, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageSource> {
     friend class BitmapImage;
 public:
     ~ImageSource();

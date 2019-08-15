@@ -48,10 +48,13 @@ ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndCo
     , m_alphaOption(alphaOption)
     , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
 {
+    ASSERT(isMainThread());
 }
 
 ImageSource::ImageSource(NativeImagePtr&& nativeImage)
 {
+    ASSERT(isMainThread());
+
     m_frameCount = 1;
     m_encodedDataStatus = EncodedDataStatus::Complete;
     growFrames();
@@ -69,6 +72,7 @@ ImageSource::ImageSource(NativeImagePtr&& nativeImage)
 ImageSource::~ImageSource()
 {
     ASSERT(!hasAsyncDecodingQueue());
+    ASSERT(isMainThread());
 }
 
 bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)

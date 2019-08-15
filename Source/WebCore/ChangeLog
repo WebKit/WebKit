@@ -1,3 +1,25 @@
+2019-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Potentially non thread-safe usage of WebCore::MediaSample
+        https://bugs.webkit.org/show_bug.cgi?id=200734
+
+        Reviewed by Eric Carlson.
+
+        ImageSource is a main thread object but ends up getting passed to a background queue for image
+        decoding. In some cases, the background queue ends up being the last one holding a ref to the
+        ImageSource which ends up destroying the ImageSource on a background thread. Doing so is not
+        safe as shown by the crash.
+
+        To address the issue, have ImageSource subclass ThreadSafeRefCounted<ImageSource, WTF::DestructionThread::Main>
+        so that it is always destroyed on the main thread.
+
+        No new tests, currently crashing on the debug bots.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::~ImageSource):
+        * platform/graphics/ImageSource.h:
+
 2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r248526.
