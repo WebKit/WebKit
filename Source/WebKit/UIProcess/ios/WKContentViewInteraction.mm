@@ -2250,9 +2250,31 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (_suppressSelectionAssistantReasons)
         return NO;
     
-    // Don't allow double tap text gestures in noneditable content.
-    if (!self.isFocusingElement && gesture == UIWKGestureDoubleTap)
-        return NO;
+    if (!self.isFocusingElement) {
+        if (gesture == UIWKGestureDoubleTap) {
+            // Don't allow double tap text gestures in noneditable content.
+            return NO;
+        }
+
+        if (gesture == UIWKGestureOneFingerTap) {
+            ASSERT(_suppressNonEditableSingleTapTextInteractionCount >= 0);
+            if (_suppressNonEditableSingleTapTextInteractionCount > 0)
+                return NO;
+
+            switch ([_textSelectionAssistant loupeGesture].state) {
+            case UIGestureRecognizerStateBegan:
+            case UIGestureRecognizerStateChanged:
+            case UIGestureRecognizerStateEnded: {
+                // Avoid handling one-finger taps while the web process is processing certain selection changes.
+                // This works around a scenario where UIKeyboardImpl blocks the main thread while handling a one-
+                // finger tap, which subsequently prevents the UI process from handling any incoming IPC messages.
+                return NO;
+            }
+            default:
+                break;
+            }
+        }
+    }
 
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     if (![self ensurePositionInformationIsUpToDate:request])
@@ -3766,12 +3788,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
     _usingGestureForSelection = YES;
+    ++_suppressNonEditableSingleTapTextInteractionCount;
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
 
     _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
         view->_usingGestureForSelection = NO;
+        --view->_suppressNonEditableSingleTapTextInteractionCount;
         [selectionHandler release];
     });
 }
@@ -3800,9 +3824,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
-    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    ++_suppressNonEditableSingleTapTextInteractionCount;
+    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [selectionHandler, protectedSelf = retainPtr(self)] (bool endIsMoving, WebKit::CallbackBase::Error error) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
+        --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;
     });
 }
 

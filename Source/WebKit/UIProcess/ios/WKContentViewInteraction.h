@@ -355,6 +355,7 @@ struct WKAutoCorrectionData {
 
     BOOL _hasSetUpInteractions;
     NSUInteger _ignoreSelectionCommandFadeCount;
+    NSInteger _suppressNonEditableSingleTapTextInteractionCount;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> _domPasteRequestHandler;
     BlockPtr<void(UIWKAutocorrectionContext *)> _pendingAutocorrectionContextHandler;
 

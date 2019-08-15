@@ -1,3 +1,40 @@
+2019-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Occasional hang under -[UIKeyboardTaskQueue lockWhenReadyForMainThread] when long-pressing non-editable text
+        https://bugs.webkit.org/show_bug.cgi?id=200731
+        <rdar://problem/54315371>
+
+        Reviewed by Tim Horton.
+
+        When handling a single tap in non-editable content, keyboards logic in UIKit may attempt to wait for all
+        pending tasks in UIKeyboardTaskQueue to finish executing (e.g. by calling -waitUntilAllTasksAreFinished]). If
+        the task queue has a pending task at this moment - for example, a text selection update that is waiting for a
+        response from the web process - this will result in a permanent deadlock, since the main thread will be blocked,
+        and therefore cannot receive any IPC communication from the web process.
+
+        One way to trigger this is to activate both the loupe gesture and non-editable text tap gesture simultaneously,
+        by tapping in a non-editable part of the web page, while an ongoing loupe gesture is driving selection updates
+        (see the layout test for more details).
+
+        To avoid getting into this scenario, prevent the text tap gesture recognizer from firing in a few edge cases
+        that could lead to hangs under keyboard code in UIKit. See comments below.
+
+        Test: editing/selection/ios/tap-during-loupe-gesture.html
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        Don't allow the text tap gesture recognizer to fire if the user is actively modifying the text selection using
+        the loupe gesture, or if there's other pending selection change updates that are pending responses from the web
+        content process.
+
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+
+        Increment and decrement _suppressNonEditableSingleTapTextInteractionCount while handling these selection
+        updates.
+
 2019-08-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r248440.
