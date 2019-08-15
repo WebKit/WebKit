@@ -858,9 +858,6 @@ test/built-ins/Date/proto-from-ctor-realm-two.js:
 test/built-ins/Date/proto-from-ctor-realm-zero.js:
   default: 'TypeError: Type error'
   strict mode: 'TypeError: Type error'
-test/built-ins/Date/prototype/toDateString/negative-year.js:
-  default: 'Test262Error: Date.prototype.toDateString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
-  strict mode: 'Test262Error: Date.prototype.toDateString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
 test/built-ins/Date/prototype/toJSON/invoke-result.js:
   default: 'TypeError: toISOString did not return a primitive value'
   strict mode: 'TypeError: toISOString did not return a primitive value'
@@ -873,12 +870,6 @@ test/built-ins/Date/prototype/toJSON/to-primitive-symbol.js:
 test/built-ins/Date/prototype/toJSON/to-primitive-value-of.js:
   default: 'TypeError: toISOString did not return a primitive value'
   strict mode: 'TypeError: toISOString did not return a primitive value'
-test/built-ins/Date/prototype/toString/negative-year.js:
-  default: 'Test262Error: Date.prototype.toString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
-  strict mode: 'Test262Error: Date.prototype.toString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
-test/built-ins/Date/prototype/toUTCString/negative-year.js:
-  default: 'Test262Error: Date.prototype.toUTCString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
-  strict mode: 'Test262Error: Date.prototype.toUTCString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
 test/built-ins/Error/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'

@@ -41,14 +41,12 @@ using namespace WTF;
 template<int width>
 static inline void appendNumber(StringBuilder& builder, int value)
 {
-    int fillingZerosCount = width;
     if (value < 0) {
         builder.append('-');
         value = -value;
-        --fillingZerosCount;
     }
     String valueString = String::number(value);
-    fillingZerosCount -= valueString.length();
+    int fillingZerosCount = width - valueString.length();
     for (int i = 0; i < fillingZerosCount; ++i)
         builder.append('0');
     builder.append(valueString);
