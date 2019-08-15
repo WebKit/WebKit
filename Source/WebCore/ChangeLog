@@ -1,3 +1,34 @@
+2019-08-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248648. rdar://problem/54333931
+
+    Focus rings are black
+    https://bugs.webkit.org/show_bug.cgi?id=200593
+    <rdar://problem/54145925>
+    
+    Patch by Daniel Bates <dabates@apple.com> on 2019-08-13
+    Reviewed by Wenson Hsieh.
+    
+    Work around <rdar://problem/50838886> and make focus rings a pretty blue.
+    
+    * rendering/RenderThemeIOS.mm:
+    (WebCore::RenderThemeIOS::platformFocusRingColor const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248648 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-13  Daniel Bates  <dabates@apple.com>
+
+            Focus rings are black
+            https://bugs.webkit.org/show_bug.cgi?id=200593
+            <rdar://problem/54145925>
+
+            Reviewed by Wenson Hsieh.
+
+            Work around <rdar://problem/50838886> and make focus rings a pretty blue.
+
+            * rendering/RenderThemeIOS.mm:
+            (WebCore::RenderThemeIOS::platformFocusRingColor const):
+
 2019-08-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248604. rdar://problem/54282801

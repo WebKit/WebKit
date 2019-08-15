@@ -1132,7 +1132,8 @@ Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
 {
-    return colorFromUIColor([PAL::getUIColorClass() keyboardFocusIndicatorColor]);
+    // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
+    return colorFromUIColor([PAL::getUIColorClass() systemBlueColor]);
 }
 #endif
 
