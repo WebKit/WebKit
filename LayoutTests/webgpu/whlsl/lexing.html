@@ -155,6 +155,18 @@ whlslTests.operatorNames = async () => {
             return 42;
         }
     `);
+
+    await checkFail(`
+        int operator&&(int x, int y) {
+            return 42;
+        }
+    `);
+
+    await checkFail(`
+        bool operator||(int x, int y) {
+            return 42;
+        }
+    `);
 };
 
 runTests(whlslTests);

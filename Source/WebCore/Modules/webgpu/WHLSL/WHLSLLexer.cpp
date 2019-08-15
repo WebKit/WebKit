@@ -868,9 +868,6 @@ parseIdentifier:
                 if (consume(']'))
                     return token(Token::Type::OperatorName);
                 return token(Token::Type::Invalid);
-            case '&':
-                shift();
-                return token(Token::Type::OperatorName);
             case '.':
                 shift();
                 if (!isValidIdentifierStart(peek()))
@@ -918,7 +915,6 @@ parseIdentifier:
 
         case '|':
             shift();
-            consume('|');
             return token(Token::Type::OperatorName);
 
         case '=':

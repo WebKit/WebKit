@@ -1,3 +1,17 @@
+2019-08-15  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Don't accept operator&& or operator|| in the Lexer
+        https://bugs.webkit.org/show_bug.cgi?id=200785
+
+        Reviewed by Saam Barati.
+
+        Implementing && or || as function calls would lose us short-circuiting.
+
+        2 new tests in LayoutTests/webgpu/whlsl/lexing.html
+
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::Lexer::consumeTokenFromStream):
+
 2019-08-15  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Debug build fix after r248730.
