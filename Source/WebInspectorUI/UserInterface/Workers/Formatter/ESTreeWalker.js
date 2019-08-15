@@ -182,9 +182,6 @@ ESTreeWalker = class ESTreeWalker
         case "RestElement":
             this._walk(node.argument, node);
             break;
-        case "RestProperty":
-            this._walk(node.argument, node);
-            break;
         case "ReturnStatement":
             this._walk(node.argument, node);
             break;
@@ -192,9 +189,6 @@ ESTreeWalker = class ESTreeWalker
             this._walkArray(node.expressions, node);
             break;
         case "SpreadElement":
-            this._walk(node.argument, node);
-            break;
-        case "SpreadProperty":
             this._walk(node.argument, node);
             break;
         case "SwitchStatement":

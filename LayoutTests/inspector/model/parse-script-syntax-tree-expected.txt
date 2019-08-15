@@ -28,7 +28,7 @@ passed MemberExpression
 passed NewExpression
 passed ObjectExpression
 passed Property
-passed RestStatement
+passed RestElement
 passed ReturnStatement
 passed SequenceExpression
 passed SwitchStatement
@@ -44,8 +44,7 @@ passed WithStatement
 passed YieldExpression
 passed ClassStatement, Super, MetaProperty
 passed Import
-passed RestProperty
-passed SpreadProperty
+passed SpreadElement
 passed AssignmentPattern
 passed ArrowFunctionExpression
 passed Async Functions

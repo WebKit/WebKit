@@ -1,3 +1,16 @@
+2019-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update Esprima to trunk (minor fixes)
+        https://bugs.webkit.org/show_bug.cgi?id=200691
+        <rdar://problem/54276170>
+
+        Rubber-stamped by Devin Rousso.
+
+        * inspector/model/parse-script-syntax-tree-expected.txt:
+        * inspector/model/parse-script-syntax-tree.html:
+        - SpreadProperty => SpreadElement.
+        - RestProperty => RestElement.
+
 2019-08-15  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make length, clamp, operator+, operator-, operator*, operator/, operator[], operator[]=, operator.xy, operator.xy=, native

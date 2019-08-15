@@ -283,7 +283,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 case WI.ScriptSyntaxTree.NodeType.AssignmentPattern:
                     return gatherIdentifiers(node.left);
                 case WI.ScriptSyntaxTree.NodeType.RestElement:
-                case WI.ScriptSyntaxTree.NodeType.RestProperty:
                     return gatherIdentifiers(node.argument);
                 default:
                     console.assert(false, "Unexpected node type in variable declarator: " + node.type);
@@ -291,7 +290,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             }
         }
 
-        console.assert(node.type === WI.ScriptSyntaxTree.NodeType.Identifier || node.type === WI.ScriptSyntaxTree.NodeType.ObjectPattern || node.type === WI.ScriptSyntaxTree.NodeType.ArrayPattern || node.type === WI.ScriptSyntaxTree.NodeType.RestElement || node.type === WI.ScriptSyntaxTree.NodeType.RestProperty);
+        console.assert(node.type === WI.ScriptSyntaxTree.NodeType.Identifier || node.type === WI.ScriptSyntaxTree.NodeType.ObjectPattern || node.type === WI.ScriptSyntaxTree.NodeType.ArrayPattern || node.type === WI.ScriptSyntaxTree.NodeType.RestElement);
 
         return gatherIdentifiers(node);
     }
@@ -425,9 +424,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         case WI.ScriptSyntaxTree.NodeType.RestElement:
             this._recurse(node.argument, callback, state);
             break;
-        case WI.ScriptSyntaxTree.NodeType.RestProperty:
-            this._recurse(node.argument, callback, state);
-            break;
         case WI.ScriptSyntaxTree.NodeType.ReturnStatement:
             this._recurse(node.argument, callback, state);
             break;
@@ -435,9 +431,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             this._recurseArray(node.expressions, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.SpreadElement:
-            this._recurse(node.argument, callback, state);
-            break;
-        case WI.ScriptSyntaxTree.NodeType.SpreadProperty:
             this._recurse(node.argument, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.SwitchStatement:
@@ -851,12 +844,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 argument: this._createInternalSyntaxTree(node.argument)
             };
             break;
-        case "RestProperty":
-            result = {
-                type: WI.ScriptSyntaxTree.NodeType.RestProperty,
-                argument: this._createInternalSyntaxTree(node.argument),
-            };
-            break;
         case "ReturnStatement":
             result = {
                 type: WI.ScriptSyntaxTree.NodeType.ReturnStatement,
@@ -872,12 +859,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         case "SpreadElement":
             result = {
                 type: WI.ScriptSyntaxTree.NodeType.SpreadElement,
-                argument: this._createInternalSyntaxTree(node.argument),
-            };
-            break;
-        case "SpreadProperty":
-            result = {
-                type: WI.ScriptSyntaxTree.NodeType.SpreadProperty,
                 argument: this._createInternalSyntaxTree(node.argument),
             };
             break;
@@ -1124,11 +1105,9 @@ WI.ScriptSyntaxTree.NodeType = {
     Program: Symbol("program"),
     Property: Symbol("property"),
     RestElement: Symbol("rest-element"),
-    RestProperty: Symbol("rest-property"),
     ReturnStatement: Symbol("return-statement"),
     SequenceExpression: Symbol("sequence-expression"),
     SpreadElement: Symbol("spread-element"),
-    SpreadProperty: Symbol("spread-property"),
     Super: Symbol("super"),
     SwitchCase: Symbol("switch-case"),
     SwitchStatement: Symbol("switch-statement"),

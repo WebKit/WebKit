@@ -1,3 +1,28 @@
+2019-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update Esprima to trunk (minor fixes)
+        https://bugs.webkit.org/show_bug.cgi?id=200691
+        <rdar://problem/54276170>
+
+        Rubber-stamped by Devin Rousso.
+
+        * UserInterface/External/Esprima/esprima.js:
+        Updated to jquery/esprima@5e55171feb5adbc2b1d28ef4b2628d5ea9af0848.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WI.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration.gatherIdentifiers):
+        (WI.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration):
+        (WI.ScriptSyntaxTree.prototype._recurse):
+        (WI.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WI.ScriptSyntaxTree):
+        * UserInterface/Workers/Formatter/ESTreeWalker.js:
+        (ESTreeWalker.prototype._walkChildren):
+        (ESTreeWalker):
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js:
+        (EsprimaFormatter.prototype._handleTokenAtNode):
+        - SpreadProperty => SpreadElement.
+        - RestProperty => RestElement.
+
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: Content request failed.

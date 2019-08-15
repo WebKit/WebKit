@@ -364,12 +364,22 @@ function test()
     InspectorTest.assert(node.right.properties[0].key.type === WI.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.log("passed Property");
 
+    node = makeNode("let { ...rest } = { x: 1, y: 0 }", false);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.kind === "let");
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WI.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].id.type === WI.ScriptSyntaxTree.NodeType.ObjectPattern);
+    InspectorTest.assert(node.declarations[0].id.properties.length === 1);
+    InspectorTest.assert(node.declarations[0].id.properties[0].type === WI.ScriptSyntaxTree.NodeType.RestElement);
+    InspectorTest.assert(node.declarations[0].id.properties[0].argument.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.declarations[0].id.properties[0].argument.name === "rest");
     node = makeNode("function foo(...things) { return things; }", false);
     InspectorTest.assert(node.params.length === 1);
     InspectorTest.assert(node.params[0].type === WI.ScriptSyntaxTree.NodeType.RestElement);
     InspectorTest.assert(node.params[0].argument.type === WI.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.params[0].argument.name === "things");
-    InspectorTest.log("passed RestStatement");
+    InspectorTest.log("passed RestElement");
 
     node = makeNode("function foo() { return 20; }", false);
     InspectorTest.assert(node.body.body[0].type === WI.ScriptSyntaxTree.NodeType.ReturnStatement);
@@ -534,18 +544,6 @@ function test()
     InspectorTest.assert(node.arguments[0].type === WI.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.log("passed Import");
 
-    node = makeNode("let { ...rest } = { x: 1, y: 0 }", false);
-    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);
-    InspectorTest.assert(node.kind === "let");
-    InspectorTest.assert(node.declarations.length === 1);
-    InspectorTest.assert(node.declarations[0].type === WI.ScriptSyntaxTree.NodeType.VariableDeclarator);
-    InspectorTest.assert(node.declarations[0].id.type === WI.ScriptSyntaxTree.NodeType.ObjectPattern);
-    InspectorTest.assert(node.declarations[0].id.properties.length === 1);
-    InspectorTest.assert(node.declarations[0].id.properties[0].type === WI.ScriptSyntaxTree.NodeType.RestProperty);
-    InspectorTest.assert(node.declarations[0].id.properties[0].argument.type === WI.ScriptSyntaxTree.NodeType.Identifier);
-    InspectorTest.assert(node.declarations[0].id.properties[0].argument.name === "rest");
-    InspectorTest.log("passed RestProperty");
-
     node = makeNode("let n = { ...spread }", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);
     InspectorTest.assert(node.kind === "let");
@@ -553,10 +551,10 @@ function test()
     InspectorTest.assert(node.declarations[0].type === WI.ScriptSyntaxTree.NodeType.VariableDeclarator);
     InspectorTest.assert(node.declarations[0].init.type === WI.ScriptSyntaxTree.NodeType.ObjectExpression);
     InspectorTest.assert(node.declarations[0].init.properties.length === 1);
-    InspectorTest.assert(node.declarations[0].init.properties[0].type === WI.ScriptSyntaxTree.NodeType.SpreadProperty);
+    InspectorTest.assert(node.declarations[0].init.properties[0].type === WI.ScriptSyntaxTree.NodeType.SpreadElement);
     InspectorTest.assert(node.declarations[0].init.properties[0].argument.type === WI.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.declarations[0].init.properties[0].argument.name === "spread");
-    InspectorTest.log("passed SpreadProperty");
+    InspectorTest.log("passed SpreadElement");
 
     node = makeNode("let [x=20] = [];", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);

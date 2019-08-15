@@ -828,12 +828,10 @@ EsprimaFormatter = class EsprimaFormatter
         // Include these here so we get only get warnings about unhandled nodes.
         if (nodeType === "ExpressionStatement"
             || nodeType === "SpreadElement"
-            || nodeType === "SpreadProperty"
             || nodeType === "Super"
             || nodeType === "Import"
             || nodeType === "MetaProperty"
             || nodeType === "RestElement"
-            || nodeType === "RestProperty"
             || nodeType === "TemplateElement"
             || nodeType === "TemplateLiteral"
             || nodeType === "DebuggerStatement"
