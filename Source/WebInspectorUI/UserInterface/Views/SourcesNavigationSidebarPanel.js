@@ -233,11 +233,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.addMouseDownContextMenuHandlers(resourceGroupingModeNavigationItem.element, this._populateResourceGroupingModeContextMenu.bind(this));
         this._resourcesNavigationBar.addNavigationItem(resourceGroupingModeNavigationItem);
 
+        let resourcesContainer = document.createElement("div");
+        resourcesContainer.classList.add("resources-container");
+        this.contentView.element.insertBefore(resourcesContainer, this._resourcesNavigationBar.element.nextSibling);
+
         this._resourcesTreeOutline = this.contentTreeOutline;
-        this._resourcesTreeOutline.element.classList.add("resources");
         this._resourcesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
-        this.contentView.element.insertBefore(this._resourcesTreeOutline.element, this._resourcesNavigationBar.element.nextSibling);
+        resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
         let onlyShowResourcesWithIssuesFilterFunction = (treeElement) => {
             if (treeElement.treeOutline !== this._resourcesTreeOutline)

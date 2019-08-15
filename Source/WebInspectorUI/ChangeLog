@@ -1,5 +1,25 @@
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: the "No Filter Results" message sits on top of all of the content, preventing any interaction
+        https://bugs.webkit.org/show_bug.cgi?id=200755
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .resources-container): Added.
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container)): Added.
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > .call-stack-container):
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > .breakpoints-container):
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > .resources-container): Added.
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources)): Deleted.
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > .resources): Deleted.
+        Wrap the resources `WI.TreeOutline` in a <div> so the empty message placeholder that gets
+        inserted after it can be constrained to the size of the `WI.TreeOutline`.
+
+2019-08-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Layers: background of 3D area doesn't update when transitioning to/from Dark mode
         https://bugs.webkit.org/show_bug.cgi?id=200775
 
