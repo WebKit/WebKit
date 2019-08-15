@@ -1,3 +1,18 @@
+2019-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove m_blockRectForTextSelection (along with related code)
+        https://bugs.webkit.org/show_bug.cgi?id=200695
+
+        Reviewed by Megan Gardner.
+
+        This member variable was consulted by block selection codepaths which no longer exist.
+        No change in behavior.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::selectionBoxForRange): Deleted.
+
 2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r248526.

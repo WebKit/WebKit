@@ -1275,26 +1275,6 @@ static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const 
     return constrainedPoint;
 }
 
-static IntRect selectionBoxForRange(WebCore::Range* range)
-{
-    if (!range)
-        return IntRect();
-    
-    IntRect boundingRect;
-    Vector<SelectionRect> selectionRects;
-    range->collectSelectionRects(selectionRects);
-    unsigned size = selectionRects.size();
-    
-    for (unsigned i = 0; i < size; ++i) {
-        const IntRect &coreRect = selectionRects[i].rect();
-        if (!i)
-            boundingRect = coreRect;
-        else
-            boundingRect.unite(coreRect);
-    }
-    return boundingRect;
-}
-
 void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     if (static_cast<GestureRecognizerState>(gestureState) == GestureRecognizerState::Began)
@@ -2085,21 +2065,7 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     setFocusedFrameBeforeSelectingTextAtLocation(point);
 
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
-    if (!isInteractingWithFocusedElement) {
-        auto* renderer = range ? range->startContainer().renderer() : nullptr;
-        if (renderer && renderer->style().preserveNewline())
-            m_blockRectForTextSelection = renderer->absoluteBoundingBoxRect(true);
-        else {
-            auto paragraphRange = enclosingTextUnitOfGranularity(visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement), ParagraphGranularity, DirectionForward);
-            if (paragraphRange && !paragraphRange->collapsed())
-                m_blockRectForTextSelection = selectionBoxForRange(paragraphRange.get());
-        }
-        
-        if (rectIsTooBigForSelection(m_blockRectForTextSelection, frame))
-            m_blockRectForTextSelection.setHeight(0);
-    }
-
+    auto range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
     if (range)
         frame.selection().setSelectedRange(range.get(), UPSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     m_initialSelection = range;
