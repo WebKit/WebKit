@@ -364,6 +364,10 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         if (!this._resource.hasResponse())
             return;
 
+        // WebSocket resources already use a "custom" response content view.
+        if (this._resource instanceof WI.WebSocketResource)
+            return;
+
         this._resource.requestContent()
         .then(({error, content}) => {
             if (error || !content || !this._canUseJSONContentViewForContent(content))

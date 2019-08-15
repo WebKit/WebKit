@@ -85,6 +85,15 @@ WI.WebSocketResource = class WebSocketResource extends WI.Resource
         this.dispatchEventToListeners(WI.WebSocketResource.Event.FrameAdded, frame);
     }
 
+    // Protected
+
+    requestContentFromBackend()
+    {
+        console.assert(false, "A WebSocket's content was requested. WebSockets do not have content so the request is nonsensical.");
+
+        return super.requestContentFromBackend();
+    }
+
     // Private
 
     _walltimeForWebSocketTimestamp(timestamp)
