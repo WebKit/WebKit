@@ -1,5 +1,17 @@
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: CodeMirror still inserts a tab even when "Prefer indent using" is set to "Spaces"
+        https://bugs.webkit.org/show_bug.cgi?id=200770
+
+        Reviewed by Ross Kirsling.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        Remap the `insertTab` command to use `insertSoftTab` when "Prefer indent using" is set to
+        "Spaces" so that CodeMirror inserts the number of spaces that would match a tab ("\t") being
+        inserted at the same spot.
+
+2019-08-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: the "No Filter Results" message sits on top of all of the content, preventing any interaction
         https://bugs.webkit.org/show_bug.cgi?id=200755
 

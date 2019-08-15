@@ -619,6 +619,17 @@
         fallthrough: mac ? "macDefault" : "pcDefault"
     };
 
+    {
+        // CodeMirror's default behavior is to always insert a tab ("\t") regardless of `indentWithTabs`.
+        let original = CodeMirror.commands.insertTab;
+        CodeMirror.commands.insertTab = function(cm) {
+            if (cm.options.indentWithTabs)
+                original(cm);
+            else
+                CodeMirror.commands.insertSoftTab(cm);
+        };
+    }
+
     // Register some extra MIME-types for CodeMirror. These are in addition to the
     // ones CodeMirror already registers, like text/html, text/javascript, etc.
     var extraXMLTypes = ["text/xml", "text/xsl"];
