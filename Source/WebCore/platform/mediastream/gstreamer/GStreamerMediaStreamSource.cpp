@@ -171,10 +171,92 @@ struct _WebKitMediaStreamSrc {
 
     gchar* uri;
 
-    GstElement* audioSrc;
-    GstClockTime firstAudioBufferPts;
-    GstElement* videoSrc;
-    GstClockTime firstFramePts;
+    struct SourceData {
+        GRefPtr<GstElement> m_src;
+        void reset(bool isVideo)
+        {
+            m_firstBufferPts = GST_CLOCK_TIME_NONE;
+            m_isVideo = isVideo;
+            m_src = nullptr;
+        }
+
+        GstElement* src()
+        {
+            return m_src.get();
+        }
+
+        static void needDataCb(GstElement*, guint, WebKitMediaStreamSrc::SourceData *self)
+        {
+            self->setEnoughData(false);
+        }
+
+        static void enoughDataCb(GstElement*, WebKitMediaStreamSrc::SourceData *self)
+        {
+            self->setEnoughData(true);
+        }
+
+
+        void setSrc(GstElement *src)
+        {
+            m_src = adoptGRef(GST_ELEMENT(g_object_ref_sink(src)));
+            if (GST_IS_APP_SRC(src)) {
+                g_object_set(src, "is-live", true, "format", GST_FORMAT_TIME, "emit-signals", TRUE, "min-percent", 100, nullptr);
+                g_signal_connect(src, "enough-data", G_CALLBACK(enoughDataCb), this);
+                g_signal_connect(src, "need-data", G_CALLBACK(needDataCb), this);
+            }
+        }
+
+        bool isUsed()
+        {
+            return !!m_src;
+        }
+
+        void setEnoughData(bool enough)
+        {
+            m_enoughData = enough;
+        }
+
+        void pushSample(GstSample *sample)
+        {
+            if (!m_src)
+                return;
+
+            bool drop = m_enoughData;
+            auto buffer = gst_sample_get_buffer(sample);
+            auto caps = gst_sample_get_caps(sample);
+            if (!GST_CLOCK_TIME_IS_VALID(m_firstBufferPts)) {
+                m_firstBufferPts = GST_BUFFER_PTS(buffer);
+                auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+                gst_pad_set_offset(pad.get(), -m_firstBufferPts);
+            }
+
+            if (m_isVideo && drop) {
+                drop = (gst_structure_has_name(gst_caps_get_structure(caps, 0), "video/x-raw")
+                    || GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT));
+            }
+
+            if (drop) {
+                m_needsDiscont = true;
+                GST_INFO_OBJECT(m_src.get(), "%s queue full already... not pushing", m_isVideo ? "Video" : "Audio");
+                return;
+            }
+
+            if (m_needsDiscont) {
+                GST_BUFFER_FLAG_SET(buffer, GST_BUFFER_FLAG_DISCONT);
+                m_needsDiscont = false;
+            }
+
+            gst_app_src_push_sample(GST_APP_SRC(m_src.get()), sample);
+        }
+    private:
+        GstClockTime m_firstBufferPts;
+        bool m_enoughData;
+        bool m_needsDiscont;
+        bool m_isVideo;
+    };
+
+    SourceData audioSrc;
+    SourceData videoSrc;
 
     std::unique_ptr<WebKitMediaStreamTrackObserver> mediaStreamTrackObserver;
     std::unique_ptr<WebKitMediaStreamObserver> mediaStreamObserver;
@@ -274,14 +356,14 @@ static void webkitMediaStreamSrcDispose(GObject* object)
 {
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC(object);
 
-    if (self->audioSrc) {
-        gst_bin_remove(GST_BIN(self), self->audioSrc);
-        self->audioSrc = nullptr;
+    if (self->audioSrc.isUsed()) {
+        gst_bin_remove(GST_BIN(self), self->audioSrc.src());
+        self->audioSrc.reset(false);
     }
 
-    if (self->videoSrc) {
-        gst_bin_remove(GST_BIN(self), self->videoSrc);
-        self->videoSrc = nullptr;
+    if (self->videoSrc.isUsed()) {
+        gst_bin_remove(GST_BIN(self), self->videoSrc.src());
+        self->videoSrc.reset(true);
     }
 }
 
@@ -354,8 +436,8 @@ static void webkit_media_stream_src_init(WebKitMediaStreamSrc* self)
     self->mediaStreamTrackObserver = std::make_unique<WebKitMediaStreamTrackObserver>(self);
     self->mediaStreamObserver = std::make_unique<WebKitMediaStreamObserver>(self);
     self->flowCombiner = gst_flow_combiner_new();
-    self->firstAudioBufferPts = GST_CLOCK_TIME_NONE;
-    self->firstFramePts = GST_CLOCK_TIME_NONE;
+    self->videoSrc.reset(true);
+    self->audioSrc.reset(false);
 }
 
 typedef struct {
@@ -467,13 +549,14 @@ static gboolean webkitMediaStreamSrcSetupSrc(WebKitMediaStreamSrc* self,
 }
 
 static gboolean webkitMediaStreamSrcSetupAppSrc(WebKitMediaStreamSrc* self,
-    MediaStreamTrackPrivate* track, GstElement** element,
+    MediaStreamTrackPrivate* track, WebKitMediaStreamSrc::SourceData* data,
     GstStaticPadTemplate* pad_template, bool onlyTrack)
 {
-    *element = gst_element_factory_make("appsrc", nullptr);
-    g_object_set(*element, "is-live", true, "format", GST_FORMAT_TIME, nullptr);
+    data->setSrc(gst_element_factory_make("appsrc", nullptr));
+    if (track->isCaptureTrack())
+        g_object_set(data->src(), "do-timestamp", true, nullptr);
 
-    return webkitMediaStreamSrcSetupSrc(self, track, *element, pad_template, TRUE, onlyTrack);
+    return webkitMediaStreamSrcSetupSrc(self, track, data->src(), pad_template, TRUE, onlyTrack);
 }
 
 static void webkitMediaStreamSrcPostStreamCollection(WebKitMediaStreamSrc* self, MediaStreamPrivate* stream)
@@ -510,16 +593,16 @@ bool webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
 static void webkitMediaStreamSrcRemoveTrackByType(WebKitMediaStreamSrc* self, RealtimeMediaSource::Type trackType)
 {
     if (trackType == RealtimeMediaSource::Type::Audio) {
-        if (self->audioSrc) {
-            gst_element_set_state(self->audioSrc, GST_STATE_NULL);
-            gst_bin_remove(GST_BIN(self), self->audioSrc);
-            self->audioSrc = nullptr;
+        if (self->audioSrc.isUsed()) {
+            gst_element_set_state(self->audioSrc.src(), GST_STATE_NULL);
+            gst_bin_remove(GST_BIN(self), self->audioSrc.src());
+            self->audioSrc.reset(false);
         }
     } else if (trackType == RealtimeMediaSource::Type::Video) {
-        if (self->videoSrc) {
-            gst_element_set_state(self->videoSrc, GST_STATE_NULL);
-            gst_bin_remove(GST_BIN(self), self->videoSrc);
-            self->videoSrc = nullptr;
+        if (self->videoSrc.isUsed()) {
+            gst_element_set_state(self->videoSrc.src(), GST_STATE_NULL);
+            gst_bin_remove(GST_BIN(self), self->videoSrc.src());
+            self->videoSrc.reset(true);
         }
     } else
         GST_INFO("Unsupported track type: %d", static_cast<int>(trackType));
@@ -544,31 +627,12 @@ bool webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
 
 static void webkitMediaStreamSrcPushVideoSample(WebKitMediaStreamSrc* self, GstSample* gstsample)
 {
-    if (self->videoSrc) {
-        if (!GST_CLOCK_TIME_IS_VALID(self->firstFramePts)) {
-            auto buffer = gst_sample_get_buffer(gstsample);
-
-            self->firstFramePts = GST_BUFFER_PTS(buffer);
-            auto pad = adoptGRef(gst_element_get_static_pad(self->videoSrc, "src"));
-            gst_pad_set_offset(pad.get(), -self->firstFramePts);
-        }
-
-        gst_app_src_push_sample(GST_APP_SRC(self->videoSrc), gstsample);
-    }
+    self->videoSrc.pushSample(gstsample);
 }
 
 static void webkitMediaStreamSrcPushAudioSample(WebKitMediaStreamSrc* self, GstSample* gstsample)
 {
-    if (self->audioSrc) {
-        if (!GST_CLOCK_TIME_IS_VALID(self->firstAudioBufferPts)) {
-            auto buffer = gst_sample_get_buffer(gstsample);
-
-            self->firstAudioBufferPts = GST_BUFFER_PTS(buffer);
-            auto pad = adoptGRef(gst_element_get_static_pad(self->audioSrc, "src"));
-            gst_pad_set_offset(pad.get(), -self->firstAudioBufferPts);
-        }
-        gst_app_src_push_sample(GST_APP_SRC(self->audioSrc), gstsample);
-    }
+    self->audioSrc.pushSample(gstsample);
 }
 
 static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc* self,

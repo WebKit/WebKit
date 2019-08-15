@@ -1,3 +1,31 @@
+2019-08-15  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Deal with slow buffer consumption in GStreamerMediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=200633
+
+        Refactoring the GStreamerMediaStreamSource factoring out streams specific
+        data in a dedicated structure.
+
+        Reviewed by Philippe Normand.
+
+        No new tests, since I do not see how to reproduce that in a test in a simple way,
+        this aims at enhancing user experience when running under high load.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::_WebKitMediaStreamSrc::SourceData::reset):
+        (WebCore::_WebKitMediaStreamSrc::SourceData::src):
+        (WebCore::_WebKitMediaStreamSrc::SourceData::setSrc):
+        (WebCore::_WebKitMediaStreamSrc::SourceData::isUsed):
+        (WebCore::_WebKitMediaStreamSrc::SourceData::pushSample):
+        (WebCore::webkitMediaStreamSrcDispose):
+        (WebCore::webkit_media_stream_src_init):
+        (WebCore::webkitMediaStreamSrcNeedDataCb):
+        (WebCore::webkitMediaStreamSrcEnoughDataCb):
+        (WebCore::webkitMediaStreamSrcSetupAppSrc):
+        (WebCore::webkitMediaStreamSrcRemoveTrackByType):
+        (WebCore::webkitMediaStreamSrcPushVideoSample):
+        (WebCore::webkitMediaStreamSrcPushAudioSample):
+
 2019-08-15  Youenn Fablet  <youenn@apple.com>
 
         Make mock libwebrtc tests run with unified plan
