@@ -32,13 +32,13 @@ namespace WebCore {
 class SinkDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(SinkDocument);
 public:
-    static Ref<SinkDocument> create(Frame* frame, const URL& url)
+    static Ref<SinkDocument> create(Frame& frame, const URL& url)
     {
         return adoptRef(*new SinkDocument(frame, url));
     }
 
 private:
-    SinkDocument(Frame*, const URL&);
+    SinkDocument(Frame&, const URL&);
 
     Ref<DocumentParser> createParser() final;
 };

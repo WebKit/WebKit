@@ -1013,4 +1013,9 @@ void Frame::selfOnlyDeref()
     deref();
 }
 
+PAL::SessionID Frame::sessionID() const
+{
+    return m_loader->client().sessionID();
+}
+
 } // namespace WebCore

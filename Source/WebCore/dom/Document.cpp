@@ -510,7 +510,7 @@ static inline int currentOrientation(Frame* frame)
     return 0;
 }
 
-Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
+Document::Document(PAL::SessionID sessionID, Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , FrameDestructionObserver(frame)
@@ -560,10 +560,12 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
-    , m_sessionID(PAL::SessionID::emptySessionID())
+    , m_sessionID(sessionID)
     , m_identifier(DocumentIdentifier::generate())
     , m_undoManager(UndoManager::create(*this))
 {
+    ASSERT(!frame || frame->sessionID() == m_sessionID);
+
     auto addResult = allDocumentsMap().add(m_identifier, this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
@@ -594,10 +596,15 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 
 Ref<Document> Document::create(Document& contextDocument)
 {
-    auto document = adoptRef(*new Document(nullptr, URL()));
+    auto document = adoptRef(*new Document(contextDocument.sessionID(), nullptr, URL()));
     document->setContextDocument(contextDocument);
     document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document;
+}
+
+Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
+{
+    return adoptRef(*new Document(frame.sessionID(), &frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
 }
 
 Document::~Document()
@@ -3870,10 +3877,10 @@ Ref<Document> Document::cloneDocumentWithoutChildren() const
 {
     if (isXMLDocument()) {
         if (isXHTMLDocument())
-            return XMLDocument::createXHTML(nullptr, url());
-        return XMLDocument::create(nullptr, url());
+            return XMLDocument::createXHTML(sessionID(), nullptr, url());
+        return XMLDocument::create(sessionID(), nullptr, url());
     }
-    return create(url());
+    return create(sessionID(), url());
 }
 
 void Document::cloneDataFromDocument(const Document& other)
@@ -6884,9 +6891,9 @@ Document& Document::ensureTemplateDocument()
         return const_cast<Document&>(*document);
 
     if (isHTMLDocument())
-        m_templateDocument = HTMLDocument::create(nullptr, WTF::blankURL());
+        m_templateDocument = HTMLDocument::create(sessionID(), nullptr, WTF::blankURL());
     else
-        m_templateDocument = create(WTF::blankURL());
+        m_templateDocument = create(sessionID(), WTF::blankURL());
 
     m_templateDocument->setContextDocument(contextDocument());
     m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.

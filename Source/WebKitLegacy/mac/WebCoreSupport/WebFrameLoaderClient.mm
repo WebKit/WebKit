@@ -221,8 +221,8 @@ Optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
 
 PAL::SessionID WebFrameLoaderClient::sessionID() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return PAL::SessionID::defaultSessionID();
+    auto* coreFrame = core(m_webFrame.get());
+    return coreFrame && coreFrame->page() ? coreFrame->page()->sessionID() : PAL::SessionID::defaultSessionID();
 }
 
 void WebFrameLoaderClient::frameLoaderDestroyed()

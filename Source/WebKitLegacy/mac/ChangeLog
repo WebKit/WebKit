@@ -1,3 +1,18 @@
+2019-08-15  Youenn Fablet  <youenn@apple.com>
+
+        Always create a Document with a valid SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=200727
+
+        Reviewed by Alex Christensen.
+
+        Implement WebKit1 sessionID getter like done for WebKit2.
+        Either the loader client has a page in which case the page session ID is used
+        or the client has no page, in which case the default session ID is used.
+        This is the same behavior as CachedResourceLoader.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::sessionID const):
+
 2019-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Use ObjectIdentifier<FrameIdentifierType> for frameIDs

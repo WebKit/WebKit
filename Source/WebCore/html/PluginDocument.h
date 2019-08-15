@@ -34,7 +34,7 @@ class Widget;
 class PluginDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(PluginDocument);
 public:
-    static Ref<PluginDocument> create(Frame* frame, const URL& url)
+    static Ref<PluginDocument> create(Frame& frame, const URL& url)
     {
         return adoptRef(*new PluginDocument(frame, url));
     }
@@ -50,7 +50,7 @@ public:
     bool shouldLoadPluginManually() const { return m_shouldLoadPluginManually; }
 
 private:
-    PluginDocument(Frame*, const URL&);
+    PluginDocument(Frame&, const URL&);
 
     Ref<DocumentParser> createParser() final;
 

@@ -22,5 +22,5 @@
     ConstructorCallWith=Document,
     ImplementationLacksVTable,
 ] interface DOMParser {
-    [MayThrowException, NewObject] Document parseFromString(DOMString string, DOMString contentType);
+    [MayThrowException, NewObject, CallWith=ScriptExecutionContext] Document parseFromString(DOMString string, DOMString contentType);
 };

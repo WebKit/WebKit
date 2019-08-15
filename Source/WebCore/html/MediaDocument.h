@@ -34,9 +34,9 @@ namespace WebCore {
 class MediaDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(MediaDocument);
 public:
-    static Ref<MediaDocument> create(Frame* frame, const URL& url)
+    static Ref<MediaDocument> create(PAL::SessionID sessionID, Frame* frame, const URL& url)
     {
-        return adoptRef(*new MediaDocument(frame, url));
+        return adoptRef(*new MediaDocument(sessionID, frame, url));
     }
     virtual ~MediaDocument();
 
@@ -45,7 +45,7 @@ public:
     String outgoingReferrer() const { return m_outgoingReferrer; }
 
 private:
-    MediaDocument(Frame*, const URL&);
+    MediaDocument(PAL::SessionID, Frame*, const URL&);
 
     Ref<DocumentParser> createParser() override;
 

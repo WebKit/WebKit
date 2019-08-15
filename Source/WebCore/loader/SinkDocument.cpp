@@ -52,8 +52,8 @@ private:
     }
 };
 
-SinkDocument::SinkDocument(Frame* frame, const URL& url)
-    : HTMLDocument(frame, url)
+SinkDocument::SinkDocument(Frame& frame, const URL& url)
+    : HTMLDocument(frame.sessionID(), &frame, url)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();

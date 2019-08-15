@@ -57,6 +57,10 @@ namespace JSC { namespace Yarr {
 class RegularExpression;
 } }
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class CSSAnimationController;
@@ -296,6 +300,8 @@ public:
 
     void selfOnlyRef();
     void selfOnlyDeref();
+
+    PAL::SessionID sessionID() const;
 
 private:
     friend class NavigationDisabler;

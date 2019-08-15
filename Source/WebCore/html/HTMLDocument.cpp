@@ -87,8 +87,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDocument);
 
 using namespace HTMLNames;
 
-HTMLDocument::HTMLDocument(Frame* frame, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
-    : Document(frame, url, documentClasses | HTMLDocumentClass, constructionFlags)
+Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(Frame& frame, const URL& url)
+{
+    return adoptRef(*new HTMLDocument(frame.sessionID(), &frame, url, HTMLDocumentClass, Synthesized));
+}
+
+HTMLDocument::HTMLDocument(PAL::SessionID sessionID, Frame* frame, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
+    : Document(sessionID, frame, url, documentClasses | HTMLDocumentClass, constructionFlags)
 {
     clearXMLVersion();
 }
@@ -247,7 +252,7 @@ bool HTMLDocument::isFrameSet() const
 
 Ref<Document> HTMLDocument::cloneDocumentWithoutChildren() const
 {
-    return create(nullptr, url());
+    return create(sessionID(), nullptr, url());
 }
 
 }

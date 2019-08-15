@@ -24,11 +24,12 @@
 namespace WebCore {
 
 class Document;
+class ScriptExecutionContext;
 
 class DOMParser : public RefCounted<DOMParser> {
 public:
     static Ref<DOMParser> create(Document& contextDocument);
-    ExceptionOr<Ref<Document>> parseFromString(const String&, const String& contentType);
+    ExceptionOr<Ref<Document>> parseFromString(ScriptExecutionContext&, const String&, const String& contentType);
 
 private:
     explicit DOMParser(Document& contextDocument);

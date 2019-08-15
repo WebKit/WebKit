@@ -173,6 +173,8 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
         return nullptr;
 
     if (!m_createdDocument) {
+        auto& context = *scriptExecutionContext();
+
         String mimeType = responseMIMEType();
         bool isHTML = equalLettersIgnoringASCIICase(mimeType, "text/html");
 
@@ -183,13 +185,13 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
             m_responseDocument = nullptr;
         } else {
             if (isHTML)
-                m_responseDocument = HTMLDocument::create(nullptr, m_url);
+                m_responseDocument = HTMLDocument::create(context.sessionID(), nullptr, m_url);
             else
-                m_responseDocument = XMLDocument::create(nullptr, m_url);
+                m_responseDocument = XMLDocument::create(context.sessionID(), nullptr, m_url);
             m_responseDocument->overrideLastModified(m_response.lastModified());
             m_responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
-            m_responseDocument->setContextDocument(downcast<Document>(*scriptExecutionContext()));
-            m_responseDocument->setSecurityOriginPolicy(scriptExecutionContext()->securityOriginPolicy());
+            m_responseDocument->setContextDocument(downcast<Document>(context));
+            m_responseDocument->setSecurityOriginPolicy(context.securityOriginPolicy());
             m_responseDocument->overrideMIMEType(mimeType);
 
             if (!m_responseDocument->wellFormed())
