@@ -1,3 +1,17 @@
+2019-08-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS](REGRESSION: r200487): WebKit.RequestActivatedElementInfoForRotatedImage fails on iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=200726
+
+        Reviewed by Simon Fraser.
+
+        To get the pixels as an array of colors, draw the image into a memory
+        context. The backing memory buffer can then be accessed to get the image
+        pixels' colors.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+
 2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r248526.
