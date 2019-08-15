@@ -100,14 +100,6 @@ private:
 #endif
         case SandboxExtension::Type::Generic:
             return sandbox_extension_issue_generic(path, 0);
-        case SandboxExtension::Type::ReadByPid:
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-            return sandbox_extension_issue_file_to_process_by_pid(APP_SANDBOX_READ, path, 0, pid.value());
-#else
-            UNUSED_PARAM(pid);
-            ASSERT_NOT_REACHED();
-            return nullptr;
-#endif
         }
     }
 
@@ -338,19 +330,6 @@ bool SandboxExtension::createHandleForMachLookupByPid(const String& service, pid
     handle.m_sandboxExtension = SandboxExtensionImpl::create(service.utf8().data(), Type::Mach, pid);
     if (!handle.m_sandboxExtension) {
         WTFLogAlways("Could not create a '%s' sandbox extension", service.utf8().data());
-        return false;
-    }
-    
-    return true;
-}
-
-bool SandboxExtension::createHandleForReadByPid(const String& path, ProcessID pid, Handle& handle)
-{
-    ASSERT(!handle.m_sandboxExtension);
-    
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), Type::ReadByPid, pid);
-    if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create a '%s' sandbox extension", path.utf8().data());
         return false;
     }
     

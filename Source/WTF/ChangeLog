@@ -1,3 +1,18 @@
+2019-08-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r248440.
+        https://bugs.webkit.org/show_bug.cgi?id=200772
+
+        Introduced regressions related to loading of local files.
+        (Requested by perarne on #webkit).
+
+        Reverted changeset:
+
+        "[Mac] Use the PID of the WebContent process when issuing
+        local file read sandbox extensions"
+        https://bugs.webkit.org/show_bug.cgi?id=200543
+        https://trac.webkit.org/changeset/248440
+
 2019-08-14  Kate Cheney  <katherine_cheney@apple.com>
 
         FileSystem::deleteFile should log error status (178347)
