@@ -49,7 +49,6 @@ public:
         ReadWrite,
         Mach,
         Generic,
-        ReadByPid
     };
 
     class Handle {
@@ -105,7 +104,6 @@ public:
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
     static bool createHandleForMachLookupByPid(const String& service, ProcessID, Handle&);
-    static bool createHandleForReadByPid(const String& path, ProcessID, Handle&);
     ~SandboxExtension();
 
     bool consume();
