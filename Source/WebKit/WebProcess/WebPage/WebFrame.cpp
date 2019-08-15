@@ -95,12 +95,6 @@ using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webFrameCounter, ("WebFrame"));
 
-static uint64_t generateFrameID()
-{
-    static uint64_t uniqueFrameID = 1;
-    return uniqueFrameID++;
-}
-
 static uint64_t generateListenerID()
 {
     static uint64_t uniqueListenerID = 1;
@@ -148,7 +142,7 @@ Ref<WebFrame> WebFrame::create(std::unique_ptr<WebFrameLoaderClient> frameLoader
 
 WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
     : m_frameLoaderClient(WTFMove(frameLoaderClient))
-    , m_frameID(generateFrameID())
+    , m_frameID(FrameIdentifier::generate())
 {
     m_frameLoaderClient->setWebFrame(this);
     WebProcess::singleton().addWebFrame(m_frameID, this);

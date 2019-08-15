@@ -1,3 +1,16 @@
+2019-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Use ObjectIdentifier<FrameIdentifierType> for frameIDs
+        https://bugs.webkit.org/show_bug.cgi?id=199986
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the strongly-typed FrameIdentifier instead of uint64_t as frame identifiers everywhere.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::frameID const):
+
 2019-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r248526.

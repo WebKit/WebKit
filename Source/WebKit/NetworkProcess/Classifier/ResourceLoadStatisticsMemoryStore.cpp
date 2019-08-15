@@ -211,7 +211,7 @@ void ResourceLoadStatisticsMemoryStore::syncStorageImmediately()
         m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
 }
 
-void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain, Optional<FrameID> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -235,7 +235,7 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& s
     });
 }
 
-void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameID frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -288,7 +288,7 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener(DomainIn
     grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID, StorageAccessPromptWasShown::No, [](StorageAccessWasGranted) { });
 }
 
-void ResourceLoadStatisticsMemoryStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, uint64_t frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -300,7 +300,7 @@ void ResourceLoadStatisticsMemoryStore::grantStorageAccess(SubFrameDomain&& subF
     grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, WTFMove(completionHandler));
 }
 
-void ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, Optional<FrameID> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 

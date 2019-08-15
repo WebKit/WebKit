@@ -90,7 +90,7 @@ void ServiceWorkerProcessProxy::updatePreferencesStore(const WebPreferencesStore
     send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
 
-void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(PageIdentifier pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&& challenge)
+void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(PageIdentifier pageID, FrameIdentifier frameID, Ref<AuthenticationChallengeProxy>&& challenge)
 {
     UNUSED_PARAM(pageID);
     UNUSED_PARAM(frameID);

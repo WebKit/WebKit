@@ -127,7 +127,7 @@ Optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
     return WTF::nullopt;
 }
 
-Optional<uint64_t> WebFrameLoaderClient::frameID() const
+Optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
     return WTF::nullopt;
 }

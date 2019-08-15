@@ -33,7 +33,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
+UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(FrameIdentifier frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     : m_frameID(frameID)
     , m_completionHandler(WTFMove(handler))
     , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))

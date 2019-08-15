@@ -101,12 +101,12 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavig
 }
 
 #if ENABLE(CONTENT_FILTERING)
-void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
+void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
 {
     contentFilterDidBlockLoadForFrameShared(m_process.copyRef(), unblockHandler, frameID);
 }
 
-void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&& process, const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
+void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&& process, const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
 {
     if (WebFrameProxy* frame = process->webFrame(frameID))
         frame->contentFilterDidBlockLoad(unblockHandler);

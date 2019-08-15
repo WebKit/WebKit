@@ -79,12 +79,12 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookies
     return m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain);
 }
 
-bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
+bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID) const
 {
     return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, pageID);
 }
     
-bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
+bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID) const
 {
     RegistrableDomain firstPartyDomain { firstPartyForCookies };
     if (firstPartyDomain.isEmpty())
@@ -136,7 +136,7 @@ void NetworkStorageSession::removePrevalentDomains(const Vector<RegistrableDomai
     }
 }
 
-bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID) const
+bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID) const
 {
     if (frameID) {
         auto framesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
@@ -169,7 +169,7 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
     return entries;
 }
     
-void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID)
+void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID)
 {
     if (!frameID) {
         if (firstPartyDomain.isEmpty())
@@ -191,7 +191,7 @@ void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resource
 
     auto pagesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
     if (pagesGrantedIterator == m_framesGrantedStorageAccess.end()) {
-        HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> entry;
+        HashMap<FrameIdentifier, RegistrableDomain> entry;
         entry.add(frameID.value(), resourceDomain);
         m_framesGrantedStorageAccess.add(pageID, entry);
     } else {
@@ -203,7 +203,7 @@ void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resource
     }
 }
 
-void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, PageIdentifier pageID)
+void NetworkStorageSession::removeStorageAccessForFrame(FrameIdentifier frameID, PageIdentifier pageID)
 {
     auto iteration = m_framesGrantedStorageAccess.find(pageID);
     if (iteration == m_framesGrantedStorageAccess.end())

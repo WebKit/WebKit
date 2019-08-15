@@ -48,7 +48,7 @@ static inline bool isSameOrigin(const URL& url, const SecurityOrigin* origin)
     return url.protocolIsData() || url.protocolIsBlob() || !origin || origin->canRequest(url);
 }
 
-NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, FetchOptions&& options, PAL::SessionID sessionID, PageIdentifier pageID, uint64_t frameID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
+NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, FetchOptions&& options, PAL::SessionID sessionID, PageIdentifier pageID, FrameIdentifier frameID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTFMove(options))
     , m_sessionID(sessionID)
     , m_networkProcess(networkProcess)

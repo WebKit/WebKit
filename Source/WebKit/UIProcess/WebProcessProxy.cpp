@@ -827,25 +827,25 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 }
 
-WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
+WebFrameProxy* WebProcessProxy::webFrame(FrameIdentifier frameID) const
 {
     if (!WebFrameProxyMap::isValidKey(frameID))
-        return 0;
+        return nullptr;
 
     return m_frameMap.get(frameID);
 }
 
-bool WebProcessProxy::canCreateFrame(uint64_t frameID) const
+bool WebProcessProxy::canCreateFrame(FrameIdentifier frameID) const
 {
     return WebFrameProxyMap::isValidKey(frameID) && !m_frameMap.contains(frameID);
 }
 
-void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy& frameProxy)
+void WebProcessProxy::frameCreated(FrameIdentifier frameID, WebFrameProxy& frameProxy)
 {
     m_frameMap.set(frameID, &frameProxy);
 }
 
-void WebProcessProxy::didDestroyFrame(uint64_t frameID)
+void WebProcessProxy::didDestroyFrame(FrameIdentifier frameID)
 {
     // If the page is closed before it has had the chance to send the DidCreateMainFrame message
     // back to the UIProcess, then the frameDestroyed message will still be received because it

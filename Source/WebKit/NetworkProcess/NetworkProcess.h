@@ -137,7 +137,6 @@ public:
     using NavigatedToDomain = WebCore::RegistrableDomain;
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
-    using FrameID = uint64_t;
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();

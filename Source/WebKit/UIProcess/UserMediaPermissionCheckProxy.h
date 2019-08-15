@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaConstraints.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
@@ -41,7 +42,7 @@ public:
     enum class PermissionInfo { Error, Unknown, Granted };
     using CompletionHandler = WTF::CompletionHandler<void(PermissionInfo)>;
 
-    static Ref<UserMediaPermissionCheckProxy> create(uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
+    static Ref<UserMediaPermissionCheckProxy> create(WebCore::FrameIdentifier frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     {
         return adoptRef(*new UserMediaPermissionCheckProxy(frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin)));
     }
@@ -50,17 +51,17 @@ public:
     void setUserMediaAccessInfo(bool);
     void invalidate() { complete(PermissionInfo::Error); }
 
-    uint64_t frameID() const { return m_frameID; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
     
 private:
-    UserMediaPermissionCheckProxy(uint64_t frameID, CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
+    UserMediaPermissionCheckProxy(WebCore::FrameIdentifier, CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
     ~UserMediaPermissionCheckProxy();
 
     void complete(PermissionInfo);
     
-    uint64_t m_frameID;
+    WebCore::FrameIdentifier m_frameID;
     CompletionHandler m_completionHandler;
     Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
     Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIFrameHandle_h
-#define APIFrameHandle_h
+#pragma once
 
-#include "APIObject.h"
-#include <WebCore/FrameIdentifier.h>
-#include <wtf/Ref.h>
+#include <wtf/ObjectIdentifier.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
+namespace WebCore {
+
+enum FrameIdentifierType { };
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
+
+inline FrameIdentifier frameIdentifierFromID(uint64_t frameID)
+{
+    return makeObjectIdentifier<FrameIdentifierType>(frameID);
 }
 
-namespace API {
-
-class FrameHandle : public ObjectImpl<Object::Type::FrameHandle> {
-public:
-    static Ref<FrameHandle> create(WebCore::FrameIdentifier);
-    static Ref<FrameHandle> createAutoconverting(WebCore::FrameIdentifier);
-
-    explicit FrameHandle(WebCore::FrameIdentifier, bool isAutoconverting);
-    virtual ~FrameHandle();
-
-    WebCore::FrameIdentifier frameID() const { return m_frameID; }
-    bool isAutoconverting() const { return m_isAutoconverting; }
-
-    void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RefPtr<Object>&);
-
-private:
-    const WebCore::FrameIdentifier m_frameID;
-    const bool m_isAutoconverting;
-};
-
-} // namespace API
-
-#endif // APIFrameHandle_h
+}

@@ -48,7 +48,7 @@
 
 + (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle
 {
-    return wrapper(WebKit::WebProcess::singleton().webFrame(handle._frameID));
+    return wrapper(WebKit::WebProcess::singleton().webFrame(WebCore::frameIdentifierFromID(handle._frameID)));
 }
 
 - (void)dealloc

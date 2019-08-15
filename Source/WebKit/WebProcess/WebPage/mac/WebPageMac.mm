@@ -670,7 +670,7 @@ void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
         m_footerBanner->didChangeDeviceScaleFactor(scaleFactor);
 }
 
-void WebPage::computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
+void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
 {
     ASSERT(resultPageRects.isEmpty());
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);

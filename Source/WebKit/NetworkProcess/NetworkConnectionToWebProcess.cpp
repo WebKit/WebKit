@@ -525,7 +525,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::Sessi
     loader->convertToDownload(downloadID, request, response);
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&& completionHandler)
+void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&& completionHandler)
 {
     auto& networkStorageSession = storageSession(networkProcess(), sessionID);
     auto result = networkStorageSession.cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
@@ -538,7 +538,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, cons
     completionHandler(WTFMove(result.first), result.second);
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, const String& cookieString)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<WebCore::FrameIdentifier> frameID, Optional<PageIdentifier> pageID, const String& cookieString)
 {
     auto& networkStorageSession = storageSession(networkProcess(), sessionID);
     networkStorageSession.setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
@@ -555,13 +555,13 @@ void NetworkConnectionToWebProcess::cookiesEnabled(PAL::SessionID sessionID, Com
     completionHandler(storageSession(networkProcess(), sessionID).cookiesEnabled());
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String, bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String, bool)>&& completionHandler)
 {
     auto result = storageSession(networkProcess(), sessionID).cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
     completionHandler(WTFMove(result.first), result.second);
 }
 
-void NetworkConnectionToWebProcess::getRawCookies(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::getRawCookies(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
     Vector<WebCore::Cookie> result;
     storageSession(networkProcess(), sessionID).getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, result);
@@ -670,7 +670,7 @@ void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, PageIdentifier pageID)
+void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, FrameIdentifier frameID, PageIdentifier pageID)
 {
     if (auto* storageSession = networkProcess().storageSession(sessionID))
         storageSession->removeStorageAccessForFrame(frameID, pageID);
@@ -728,7 +728,7 @@ void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<WebCore
         resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
 }
 
-void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
@@ -740,7 +740,7 @@ void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, c
     completionHandler(true);
 }
 
-void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(WebCore::StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown)>&& completionHandler)
+void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(WebCore::StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown)>&& completionHandler)
 {
     if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {

@@ -265,7 +265,7 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
 {
     WebFrame* webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? webFrame->frameID() : 0), m_page.pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? makeOptional(webFrame->frameID()) : WTF::nullopt), m_page.pageID());
 }
 
 Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& request, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
@@ -625,7 +625,7 @@ void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) con
         WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
         if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
             m_cachedFrameSetLargestFrame = largestFrame;
-            m_page.send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0));
+            m_page.send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? makeOptional(largestFrame->frameID()) : WTF::nullopt));
         }
     }
 
@@ -1316,12 +1316,12 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, PageIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_page.hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, WTFMove(completionHandler));
 }
 
-void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, PageIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
+void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
     m_page.requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, WTFMove(completionHandler));
 }

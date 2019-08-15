@@ -382,7 +382,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     }
 }
 
-void SimulatedInputDispatcher::run(uint64_t frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::run(WebCore::FrameIdentifier frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
 {
     ASSERT(!isActive());
     if (isActive()) {

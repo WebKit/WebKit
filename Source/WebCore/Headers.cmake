@@ -777,6 +777,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FocusDirection.h
     page/Frame.h
     page/FrameDestructionObserver.h
+    page/FrameIdentifier.h
     page/FrameSnapshotting.h
     page/FrameTree.h
     page/FrameView.h

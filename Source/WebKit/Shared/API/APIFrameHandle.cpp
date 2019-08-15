@@ -31,17 +31,17 @@
 
 namespace API {
 
-Ref<FrameHandle> FrameHandle::create(uint64_t frameID)
+Ref<FrameHandle> FrameHandle::create(WebCore::FrameIdentifier frameID)
 {
     return adoptRef(*new FrameHandle(frameID, false));
 }
 
-Ref<FrameHandle> FrameHandle::createAutoconverting(uint64_t frameID)
+Ref<FrameHandle> FrameHandle::createAutoconverting(WebCore::FrameIdentifier frameID)
 {
     return adoptRef(*new FrameHandle(frameID, true));
 }
 
-FrameHandle::FrameHandle(uint64_t frameID, bool isAutoconverting)
+FrameHandle::FrameHandle(WebCore::FrameIdentifier frameID, bool isAutoconverting)
     : m_frameID(frameID)
     , m_isAutoconverting(isAutoconverting)
 {
@@ -59,7 +59,7 @@ void FrameHandle::encode(IPC::Encoder& encoder) const
 
 bool FrameHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
-    uint64_t frameID;
+    WebCore::FrameIdentifier frameID;
     if (!decoder.decode(frameID))
         return false;
 

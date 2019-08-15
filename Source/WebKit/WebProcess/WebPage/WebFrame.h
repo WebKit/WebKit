@@ -80,7 +80,7 @@ public:
     WebCore::Frame* coreFrame() const { return m_coreFrame; }
 
     FrameInfoData info() const;
-    uint64_t frameID() const { return m_frameID; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
@@ -187,7 +187,7 @@ private:
     std::unique_ptr<WebFrameLoaderClient> m_frameLoaderClient;
     LoadListener* m_loadListener { nullptr };
     
-    uint64_t m_frameID { 0 };
+    WebCore::FrameIdentifier m_frameID;
 
 #if PLATFORM(IOS_FAMILY)
     uint64_t m_firstLayerTreeTransactionIDAfterDidCommitLoad { 0 };

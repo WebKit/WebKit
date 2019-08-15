@@ -41,7 +41,7 @@ public:
 
     static bool hasRegisteredServiceWorkers(const String& serviceWorkerDirectory);
 
-    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
+    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, WebCore::FrameIdentifier, Ref<AuthenticationChallengeProxy>&&);
 
     void start(const WebPreferencesStore&, Optional<PAL::SessionID> initialSessionID);
     void setUserAgent(const String&);

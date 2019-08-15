@@ -52,7 +52,7 @@ public:
     void dispatchDidFailToStartPlugin(const WebCore::PluginView&) const;
 
     Optional<WebCore::PageIdentifier> pageID() const final;
-    Optional<uint64_t> frameID() const final;
+    Optional<WebCore::FrameIdentifier> frameID() const final;
     PAL::SessionID sessionID() const final;
 
     bool hasWebView() const override;

@@ -42,7 +42,7 @@ class NetworkSessionCocoa;
 class NetworkDataTaskCocoa final : public NetworkDataTask {
     friend class NetworkSessionCocoa;
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, uint64_t frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
     {
         return adoptRef(*new NetworkDataTaskCocoa(session, client, request, frameID, pageID, storedCredentialsPolicy, shouldContentSniff, shouldContentEncodingSniff, shouldClearReferrerOnHTTPSToHTTPRedirect, shouldPreconnectOnly, dataTaskIsForMainFrameNavigation, dataTaskIsForMainResourceNavigationForAnyFrame, networkActivityTracker));
     }
@@ -69,13 +69,13 @@ public:
 
     WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
 
-    uint64_t frameID() const { return m_frameID; };
+    WebCore::FrameIdentifier frameID() const { return m_frameID; };
     WebCore::PageIdentifier pageID() const { return m_pageID; };
 
     String description() const override;
 
 private:
-    NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, uint64_t frameID, WebCore::PageIdentifier, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker>);
+    NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker>);
 
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(__strong NSURLRequest*&, bool shouldContentSniff, bool shouldContentEncodingSniff);
@@ -92,7 +92,7 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
-    uint64_t m_frameID;
+    WebCore::FrameIdentifier m_frameID;
     WebCore::PageIdentifier m_pageID;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

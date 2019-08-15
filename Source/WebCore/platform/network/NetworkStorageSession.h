@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CredentialStorage.h"
+#include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "RegistrableDomain.h"
 #include <pal/SessionID.h>
@@ -123,7 +124,7 @@ public:
     WEBCORE_EXPORT bool cookiesEnabled() const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
-    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, const String&) const;
+    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, const String&) const;
     WEBCORE_EXPORT void deleteCookie(const Cookie&);
     WEBCORE_EXPORT void deleteCookie(const URL&, const String&) const;
     WEBCORE_EXPORT void deleteAllCookies();
@@ -132,26 +133,26 @@ public:
     WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
-    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, Vector<Cookie>&) const;
+    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, Vector<Cookie>&) const;
     WEBCORE_EXPORT void flushCookieStore();
     WEBCORE_EXPORT void getHostnamesWithCookies(HashSet<String>& hostnames);
-    WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
-    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
+    WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies) const;
+    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, Optional<uint64_t> frameID, Optional<PageIdentifier>) const;
-    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<PageIdentifier>) const;
+    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, Optional<FrameIdentifier>, Optional<PageIdentifier>) const;
+    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<FrameIdentifier>, Optional<PageIdentifier>) const;
     WEBCORE_EXPORT bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
     WEBCORE_EXPORT bool shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(const RegistrableDomain&) const;
     WEBCORE_EXPORT void setPrevalentDomainsToBlockAndDeleteCookiesFor(const Vector<RegistrableDomain>&);
     WEBCORE_EXPORT void setPrevalentDomainsToBlockButKeepCookiesFor(const Vector<RegistrableDomain>&);
     WEBCORE_EXPORT void setAgeCapForClientSideCookies(Optional<Seconds>);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<RegistrableDomain>& domains);
-    WEBCORE_EXPORT bool hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier) const;
+    WEBCORE_EXPORT bool hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier>, PageIdentifier) const;
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
-    WEBCORE_EXPORT void grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier);
-    WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, PageIdentifier);
+    WEBCORE_EXPORT void grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier>, PageIdentifier);
+    WEBCORE_EXPORT void removeStorageAccessForFrame(FrameIdentifier, PageIdentifier);
     WEBCORE_EXPORT void clearPageSpecificDataForResourceLoadStatistics(PageIdentifier);
     WEBCORE_EXPORT void removeAllStorageAccess();
     WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
@@ -185,7 +186,7 @@ private:
     Optional<Seconds> clientSideCookieCap(const RegistrableDomain& firstParty, Optional<PageIdentifier>) const;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockAndDeleteCookiesFor;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockButKeepCookiesFor;
-    HashMap<PageIdentifier, HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>> m_framesGrantedStorageAccess;
+    HashMap<PageIdentifier, HashMap<FrameIdentifier, RegistrableDomain>> m_framesGrantedStorageAccess;
     HashMap<PageIdentifier, HashMap<RegistrableDomain, RegistrableDomain>> m_pagesGrantedStorageAccess;
     Optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
     Optional<Seconds> m_ageCapForClientSideCookies { };

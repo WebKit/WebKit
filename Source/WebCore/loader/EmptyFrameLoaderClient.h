@@ -32,7 +32,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 
     void frameLoaderDestroyed() override { }
 
-    Optional<uint64_t> frameID() const override { return WTF::nullopt; }
+    Optional<FrameIdentifier> frameID() const override { return WTF::nullopt; }
     Optional<PageIdentifier> pageID() const override { return WTF::nullopt; }
     PAL::SessionID sessionID() const override;
 

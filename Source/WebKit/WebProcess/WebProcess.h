@@ -40,6 +40,7 @@
 #include "WebSQLiteDatabaseTracker.h"
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #if PLATFORM(MAC)
@@ -172,9 +173,9 @@ public:
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
-    WebFrame* webFrame(uint64_t) const;
-    void addWebFrame(uint64_t, WebFrame*);
-    void removeWebFrame(uint64_t);
+    WebFrame* webFrame(WebCore::FrameIdentifier) const;
+    void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
+    void removeWebFrame(WebCore::FrameIdentifier);
 
     WebPageGroupProxy* webPageGroup(WebCore::PageGroup*);
     WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
@@ -489,7 +490,7 @@ private:
 
     bool m_fullKeyboardAccessEnabled { false };
 
-    HashMap<uint64_t, WebFrame*> m_frameMap;
+    HashMap<WebCore::FrameIdentifier, WebFrame*> m_frameMap;
 
     typedef HashMap<const char*, std::unique_ptr<WebProcessSupplement>, PtrHash<const char*>> WebProcessSupplementMap;
     WebProcessSupplementMap m_supplements;

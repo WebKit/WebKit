@@ -108,7 +108,7 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
     return challengesToCoalesce;
 }
 
-void AuthenticationManager::didReceiveAuthenticationChallenge(PageIdentifier pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
+void AuthenticationManager::didReceiveAuthenticationChallenge(PageIdentifier pageID, FrameIdentifier frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     ASSERT(pageID);
     ASSERT(frameID);

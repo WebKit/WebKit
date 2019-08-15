@@ -30,6 +30,7 @@
 #include "DisplayRefreshMonitor.h"
 #include "DocumentStorageAccess.h"
 #include "FocusDirection.h"
+#include "FrameIdentifier.h"
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -486,8 +487,8 @@ public:
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, uint64_t /*frameID*/, PageIdentifier, WTF::CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
-    virtual void requestStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, uint64_t /*frameID*/, PageIdentifier, WTF::CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler) { completionHandler(StorageAccessWasGranted::No, StorageAccessPromptWasShown::No); }
+    virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, FrameIdentifier, PageIdentifier, WTF::CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void requestStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, FrameIdentifier, PageIdentifier, WTF::CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler) { completionHandler(StorageAccessWasGranted::No, StorageAccessPromptWasShown::No); }
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

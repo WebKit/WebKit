@@ -55,7 +55,7 @@ FrameInfo::FrameInfo(const WebKit::FrameInfoData& frameInfoData, WebKit::WebPage
     : m_isMainFrame { frameInfoData.isMainFrame }
     , m_request { frameInfoData.request }
     , m_securityOrigin { SecurityOrigin::create(frameInfoData.securityOrigin.securityOrigin()) }
-    , m_handle { API::FrameHandle::create(frameInfoData.frameID) }
+    , m_handle { API::FrameHandle::create(frameInfoData.frameID ? *frameInfoData.frameID : WebCore::FrameIdentifier{ }) }
     , m_page { makeRefPtr(page) }
 {
 }

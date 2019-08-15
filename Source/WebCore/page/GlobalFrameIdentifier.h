@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include <wtf/Optional.h>
 
@@ -33,7 +34,7 @@ namespace WebCore {
 // Frame identifier that is unique across all WebContent processes.
 struct GlobalFrameIdentifier {
     PageIdentifier pageID;
-    uint64_t frameID;
+    FrameIdentifier frameID;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<GlobalFrameIdentifier> decode(Decoder&);
@@ -53,7 +54,7 @@ Optional<GlobalFrameIdentifier> GlobalFrameIdentifier::decode(Decoder& decoder)
     if (!pageID)
         return WTF::nullopt;
 
-    Optional<uint64_t> frameID;
+    Optional<FrameIdentifier> frameID;
     decoder >> frameID;
     if (!frameID)
         return WTF::nullopt;

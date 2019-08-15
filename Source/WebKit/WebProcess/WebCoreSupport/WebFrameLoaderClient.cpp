@@ -120,7 +120,7 @@ Optional<PageIdentifier> WebFrameLoaderClient::pageID() const
     return WTF::nullopt;
 }
 
-Optional<uint64_t> WebFrameLoaderClient::frameID() const
+Optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
     if (m_frame)
         return m_frame->frameID();
@@ -546,7 +546,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
     if (!webPage)
         return;
 
-    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailProvisionalLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ")", this, webPage->pageID().toUInt64(), m_frame->frameID());
+    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailProvisionalLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ")", this, webPage->pageID().toUInt64(), m_frame->frameID().toUInt64());
 
     RefPtr<API::Object> userData;
 
@@ -582,7 +582,7 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     if (!webPage)
         return;
 
-    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ")", this, webPage->pageID().toUInt64(), m_frame->frameID());
+    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ")", this, webPage->pageID().toUInt64(), m_frame->frameID().toUInt64());
 
     RefPtr<API::Object> userData;
 

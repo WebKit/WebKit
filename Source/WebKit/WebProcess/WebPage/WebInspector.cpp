@@ -209,7 +209,7 @@ void WebInspector::showResources()
     });
 }
 
-void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
+void WebInspector::showMainResourceForFrame(WebCore::FrameIdentifier frameIdentifier)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameIdentifier);
     if (!frame)

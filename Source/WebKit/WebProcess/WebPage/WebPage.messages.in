@@ -27,9 +27,9 @@ messages -> WebPage LegacyReceiver {
 
     SetBackgroundColor(Optional<WebCore::Color> color)
 
-    AddConsoleMessage(uint64_t frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
-    SendCSPViolationReport(uint64_t frameID, URL reportURL, IPC::FormDataReference reportData)
-    EnqueueSecurityPolicyViolationEvent(uint64_t frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
+    AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
+    SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
+    EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous
 
@@ -162,8 +162,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:bool WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebKit::WebsitePoliciesData> websitePolicies)
     TryRestoreScrollPosition()
 
-    LoadURLInFrame(URL url, String referrer, uint64_t frameID)
-    LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, uint64_t frameID)
+    LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
+    LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, WebCore::FrameIdentifier frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
@@ -173,7 +173,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     Reload(uint64_t navigationID, uint32_t reloadOptions, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
 
-    StopLoadingFrame(uint64_t frameID)
+    StopLoadingFrame(WebCore::FrameIdentifier frameID)
     
     RestoreSession(Vector<WebKit::BackForwardListItemState> itemStates)
     UpdateBackForwardListForReattach(Vector<WebKit::BackForwardListItemState> itemStates)
@@ -182,8 +182,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
-    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, WebCore::PolicyCheckIdentifier policyCheckIdentifier, enum:uint8_t WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, Optional<WebKit::WebsitePoliciesData> websitePolicies)
-    ContinueWillSubmitForm(uint64_t frameID, uint64_t listenerID)
+    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, WebCore::PolicyCheckIdentifier policyCheckIdentifier, enum:uint8_t WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, Optional<WebKit::WebsitePoliciesData> websitePolicies)
+    ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, uint64_t listenerID)
 
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
@@ -196,15 +196,15 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(MHTML)
     GetContentsAsMHTMLData(WebKit::CallbackID callbackID)
 #endif
-    GetMainResourceDataOfFrame(uint64_t frameID, WebKit::CallbackID callbackID)
-    GetResourceDataFromFrame(uint64_t frameID, String resourceURL, WebKit::CallbackID callbackID)
+    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
+    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL, WebKit::CallbackID callbackID)
     GetRenderTreeExternalRepresentation(WebKit::CallbackID callbackID)
     GetSelectionOrContentsAsString(WebKit::CallbackID callbackID)
     GetSelectionAsWebArchiveData(WebKit::CallbackID callbackID)
-    GetSourceForFrame(uint64_t frameID, WebKit::CallbackID callbackID)
-    GetWebArchiveOfFrame(uint64_t frameID, WebKit::CallbackID callbackID)
+    GetSourceForFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
+    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
     RunJavaScriptInMainFrameScriptWorld(String script, bool forceUserGesture, Optional<String> worldName, WebKit::CallbackID callbackID)
-    RunJavaScriptInFrame(uint64_t frameID, String script, bool forceUserGesture, WebKit::CallbackID callbackID)
+    RunJavaScriptInFrame(WebCore::FrameIdentifier frameID, String script, bool forceUserGesture, WebKit::CallbackID callbackID)
     ForceRepaint(WebKit::CallbackID callbackID)
 
     SelectAll()
@@ -380,18 +380,18 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 
     # Printing.
-    BeginPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo)
+    BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
     EndPrinting()
-    ComputePagesForPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
+    ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
 #if PLATFORM(COCOA)
-    DrawRectToImage(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, WebKit::CallbackID callbackID)
-    DrawPagesToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
+    DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, WebKit::CallbackID callbackID)
+    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
 #if PLATFORM(IOS_FAMILY)
-    ComputePagesForPrintingAndDrawToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Synchronous
+    ComputePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Synchronous
 #endif
 #endif
 #if PLATFORM(GTK)
-    DrawPagesForPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
+    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
 #endif
 
     # Media
@@ -413,7 +413,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ConfirmComposition(String text, int64_t selectionStart, int64_t selectionLength)
     CancelComposition()
 
-    CollapseSelectionInFrame(uint64_t frameID)
+    CollapseSelectionInFrame(WebCore::FrameIdentifier frameID)
 
     GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) Synchronous
 #endif
@@ -536,7 +536,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidReceivePasswordForQuickLookDocument(String password)
 #endif
 
-    FrameBecameRemote(uint64_t frameID, struct WebCore::GlobalFrameIdentifier remoteFrameIdentifier, struct WebCore::GlobalWindowIdentifier remoteWindowIdentifier)
+    FrameBecameRemote(WebCore::FrameIdentifier frameID, struct WebCore::GlobalFrameIdentifier remoteFrameIdentifier, struct WebCore::GlobalWindowIdentifier remoteWindowIdentifier)
 
     RegisterURLSchemeHandler(uint64_t identifier, String scheme)
 

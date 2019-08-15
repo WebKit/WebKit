@@ -189,7 +189,7 @@ static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
     return parsedCookies;
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, const String& value) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, const String& value) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -225,7 +225,7 @@ static bool containsSecureCookies(CFArrayRef cookies)
     return false;
 }
 
-std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -240,7 +240,7 @@ std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstPar
     return { cookieString, didAccessSecureCookies };
 }
 
-std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -264,7 +264,7 @@ bool NetworkStorageSession::cookiesEnabled() const
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, Vector<Cookie>& rawCookies) const
+bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, Vector<Cookie>& rawCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);

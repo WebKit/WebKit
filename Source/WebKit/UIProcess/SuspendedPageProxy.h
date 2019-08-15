@@ -29,6 +29,7 @@
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,12 +43,12 @@ enum class ShouldDelayClosingUntilEnteringAcceleratedCompositingMode : bool { No
 class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeWeakPtr<SuspendedPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, uint64_t mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
+    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, WebCore::FrameIdentifier mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
     ~SuspendedPageProxy();
 
     WebPageProxy& page() const { return m_page; }
     WebProcessProxy& process() { return m_process.get(); }
-    uint64_t mainFrameID() const { return m_mainFrameID; }
+    WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
 
     bool pageIsClosedOrClosing() const;
 
@@ -74,7 +75,7 @@ private:
 
     WebPageProxy& m_page;
     Ref<WebProcessProxy> m_process;
-    uint64_t m_mainFrameID;
+    WebCore::FrameIdentifier m_mainFrameID;
     bool m_isClosed { false };
     ShouldDelayClosingUntilEnteringAcceleratedCompositingMode m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode { ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No };
     bool m_shouldCloseWhenEnteringAcceleratedCompositingMode { false };

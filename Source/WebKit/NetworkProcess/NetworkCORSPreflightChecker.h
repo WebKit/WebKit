@@ -51,7 +51,7 @@ public:
         String userAgent;
         PAL::SessionID sessionID;
         WebCore::PageIdentifier pageID;
-        uint64_t frameID;
+        WebCore::FrameIdentifier frameID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;

@@ -1066,7 +1066,7 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(uint64_t r
     pageClient().handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
 }
 
-uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, DrawToPDFCallback::CallbackFunction&& callback)
+uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, DrawToPDFCallback::CallbackFunction&& callback)
 {
     if (!hasRunningProcess()) {
         callback(IPC::DataReference(), CallbackBase::Error::OwnerWasInvalidated);

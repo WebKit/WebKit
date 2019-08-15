@@ -28,6 +28,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/CompletionHandler.h>
@@ -85,7 +86,7 @@ enum class UseDecision {
     NoDueToExpiredRedirect
 };
 
-using GlobalFrameID = std::pair<WebCore::PageIdentifier, uint64_t /*webFrameID*/>;
+using GlobalFrameID = std::pair<WebCore::PageIdentifier, WebCore::FrameIdentifier>; // FIXME: Use GlobalFrameIdentifier.
 
 enum class CacheOption : uint8_t {
     // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.

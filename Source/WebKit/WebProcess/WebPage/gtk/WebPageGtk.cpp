@@ -183,7 +183,7 @@ void WebPage::setInputMethodState(bool enabled)
     send(Messages::WebPageProxy::SetInputMethodState(enabled));
 }
 
-void WebPage::collapseSelectionInFrame(uint64_t frameID)
+void WebPage::collapseSelectionInFrame(FrameIdentifier frameID)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame || !frame->coreFrame())

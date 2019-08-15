@@ -26,6 +26,8 @@
 #import "config.h"
 #import "_WKFrameHandleInternal.h"
 
+#import <WebCore/FrameIdentifier.h>
+
 @implementation _WKFrameHandle {
     API::ObjectStorage<API::FrameHandle> _frameHandle;
 }
@@ -50,12 +52,12 @@
 
 - (NSUInteger)hash
 {
-    return _frameHandle->frameID();
+    return _frameHandle->frameID().toUInt64();
 }
 
 - (uint64_t)_frameID
 {
-    return _frameHandle->frameID();
+    return _frameHandle->frameID().toUInt64();
 }
 
 #pragma mark NSCopying protocol implementation
@@ -83,14 +85,14 @@
         return nil;
     }
 
-    API::Object::constructInWrapper<API::FrameHandle>(self, frameID.unsignedLongLongValue, false);
+    API::Object::constructInWrapper<API::FrameHandle>(self, WebCore::frameIdentifierFromID(frameID.unsignedLongLongValue), false);
 
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:@(_frameHandle->frameID()) forKey:@"frameID"];
+    [coder encodeObject:@([self _frameID]) forKey:@"frameID"];
 }
 
 #pragma mark WKObject protocol implementation

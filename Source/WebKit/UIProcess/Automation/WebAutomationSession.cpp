@@ -202,41 +202,43 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
     return handle;
 }
 
-Optional<uint64_t> WebAutomationSession::webFrameIDForHandle(const String& handle)
+Optional<FrameIdentifier> WebAutomationSession::webFrameIDForHandle(const String& handle, bool& frameNotFound)
 {
     if (handle.isEmpty())
-        return 0;
+        return WTF::nullopt;
 
     auto iter = m_handleWebFrameMap.find(handle);
-    if (iter == m_handleWebFrameMap.end())
+    if (iter == m_handleWebFrameMap.end()) {
+        frameNotFound = true;
         return WTF::nullopt;
+    }
 
     return iter->value;
 }
 
-String WebAutomationSession::handleForWebFrameID(uint64_t frameID)
+String WebAutomationSession::handleForWebFrameID(Optional<FrameIdentifier> frameID)
 {
-    if (!frameID)
+    if (!frameID || !*frameID)
         return emptyString();
 
     for (auto& process : m_processPool->processes()) {
-        if (WebFrameProxy* frame = process->webFrame(frameID)) {
+        if (WebFrameProxy* frame = process->webFrame(*frameID)) {
             if (frame->isMainFrame())
                 return emptyString();
             break;
         }
     }
 
-    auto iter = m_webFrameHandleMap.find(frameID);
+    auto iter = m_webFrameHandleMap.find(*frameID);
     if (iter != m_webFrameHandleMap.end())
         return iter->value;
 
     String handle = "frame-" + createCanonicalUUIDString().convertToASCIIUppercase();
 
-    auto firstAddResult = m_webFrameHandleMap.add(frameID, handle);
+    auto firstAddResult = m_webFrameHandleMap.add(*frameID, handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);
 
-    auto secondAddResult = m_handleWebFrameMap.add(handle, frameID);
+    auto secondAddResult = m_handleWebFrameMap.add(handle, *frameID);
     RELEASE_ASSERT(secondAddResult.isNewEntry);
 
     return handle;
@@ -362,14 +364,15 @@ void WebAutomationSession::switchToBrowsingContext(const String& browsingContext
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
 
     m_client->requestSwitchToPage(*this, *page, [frameID, page = makeRef(*page), callback = WTFMove(callback)]() {
         page->setFocus(true);
-        page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
+        page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID), 0);
 
         callback->sendSuccess();
     });
@@ -459,8 +462,9 @@ void WebAutomationSession::waitForNavigationToComplete(const String& browsingCon
         && page->pageLoadState().isLoading() && m_client->isShowingJavaScriptDialogOnPage(*this, *page);
 
     if (optionalFrameHandle && !optionalFrameHandle->isEmpty()) {
-        Optional<uint64_t> frameID = webFrameIDForHandle(*optionalFrameHandle);
-        if (!frameID)
+        bool frameNotFound = false;
+        auto frameID = webFrameIDForHandle(*optionalFrameHandle, frameNotFound);
+        if (frameNotFound)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
         WebFrameProxy* frame = page->process().webFrame(frameID.value());
         if (!frame)
@@ -537,7 +541,7 @@ void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(Ha
     }
 }
 
-static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, uint64_t frameID)
+static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, FrameIdentifier frameID)
 {
     for (auto& process : processPool.processes()) {
         if (auto* frame = process->webFrame(frameID))
@@ -546,7 +550,7 @@ static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, uint6
     return nullptr;
 }
 
-void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
+void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<FrameIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
 {
     Inspector::ErrorString timeoutError = STRING_FOR_PREDEFINED_ERROR_NAME(Timeout);
     for (auto id : copyToVector(map.keys())) {
@@ -924,8 +928,9 @@ void WebAutomationSession::evaluateJavaScriptFunction(const String& browsingCont
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     Vector<String> argumentsVector;
@@ -943,7 +948,7 @@ void WebAutomationSession::evaluateJavaScriptFunction(const String& browsingCont
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->pageID(), frameID.value(), function, argumentsVector, expectsImplicitCallbackArgument, callbackTimeout, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->pageID(), frameID, function, argumentsVector, expectsImplicitCallbackArgument, callbackTimeout, callbackID), 0);
 }
 
 void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType)
@@ -967,11 +972,12 @@ void WebAutomationSession::resolveChildFrameHandle(const String& browsingContext
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    WTF::CompletionHandler<void(Optional<String>, uint64_t)> completionHandler = [this, protectedThis = makeRef(*this), callback = callback.copyRef()](Optional<String> errorType, uint64_t frameID) mutable {
+    WTF::CompletionHandler<void(Optional<String>, Optional<FrameIdentifier>)> completionHandler = [this, protectedThis = makeRef(*this), callback = callback.copyRef()](Optional<String> errorType, Optional<FrameIdentifier> frameID) mutable {
         if (errorType) {
             callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
             return;
@@ -981,17 +987,17 @@ void WebAutomationSession::resolveChildFrameHandle(const String& browsingContext
     };
 
     if (optionalNodeHandle) {
-        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->pageID(), frameID.value(), *optionalNodeHandle), WTFMove(completionHandler));
+        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->pageID(), frameID, *optionalNodeHandle), WTFMove(completionHandler));
         return;
     }
 
     if (optionalName) {
-        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->pageID(), frameID.value(), *optionalName), WTFMove(completionHandler));
+        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->pageID(), frameID, *optionalName), WTFMove(completionHandler));
         return;
     }
 
     if (optionalOrdinal) {
-        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->pageID(), frameID.value(), *optionalOrdinal), WTFMove(completionHandler));
+        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->pageID(), frameID, *optionalOrdinal), WTFMove(completionHandler));
         return;
     }
 
@@ -1004,11 +1010,12 @@ void WebAutomationSession::resolveParentFrameHandle(const String& browsingContex
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    WTF::CompletionHandler<void(Optional<String>, uint64_t)> completionHandler = [this, protectedThis = makeRef(*this), callback = callback.copyRef()](Optional<String> errorType, uint64_t frameID) mutable {
+    WTF::CompletionHandler<void(Optional<String>, Optional<FrameIdentifier>)> completionHandler = [this, protectedThis = makeRef(*this), callback = callback.copyRef()](Optional<String> errorType, Optional<FrameIdentifier> frameID) mutable {
         if (errorType) {
             callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
             return;
@@ -1017,7 +1024,7 @@ void WebAutomationSession::resolveParentFrameHandle(const String& browsingContex
         callback->sendSuccess(handleForWebFrameID(frameID));
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->pageID(), frameID.value()), WTFMove(completionHandler));
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->pageID(), frameID), WTFMove(completionHandler));
 }
 
 static Optional<CoordinateSystem> protocolStringToCoordinateSystem(const String& coordinateSystemString)
@@ -1035,8 +1042,9 @@ void WebAutomationSession::computeElementLayout(const String& browsingContextHan
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     Optional<CoordinateSystem> coordinateSystem = protocolStringToCoordinateSystem(coordinateSystemString);
@@ -1078,7 +1086,7 @@ void WebAutomationSession::computeElementLayout(const String& browsingContextHan
     };
 
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value()), WTFMove(completionHandler));
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value()), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::selectOptionElement(const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, Ref<SelectOptionElementCallback>&& callback)
@@ -1087,8 +1095,9 @@ void WebAutomationSession::selectOptionElement(const String& browsingContextHand
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     WTF::CompletionHandler<void(Optional<String>)> completionHandler = [callback = callback.copyRef()](Optional<String> errorType) mutable {
@@ -1100,7 +1109,7 @@ void WebAutomationSession::selectOptionElement(const String& browsingContextHand
         callback->sendSuccess();
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SelectOptionElement(page->pageID(), frameID.value(), nodeHandle), WTFMove(completionHandler));
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SelectOptionElement(page->pageID(), frameID, nodeHandle), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::isShowingJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, bool* result)
@@ -1270,9 +1279,7 @@ void WebAutomationSession::getAllCookies(const String& browsingContextHandle, Re
         callback->sendSuccess(buildArrayForCookies(cookies));
     };
 
-    // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
-    const uint64_t mainFrameID = 0;
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->pageID(), mainFrameID), WTFMove(completionHandler));
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->pageID(), WTF::nullopt), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::deleteSingleCookie(const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&& callback)
@@ -1290,9 +1297,7 @@ void WebAutomationSession::deleteSingleCookie(const String& browsingContextHandl
         callback->sendSuccess();
     };
 
-    // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
-    const uint64_t mainFrameID = 0;
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->pageID(), mainFrameID, cookieName), WTFMove(completionHandler));
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->pageID(), WTF::nullopt, cookieName), WTFMove(completionHandler));
 }
 
 static String domainByAddingDotPrefixIfNeeded(String domain)
@@ -1457,7 +1462,7 @@ SimulatedInputSource* WebAutomationSession::inputSourceForType(SimulatedInputSou
 }
 
 // MARK: SimulatedInputDispatcher::Client API
-void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&& completionHandler)
+void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, FrameIdentifier frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&& completionHandler)
 {
     WTF::CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)> didComputeElementLayoutHandler = [completionHandler = WTFMove(completionHandler)](Optional<String> errorType, WebCore::IntRect, Optional<WebCore::IntPoint> inViewCenterPoint, bool) mutable {
         if (errorType) {
@@ -1778,8 +1783,9 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     HashMap<String, Ref<SimulatedInputSource>> sourceIdToInputSourceMap;
@@ -1953,8 +1959,9 @@ void WebAutomationSession::cancelInteractionSequence(const String& handle, const
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     Vector<SimulatedInputKeyFrame> keyFrames({ SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources) });
@@ -1976,8 +1983,9 @@ void WebAutomationSession::takeScreenshot(const String& handle, const String* op
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
-    if (!frameID)
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), frameNotFound);
+    if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
@@ -1987,7 +1995,7 @@ void WebAutomationSession::takeScreenshot(const String& handle, const String* op
     uint64_t callbackID = m_nextScreenshotCallbackID++;
     m_screenshotCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->pageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
 }
 
 void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle& imageDataHandle, const String& errorType)

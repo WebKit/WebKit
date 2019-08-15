@@ -28,6 +28,7 @@
 #if ENABLE(WEBDRIVER_ACTIONS_API)
 
 #include "WebEvent.h"
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
@@ -132,7 +133,7 @@ public:
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         virtual void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) = 0;
 #endif
-        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) = 0;
+        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, WebCore::FrameIdentifier, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) = 0;
     };
 
     static Ref<SimulatedInputDispatcher> create(WebPageProxy& page, SimulatedInputDispatcher::Client& client)
@@ -142,7 +143,7 @@ public:
 
     ~SimulatedInputDispatcher();
 
-    void run(uint64_t frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
+    void run(WebCore::FrameIdentifier, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
     bool isActive() const;
@@ -165,7 +166,7 @@ private:
     WebPageProxy& m_page;
     SimulatedInputDispatcher::Client& m_client;
 
-    Optional<uint64_t> m_frameID;
+    Optional<WebCore::FrameIdentifier> m_frameID;
     AutomationCompletionHandler m_runCompletionHandler;
     AutomationCompletionHandler m_keyFrameTransitionCompletionHandler;
     RunLoop::Timer<SimulatedInputDispatcher> m_keyFrameTransitionDurationTimer;

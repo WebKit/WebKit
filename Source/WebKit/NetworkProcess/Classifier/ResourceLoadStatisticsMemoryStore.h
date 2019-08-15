@@ -97,9 +97,9 @@ public:
 
     void calculateAndSubmitTelemetry() const override;
 
-    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) override;
-    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) override;
-    void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) override;
+    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) override;
+    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) override;
+    void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) override;
 
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame) override;
     void logUserInteraction(const TopFrameDomain&) override;
@@ -123,7 +123,7 @@ private:
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
     void setPrevalentResource(ResourceLoadStatistics&, ResourceLoadPrevalence);
     unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const ResourceLoadStatistics&, HashSet<RedirectedToDomain>&, unsigned numberOfRecursiveCalls) const;
-    void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, Optional<FrameID>, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
+    void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
     void markAsPrevalentIfHasRedirectedToPrevalent(ResourceLoadStatistics&);
     bool isPrevalentDueToDebugMode(ResourceLoadStatistics&);
     Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() override;

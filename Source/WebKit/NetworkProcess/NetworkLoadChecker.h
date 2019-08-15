@@ -29,6 +29,7 @@
 #include <WebCore/ContentExtensionActions.h>
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceError.h>
@@ -55,7 +56,7 @@ class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(NetworkProcess&, WebCore::FetchOptions&&, PAL::SessionID, WebCore::PageIdentifier, uint64_t frameID, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    NetworkLoadChecker(NetworkProcess&, WebCore::FetchOptions&&, PAL::SessionID, WebCore::PageIdentifier, WebCore::FrameIdentifier, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -127,7 +128,7 @@ private:
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     WebCore::PageIdentifier m_pageID;
-    uint64_t m_frameID;
+    WebCore::FrameIdentifier m_frameID;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
     WebCore::HTTPHeaderMap m_firstRequestHeaders; // Needed for CORS checks.
     URL m_url;

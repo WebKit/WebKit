@@ -1,3 +1,349 @@
+2019-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Use ObjectIdentifier<FrameIdentifierType> for frameIDs
+        https://bugs.webkit.org/show_bug.cgi?id=199986
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the strongly-typed FrameIdentifier instead of uint64_t as frame identifiers everywhere.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccessForFrame):
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::hasStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::convertToDownload):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::escapeIDForJSON):
+        (WebKit::logBlockedCookieInformation):
+        (WebKit::logCookieInformationInternal):
+        (WebKit::NetworkResourceLoader::logCookieInformation):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * Scripts/webkit/messages.py:
+        * Shared/API/APIFrameHandle.cpp:
+        (API::FrameHandle::create):
+        (API::FrameHandle::createAutoconverting):
+        (API::FrameHandle::FrameHandle):
+        (API::FrameHandle::decode):
+        * Shared/API/APIFrameHandle.h:
+        (API::FrameHandle::frameID const):
+        * Shared/API/Cocoa/_WKFrameHandle.mm:
+        (-[_WKFrameHandle hash]):
+        (-[_WKFrameHandle _frameID]):
+        (-[_WKFrameHandle initWithCoder:]):
+        (-[_WKFrameHandle encodeWithCoder:]):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/FrameInfoData.h:
+        * UIProcess/API/C/WKFrameHandleRef.cpp:
+        (WKFrameHandleGetFrameID):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _printOperationWithPrintInfo:forFrame:]):
+        (-[WKWebView _canChangeFrameLayout:]):
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector showMainResourceForFrame:]):
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::run):
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::webFrameIDForHandle):
+        (WebKit::WebAutomationSession::handleForWebFrameID):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::waitForNavigationToComplete):
+        (WebKit::findPageForFrameID):
+        (WebKit::WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::selectOptionElement):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::viewportInViewCenterPointOfElement):
+        (WebKit::WebAutomationSession::takeScreenshot):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter attemptRecovery]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::contentFilterDidBlockLoadForFrame):
+        (WebKit::WebPageProxy::contentFilterDidBlockLoadForFrameShared):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::requestStorageAccessConfirm):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::validateInput):
+        (WebKit::ProvisionalPageProxy::didCreateMainFrame):
+        (WebKit::ProvisionalPageProxy::didPerformClientRedirect):
+        (WebKit::ProvisionalPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didNavigateWithNavigationData):
+        (WebKit::ProvisionalPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        (WebKit::ProvisionalPageProxy::didPerformServerRedirect):
+        (WebKit::ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionSync):
+        (WebKit::ProvisionalPageProxy::contentFilterDidBlockLoadForFrame):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy):
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+        (WebKit::UserMediaPermissionCheckProxy::create):
+        (WebKit::UserMediaPermissionCheckProxy::frameID const):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::resetAccess):
+        (WebKit::UserMediaPermissionRequestManagerProxy::searchForGrantedRequest const):
+        (WebKit::UserMediaPermissionRequestManagerProxy::wasRequestDenied):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo):
+        (WebKit::UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::mainFrameID const):
+        (WebKit::UserMediaPermissionRequestProxy::frameID const):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::create):
+        (WebKit::WebFrameProxy::frameID const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::runJavaScriptInFrame):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::didCreateWindow):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didExplicitOpenForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::willPerformClientRedirectForFrame):
+        (WebKit::WebPageProxy::didCancelClientRedirectForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrameShared):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didChangeMainDocument):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::frameDidBecomeFrameSet):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didNavigateWithNavigationDataShared):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformClientRedirectShared):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirectShared):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::focusedFrameChanged):
+        (WebKit::WebPageProxy::frameSetLargestFrameChanged):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::requestStorageSpace):
+        (WebKit::WebPageProxy::makeStorageSpaceRequest):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::enumerateMediaDevicesForFrame):
+        (WebKit::WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess):
+        (WebKit::WebPageProxy::requestStorageAccessConfirm):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::webFrame const):
+        (WebKit::WebProcessProxy::canCreateFrame const):
+        (WebKit::WebProcessProxy::frameCreated):
+        (WebKit::WebProcessProxy::didDestroyFrame):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::evaluateJavaScriptCallback):
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSessionProxy::didEvaluateJavaScriptFunction):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithOrdinal):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithNodeHandle):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithName):
+        (WebKit::WebAutomationSessionProxy::resolveParentFrame):
+        (WebKit::WebAutomationSessionProxy::focusFrame):
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        (WebKit::WebAutomationSessionProxy::selectOptionElement):
+        (WebKit::WebAutomationSessionProxy::takeScreenshot):
+        (WebKit::WebAutomationSessionProxy::getCookiesForFrame):
+        (WebKit::WebAutomationSessionProxy::deleteCookie):
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpFrameFromHandle:]):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        (WebKit::WebResourceLoader::didBlockAuthenticationChallenge):
+        (WebKit::WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+        (WebKit::WebResourceLoader::didReceiveResource):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedFrameChanged):
+        (WebKit::WebChromeClient::contentsSizeChanged const):
+        (WebKit::WebChromeClient::hasStorageAccess):
+        (WebKit::WebChromeClient::requestStorageAccess):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::frameID const):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::cookies const):
+        (WebKit::WebCookieJar::setCookies):
+        (WebKit::WebCookieJar::cookieRequestHeaderFieldValue const):
+        (WebKit::WebCookieJar::getRawCookies const):
+        * WebProcess/WebPage/WebCookieJar.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::generateFrameID): Deleted.
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::frameID const):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::showMainResourceForFrame):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURLInFrame):
+        (WebKit::WebPage::loadDataInFrame):
+        (WebKit::WebPage::stopLoadingFrame):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::continueWillSubmitForm):
+        (WebKit::WebPage::runJavaScriptInFrame):
+        (WebKit::WebPage::getSourceForFrame):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::addConsoleMessage):
+        (WebKit::WebPage::sendCSPViolationReport):
+        (WebKit::WebPage::enqueueSecurityPolicyViolationEvent):
+        (WebKit::WebPage::beginPrinting):
+        (WebKit::WebPage::computePagesForPrinting):
+        (WebKit::WebPage::computePagesForPrintingImpl):
+        (WebKit::WebPage::drawRectToImage):
+        (WebKit::WebPage::drawPagesToPDF):
+        (WebKit::WebPage::drawPagesToPDFImpl):
+        (WebKit::WebPage::drawPagesForPrinting):
+        (WebKit::WebPage::frameBecameRemote):
+        (WebKit::WebPage::hasStorageAccess):
+        (WebKit::WebPage::requestStorageAccess):
+        (WebKit::WebPage::shouldAllowDeviceOrientationAndMotionAccess):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::computePagesForPrintingPDFDocument):
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::computePagesForPrintingPDFDocument):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webFrame const):
+        (WebKit::WebProcess::addWebFrame):
+        (WebKit::WebProcess::removeWebFrame):
+        * WebProcess/WebProcess.h:
+
 2019-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove m_blockRectForTextSelection (along with related code)

@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -52,7 +53,7 @@ class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::Mess
 public:
     struct TrackingParameters {
         WebCore::PageIdentifier pageID;
-        uint64_t frameID { 0 };
+        WebCore::FrameIdentifier frameID;
         ResourceLoadIdentifier resourceID { 0 };
     };
 

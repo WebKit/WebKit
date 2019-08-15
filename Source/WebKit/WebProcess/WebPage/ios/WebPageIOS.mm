@@ -551,7 +551,7 @@ void WebPage::acceptsFirstMouse(int, const WebKit::WebMouseEvent&, CompletionHan
     completionHandler(false);
 }
 
-void WebPage::computePagesForPrintingPDFDocument(uint64_t, const PrintInfo&, Vector<IntRect>&)
+void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier, const PrintInfo&, Vector<IntRect>&)
 {
     notImplemented();
 }
@@ -3705,7 +3705,7 @@ void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& qu
 }
 #endif
 
-void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, CallbackID callbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&& reply)
+void WebPage::computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CallbackID callbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&& reply)
 {
     if (printInfo.snapshotFirstPage) {
         reply(1);

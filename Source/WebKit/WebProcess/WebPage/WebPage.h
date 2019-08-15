@@ -346,9 +346,9 @@ public:
     WebFullScreenManager* fullScreenManager();
 #endif
 
-    void addConsoleMessage(uint64_t frameID, MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
-    void sendCSPViolationReport(uint64_t frameID, const URL& reportURL, IPC::FormDataReference&&);
-    void enqueueSecurityPolicyViolationEvent(uint64_t frameID, WebCore::SecurityPolicyViolationEvent::Init&&);
+    void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
+    void sendCSPViolationReport(WebCore::FrameIdentifier, const URL& reportURL, IPC::FormDataReference&&);
+    void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEvent::Init&&);
 
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
@@ -522,7 +522,7 @@ public:
     WebCore::Color underlayColor() const { return m_underlayColor; }
 
     void stopLoading();
-    void stopLoadingFrame(uint64_t frameID);
+    void stopLoadingFrame(WebCore::FrameIdentifier);
     bool defersLoading() const;
     void setDefersLoading(bool deferLoading);
 
@@ -769,7 +769,7 @@ public:
     void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
     void cancelComposition();
 
-    void collapseSelectionInFrame(uint64_t frameID);
+    void collapseSelectionInFrame(WebCore::FrameIdentifier);
     void showEmojiPicker(WebCore::Frame&);
 
     void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&&);
@@ -862,23 +862,23 @@ public:
     WebCore::DragSourceAction allowedDragSourceActions() const { return m_allowedDragSourceActions; }
 #endif
 
-    void beginPrinting(uint64_t frameID, const PrintInfo&);
+    void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);
     void endPrinting();
-    void computePagesForPrinting(uint64_t frameID, const PrintInfo&, CallbackID);
-    void computePagesForPrintingImpl(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor, WebCore::FloatBoxExtent& computedMargin);
+    void computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CallbackID);
+    void computePagesForPrintingImpl(WebCore::FrameIdentifier, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor, WebCore::FloatBoxExtent& computedMargin);
 
 #if PLATFORM(COCOA)
-    void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CallbackID);
-    void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, CallbackID);
-    void drawPagesToPDFImpl(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
+    void drawRectToImage(WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CallbackID);
+    void drawPagesToPDF(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CallbackID);
+    void drawPagesToPDFImpl(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&&);
+    void computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&&);
 #endif
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, CallbackID);
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CallbackID);
     void didFinishPrintOperation(const WebCore::ResourceError&, CallbackID);
 #endif
 
@@ -1131,13 +1131,13 @@ public:
     void flushPendingEditorStateUpdate();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, uint64_t frameID, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, uint64_t frameID, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
+    void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
     void wasLoadedWithDataTransferFromPrevalentResource();
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    void shouldAllowDeviceOrientationAndMotionAccess(uint64_t frameID, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
+    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
 #endif
 
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback);
@@ -1356,8 +1356,8 @@ private:
     static bool scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);
     static bool logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
-    void loadURLInFrame(URL&&, const String& referrer, uint64_t frameID);
-    void loadDataInFrame(IPC::DataReference&&, String&& MIMEType, String&& encodingName, URL&& baseURL, uint64_t frameID);
+    void loadURLInFrame(URL&&, const String& referrer, WebCore::FrameIdentifier);
+    void loadDataInFrame(IPC::DataReference&&, String&& MIMEType, String&& encodingName, URL&& baseURL, WebCore::FrameIdentifier);
 
     enum class WasRestoredByAPIRequest { No, Yes };
     void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
@@ -1389,16 +1389,16 @@ private:
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CallbackID);
 #endif
-    void getMainResourceDataOfFrame(uint64_t frameID, CallbackID);
-    void getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, CallbackID);
+    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CallbackID);
+    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CallbackID);
     void getRenderTreeExternalRepresentation(CallbackID);
     void getSelectionOrContentsAsString(CallbackID);
     void getSelectionAsWebArchiveData(CallbackID);
-    void getSourceForFrame(uint64_t frameID, CallbackID);
-    void getWebArchiveOfFrame(uint64_t frameID, CallbackID);
+    void getSourceForFrame(WebCore::FrameIdentifier, CallbackID);
+    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CallbackID);
     void runJavaScript(WebFrame*, const String&, bool forceUserGesture, const Optional<String>& worldName, CallbackID);
     void runJavaScriptInMainFrameScriptWorld(const String&, bool forceUserGesture, const Optional<String>& worldName, CallbackID);
-    void runJavaScriptInFrame(uint64_t frameID, const String&, bool forceUserGesture, CallbackID);
+    void runJavaScriptInFrame(WebCore::FrameIdentifier, const String&, bool forceUserGesture, CallbackID);
     void forceRepaint(CallbackID);
     void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CallbackID);
 
@@ -1412,8 +1412,8 @@ private:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, WebCore::PolicyCheckIdentifier, WebCore::PolicyAction, uint64_t navigationID, const DownloadID&, Optional<WebsitePoliciesData>&&);
-    void continueWillSubmitForm(uint64_t frameID, uint64_t listenerID);
+    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, WebCore::PolicyCheckIdentifier, WebCore::PolicyAction, uint64_t navigationID, const DownloadID&, Optional<WebsitePoliciesData>&&);
+    void continueWillSubmitForm(WebCore::FrameIdentifier, uint64_t listenerID);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
@@ -1431,7 +1431,7 @@ private:
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
 
     RetainPtr<PDFDocument> pdfDocumentForPrintingFrame(WebCore::Frame*);
-    void computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects);
+    void computePagesForPrintingPDFDocument(WebCore::FrameIdentifier, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects);
     void drawPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, const WebCore::IntRect&);
     void drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t first, uint32_t count);
 #endif
@@ -1584,7 +1584,7 @@ private:
     void voicesDidChange();
 #endif
 
-    void frameBecameRemote(uint64_t frameID, WebCore::GlobalFrameIdentifier&& remoteFrameIdentifier, WebCore::GlobalWindowIdentifier&& remoteWindowIdentifier);
+    void frameBecameRemote(WebCore::FrameIdentifier, WebCore::GlobalFrameIdentifier&& remoteFrameIdentifier, WebCore::GlobalWindowIdentifier&& remoteWindowIdentifier);
 
     void registerURLSchemeHandler(uint64_t identifier, const String& scheme);
 

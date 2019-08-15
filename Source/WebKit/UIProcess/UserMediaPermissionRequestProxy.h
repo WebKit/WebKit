@@ -21,6 +21,7 @@
 
 #include "APIObject.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -35,7 +36,7 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request)
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request)
     {
         return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request)));
     }
@@ -65,8 +66,8 @@ public:
     void setHasPersistentAccess() { m_hasPersistentAccess = true; }
 
     uint64_t userMediaID() const { return m_userMediaID; }
-    uint64_t mainFrameID() const { return m_mainFrameID; }
-    uint64_t frameID() const { return m_frameID; }
+    WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
@@ -84,12 +85,12 @@ public:
     WebCore::CaptureDevice videoDevice() const { return m_eligibleVideoDevices.isEmpty() ? WebCore::CaptureDevice { } : m_eligibleVideoDevices[0]; }
 
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
 
     UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;
-    uint64_t m_mainFrameID;
-    uint64_t m_frameID;
+    WebCore::FrameIdentifier m_mainFrameID;
+    WebCore::FrameIdentifier m_frameID;
     Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
     Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
     Vector<WebCore::CaptureDevice> m_eligibleVideoDevices;

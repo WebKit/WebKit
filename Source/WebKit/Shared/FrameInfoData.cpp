@@ -49,8 +49,12 @@ bool FrameInfoData::decode(IPC::Decoder& decoder, FrameInfoData& result)
     if (!securityOrigin)
         return false;
     result.securityOrigin = WTFMove(*securityOrigin);
-    if (!decoder.decode(result.frameID))
+    
+    Optional<Optional<FrameIdentifier>> frameID;
+    decoder >> frameID;
+    if (!frameID)
         return false;
+    result.frameID = WTFMove(*frameID);
 
     return true;
 }

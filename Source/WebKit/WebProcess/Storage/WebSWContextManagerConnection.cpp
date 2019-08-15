@@ -73,7 +73,7 @@ static const Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by la
 
 class ServiceWorkerFrameLoaderClient final : public EmptyFrameLoaderClient {
 public:
-    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, PAL::SessionID sessionID, WebCore::PageIdentifier pageID, uint64_t frameID, const String& userAgent)
+    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, PAL::SessionID sessionID, WebCore::PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
         : m_connection(connection)
         , m_sessionID(sessionID)
         , m_pageID(pageID)
@@ -96,13 +96,13 @@ private:
 
     PAL::SessionID sessionID() const final { return m_sessionID; }
     Optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
-    Optional<uint64_t> frameID() const final { return m_frameID; }
+    Optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
     String userAgent(const URL&) final { return m_userAgent; }
 
     WebSWContextManagerConnection& m_connection;
     PAL::SessionID m_sessionID;
-    WebCore::PageIdentifier m_pageID;
-    uint64_t m_frameID { 0 };
+    PageIdentifier m_pageID;
+    FrameIdentifier m_frameID;
     String m_userAgent;
 };
 
@@ -153,7 +153,8 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
 
     // FIXME: This method should be moved directly to WebCore::SWContextManager::Connection
     // If it weren't for ServiceWorkerFrameLoaderClient's dependence on WebDocumentLoader, this could already happen.
-    auto frameLoaderClient = std::make_unique<ServiceWorkerFrameLoaderClient>(*this, sessionID, m_pageID, ++m_previousServiceWorkerID, effectiveUserAgent);
+    // FIXME: Weird to pass m_previousServiceWorkerID as a FrameIdentifier.
+    auto frameLoaderClient = std::make_unique<ServiceWorkerFrameLoaderClient>(*this, sessionID, m_pageID, frameIdentifierFromID(++m_previousServiceWorkerID), effectiveUserAgent);
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.get();
     m_loaders.add(WTFMove(frameLoaderClient));
 

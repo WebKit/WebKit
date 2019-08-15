@@ -34,6 +34,7 @@
 #include "NetworkRTCProvider.h"
 #include "NetworkResourceLoadMap.h"
 #include "WebPaymentCoordinatorProxy.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -174,11 +175,11 @@ private:
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(PAL::SessionID, uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void cookiesForDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void setCookiesFromDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, const String&);
+    void cookiesForDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void setCookiesFromDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, const String&);
     void cookiesEnabled(PAL::SessionID, CompletionHandler<void(bool)>&&);
-    void cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void getRawCookies(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void getRawCookies(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void deleteCookie(PAL::SessionID, const URL&, const String& cookieName);
 
     void registerFileBlobURL(PAL::SessionID, const URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);
@@ -218,7 +219,7 @@ private:
     CacheStorageEngineConnection& cacheStorageConnection();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, WebCore::PageIdentifier);
+    void removeStorageAccessForFrame(PAL::SessionID, WebCore::FrameIdentifier, WebCore::PageIdentifier);
     void clearPageSpecificDataForResourceLoadStatistics(PAL::SessionID, WebCore::PageIdentifier);
 
     void logUserInteraction(PAL::SessionID, const RegistrableDomain&);
@@ -226,8 +227,8 @@ private:
     void logSubresourceLoading(PAL::SessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen);
     void logSubresourceRedirect(PAL::SessionID, const RegistrableDomain& sourceDomain, const RegistrableDomain& targetDomain);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
-    void hasStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, WebCore::PageIdentifier, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
+    void hasStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
     void requestStorageAccessUnderOpener(PAL::SessionID, WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain);
 #endif
 

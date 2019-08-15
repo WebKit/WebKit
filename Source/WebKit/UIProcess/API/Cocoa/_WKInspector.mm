@@ -30,6 +30,7 @@
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
+#import <WebCore/FrameIdentifier.h>
 #import <wtf/RetainPtr.h>
 
 @implementation _WKInspector
@@ -99,7 +100,7 @@
 - (void)showMainResourceForFrame:(_WKFrameHandle *)frame
 {
     if (auto* page = _inspector->inspectedPage())
-        _inspector->showMainResourceForFrame(page->process().webFrame(frame._frameID));
+        _inspector->showMainResourceForFrame(page->process().webFrame(WebCore::frameIdentifierFromID(frame._frameID)));
 }
 
 - (void)attach

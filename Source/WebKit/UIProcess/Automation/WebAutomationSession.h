@@ -34,6 +34,7 @@
 #include "ShareableBitmap.h"
 #include "SimulatedInputDispatcher.h"
 #include "WebEvent.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -152,7 +153,7 @@ public:
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) final;
 #endif
-    void viewportInViewCenterPointOfElement(WebPageProxy&, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) final;
+    void viewportInViewCenterPointOfElement(WebPageProxy&, WebCore::FrameIdentifier, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) final;
 
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
@@ -220,14 +221,14 @@ private:
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Ref<WebAutomationSession>&&, Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Ref<WebAutomationSession::GetBrowsingContextsCallback>&&);
 
-    Optional<uint64_t> webFrameIDForHandle(const String&);
-    String handleForWebFrameID(uint64_t frameID);
+    Optional<WebCore::FrameIdentifier> webFrameIDForHandle(const String&, bool& frameNotFound);
+    String handleForWebFrameID(Optional<WebCore::FrameIdentifier>);
     String handleForWebFrameProxy(const WebFrameProxy&);
 
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Ref<Inspector::BackendDispatcher::CallbackBase>&&);
     void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Ref<Inspector::BackendDispatcher::CallbackBase>&&);
     void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebCore::PageIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>&);
-    void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>&);
+    void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>&);
     void loadTimerFired();
 
     void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
@@ -284,13 +285,13 @@ private:
     HashMap<WebCore::PageIdentifier, String> m_webPageHandleMap;
     HashMap<String, WebCore::PageIdentifier> m_handleWebPageMap;
 
-    HashMap<uint64_t, String> m_webFrameHandleMap;
-    HashMap<String, uint64_t> m_handleWebFrameMap;
+    HashMap<WebCore::FrameIdentifier, String> m_webFrameHandleMap;
+    HashMap<String, WebCore::FrameIdentifier> m_handleWebFrameMap;
 
     HashMap<WebCore::PageIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
     HashMap<WebCore::PageIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
-    HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
-    HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebCore::FrameIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebCore::FrameIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<WebCore::PageIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingInspectorCallbacksPerPage;
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     HashMap<WebCore::PageIdentifier, Function<void(Optional<AutomationCommandError>)>> m_pendingKeyboardEventsFlushedCallbacksPerPage;

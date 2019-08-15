@@ -1,3 +1,42 @@
+2019-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Use ObjectIdentifier<FrameIdentifierType> for frameIDs
+        https://bugs.webkit.org/show_bug.cgi?id=199986
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the strongly-typed FrameIdentifier instead of uint64_t as frame identifiers everywhere.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CookieJar.cpp:
+        (WebCore::CookieJar::cookies const):
+        (WebCore::CookieJar::setCookies):
+        (WebCore::CookieJar::cookieRequestHeaderFieldValue const):
+        (WebCore::CookieJar::getRawCookies const):
+        * loader/CookieJar.h:
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+        * loader/NavigationAction.cpp:
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::Requester::frameID const):
+        * page/ChromeClient.h:
+        * page/GlobalFrameIdentifier.h:
+        (WebCore::GlobalFrameIdentifier::decode):
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::hasStorageAccess const):
+        (WebCore::NetworkStorageSession::grantStorageAccess):
+        (WebCore::NetworkStorageSession::removeStorageAccessForFrame):
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::cookiesForURL):
+        (WebCore::cookiesForSession):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+
 2019-08-15  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC]: openh264 encoder bitrate is in bits per second

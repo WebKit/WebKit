@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "CoordinateSystem.h"
 #include <JavaScriptCore/JSBase.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/text/WTFString.h>
 
@@ -51,7 +52,7 @@ public:
 
     void didClearWindowObjectForFrame(WebFrame&);
 
-    void didEvaluateJavaScriptFunction(uint64_t frameID, uint64_t callbackID, const String& result, const String& errorType);
+    void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, uint64_t callbackID, const String& result, const String& errorType);
 
 private:
     JSObjectRef scriptObjectForFrame(WebFrame&);
@@ -61,22 +62,22 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(WebCore::PageIdentifier, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID);
-    void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, uint64_t frameID, uint32_t ordinal, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, uint64_t frameID, const String& nodeHandle, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void resolveChildFrameWithName(WebCore::PageIdentifier, uint64_t frameID, const String& name, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void resolveParentFrame(WebCore::PageIdentifier, uint64_t frameID, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void focusFrame(WebCore::PageIdentifier, uint64_t frameID);
-    void computeElementLayout(WebCore::PageIdentifier, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&&);
-    void selectOptionElement(WebCore::PageIdentifier, uint64_t frameID, String nodeHandle, CompletionHandler<void(Optional<String>)>&&);
-    void takeScreenshot(WebCore::PageIdentifier, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID);
-    void getCookiesForFrame(WebCore::PageIdentifier, uint64_t frameID, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&&);
-    void deleteCookie(WebCore::PageIdentifier, uint64_t frameID, String cookieName, CompletionHandler<void(Optional<String>)>&&);
+    void evaluateJavaScriptFunction(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID);
+    void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
+    void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& nodeHandle, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
+    void resolveChildFrameWithName(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& name, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
+    void resolveParentFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
+    void focusFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>);
+    void computeElementLayout(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&&);
+    void selectOptionElement(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(Optional<String>)>&&);
+    void takeScreenshot(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID);
+    void getCookiesForFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&&);
+    void deleteCookie(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(Optional<String>)>&&);
 
     String m_sessionIdentifier;
 
-    HashMap<uint64_t, JSObjectRef> m_webFrameScriptObjectMap;
-    HashMap<uint64_t, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
+    HashMap<WebCore::FrameIdentifier, JSObjectRef> m_webFrameScriptObjectMap;
+    HashMap<WebCore::FrameIdentifier, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
 };
 
 } // namespace WebKit

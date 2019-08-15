@@ -27,6 +27,7 @@
 
 #include "NetworkActivityTracker.h"
 #include <WebCore/BlobDataFileReference.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -46,7 +47,7 @@ public:
 
     PAL::SessionID sessionID;
     WebCore::PageIdentifier webPageID;
-    uint64_t webFrameID { 0 };
+    WebCore::FrameIdentifier webFrameID;
     WTF::ProcessID parentPID { 0 };
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::ContentSniffingPolicy::SniffContent };

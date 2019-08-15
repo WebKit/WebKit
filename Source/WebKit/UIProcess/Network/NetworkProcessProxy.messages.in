@@ -23,7 +23,7 @@
 messages -> NetworkProcessProxy LegacyReceiver {
     DidCreateNetworkConnectionToWebProcess(IPC::Attachment connectionIdentifier)
 
-    DidReceiveAuthenticationChallenge(WebCore::PageIdentifier pageID, uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
+    DidReceiveAuthenticationChallenge(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
     DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
@@ -48,7 +48,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     NotifyWebsiteDataDeletionForRegistrableDomainsFinished()
     NotifyWebsiteDataScanForRegistrableDomainsFinished()
     NotifyResourceLoadStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins)
-    RequestStorageAccessConfirm(WebCore::PageIdentifier pageID, uint64_t frameID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool userDidGrantAccess) Async
+    RequestStorageAccessConfirm(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool userDidGrantAccess) Async
     DeleteWebsiteDataInUIProcessForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> dataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain> domains) -> (HashSet<WebCore::RegistrableDomain> domainsWithMatchingDataRecords) Async
     DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(WebCore::PageIdentifier pageID)
 #endif

@@ -38,6 +38,7 @@
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -97,7 +98,7 @@ enum class AllowProcessCaching { No, Yes };
 
 class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
-    typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
+    typedef HashMap<WebCore::FrameIdentifier, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<WebCore::PageIdentifier, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
@@ -164,9 +165,9 @@ public:
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     bool isResponsive() const;
 
-    WebFrameProxy* webFrame(uint64_t) const;
-    bool canCreateFrame(uint64_t frameID) const;
-    void frameCreated(uint64_t, WebFrameProxy&);
+    WebFrameProxy* webFrame(WebCore::FrameIdentifier) const;
+    bool canCreateFrame(WebCore::FrameIdentifier) const;
+    void frameCreated(WebCore::FrameIdentifier, WebFrameProxy&);
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
     size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
 
@@ -335,7 +336,7 @@ protected:
 private:
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);
-    void didDestroyFrame(uint64_t);
+    void didDestroyFrame(WebCore::FrameIdentifier);
     void didDestroyUserGestureToken(uint64_t);
 
     bool canBeAddedToWebProcessCache() const;

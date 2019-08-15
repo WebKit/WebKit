@@ -64,7 +64,7 @@ private:
     bool hasWebView() const final; // mainly for assertions
 
     Optional<WebCore::PageIdentifier> pageID() const final;
-    Optional<uint64_t> frameID() const final;
+    Optional<WebCore::FrameIdentifier> frameID() const final;
     PAL::SessionID sessionID() const final;
 
     void makeRepresentation(WebCore::DocumentLoader*) final;

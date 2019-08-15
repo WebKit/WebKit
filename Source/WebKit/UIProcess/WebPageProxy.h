@@ -1018,7 +1018,7 @@ public:
     void runJavaScriptInMainFrame(const String&, bool, WTF::Function<void (API::SerializedScriptValue*, bool hadException, const WebCore::ExceptionDetails&, CallbackBase::Error)>&& callbackFunction);
     void runJavaScriptInMainFrameScriptWorld(const String&, bool, const Optional<String>& worldName, WTF::Function<void(API::SerializedScriptValue*, bool hadException, const WebCore::ExceptionDetails&, CallbackBase::Error)>&& callbackFunction);
     // For sub frames.
-    void runJavaScriptInFrame(uint64_t frameID, const String& script, bool forceUserGesture, WTF::Function<void(API::SerializedScriptValue*, bool hadException, const WebCore::ExceptionDetails&, CallbackBase::Error)>&& callbackFunction);
+    void runJavaScriptInFrame(WebCore::FrameIdentifier, const String& script, bool forceUserGesture, WTF::Function<void(API::SerializedScriptValue*, bool hadException, const WebCore::ExceptionDetails&, CallbackBase::Error)>&& callbackFunction);
     void forceRepaint(RefPtr<VoidCallback>&&);
 
     float headerHeight(WebFrameProxy&);
@@ -1161,7 +1161,7 @@ public:
     void drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, Ref<ImageCallback>&&);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, Ref<DataCallback>&&);
 #if PLATFORM(IOS_FAMILY)
-    uint32_t computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, DrawToPDFCallback::CallbackFunction&&);
+    uint32_t computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, DrawToPDFCallback::CallbackFunction&&);
     void drawToPDFCallback(const IPC::DataReference& pdfData, WebKit::CallbackID);
 #endif
 #elif PLATFORM(GTK)
@@ -1252,7 +1252,7 @@ public:
     void setViewportSizeForCSSViewportUnits(const WebCore::IntSize&);
     WebCore::IntSize viewportSizeForCSSViewportUnits() const { return m_viewportSizeForCSSViewportUnits.valueOr(WebCore::IntSize()); }
 
-    void didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
+    void didReceiveAuthenticationChallengeProxy(WebCore::FrameIdentifier, Ref<AuthenticationChallengeProxy>&&);
 
     SpellDocumentTag spellDocumentTag();
 
@@ -1452,12 +1452,12 @@ public:
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, uint64_t frameID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    void shouldAllowDeviceOrientationAndMotionAccess(uint64_t frameID, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
+    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
 #endif
 
     static WebPageProxy* nonEphemeralWebPageProxy();
@@ -1498,33 +1498,33 @@ public:
 #endif
 
     ProvisionalPageProxy* provisionalPageProxy() const { return m_provisionalPage.get(); }
-    void commitProvisionalPage(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData&);
+    void commitProvisionalPage(WebCore::FrameIdentifier, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData&);
 
     // Logic shared between the WebPageProxy and the ProvisionalPageProxy.
-    void didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, uint64_t frameID, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
-    void didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&);
-    void didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, uint64_t frameID, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
-    void didPerformServerRedirectShared(Ref<WebProcessProxy>&&, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
-    void didPerformClientRedirectShared(Ref<WebProcessProxy>&&, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
-    void didNavigateWithNavigationDataShared(Ref<WebProcessProxy>&&, const WebNavigationDataStore&, uint64_t frameID);
-    void didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&&, uint64_t frameID, uint64_t navigationID, URL&&);
-    void decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&&, uint64_t frameID, WebCore::SecurityOriginData&& frameSecurityOrigin, WebCore::PolicyCheckIdentifier,
+    void didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
+    void didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&);
+    void didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
+    void didPerformServerRedirectShared(Ref<WebProcessProxy>&&, const String& sourceURLString, const String& destinationURLString, WebCore::FrameIdentifier);
+    void didPerformClientRedirectShared(Ref<WebProcessProxy>&&, const String& sourceURLString, const String& destinationURLString, WebCore::FrameIdentifier);
+    void didNavigateWithNavigationDataShared(Ref<WebProcessProxy>&&, const WebNavigationDataStore&, WebCore::FrameIdentifier);
+    void didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, uint64_t navigationID, URL&&);
+    void decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, WebCore::SecurityOriginData&& frameSecurityOrigin, WebCore::PolicyCheckIdentifier,
         uint64_t navigationID, NavigationActionData&&, FrameInfoData&&, Optional<WebCore::PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&,
         IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
-    void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, WebCore::PolicyCheckIdentifier,
+    void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& frameSecurityOrigin, WebCore::PolicyCheckIdentifier,
         uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& = WTF::nullopt, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(SandboxExtension::Handle&&)>&&);
-    void decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&&, uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
+    void decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, bool isMainFrame, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
         FrameInfoData&&, Optional<WebCore::PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&&);
 #if USE(QUICK_LOOK)
     void didRequestPasswordForQuickLookDocumentInMainFrameShared(Ref<WebProcessProxy>&&, const String& fileName);
 #endif
 #if ENABLE(CONTENT_FILTERING)
-    void contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&&, const WebCore::ContentFilterUnblockHandler&, uint64_t frameID);
+    void contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&&, const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
 #endif
 
     void dumpAdClickAttribution(CompletionHandler<void(const String&)>&&);
@@ -1561,7 +1561,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
-    void requestStorageSpace(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, WTF::CompletionHandler<void(uint64_t)>&&);
+    void requestStorageSpace(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, WTF::CompletionHandler<void(uint64_t)>&&);
 
     URL currentResourceDirectoryURL() const;
 
@@ -1581,7 +1581,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    bool suspendCurrentPageIfPossible(API::Navigation&, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
+    bool suspendCurrentPageIfPossible(API::Navigation&, Optional<WebCore::FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
 
     enum class ResetStateReason {
         PageInvalidated,
@@ -1610,32 +1610,32 @@ private:
     void requestPointerUnlock();
 #endif
 
-    void didCreateMainFrame(uint64_t frameID);
-    void didCreateSubframe(uint64_t frameID);
-    void didCreateWindow(uint64_t frameID, WebCore::GlobalWindowIdentifier&&);
+    void didCreateMainFrame(WebCore::FrameIdentifier);
+    void didCreateSubframe(WebCore::FrameIdentifier);
+    void didCreateWindow(WebCore::FrameIdentifier, WebCore::GlobalWindowIdentifier&&);
 
-    void didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
-    void willPerformClientRedirectForFrame(uint64_t frameID, const String& url, double delay, WebCore::LockBackForwardList);
-    void didCancelClientRedirectForFrame(uint64_t frameID);
-    void didChangeProvisionalURLForFrame(uint64_t frameID, uint64_t navigationID, URL&&);
-    void didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&);
-    void didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData&);
-    void didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData&);
-    void didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData&);
-    void didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, const UserData&);
-    void didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t sameDocumentNavigationType, URL&&, const UserData&);
-    void didChangeMainDocument(uint64_t frameID);
-    void didExplicitOpenForFrame(uint64_t frameID, URL&&);
+    void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
+    void willPerformClientRedirectForFrame(WebCore::FrameIdentifier, const String& url, double delay, WebCore::LockBackForwardList);
+    void didCancelClientRedirectForFrame(WebCore::FrameIdentifier);
+    void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, uint64_t navigationID, URL&&);
+    void didFailProvisionalLoadForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&);
+    void didCommitLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData&);
+    void didFinishDocumentLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, const UserData&);
+    void didFinishLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, const UserData&);
+    void didFailLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, const WebCore::ResourceError&, const UserData&);
+    void didSameDocumentNavigationForFrame(WebCore::FrameIdentifier, uint64_t navigationID, uint32_t sameDocumentNavigationType, URL&&, const UserData&);
+    void didChangeMainDocument(WebCore::FrameIdentifier);
+    void didExplicitOpenForFrame(WebCore::FrameIdentifier, URL&&);
 
-    void didReceiveTitleForFrame(uint64_t frameID, const String&, const UserData&);
-    void didFirstLayoutForFrame(uint64_t frameID, const UserData&);
-    void didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, const UserData&);
-    void didDisplayInsecureContentForFrame(uint64_t frameID, const UserData&);
-    void didRunInsecureContentForFrame(uint64_t frameID, const UserData&);
-    void didDetectXSSForFrame(uint64_t frameID, const UserData&);
+    void didReceiveTitleForFrame(WebCore::FrameIdentifier, const String&, const UserData&);
+    void didFirstLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
+    void didFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
+    void didDisplayInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
+    void didRunInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
+    void didDetectXSSForFrame(WebCore::FrameIdentifier, const UserData&);
     void mainFramePluginHandlesPageScaleGestureDidChange(bool);
-    void frameDidBecomeFrameSet(uint64_t frameID, bool);
+    void frameDidBecomeFrameSet(WebCore::FrameIdentifier, bool);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
@@ -1648,37 +1648,37 @@ private:
     void decidePolicyForNavigationAction(Ref<WebProcessProxy>&&, WebFrameProxy&, WebCore::SecurityOriginData&&, uint64_t navigationID, NavigationActionData&&,
         FrameInfoData&&, Optional<WebCore::PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, Ref<PolicyDecisionSender>&&);
-    void decidePolicyForNavigationActionAsync(uint64_t frameID, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
+    void decidePolicyForNavigationActionAsync(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
         FrameInfoData&&, Optional<WebCore::PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
-    void decidePolicyForNavigationActionSync(uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
+    void decidePolicyForNavigationActionSync(WebCore::FrameIdentifier, bool isMainFrame, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
         FrameInfoData&&, Optional<WebCore::PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&&);
-    void decidePolicyForNewWindowAction(uint64_t frameID, const WebCore::SecurityOriginData&, WebCore::PolicyCheckIdentifier, NavigationActionData&&,
+    void decidePolicyForNewWindowAction(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, WebCore::PolicyCheckIdentifier, NavigationActionData&&,
         WebCore::ResourceRequest&&, const String& frameName, uint64_t listenerID, const UserData&);
-    void decidePolicyForResponse(uint64_t frameID, const WebCore::SecurityOriginData&, WebCore::PolicyCheckIdentifier, uint64_t navigationID,
+    void decidePolicyForResponse(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, WebCore::PolicyCheckIdentifier, uint64_t navigationID,
         const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
-    void unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError&, const UserData&);
+    void unableToImplementPolicy(WebCore::FrameIdentifier, const WebCore::ResourceError&, const UserData&);
     void beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy&);
 
     WebContentMode effectiveContentModeAfterAdjustingPolicies(API::WebsitePolicies&, const WebCore::ResourceRequest&);
 
-    void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, const UserData&);
+    void willSubmitForm(WebCore::FrameIdentifier, WebCore::FrameIdentifier sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, const UserData&);
 
     void contentRuleListNotification(URL&&, WebCore::ContentRuleListResults&&);
 
     // History client
-    void didNavigateWithNavigationData(const WebNavigationDataStore&, uint64_t frameID);
-    void didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
-    void didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
-    void didUpdateHistoryTitle(const String& title, const String& url, uint64_t frameID);
+    void didNavigateWithNavigationData(const WebNavigationDataStore&, WebCore::FrameIdentifier);
+    void didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, WebCore::FrameIdentifier);
+    void didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, WebCore::FrameIdentifier);
+    void didUpdateHistoryTitle(const String& title, const String& url, WebCore::FrameIdentifier);
 
     // UI client
     void createNewPage(const FrameInfoData&, Optional<WebCore::PageIdentifier> originatingPageID, WebCore::ResourceRequest&&, WebCore::WindowFeatures&&, NavigationActionData&&, Messages::WebPageProxy::CreateNewPage::DelayedReply&&);
     void showPage();
-    void runJavaScriptAlert(uint64_t frameID, const WebCore::SecurityOriginData&, const String&, Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply&&);
-    void runJavaScriptConfirm(uint64_t frameID, const WebCore::SecurityOriginData&, const String&, Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply&&);
-    void runJavaScriptPrompt(uint64_t frameID, const WebCore::SecurityOriginData&, const String&, const String&, Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply&&);
+    void runJavaScriptAlert(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, const String&, Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply&&);
+    void runJavaScriptConfirm(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, const String&, Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply&&);
+    void runJavaScriptPrompt(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, const String&, const String&, Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply&&);
     void setStatusText(const String&);
     void mouseDidMoveOverElement(WebHitTestResultData&&, uint32_t modifiers, UserData&&);
 
@@ -1701,21 +1701,21 @@ private:
     void rootViewToScreen(const WebCore::IntRect& viewRect, Messages::WebPageProxy::RootViewToScreen::DelayedReply&&);
     void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, CompletionHandler<void(WebCore::IntPoint)>&&);
     void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, CompletionHandler<void(WebCore::IntRect)>&&);
-    void runBeforeUnloadConfirmPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply&&);
+    void runBeforeUnloadConfirmPanel(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply&&);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();
-    void runOpenPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const WebCore::FileChooserSettings&);
+    void runOpenPanel(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, const WebCore::FileChooserSettings&);
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, ShareSheetCallbackID);
-    void printFrame(uint64_t frameID, CompletionHandler<void()>&&);
-    void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
+    void printFrame(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
+    void exceededDatabaseQuota(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
     void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&&);
-    void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
+    void requestGeolocationPermissionForFrame(uint64_t geolocationID, WebCore::FrameIdentifier, String originIdentifier);
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
 #endif
-    void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
-    void enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData);
+    void requestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
+    void enumerateMediaDevicesForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData);
     void beginMonitoringCaptureDevices();
 
     void runModal();
@@ -1895,8 +1895,8 @@ private:
     void printFinishedCallback(const WebCore::ResourceError&, CallbackID);
 #endif
 
-    void focusedFrameChanged(uint64_t frameID);
-    void frameSetLargestFrameChanged(uint64_t frameID);
+    void focusedFrameChanged(const Optional<WebCore::FrameIdentifier>&);
+    void frameSetLargestFrameChanged(const Optional<WebCore::FrameIdentifier>&);
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
 
@@ -1997,7 +1997,7 @@ private:
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler&, uint64_t frameID);
+    void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
 #endif
 
     void tryReloadAfterProcessTermination();
@@ -2110,7 +2110,7 @@ private:
     static bool isInHardwareKeyboardMode();
 #endif
 
-    void makeStorageSpaceRequest(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
+    void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
 
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;

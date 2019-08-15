@@ -768,17 +768,17 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     LOG_ERROR("Unhandled web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
 }
 
-WebFrame* WebProcess::webFrame(uint64_t frameID) const
+WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const
 {
     return m_frameMap.get(frameID);
 }
 
-void WebProcess::addWebFrame(uint64_t frameID, WebFrame* frame)
+void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
 {
     m_frameMap.set(frameID, frame);
 }
 
-void WebProcess::removeWebFrame(uint64_t frameID)
+void WebProcess::removeWebFrame(FrameIdentifier frameID)
 {
     m_frameMap.remove(frameID);
 

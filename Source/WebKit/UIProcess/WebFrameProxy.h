@@ -59,14 +59,14 @@ struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
 public:
-    static Ref<WebFrameProxy> create(WebPageProxy& page, uint64_t frameID)
+    static Ref<WebFrameProxy> create(WebPageProxy& page, WebCore::FrameIdentifier frameID)
     {
         return adoptRef(*new WebFrameProxy(page, frameID));
     }
 
     virtual ~WebFrameProxy();
 
-    uint64_t frameID() const { return m_frameID; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
     WebPageProxy* page() const { return m_page.get(); }
 
     void webProcessWillShutDown();
@@ -130,7 +130,7 @@ public:
 #endif
 
 private:
-    WebFrameProxy(WebPageProxy&, uint64_t frameID);
+    WebFrameProxy(WebPageProxy&, WebCore::FrameIdentifier);
 
     WeakPtr<WebPageProxy> m_page;
 
@@ -138,11 +138,11 @@ private:
 
     String m_MIMEType;
     String m_title;
-    bool m_isFrameSet;
+    bool m_isFrameSet { false };
     bool m_containsPluginDocument { false };
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
-    uint64_t m_frameID;
+    WebCore::FrameIdentifier m_frameID;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif

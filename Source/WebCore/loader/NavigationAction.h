@@ -30,6 +30,7 @@
 
 #include "AdClickAttribution.h"
 #include "BackForwardItemIdentifier.h"
+#include "FrameIdentifier.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutPoint.h"
 #include "PageIdentifier.h"
@@ -64,7 +65,7 @@ public:
     NavigationAction(NavigationAction&&);
     NavigationAction& operator=(NavigationAction&&);
 
-    using PageIDAndFrameIDPair = std::pair<PageIdentifier, uint64_t /* frameID */>;
+    using PageIDAndFrameIDPair = std::pair<PageIdentifier, FrameIdentifier>; // FIXME: Use GlobalFrameIdentifier.
     class Requester {
     public:
         Requester(const Document&);
@@ -72,7 +73,7 @@ public:
         const URL& url() const { return m_url; }
         const SecurityOrigin& securityOrigin() const { return *m_origin; }
         PageIdentifier pageID() const { return m_pageIDAndFrameIDPair.first; }
-        uint64_t frameID() const { return m_pageIDAndFrameIDPair.second; }
+        FrameIdentifier frameID() const { return m_pageIDAndFrameIDPair.second; }
     private:
         URL m_url;
         RefPtr<SecurityOrigin> m_origin;

@@ -240,9 +240,9 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     processNextUserMediaRequestIfNeeded();
 }
 
-void UserMediaPermissionRequestManagerProxy::resetAccess(uint64_t frameID)
+void UserMediaPermissionRequestManagerProxy::resetAccess(FrameIdentifier frameID)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, frameID);
+    ALWAYS_LOG(LOGIDENTIFIER, frameID.loggingString());
     m_grantedRequests.removeAllMatching([frameID](const auto& grantedRequest) {
         return grantedRequest->mainFrameID() == frameID;
     });
@@ -251,7 +251,7 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(uint64_t frameID)
     m_hasFilteredDeviceList = false;
 }
 
-const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(uint64_t frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
+const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(FrameIdentifier frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
 {
     if (m_page.isMediaStreamCaptureMuted())
         return nullptr;
@@ -282,7 +282,7 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
     return nullptr;
 }
 
-bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(uint64_t mainFrameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture)
+bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(FrameIdentifier mainFrameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture)
 {
     for (const auto& deniedRequest : m_deniedRequests) {
         if (!deniedRequest.userMediaDocumentOrigin->isSameSchemeHostPort(userMediaDocumentOrigin))
@@ -346,7 +346,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
 }
 #endif
 
-void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, MediaStreamRequest&& userRequest)
+void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, MediaStreamRequest&& userRequest)
 {
 #if ENABLE(MEDIA_STREAM)
     if (!m_page.hasRunningProcess())
@@ -521,7 +521,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), *m_currentUserMediaRequest);
 }
 
-void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&& handler)
+void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&& handler)
 {
     auto* webFrame = m_page.process().webFrame(frameID);
     if (!webFrame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topLevelDocumentOrigin.get())) {
@@ -545,7 +545,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
     m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *webFrame, userMediaOrigin.get(), topLevelOrigin.get(), request.get());
 }
 
-bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(uint64_t frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin)
+bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(FrameIdentifier frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin)
 {
     for (const auto& grantedRequest : m_grantedRequests) {
         if (grantedRequest->requiresDisplayCapture())
@@ -604,7 +604,7 @@ Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDev
 }
 #endif
 
-void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
+void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
 #if ENABLE(MEDIA_STREAM)
     ALWAYS_LOG(LOGIDENTIFIER, userMediaID);

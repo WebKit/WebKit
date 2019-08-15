@@ -280,7 +280,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCor
     });
 }
 
-void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(subFrameDomain != topFrameDomain);
     ASSERT(RunLoop::isMain());
@@ -301,7 +301,7 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& s
     });
 }
 
-bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, uint64_t frameID, PageIdentifier pageID)
+bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, FrameIdentifier frameID, PageIdentifier pageID)
 {
     ASSERT(RunLoop::isMain());
 
@@ -314,7 +314,7 @@ bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableD
     return false;
 }
 
-void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(bool hasAccess)>&& callback)
+void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool hasAccess)>&& callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -328,7 +328,7 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const R
     callback(false);
 }
 
-void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
+void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -391,7 +391,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(Registrable
     });
 }
 
-void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
+void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     postTask([this, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, promptWasShown, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -410,7 +410,7 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain&
     });
 }
 
-StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID)
+StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID)
 {
     ASSERT(RunLoop::isMain());
 
@@ -427,7 +427,7 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccess(const
     return isStorageGranted ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::No;
 }
 
-void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 

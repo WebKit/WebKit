@@ -170,7 +170,7 @@ static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
     return session.sessionID().isAlwaysOnLoggingAllowed();
 }
 
-NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
+NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
     , m_frameID(frameID)
     , m_pageID(pageID)
@@ -256,7 +256,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (shouldBlockCookies) {
 #if !RELEASE_LOG_DISABLED
         if (m_session->shouldLogCookieInformation())
-            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Blocking cookies for URL %s", this, pageID.toUInt64(), frameID, (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Blocking cookies for URL %s", this, pageID.toUInt64(), frameID.toUInt64(), (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 #else
         LOG(NetworkSession, "%llu Blocking cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 #endif
@@ -390,7 +390,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     }
 #if !RELEASE_LOG_DISABLED
     if (m_session->shouldLogCookieInformation())
-        RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID, (unsigned long)[m_task taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
+        RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID.toUInt64(), (unsigned long)[m_task taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
 #else
     LOG(NetworkSession, "%llu %s cookies for redirect URL %s", [m_task taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
 #endif

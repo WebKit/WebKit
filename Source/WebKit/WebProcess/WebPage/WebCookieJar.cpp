@@ -50,7 +50,7 @@ WebCookieJar::WebCookieJar()
 
 String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 {
-    Optional<uint64_t> frameID;
+    Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().client().frameID();
@@ -67,7 +67,7 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 
 void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const String& cookieString)
 {
-    Optional<uint64_t> frameID;
+    Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().client().frameID();
@@ -85,7 +85,7 @@ bool WebCookieJar::cookiesEnabled(const WebCore::Document& document) const
     return result;
 }
 
-std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const PAL::SessionID& sessionID, const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const
+std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const PAL::SessionID& sessionID, const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const
 {
     String cookieString;
     bool secureCookiesAccessed = false;
@@ -96,7 +96,7 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
 
 bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const
 {
-    Optional<uint64_t> frameID;
+    Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().client().frameID();

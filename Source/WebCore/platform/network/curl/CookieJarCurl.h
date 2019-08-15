@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -42,15 +43,15 @@ enum class CookieAcceptPolicy;
 
 class CookieJarCurl {
 public:
-    std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
-    void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, const String&) const;
+    std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
+    void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier> frameID, Optional<PageIdentifier>, const String&) const;
     void setCookiesFromHTTPResponse(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&) const;
     void setCookieAcceptPolicy(const NetworkStorageSession&, CookieAcceptPolicy) const;
     CookieAcceptPolicy cookieAcceptPolicy(const NetworkStorageSession&) const;
     bool cookiesEnabled(const NetworkStorageSession&) const;
-    std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
+    std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
     std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const CookieRequestHeaderFieldProxy&) const;
-    bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier>, Vector<Cookie>&) const;
+    bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier> frameID, Optional<PageIdentifier>, Vector<Cookie>&) const;
     void deleteCookie(const NetworkStorageSession&, const URL&, const String&) const;
     void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) const;
     void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) const;

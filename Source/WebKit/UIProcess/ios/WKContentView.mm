@@ -701,9 +701,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     if (_isPrintingToPDF)
         return 0;
 
-    uint64_t frameID;
+    WebCore::FrameIdentifier frameID;
     if (_WKFrameHandle *handle = printFormatter.frameToPrint)
-        frameID = handle._frameID;
+        frameID = WebCore::frameIdentifierFromID(handle._frameID);
     else if (auto mainFrame = _page->mainFrame())
         frameID = mainFrame->frameID();
     else

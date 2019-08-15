@@ -29,6 +29,7 @@
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -61,7 +62,7 @@ public:
 
     static const char* supplementName();
 
-    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
+    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 
     void completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition, WebCore::Credential&&);

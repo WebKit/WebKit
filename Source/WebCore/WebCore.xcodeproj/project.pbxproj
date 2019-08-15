@@ -280,6 +280,7 @@
 		0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F03C0731884695E00A5F8CA /* SystemMemory.h */; };
 		0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F11781822E3C47F008BD570 /* FrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11781622E3C47E008BD570 /* FrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F15DA8A0F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h */; };
@@ -5578,6 +5579,7 @@
 		0F03C0731884695E00A5F8CA /* SystemMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemMemory.h; sourceTree = "<group>"; };
 		0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTypedArrayController.cpp; sourceTree = "<group>"; };
 		0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypedArrayController.h; sourceTree = "<group>"; };
+		0F11781622E3C47E008BD570 /* FrameIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameIdentifier.h; sourceTree = "<group>"; };
 		0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionInfo.h; sourceTree = "<group>"; };
 		0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAFilters.h; sourceTree = "<group>"; };
 		0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCAFiltersCocoa.mm; sourceTree = "<group>"; };
@@ -20204,6 +20206,7 @@
 				65BF022A0974816300C43196 /* Frame.h */,
 				974A862014B7ADBB003FDC76 /* FrameDestructionObserver.cpp */,
 				974A862114B7ADBB003FDC76 /* FrameDestructionObserver.h */,
+				0F11781622E3C47E008BD570 /* FrameIdentifier.h */,
 				C4CD629818383766007EBAF1 /* FrameSnapshotting.cpp */,
 				C4CD629918383766007EBAF1 /* FrameSnapshotting.h */,
 				65A21482097A3F5300B9050A /* FrameTree.cpp */,
@@ -29255,6 +29258,7 @@
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				974A862314B7ADBB003FDC76 /* FrameDestructionObserver.h in Headers */,
+				0F11781822E3C47F008BD570 /* FrameIdentifier.h in Headers */,
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */,
 				D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */,

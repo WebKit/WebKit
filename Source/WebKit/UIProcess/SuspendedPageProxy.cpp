@@ -78,7 +78,7 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, uint64_t mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, FrameIdentifier mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
     : m_page(page)
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)

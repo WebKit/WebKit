@@ -21,21 +21,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebAutomationSessionProxy {
-    EvaluateJavaScriptFunction(WebCore::PageIdentifier pageID, uint64_t frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
+    EvaluateJavaScriptFunction(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
 
-    ResolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, uint64_t frameID, uint32_t ordinal) -> (Optional<String> errorType, uint64_t frameID) Async
-    ResolveChildFrameWithNodeHandle(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle) -> (Optional<String> errorType, uint64_t frameID) Async
-    ResolveChildFrameWithName(WebCore::PageIdentifier pageID, uint64_t frameID, String name) -> (Optional<String> errorType, uint64_t frameID) Async
-    ResolveParentFrame(WebCore::PageIdentifier pageID, uint64_t frameID) -> (Optional<String> errorType, uint64_t frameID) Async
+    ResolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal) -> (Optional<String> errorType, Optional<WebCore::FrameIdentifier> frameID) Async
+    ResolveChildFrameWithNodeHandle(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (Optional<String> errorType, Optional<WebCore::FrameIdentifier> frameID) Async
+    ResolveChildFrameWithName(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String name) -> (Optional<String> errorType, Optional<WebCore::FrameIdentifier> frameID) Async
+    ResolveParentFrame(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID) -> (Optional<String> errorType, Optional<WebCore::FrameIdentifier> frameID) Async
 
-    FocusFrame(WebCore::PageIdentifier pageID, uint64_t frameID)
+    FocusFrame(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID)
 
-    ComputeElementLayout(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, enum:uint8_t WebKit::CoordinateSystem coordinateSystem) -> (Optional<String> errorType, WebCore::IntRect rect, Optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured) Async
+    ComputeElementLayout(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, enum:uint8_t WebKit::CoordinateSystem coordinateSystem) -> (Optional<String> errorType, WebCore::IntRect rect, Optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured) Async
 
-    SelectOptionElement(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle) -> (Optional<String> errorType) Async
+    SelectOptionElement(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (Optional<String> errorType) Async
 
-    TakeScreenshot(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
+    TakeScreenshot(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
 
-    GetCookiesForFrame(WebCore::PageIdentifier pageID, uint64_t frameID) -> (Optional<String> errorType, Vector<WebCore::Cookie> cookies) Async
-    DeleteCookie(WebCore::PageIdentifier pageID, uint64_t frameID, String cookieName) -> (Optional<String> errorType) Async
+    GetCookiesForFrame(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID) -> (Optional<String> errorType, Vector<WebCore::Cookie> cookies) Async
+    DeleteCookie(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String cookieName) -> (Optional<String> errorType) Async
 }
