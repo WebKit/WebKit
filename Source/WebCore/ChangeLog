@@ -1,3 +1,18 @@
+2019-08-15  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Trivial clean-up of the MSL code generated
+        https://bugs.webkit.org/show_bug.cgi?id=200525
+
+        Reviewed by Darin Adler.
+
+        Emit simpler code for ternary expressions
+        Remove duplicate {} around functions
+
+        No new tests as it is covered by the existing ones.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+
 2019-08-15  Youenn Fablet  <youenn@apple.com>
 
         Always create a Document with a valid SessionID

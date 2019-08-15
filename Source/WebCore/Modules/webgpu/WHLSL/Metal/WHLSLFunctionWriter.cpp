@@ -247,10 +247,10 @@ void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
             m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*parameter->type()), ' ', parameterName);
         }
-        m_stringBuilder.append(") {\n");
+        m_stringBuilder.append(")\n");
         checkErrorAndVisit(functionDefinition.block());
         ASSERT(m_stack.isEmpty());
-        m_stringBuilder.append("}\n");
+        m_stringBuilder.append('\n');
     }
 }
 
@@ -679,22 +679,13 @@ void FunctionDefinitionWriter::visit(AST::TernaryExpression& ternaryExpression)
 {
     checkErrorAndVisit(ternaryExpression.predicate());
     auto check = takeLastValue();
+    checkErrorAndVisit(ternaryExpression.bodyExpression());
+    auto body = takeLastValue();
+    checkErrorAndVisit(ternaryExpression.elseExpression());
+    auto elseBody = takeLastValue();
 
     auto variableName = generateNextVariableName();
-    m_stringBuilder.flexibleAppend(
-        m_typeNamer.mangledNameForType(ternaryExpression.resolvedType()), ' ', variableName, ";\n"
-        "if (", check, ") {\n"
-    );
-    checkErrorAndVisit(ternaryExpression.bodyExpression());
-    m_stringBuilder.flexibleAppend(
-        variableName, " = ", takeLastValue(), ";\n"
-        "} else {\n"
-    );
-    checkErrorAndVisit(ternaryExpression.elseExpression());
-    m_stringBuilder.flexibleAppend(
-        variableName, " = ", takeLastValue(), ";\n"
-        "}\n"
-    );
+    m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(ternaryExpression.resolvedType()), ' ', variableName, " = ", check, " ? ", body, " : ", elseBody, ";\n");
     appendRightValue(ternaryExpression, variableName);
 }
 
