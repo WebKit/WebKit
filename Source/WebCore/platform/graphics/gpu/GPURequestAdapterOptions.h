@@ -37,7 +37,7 @@ enum class GPUPowerPreference {
 };
 
 struct GPURequestAdapterOptions {
-    Optional<GPUPowerPreference> powerPreference;
+    Optional<GPUPowerPreference> powerPreference { GPUPowerPreference::LowPower };
 };
     
 } // namespace WebCore
