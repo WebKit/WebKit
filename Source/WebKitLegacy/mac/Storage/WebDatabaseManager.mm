@@ -157,6 +157,13 @@ static NSString *databasesDirectoryPath();
 #endif
 }
 
+- (void)setIDBPerOriginQuota:(uint64_t)quota
+{
+#if ENABLE(INDEXED_DATABASE)
+    WebDatabaseProvider::singleton().setIDBPerOriginQuota(quota);
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static bool isFileHidden(NSString *file)

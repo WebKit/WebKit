@@ -175,6 +175,9 @@ public:
     uint64_t domCacheSize(JSStringRef origin);
     void setAllowStorageQuotaIncrease(bool);
 
+    // IndexedDB
+    void setIDBPerOriginQuota(uint64_t);
+
     // Failed load condition testing
     void forceImmediateCompletion();
 

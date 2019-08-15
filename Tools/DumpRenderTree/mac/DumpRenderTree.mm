@@ -2035,6 +2035,7 @@ static void runTest(const string& inputLine)
     gTestRunner->clearAllApplicationCaches();
 
     gTestRunner->clearAllDatabases();
+    gTestRunner->setIDBPerOriginQuota(50 * MB);
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);

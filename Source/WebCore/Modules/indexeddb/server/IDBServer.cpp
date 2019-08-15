@@ -135,7 +135,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     if (m_databaseDirectoryPath.isEmpty())
         return MemoryIDBBackingStore::create(identifier);
 
-    return std::make_unique<SQLiteIDBBackingStore>(m_sessionID, identifier, m_databaseDirectoryPath, m_backingStoreTemporaryFileHandler);
+    return std::make_unique<SQLiteIDBBackingStore>(m_sessionID, identifier, m_databaseDirectoryPath, m_backingStoreTemporaryFileHandler, m_perOriginQuota);
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)
@@ -689,6 +689,14 @@ void IDBServer::didPerformCloseAndDeleteDatabases(uint64_t callbackID)
     auto callback = m_deleteDatabaseCompletionHandlers.take(callbackID);
     ASSERT(callback);
     callback();
+}
+
+void IDBServer::setPerOriginQuota(uint64_t quota)
+{
+    m_perOriginQuota = quota;
+
+    for (auto& database : m_uniqueIDBDatabaseMap.values())
+        database->setQuota(quota);
 }
 
 IDBServer::QuotaUser::QuotaUser(IDBServer& server, StorageQuotaManager* manager, ClientOrigin&& origin)

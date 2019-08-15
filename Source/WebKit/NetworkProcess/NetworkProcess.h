@@ -284,6 +284,7 @@ public:
     WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
     // WebCore::IDBServer::IDBBackingStoreFileHandler.
     void accessToTemporaryFileComplete(const String& path) final;
+    void setIDBPerOriginQuota(uint64_t);
 #endif
     void updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID, const WebCore::ClientOrigin&);
 
@@ -524,6 +525,7 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
+    uint64_t m_idbPerOriginQuota { WebCore::IDBServer::defaultPerOriginQuota };
 #endif
 
     Deque<CrossThreadTask> m_storageTasks;

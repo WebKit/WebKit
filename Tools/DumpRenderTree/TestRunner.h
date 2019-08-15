@@ -106,6 +106,7 @@ public:
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme);
     void setDefersLoading(bool);
     void setIconDatabaseEnabled(bool);
+    void setIDBPerOriginQuota(uint64_t);
     void setJavaScriptCanAccessClipboard(bool flag);
     void setAutomaticLinkDetectionEnabled(bool flag);
     void setMainFrameIsFirstResponder(bool flag);

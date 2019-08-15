@@ -69,4 +69,5 @@ interface IWebDatabaseManager : IUnknown
 interface IWebDatabaseManager2 : IWebDatabaseManager
 {
     HRESULT deleteAllIndexedDatabases();
+    HRESULT setIDBPerOriginQuota([in] unsigned long long quota);
 }

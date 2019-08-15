@@ -45,9 +45,17 @@ WebDatabaseProvider::~WebDatabaseProvider()
 #if ENABLE(INDEXED_DATABASE)
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID& sessionID)
 {
-    return m_idbServerMap.ensure(sessionID.sessionID(), [&sessionID] {
-        return sessionID.isEphemeral() ? WebCore::InProcessIDBServer::create(sessionID) : WebCore::InProcessIDBServer::create(sessionID, indexedDatabaseDirectoryPath());
-    }).iterator->value->connectionToServer();
+    auto result = m_idbServerMap.add(sessionID.sessionID(), nullptr);
+    if (result.isNewEntry) {
+        if (sessionID.isEphemeral())
+            result.iterator->value = WebCore::InProcessIDBServer::create(sessionID);
+        else
+            result.iterator->value = WebCore::InProcessIDBServer::create(sessionID, indexedDatabaseDirectoryPath());
+    }
+
+    result.iterator->value->idbServer().setPerOriginQuota(m_idbPerOriginQuota);
+
+    return result.iterator->value->connectionToServer();
 }
 
 void WebDatabaseProvider::deleteAllDatabases()
@@ -55,4 +63,13 @@ void WebDatabaseProvider::deleteAllDatabases()
     for (auto& server : m_idbServerMap.values())
         server->idbServer().closeAndDeleteDatabasesModifiedSince(-WallTime::infinity(), [] { });
 }
+
+void WebDatabaseProvider::setIDBPerOriginQuota(uint64_t quota)
+{
+    m_idbPerOriginQuota = quota;
+
+    for (auto& server : m_idbServerMap.values())
+        server->idbServer().setPerOriginQuota(quota);
+}
+
 #endif
