@@ -281,6 +281,26 @@ void PageConsoleClient::recordEnd(JSC::ExecState* state, Ref<ScriptArguments>&& 
     }
 }
 
+static Optional<String> snapshotCanvas(HTMLCanvasElement& canvasElement, CanvasRenderingContext& canvasRenderingContext)
+{
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
+        downcast<WebGLRenderingContextBase>(canvasRenderingContext).setPreventBufferClearForInspector(true);
+#endif
+
+    auto result = canvasElement.toDataURL("image/png"_s);
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
+        downcast<WebGLRenderingContextBase>(canvasRenderingContext).setPreventBufferClearForInspector(false);
+#endif
+
+    if (!result.hasException())
+        return result.releaseReturnValue().string;
+
+    return WTF::nullopt;
+}
+
 void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
     String dataURL;
@@ -321,13 +341,22 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
                         videoElement.paintCurrentFrameInContext(snapshot->context(), FloatRect(0, 0, videoWidth, videoHeight));
                     }
 #endif
+                    else if (is<HTMLCanvasElement>(node)) {
+                        auto& canvasElement = downcast<HTMLCanvasElement>(*node);
+                        if (auto* canvasRenderingContext = canvasElement.renderingContext()) {
+                            if (auto result = snapshotCanvas(canvasElement, *canvasRenderingContext))
+                                dataURL = result.value();
+                        }
+                    }
                 }
 
-                if (!snapshot)
-                    snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node);
+                if (dataURL.isEmpty()) {
+                    if (!snapshot)
+                        snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node);
 
-                if (snapshot)
-                    dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                    if (snapshot)
+                        dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                }
             }
         } else if (auto* imageData = JSImageData::toWrapped(state->vm(), possibleTarget)) {
             target = possibleTarget;
@@ -350,20 +379,8 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
             if (is<HTMLCanvasElement>(canvas)) {
                 target = possibleTarget;
                 if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
-#if ENABLE(WEBGL)
-                    if (is<WebGLRenderingContextBase>(context))
-                        downcast<WebGLRenderingContextBase>(context)->setPreventBufferClearForInspector(true);
-#endif
-
-                    auto result = downcast<HTMLCanvasElement>(canvas).toDataURL("image/png"_s);
-
-#if ENABLE(WEBGL)
-                    if (is<WebGLRenderingContextBase>(context))
-                        downcast<WebGLRenderingContextBase>(context)->setPreventBufferClearForInspector(false);
-#endif
-
-                    if (!result.hasException())
-                        dataURL = result.releaseReturnValue().string;
+                    if (auto result = snapshotCanvas(downcast<HTMLCanvasElement>(canvas), *context))
+                        dataURL = result.value();
                 }
             }
 

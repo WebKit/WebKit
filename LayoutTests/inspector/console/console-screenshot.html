@@ -31,6 +31,18 @@ function testHTMLPictureElement() {
     });
 }
 
+function testHTMLCanvasElement() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+
+    let context = canvas.getContext("2d");
+    context.fillStyle = "red";
+    context.fillRect(0, 0, 2, 2);
+
+    console.screenshot(canvas);
+}
+
 function testImageBitmap() {
     // 2x2 red square
     let image = document.createElement("img");
@@ -101,6 +113,18 @@ function test()
     addTest({
         name: "console.screenshot.Node.DetachedScreenshotable.Picture",
         expression: `testHTMLPictureElement()`,
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedScreenshotable.Canvas",
+        expression: `testHTMLCanvasElement()`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
     });
 
     addTest({

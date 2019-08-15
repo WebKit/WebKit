@@ -2,6 +2,7 @@ CONSOLE MESSAGE: [object HTMLDivElement]
 CONSOLE MESSAGE: [object HTMLDivElement]
 CONSOLE MESSAGE: [object HTMLImageElement]
 CONSOLE MESSAGE: [object HTMLPictureElement]
+CONSOLE MESSAGE: [object HTMLCanvasElement]
 CONSOLE MESSAGE: [object HTMLDivElement]
 CONSOLE MESSAGE: [object ImageData]
 CONSOLE MESSAGE: [object ImageBitmap]
@@ -34,6 +35,12 @@ PASS: The image width should be 2px.
 PASS: The image height should be 2px.
 
 -- Running test case: console.screenshot.Node.DetachedScreenshotable.Picture
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.Node.DetachedScreenshotable.Canvas
 PASS: The added message should be an image.
 PASS: The image should not be empty.
 PASS: The image width should be 2px.
