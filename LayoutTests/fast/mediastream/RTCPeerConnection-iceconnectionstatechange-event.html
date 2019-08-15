@@ -7,8 +7,6 @@
     <body>
         <script>
             description("Test RTCPeerConnection 'iceconnectionstatechange' event");
-            if (window.testRunner)
-                testRunner.setWebRTCUnifiedPlanEnabled(false);
 
             if (window.internals)
                 internals.useMockRTCPeerConnectionFactory("ICEConnectionState");

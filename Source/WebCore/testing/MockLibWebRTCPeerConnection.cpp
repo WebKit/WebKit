@@ -71,8 +71,16 @@ void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& 
 
 MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection()
 {
-    // Free senders in a different thread like an actual peer connection would probably do.
-    Thread::create("MockLibWebRTCPeerConnection thread", [senders = WTFMove(m_senders)] { });
+    // Free senders and receivers in a different thread like an actual peer connection would probably do.
+    Thread::create("MockLibWebRTCPeerConnection thread", [transceivers = WTFMove(m_transceivers)] { });
+}
+
+std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> MockLibWebRTCPeerConnection::GetTransceivers() const
+{
+    std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> transceivers;
+    for (auto transceiver : m_transceivers)
+        transceivers.push_back(transceiver);
+    return transceivers;
 }
 
 class MockLibWebRTCPeerConnectionForIceCandidates : public MockLibWebRTCPeerConnection {
@@ -254,8 +262,12 @@ webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> MockLibWebRTC
     if (!streamIds.empty())
         m_streamLabel = streamIds.front();
 
-    m_senders.append(new rtc::RefCountedObject<MockRtpSender>(WTFMove(track)));
-    return rtc::scoped_refptr<webrtc::RtpSenderInterface>(m_senders.last().get());
+    rtc::scoped_refptr<webrtc::RtpSenderInterface> sender = new rtc::RefCountedObject<MockRtpSender>(WTFMove(track));
+    rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver = new rtc::RefCountedObject<MockRtpReceiver>();
+    rtc::scoped_refptr<MockRtpTransceiver> transceiver = new rtc::RefCountedObject<MockRtpTransceiver>(WTFMove(sender), WTFMove(receiver));
+
+    m_transceivers.append(WTFMove(transceiver));
+    return rtc::scoped_refptr<webrtc::RtpSenderInterface>(m_transceivers.last()->sender());
 }
 
 bool MockLibWebRTCPeerConnection::RemoveTrack(webrtc::RtpSenderInterface* sender)
@@ -264,8 +276,8 @@ bool MockLibWebRTCPeerConnection::RemoveTrack(webrtc::RtpSenderInterface* sender
         observer->OnRenegotiationNeeded();
     });
     bool isRemoved = false;
-    return m_senders.removeFirstMatching([&](auto& item) {
-        if (item.get() != sender)
+    return m_transceivers.removeFirstMatching([&](auto& transceiver) {
+        if (transceiver->sender().get() != sender)
             return false;
         isRemoved = true;
         return true;
@@ -281,11 +293,11 @@ void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionOb
             "o=- 5667094644266930845 " << m_counter++ << " IN IP4 127.0.0.1\r\n"
             "s=-\r\n"
             "t=0 0\r\n";
-        if (m_senders.size()) {
+        if (m_transceivers.size()) {
             unsigned partCounter = 1;
             sdp << "a=msid-semantic:WMS " << m_streamLabel << "\r\n";
-            for (auto& sender : m_senders) {
-                auto track = sender->track();
+            for (auto& transceiver : m_transceivers) {
+                auto track = transceiver->sender()->track();
                 if (track->kind() != "audio")
                     continue;
                 sdp <<
@@ -304,8 +316,8 @@ void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionOb
                     "a=fingerprint:sha-256 8B:87:09:8A:5D:C2:F3:33:EF:C5:B1:F6:84:3A:3D:D6:A3:E2:9C:17:4C:E7:46:3B:1B:CE:84:98:DD:8E:AF:7B\r\n"
                     "a=setup:actpass\r\n";
             }
-            for (auto& sender : m_senders) {
-                auto track = sender->track();
+            for (auto& transceiver : m_transceivers) {
+                auto track = transceiver->sender()->track();
                 if (track->kind() != "video")
                     continue;
                 sdp <<
@@ -345,9 +357,9 @@ void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionOb
             "o=- 5667094644266930846 " << m_counter++ << " IN IP4 127.0.0.1\r\n"
             "s=-\r\n"
             "t=0 0\r\n";
-        if (m_senders.size()) {
-            for (auto& sender : m_senders) {
-                auto track = sender->track();
+        if (m_transceivers.size()) {
+            for (auto& transceiver : m_transceivers) {
+                auto track = transceiver->sender()->track();
                 if (track->kind() != "audio")
                     continue;
                 sdp <<
@@ -365,8 +377,8 @@ void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionOb
                     "a=fingerprint:sha-256 8B:87:09:8A:5D:C2:F3:33:EF:C5:B1:F6:84:3A:3D:D6:A3:E2:9C:17:4C:E7:46:3B:1B:CE:84:98:DD:8E:AF:7B\r\n"
                     "a=setup:active\r\n";
             }
-            for (auto& sender : m_senders) {
-                auto track = sender->track();
+            for (auto& transceiver : m_transceivers) {
+                auto track = transceiver->sender()->track();
                 if (track->kind() != "video")
                     continue;
                 sdp <<
