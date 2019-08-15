@@ -66,11 +66,17 @@ bool deleteFile(const String& path)
 {
     CString fsRep = fileSystemRepresentation(path);
 
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
+    if (!fsRep.data() || fsRep.data()[0] == '\0') {
+        LOG_ERROR("File failed to delete. Failed to get filesystem representation to create CString from cfString or filesystem representation is a null value");
         return false;
+    }
 
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
-    return !unlink(fsRep.data());
+    bool unlinked = !unlink(fsRep.data());
+    if (!unlinked)
+        LOG_ERROR("File failed to delete. Error message: %s", strerror(errno));
+
+    return unlinked;
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)

@@ -1,3 +1,18 @@
+2019-08-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        FileSystem::deleteFile should log error status (178347)
+        https://bugs.webkit.org/show_bug.cgi?id=178347
+
+        Reviewed by Brent Fulgham.
+
+        I added logging to the FileSystem::deleteFile function so that the debugger will
+        be able to see the associated errno string and better understand the reason for an
+        unlink failure or will know if the fileSystemRepresentation call was not
+        successful (or returned null).
+
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::deleteFile):
+
 2019-08-14  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13
