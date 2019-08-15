@@ -38,6 +38,10 @@ class FlaskRequestsResponse(Response):
     def text(self):
         return self.data.decode('utf-8')
 
+    @property
+    def content(self):
+        return self.data
+
     def json(self):
         return json.loads(self.text)
 
