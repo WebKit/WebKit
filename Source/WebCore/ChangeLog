@@ -1,3 +1,10 @@
+2019-08-15  Justin Fan  <justin_fan@apple.com>
+
+        Unreviewed suggested patch follow-up to https://bugs.webkit.org/show_bug.cgi?id=200740.
+
+        * platform/graphics/gpu/GPURequestAdapterOptions.h:
+        (): Deleted.
+
 2019-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Support web fonts
