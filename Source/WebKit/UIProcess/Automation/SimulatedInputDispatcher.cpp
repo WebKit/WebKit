@@ -296,7 +296,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             } else if (a.location != b.location) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
-                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.valueOr(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.valueOr(MouseButton::None), b.location.value(), WTFMove(eventDispatchFinished));
             } else
                 eventDispatchFinished(WTF::nullopt);
         });
@@ -401,7 +401,7 @@ void SimulatedInputDispatcher::run(WebCore::FrameIdentifier frameID, Vector<Simu
     m_keyframes.append(SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(m_inputSources));
     m_keyframes.appendVector(WTFMove(keyFrames));
 
-    LOG(Automation, "SimulatedInputDispatcher[%p]: starting input simulation using %d keyframes", this, m_keyframeIndex);
+    LOG(Automation, "SimulatedInputDispatcher[%p]: starting input simulation using %zu keyframes", this, m_keyframes.size());
 
     transitionToNextKeyFrame();
 }

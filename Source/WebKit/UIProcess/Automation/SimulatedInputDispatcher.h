@@ -41,6 +41,7 @@
 namespace Inspector { namespace Protocol { namespace Automation {
 enum class ErrorMessage;
 enum class KeyboardInteractionType;
+enum class MouseButton;
 enum class MouseInteraction;
 enum class MouseMoveOrigin;
 enum class VirtualKey;
@@ -57,7 +58,7 @@ using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteraction
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeySet = HashSet<VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 using CharKey = char; // For WebDriver, this only needs to support ASCII characters on 102-key keyboard.
-using MouseButton = WebMouseEvent::Button;
+using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
 using MouseMoveOrigin = Inspector::Protocol::Automation::MouseMoveOrigin;
 
@@ -125,7 +126,7 @@ public:
     public:
         virtual ~Client() { }
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-        virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) = 0;
+        virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) = 0;
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         virtual void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, Optional<Seconds> duration, AutomationCompletionHandler&&) = 0;

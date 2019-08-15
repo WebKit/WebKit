@@ -48,15 +48,15 @@ static unsigned modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
     return state;
 }
 
-static unsigned mouseButtonToGdkButton(WebMouseEvent::Button button)
+static unsigned mouseButtonToGdkButton(MouseButton button)
 {
     switch (button) {
-    case WebMouseEvent::NoButton:
-    case WebMouseEvent::LeftButton:
+    case MouseButton::None:
+    case MouseButton::Left:
         return GDK_BUTTON_PRIMARY;
-    case WebMouseEvent::MiddleButton:
+    case MouseButton::Middle:
         return GDK_BUTTON_MIDDLE;
-    case WebMouseEvent::RightButton:
+    case MouseButton::Right:
         return GDK_BUTTON_SECONDARY;
     }
     return GDK_BUTTON_PRIMARY;
@@ -101,7 +101,7 @@ static void doMotionEvent(GtkWidget* widget, const WebCore::IntPoint& location, 
     gtk_main_do_event(event.get());
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
     auto modifier = stateModifierForGdkButton(gdkButton);

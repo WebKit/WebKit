@@ -121,9 +121,22 @@ bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 #pragma mark Platform-dependent Implementations
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier> keyModifiers)
+
+static WebMouseEvent::Button automationMouseButtonToPlatformMouseButton(MouseButton button)
+{
+    switch (button) {
+    case MouseButton::Left:   return WebMouseEvent::LeftButton;
+    case MouseButton::Middle: return WebMouseEvent::MiddleButton;
+    case MouseButton::Right:  return WebMouseEvent::RightButton;
+    case MouseButton::None:   return WebMouseEvent::NoButton;
+    default: ASSERT_NOT_REACHED();
+    }
+}
+
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier> keyModifiers)
 {
     IntRect windowRect;
+
     IntPoint locationInView = WebCore::IntPoint(locationInViewport.x(), locationInViewport.y() + page.topContentInset());
     page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
     IntPoint locationInWindow = windowRect.location();
@@ -147,7 +160,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     NSEventType downEventType = (NSEventType)0;
     NSEventType dragEventType = (NSEventType)0;
     NSEventType upEventType = (NSEventType)0;
-    switch (button) {
+    switch (automationMouseButtonToPlatformMouseButton(button)) {
     case WebMouseEvent::NoButton:
         downEventType = upEventType = dragEventType = NSEventTypeMouseMoved;
         break;

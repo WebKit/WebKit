@@ -1,3 +1,42 @@
+2019-08-14  Brian Burg  <bburg@apple.com>
+
+        Web Automation: mouse buttons are not correctly printed in SimulatedInputDispatcher log spew
+        https://bugs.webkit.org/show_bug.cgi?id=200729
+
+        Reviewed by Devin Rousso.
+
+        This was printing out gibberish because it was trying to decode a WebMouseEvent button
+        as an Automation protocol button. The logging was less useful because of it.
+
+        To fix this, push usage of Automation protocol-based MouseButton type alias all the way
+        to the platform-specific methods. The mouse buttons are the same for WebMouseEvent::Button
+        and the Automation protocol type, except the automation type has an auto-generated toString.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        (WebKit::SimulatedInputDispatcher::run):
+        Fix types.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        (WebKit::protocolMouseButtonToWebMouseEventButton): Deleted.
+        Fix types.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::automationMouseButtonToPlatformMouseButton):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::mouseButtonToGdkButton):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::mouseButtonToWPEButton):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        Move translation between MouseButton and native button values to platform methods.
+
 2019-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Use ObjectIdentifier<FrameIdentifierType> for frameIDs

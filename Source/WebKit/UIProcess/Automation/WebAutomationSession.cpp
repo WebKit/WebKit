@@ -1482,7 +1482,8 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
 }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button mouseButton, const WebCore::IntPoint& locationInViewport, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
+
+void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
 {
     page.getWindowFrameWithCallback([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), page = makeRef(page), interaction, mouseButton, locationInViewport](WebCore::FloatRect windowFrame) mutable {
         auto clippedX = std::min(std::max(0.0f, (float)locationInViewport.x()), windowFrame.size().width());
@@ -1581,24 +1582,6 @@ static WebEvent::Modifier protocolModifierToWebEventModifier(Inspector::Protocol
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
-#if ENABLE(WEBDRIVER_ACTIONS_API)
-static WebMouseEvent::Button protocolMouseButtonToWebMouseEventButton(Inspector::Protocol::Automation::MouseButton button)
-{
-    switch (button) {
-    case Inspector::Protocol::Automation::MouseButton::None:
-        return WebMouseEvent::NoButton;
-    case Inspector::Protocol::Automation::MouseButton::Left:
-        return WebMouseEvent::LeftButton;
-    case Inspector::Protocol::Automation::MouseButton::Middle:
-        return WebMouseEvent::MiddleButton;
-    case Inspector::Protocol::Automation::MouseButton::Right:
-        return WebMouseEvent::RightButton;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-#endif // ENABLE(WEBDRIVER_ACTIONS_API)
-
 void WebAutomationSession::performMouseInteraction(const String& handle, const JSON::Object& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const JSON::Array& keyModifierStrings, Ref<PerformMouseInteractionCallback>&& callback)
 {
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -1659,7 +1642,7 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, parsedInteraction.value(), protocolMouseButtonToWebMouseEventButton(parsedButton.value()), locationInViewport, keyModifiers);
+        platformSimulateMouseInteraction(page, parsedInteraction.value(), parsedButton.value(), locationInViewport, keyModifiers);
 
         // If the event location was previously clipped and does not hit test anything in the window, then it will not be processed.
         // For compatibility with pre-W3C driver implementations, don't make this a hard error; just do nothing silently.
@@ -1901,7 +1884,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             String pressedButtonString;
             if (stateObject->getString("pressedButton"_s, pressedButtonString)) {
                 auto protocolButton = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(pressedButtonString);
-                sourceState.pressedMouseButton = protocolMouseButtonToWebMouseEventButton(protocolButton.valueOr(Inspector::Protocol::Automation::MouseButton::None));
+                sourceState.pressedMouseButton = protocolButton.valueOr(MouseButton::None);
             }
 
             String originString;
