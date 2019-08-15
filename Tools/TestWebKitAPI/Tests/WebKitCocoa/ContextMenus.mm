@@ -34,8 +34,10 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 
-static bool willPresentCalled;
 static bool contextMenuRequested;
+static bool willPresentCalled;
+static bool willCommitCalled;
+static bool didEndCalled;
 static RetainPtr<NSURL> simpleURL;
 
 @interface TestContextMenuUIDelegate : NSObject <WKUIDelegate>
@@ -47,7 +49,15 @@ static RetainPtr<NSURL> simpleURL;
 {
     EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[simpleURL absoluteString]]);
     contextMenuRequested = true;
-    completionHandler([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:nil]);
+    UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
+    {
+        return [UIViewController new];
+    };
+    UIContextMenuActionProvider actionProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions)
+    {
+        return [UIMenu menuWithTitle:@"" children:suggestedActions];
+    };
+    completionHandler([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:previewProvider actionProvider:actionProvider]);
 }
 
 - (void)webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo
@@ -57,36 +67,58 @@ static RetainPtr<NSURL> simpleURL;
 
 - (void)webView:(WKWebView *)webView contextMenuForElement:(WKContextMenuElementInfo *)elementInfo willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
 {
+    willCommitCalled = true;
 }
 
 - (void)webView:(WKWebView *)webView contextMenuDidEndForElement:(WKContextMenuElementInfo *)elementInfo
 {
+    didEndCalled = true;
 }
 
 @end
 
-TEST(WebKit, DISABLED_ContextMenuBasic)
+static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver()
 {
-    auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    auto driver = adoptNS([TestContextMenuDriver new]);
-    auto uiDelegate = adoptNS([TestContextMenuUIDelegate new]);
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    static auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    static auto driver = adoptNS([TestContextMenuDriver new]);
+    static auto uiDelegate = adoptNS([TestContextMenuUIDelegate new]);
+    static auto configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration _setClickInteractionDriverForTesting:(id<_UIClickInteractionDriving>)driver.get()];
-    auto webViewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
+    static auto webViewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
     TestWKWebView *webView = [webViewController webView];
     [window addSubview:webView];
     [webView setUIDelegate:uiDelegate.get()];
-
     simpleURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<a href='%@'>This is a link</a>", simpleURL.get()]];
-    [driver begin:^(BOOL result) {
-        if (result) {
-            [driver clickDown];
-            [driver clickUp];
-            [driver end];
-        }
-    }];
-    TestWebKitAPI::Util::run(&willPresentCalled);
+    return driver;
 }
 
+TEST(WebKit, ContextMenuClick)
+{
+    auto driver = contextMenuWebViewDriver();
+    [driver begin:^(BOOL result) {
+        EXPECT_TRUE(result);
+        [driver clickDown];
+        [driver clickUp];
+    }];
+    TestWebKitAPI::Util::run(&willPresentCalled);
+    EXPECT_TRUE(contextMenuRequested);
+    EXPECT_TRUE(willPresentCalled);
+    EXPECT_FALSE(willCommitCalled);
+    EXPECT_FALSE(didEndCalled);
+}
+
+TEST(WebKit, ContextMenuEnd)
+{
+    auto driver = contextMenuWebViewDriver();
+    [driver begin:^(BOOL result) {
+        EXPECT_TRUE(result);
+        [driver end];
+    }];
+    TestWebKitAPI::Util::run(&didEndCalled);
+    EXPECT_TRUE(contextMenuRequested);
+    EXPECT_FALSE(willPresentCalled);
+    EXPECT_FALSE(willCommitCalled);
+    EXPECT_TRUE(didEndCalled);
+}
 #endif // PLATFORM(IOS) && USE(UICONTEXTMENU)
