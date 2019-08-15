@@ -1,5 +1,14 @@
 2019-08-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Error thrown during "acceptNode" lookup is overridden
+        https://bugs.webkit.org/show_bug.cgi?id=200735
+
+        Reviewed by Ross Kirsling.
+
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-expected.txt:
+
+2019-08-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Re-sync web-platform-tests/dom/traversal from upstream
         https://bugs.webkit.org/show_bug.cgi?id=200737
 

@@ -44,6 +44,8 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 
     ExecState* exec = globalObject.globalExec();
     VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     JSValue function;
     CallData callData;
     CallType callType = CallType::None;
@@ -60,6 +62,12 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 
         ASSERT(!functionName.isNull());
         function = callback->get(exec, functionName);
+        if (UNLIKELY(scope.exception())) {
+            returnedException = scope.exception();
+            scope.clearException();
+            return JSValue();
+        }
+
         callType = getCallData(vm, function, callData);
         if (callType == CallType::None) {
             returnedException = JSC::Exception::create(vm, createTypeError(exec));
