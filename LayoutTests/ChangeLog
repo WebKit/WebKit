@@ -1,3 +1,29 @@
+2019-08-15  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make length, clamp, operator+, operator-, operator*, operator/, operator[], operator[]=, operator.xy, operator.xy=, native
+        https://bugs.webkit.org/show_bug.cgi?id=200700
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl/clamp-stdlib-expected.txt: Added.
+        * webgpu/whlsl/clamp-stdlib.html: Added.
+        * webgpu/whlsl/length-stdlib-expected.txt: Added.
+        * webgpu/whlsl/length-stdlib.html: Added.
+        * webgpu/whlsl/operator-div-expected.txt: Added.
+        * webgpu/whlsl/operator-div.html: Added.
+        * webgpu/whlsl/operator-minus-expected.txt: Added.
+        * webgpu/whlsl/operator-minus.html: Added.
+        * webgpu/whlsl/operator-plus-expected.txt: Added.
+        * webgpu/whlsl/operator-plus.html: Added.
+        * webgpu/whlsl/operator-times-expected.txt: Added.
+        * webgpu/whlsl/operator-times.html: Added.
+        * webgpu/whlsl/operator-vector-assign-expected.txt: Added.
+        * webgpu/whlsl/operator-vector-assign.html: Added.
+        * webgpu/whlsl/operator-vector-load-expected.txt: Added.
+        * webgpu/whlsl/operator-vector-load.html: Added.
+        * webgpu/whlsl/operator-xy-expected.txt: Added.
+        * webgpu/whlsl/operator-xy.html: Added.
+
 2019-08-15  Antti Koivisto  <antti@apple.com>
 
         Negative size box with border radius causes hang under WebCore::approximateAsRegion

@@ -42,6 +42,8 @@ namespace WebCore {
 
 namespace WHLSL {
 
+constexpr bool verbose = false;
+
 static String decompressAndDecodeStandardLibrary()
 {
     auto decompressedStandardLibrary = gunzip(WHLSLStandardLibrary, sizeof(WHLSLStandardLibrary));
@@ -110,11 +112,21 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
             if (iterator == standardLibraryFunctionMap.get().end())
                 continue;
             auto stringView = StringView(standardLibrary.get()).substring(iterator->value.start, iterator->value.end - iterator->value.start);
+            if (verbose) {
+                dataLogLn("---------------------------");
+                dataLogLn(stringView);
+                dataLogLn("---------------------------");
+            }
+            auto start = program.functionDefinitions().size();
             auto parseResult = parser.parse(program, stringView, ParsingMode::StandardLibrary);
             if (!parseResult) {
                 dataLogLn("failed to parse the (partial) standard library: ", Lexer::errorString(stringView, parseResult.error()));
                 ASSERT_NOT_REACHED();
                 return;
+            }
+            if (verbose) {
+                if (program.functionDefinitions().size() != start)
+                    dataLogLn("non native stdlib function: '", name, "'");
             }
             allFunctionNames.add(name);
         }

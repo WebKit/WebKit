@@ -1,3 +1,28 @@
+2019-08-15  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make length, clamp, operator+, operator-, operator*, operator/, operator[], operator[]=, operator.xy, operator.xy=, native
+        https://bugs.webkit.org/show_bug.cgi?id=200700
+
+        Reviewed by Robin Morisset.
+
+        This makes us 50% faster in compute_boids.
+
+        Tests: webgpu/whlsl/clamp-stdlib.html
+               webgpu/whlsl/length-stdlib.html
+               webgpu/whlsl/operator-div.html
+               webgpu/whlsl/operator-minus.html
+               webgpu/whlsl/operator-plus.html
+               webgpu/whlsl/operator-times.html
+               webgpu/whlsl/operator-vector-assign.html
+               webgpu/whlsl/operator-vector-load.html
+               webgpu/whlsl/operator-xy.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp:
+        (WebCore::WHLSL::includeStandardLibrary):
+
 2019-08-15  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Trivial clean-up of the MSL code generated

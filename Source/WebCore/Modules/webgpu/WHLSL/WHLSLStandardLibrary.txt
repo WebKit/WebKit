@@ -2448,199 +2448,18 @@ float4 operator.wy=(float4 v, float2 c) {
 }
 
 /* Functions named operator[]= */
-bool2 operator[]=(bool2 v, uint index, bool a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-bool3 operator[]=(bool3 v, uint index, bool a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-bool4 operator[]=(bool4 v, uint index, bool a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        case 3:
-            v.w = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-uint2 operator[]=(uint2 v, uint index, uint a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-uint3 operator[]=(uint3 v, uint index, uint a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-uint4 operator[]=(uint4 v, uint index, uint a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        case 3:
-            v.w = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-int2 operator[]=(int2 v, uint index, int a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-int3 operator[]=(int3 v, uint index, int a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-int4 operator[]=(int4 v, uint index, int a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        case 3:
-            v.w = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-float2 operator[]=(float2 v, uint index, float a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-float3 operator[]=(float3 v, uint index, float a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-float4 operator[]=(float4 v, uint index, float a) {
-    switch (index) {
-        case 0:
-            v.x = a;
-            break;
-        case 1:
-            v.y = a;
-            break;
-        case 2:
-            v.z = a;
-            break;
-        case 3:
-            v.w = a;
-            break;
-        default:
-            break;
-    }
-    return v;
-}
-
+native bool2 operator[]=(bool2, uint, bool);
+native bool3 operator[]=(bool3, uint, bool);
+native bool4 operator[]=(bool4, uint, bool);
+native uint2 operator[]=(uint2, uint, uint);
+native uint3 operator[]=(uint3, uint, uint);
+native uint4 operator[]=(uint4, uint, uint);
+native int2 operator[]=(int2, uint, int);
+native int3 operator[]=(int3, uint, int);
+native int4 operator[]=(int4, uint, int);
+native float2 operator[]=(float2, uint, float);
+native float3 operator[]=(float3, uint, float);
+native float4 operator[]=(float4, uint, float);
 native float2x2 operator[]=(float2x2, uint, float2);
 native float2x3 operator[]=(float2x3, uint, float3);
 native float2x4 operator[]=(float2x4, uint, float4);
@@ -3157,18 +2976,10 @@ native void InterlockedMin(threadgroup atomic_uint*, uint, threadgroup uint*);
 native void InterlockedMin(threadgroup atomic_int*, int, threadgroup int*);
 
 /* Functions named length */
-float length(float x) {
-    return sqrt(dot(x, x));
-}
-float length(float2 x) {
-    return sqrt(dot(x, x));
-}
-float length(float3 x) {
-    return sqrt(dot(x, x));
-}
-float length(float4 x) {
-    return sqrt(dot(x, x));
-}
+native float length(float);
+native float length(float2);
+native float length(float3);
+native float length(float4);
 
 
 /* Functions named operator.xwzy */
@@ -11187,174 +10998,18 @@ float2 operator.ww(float4 v) {
 }
 
 /* Functions named operator[] */
-bool operator[](bool2 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        default:
-            break;
-    }
-    bool result;
-    return result;
-}
-bool operator[](bool3 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        default:
-            break;
-    }
-    bool result;
-    return result;
-}
-bool operator[](bool4 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        case 3:
-            return v.w;
-        default:
-            break;
-    }
-    bool result;
-    return result;
-}
-uint operator[](uint2 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        default:
-            break;
-    }
-    uint result;
-    return result;
-}
-uint operator[](uint3 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        default:
-            break;
-    }
-    uint result;
-    return result;
-}
-uint operator[](uint4 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        case 3:
-            return v.w;
-        default:
-            break;
-    }
-    uint result;
-    return result;
-}
-int operator[](int2 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        default:
-            break;
-    }
-    int result;
-    return result;
-}
-int operator[](int3 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        default:
-            break;
-    }
-    int result;
-    return result;
-}
-int operator[](int4 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        case 3:
-            return v.w;
-        default:
-            break;
-    }
-    int result;
-    return result;
-}
-float operator[](float2 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        default:
-            break;
-    }
-    float result;
-    return result;
-}
-float operator[](float3 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        default:
-            break;
-    }
-    float result;
-    return result;
-}
-float operator[](float4 v, uint index) {
-    switch (index) {
-        case 0:
-            return v.x;
-        case 1:
-            return v.y;
-        case 2:
-            return v.z;
-        case 3:
-            return v.w;
-        default:
-            break;
-    }
-    float result;
-    return result;
-}
+native bool operator[](bool2, uint);
+native bool operator[](bool3, uint);
+native bool operator[](bool4, uint);
+native uint operator[](uint2, uint);
+native uint operator[](uint3, uint);
+native uint operator[](uint4, uint);
+native int operator[](int2, uint);
+native int operator[](int3, uint);
+native int operator[](int4, uint);
+native float operator[](float2, uint);
+native float operator[](float3, uint);
+native float operator[](float4, uint);
 native float2 operator[](float2x2, uint);
 native float3 operator[](float2x3, uint);
 native float4 operator[](float2x4, uint);
@@ -16085,546 +15740,60 @@ float4 operator.wxzy=(float4 v, float4 c) {
 native int operator*(int, int);
 native uint operator*(uint, uint);
 native float operator*(float, float);
-uint2 operator*(uint2 a, uint2 b) {
-    uint2 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    return result;
-}
-uint2 operator*(uint2 a, uint b) {
-    uint2 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    return result;
-}
-uint2 operator*(uint a, uint2 b) {
-    uint2 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    return result;
-}
-uint3 operator*(uint3 a, uint3 b) {
-    uint3 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    result[2] = a[2] * b[2];
-    return result;
-}
-uint3 operator*(uint3 a, uint b) {
-    uint3 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    result[2] = a[2] * b;
-    return result;
-}
-uint3 operator*(uint a, uint3 b) {
-    uint3 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    result[2] = a * b[2];
-    return result;
-}
-uint4 operator*(uint4 a, uint4 b) {
-    uint4 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    result[2] = a[2] * b[2];
-    result[3] = a[3] * b[3];
-    return result;
-}
-uint4 operator*(uint4 a, uint b) {
-    uint4 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    result[2] = a[2] * b;
-    result[3] = a[3] * b;
-    return result;
-}
-uint4 operator*(uint a, uint4 b) {
-    uint4 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    result[2] = a * b[2];
-    result[3] = a * b[3];
-    return result;
-}
-int2 operator*(int2 a, int2 b) {
-    int2 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    return result;
-}
-int2 operator*(int2 a, int b) {
-    int2 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    return result;
-}
-int2 operator*(int a, int2 b) {
-    int2 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    return result;
-}
-int3 operator*(int3 a, int3 b) {
-    int3 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    result[2] = a[2] * b[2];
-    return result;
-}
-int3 operator*(int3 a, int b) {
-    int3 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    result[2] = a[2] * b;
-    return result;
-}
-int3 operator*(int a, int3 b) {
-    int3 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    result[2] = a * b[2];
-    return result;
-}
-int4 operator*(int4 a, int4 b) {
-    int4 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    result[2] = a[2] * b[2];
-    result[3] = a[3] * b[3];
-    return result;
-}
-int4 operator*(int4 a, int b) {
-    int4 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    result[2] = a[2] * b;
-    result[3] = a[3] * b;
-    return result;
-}
-int4 operator*(int a, int4 b) {
-    int4 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    result[2] = a * b[2];
-    result[3] = a * b[3];
-    return result;
-}
-float2 operator*(float2 a, float2 b) {
-    float2 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    return result;
-}
-float2 operator*(float2 a, float b) {
-    float2 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    return result;
-}
-float2 operator*(float a, float2 b) {
-    float2 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    return result;
-}
-float3 operator*(float3 a, float3 b) {
-    float3 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    result[2] = a[2] * b[2];
-    return result;
-}
-float3 operator*(float3 a, float b) {
-    float3 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    result[2] = a[2] * b;
-    return result;
-}
-float3 operator*(float a, float3 b) {
-    float3 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    result[2] = a * b[2];
-    return result;
-}
-float4 operator*(float4 a, float4 b) {
-    float4 result;
-    result[0] = a[0] * b[0];
-    result[1] = a[1] * b[1];
-    result[2] = a[2] * b[2];
-    result[3] = a[3] * b[3];
-    return result;
-}
-float4 operator*(float4 a, float b) {
-    float4 result;
-    result[0] = a[0] * b;
-    result[1] = a[1] * b;
-    result[2] = a[2] * b;
-    result[3] = a[3] * b;
-    return result;
-}
-float4 operator*(float a, float4 b) {
-    float4 result;
-    result[0] = a * b[0];
-    result[1] = a * b[1];
-    result[2] = a * b[2];
-    result[3] = a * b[3];
-    return result;
-}
-float2x2 operator*(float2x2 a, float2x2 b) {
-    float2x2 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    return result;
-}
-float2x2 operator*(float2x2 a, float b) {
-    float2x2 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    return result;
-}
-float2x2 operator*(float a, float2x2 b) {
-    float2x2 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    return result;
-}
-float2x3 operator*(float2x3 a, float2x3 b) {
-    float2x3 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[0][2] = a[0][2] * b[0][2];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[1][2] = a[1][2] * b[1][2];
-    return result;
-}
-float2x3 operator*(float2x3 a, float b) {
-    float2x3 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[0][2] = a[0][2] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[1][2] = a[1][2] * b;
-    return result;
-}
-float2x3 operator*(float a, float2x3 b) {
-    float2x3 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[0][2] = a * b[0][2];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[1][2] = a * b[1][2];
-    return result;
-}
-float2x4 operator*(float2x4 a, float2x4 b) {
-    float2x4 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[0][2] = a[0][2] * b[0][2];
-    result[0][3] = a[0][3] * b[0][3];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[1][2] = a[1][2] * b[1][2];
-    result[1][3] = a[1][3] * b[1][3];
-    return result;
-}
-float2x4 operator*(float2x4 a, float b) {
-    float2x4 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[0][2] = a[0][2] * b;
-    result[0][3] = a[0][3] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[1][2] = a[1][2] * b;
-    result[1][3] = a[1][3] * b;
-    return result;
-}
-float2x4 operator*(float a, float2x4 b) {
-    float2x4 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[0][2] = a * b[0][2];
-    result[0][3] = a * b[0][3];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[1][2] = a * b[1][2];
-    result[1][3] = a * b[1][3];
-    return result;
-}
-float3x2 operator*(float3x2 a, float3x2 b) {
-    float3x2 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[2][0] = a[2][0] * b[2][0];
-    result[2][1] = a[2][1] * b[2][1];
-    return result;
-}
-float3x2 operator*(float3x2 a, float b) {
-    float3x2 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[2][0] = a[2][0] * b;
-    result[2][1] = a[2][1] * b;
-    return result;
-}
-float3x2 operator*(float a, float3x2 b) {
-    float3x2 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[2][0] = a * b[2][0];
-    result[2][1] = a * b[2][1];
-    return result;
-}
-float3x3 operator*(float3x3 a, float3x3 b) {
-    float3x3 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[0][2] = a[0][2] * b[0][2];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[1][2] = a[1][2] * b[1][2];
-    result[2][0] = a[2][0] * b[2][0];
-    result[2][1] = a[2][1] * b[2][1];
-    result[2][2] = a[2][2] * b[2][2];
-    return result;
-}
-float3x3 operator*(float3x3 a, float b) {
-    float3x3 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[0][2] = a[0][2] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[1][2] = a[1][2] * b;
-    result[2][0] = a[2][0] * b;
-    result[2][1] = a[2][1] * b;
-    result[2][2] = a[2][2] * b;
-    return result;
-}
-float3x3 operator*(float a, float3x3 b) {
-    float3x3 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[0][2] = a * b[0][2];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[1][2] = a * b[1][2];
-    result[2][0] = a * b[2][0];
-    result[2][1] = a * b[2][1];
-    result[2][2] = a * b[2][2];
-    return result;
-}
-float3x4 operator*(float3x4 a, float3x4 b) {
-    float3x4 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[0][2] = a[0][2] * b[0][2];
-    result[0][3] = a[0][3] * b[0][3];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[1][2] = a[1][2] * b[1][2];
-    result[1][3] = a[1][3] * b[1][3];
-    result[2][0] = a[2][0] * b[2][0];
-    result[2][1] = a[2][1] * b[2][1];
-    result[2][2] = a[2][2] * b[2][2];
-    result[2][3] = a[2][3] * b[2][3];
-    return result;
-}
-float3x4 operator*(float3x4 a, float b) {
-    float3x4 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[0][2] = a[0][2] * b;
-    result[0][3] = a[0][3] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[1][2] = a[1][2] * b;
-    result[1][3] = a[1][3] * b;
-    result[2][0] = a[2][0] * b;
-    result[2][1] = a[2][1] * b;
-    result[2][2] = a[2][2] * b;
-    result[2][3] = a[2][3] * b;
-    return result;
-}
-float3x4 operator*(float a, float3x4 b) {
-    float3x4 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[0][2] = a * b[0][2];
-    result[0][3] = a * b[0][3];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[1][2] = a * b[1][2];
-    result[1][3] = a * b[1][3];
-    result[2][0] = a * b[2][0];
-    result[2][1] = a * b[2][1];
-    result[2][2] = a * b[2][2];
-    result[2][3] = a * b[2][3];
-    return result;
-}
-float4x2 operator*(float4x2 a, float4x2 b) {
-    float4x2 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[2][0] = a[2][0] * b[2][0];
-    result[2][1] = a[2][1] * b[2][1];
-    result[3][0] = a[3][0] * b[3][0];
-    result[3][1] = a[3][1] * b[3][1];
-    return result;
-}
-float4x2 operator*(float4x2 a, float b) {
-    float4x2 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[2][0] = a[2][0] * b;
-    result[2][1] = a[2][1] * b;
-    result[3][0] = a[3][0] * b;
-    result[3][1] = a[3][1] * b;
-    return result;
-}
-float4x2 operator*(float a, float4x2 b) {
-    float4x2 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[2][0] = a * b[2][0];
-    result[2][1] = a * b[2][1];
-    result[3][0] = a * b[3][0];
-    result[3][1] = a * b[3][1];
-    return result;
-}
-float4x3 operator*(float4x3 a, float4x3 b) {
-    float4x3 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[0][2] = a[0][2] * b[0][2];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[1][2] = a[1][2] * b[1][2];
-    result[2][0] = a[2][0] * b[2][0];
-    result[2][1] = a[2][1] * b[2][1];
-    result[2][2] = a[2][2] * b[2][2];
-    result[3][0] = a[3][0] * b[3][0];
-    result[3][1] = a[3][1] * b[3][1];
-    result[3][2] = a[3][2] * b[3][2];
-    return result;
-}
-float4x3 operator*(float4x3 a, float b) {
-    float4x3 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[0][2] = a[0][2] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[1][2] = a[1][2] * b;
-    result[2][0] = a[2][0] * b;
-    result[2][1] = a[2][1] * b;
-    result[2][2] = a[2][2] * b;
-    result[3][0] = a[3][0] * b;
-    result[3][1] = a[3][1] * b;
-    result[3][2] = a[3][2] * b;
-    return result;
-}
-float4x3 operator*(float a, float4x3 b) {
-    float4x3 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[0][2] = a * b[0][2];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[1][2] = a * b[1][2];
-    result[2][0] = a * b[2][0];
-    result[2][1] = a * b[2][1];
-    result[2][2] = a * b[2][2];
-    result[3][0] = a * b[3][0];
-    result[3][1] = a * b[3][1];
-    result[3][2] = a * b[3][2];
-    return result;
-}
-float4x4 operator*(float4x4 a, float4x4 b) {
-    float4x4 result;
-    result[0][0] = a[0][0] * b[0][0];
-    result[0][1] = a[0][1] * b[0][1];
-    result[0][2] = a[0][2] * b[0][2];
-    result[0][3] = a[0][3] * b[0][3];
-    result[1][0] = a[1][0] * b[1][0];
-    result[1][1] = a[1][1] * b[1][1];
-    result[1][2] = a[1][2] * b[1][2];
-    result[1][3] = a[1][3] * b[1][3];
-    result[2][0] = a[2][0] * b[2][0];
-    result[2][1] = a[2][1] * b[2][1];
-    result[2][2] = a[2][2] * b[2][2];
-    result[2][3] = a[2][3] * b[2][3];
-    result[3][0] = a[3][0] * b[3][0];
-    result[3][1] = a[3][1] * b[3][1];
-    result[3][2] = a[3][2] * b[3][2];
-    result[3][3] = a[3][3] * b[3][3];
-    return result;
-}
-float4x4 operator*(float4x4 a, float b) {
-    float4x4 result;
-    result[0][0] = a[0][0] * b;
-    result[0][1] = a[0][1] * b;
-    result[0][2] = a[0][2] * b;
-    result[0][3] = a[0][3] * b;
-    result[1][0] = a[1][0] * b;
-    result[1][1] = a[1][1] * b;
-    result[1][2] = a[1][2] * b;
-    result[1][3] = a[1][3] * b;
-    result[2][0] = a[2][0] * b;
-    result[2][1] = a[2][1] * b;
-    result[2][2] = a[2][2] * b;
-    result[2][3] = a[2][3] * b;
-    result[3][0] = a[3][0] * b;
-    result[3][1] = a[3][1] * b;
-    result[3][2] = a[3][2] * b;
-    result[3][3] = a[3][3] * b;
-    return result;
-}
-float4x4 operator*(float a, float4x4 b) {
-    float4x4 result;
-    result[0][0] = a * b[0][0];
-    result[0][1] = a * b[0][1];
-    result[0][2] = a * b[0][2];
-    result[0][3] = a * b[0][3];
-    result[1][0] = a * b[1][0];
-    result[1][1] = a * b[1][1];
-    result[1][2] = a * b[1][2];
-    result[1][3] = a * b[1][3];
-    result[2][0] = a * b[2][0];
-    result[2][1] = a * b[2][1];
-    result[2][2] = a * b[2][2];
-    result[2][3] = a * b[2][3];
-    result[3][0] = a * b[3][0];
-    result[3][1] = a * b[3][1];
-    result[3][2] = a * b[3][2];
-    result[3][3] = a * b[3][3];
-    return result;
-}
+native uint2 operator*(uint2, uint2);
+native uint2 operator*(uint2, uint);
+native uint2 operator*(uint, uint2);
+native uint3 operator*(uint3, uint3);
+native uint3 operator*(uint3, uint);
+native uint3 operator*(uint, uint3);
+native uint4 operator*(uint4, uint4);
+native uint4 operator*(uint4, uint);
+native uint4 operator*(uint, uint4);
+native int2 operator*(int2, int2);
+native int2 operator*(int2, int);
+native int2 operator*(int, int2);
+native int3 operator*(int3, int3);
+native int3 operator*(int3, int);
+native int3 operator*(int, int3);
+native int4 operator*(int4, int4);
+native int4 operator*(int4, int);
+native int4 operator*(int, int4);
+native float2 operator*(float2, float2);
+native float2 operator*(float2, float);
+native float2 operator*(float, float2);
+native float3 operator*(float3, float3);
+native float3 operator*(float3, float);
+native float3 operator*(float, float3);
+native float4 operator*(float4, float4);
+native float4 operator*(float4, float);
+native float4 operator*(float, float4);
+native float2x2 operator*(float2x2, float2x2);
+native float2x2 operator*(float2x2, float);
+native float2x2 operator*(float, float2x2);
+native float2x3 operator*(float2x3, float2x3);
+native float2x3 operator*(float2x3, float);
+native float2x3 operator*(float, float2x3);
+native float2x4 operator*(float2x4, float2x4);
+native float2x4 operator*(float2x4, float);
+native float2x4 operator*(float, float2x4);
+native float3x2 operator*(float3x2, float3x2);
+native float3x2 operator*(float3x2, float);
+native float3x2 operator*(float, float3x2);
+native float3x3 operator*(float3x3, float3x3);
+native float3x3 operator*(float3x3, float);
+native float3x3 operator*(float, float3x3);
+native float3x4 operator*(float3x4, float3x4);
+native float3x4 operator*(float3x4, float);
+native float3x4 operator*(float, float3x4);
+native float4x2 operator*(float4x2, float4x2);
+native float4x2 operator*(float4x2, float);
+native float4x2 operator*(float, float4x2);
+native float4x3 operator*(float4x3, float4x3);
+native float4x3 operator*(float4x3, float);
+native float4x3 operator*(float, float4x3);
+native float4x4 operator*(float4x4, float4x4);
+native float4x4 operator*(float4x4, float);
+native float4x4 operator*(float, float4x4);
 
 /* Functions named cos */
 native float cos(float);
@@ -24037,346 +23206,75 @@ native uint operator-(uint, uint);
 native float operator-(float, float);
 native int operator-(int);
 native float operator-(float);
-
-uint2 operator-(uint2 a, uint2 b) {
-    uint2 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    return result;
-}
-uint3 operator-(uint3 a, uint3 b) {
-    uint3 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    result[2] = a[2] - b[2];
-    return result;
-}
-uint4 operator-(uint4 a, uint4 b) {
-    uint4 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    result[2] = a[2] - b[2];
-    result[3] = a[3] - b[3];
-    return result;
-}
-int2 operator-(int2 a, int2 b) {
-    int2 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    return result;
-}
-int3 operator-(int3 a, int3 b) {
-    int3 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    result[2] = a[2] - b[2];
-    return result;
-}
-int4 operator-(int4 a, int4 b) {
-    int4 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    result[2] = a[2] - b[2];
-    result[3] = a[3] - b[3];
-    return result;
-}
-float2 operator-(float2 a, float2 b) {
-    float2 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    return result;
-}
-float3 operator-(float3 a, float3 b) {
-    float3 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    result[2] = a[2] - b[2];
-    return result;
-}
-float4 operator-(float4 a, float4 b) {
-    float4 result;
-    result[0] = a[0] - b[0];
-    result[1] = a[1] - b[1];
-    result[2] = a[2] - b[2];
-    result[3] = a[3] - b[3];
-    return result;
-}
-int2 operator-(int2 a) {
-    int2 result;
-    result[0] = -a[0];
-    result[1] = -a[1];
-    return result;
-}
-int3 operator-(int3 a) {
-    int3 result;
-    result[0] = -a[0];
-    result[1] = -a[1];
-    result[2] = -a[2];
-    return result;
-}
-int4 operator-(int4 a) {
-    int4 result;
-    result[0] = -a[0];
-    result[1] = -a[1];
-    result[2] = -a[2];
-    result[3] = -a[3];
-    return result;
-}
-float2 operator-(float2 a) {
-    float2 result;
-    result[0] = -a[0];
-    result[1] = -a[1];
-    return result;
-}
-float3 operator-(float3 a) {
-    float3 result;
-    result[0] = -a[0];
-    result[1] = -a[1];
-    result[2] = -a[2];
-    return result;
-}
-float4 operator-(float4 a) {
-    float4 result;
-    result[0] = -a[0];
-    result[1] = -a[1];
-    result[2] = -a[2];
-    result[3] = -a[3];
-    return result;
-}
-float2x2 operator-(float2x2 a, float2x2 b) {
-    float2x2 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    return result;
-}
-float2x2 operator-(float2x2 a) {
-    float2x2 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    return result;
-}
-float2x3 operator-(float2x3 a, float2x3 b) {
-    float2x3 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[0][2] = a[0][2] - b[0][2];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[1][2] = a[1][2] - b[1][2];
-    return result;
-}
-float2x3 operator-(float2x3 a) {
-    float2x3 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[0][2] = -a[0][2];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[1][2] = -a[1][2];
-    return result;
-}
-float2x4 operator-(float2x4 a, float2x4 b) {
-    float2x4 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[0][2] = a[0][2] - b[0][2];
-    result[0][3] = a[0][3] - b[0][3];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[1][2] = a[1][2] - b[1][2];
-    result[1][3] = a[1][3] - b[1][3];
-    return result;
-}
-float2x4 operator-(float2x4 a) {
-    float2x4 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[0][2] = -a[0][2];
-    result[0][3] = -a[0][3];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[1][2] = -a[1][2];
-    result[1][3] = -a[1][3];
-    return result;
-}
-float3x2 operator-(float3x2 a, float3x2 b) {
-    float3x2 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[2][0] = a[2][0] - b[2][0];
-    result[2][1] = a[2][1] - b[2][1];
-    return result;
-}
-float3x2 operator-(float3x2 a) {
-    float3x2 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[2][0] = -a[2][0];
-    result[2][1] = -a[2][1];
-    return result;
-}
-float3x3 operator-(float3x3 a, float3x3 b) {
-    float3x3 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[0][2] = a[0][2] - b[0][2];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[1][2] = a[1][2] - b[1][2];
-    result[2][0] = a[2][0] - b[2][0];
-    result[2][1] = a[2][1] - b[2][1];
-    result[2][2] = a[2][2] - b[2][2];
-    return result;
-}
-float3x3 operator-(float3x3 a) {
-    float3x3 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[0][2] = -a[0][2];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[1][2] = -a[1][2];
-    result[2][0] = -a[2][0];
-    result[2][1] = -a[2][1];
-    result[2][2] = -a[2][2];
-    return result;
-}
-float3x4 operator-(float3x4 a, float3x4 b) {
-    float3x4 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[0][2] = a[0][2] - b[0][2];
-    result[0][3] = a[0][3] - b[0][3];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[1][2] = a[1][2] - b[1][2];
-    result[1][3] = a[1][3] - b[1][3];
-    result[2][0] = a[2][0] - b[2][0];
-    result[2][1] = a[2][1] - b[2][1];
-    result[2][2] = a[2][2] - b[2][2];
-    result[2][3] = a[2][3] - b[2][3];
-    return result;
-}
-float3x4 operator-(float3x4 a) {
-    float3x4 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[0][2] = -a[0][2];
-    result[0][3] = -a[0][3];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[1][2] = -a[1][2];
-    result[1][3] = -a[1][3];
-    result[2][0] = -a[2][0];
-    result[2][1] = -a[2][1];
-    result[2][2] = -a[2][2];
-    result[2][3] = -a[2][3];
-    return result;
-}
-float4x2 operator-(float4x2 a, float4x2 b) {
-    float4x2 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[2][0] = a[2][0] - b[2][0];
-    result[2][1] = a[2][1] - b[2][1];
-    result[3][0] = a[3][0] - b[3][0];
-    result[3][1] = a[3][1] - b[3][1];
-    return result;
-}
-float4x2 operator-(float4x2 a) {
-    float4x2 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[2][0] = -a[2][0];
-    result[2][1] = -a[2][1];
-    result[3][0] = -a[3][0];
-    result[3][1] = -a[3][1];
-    return result;
-}
-float4x3 operator-(float4x3 a, float4x3 b) {
-    float4x3 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[0][2] = a[0][2] - b[0][2];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[1][2] = a[1][2] - b[1][2];
-    result[2][0] = a[2][0] - b[2][0];
-    result[2][1] = a[2][1] - b[2][1];
-    result[2][2] = a[2][2] - b[2][2];
-    result[3][0] = a[3][0] - b[3][0];
-    result[3][1] = a[3][1] - b[3][1];
-    result[3][2] = a[3][2] - b[3][2];
-    return result;
-}
-float4x3 operator-(float4x3 a) {
-    float4x3 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[0][2] = -a[0][2];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[1][2] = -a[1][2];
-    result[2][0] = -a[2][0];
-    result[2][1] = -a[2][1];
-    result[2][2] = -a[2][2];
-    result[3][0] = -a[3][0];
-    result[3][1] = -a[3][1];
-    result[3][2] = -a[3][2];
-    return result;
-}
-float4x4 operator-(float4x4 a, float4x4 b) {
-    float4x4 result;
-    result[0][0] = a[0][0] - b[0][0];
-    result[0][1] = a[0][1] - b[0][1];
-    result[0][2] = a[0][2] - b[0][2];
-    result[0][3] = a[0][3] - b[0][3];
-    result[1][0] = a[1][0] - b[1][0];
-    result[1][1] = a[1][1] - b[1][1];
-    result[1][2] = a[1][2] - b[1][2];
-    result[1][3] = a[1][3] - b[1][3];
-    result[2][0] = a[2][0] - b[2][0];
-    result[2][1] = a[2][1] - b[2][1];
-    result[2][2] = a[2][2] - b[2][2];
-    result[2][3] = a[2][3] - b[2][3];
-    result[3][0] = a[3][0] - b[3][0];
-    result[3][1] = a[3][1] - b[3][1];
-    result[3][2] = a[3][2] - b[3][2];
-    result[3][3] = a[3][3] - b[3][3];
-    return result;
-}
-float4x4 operator-(float4x4 a) {
-    float4x4 result;
-    result[0][0] = -a[0][0];
-    result[0][1] = -a[0][1];
-    result[0][2] = -a[0][2];
-    result[0][3] = -a[0][3];
-    result[1][0] = -a[1][0];
-    result[1][1] = -a[1][1];
-    result[1][2] = -a[1][2];
-    result[1][3] = -a[1][3];
-    result[2][0] = -a[2][0];
-    result[2][1] = -a[2][1];
-    result[2][2] = -a[2][2];
-    result[2][3] = -a[2][3];
-    result[3][0] = -a[3][0];
-    result[3][1] = -a[3][1];
-    result[3][2] = -a[3][2];
-    result[3][3] = -a[3][3];
-    return result;
-}
+native uint2 operator-(uint2, uint2);
+native uint2 operator-(uint, uint2);
+native uint2 operator-(uint2, uint);
+native uint3 operator-(uint3, uint3);
+native uint3 operator-(uint, uint3);
+native uint3 operator-(uint3, uint);
+native uint4 operator-(uint4, uint4);
+native uint4 operator-(uint, uint4);
+native uint4 operator-(uint4, uint);
+native int2 operator-(int2, int2);
+native int2 operator-(int, int2);
+native int2 operator-(int2, int);
+native int3 operator-(int3, int3);
+native int3 operator-(int, int3);
+native int3 operator-(int3, int);
+native int4 operator-(int4, int4);
+native int4 operator-(int, int4);
+native int4 operator-(int4, int);
+native float2 operator-(float2, float2);
+native float2 operator-(float, float2);
+native float2 operator-(float2, float);
+native float3 operator-(float3, float3);
+native float3 operator-(float, float3);
+native float3 operator-(float3, float);
+native float4 operator-(float4, float4);
+native float4 operator-(float, float4);
+native float4 operator-(float4, float);
+native int2 operator-(int2);
+native int3 operator-(int3);
+native int4 operator-(int4);
+native float2 operator-(float2);
+native float3 operator-(float3);
+native float4 operator-(float4);
+native float2x2 operator-(float2x2, float2x2);
+native float2x2 operator-(float2x2, float);
+native float2x2 operator-(float, float2x2);
+native float2x2 operator-(float2x2);
+native float2x3 operator-(float2x3, float2x3);
+native float2x3 operator-(float, float2x3);
+native float2x3 operator-(float2x3, float);
+native float2x3 operator-(float2x3);
+native float2x4 operator-(float2x4, float2x4);
+native float2x4 operator-(float, float2x4);
+native float2x4 operator-(float2x4, float);
+native float2x4 operator-(float2x4);
+native float3x2 operator-(float3x2, float3x2);
+native float3x2 operator-(float, float3x2);
+native float3x2 operator-(float3x2, float);
+native float3x2 operator-(float3x2);
+native float3x3 operator-(float3x3, float3x3);
+native float3x3 operator-(float, float3x3);
+native float3x3 operator-(float3x3, float);
+native float3x3 operator-(float3x3);
+native float3x4 operator-(float3x4, float3x4);
+native float3x4 operator-(float, float3x4);
+native float3x4 operator-(float3x4, float);
+native float3x4 operator-(float3x4);
+native float4x2 operator-(float4x2, float4x2);
+native float4x2 operator-(float, float4x2);
+native float4x2 operator-(float4x2, float);
+native float4x2 operator-(float4x2);
+native float4x3 operator-(float4x3, float4x3);
+native float4x3 operator-(float, float4x3);
+native float4x3 operator-(float4x3, float);
+native float4x3 operator-(float4x3);
+native float4x4 operator-(float4x4, float4x4);
+native float4x4 operator-(float, float4x4);
+native float4x4 operator-(float4x4, float);
+native float4x4 operator-(float4x4);
 
 /* Functions named min */
 uint min(uint x, uint y) {
@@ -27575,203 +26473,27 @@ float3 operator.zyw(float4 v) {
 }
 
 /* Functions named clamp */
-
-
-uint clamp(uint x, uint lower, uint upper) {
-    return max(min(upper, x), lower);
-}
-uint2 clamp(uint2 x, uint2 y, uint2 z) {
-    uint2 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    return result;
-}
-uint3 clamp(uint3 x, uint3 y, uint3 z) {
-    uint3 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    result[2] = clamp(x[2], y[2], z[2]);
-    return result;
-}
-uint4 clamp(uint4 x, uint4 y, uint4 z) {
-    uint4 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    result[2] = clamp(x[2], y[2], z[2]);
-    result[3] = clamp(x[3], y[3], z[3]);
-    return result;
-}
-
-
-
-int clamp(int x, int lower, int upper) {
-    return max(min(upper, x), lower);
-}
-int2 clamp(int2 x, int2 y, int2 z) {
-    int2 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    return result;
-}
-int3 clamp(int3 x, int3 y, int3 z) {
-    int3 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    result[2] = clamp(x[2], y[2], z[2]);
-    return result;
-}
-int4 clamp(int4 x, int4 y, int4 z) {
-    int4 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    result[2] = clamp(x[2], y[2], z[2]);
-    result[3] = clamp(x[3], y[3], z[3]);
-    return result;
-}
-
-
-float clamp(float x, float lower, float upper) {
-    return max(min(upper, x), lower);
-}
-float2 clamp(float2 x, float2 y, float2 z) {
-    float2 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    return result;
-}
-float3 clamp(float3 x, float3 y, float3 z) {
-    float3 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    result[2] = clamp(x[2], y[2], z[2]);
-    return result;
-}
-float4 clamp(float4 x, float4 y, float4 z) {
-    float4 result;
-    result[0] = clamp(x[0], y[0], z[0]);
-    result[1] = clamp(x[1], y[1], z[1]);
-    result[2] = clamp(x[2], y[2], z[2]);
-    result[3] = clamp(x[3], y[3], z[3]);
-    return result;
-}
-float2x2 clamp(float2x2 x, float2x2 y, float2x2 z) {
-    float2x2 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    return result;
-}
-float2x3 clamp(float2x3 x, float2x3 y, float2x3 z) {
-    float2x3 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[0][2] = clamp(x[0][2], y[0][2], z[0][2]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[1][2] = clamp(x[1][2], y[1][2], z[1][2]);
-    return result;
-}
-float2x4 clamp(float2x4 x, float2x4 y, float2x4 z) {
-    float2x4 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[0][2] = clamp(x[0][2], y[0][2], z[0][2]);
-    result[0][3] = clamp(x[0][3], y[0][3], z[0][3]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[1][2] = clamp(x[1][2], y[1][2], z[1][2]);
-    result[1][3] = clamp(x[1][3], y[1][3], z[1][3]);
-    return result;
-}
-float3x2 clamp(float3x2 x, float3x2 y, float3x2 z) {
-    float3x2 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[2][0] = clamp(x[2][0], y[2][0], z[2][0]);
-    result[2][1] = clamp(x[2][1], y[2][1], z[2][1]);
-    return result;
-}
-float3x3 clamp(float3x3 x, float3x3 y, float3x3 z) {
-    float3x3 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[0][2] = clamp(x[0][2], y[0][2], z[0][2]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[1][2] = clamp(x[1][2], y[1][2], z[1][2]);
-    result[2][0] = clamp(x[2][0], y[2][0], z[2][0]);
-    result[2][1] = clamp(x[2][1], y[2][1], z[2][1]);
-    result[2][2] = clamp(x[2][2], y[2][2], z[2][2]);
-    return result;
-}
-float3x4 clamp(float3x4 x, float3x4 y, float3x4 z) {
-    float3x4 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[0][2] = clamp(x[0][2], y[0][2], z[0][2]);
-    result[0][3] = clamp(x[0][3], y[0][3], z[0][3]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[1][2] = clamp(x[1][2], y[1][2], z[1][2]);
-    result[1][3] = clamp(x[1][3], y[1][3], z[1][3]);
-    result[2][0] = clamp(x[2][0], y[2][0], z[2][0]);
-    result[2][1] = clamp(x[2][1], y[2][1], z[2][1]);
-    result[2][2] = clamp(x[2][2], y[2][2], z[2][2]);
-    result[2][3] = clamp(x[2][3], y[2][3], z[2][3]);
-    return result;
-}
-float4x2 clamp(float4x2 x, float4x2 y, float4x2 z) {
-    float4x2 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[2][0] = clamp(x[2][0], y[2][0], z[2][0]);
-    result[2][1] = clamp(x[2][1], y[2][1], z[2][1]);
-    result[3][0] = clamp(x[3][0], y[3][0], z[3][0]);
-    result[3][1] = clamp(x[3][1], y[3][1], z[3][1]);
-    return result;
-}
-float4x3 clamp(float4x3 x, float4x3 y, float4x3 z) {
-    float4x3 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[0][2] = clamp(x[0][2], y[0][2], z[0][2]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[1][2] = clamp(x[1][2], y[1][2], z[1][2]);
-    result[2][0] = clamp(x[2][0], y[2][0], z[2][0]);
-    result[2][1] = clamp(x[2][1], y[2][1], z[2][1]);
-    result[2][2] = clamp(x[2][2], y[2][2], z[2][2]);
-    result[3][0] = clamp(x[3][0], y[3][0], z[3][0]);
-    result[3][1] = clamp(x[3][1], y[3][1], z[3][1]);
-    result[3][2] = clamp(x[3][2], y[3][2], z[3][2]);
-    return result;
-}
-float4x4 clamp(float4x4 x, float4x4 y, float4x4 z) {
-    float4x4 result;
-    result[0][0] = clamp(x[0][0], y[0][0], z[0][0]);
-    result[0][1] = clamp(x[0][1], y[0][1], z[0][1]);
-    result[0][2] = clamp(x[0][2], y[0][2], z[0][2]);
-    result[0][3] = clamp(x[0][3], y[0][3], z[0][3]);
-    result[1][0] = clamp(x[1][0], y[1][0], z[1][0]);
-    result[1][1] = clamp(x[1][1], y[1][1], z[1][1]);
-    result[1][2] = clamp(x[1][2], y[1][2], z[1][2]);
-    result[1][3] = clamp(x[1][3], y[1][3], z[1][3]);
-    result[2][0] = clamp(x[2][0], y[2][0], z[2][0]);
-    result[2][1] = clamp(x[2][1], y[2][1], z[2][1]);
-    result[2][2] = clamp(x[2][2], y[2][2], z[2][2]);
-    result[2][3] = clamp(x[2][3], y[2][3], z[2][3]);
-    result[3][0] = clamp(x[3][0], y[3][0], z[3][0]);
-    result[3][1] = clamp(x[3][1], y[3][1], z[3][1]);
-    result[3][2] = clamp(x[3][2], y[3][2], z[3][2]);
-    result[3][3] = clamp(x[3][3], y[3][3], z[3][3]);
-    return result;
-}
-
+native uint clamp(uint, uint, uint);
+native uint2 clamp(uint2, uint2, uint2);
+native uint3 clamp(uint3, uint3, uint3);
+native uint4 clamp(uint4, uint4, uint4);
+native int clamp(int, int, int);
+native int2 clamp(int2, int2, int2);
+native int3 clamp(int3, int3, int3);
+native int4 clamp(int4, int4, int4);
+native float clamp(float, float, float);
+native float2 clamp(float2, float2, float2);
+native float3 clamp(float3, float3, float3);
+native float4 clamp(float4, float4, float4);
+native float2x2 clamp(float2x2, float2x2, float2x2);
+native float2x3 clamp(float2x3, float2x3, float2x3);
+native float2x4 clamp(float2x4, float2x4, float2x4);
+native float3x2 clamp(float3x2, float3x2, float3x2);
+native float3x3 clamp(float3x3, float3x3, float3x3);
+native float3x4 clamp(float3x4, float3x4, float3x4);
+native float4x2 clamp(float4x2, float4x2, float4x2);
+native float4x3 clamp(float4x3, float4x3, float4x3);
+native float4x4 clamp(float4x4, float4x4, float4x4);
 
 /* Functions named operator.wxxy */
 bool4 operator.wxxy(bool4 v) {
@@ -34192,186 +32914,60 @@ float4 operator.xwyw(float4 v) {
 native int operator+(int, int);
 native uint operator+(uint, uint);
 native float operator+(float, float);
-uint2 operator+(uint2 a, uint2 b) {
-    uint2 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    return result;
-}
-uint3 operator+(uint3 a, uint3 b) {
-    uint3 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    result[2] = a[2] + b[2];
-    return result;
-}
-uint4 operator+(uint4 a, uint4 b) {
-    uint4 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    result[2] = a[2] + b[2];
-    result[3] = a[3] + b[3];
-    return result;
-}
-int2 operator+(int2 a, int2 b) {
-    int2 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    return result;
-}
-int3 operator+(int3 a, int3 b) {
-    int3 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    result[2] = a[2] + b[2];
-    return result;
-}
-int4 operator+(int4 a, int4 b) {
-    int4 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    result[2] = a[2] + b[2];
-    result[3] = a[3] + b[3];
-    return result;
-}
-float2 operator+(float2 a, float2 b) {
-    float2 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    return result;
-}
-float3 operator+(float3 a, float3 b) {
-    float3 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    result[2] = a[2] + b[2];
-    return result;
-}
-float4 operator+(float4 a, float4 b) {
-    float4 result;
-    result[0] = a[0] + b[0];
-    result[1] = a[1] + b[1];
-    result[2] = a[2] + b[2];
-    result[3] = a[3] + b[3];
-    return result;
-}
-float2x2 operator+(float2x2 a, float2x2 b) {
-    float2x2 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    return result;
-}
-float2x3 operator+(float2x3 a, float2x3 b) {
-    float2x3 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[0][2] = a[0][2] + b[0][2];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[1][2] = a[1][2] + b[1][2];
-    return result;
-}
-float2x4 operator+(float2x4 a, float2x4 b) {
-    float2x4 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[0][2] = a[0][2] + b[0][2];
-    result[0][3] = a[0][3] + b[0][3];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[1][2] = a[1][2] + b[1][2];
-    result[1][3] = a[1][3] + b[1][3];
-    return result;
-}
-float3x2 operator+(float3x2 a, float3x2 b) {
-    float3x2 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[2][0] = a[2][0] + b[2][0];
-    result[2][1] = a[2][1] + b[2][1];
-    return result;
-}
-float3x3 operator+(float3x3 a, float3x3 b) {
-    float3x3 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[0][2] = a[0][2] + b[0][2];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[1][2] = a[1][2] + b[1][2];
-    result[2][0] = a[2][0] + b[2][0];
-    result[2][1] = a[2][1] + b[2][1];
-    result[2][2] = a[2][2] + b[2][2];
-    return result;
-}
-float3x4 operator+(float3x4 a, float3x4 b) {
-    float3x4 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[0][2] = a[0][2] + b[0][2];
-    result[0][3] = a[0][3] + b[0][3];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[1][2] = a[1][2] + b[1][2];
-    result[1][3] = a[1][3] + b[1][3];
-    result[2][0] = a[2][0] + b[2][0];
-    result[2][1] = a[2][1] + b[2][1];
-    result[2][2] = a[2][2] + b[2][2];
-    result[2][3] = a[2][3] + b[2][3];
-    return result;
-}
-float4x2 operator+(float4x2 a, float4x2 b) {
-    float4x2 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[2][0] = a[2][0] + b[2][0];
-    result[2][1] = a[2][1] + b[2][1];
-    result[3][0] = a[3][0] + b[3][0];
-    result[3][1] = a[3][1] + b[3][1];
-    return result;
-}
-float4x3 operator+(float4x3 a, float4x3 b) {
-    float4x3 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[0][2] = a[0][2] + b[0][2];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[1][2] = a[1][2] + b[1][2];
-    result[2][0] = a[2][0] + b[2][0];
-    result[2][1] = a[2][1] + b[2][1];
-    result[2][2] = a[2][2] + b[2][2];
-    result[3][0] = a[3][0] + b[3][0];
-    result[3][1] = a[3][1] + b[3][1];
-    result[3][2] = a[3][2] + b[3][2];
-    return result;
-}
-float4x4 operator+(float4x4 a, float4x4 b) {
-    float4x4 result;
-    result[0][0] = a[0][0] + b[0][0];
-    result[0][1] = a[0][1] + b[0][1];
-    result[0][2] = a[0][2] + b[0][2];
-    result[0][3] = a[0][3] + b[0][3];
-    result[1][0] = a[1][0] + b[1][0];
-    result[1][1] = a[1][1] + b[1][1];
-    result[1][2] = a[1][2] + b[1][2];
-    result[1][3] = a[1][3] + b[1][3];
-    result[2][0] = a[2][0] + b[2][0];
-    result[2][1] = a[2][1] + b[2][1];
-    result[2][2] = a[2][2] + b[2][2];
-    result[2][3] = a[2][3] + b[2][3];
-    result[3][0] = a[3][0] + b[3][0];
-    result[3][1] = a[3][1] + b[3][1];
-    result[3][2] = a[3][2] + b[3][2];
-    result[3][3] = a[3][3] + b[3][3];
-    return result;
-}
+native uint2 operator+(uint2, uint2);
+native uint2 operator+(uint, uint2);
+native uint2 operator+(uint2, uint);
+native uint3 operator+(uint3, uint3);
+native uint3 operator+(uint, uint3);
+native uint3 operator+(uint3, uint);
+native uint4 operator+(uint4, uint4);
+native uint4 operator+(uint, uint4);
+native uint4 operator+(uint4, uint);
+native int2 operator+(int2, int2);
+native int2 operator+(int, int2);
+native int2 operator+(int2, int);
+native int3 operator+(int3, int3);
+native int3 operator+(int, int3);
+native int3 operator+(int3, int);
+native int4 operator+(int4, int4);
+native int4 operator+(int, int4);
+native int4 operator+(int4, int);
+native float2 operator+(float2, float2);
+native float2 operator+(float, float2);
+native float2 operator+(float2, float);
+native float3 operator+(float3, float3);
+native float3 operator+(float, float3);
+native float3 operator+(float3, float);
+native float4 operator+(float4, float4);
+native float4 operator+(float, float4);
+native float4 operator+(float4, float);
+native float2x2 operator+(float2x2, float2x2);
+native float2x2 operator+(float, float2x2);
+native float2x2 operator+(float2x2, float);
+native float2x3 operator+(float2x3, float2x3);
+native float2x3 operator+(float, float2x3);
+native float2x3 operator+(float2x3, float);
+native float2x4 operator+(float2x4, float2x4);
+native float2x4 operator+(float, float2x4);
+native float2x4 operator+(float2x4, float);
+native float3x2 operator+(float3x2, float3x2);
+native float3x2 operator+(float, float3x2);
+native float3x2 operator+(float3x2, float);
+native float3x3 operator+(float3x3, float3x3);
+native float3x3 operator+(float, float3x3);
+native float3x3 operator+(float3x3, float);
+native float3x4 operator+(float3x4, float3x4);
+native float3x4 operator+(float, float3x4);
+native float3x4 operator+(float3x4, float);
+native float4x2 operator+(float4x2, float4x2);
+native float4x2 operator+(float, float4x2);
+native float4x2 operator+(float4x2, float);
+native float4x3 operator+(float4x3, float4x3);
+native float4x3 operator+(float, float4x3);
+native float4x3 operator+(float4x3, float);
+native float4x4 operator+(float4x4, float4x4);
+native float4x4 operator+(float, float4x4);
+native float4x4 operator+(float4x4, float);
 
 /* Functions named operator.zxx */
 bool3 operator.zxx(bool3 v) {
@@ -35187,546 +33783,60 @@ float4x4 log10(float4x4 x) {
 native int operator/(int, int);
 native uint operator/(uint, uint);
 native float operator/(float, float);
-uint2 operator/(uint2 a, uint2 b) {
-    uint2 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    return result;
-}
-uint2 operator/(uint2 a, uint b) {
-    uint2 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    return result;
-}
-uint2 operator/(uint a, uint2 b) {
-    uint2 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    return result;
-}
-uint3 operator/(uint3 a, uint3 b) {
-    uint3 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    result[2] = a[2] / b[2];
-    return result;
-}
-uint3 operator/(uint3 a, uint b) {
-    uint3 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    result[2] = a[2] / b;
-    return result;
-}
-uint3 operator/(uint a, uint3 b) {
-    uint3 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    result[2] = a / b[2];
-    return result;
-}
-uint4 operator/(uint4 a, uint4 b) {
-    uint4 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    result[2] = a[2] / b[2];
-    result[3] = a[3] / b[3];
-    return result;
-}
-uint4 operator/(uint4 a, uint b) {
-    uint4 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    result[2] = a[2] / b;
-    result[3] = a[3] / b;
-    return result;
-}
-uint4 operator/(uint a, uint4 b) {
-    uint4 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    result[2] = a / b[2];
-    result[3] = a / b[3];
-    return result;
-}
-int2 operator/(int2 a, int2 b) {
-    int2 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    return result;
-}
-int2 operator/(int2 a, int b) {
-    int2 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    return result;
-}
-int2 operator/(int a, int2 b) {
-    int2 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    return result;
-}
-int3 operator/(int3 a, int3 b) {
-    int3 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    result[2] = a[2] / b[2];
-    return result;
-}
-int3 operator/(int3 a, int b) {
-    int3 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    result[2] = a[2] / b;
-    return result;
-}
-int3 operator/(int a, int3 b) {
-    int3 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    result[2] = a / b[2];
-    return result;
-}
-int4 operator/(int4 a, int4 b) {
-    int4 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    result[2] = a[2] / b[2];
-    result[3] = a[3] / b[3];
-    return result;
-}
-int4 operator/(int4 a, int b) {
-    int4 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    result[2] = a[2] / b;
-    result[3] = a[3] / b;
-    return result;
-}
-int4 operator/(int a, int4 b) {
-    int4 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    result[2] = a / b[2];
-    result[3] = a / b[3];
-    return result;
-}
-float2 operator/(float2 a, float2 b) {
-    float2 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    return result;
-}
-float2 operator/(float2 a, float b) {
-    float2 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    return result;
-}
-float2 operator/(float a, float2 b) {
-    float2 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    return result;
-}
-float3 operator/(float3 a, float3 b) {
-    float3 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    result[2] = a[2] / b[2];
-    return result;
-}
-float3 operator/(float3 a, float b) {
-    float3 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    result[2] = a[2] / b;
-    return result;
-}
-float3 operator/(float a, float3 b) {
-    float3 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    result[2] = a / b[2];
-    return result;
-}
-float4 operator/(float4 a, float4 b) {
-    float4 result;
-    result[0] = a[0] / b[0];
-    result[1] = a[1] / b[1];
-    result[2] = a[2] / b[2];
-    result[3] = a[3] / b[3];
-    return result;
-}
-float4 operator/(float4 a, float b) {
-    float4 result;
-    result[0] = a[0] / b;
-    result[1] = a[1] / b;
-    result[2] = a[2] / b;
-    result[3] = a[3] / b;
-    return result;
-}
-float4 operator/(float a, float4 b) {
-    float4 result;
-    result[0] = a / b[0];
-    result[1] = a / b[1];
-    result[2] = a / b[2];
-    result[3] = a / b[3];
-    return result;
-}
-float2x2 operator/(float2x2 a, float2x2 b) {
-    float2x2 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    return result;
-}
-float2x2 operator/(float2x2 a, float b) {
-    float2x2 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    return result;
-}
-float2x2 operator/(float a, float2x2 b) {
-    float2x2 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    return result;
-}
-float2x3 operator/(float2x3 a, float2x3 b) {
-    float2x3 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[0][2] = a[0][2] / b[0][2];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[1][2] = a[1][2] / b[1][2];
-    return result;
-}
-float2x3 operator/(float2x3 a, float b) {
-    float2x3 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[0][2] = a[0][2] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[1][2] = a[1][2] / b;
-    return result;
-}
-float2x3 operator/(float a, float2x3 b) {
-    float2x3 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[0][2] = a / b[0][2];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[1][2] = a / b[1][2];
-    return result;
-}
-float2x4 operator/(float2x4 a, float2x4 b) {
-    float2x4 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[0][2] = a[0][2] / b[0][2];
-    result[0][3] = a[0][3] / b[0][3];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[1][2] = a[1][2] / b[1][2];
-    result[1][3] = a[1][3] / b[1][3];
-    return result;
-}
-float2x4 operator/(float2x4 a, float b) {
-    float2x4 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[0][2] = a[0][2] / b;
-    result[0][3] = a[0][3] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[1][2] = a[1][2] / b;
-    result[1][3] = a[1][3] / b;
-    return result;
-}
-float2x4 operator/(float a, float2x4 b) {
-    float2x4 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[0][2] = a / b[0][2];
-    result[0][3] = a / b[0][3];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[1][2] = a / b[1][2];
-    result[1][3] = a / b[1][3];
-    return result;
-}
-float3x2 operator/(float3x2 a, float3x2 b) {
-    float3x2 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[2][0] = a[2][0] / b[2][0];
-    result[2][1] = a[2][1] / b[2][1];
-    return result;
-}
-float3x2 operator/(float3x2 a, float b) {
-    float3x2 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[2][0] = a[2][0] / b;
-    result[2][1] = a[2][1] / b;
-    return result;
-}
-float3x2 operator/(float a, float3x2 b) {
-    float3x2 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[2][0] = a / b[2][0];
-    result[2][1] = a / b[2][1];
-    return result;
-}
-float3x3 operator/(float3x3 a, float3x3 b) {
-    float3x3 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[0][2] = a[0][2] / b[0][2];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[1][2] = a[1][2] / b[1][2];
-    result[2][0] = a[2][0] / b[2][0];
-    result[2][1] = a[2][1] / b[2][1];
-    result[2][2] = a[2][2] / b[2][2];
-    return result;
-}
-float3x3 operator/(float3x3 a, float b) {
-    float3x3 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[0][2] = a[0][2] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[1][2] = a[1][2] / b;
-    result[2][0] = a[2][0] / b;
-    result[2][1] = a[2][1] / b;
-    result[2][2] = a[2][2] / b;
-    return result;
-}
-float3x3 operator/(float a, float3x3 b) {
-    float3x3 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[0][2] = a / b[0][2];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[1][2] = a / b[1][2];
-    result[2][0] = a / b[2][0];
-    result[2][1] = a / b[2][1];
-    result[2][2] = a / b[2][2];
-    return result;
-}
-float3x4 operator/(float3x4 a, float3x4 b) {
-    float3x4 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[0][2] = a[0][2] / b[0][2];
-    result[0][3] = a[0][3] / b[0][3];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[1][2] = a[1][2] / b[1][2];
-    result[1][3] = a[1][3] / b[1][3];
-    result[2][0] = a[2][0] / b[2][0];
-    result[2][1] = a[2][1] / b[2][1];
-    result[2][2] = a[2][2] / b[2][2];
-    result[2][3] = a[2][3] / b[2][3];
-    return result;
-}
-float3x4 operator/(float3x4 a, float b) {
-    float3x4 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[0][2] = a[0][2] / b;
-    result[0][3] = a[0][3] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[1][2] = a[1][2] / b;
-    result[1][3] = a[1][3] / b;
-    result[2][0] = a[2][0] / b;
-    result[2][1] = a[2][1] / b;
-    result[2][2] = a[2][2] / b;
-    result[2][3] = a[2][3] / b;
-    return result;
-}
-float3x4 operator/(float a, float3x4 b) {
-    float3x4 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[0][2] = a / b[0][2];
-    result[0][3] = a / b[0][3];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[1][2] = a / b[1][2];
-    result[1][3] = a / b[1][3];
-    result[2][0] = a / b[2][0];
-    result[2][1] = a / b[2][1];
-    result[2][2] = a / b[2][2];
-    result[2][3] = a / b[2][3];
-    return result;
-}
-float4x2 operator/(float4x2 a, float4x2 b) {
-    float4x2 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[2][0] = a[2][0] / b[2][0];
-    result[2][1] = a[2][1] / b[2][1];
-    result[3][0] = a[3][0] / b[3][0];
-    result[3][1] = a[3][1] / b[3][1];
-    return result;
-}
-float4x2 operator/(float4x2 a, float b) {
-    float4x2 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[2][0] = a[2][0] / b;
-    result[2][1] = a[2][1] / b;
-    result[3][0] = a[3][0] / b;
-    result[3][1] = a[3][1] / b;
-    return result;
-}
-float4x2 operator/(float a, float4x2 b) {
-    float4x2 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[2][0] = a / b[2][0];
-    result[2][1] = a / b[2][1];
-    result[3][0] = a / b[3][0];
-    result[3][1] = a / b[3][1];
-    return result;
-}
-float4x3 operator/(float4x3 a, float4x3 b) {
-    float4x3 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[0][2] = a[0][2] / b[0][2];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[1][2] = a[1][2] / b[1][2];
-    result[2][0] = a[2][0] / b[2][0];
-    result[2][1] = a[2][1] / b[2][1];
-    result[2][2] = a[2][2] / b[2][2];
-    result[3][0] = a[3][0] / b[3][0];
-    result[3][1] = a[3][1] / b[3][1];
-    result[3][2] = a[3][2] / b[3][2];
-    return result;
-}
-float4x3 operator/(float4x3 a, float b) {
-    float4x3 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[0][2] = a[0][2] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[1][2] = a[1][2] / b;
-    result[2][0] = a[2][0] / b;
-    result[2][1] = a[2][1] / b;
-    result[2][2] = a[2][2] / b;
-    result[3][0] = a[3][0] / b;
-    result[3][1] = a[3][1] / b;
-    result[3][2] = a[3][2] / b;
-    return result;
-}
-float4x3 operator/(float a, float4x3 b) {
-    float4x3 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[0][2] = a / b[0][2];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[1][2] = a / b[1][2];
-    result[2][0] = a / b[2][0];
-    result[2][1] = a / b[2][1];
-    result[2][2] = a / b[2][2];
-    result[3][0] = a / b[3][0];
-    result[3][1] = a / b[3][1];
-    result[3][2] = a / b[3][2];
-    return result;
-}
-float4x4 operator/(float4x4 a, float4x4 b) {
-    float4x4 result;
-    result[0][0] = a[0][0] / b[0][0];
-    result[0][1] = a[0][1] / b[0][1];
-    result[0][2] = a[0][2] / b[0][2];
-    result[0][3] = a[0][3] / b[0][3];
-    result[1][0] = a[1][0] / b[1][0];
-    result[1][1] = a[1][1] / b[1][1];
-    result[1][2] = a[1][2] / b[1][2];
-    result[1][3] = a[1][3] / b[1][3];
-    result[2][0] = a[2][0] / b[2][0];
-    result[2][1] = a[2][1] / b[2][1];
-    result[2][2] = a[2][2] / b[2][2];
-    result[2][3] = a[2][3] / b[2][3];
-    result[3][0] = a[3][0] / b[3][0];
-    result[3][1] = a[3][1] / b[3][1];
-    result[3][2] = a[3][2] / b[3][2];
-    result[3][3] = a[3][3] / b[3][3];
-    return result;
-}
-float4x4 operator/(float4x4 a, float b) {
-    float4x4 result;
-    result[0][0] = a[0][0] / b;
-    result[0][1] = a[0][1] / b;
-    result[0][2] = a[0][2] / b;
-    result[0][3] = a[0][3] / b;
-    result[1][0] = a[1][0] / b;
-    result[1][1] = a[1][1] / b;
-    result[1][2] = a[1][2] / b;
-    result[1][3] = a[1][3] / b;
-    result[2][0] = a[2][0] / b;
-    result[2][1] = a[2][1] / b;
-    result[2][2] = a[2][2] / b;
-    result[2][3] = a[2][3] / b;
-    result[3][0] = a[3][0] / b;
-    result[3][1] = a[3][1] / b;
-    result[3][2] = a[3][2] / b;
-    result[3][3] = a[3][3] / b;
-    return result;
-}
-float4x4 operator/(float a, float4x4 b) {
-    float4x4 result;
-    result[0][0] = a / b[0][0];
-    result[0][1] = a / b[0][1];
-    result[0][2] = a / b[0][2];
-    result[0][3] = a / b[0][3];
-    result[1][0] = a / b[1][0];
-    result[1][1] = a / b[1][1];
-    result[1][2] = a / b[1][2];
-    result[1][3] = a / b[1][3];
-    result[2][0] = a / b[2][0];
-    result[2][1] = a / b[2][1];
-    result[2][2] = a / b[2][2];
-    result[2][3] = a / b[2][3];
-    result[3][0] = a / b[3][0];
-    result[3][1] = a / b[3][1];
-    result[3][2] = a / b[3][2];
-    result[3][3] = a / b[3][3];
-    return result;
-}
+native uint2 operator/(uint2, uint2);
+native uint2 operator/(uint2, uint);
+native uint2 operator/(uint, uint2);
+native uint3 operator/(uint3, uint3);
+native uint3 operator/(uint3, uint);
+native uint3 operator/(uint, uint3);
+native uint4 operator/(uint4, uint4);
+native uint4 operator/(uint4, uint);
+native uint4 operator/(uint, uint4);
+native int2 operator/(int2, int2);
+native int2 operator/(int2, int);
+native int2 operator/(int, int2);
+native int3 operator/(int3, int3);
+native int3 operator/(int3, int);
+native int3 operator/(int, int3);
+native int4 operator/(int4, int4);
+native int4 operator/(int4, int);
+native int4 operator/(int, int4);
+native float2 operator/(float2, float2);
+native float2 operator/(float2, float);
+native float2 operator/(float, float2);
+native float3 operator/(float3, float3);
+native float3 operator/(float3, float);
+native float3 operator/(float, float3);
+native float4 operator/(float4, float4);
+native float4 operator/(float4, float);
+native float4 operator/(float, float4);
+native float2x2 operator/(float2x2, float2x2);
+native float2x2 operator/(float2x2, float);
+native float2x2 operator/(float, float2x2);
+native float2x3 operator/(float2x3, float2x3);
+native float2x3 operator/(float2x3, float);
+native float2x3 operator/(float, float2x3);
+native float2x4 operator/(float2x4, float2x4);
+native float2x4 operator/(float2x4, float);
+native float2x4 operator/(float, float2x4);
+native float3x2 operator/(float3x2, float3x2);
+native float3x2 operator/(float3x2, float);
+native float3x2 operator/(float, float3x2);
+native float3x3 operator/(float3x3, float3x3);
+native float3x3 operator/(float3x3, float);
+native float3x3 operator/(float, float3x3);
+native float3x4 operator/(float3x4, float3x4);
+native float3x4 operator/(float3x4, float);
+native float3x4 operator/(float, float3x4);
+native float4x2 operator/(float4x2, float4x2);
+native float4x2 operator/(float4x2, float);
+native float4x2 operator/(float, float4x2);
+native float4x3 operator/(float4x3, float4x3);
+native float4x3 operator/(float4x3, float);
+native float4x3 operator/(float, float4x3);
+native float4x4 operator/(float4x4, float4x4);
+native float4x4 operator/(float4x4, float);
+native float4x4 operator/(float, float4x4);
 
 /* Functions named operator.xwzx */
 bool4 operator.xwzx(bool4 v) {
@@ -38604,78 +36714,18 @@ native float3 operator.x=(float3, float);
 native float4 operator.x=(float4, float);
 
 /* Functions named operator.xy= */
-bool2 operator.xy=(bool2 v, bool2 c) {
-    bool2 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-bool3 operator.xy=(bool3 v, bool2 c) {
-    bool3 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-bool4 operator.xy=(bool4 v, bool2 c) {
-    bool4 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-uint2 operator.xy=(uint2 v, uint2 c) {
-    uint2 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-uint3 operator.xy=(uint3 v, uint2 c) {
-    uint3 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-uint4 operator.xy=(uint4 v, uint2 c) {
-    uint4 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-int2 operator.xy=(int2 v, int2 c) {
-    int2 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-int3 operator.xy=(int3 v, int2 c) {
-    int3 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-int4 operator.xy=(int4 v, int2 c) {
-    int4 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-float2 operator.xy=(float2 v, float2 c) {
-    float2 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-float3 operator.xy=(float3 v, float2 c) {
-    float3 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
-float4 operator.xy=(float4 v, float2 c) {
-    float4 result = v;
-    result.x = c.x;
-    result.y = c.y;
-    return result;
-}
+native bool2 operator.xy=(bool2, bool2);
+native bool3 operator.xy=(bool3, bool2);
+native bool4 operator.xy=(bool4, bool2);
+native uint2 operator.xy=(uint2, uint2);
+native uint3 operator.xy=(uint3, uint2);
+native uint4 operator.xy=(uint4, uint2);
+native int2 operator.xy=(int2, int2);
+native int3 operator.xy=(int3, int2);
+native int4 operator.xy=(int4, int2);
+native float2 operator.xy=(float2, float2);
+native float3 operator.xy=(float3, float2);
+native float4 operator.xy=(float4, float2);
 
 /* Functions named operator.yxw */
 bool3 operator.yxw(bool4 v) {
@@ -39518,75 +37568,15 @@ float4 operator.wwxz(float4 v) {
 }
 
 /* Functions named operator.xy */
-bool2 operator.xy(bool2 v) {
-    bool2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-bool2 operator.xy(bool3 v) {
-    bool2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-bool2 operator.xy(bool4 v) {
-    bool2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-uint2 operator.xy(uint2 v) {
-    uint2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-uint2 operator.xy(uint3 v) {
-    uint2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-uint2 operator.xy(uint4 v) {
-    uint2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-int2 operator.xy(int2 v) {
-    int2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-int2 operator.xy(int3 v) {
-    int2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-int2 operator.xy(int4 v) {
-    int2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-float2 operator.xy(float2 v) {
-    float2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-float2 operator.xy(float3 v) {
-    float2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
-float2 operator.xy(float4 v) {
-    float2 result;
-    result.x = v.x;
-    result.y = v.y;
-    return result;
-}
+native bool2 operator.xy(bool2);
+native bool2 operator.xy(bool3);
+native bool2 operator.xy(bool4);
+native uint2 operator.xy(uint2);
+native uint2 operator.xy(uint3);
+native uint2 operator.xy(uint4);
+native int2 operator.xy(int2);
+native int2 operator.xy(int3);
+native int2 operator.xy(int4);
+native float2 operator.xy(float2);
+native float2 operator.xy(float3);
+native float2 operator.xy(float4);

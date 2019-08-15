@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test prefix/postfix.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorIndexLoad = async () => {
+    const program = `
+        int foo() {
+            int2 x;
+            x.x = 20;
+            x.y = 10;
+            x[5000] = 20;
+            return x[0] / x[1] + x[5000];
+        }
+    `;
+    assert_equals(await callIntFunction(program,  "foo", []), 2);
+};
+
+runTests(whlslTests);
+</script>
+</html>
