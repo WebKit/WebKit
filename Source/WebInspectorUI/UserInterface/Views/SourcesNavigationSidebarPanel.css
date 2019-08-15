@@ -137,7 +137,7 @@
     content: url(../Images/TypeObject.svg);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.navigation.sources > .content > .warning-banner {
         color: var(--yellow-highlight-text-color);
         background-color: var(--yellow-highlight-background-color);

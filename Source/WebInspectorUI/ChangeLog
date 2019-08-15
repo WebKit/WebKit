@@ -1,3 +1,23 @@
+2019-08-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Layers: background of 3D area doesn't update when transitioning to/from Dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=200775
+
+        Reviewed by Ross Kirsling.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype.initialLayout):
+        Add a `matchMedia` listener for `(prefers-color-scheme: dark)` and update the clear color
+        of the WebGL renderer whenever it changes.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (@media (prefers-color-scheme: dark)): Added.
+        (@media (prefers-dark-interface)): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)): Added.
+        (@media (prefers-dark-interface)): Deleted.
+        Drive-by: replace older `prefers-dark-interface` with modern `prefers-color-scheme: dark`.
+
 2019-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Update Esprima to trunk (minor fixes)
