@@ -31,10 +31,6 @@
 #include <CoreGraphics/CGFont.h>
 #endif
 
-#if USE(DIRECT2D)
-#include <dwrite.h>
-#endif
-
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)

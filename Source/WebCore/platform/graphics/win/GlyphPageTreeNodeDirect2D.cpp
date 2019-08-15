@@ -28,9 +28,10 @@
 
 #if USE(DIRECT2D)
 
+#include "DirectWriteUtilities.h"
 #include "Font.h"
 #include "TextAnalyzerHelper.h"
-#include <dwrite.h>
+#include <dwrite_3.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     bool haveGlyphs = false;
 
     COMPtr<IDWriteTextAnalyzer> analyzer;
-    HRESULT hr = Font::systemDWriteFactory()->CreateTextAnalyzer(&analyzer);
+    HRESULT hr = DirectWrite::factory()->CreateTextAnalyzer(&analyzer);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
     auto& fontPlatformData = font.platformData();

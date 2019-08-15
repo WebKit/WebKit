@@ -46,10 +46,6 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
-#if USE(DIRECT2D)
-#include <dwrite.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/Lock.h>
 #include <wtf/RecursiveLockAdapter.h>

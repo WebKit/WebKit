@@ -64,6 +64,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/Direct2DOperations.cpp
     platform/graphics/win/Direct2DUtilities.cpp
+    platform/graphics/win/DirectWriteUtilities.cpp
     platform/graphics/win/FloatPointDirect2D.cpp
     platform/graphics/win/FloatRectDirect2D.cpp
     platform/graphics/win/FloatSizeDirect2D.cpp
@@ -150,6 +151,41 @@ list(APPEND WebCore_SOURCES
     rendering/RenderThemeWin.cpp
 )
 
+if (USE_CF)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/loader/archive/cf"
+        "${WEBCORE_DIR}/platform/cf"
+        "${WEBCORE_DIR}/platform/cf/win"
+    )
+
+    list(APPEND WebCore_SOURCES
+        editing/SmartReplaceCF.cpp
+
+        loader/archive/cf/LegacyWebArchive.cpp
+
+        platform/cf/KeyedDecoderCF.cpp
+        platform/cf/KeyedEncoderCF.cpp
+        platform/cf/SharedBufferCF.cpp
+
+        platform/cf/win/CertificateCFWin.cpp
+
+        platform/text/cf/HyphenationCF.cpp
+    )
+
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        loader/archive/cf/LegacyWebArchive.h
+
+        platform/cf/win/CertificateCFWin.h
+    )
+
+    list(APPEND WebCore_LIBRARIES ${COREFOUNDATION_LIBRARY})
+    list(APPEND WebCoreTestSupport_LIBRARIES ${COREFOUNDATION_LIBRARY})
+else ()
+    list(APPEND WebCore_SOURCES
+        platform/text/Hyphenation.cpp
+    )
+endif ()
+
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/win/AccessibilityObjectWrapperWin.h
 
@@ -160,6 +196,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/win/DIBPixelData.h
     platform/graphics/win/Direct2DOperations.h
     platform/graphics/win/Direct2DUtilities.h
+    platform/graphics/win/DirectWriteUtilities.h
     platform/graphics/win/FullScreenController.h
     platform/graphics/win/FullScreenControllerClient.h
     platform/graphics/win/GraphicsContextImplDirect2D.h
@@ -213,6 +250,13 @@ list(APPEND WebCoreTestSupport_LIBRARIES
     shlwapi
 )
 
+make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj)
+file(COPY
+    "${WEBCORE_DIR}/en.lproj/Localizable.strings"
+    "${WEBCORE_DIR}/en.lproj/mediaControlsLocalizedStrings.js"
+    DESTINATION
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
+)
 file(COPY
     "${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.css"
     "${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js"

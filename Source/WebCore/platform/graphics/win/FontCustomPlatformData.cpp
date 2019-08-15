@@ -34,8 +34,8 @@
 #endif
 
 #if USE(DIRECT2D)
-#include "Font.h"
-#include <dwrite.h>
+#include "DirectWriteUtilities.h"
+#include <dwrite_3.h>
 #endif
 
 namespace WebCore {
@@ -65,7 +65,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     logFont.lfUnderline = false;
     logFont.lfStrikeOut = false;
     logFont.lfCharSet = DEFAULT_CHARSET;
-#if USE(CG) || USE(CAIRO)
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     logFont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
 #else
     logFont.lfOutPrecision = OUT_TT_PRECIS;
@@ -76,20 +76,11 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     logFont.lfWeight = bold ? 700 : 400;
 
     auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
-
 #if USE(CG)
     RetainPtr<CGFontRef> cgFont = adoptCF(CGFontCreateWithPlatformFont(&logFont));
     return FontPlatformData(WTFMove(hfont), cgFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 #else
-    COMPtr<IDWriteFont> dwFont;
-    HRESULT hr = Font::systemDWriteGdiInterop()->CreateFontFromLOGFONT(&logFont, &dwFont);
-    if (!SUCCEEDED(hr)) {
-        LOGFONT customFont;
-        hr = ::GetObject(hfont.get(), sizeof(LOGFONT), &customFont);
-        if (SUCCEEDED(hr))
-            hr = FontPlatformData::createFallbackFont(customFont, &dwFont);
-    }
-    RELEASE_ASSERT(SUCCEEDED(hr));
+    COMPtr<IDWriteFont> dwFont = DirectWrite::createWithPlatformFont(logFont);
     return FontPlatformData(WTFMove(hfont), dwFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 #endif
 }

@@ -65,7 +65,7 @@ interface IDWriteFontFace;
 #endif
 
 #if USE(DIRECT2D)
-#include <dwrite.h>
+#include <dwrite_3.h>
 #endif
 
 namespace WebCore {
@@ -103,7 +103,7 @@ public:
 #endif
 
 #if PLATFORM(WIN) && USE(DIRECT2D)
-    FontPlatformData(GDIObject<HFONT>, IDWriteFont*, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+    FontPlatformData(GDIObject<HFONT>&&, IDWriteFont*, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif
 
 #if PLATFORM(WIN) && USE(CAIRO)
@@ -145,6 +145,7 @@ public:
     IDWriteFontFace* dwFontFace() const { return m_dwFontFace.get(); }
 
     static HRESULT createFallbackFont(const LOGFONT&, IDWriteFont**);
+    static HRESULT createFallbackFont(HFONT, IDWriteFont**);
 #endif
 
     bool isFixedPitch() const;

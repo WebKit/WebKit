@@ -34,6 +34,8 @@ interface IWICBitmap;
 
 namespace WebCore {
 
+class IntSize;
+
 class BackingStoreBackendDirect2DImpl final : public BackingStoreBackendDirect2D {
 public:
     WEBCORE_EXPORT BackingStoreBackendDirect2DImpl(const IntSize&, float deviceScaleFactor);

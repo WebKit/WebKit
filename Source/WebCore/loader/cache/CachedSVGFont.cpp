@@ -40,10 +40,6 @@
 #include "TypedElementDescendantIterator.h"
 #include "SVGToOTFFontConversion.h"
 
-#if USE(DIRECT2D)
-#include <dwrite.h>
-#endif
-
 namespace WebCore {
 
 CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)

@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(DIRECT2D)
-#include <dwrite.h>
+#include <dwrite_3.h>
 #endif
 
 using std::min;

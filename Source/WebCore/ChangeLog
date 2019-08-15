@@ -1,3 +1,51 @@
+2019-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Support web fonts
+        https://bugs.webkit.org/show_bug.cgi?id=200771
+        <rdar://problem/54350291>
+
+        Reviewed by Dean Jackson.
+
+        The current code path for handling web fonts uses 'AddFontMemResourceEx'. Unfortunately, this only updates the font caches used by GDI, and is not exposed to DirectWrite.
+
+        This patch does the following:
+        1. Moves some code into a new DirectWriteUtilities file, similar to how Direct2D is handled, so we
+           can share code in more places.
+        2. After adding the font to GDI, it adds the font information to the DirectWrite font cache.
+        3. Add logic to check the overall system DirectWrite fonts, as well as the custom font cache used
+           for downloaded fonts.
+
+        * PlatformFTW.cmake: Add DirectWriteUtilities.cpp
+        * css/CSSFontFaceSource.cpp:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedSVGFont.cpp:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.cpp:
+        * platform/graphics/FontPlatformData.cpp:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        (WebCore::renameAndActivateFont):
+        * platform/graphics/win/DirectWriteUtilities.cpp: Added.
+        * platform/graphics/win/DirectWriteUtilities.h: Added.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont):
+        * platform/graphics/win/FontCascadeDirect2D.cpp:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontPlatformDataDirect2D.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::createFallbackFont):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        * platform/graphics/win/SimpleFontDataDirect2D.cpp:
+        (WebCore::Font::systemDWriteFactory): Deleted.
+        (WebCore::Font::systemDWriteGdiInterop): Deleted.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+
 2019-08-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -preventDisplaySleepForVideoPlayback

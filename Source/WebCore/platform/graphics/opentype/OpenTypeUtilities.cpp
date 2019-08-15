@@ -29,6 +29,11 @@
 
 #include "SharedBuffer.h"
 
+#if USE(DIRECT2D)
+#include "DirectWriteUtilities.h"
+#include <dwrite_3.h>
+#endif
+
 namespace WebCore {
 
 struct BigEndianUShort { 
@@ -422,6 +427,11 @@ HANDLE renameAndActivateFont(const SharedBuffer& fontData, const String& fontNam
         RemoveFontMemResourceEx(fontHandle);
         return 0;
     }
+
+#if USE(DIRECT2D)
+    HRESULT hr = DirectWrite::addFontFromDataToProcessCollection(rewrittenFontData);
+    ASSERT(SUCCEEDED(hr));
+#endif
 
     return fontHandle;
 }

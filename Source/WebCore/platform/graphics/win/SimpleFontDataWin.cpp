@@ -37,10 +37,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/win/GDIObject.h>
 
-#if USE(DIRECT2D)
-#include <dwrite.h>
-#endif
-
 namespace WebCore {
 
 static bool g_shouldApplyMacAscentHack;

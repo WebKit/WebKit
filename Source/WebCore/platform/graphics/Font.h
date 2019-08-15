@@ -51,7 +51,7 @@
 #endif
 
 #if USE(DIRECT2D)
-interface IDWriteFactory;
+interface IDWriteFactory5;
 interface IDWriteGdiInterop;
 #endif
 
@@ -217,11 +217,6 @@ public:
     static void setShouldApplyMacAscentHack(bool);
     static bool shouldApplyMacAscentHack();
     static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
-#endif
-
-#if USE(DIRECT2D)
-    WEBCORE_EXPORT static IDWriteFactory* systemDWriteFactory();
-    WEBCORE_EXPORT static IDWriteGdiInterop* systemDWriteGdiInterop();
 #endif
 
 private:

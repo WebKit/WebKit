@@ -45,10 +45,6 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
-#if USE(DIRECT2D)
-#include <dwrite.h>
-#endif
-
 namespace WebCore {
 
 unsigned GlyphPage::s_count = 0;

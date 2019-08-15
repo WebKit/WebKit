@@ -28,6 +28,7 @@
 
 #if USE(DIRECT2D)
 
+#include "DirectWriteUtilities.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontDescription.h"
@@ -36,7 +37,7 @@
 #include "HWndDC.h"
 #include "NotImplemented.h"
 #include <comutil.h>
-#include <dwrite.h>
+#include <dwrite_3.h>
 #include <mlang.h>
 #include <unicode/uchar.h>
 #include <unicode/unorm.h>
@@ -46,28 +47,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-IDWriteFactory* Font::systemDWriteFactory()
-{
-    static IDWriteFactory* directWriteFactory = nullptr;
-    if (!directWriteFactory) {
-        HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(directWriteFactory), reinterpret_cast<IUnknown**>(&directWriteFactory));
-        RELEASE_ASSERT(SUCCEEDED(hr));
-    }
-
-    return directWriteFactory;
-}
-
-IDWriteGdiInterop* Font::systemDWriteGdiInterop()
-{
-    static IDWriteGdiInterop* directWriteGdiInterop = nullptr;
-    if (!directWriteGdiInterop) {
-        HRESULT hr = systemDWriteFactory()->GetGdiInterop(&directWriteGdiInterop);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-    }
-
-    return directWriteGdiInterop;
-}
 
 static Vector<WCHAR> getFaceName(IDWriteFont* font)
 {
