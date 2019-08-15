@@ -1,3 +1,39 @@
+2019-08-15  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Dispatch synthetic click when the visibility candidate element becomes hidden again.
+        https://bugs.webkit.org/show_bug.cgi?id=200773
+        <rdar://problem/54351728>
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes the case when the candidate element (going from hidden to visible) becomes hidden by the end of the observation window. It essentially means that no visible change has happened
+        and we should proceed with dispatching the synthetic click event.
+        We now keep track of the candidate element and reset the visiblity state when it loses its renderer.
+
+        Test: fast/events/touch/ios/content-observation/going-from-hidden-to-visible-and-to-hidden.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didAddTransition):
+        (WebCore::ContentChangeObserver::didFinishTransition):
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::reset):
+        (WebCore::ContentChangeObserver::rendererWillBeDestroyed):
+        (WebCore::ContentChangeObserver::contentVisibilityDidChange):
+        (WebCore::ContentChangeObserver::touchEventDidStart):
+        (WebCore::ContentChangeObserver::touchEventDidFinish):
+        (WebCore::ContentChangeObserver::mouseMovedDidStart):
+        (WebCore::ContentChangeObserver::mouseMovedDidFinish):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::ContentChangeObserver::hasDeterminateState const): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::hasObservedTransition const):
+        (WebCore::ContentChangeObserver::setTouchEventIsBeingDispatched):
+        (WebCore::ContentChangeObserver::isTouchEventBeingDispatched const):
+        (WebCore::ContentChangeObserver::setMouseMovedEventIsBeingDispatched):
+        (WebCore::ContentChangeObserver::isMouseMovedEventBeingDispatched const):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+
 2019-08-15  Justin Fan  <justin_fan@apple.com>
 
         Unreviewed suggested patch follow-up to https://bugs.webkit.org/show_bug.cgi?id=200740.

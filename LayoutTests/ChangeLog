@@ -1,3 +1,14 @@
+2019-08-15  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Dispatch synthetic click when the visibility candidate element becomes hidden again.
+        https://bugs.webkit.org/show_bug.cgi?id=200773
+        <rdar://problem/54351728>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/going-from-hidden-to-visible-and-to-hidden-expected.html: Added.
+        * fast/events/touch/ios/content-observation/going-from-hidden-to-visible-and-to-hidden.html: Added.
+
 2019-08-15  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Don't accept operator&& or operator|| in the Lexer

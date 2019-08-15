@@ -128,7 +128,7 @@ private:
 
     void didRecognizeLongPress();
 
-    void contentVisibilityDidChange();
+    void contentVisibilityDidChange(const Element&);
 
     void setShouldObserveDOMTimerSchedulingAndTransitions(bool);
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
@@ -159,10 +159,15 @@ private:
     bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
     bool hasObservedTransition() const { return !m_elementsWithTransition.isEmpty(); }
-    bool hasDeterminateState() const;
 
     void setIsBetweenTouchEndAndMouseMoved(bool isBetween) { m_isBetweenTouchEndAndMouseMoved = isBetween; }
     bool isBetweenTouchEndAndMouseMoved() const { return m_isBetweenTouchEndAndMouseMoved; }
+
+    void setTouchEventIsBeingDispatched(bool dispatching) { m_touchEventIsBeingDispatched = dispatching; }
+    bool isTouchEventBeingDispatched() const { return m_touchEventIsBeingDispatched; }
+
+    void setMouseMovedEventIsBeingDispatched(bool dispatching) { m_mouseMovedEventIsBeingDispatched = dispatching; }
+    bool isMouseMovedEventBeingDispatched() const { return m_mouseMovedEventIsBeingDispatched; }
 
     bool hasPendingActivity() const { return hasObservedDOMTimer() || hasObservedTransition() || m_isWaitingForStyleRecalc || isObservationTimeWindowActive(); }
     bool isObservationTimeWindowActive() const { return m_contentObservationTimer.isActive(); }
@@ -202,6 +207,7 @@ private:
     HashSet<const Element*> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
     WeakPtr<Element> m_hiddenTouchTargetElement;
+    WeakPtr<Element> m_visibilityCandidateElement;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
     bool m_isInObservedStyleRecalc { false };
@@ -214,9 +220,9 @@ private:
 
 inline bool ContentChangeObserver::isObservingContentChanges() const
 {
-    return m_touchEventIsBeingDispatched
-        || m_isBetweenTouchEndAndMouseMoved
-        || m_mouseMovedEventIsBeingDispatched
+    return isTouchEventBeingDispatched()
+        || isBetweenTouchEndAndMouseMoved()
+        || isMouseMovedEventBeingDispatched()
         || m_observedDomTimerIsBeingExecuted
         || m_isInObservedStyleRecalc
         || isObservationTimeWindowActive();

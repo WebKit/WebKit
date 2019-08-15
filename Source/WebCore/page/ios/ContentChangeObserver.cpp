@@ -214,6 +214,8 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
         return;
     if (hasVisibleChangeState())
         return;
+    if (!isObservingContentChanges())
+        return;
     if (!isObservingTransitions())
         return;
     if (!transition.isDurationSet() || !transition.isPropertySet())
@@ -251,7 +253,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
             return;
         }
         if (isConsideredClickable(*targetElement, ElementHadRenderer::Yes))
-            weakThis->contentVisibilityDidChange();
+            weakThis->contentVisibilityDidChange(*targetElement);
         weakThis->adjustObservedState(Event::CompletedTransition);
     });
 }
@@ -271,13 +273,15 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
 {
     if (!m_document.settings().contentChangeObserverEnabled())
         return;
-    if (m_document.activeDOMObjectsAreSuspended())
-        return;
-    if (timeout > maximumDelayForTimers || !singleShot)
+    if (!isObservingContentChanges())
         return;
     if (!isObservingDOMTimerScheduling())
         return;
     if (hasVisibleChangeState())
+        return;
+    if (m_document.activeDOMObjectsAreSuspended())
+        return;
+    if (timeout > maximumDelayForTimers || !singleShot)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didInstallDOMTimer: register this timer: (" << &timer << ") and observe when it fires.");
 
@@ -359,12 +363,15 @@ void ContentChangeObserver::reset()
 {
     stopObservingPendingActivities();
     setHasNoChangeState();
-    setIsBetweenTouchEndAndMouseMoved(false);
 
-    m_touchEventIsBeingDispatched = false;
+    setTouchEventIsBeingDispatched(false);
+    setIsBetweenTouchEndAndMouseMoved(false);
+    setMouseMovedEventIsBeingDispatched(false);
+
     m_isInObservedStyleRecalc = false;
     m_observedDomTimerIsBeingExecuted = false;
-    m_mouseMovedEventIsBeingDispatched = false;
+
+    m_visibilityCandidateElement = { };
 
     m_contentObservationTimer.stop();
     m_elementsWithDestroyedVisibleRenderer.clear();
@@ -389,17 +396,24 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
         return;
     if (!isObservingContentChanges())
         return;
-    if (hasVisibleChangeState())
-        return;
     LOG_WITH_STREAM(ContentObservation, stream << "rendererWillBeDestroyed element: " << &element);
 
     if (!isVisuallyHidden(element))
         m_elementsWithDestroyedVisibleRenderer.add(&element);
+    // Candidate element is no longer visible.
+    if (m_visibilityCandidateElement == &element) {
+        // FIXME: We should also check for other type of visiblity changes.
+        ASSERT(hasVisibleChangeState());
+        m_visibilityCandidateElement = { };
+        setHasIndeterminateState();
+    }
 }
 
-void ContentChangeObserver::contentVisibilityDidChange()
+void ContentChangeObserver::contentVisibilityDidChange(const Element& element)
 {
     LOG(ContentObservation, "contentVisibilityDidChange: visible content change did happen.");
+    // FIXME: This should evolve into a list of candidate elements.
+    m_visibilityCandidateElement = makeWeakPtr(element);
     adjustObservedState(Event::ContentVisibilityChanged);
 }
 
@@ -411,7 +425,7 @@ void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
     if (eventType != PlatformEvent::Type::TouchStart)
         return;
     LOG(ContentObservation, "touchEventDidStart: touch start event started.");
-    m_touchEventIsBeingDispatched = true;
+    setTouchEventIsBeingDispatched(true);
     adjustObservedState(Event::StartedTouchStartEventDispatching);
 #else
     UNUSED_PARAM(eventType);
@@ -421,11 +435,11 @@ void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
 void ContentChangeObserver::touchEventDidFinish()
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!m_touchEventIsBeingDispatched)
+    if (!isTouchEventBeingDispatched())
         return;
     ASSERT(m_document.settings().contentChangeObserverEnabled());
     LOG(ContentObservation, "touchEventDidFinish: touch start event finished.");
-    m_touchEventIsBeingDispatched = false;
+    setTouchEventIsBeingDispatched(false);
     adjustObservedState(Event::EndedTouchStartEventDispatching);
 #endif
 }
@@ -435,18 +449,18 @@ void ContentChangeObserver::mouseMovedDidStart()
     if (!m_document.settings().contentChangeObserverEnabled())
         return;
     LOG(ContentObservation, "mouseMovedDidStart: mouseMoved started.");
-    m_mouseMovedEventIsBeingDispatched = true;
+    setMouseMovedEventIsBeingDispatched(true);
     adjustObservedState(Event::StartedMouseMovedEventDispatching);
 }
 
 void ContentChangeObserver::mouseMovedDidFinish()
 {
-    if (!m_mouseMovedEventIsBeingDispatched)
+    if (!isMouseMovedEventBeingDispatched())
         return;
     ASSERT(m_document.settings().contentChangeObserverEnabled());
     LOG(ContentObservation, "mouseMovedDidFinish: mouseMoved finished.");
     adjustObservedState(Event::EndedMouseMovedEventDispatching);
-    m_mouseMovedEventIsBeingDispatched = false;
+    setMouseMovedEventIsBeingDispatched(false);
 }
 
 void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
@@ -454,13 +468,6 @@ void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
     if (shouldObserve)
         LOG(ContentObservation, "Wait until next style recalc fires.");
     m_isWaitingForStyleRecalc = shouldObserve;
-}
-
-bool ContentChangeObserver::hasDeterminateState() const
-{
-    if (hasVisibleChangeState())
-        return true;
-    return observedContentChange() == WKContentNoChange && !hasPendingActivity();
 }
 
 void ContentChangeObserver::adjustObservedState(Event event)
@@ -477,27 +484,34 @@ void ContentChangeObserver::adjustObservedState(Event event)
     };
 
     auto notifyClientIfNeeded = [&] {
-        // First demote to "no change" if there's no pending activity anymore.
-        if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
-            setHasNoChangeState();
-
-        if (isBetweenTouchEndAndMouseMoved()) {
-            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
+        if (isTouchEventBeingDispatched()) {
+            LOG(ContentObservation, "notifyClientIfNeeded: Touch event is being dispatched. No need to notify the client.");
             return;
         }
-        if (m_mouseMovedEventIsBeingDispatched) {
-            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: in mouseMoved call. No need to notify the client.");
+        if (isBetweenTouchEndAndMouseMoved()) {
+            LOG(ContentObservation, "notifyClientIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
+            return;
+        }
+        if (isMouseMovedEventBeingDispatched()) {
+            LOG(ContentObservation, "notifyClientIfNeeded: in mouseMoved call. No need to notify the client.");
             return;
         }
         if (isObservationTimeWindowActive()) {
-            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: Inside the fixed window observation. No need to notify the client.");
+            LOG(ContentObservation, "notifyClientIfNeeded: Inside the fixed window observation. No need to notify the client.");
             return;
         }
-        if (!hasDeterminateState()) {
-            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: not in a determined state yet.");
+
+        // The fixed observation window (which is the final step in content observation) is closed and now we check if are still waiting for timers or animations to finish.
+        if (hasPendingActivity()) {
+            LOG(ContentObservation, "notifyClientIfNeeded: We are still waiting on some events.");
             return;
         }
-        LOG_WITH_STREAM(ContentObservation, stream << "adjustStateAndNotifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
+
+        // First demote to "no change" because we've got no pending activity anymore.
+        if (observedContentChange() == WKContentIndeterminateChange)
+            setHasNoChangeState();
+
+        LOG_WITH_STREAM(ContentObservation, stream << "notifyClientIfNeeded: sending observedContentChange ->" << observedContentChange());
         ASSERT(m_document.page());
         ASSERT(m_document.frame());
         m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame(), observedContentChange());
@@ -595,7 +609,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
     }
     // Either the page decided to call preventDefault on the touch action or the tap gesture evolved to some other gesture (long press, double tap). 
     if (event == Event::WillNotProceedWithClick) {
-        reset();
+        stopContentObservation();
         return;
     }
     // The page produced an visible change on an actionable content.
@@ -628,7 +642,7 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     };
 
     if (changedFromHiddenToVisible() && isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
-        m_contentChangeObserver.contentVisibilityDidChange();
+        m_contentChangeObserver.contentVisibilityDidChange(m_element);
 }
 
 #if ENABLE(TOUCH_EVENTS)
