@@ -21,7 +21,10 @@ for (let target of targets) {
     for (let i = 0; i < 500; i++) {
         let threw = false;
         try {
-            new proxy;
+            if (target === Promise)
+                new proxy(function() {});
+            else
+                new proxy;
         } catch(e) {
             threw = true;
             assert(e === error);

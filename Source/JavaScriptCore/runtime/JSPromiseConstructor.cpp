@@ -112,10 +112,14 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     if (newTarget.isUndefined())
         return throwVMTypeError(exec, scope);
 
+    JSValue executor = exec->argument(0);
+    if (!executor.isFunction(vm))
+        return throwVMTypeError(exec, scope, "Promise constructor takes a function argument"_s);
+
     Structure* promiseStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->promiseStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSPromise* promise = JSPromise::create(vm, promiseStructure);
-    promise->initialize(exec, globalObject,  exec->argument(0));
+    promise->initialize(exec, globalObject, executor);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(promise);

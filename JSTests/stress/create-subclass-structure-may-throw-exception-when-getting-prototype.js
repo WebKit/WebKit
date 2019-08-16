@@ -29,7 +29,6 @@ Object.defineProperty(bf, "prototype", {
     Error,
     Uint8Array,
     ArrayBuffer,
-    Promise,
     Map,
     WeakMap,
     Set,
@@ -39,6 +38,10 @@ Object.defineProperty(bf, "prototype", {
         Reflect.construct(constructor, [], bf);
     }, `Error: OK`);
 });
+
+shouldThrow(() => {
+    Reflect.construct(Promise, [() => {}], bf);
+}, `Error: OK`);
 
 // Proxy constructor is not aware of new.target.
 Reflect.construct(Proxy, [{}, {}], bf);

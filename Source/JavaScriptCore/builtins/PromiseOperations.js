@@ -216,9 +216,6 @@ function initializePromise(executor)
 {
     "use strict";
 
-    if (typeof executor !== 'function')
-        @throwTypeError("Promise constructor takes a function argument");
-
     @putByIdDirectPrivate(this, "promiseState", @promiseStatePending);
     @putByIdDirectPrivate(this, "promiseReactions", []);
     @putByIdDirectPrivate(this, "promiseIsHandled", false);

@@ -1282,9 +1282,6 @@ test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
 test/built-ins/Promise/allSettled/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Promise/get-prototype-abrupt-executor-not-callable.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
