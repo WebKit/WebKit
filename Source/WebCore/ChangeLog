@@ -1,3 +1,21 @@
+2019-08-16  Antti Koivisto  <antti@apple.com>
+
+        Content in <iframe> should override "touch-action" set in embedding document
+        https://bugs.webkit.org/show_bug.cgi?id=200204
+        <rdar://problem/54355249>
+
+        Reviewed by Antoine Quint.
+
+        Test: pointerevents/ios/touch-action-region-frame.html
+
+        Subframes where content doesn't use any touch-action properties won't generate event region for their main layer.
+        As a result the touch-action property gets computed in UI process to the parent frames touch-action (instead of 'auto').
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+
+        Generate event region for the main layer of subframes.
+
 2019-08-16  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Move TextureMapperAnimation to the nicosia namespace as Nicosia::Animation

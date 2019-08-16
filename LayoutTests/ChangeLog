@@ -1,3 +1,14 @@
+2019-08-16  Antti Koivisto  <antti@apple.com>
+
+        Content in <iframe> should override "touch-action" set in embedding document
+        https://bugs.webkit.org/show_bug.cgi?id=200204
+        <rdar://problem/54355249>
+
+        Reviewed by Antoine Quint.
+
+        * pointerevents/ios/touch-action-region-frame-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-frame.html: Added.
+
 2019-08-16  Chris Lord  <clord@igalia.com>
 
         Update WebGL test expectations for WebKit WPE

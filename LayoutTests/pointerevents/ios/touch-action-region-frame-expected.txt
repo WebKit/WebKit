@@ -1,0 +1,43 @@
+ 
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 300.00 1016.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 300.00 1016.00)
+      (drawsContent 1)
+      (event region
+        (rect (0,0) width=300 height=1016)
+      )
+      (children 1
+        (GraphicsLayer
+        )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 300.00 1016.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 300.00 1016.00)
+      (drawsContent 1)
+      (event region
+        (rect (0,0) width=300 height=1016)
+        (touch-action
+          (manipulation          
+            (rect (0,0) width=27 height=8)
+            (rect (0,8) width=292 height=11)
+            (rect (8,19) width=284 height=989)
+          )
+        )
+      )
+      (children 1
+        (GraphicsLayer
+        )
+      )
+    )
+  )
+)
+

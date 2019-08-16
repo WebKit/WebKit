@@ -1588,7 +1588,7 @@ void RenderLayerBacking::updateEventRegion()
 #if ENABLE(POINTER_EVENTS)
     hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
 #endif
-    if (m_owningLayer.isRenderViewLayer() && !hasTouchActionElements)
+    if (m_isMainFrameRenderViewLayer && !hasTouchActionElements)
         return;
 
     GraphicsContext nullContext(nullptr);
