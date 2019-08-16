@@ -2,87 +2,34 @@ Test JavaScript formatting.
 
 
 == Running test suite: EsprimaFormatter.JavaScript
--- Running test case: EsprimaFormatter.JavaScript.arrow-functions.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.classes.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.comments-and-preserve-newlines.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.comments-only.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.do-while-statement.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.for-statements.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.functions.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.generators.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.if-statement.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.import.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.label-break-continue-block.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.logic-expressions.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.new-expression.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.object-array-literal.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.other-statements.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.return-statement.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.sample-jquery.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.sample-normal-utilities.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.sample-webinspector-object.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.switch-case-default.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.template-strings.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.ternary-expressions.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.try-catch-finally-statements.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.unary-binary-expressions.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.variable-declaration.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.while-statement.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.with-statement.js
-PASS
-
--- Running test case: EsprimaFormatter.JavaScript.modules.js
-PASS
+-- Running test case: EsprimaFormatter.JavaScript
+PASS: arrow-functions.js
+PASS: classes.js
+PASS: comments-and-preserve-newlines.js
+PASS: comments-only.js
+PASS: do-while-statement.js
+PASS: for-statements.js
+PASS: functions.js
+PASS: generators.js
+PASS: if-statement.js
+PASS: import.js
+PASS: label-break-continue-block.js
+PASS: logic-expressions.js
+PASS: new-expression.js
+PASS: numbers.js
+PASS: object-array-literal.js
+PASS: other-statements.js
+PASS: return-statement.js
+PASS: sample-jquery.js
+PASS: sample-normal-utilities.js
+PASS: sample-webinspector-object.js
+PASS: switch-case-default.js
+PASS: template-strings.js
+PASS: ternary-expressions.js
+PASS: try-catch-finally-statements.js
+PASS: unary-binary-expressions.js
+PASS: variable-declaration.js
+PASS: while-statement.js
+PASS: with-statement.js
+PASS: modules.js
 

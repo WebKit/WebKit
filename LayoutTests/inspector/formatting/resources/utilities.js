@@ -9,47 +9,47 @@ TestPage.registerInitializer(function() {
         });
     }
 
-    function runFormattingTest(mode, testName, testURL) {
-        return loadFormattingTestAndExpectedResults(testURL).then(function(results) {
-            let {testText, expectedText} = results;
-            return new Promise(function(resolve, reject) {
-                let workerProxy = WI.FormatterWorkerProxy.singleton();
-                const indentString = "    ";
+    async function runFormattingTest(mode, testName, testURL) {
+        let {testText, expectedText} = await loadFormattingTestAndExpectedResults(testURL);
+        return new Promise(function(resolve, reject) {
+            let workerProxy = WI.FormatterWorkerProxy.singleton();
+            const indentString = "    ";
 
-                function callback({formattedText, sourceMapData}) {
-                    let pass = formattedText === expectedText;
-                    InspectorTest.log(pass ? "PASS" : "FAIL");
+            function callback({formattedText, sourceMapData}) {
+                let pass = formattedText === expectedText;
+                InspectorTest.passOrFail(pass, testName);
 
-                    if (!pass) {
-                        InspectorTest.log("Input:");
-                        InspectorTest.log("-----------");
-                        InspectorTest.log(testText);
-                        InspectorTest.log("-----------");
-                        InspectorTest.log("Formatted Output: " + formattedText.length);
-                        InspectorTest.log("-----------");
-                        InspectorTest.log(formattedText);
-                        InspectorTest.log("-----------");
-                        InspectorTest.log("Expected Output: " + expectedText.length);
-                        InspectorTest.log("-----------");
-                        InspectorTest.log(expectedText);
-                        InspectorTest.log("-----------");
-                    }
-
-                    resolve(pass);
+                if (formattedText === null)
+                    InspectorTest.log("Failed to parse!");
+                else if (!pass) {
+                    InspectorTest.log("Input:");
+                    InspectorTest.log("-----------");
+                    InspectorTest.log(testText);
+                    InspectorTest.log("-----------");
+                    InspectorTest.log("Formatted Output: " + formattedText.length);
+                    InspectorTest.log("-----------");
+                    InspectorTest.log(formattedText);
+                    InspectorTest.log("-----------");
+                    InspectorTest.log("Expected Output: " + expectedText.length);
+                    InspectorTest.log("-----------");
+                    InspectorTest.log(expectedText);
+                    InspectorTest.log("-----------");
                 }
 
-                switch (mode) {
-                case "text/javascript": {
-                    let isModule = /^module/.test(testName);
-                    workerProxy.formatJavaScript(testText, isModule, indentString, callback);
-                    break;
-                }
+                resolve();
+            }
 
-                case "text/css":
-                    workerProxy.formatCSS(testText, indentString, callback);
-                    break;
-                }
-            });
+            switch (mode) {
+            case "text/javascript": {
+                let isModule = /^module/.test(testName);
+                workerProxy.formatJavaScript(testText, isModule, indentString, callback);
+                break;
+            }
+
+            case "text/css":
+                workerProxy.formatCSS(testText, indentString, callback);
+                break;
+            }
         });
     }
 
@@ -57,16 +57,16 @@ TestPage.registerInitializer(function() {
         let testPageURL = WI.networkManager.mainFrame.mainResource.url;
         let testPageResourcesURL = testPageURL.substring(0, testPageURL.lastIndexOf("/"));
 
-        for (let test of tests) {
-            let testName = test.substring(test.lastIndexOf("/") + 1);
-            let testURL = testPageResourcesURL + "/" + test;
-            suite.addTestCase({
-                name: suite.name + "." + testName,
-                test(resolve, reject) {
-                    runFormattingTest(mode, testName, testURL).then(resolve).catch(reject);
-                },
-                timeout: -1,
-            });
-        }
+        suite.addTestCase({
+            name: suite.name,
+            timeout: -1,
+            async test(resolve, reject) {
+                for (let test of tests) {
+                    let testName = test.substring(test.lastIndexOf("/") + 1);
+                    let testURL = testPageResourcesURL + "/" + test;
+                    await runFormattingTest(mode, testName, testURL);
+                }
+            }
+        });
     };
 });

@@ -471,7 +471,7 @@ EsprimaFormatter = class EsprimaFormatter
         }
 
         if (nodeType === "ForStatement" || nodeType === "ForOfStatement" || nodeType === "ForInStatement") {
-            if (tokenValue === "for") {
+            if (tokenValue === "for" || tokenValue === "await") {
                 builder.appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;

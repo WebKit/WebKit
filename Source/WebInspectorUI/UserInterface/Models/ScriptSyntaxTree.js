@@ -712,7 +712,8 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 type: WI.ScriptSyntaxTree.NodeType.ForOfStatement,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
-                body: this._createInternalSyntaxTree(node.body)
+                body: this._createInternalSyntaxTree(node.body),
+                await: node.await
             };
             break;
         case "FunctionDeclaration":

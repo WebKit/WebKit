@@ -109,10 +109,20 @@ function test()
     InspectorTest.assert(node.arguments[1].type === WI.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.log("passed CallExpression");
 
-    node = makeNode("try {} catch(e) {} ", false);
+    node = makeNode("try {} catch(e) {}", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.TryStatement);
-    InspectorTest.log("passed TryStatement");
     InspectorTest.assert(node.handler.type === WI.ScriptSyntaxTree.NodeType.CatchClause);
+    InspectorTest.assert(node.handler.param.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(!node.finalizer);
+    node = makeNode("try {} catch {}", false);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.TryStatement);
+    InspectorTest.assert(node.handler.type === WI.ScriptSyntaxTree.NodeType.CatchClause);
+    InspectorTest.assert(!node.handler.param);
+    node = makeNode("try {} finally {}", false);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.TryStatement);
+    InspectorTest.assert(!node.handler);
+    InspectorTest.assert(node.finalizer.type === WI.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.log("passed TryStatement");
     InspectorTest.log("passed CatchClause");
 
     node = makeNode("foo ? bar : baz;", true);
@@ -183,6 +193,7 @@ function test()
 
     node = makeNode("for(var x of {});", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ForOfStatement);
+    InspectorTest.assert(!node.await);
     InspectorTest.assert(node.left);
     InspectorTest.assert(node.left.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);
     InspectorTest.assert(node.right);
@@ -191,10 +202,16 @@ function test()
     InspectorTest.assert(node.body.type === WI.ScriptSyntaxTree.NodeType.EmptyStatement);
     node = makeNode("for(var {x} of {});", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ForOfStatement);
+    InspectorTest.assert(!node.await);
     InspectorTest.assert(node.left);
     InspectorTest.assert(node.left.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);
     InspectorTest.assert(node.left.declarations[0].id.type === WI.ScriptSyntaxTree.NodeType.ObjectPattern);
     InspectorTest.assert(node.left.declarations[0].id.properties[0].value.name === "x");
+    node = makeNode("async function foo() { for await (x of []); }", false);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(node.async);
+    InspectorTest.assert(node.body.body[0].type === WI.ScriptSyntaxTree.NodeType.ForOfStatement);
+    InspectorTest.assert(node.body.body[0].await);
     InspectorTest.log("passed ForOfStatement");
 
     node = makeNode("function foo(x,y){}", false);

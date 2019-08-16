@@ -69,3 +69,15 @@ for(var x of window);
 for(var x of (window));
 for(var{foo}of window);
 for(var[x,y]of[1,2,3]);
+
+// ES2018 - Async Iteration / Async Generators
+
+async function f() {
+    for await (x of[]);
+    for await(x of[1,2,3]);
+    for await(x of([1,2,3]));
+    for await(var x of window);
+    for await(var x of (window));
+    for await(let{foo}of window);
+    for await(let[x,y]of[1,2,3]);
+}

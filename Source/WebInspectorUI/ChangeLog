@@ -1,3 +1,51 @@
+2019-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update Esprima to support modern JavaScript language features
+        https://bugs.webkit.org/show_bug.cgi?id=200796
+
+        Reviewed by Ross Kirsling.
+
+        Use a fork of Esprima to support modern JavaScript language features
+        while going through the process to upstream support:
+
+          ES2018 Feature: Async Iteration (for-await-of)
+          https://github.com/jquery/esprima/issues/1990
+
+          ES2019 Feature: Numeric Separator
+          https://github.com/jquery/esprima/issues/1989
+
+          ES2019 Feature: Optional catch binding
+          https://github.com/jquery/esprima/issues/1953
+
+          ES2020 Feature: BigInt
+          https://github.com/jquery/esprima/issues/1988
+
+        ESTree compatible AST changes are summarized as:
+
+          - CatchClause `param` property is now nullable
+          - ForOfStatement now has a boolean `await` property
+          - Literal can be a `"bigint"` type (works if the environment has BigInt or not)
+
+        The pretty printer only needed to have additional handling for `for-await-of`.
+
+        * UserInterface/External/Esprima/esprima.js:
+        New version. Typescript output expects a modern JavaScript environment
+        instead of just ES6.
+
+        * Tools/Formatting/index.html:
+        Update the formatting tool for easier use in case of errors.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WI.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.passOrFail):
+        Convenience for pass/fail with the same message based on a condition.
+
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js:
+        (EsprimaFormatter.prototype._handleTokenAtNode):
+        Ensure a space after `await` in `for await` syntax.
+
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r244268): "Show Scope Chain on pause" setting has no effect

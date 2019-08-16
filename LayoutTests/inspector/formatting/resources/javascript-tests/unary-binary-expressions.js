@@ -61,3 +61,11 @@ typeof x;
 typeof(x);
 x instanceof x;
 x instanceof(x);
+
+
+// ES2020 - BigInt
+1n+2n-3n*4n/5n%6n;
+123n===0;
+0===123n;
++123n===-123n;
+-123n===+123n;

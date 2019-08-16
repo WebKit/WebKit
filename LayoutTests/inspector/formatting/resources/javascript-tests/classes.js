@@ -20,3 +20,13 @@ A = class Foo extends(b?Bar:Bar){constructor(){new.target.staticMethod()}static 
 class Foo{static async async(){1}async async(){1}async(){1}}
 
 class Foo{async"f"(){}async 1(){}async["f"](){}}
+
+// ES2018 - Async Iteration / Async Generators
+
+class Foo{static async*async(){1}async*async(){1}*async(){1}}
+
+class Foo{static async *async(){1}async *async(){1}*async(){1}}
+
+class Foo{static async * async(){1}async * async(){1}* async(){1}}
+
+class Foo{async*"f"(){}async*1(){}async*["f"](){}}

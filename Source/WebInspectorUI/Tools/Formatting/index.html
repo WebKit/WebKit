@@ -55,6 +55,7 @@
         "logic-expressions.js",
         "ternary-expressions.js",
         "new-expression.js",
+        "numbers.js",
         "label-break-continue-block.js",
         "with-statement.js",
         "return-statement.js",
@@ -201,7 +202,7 @@
             let debugFormatter = new EsprimaFormatterDebug(cm.getValue(), currentSourceType());
             debugText = debugFormatter.debugText;
         } catch (error) {
-            debugText = "Parse error";
+            debugText = "Parse error: " + JSON.stringify(error, null, 2);
         }
 
         // Output the results.
@@ -265,12 +266,12 @@
 
             // Compare results.
             let pass = formatter.formattedText === expectedData;
-            results.push("/* " + (pass ? "PASS" : "FAIL") + ": " + test + " */");
+            results.push("/* " + (pass ? "PASS" : "!! FAIL") + ": " + test + " */");
 
             // Output failures to console.
             if (!pass) {
                 console.log("Test", test);
-                console.log("Formatted Output", formatter.formattedText.length);
+                console.log("Formatted Output", formatter.formattedText ? formatter.formattedText.length : null);
                 console.log(formatter.formattedText);
                 console.log("Expected Output", expectedData.length);
                 console.log(expectedData);

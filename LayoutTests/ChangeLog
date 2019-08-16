@@ -1,3 +1,36 @@
+2019-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update Esprima to support modern JavaScript language features
+        https://bugs.webkit.org/show_bug.cgi?id=200796
+
+        Reviewed by Ross Kirsling.
+
+        * inspector/formatting/resources/javascript-tests/classes-expected.js:
+        * inspector/formatting/resources/javascript-tests/classes.js:
+        * inspector/formatting/resources/javascript-tests/for-statements-expected.js:
+        * inspector/formatting/resources/javascript-tests/for-statements.js:
+        * inspector/formatting/resources/javascript-tests/generators-expected.js:
+        * inspector/formatting/resources/javascript-tests/generators.js:
+        * inspector/formatting/resources/javascript-tests/numbers-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/numbers.js: Added.
+        * inspector/formatting/resources/javascript-tests/try-catch-finally-statements-expected.js:
+        * inspector/formatting/resources/javascript-tests/try-catch-finally-statements.js:
+        * inspector/formatting/resources/javascript-tests/unary-binary-expressions-expected.js:
+        * inspector/formatting/resources/javascript-tests/unary-binary-expressions.js:
+        Test formatting of new JavaScript language features.
+
+        * inspector/formatting/formatting-css-expected.txt:
+        * inspector/formatting/formatting-javascript-expected.txt:
+        * inspector/formatting/formatting-javascript.html:
+        * inspector/formatting/resources/utilities.js:
+        (TestPage.registerInitializer.async.runFormattingTest):
+        (TestPage.registerInitializer.window.addFormattingTests):
+        (TestPage.registerInitializer):
+        Cleaner output and better handling for debugging failures.
+
+        * inspector/model/parse-script-syntax-tree.html:
+        Test new AST permutations.
+
 2019-08-15  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Keep track of all the visibility candidates.

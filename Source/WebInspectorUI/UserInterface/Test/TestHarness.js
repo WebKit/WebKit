@@ -201,6 +201,14 @@ TestHarness = class TestHarness extends WI.Object
         this.log("FAIL: " + stringifiedMessage);
     }
 
+    passOrFail(condition, message)
+    {
+        if (condition)
+            this.pass(message);
+        else
+            this.fail(message);
+    }
+
     // Use this to expect an exception. To further examine the exception,
     // chain onto the result with .then() and add your own test assertions.
     // The returned promise is rejected if an exception was not thrown.

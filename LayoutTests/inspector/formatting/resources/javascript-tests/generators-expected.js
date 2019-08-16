@@ -30,3 +30,38 @@ function* gen() {
 function* gen(a=1, [b, c], ...rest) {
     return yield yield foo("foo")
 }
+
+// ES2018 - Async Iteration / Async Generators
+
+async function* gen() {}
+async function* gen() {
+    1
+}
+async function* gen() {}
+async function* gen() {
+    1
+}
+async function* gen() {}
+async function* gen() {
+    1
+}
+
+async function* gen() {
+    yield
+}
+async function* gen() {
+    yield x
+}
+async function* gen() {
+    yield "x"
+}
+async function* gen() {
+    yield [x]
+}
+async function* gen() {
+    yield foo()
+}
+
+async function* gen(a=1, [b, c], ...rest) {
+    return yield yield foo("foo")
+}

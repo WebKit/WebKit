@@ -1,3 +1,32 @@
+try {} catch {}
+try {} catch {} finally {}
+
+try {
+    1
+} catch {}
+try {
+    1
+} catch {} finally {}
+try {
+    1
+} catch {
+    2
+} finally {}
+try {
+    1
+} catch {
+    2
+} finally {
+    3
+}
+
+try {} catch {
+    2
+} finally {}
+try {} catch {} finally {
+    3
+}
+
 try {} catch (e) {}
 try {} catch (e) {} finally {}
 
