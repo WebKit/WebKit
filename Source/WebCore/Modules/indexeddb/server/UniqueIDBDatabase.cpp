@@ -44,9 +44,8 @@
 #include "StorageQuotaManager.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include <JavaScriptCore/AuxiliaryBarrierInlines.h>
-#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>

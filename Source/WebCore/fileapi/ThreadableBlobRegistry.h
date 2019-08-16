@@ -33,6 +33,10 @@
 
 #include <wtf/Forward.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class BlobPart;

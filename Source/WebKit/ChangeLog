@@ -1,3 +1,15 @@
+2019-08-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restabilization of non-unified build.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::StorageManagerSet):
+        * Shared/FrameInfoData.cpp:
+        (WebKit::FrameInfoData::decode):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+
 2019-08-16  Chris Dumez  <cdumez@apple.com>
 
         StorageManager does not need to subclass RefCounted

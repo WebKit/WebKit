@@ -1,3 +1,12 @@
+2019-08-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restabilization of non-unified build.
+
+        * Modules/indexeddb/server/IDBSerializationContext.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        * fileapi/ThreadableBlobRegistry.h:
+        * loader/SinkDocument.cpp:
+
 2019-08-16  Antti Koivisto  <antti@apple.com>
 
         Content in <iframe> should override "touch-action" set in embedding document

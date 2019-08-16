@@ -26,8 +26,10 @@
 #include "config.h"
 #include "StorageManagerSet.h"
 
+#include "StorageArea.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerSetMessages.h"
+#include <WebCore/TextEncoding.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
@@ -45,7 +47,7 @@ StorageManagerSet::StorageManagerSet()
     ASSERT(RunLoop::isMain());
 
     // Make sure the encoding is initialized before we start dispatching things to the queue.
-    UTF8Encoding();
+    WebCore::UTF8Encoding();
 }
 
 StorageManagerSet::~StorageManagerSet()

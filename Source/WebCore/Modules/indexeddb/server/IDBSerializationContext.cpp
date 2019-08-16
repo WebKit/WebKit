@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBSerializationContext.h"
 
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <pal/SessionID.h>
 
 #if ENABLE(INDEXED_DATABASE)

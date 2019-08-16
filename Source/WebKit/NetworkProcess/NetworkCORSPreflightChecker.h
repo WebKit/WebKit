@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkDataTask.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/StoredCredentialsPolicy.h>

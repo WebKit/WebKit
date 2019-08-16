@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageNamespaceImpl.h"
 
+#include "NetworkProcessConnection.h"
 #include "StorageAreaImpl.h"
 #include "StorageAreaMap.h"
 #include "StorageManagerSetMessages.h"

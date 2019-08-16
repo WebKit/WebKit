@@ -50,7 +50,7 @@ bool FrameInfoData::decode(IPC::Decoder& decoder, FrameInfoData& result)
         return false;
     result.securityOrigin = WTFMove(*securityOrigin);
     
-    Optional<Optional<FrameIdentifier>> frameID;
+    Optional<Optional<WebCore::FrameIdentifier>> frameID;
     decoder >> frameID;
     if (!frameID)
         return false;

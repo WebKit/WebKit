@@ -30,6 +30,7 @@
 #include <WebCore/StorageArea.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/StorageNamespace.h>
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
