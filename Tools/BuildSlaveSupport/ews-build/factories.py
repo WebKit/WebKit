@@ -140,7 +140,11 @@ class macOSWK2Factory(TestFactory):
 
 
 class WindowsFactory(Factory):
-    pass
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, triggers, additionalArguments)
+        self.addStep(KillOldProcesses())
+        self.addStep(CompileWebKit())
+        self.addStep(RunWebKit1Tests())
 
 
 class WinCairoFactory(Factory):
