@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBServer.h"
 #include "UniqueIDBDatabase.h"
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
