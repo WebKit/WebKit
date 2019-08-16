@@ -41,12 +41,7 @@ function test() {
                 CSSAgent.addRule(styleSheet.id, "body", ruleAdded);
             }
 
-            function usedExistingInspectorStylesheet(styleSheet) {
-                reject("Inspector style sheet already exists");
-            }
-
-            const doNotCreateIfMissing = true;
-            WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, usedExistingInspectorStylesheet, doNotCreateIfMissing);
+            InspectorTest.expectEqual(WI.cssManager.inspectorStyleSheetsForFrame(mainFrame).length, 0, "Should not have any inspector style sheets for the main frame.");
 
             WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, inspectorStyleSheetAvailable);
         }

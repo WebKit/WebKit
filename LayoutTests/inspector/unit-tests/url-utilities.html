@@ -442,8 +442,20 @@ function test()
     suite.addTestCase({
         name: "WI.displayNameForURL",
         test() {
-            const tests = [
+            function test(tests) {
+                for (let {url, expected} of tests)
+                    InspectorTest.expectEqual(WI.displayNameForURL(url), expected, `Display name of '${url}' should be '${expected}'.`);
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Allowing directory as name...");
+                for (let {url, expected, directory} of tests)
+                    InspectorTest.expectEqual(WI.displayNameForURL(url, null, {allowDirectoryAsName: true}), directory || expected, `Display name of '${url}' should be '${directory || expected}'.`);
+            }
+
+            test([
                 {url: "a", expected: "a"},
+
                 {url: "http://", expected: "http://"},
                 {url: "http://example", expected: "example"},
                 {url: "http://example.com", expected: "example.com"},
@@ -455,31 +467,58 @@ function test()
                 {url: "http://example.com/path/to", expected: "to"},
                 {url: "http://example.com/path/to/", expected: "to", directory: "/"},
                 {url: "http://example.com/path/to/page.html", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html#test", expected: "page.html"},
                 {url: "http://example.com/path/to/page.html?", expected: "page.html"},
                 {url: "http://example.com/path/to/page.html?a=1", expected: "page.html"},
-                {url: "http://example.com/path/to/page.html?a=1&b=2", expected: "page.html"},
-                {url: "http://example.com/path/to/page.html?a=1&b=2#test", expected: "page.html"},
-                {url: "http://example.com:123/path/to/page.html?a=1&b=2#test", expected: "page.html"},
-                {url: "http://example.com/path/to/page.html#test", expected: "page.html"},
-                {url: "http://example.com#alpha/beta", expected: "example.com"},
-                {url: "http://example.com?key=alpha/beta", expected: "beta"},
+                {url: "http://example.com/path/to/page.html?a=1&b=foo%2Fbar", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test", expected: "page.html"},
+                {url: "http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test", expected: "page.html"},
+
+                {url: "http://example.com#foo%20bar", expected: "example.com"},
+                {url: "http://example.com/#foo%20bar", expected: "example.com", directory: "/"},
+                {url: "http://example.com/foo%20bar", expected: "foo bar"},
+                {url: "http://example.com/?key=foo%20bar", expected: "example.com", directory: "/"},
+                {url: "http://example.com/foo%20bar", expected: "foo bar"},
+                {url: "http://example.com/foo bar", expected: "foo bar"},
+
+                {url: "http://example.com#foo/bar", expected: "example.com"},
+                {url: "http://example.com/#foo/bar", expected: "example.com", directory: "/"},
+                {url: "http://example.com#foo%2Fbar", expected: "example.com"},
+                {url: "http://example.com/#foo%2Fbar", expected: "example.com", directory: "/"},
+                {url: "http://example.com/?key=foo%2Fbar", expected: "example.com", directory: "/"},
+                {url: "http://example.com/foo%2Fbar", expected: "foo/bar"},
+
                 {url: "http://user:pass@example.com/", expected: "example.com", directory: "/"},
+
                 {url: "http://my.example.com", expected: "my.example.com"},
-                {url: "file://foo/bar", expected: "bar"},
+                {url: "http://my.example.com/", expected: "my.example.com", directory: "/"},
+
+                {url: "file:///foo", expected: "foo"},
+                {url: "file:///foo/", expected: "foo", directory: "/"},
+                {url: "file:///foo/bar", expected: "bar"},
+
                 {url: "data:text/plain,test", expected: "data:text/plain,test"},
+
                 {url: "about:blank", expected: "about:blank"},
                 {url: "about:srcdoc", expected: "about:srcdoc"},
+
                 {url: "app-specific://example.com", expected: "example.com"},
-            ];
+                {url: "app-specific://example.com/", expected: "example.com", directory: "/"},
+                {url: "app-specific://example.com/path", expected: "path"},
+            ]);
 
-            for (let {url, expected} of tests)
-                InspectorTest.expectEqual(WI.displayNameForURL(url), expected, `Display name of '${url}' should be '${expected}'.`);
-
+            // FIXME: <https://webkit.org/b/165155> Web Inspector: Use URL constructor to better handle all kinds of URLs
+            InspectorTest.newline();
+            InspectorTest.log("-- Known issues <https://webkit.org/b/165155>");
             InspectorTest.newline();
 
-            InspectorTest.log("Allowing directory as name...");
-            for (let {url, expected, directory} of tests)
-                InspectorTest.expectEqual(WI.displayNameForURL(url, null, {allowDirectoryAsName: true}), directory || expected, `Display name of '${url}' should be '${directory || expected}'.`);
+            test([
+                {url: "http://example.com?key=foo%2Fbar", expected: "example.com"},
+                {url: "http://example.com?key=foo/bar", expected: "example.com"},
+
+                {url: "http://example.com?key=foo%20bar", expected: "example.com"},
+                {url: "http://example.com?key=foo bar", expected: "example.com"},
+            ]);
         },
     });
 

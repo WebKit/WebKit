@@ -392,21 +392,36 @@ PASS: Display name of 'http://example.com/path/' should be 'path'.
 PASS: Display name of 'http://example.com/path/to' should be 'to'.
 PASS: Display name of 'http://example.com/path/to/' should be 'to'.
 PASS: Display name of 'http://example.com/path/to/page.html' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html#test' should be 'page.html'.
 PASS: Display name of 'http://example.com/path/to/page.html?' should be 'page.html'.
 PASS: Display name of 'http://example.com/path/to/page.html?a=1' should be 'page.html'.
-PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=2' should be 'page.html'.
-PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=2#test' should be 'page.html'.
-PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=2#test' should be 'page.html'.
-PASS: Display name of 'http://example.com/path/to/page.html#test' should be 'page.html'.
-PASS: Display name of 'http://example.com#alpha/beta' should be 'example.com'.
-PASS: Display name of 'http://example.com?key=alpha/beta' should be 'beta'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com#foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com/?key=foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com/foo bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com#foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com/foo%2Fbar' should be 'foo/bar'.
 PASS: Display name of 'http://user:pass@example.com/' should be 'example.com'.
 PASS: Display name of 'http://my.example.com' should be 'my.example.com'.
-PASS: Display name of 'file://foo/bar' should be 'bar'.
+PASS: Display name of 'http://my.example.com/' should be 'my.example.com'.
+PASS: Display name of 'file:///foo' should be 'foo'.
+PASS: Display name of 'file:///foo/' should be 'foo'.
+PASS: Display name of 'file:///foo/bar' should be 'bar'.
 PASS: Display name of 'data:text/plain,test' should be 'data:text/plain,test'.
 PASS: Display name of 'about:blank' should be 'about:blank'.
 PASS: Display name of 'about:srcdoc' should be 'about:srcdoc'.
 PASS: Display name of 'app-specific://example.com' should be 'example.com'.
+PASS: Display name of 'app-specific://example.com/' should be 'example.com'.
+PASS: Display name of 'app-specific://example.com/path' should be 'path'.
 
 Allowing directory as name...
 PASS: Display name of 'a' should be 'a'.
@@ -421,21 +436,65 @@ PASS: Display name of 'http://example.com/path/' should be '/'.
 PASS: Display name of 'http://example.com/path/to' should be 'to'.
 PASS: Display name of 'http://example.com/path/to/' should be '/'.
 PASS: Display name of 'http://example.com/path/to/page.html' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html#test' should be 'page.html'.
 PASS: Display name of 'http://example.com/path/to/page.html?' should be 'page.html'.
 PASS: Display name of 'http://example.com/path/to/page.html?a=1' should be 'page.html'.
-PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=2' should be 'page.html'.
-PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=2#test' should be 'page.html'.
-PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=2#test' should be 'page.html'.
-PASS: Display name of 'http://example.com/path/to/page.html#test' should be 'page.html'.
-PASS: Display name of 'http://example.com#alpha/beta' should be 'example.com'.
-PASS: Display name of 'http://example.com?key=alpha/beta' should be 'beta'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com#foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com/?key=foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com/foo bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com#foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo/bar' should be '/'.
+PASS: Display name of 'http://example.com#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com/foo%2Fbar' should be 'foo/bar'.
 PASS: Display name of 'http://user:pass@example.com/' should be '/'.
 PASS: Display name of 'http://my.example.com' should be 'my.example.com'.
-PASS: Display name of 'file://foo/bar' should be 'bar'.
+PASS: Display name of 'http://my.example.com/' should be '/'.
+PASS: Display name of 'file:///foo' should be 'foo'.
+PASS: Display name of 'file:///foo/' should be '/'.
+PASS: Display name of 'file:///foo/bar' should be 'bar'.
 PASS: Display name of 'data:text/plain,test' should be 'data:text/plain,test'.
 PASS: Display name of 'about:blank' should be 'about:blank'.
 PASS: Display name of 'about:srcdoc' should be 'about:srcdoc'.
 PASS: Display name of 'app-specific://example.com' should be 'example.com'.
+PASS: Display name of 'app-specific://example.com/' should be '/'.
+PASS: Display name of 'app-specific://example.com/path' should be 'path'.
+
+-- Known issues <https://webkit.org/b/165155>
+
+FAIL: Display name of 'http://example.com?key=foo%2Fbar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "example.com?key=foo%2fbar"
+FAIL: Display name of 'http://example.com?key=foo/bar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "bar"
+FAIL: Display name of 'http://example.com?key=foo%20bar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "example.com?key=foo%20bar"
+FAIL: Display name of 'http://example.com?key=foo bar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "example.com?key=foo bar"
+
+Allowing directory as name...
+FAIL: Display name of 'http://example.com?key=foo%2Fbar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "example.com?key=foo%2fbar"
+FAIL: Display name of 'http://example.com?key=foo/bar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "bar"
+FAIL: Display name of 'http://example.com?key=foo%20bar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "example.com?key=foo%20bar"
+FAIL: Display name of 'http://example.com?key=foo bar' should be 'example.com'.
+    Expected: "example.com"
+    Actual: "example.com?key=foo bar"
 
 -- Running test case: WI.h2Authority
 PASS: HTTP/2 :authority of 'http://example.com' should be 'example.com'.

@@ -3,6 +3,7 @@ Testing that CSS.addRule works for all types of stylesheets.
 
 == Running test suite: CSS.addRule
 -- Running test case: CSS.addRule.InNonExistingInspectorStyleSheet
+PASS: Should not have any inspector style sheets for the main frame.
 PASS: Rule selector should be "body"
 PASS: Rule range should be [0:0,0:4]
 PASS: Rule origin should be "inspector"
