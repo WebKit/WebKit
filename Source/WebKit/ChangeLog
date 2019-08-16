@@ -1,3 +1,16 @@
+2019-08-16  Dean Jackson  <dino@apple.com>
+
+        Long pressing images with transparent backgrounds in dark mode causes a black background to appear around the image content
+        https://bugs.webkit.org/show_bug.cgi?id=200827
+        <rdar://53933379>
+
+        Reviewed by Tim Horton.
+
+        Set a clear color when there is no provided background.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createTargetedPreview):
+
 2019-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Split tabIndex computation for DOM and the rest of WebCore

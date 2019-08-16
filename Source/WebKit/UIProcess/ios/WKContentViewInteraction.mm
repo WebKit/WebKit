@@ -8185,8 +8185,7 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
     else
         parameters = adoptNS([[UIPreviewParameters alloc] init]);
 
-    if (backgroundColor)
-        [parameters setBackgroundColor:backgroundColor];
+    [parameters setBackgroundColor:(backgroundColor ?: [UIColor clearColor])];
 
     CGPoint centerInContainerCoordinates = { CGRectGetMidX(frameInContainerCoordinates), CGRectGetMidY(frameInContainerCoordinates) };
     auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:previewContainer center:centerInContainerCoordinates]);
