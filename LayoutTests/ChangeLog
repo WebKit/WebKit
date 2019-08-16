@@ -1,3 +1,11 @@
+2019-08-16  Russell Epstein  <repstein@apple.com>
+
+        rdar://52594556 (Layout test fast/text/international/system-language/han-quotes.html is failing)
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations: Added expectation for fast/text/international/system-language/han-quotes.html
+
 2019-08-16  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix test failure and add additional tests after r248753
