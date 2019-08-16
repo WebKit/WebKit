@@ -1,5 +1,18 @@
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r244268): "Show Scope Chain on pause" setting has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=200797
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WI.DebuggerTabContentView.prototype.showDetailsSidebarPanels):
+        * UserInterface/Views/SourcesTabContentView.js:
+        (WI.SourcesTabContentView.prototype.showDetailsSidebarPanels):
+        When the sidebar panel isn't visible `parentSidebar` is `null`. Use `WI.DetailsSidebar` instead.
+
+2019-08-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: TypeError: null is not an object (evaluating 'this._resource.initiatorSourceCodeLocation')
         https://bugs.webkit.org/show_bug.cgi?id=200798
 

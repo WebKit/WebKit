@@ -83,12 +83,8 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
         if (!scopeChainDetailsSidebarPanel)
             return;
 
-        let sidebar = scopeChainDetailsSidebarPanel.parentSidebar;
-        if (!sidebar)
-            return;
-
-        sidebar.selectedSidebarPanel = scopeChainDetailsSidebarPanel;
-        sidebar.collapsed = false;
+        WI.detailsSidebar.selectedSidebarPanel = scopeChainDetailsSidebarPanel;
+        WI.detailsSidebar.collapsed = false;
 
         this._showScopeChainDetailsSidebarPanel = false;
     }
