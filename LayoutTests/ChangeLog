@@ -1,5 +1,15 @@
 2019-08-16  Russell Epstein  <repstein@apple.com>
 
+        Typo correction for han-quotes expectation entry.
+        rdar://52594556
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations: Test is an ImageOnlyFailure, not a
+	text Failure. Corrected mistake.
+
+2019-08-16  Russell Epstein  <repstein@apple.com>
+
         rdar://52557916 (REGRESSION: fast/css/paint-order.html and fast/css/paint-order-shadow.html are failing)
 
         Unreviewed Test Gardening.

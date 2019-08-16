@@ -1984,7 +1984,7 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 webkit.org/b/200258 [ Debug ] imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html [ Pass Failure ]
 
 # rdar://52594556 (Layout test fast/text/international/system-language/han-quotes.html is failing)
-[ Catalina+ ] fast/text/international/system-language/han-quotes.html [ Failure ]
+[ Catalina+ ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 
 # rdar://52557916 (REGRESSION: fast/css/paint-order.html and fast/css/paint-order-shadow.html are failing)
 [ Catalina+ ] fast/css/paint-order.html [ ImageOnlyFailure ]
