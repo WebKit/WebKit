@@ -32994,6 +32994,24 @@ native float4x3 operator+(float4x3, float);
 native float4x4 operator+(float4x4, float4x4);
 native float4x4 operator+(float, float4x4);
 native float4x4 operator+(float4x4, float);
+native uint2 operator+(uint2);
+native uint3 operator+(uint3);
+native uint4 operator+(uint4);
+native int2 operator+(int2);
+native int3 operator+(int3);
+native int4 operator+(int4);
+native float2 operator+(float2);
+native float3 operator+(float3);
+native float4 operator+(float4);
+native float2x2 operator+(float2x2);
+native float2x3 operator+(float2x3);
+native float2x4 operator+(float2x4);
+native float3x2 operator+(float3x2);
+native float3x3 operator+(float3x3);
+native float3x4 operator+(float3x4);
+native float4x2 operator+(float4x2);
+native float4x3 operator+(float4x3);
+native float4x4 operator+(float4x4);
 
 /* Functions named operator.zxx */
 bool3 operator.zxx(bool3 v) {
