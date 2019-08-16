@@ -1,3 +1,22 @@
+2019-08-16  Chris Lord  <clord@igalia.com>
+
+        Update WebGL test expectations for WebKit WPE
+        https://bugs.webkit.org/show_bug.cgi?id=200765
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Establish a new baseline for WPE backend WebGL test results.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/webgl/2.0.0/conformance/extensions/get-extension-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-image-data-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/buffers/bound-buffer-size-change-test-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/shader-with-mis-matching-uniform-block-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization-expected.txt:
+
 2019-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Update Esprima to support modern JavaScript language features

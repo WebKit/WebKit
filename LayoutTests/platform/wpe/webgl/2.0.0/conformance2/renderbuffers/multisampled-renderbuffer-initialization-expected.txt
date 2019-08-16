@@ -112,7 +112,7 @@ Test: ../../resources/webgl_test_files/conformance2/renderbuffers/multisampled-r
 [ 109: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 [ 110: PASS ] getError was expected value: NO_ERROR : should be no errors
 [ 111: PASS ] getError was expected value: NO_ERROR : should be no errors
-[ 112: FAIL ] user buffer has been initialized to 0 at (0, 0) expected: 0,0,0,0 was 0,255,0,255
+[ 112: PASS ] user buffer has been initialized to 0
 [ 113: PASS ] getError was expected value: NO_ERROR : should be no errors
 [ 114: PASS ] internal buffers have been initialized to 0
 [ 115: PASS ] getError was expected value: NO_ERROR : should be no error after framebufferRenderbuffer.
@@ -130,5 +130,5 @@ Test: ../../resources/webgl_test_files/conformance2/renderbuffers/multisampled-r
 [ 127: PASS ] clearColor is [0, 1, 0, 1]
 [ 128: PASS ] getError was expected value: NO_ERROR : should be no errors
 [ 129: PASS ] successfullyParsed is true
-[ FAIL ] 10 failures reported
+[ FAIL ] 9 failures reported
 

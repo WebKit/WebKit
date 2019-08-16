@@ -817,6 +817,8 @@ webkit.org/b/195267 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/195267 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https.html [ Pass Crash ]
 
 webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Timeout ]
+Bug(WPE) webgl/2.0.0/conformance/ogles/GL/swizzlers/swizzlers_049_to_056.html [ Timeout Pass ]
+Bug(WPE) webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Failure Pass ]
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Failure Pass ]
 
@@ -829,11 +831,20 @@ webkit.org/b/200304 svg/as-image/svg-image-with-data-uri-background.html [ Image
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
 webkit.org/b/159754 workers/bomb.html [ Skip ]
 
-webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
-
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
+Bug(WPE) webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
+Bug(WPE) webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Slow ]
+
+# It seems these tests are intermittently slow on recent Intel integrated graphics (tested on i7-8550U)
+Bug(WPE) webgl/2.0.0/conformance2/glsl3/array-assign.html [ Slow ]
+Bug(WPE) webgl/2.0.0/conformance2/glsl3/array-assign-constructor.html [ Slow ]
+Bug(WPE) webgl/2.0.0/conformance2/glsl3/array-element-increment.html [ Slow ]
+Bug(WPE) webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Slow ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
 
@@ -934,30 +945,27 @@ Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
+Bug(WPE) webgl/1.0.2/conformance/textures/texture-size-limit.html [ Timeout Failure ]
 
 # webgl/1.0.3:
 #  Failing:
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-canvas.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-image-data.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-image.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
 #  Timing out:
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Timeout ]
 Bug(WPE) webgl/1.0.3/conformance/textures/texture-upload-size.html [ Timeout ]
 #  One of these tests is DDoS-ing Mesa AMD drivers.
 Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
 Bug(WPE) webgl/2.0.0/conformance/glsl/bugs [ Skip ]
 
-# webgl 2.0
+# webgl/2.0.0:
+#  Failing
 webkit.org/b/188346 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Failure ]
 webkit.org/b/188346 webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object.html [ Failure ]
 
