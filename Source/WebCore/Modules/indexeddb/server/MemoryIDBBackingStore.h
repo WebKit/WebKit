@@ -41,9 +41,9 @@ class MemoryObjectStore;
 class MemoryIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<MemoryIDBBackingStore> create(const IDBDatabaseIdentifier&);
+    static std::unique_ptr<MemoryIDBBackingStore> create(PAL::SessionID, const IDBDatabaseIdentifier&);
     
-    MemoryIDBBackingStore(const IDBDatabaseIdentifier&);
+    MemoryIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&);
     ~MemoryIDBBackingStore() final;
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
@@ -91,6 +91,7 @@ private:
     RefPtr<MemoryObjectStore> takeObjectStoreByIdentifier(uint64_t identifier);
 
     IDBDatabaseIdentifier m_identifier;
+    PAL::SessionID m_sessionID;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;

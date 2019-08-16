@@ -38,6 +38,7 @@
 #include "IDBKeyData.h"
 #include "IDBObjectStoreInfo.h"
 #include "IDBSerialization.h"
+#include "IDBSerializationContext.h"
 #include "IDBTransactionInfo.h"
 #include "IDBValue.h"
 #include "IndexKey.h"
@@ -234,6 +235,7 @@ SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDB
     , m_databaseRootDirectory(databaseRootDirectory)
     , m_temporaryFileHandler(fileHandler)
     , m_quota(quota)
+    , m_serializationContext(IDBSerializationContext::getOrCreateIDBSerializationContext(sessionID))
 {
     m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }
@@ -242,36 +244,6 @@ SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
 {
     if (m_sqliteDB)
         closeSQLiteDB();
-
-    if (m_vm) {
-        JSLockHolder locker(m_vm.get());
-        m_globalObject.clear();
-        m_vm = nullptr;
-    }
-}
-
-
-void SQLiteIDBBackingStore::initializeVM()
-{
-    if (!m_vm) {
-        ASSERT(!m_globalObject);
-        m_vm = VM::create();
-
-        JSLockHolder locker(m_vm.get());
-        m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
-    }
-}
-
-VM& SQLiteIDBBackingStore::vm()
-{
-    initializeVM();
-    return *m_vm;
-}
-
-JSGlobalObject& SQLiteIDBBackingStore::globalObject()
-{
-    initializeVM();
-    return **m_globalObject;
 }
 
 static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
@@ -1732,16 +1704,16 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
 
 IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& info, const IDBKeyData& key, const ThreadSafeDataBuffer& value, int64_t recordID)
 {
-    JSLockHolder locker(vm());
+    JSLockHolder locker(m_serializationContext->vm());
 
-    auto jsValue = deserializeIDBValueToJSValue(*globalObject().globalExec(), value);
+    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), value);
     if (jsValue.isUndefinedOrNull())
         return IDBError { };
 
     IndexKey indexKey;
     auto* objectStoreInfo = infoForObjectStore(info.objectStoreIdentifier());
     ASSERT(objectStoreInfo);
-    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue, indexKey, objectStoreInfo->keyPath(), key);
+    generateIndexKeyForValue(m_serializationContext->execState(), info, jsValue, indexKey, objectStoreInfo->keyPath(), key);
 
     if (indexKey.isNull())
         return IDBError { };
@@ -1751,9 +1723,9 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& i
 
 IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStoreInfo& info, const IDBKeyData& key, const ThreadSafeDataBuffer& value, int64_t recordID)
 {
-    JSLockHolder locker(vm());
+    JSLockHolder locker(m_serializationContext->vm());
 
-    auto jsValue = deserializeIDBValueToJSValue(*globalObject().globalExec(), value);
+    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), value);
     if (jsValue.isUndefinedOrNull())
         return IDBError { };
 
@@ -1761,7 +1733,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     bool anyRecordsSucceeded = false;
     for (auto& index : info.indexMap().values()) {
         IndexKey indexKey;
-        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey, info.keyPath(), key);
+        generateIndexKeyForValue(m_serializationContext->execState(), index, jsValue, indexKey, info.keyPath(), key);
 
         if (indexKey.isNull())
             continue;

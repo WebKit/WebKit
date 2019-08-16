@@ -46,13 +46,14 @@ namespace IDBServer {
 // The IndexedDB spec states the value you can get from the key generator is 2^53
 static uint64_t maxGeneratedKeyValue = 0x20000000000000;
 
-std::unique_ptr<MemoryIDBBackingStore> MemoryIDBBackingStore::create(const IDBDatabaseIdentifier& identifier)
+std::unique_ptr<MemoryIDBBackingStore> MemoryIDBBackingStore::create(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier)
 {
-    return std::make_unique<MemoryIDBBackingStore>(identifier);
+    return std::make_unique<MemoryIDBBackingStore>(sessionID, identifier);
 }
 
-MemoryIDBBackingStore::MemoryIDBBackingStore(const IDBDatabaseIdentifier& identifier)
+MemoryIDBBackingStore::MemoryIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
+    , m_sessionID(sessionID)
 {
 }
 
@@ -135,7 +136,7 @@ IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
         return IDBError { ConstraintError };
 
     ASSERT(!m_objectStoresByIdentifier.contains(info.identifier()));
-    auto objectStore = MemoryObjectStore::create(info);
+    auto objectStore = MemoryObjectStore::create(m_sessionID, info);
 
     m_databaseInfo->addExistingObjectStore(info);
 

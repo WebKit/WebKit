@@ -43,6 +43,7 @@ class SQLiteStatement;
 
 namespace IDBServer {
 
+class IDBSerializationContext;
 class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore : public IDBBackingStore {
@@ -190,10 +191,6 @@ private:
 
     std::unique_ptr<SQLiteStatement> m_cachedStatements[static_cast<int>(SQL::Count)];
 
-    JSC::VM& vm();
-    JSC::JSGlobalObject& globalObject();
-    void initializeVM();
-
     PAL::SessionID m_sessionID;
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
@@ -207,12 +204,11 @@ private:
     String m_databaseRootDirectory;
     String m_databaseDirectory;
 
-    RefPtr<JSC::VM> m_vm;
-    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
-
     IDBBackingStoreTemporaryFileHandler& m_temporaryFileHandler;
     
     uint64_t m_quota;
+
+    Ref<IDBSerializationContext> m_serializationContext;
 };
 
 } // namespace IDBServer

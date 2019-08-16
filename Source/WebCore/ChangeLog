@@ -1,3 +1,56 @@
+2019-08-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Use one VM per thread for IDB serialization work in network process
+        https://bugs.webkit.org/show_bug.cgi?id=200526
+
+        Reviewed by Geoffrey Garen.
+
+        We had one static VM in UniqueIDBDatabase for serialization/deserialization in MemoryObjectStore. This VM was 
+        never destroyed and could be used on different background threads.
+ 
+        We also had one VM per SQLiteIDBBackingStore for serialization/deserialization in SQLiteIDBBackingStore. If 
+        there were multiple IndexedDB databases of the same session opened, we would have multiple VMs created
+        on the same thread. Each VM has its memory allocator and garbage collector, which takes up memory.
+ 
+        To be more memory efficient and safe, we can use one VM per thread in the network process, and create/destroy
+        the VMs on demand.
+
+        * Modules/indexeddb/server/IDBSerializationContext.cpp: Added.
+        (WebCore::IDBServer::IDBSerializationContext::getOrCreateIDBSerializationContext):
+        (WebCore::IDBServer::IDBSerializationContext::~IDBSerializationContext):
+        (WebCore::IDBServer::IDBSerializationContext::initializeVM):
+        (WebCore::IDBServer::IDBSerializationContext::vm):
+        (WebCore::IDBServer::IDBSerializationContext::execState):
+        (WebCore::IDBServer::IDBSerializationContext::IDBSerializationContext):
+        * Modules/indexeddb/server/IDBSerializationContext.h: Added.
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::create):
+        (WebCore::IDBServer::MemoryIDBBackingStore::MemoryIDBBackingStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createObjectStore):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::create):
+        (WebCore::IDBServer::MemoryObjectStore::MemoryObjectStore):
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::~SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::initializeVM): Deleted.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::vm): Deleted.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::globalObject): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadVM): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadExecState): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Sources.txt:
+
 2019-08-15  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Dispatch synthetic click when the visibility candidate element becomes hidden again.

@@ -1197,23 +1197,6 @@ void UniqueIDBDatabase::putOrAddAfterQuotaCheck(uint64_t taskSize, const IDBRequ
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPutOrAdd, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyData, value, overwriteMode));
 }
 
-VM& UniqueIDBDatabase::databaseThreadVM()
-{
-    ASSERT(!isMainThread());
-    static VM* vm = &VM::create().leakRef();
-    return *vm;
-}
-
-ExecState& UniqueIDBDatabase::databaseThreadExecState()
-{
-    ASSERT(!isMainThread());
-
-    static NeverDestroyed<Strong<JSGlobalObject>> globalObject(databaseThreadVM(), JSGlobalObject::create(databaseThreadVM(), JSGlobalObject::createStructure(databaseThreadVM(), jsNull())));
-
-    RELEASE_ASSERT(globalObject.get()->globalExec());
-    return *globalObject.get()->globalExec();
-}
-
 void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const IDBValue& originalRecordValue, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     ASSERT(!isMainThread());

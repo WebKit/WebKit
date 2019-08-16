@@ -35,6 +35,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class IDBCursorInfo;
@@ -52,13 +56,14 @@ enum class IndexRecordType;
 
 namespace IDBServer {
 
+class IDBSerializationContext;
 class MemoryBackingStoreTransaction;
 
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
 class MemoryObjectStore : public RefCounted<MemoryObjectStore> {
 public:
-    static Ref<MemoryObjectStore> create(const IDBObjectStoreInfo&);
+    static Ref<MemoryObjectStore> create(PAL::SessionID, const IDBObjectStoreInfo&);
 
     ~MemoryObjectStore();
 
@@ -104,7 +109,7 @@ public:
     void renameIndex(MemoryIndex&, const String& newName);
 
 private:
-    MemoryObjectStore(const IDBObjectStoreInfo&);
+    MemoryObjectStore(PAL::SessionID, const IDBObjectStoreInfo&);
 
     IDBKeyDataSet::iterator lowestIteratorInRange(const IDBKeyRangeData&, bool reverse) const;
 
@@ -128,6 +133,8 @@ private:
     HashMap<uint64_t, RefPtr<MemoryIndex>> m_indexesByIdentifier;
     HashMap<String, RefPtr<MemoryIndex>> m_indexesByName;
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryObjectStoreCursor>> m_cursors;
+
+    Ref<IDBSerializationContext> m_serializationContext;
 };
 
 } // namespace IDBServer
