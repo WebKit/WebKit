@@ -41,6 +41,7 @@ WI.ConsoleCommandView = class ConsoleCommandView
     {
         this._element = document.createElement("div");
         this._element.classList.add("console-user-command");
+        this._element.dir = "ltr";
         this._element.setAttribute("data-labelprefix", WI.UIString("Input: "));
 
         if (this._className)

@@ -69,7 +69,8 @@
     background-color: var(--selected-background-color-unfocused);
 }
 
-body[dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon) {
+body[dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon),
+body[dir=rtl] [dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon) {
     float: left;
 }
 
@@ -104,6 +105,10 @@ body[dir=rtl] .tree-outline .item :matches(.disclosure-button, .icon) {
 
 body[dir=rtl] .tree-outline .item .disclosure-button {
     transform: scaleX(-1);
+}
+
+body[dir=rtl] [dir=ltr] .tree-outline .item .disclosure-button {
+    transform: unset;
 }
 
 .tree-outline.hide-disclosure-buttons .item .disclosure-button {

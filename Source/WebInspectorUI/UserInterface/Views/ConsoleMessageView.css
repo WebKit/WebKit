@@ -113,10 +113,6 @@
     content: "";
 }
 
-body[dir=rtl] .console-message.expandable .console-top-level-message::before {
-    transform: scaleX(-1);
-}
-
 .console-message.expandable.expanded .console-top-level-message::before {
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }

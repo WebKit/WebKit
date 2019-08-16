@@ -932,8 +932,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _keyDown(event)
     {
-        let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
-
         if (this._keyboardShortcutCommandA.matchesEvent(event))
             this._commandAWasPressed(event);
         else if (this._keyboardShortcutEsc.matchesEvent(event))
@@ -942,9 +940,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             this._upArrowWasPressed(event);
         else if (event.keyIdentifier === "Down")
             this._downArrowWasPressed(event);
-        else if ((!isRTL && event.keyIdentifier === "Left") || (isRTL && event.keyIdentifier === "Right"))
+        else if (event.keyIdentifier === "Left")
             this._leftArrowWasPressed(event);
-        else if ((!isRTL && event.keyIdentifier === "Right") || (isRTL && event.keyIdentifier === "Left"))
+        else if (event.keyIdentifier === "Right")
             this._rightArrowWasPressed(event);
         else if (event.keyIdentifier === "Enter" && event.metaKey)
             this._commandEnterWasPressed(event);

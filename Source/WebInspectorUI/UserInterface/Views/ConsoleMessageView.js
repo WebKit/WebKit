@@ -51,6 +51,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
     {
         this._element = document.createElement("div");
         this._element.classList.add("console-message");
+        this._element.dir = "ltr";
 
         // FIXME: <https://webkit.org/b/143545> Web Inspector: LogContentView should use higher level objects
         this._element.__message = this._message;

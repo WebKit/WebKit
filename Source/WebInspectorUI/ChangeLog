@@ -1,3 +1,34 @@
+2019-08-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: RTL: Console should be always LTR
+        https://bugs.webkit.org/show_bug.cgi?id=200482
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ConsoleCommandView.js:
+        (WI.ConsoleCommandView.prototype.render):
+        * UserInterface/Views/ConsoleMessageView.css:
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.render):
+        Make console messages always LTR.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._keyDown):
+        Since the console is always LTR now, we can remove code that flips left and right
+        arrow keys.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        JS objects should always be LTR.
+
+        * UserInterface/Views/TreeElement.js:
+        Look at "direction" CSS property because Element's text direction can be LTR even
+        when `WI.resolvedLayoutDirection()` is RTL.
+
+        (WI.TreeElement.prototype.isEventWithinDisclosureTriangle):
+        * UserInterface/Views/TreeOutline.css:
+        (body[dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon),):
+        (body[dir=rtl] [dir=ltr] .tree-outline .item .disclosure-button):
+
 2019-08-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: setting a breakpoint on a specific listener should enable the event listener

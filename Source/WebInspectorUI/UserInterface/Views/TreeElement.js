@@ -615,7 +615,7 @@ WI.TreeElement = class TreeElement extends WI.Object
         // FIXME: We should not use getComputedStyle(). For that we need to get rid of using ::before for disclosure triangle. (http://webk.it/74446)
         let computedStyle = window.getComputedStyle(this._listItemNode);
         let start = 0;
-        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+        if (computedStyle.direction === WI.LayoutDirection.RTL)
             start += this._listItemNode.totalOffsetRight - computedStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX) - this.arrowToggleWidth;
         else
             start += this._listItemNode.totalOffsetLeft + computedStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
