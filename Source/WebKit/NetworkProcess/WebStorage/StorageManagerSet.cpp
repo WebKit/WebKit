@@ -64,9 +64,9 @@ void StorageManagerSet::add(PAL::SessionID sessionID, const String& localStorage
         if (!sessionID.isEphemeral())
             SandboxExtension::consumePermanently(localStorageDirectoryHandle);
 
-        m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, directory = localStorageDirectory.isolatedCopy()]() mutable {
-            m_storageManagers.ensure(sessionID, [directory]() mutable {
-                return StorageManager::create(WTFMove(directory));
+        m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, localStorageDirectory = localStorageDirectory.isolatedCopy()]() mutable {
+            m_storageManagers.ensure(sessionID, [&]() mutable {
+                return std::make_unique<StorageManager>(WTFMove(localStorageDirectory));
             });
         });
     }

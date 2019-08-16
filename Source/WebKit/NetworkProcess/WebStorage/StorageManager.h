@@ -48,13 +48,11 @@ class WebProcessProxy;
 
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 
-class StorageManager : public RefCounted<StorageManager> {
+class StorageManager {
+    WTF_MAKE_NONCOPYABLE(StorageManager);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StorageManager> create(String&& localStorageDirectory)
-    {
-        return adoptRef(*new StorageManager(WTFMove(localStorageDirectory)));
-    }
-    
+    explicit StorageManager(String&& localStorageDirectory);
     ~StorageManager();
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
@@ -84,8 +82,6 @@ public:
     StorageArea* createSessionStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
 
 private:
-    explicit StorageManager(String&& localStorageDirectory);
-
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
     TransientLocalStorageNamespace* getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin);
     SessionStorageNamespace* getOrCreateSessionStorageNamespace(uint64_t storageNamespaceID);

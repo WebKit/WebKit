@@ -84,7 +84,7 @@ private:
     void clear(IPC::Connection&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
     void cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID, uint64_t fromStorageNamespaceID, uint64_t toStorageNamespaceID);
 
-    HashMap<PAL::SessionID, RefPtr<StorageManager>> m_storageManagers;
+    HashMap<PAL::SessionID, std::unique_ptr<StorageManager>> m_storageManagers;
     HashMap<PAL::SessionID, String> m_storageManagerPaths;
     HashMap<uint64_t, StorageArea*> m_storageAreas;
 
