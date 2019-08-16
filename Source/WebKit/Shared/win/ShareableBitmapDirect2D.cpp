@@ -96,13 +96,7 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
 COMPtr<IWICBitmap> ShareableBitmap::createDirect2DSurface()
 {
     m_bitmap = createSurfaceFromData(data(), m_size);
-    ref(); // Balanced by deref in releaseSurfaceData.
     return m_bitmap;
-}
-
-void ShareableBitmap::releaseSurfaceData(void* typelessBitmap)
-{
-    static_cast<ShareableBitmap*>(typelessBitmap)->deref(); // Balanced by ref in createDirect2DSurface.
 }
 
 RefPtr<Image> ShareableBitmap::createImage()

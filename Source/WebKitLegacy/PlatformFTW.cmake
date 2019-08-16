@@ -220,6 +220,16 @@ list(APPEND WebKitLegacy_SOURCES_WebCoreSupport
     win/WebCoreSupport/WebVisitedLinkStore.h
 )
 
+if (USE_CF)
+    list(APPEND WebKitLegacy_SOURCES_Classes
+        cf/WebCoreSupport/WebInspectorClientCF.cpp
+    )
+
+    list(APPEND WebKitLegacy_LIBRARIES
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif ()
+
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     enable_language(ASM_MASM)
     if (MSVC)

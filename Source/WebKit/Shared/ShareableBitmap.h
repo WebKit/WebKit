@@ -149,7 +149,7 @@ private:
     static void releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t);
 #endif
 
-#if USE(CAIRO) || USE(DIRECT2D)
+#if USE(CAIRO)
     static void releaseSurfaceData(void* typelessBitmap);
 #endif
 

@@ -154,7 +154,9 @@ private:
     GDIObject<HBITMAP> m_bitmap;
     WebCore::IntSize m_fullscreenSize;
     WebCore::IntPoint m_hudPosition;
+#if ENABLE(FULLSCREEN_API)
     std::unique_ptr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
+#endif
 
 #if USE(CA)
     class LayerClient;

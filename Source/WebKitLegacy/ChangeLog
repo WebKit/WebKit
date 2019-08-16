@@ -1,3 +1,12 @@
+2019-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Enable CoreFoundation use if building for Apple target
+        https://bugs.webkit.org/show_bug.cgi?id=200799
+
+        Reviewed by Alex Christensen.
+
+        * PlatformFTW.cmake:
+
 2019-08-15  Sihui Liu  <sihui_liu@apple.com>
 
         Some improvements on web storage

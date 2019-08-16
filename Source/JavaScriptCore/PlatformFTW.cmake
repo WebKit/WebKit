@@ -7,6 +7,26 @@ list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
     API/JavaScriptCore.h
 )
 
+if (USE_CF)
+    list(APPEND JavaScriptCore_SOURCES
+        API/JSStringRefCF.cpp
+    )
+
+    list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
+        API/JSStringRefCF.h
+    )
+
+    list(APPEND JavaScriptCore_LIBRARIES
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif ()
+
+if (NOT WTF_PLATFORM_WIN_CAIRO)
+    list(APPEND JavaScriptCore_LIBRARIES
+        winmm
+    )
+endif ()
+
 if (ENABLE_REMOTE_INSPECTOR)
     list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
         "${JAVASCRIPTCORE_DIR}/inspector/remote/socket"

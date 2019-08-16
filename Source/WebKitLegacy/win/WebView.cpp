@@ -7880,7 +7880,9 @@ HRESULT WebView::setVisibilityState(WebPageVisibilityState visibilityState)
 
 HRESULT WebView::exitFullscreenIfNeeded()
 {
+#if ENABLE(FULLSCREEN_API)
     if (fullScreenController() && fullScreenController()->isFullScreen())
         fullScreenController()->close();
+#endif
     return S_OK;
 }
