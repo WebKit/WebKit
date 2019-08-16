@@ -61,10 +61,12 @@ LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& queue, Ref<LocalStor
     , m_didScheduleDatabaseUpdate(false)
     , m_shouldClearItems(false)
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 LocalStorageDatabase::~LocalStorageDatabase()
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_isClosed);
 }
 
