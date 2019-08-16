@@ -125,16 +125,16 @@ public:
 
     // These methods are meant to match indexed access methods that JSObject
     // supports - hence the slight redundancy.
-    bool canGetIndexQuickly(unsigned i)
+    bool canGetIndexQuickly(unsigned i) const
     {
         return i < m_length;
     }
-    bool canSetIndexQuickly(unsigned i)
+    bool canSetIndexQuickly(unsigned i, JSValue value) const
     {
-        return i < m_length;
+        return i < m_length && value.isNumber();
     }
     
-    typename Adaptor::Type getIndexQuicklyAsNativeValue(unsigned i)
+    typename Adaptor::Type getIndexQuicklyAsNativeValue(unsigned i) const
     {
         ASSERT(i < m_length);
         return typedVector()[i];
@@ -145,7 +145,7 @@ public:
         return Adaptor::toDouble(getIndexQuicklyAsNativeValue(i));
     }
     
-    JSValue getIndexQuickly(unsigned i)
+    JSValue getIndexQuickly(unsigned i) const
     {
         return Adaptor::toJSValue(getIndexQuicklyAsNativeValue(i));
     }

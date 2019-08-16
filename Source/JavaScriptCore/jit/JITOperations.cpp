@@ -636,14 +636,11 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
         uint32_t i = subscript.asUInt32();
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (object->canSetIndexQuickly(i)) {
+            if (object->canSetIndexQuickly(i, value)) {
                 object->setIndexQuickly(vm, i, value);
                 return;
             }
 
-            // FIXME: This will make us think that in-bounds typed array accesses are actually
-            // out-of-bounds.
-            // https://bugs.webkit.org/show_bug.cgi?id=149886
             byValInfo->arrayProfile->setOutOfBounds();
             scope.release();
             object->methodTable(vm)->putByIndex(object, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
@@ -2052,12 +2049,8 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
-    if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index)) {
-        // FIXME: This will make us think that in-bounds typed array accesses are actually
-        // out-of-bounds.
-        // https://bugs.webkit.org/show_bug.cgi?id=149886
+    if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index))
         byValInfo->arrayProfile->setOutOfBounds();
-    }
     return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, index, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
     
@@ -2076,12 +2069,8 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(ExecState* exec,
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
-    if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index)) {
-        // FIXME: This will make us think that in-bounds typed array accesses are actually
-        // out-of-bounds.
-        // https://bugs.webkit.org/show_bug.cgi?id=149886
+    if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index))
         byValInfo->arrayProfile->setOutOfBounds();
-    }
     return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, index, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
     

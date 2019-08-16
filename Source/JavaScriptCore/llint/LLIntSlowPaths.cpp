@@ -1000,7 +1000,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
         uint32_t i = subscript.asUInt32();
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (object->canSetIndexQuickly(i))
+            if (object->canSetIndexQuickly(i, value))
                 object->setIndexQuickly(vm, i, value);
             else
                 object->methodTable(vm)->putByIndex(object, exec, i, value, isStrictMode);

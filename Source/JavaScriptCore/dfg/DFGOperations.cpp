@@ -96,7 +96,7 @@ static inline void putByVal(ExecState* exec, VM& vm, JSValue baseValue, uint32_t
     }
     if (baseValue.isObject()) {
         JSObject* object = asObject(baseValue);
-        if (object->canSetIndexQuickly(index)) {
+        if (object->canSetIndexQuickly(index, value)) {
             object->setIndexQuickly(vm, index, value);
             return;
         }

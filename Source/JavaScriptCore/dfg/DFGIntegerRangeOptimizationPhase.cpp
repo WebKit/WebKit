@@ -275,6 +275,11 @@ public:
         RELEASE_ASSERT(left != m_right);
         m_left = left;
     }
+    void setRight(NodeFlowProjection right)
+    {
+        RELEASE_ASSERT(right != m_left);
+        m_right = right;
+    }
     bool addToOffset(int offset)
     {
         if (sumOverflows<int>(m_offset, offset))
@@ -1326,6 +1331,9 @@ public:
                                 lessThanLength = true;
                         }
                     }
+
+                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
+                        dataLogLn("CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
                     
                     if (nonNegative && lessThanLength) {
                         executeNode(block->at(nodeIndex));
@@ -1643,7 +1651,7 @@ private:
             
             if (timeToLive && otherRelationship.kind() == Relationship::Equal) {
                 if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
-                    dataLog("      Considering: ", otherRelationship, "\n");
+                    dataLog("      Considering (lhs): ", otherRelationship, "\n");
                 
                 // We have:
                 //     @a op @b + C
@@ -1664,6 +1672,31 @@ private:
                             toAdd.append(newRelationship);
                     }
                 }
+            }
+        }
+
+        if (timeToLive && relationship.kind() != Relationship::Equal) {
+            for (Relationship& possibleEquality : relationshipMap.get(relationship.right())) {
+                if (possibleEquality.kind() != Relationship::Equal
+                    || possibleEquality.offset() == std::numeric_limits<int>::min()
+                    || possibleEquality.right() == relationship.left())
+                    continue;
+                if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
+                    dataLog("      Considering (rhs): ", possibleEquality, "\n");
+
+                // We have:
+                //     @a op @b + C
+                //     @b == @c + D
+                //
+                // This implies:
+                //     @a op @c + (C + D)
+                //
+                // Where: @a == relationship.left(), @b == relationship.right()
+
+                Relationship newRelationship = relationship;
+                newRelationship.setRight(possibleEquality.right());
+                if (newRelationship.addToOffset(possibleEquality.offset()))
+                    toAdd.append(newRelationship);
             }
         }
         

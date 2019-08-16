@@ -1,3 +1,37 @@
+2019-08-16  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value
+        https://bugs.webkit.org/show_bug.cgi?id=200782
+
+        Reviewed by Saam Barati.
+
+        Speculate that putByVals on typed arrays are in bounds initially, and add an extra rule to integer range optimization to 
+        remove CheckInBounds when we are looping over two arrays. We do this by fixing a bug in the llint slow paths that marked 
+        typed array accesses as out of bounds, and we also add an extra step to integer range optimization to search for equality
+        relationships on the RHS value.
+
+        Microbenchmarks give a 40% improvement on the memcpy loop test, and neutral on the out-of-bounds typed array test.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::canGetIndexQuickly const):
+        (JSC::JSObject::getIndexQuickly const):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::setIndexQuickly):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canGetIndexQuicklyForTypedArray const):
+        (JSC::JSObject::canSetIndexQuicklyForTypedArray const):
+        (JSC::JSObject::getIndexQuicklyForTypedArray const):
+        (JSC::JSObject::setIndexQuicklyForTypedArray):
+
 2019-08-16  Mark Lam  <mark.lam@apple.com>
 
         [Re-land] ProxyObject should not be allow to access its target's private properties.

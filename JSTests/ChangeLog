@@ -1,3 +1,19 @@
+2019-08-16  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value
+        https://bugs.webkit.org/show_bug.cgi?id=200782
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/int8-out-of-bounds.js: Added.
+        (foo):
+        * microbenchmarks/memcpy-typed-loop.js: Added.
+        (doTest):
+        (let.arr1.new.Int32Array.1000.let.arr2.new.Int32Array.1000):
+        (arr2):
+        * stress/int8-repeat-in-then-out-of-bounds.js: Added.
+        (foo):
+
 2019-08-16  Mark Lam  <mark.lam@apple.com>
 
         [Re-land] ProxyObject should not be allow to access its target's private properties.
