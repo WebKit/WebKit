@@ -83,12 +83,12 @@ bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID) const
     return m_eventListeners.contains(connectionID);
 }
 
-Ref<StorageArea> StorageArea::clone() const
+std::unique_ptr<StorageArea> StorageArea::clone() const
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(!m_localStorageNamespace);
 
-    auto storageArea = StorageArea::create(nullptr, m_securityOrigin, m_quotaInBytes);
+    auto storageArea = std::make_unique<StorageArea>(nullptr, m_securityOrigin, m_quotaInBytes);
     storageArea->m_storageMap = m_storageMap;
 
     return storageArea;

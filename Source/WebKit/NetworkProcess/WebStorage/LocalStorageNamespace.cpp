@@ -47,12 +47,12 @@ LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(!RunLoop::isMain());
 }
 
-Ref<StorageArea> LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral)
+StorageArea& LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral)
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
-        return StorageArea::create(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
-    }).iterator->value;
+        return std::make_unique<StorageArea>(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
+    }).iterator->value.get();
 }
 
 void LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
@@ -66,7 +66,7 @@ void LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOrigin
 void LocalStorageNamespace::clearAllStorageAreas()
 {
     ASSERT(!RunLoop::isMain());
-    for (auto storageArea : m_storageAreaMap.values())
+    for (auto& storageArea : m_storageAreaMap.values())
         storageArea->clear();
 }
 

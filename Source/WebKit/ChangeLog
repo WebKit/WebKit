@@ -1,3 +1,35 @@
+2019-08-16  Chris Dumez  <cdumez@apple.com>
+
+        Many WebStorage classes do not need to subclass ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200821
+
+        Reviewed by Geoffrey Garen.
+
+        Many WebStorage classes do not need to subclass ThreadSafeRefCounted. They never get ref'd or deref'd.
+
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::LocalStorageNamespace::clearAllStorageAreas):
+        * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+        * NetworkProcess/WebStorage/SessionStorageNamespace.cpp:
+        (WebKit::SessionStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/SessionStorageNamespace.h:
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::clone const):
+        * NetworkProcess/WebStorage/StorageArea.h:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::createLocalStorageArea):
+        (WebKit::StorageManager::createTransientLocalStorageArea):
+        (WebKit::StorageManager::createSessionStorageArea):
+        (WebKit::StorageManager::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateTransientLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateSessionStorageNamespace):
+        * NetworkProcess/WebStorage/StorageManager.h:
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp:
+        (WebKit::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.h:
+
 2019-08-16  Dean Jackson  <dino@apple.com>
 
         Long pressing images with transparent backgrounds in dark mode causes a black background to appear around the image content

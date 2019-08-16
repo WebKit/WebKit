@@ -28,7 +28,6 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -36,19 +35,17 @@ namespace WebKit {
 class StorageArea;
 class StorageManager;
 
-class LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace>, public CanMakeWeakPtr<LocalStorageNamespace> {
+class LocalStorageNamespace : public CanMakeWeakPtr<LocalStorageNamespace> {
+    WTF_MAKE_NONCOPYABLE(LocalStorageNamespace);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<LocalStorageNamespace> create(StorageManager& storageManager, uint64_t storageNamespaceID)
-    {
-        return adoptRef(*new LocalStorageNamespace(storageManager, storageNamespaceID));
-    }
-
+    LocalStorageNamespace(StorageManager&, uint64_t storageManagerID);
     ~LocalStorageNamespace();
 
     StorageManager* storageManager() const { return &m_storageManager; }
 
     enum class IsEphemeral : bool { No, Yes };
-    Ref<StorageArea> getOrCreateStorageArea(WebCore::SecurityOriginData&&, IsEphemeral);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, IsEphemeral);
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();
@@ -56,12 +53,10 @@ public:
     Vector<WebCore::SecurityOriginData> ephemeralOrigins() const;
 
 private:
-    LocalStorageNamespace(StorageManager&, uint64_t storageManagerID);
-
     StorageManager& m_storageManager;
     unsigned m_quotaInBytes { 0 };
 
-    HashMap<WebCore::SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
+    HashMap<WebCore::SecurityOriginData, std::unique_ptr<StorageArea>> m_storageAreaMap;
 };
 
 } // namespace WebKit

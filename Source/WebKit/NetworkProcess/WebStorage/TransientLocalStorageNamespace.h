@@ -28,32 +28,27 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
 class StorageArea;
 
-class TransientLocalStorageNamespace : public ThreadSafeRefCounted<TransientLocalStorageNamespace> {
+class TransientLocalStorageNamespace {
+    WTF_MAKE_NONCOPYABLE(TransientLocalStorageNamespace);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TransientLocalStorageNamespace> create()
-    {
-        return adoptRef(*new TransientLocalStorageNamespace());
-    }
-
+    TransientLocalStorageNamespace();
     ~TransientLocalStorageNamespace();
 
-    Ref<StorageArea> getOrCreateStorageArea(WebCore::SecurityOriginData&&);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&);
     Vector<WebCore::SecurityOriginData> origins() const;
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();
 
 private:
-    TransientLocalStorageNamespace();
-
     const unsigned m_quotaInBytes { 0 };
-    HashMap<WebCore::SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
+    HashMap<WebCore::SecurityOriginData, std::unique_ptr<StorageArea>> m_storageAreaMap;
 };
 
 } // namespace WebKit

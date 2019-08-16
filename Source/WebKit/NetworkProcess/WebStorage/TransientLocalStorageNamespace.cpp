@@ -44,12 +44,12 @@ TransientLocalStorageNamespace::~TransientLocalStorageNamespace()
     ASSERT(!RunLoop::isMain());
 }
 
-Ref<StorageArea> TransientLocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin)
+StorageArea& TransientLocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin)
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [this, &securityOrigin]() mutable {
-        return StorageArea::create(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
-    }).iterator->value.copyRef();
+        return std::make_unique<StorageArea>(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
+    }).iterator->value.get();
 }
 
 Vector<SecurityOriginData> TransientLocalStorageNamespace::origins() const

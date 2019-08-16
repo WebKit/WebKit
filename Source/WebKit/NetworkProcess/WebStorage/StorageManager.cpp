@@ -65,7 +65,7 @@ void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, 
     ASSERT(!RunLoop::isMain());
 
     m_sessionStorageNamespaces.ensure(storageNamespaceID, [quotaInBytes] {
-        return SessionStorageNamespace::create(quotaInBytes);
+        return std::make_unique<SessionStorageNamespace>(quotaInBytes);
     });
 }
 
@@ -197,7 +197,7 @@ StorageArea* StorageManager::createLocalStorageArea(uint64_t storageNamespaceID,
     ASSERT(!RunLoop::isMain());
 
     if (auto* localStorageNamespace = getOrCreateLocalStorageNamespace(storageNamespaceID))
-        return localStorageNamespace->getOrCreateStorageArea(WTFMove(origin), m_localStorageDatabaseTracker ? LocalStorageNamespace::IsEphemeral::No : LocalStorageNamespace::IsEphemeral::Yes).ptr();
+        return &localStorageNamespace->getOrCreateStorageArea(WTFMove(origin), m_localStorageDatabaseTracker ? LocalStorageNamespace::IsEphemeral::No : LocalStorageNamespace::IsEphemeral::Yes);
 
     return nullptr;
 }
@@ -208,7 +208,7 @@ StorageArea* StorageManager::createTransientLocalStorageArea(uint64_t storageNam
     ASSERT((HashMap<uint64_t, RefPtr<TransientLocalStorageNamespace>>::isValidKey(storageNamespaceID)));
 
     if (auto* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, WTFMove(topLevelOrigin)))
-        return transientLocalStorageNamespace->getOrCreateStorageArea(WTFMove(origin)).ptr();
+        return &transientLocalStorageNamespace->getOrCreateStorageArea(WTFMove(origin));
     
     return nullptr;
 }
@@ -219,7 +219,7 @@ StorageArea* StorageManager::createSessionStorageArea(uint64_t storageNamespaceI
     ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
 
     if (auto* sessionStorageNamespace = getOrCreateSessionStorageNamespace(storageNamespaceID))
-        return sessionStorageNamespace->getOrCreateStorageArea(WTFMove(origin)).ptr();
+        return &sessionStorageNamespace->getOrCreateStorageArea(WTFMove(origin));
     
     return nullptr;
 }
@@ -232,7 +232,7 @@ LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t
         return nullptr;
 
     return m_localStorageNamespaces.ensure(storageNamespaceID, [this, storageNamespaceID]() {
-        return LocalStorageNamespace::create(*this, storageNamespaceID);
+        return std::make_unique<LocalStorageNamespace>(*this, storageNamespaceID);
     }).iterator->value.get();
 }
 
@@ -244,7 +244,7 @@ TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorage
         return nullptr;
 
     return m_transientLocalStorageNamespaces.ensure({ storageNamespaceID, WTFMove(topLevelOrigin) }, [] {
-        return TransientLocalStorageNamespace::create();
+        return std::make_unique<TransientLocalStorageNamespace>();
     }).iterator->value.get();
 }
 
@@ -257,7 +257,7 @@ SessionStorageNamespace* StorageManager::getOrCreateSessionStorageNamespace(uint
 
     return m_sessionStorageNamespaces.ensure(storageNamespaceID, [] {
         // We currently have no limit on session storage.
-        return SessionStorageNamespace::create(std::numeric_limits<unsigned>::max());
+        return std::make_unique<SessionStorageNamespace>(std::numeric_limits<unsigned>::max());
     }).iterator->value.get();
 }
 

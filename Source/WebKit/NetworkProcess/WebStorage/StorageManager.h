@@ -87,9 +87,9 @@ private:
     SessionStorageNamespace* getOrCreateSessionStorageNamespace(uint64_t storageNamespaceID);
 
     RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
-    HashMap<uint64_t, RefPtr<LocalStorageNamespace>> m_localStorageNamespaces;
-    HashMap<std::pair<uint64_t, WebCore::SecurityOriginData>, RefPtr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
-    HashMap<uint64_t, RefPtr<SessionStorageNamespace>> m_sessionStorageNamespaces;
+    HashMap<uint64_t, std::unique_ptr<LocalStorageNamespace>> m_localStorageNamespaces;
+    HashMap<std::pair<uint64_t, WebCore::SecurityOriginData>, std::unique_ptr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
+    HashMap<uint64_t, std::unique_ptr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 };
 
 } // namespace WebKit

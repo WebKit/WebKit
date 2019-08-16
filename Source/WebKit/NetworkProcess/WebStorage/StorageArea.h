@@ -28,7 +28,6 @@
 #include "Connection.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 class StorageMap;
@@ -39,13 +38,11 @@ namespace WebKit {
 class LocalStorageDatabase;
 class LocalStorageNamespace;
 
-class StorageArea : public ThreadSafeRefCounted<StorageArea> {
+class StorageArea {
+    WTF_MAKE_NONCOPYABLE(StorageArea);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StorageArea> create(LocalStorageNamespace* localStorageNamespace, const WebCore::SecurityOriginData& securityOrigin, unsigned quotaInBytes)
-    {
-        return adoptRef(*new StorageArea(localStorageNamespace, securityOrigin, quotaInBytes));
-    }
-    
+    StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
     ~StorageArea();
 
     const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
@@ -55,7 +52,7 @@ public:
     void removeListener(IPC::Connection::UniqueID);
     bool hasListener(IPC::Connection::UniqueID connectionID) const;
 
-    Ref<StorageArea> clone() const;
+    std::unique_ptr<StorageArea> clone() const;
 
     void setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
     void removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
@@ -73,8 +70,6 @@ public:
     void syncToDatabase();
 
 private:
-    StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
-
     void dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
     // Will be null if the storage area belongs to a session storage namespace or the storage area is in an ephemeral session.

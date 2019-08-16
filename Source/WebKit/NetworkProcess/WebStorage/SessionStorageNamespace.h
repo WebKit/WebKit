@@ -28,24 +28,21 @@
 #include "Connection.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
 class StorageArea;
 
-class SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
+class SessionStorageNamespace {
+    WTF_MAKE_NONCOPYABLE(SessionStorageNamespace);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SessionStorageNamespace> create(unsigned quotaInBytes)
-    {
-        return adoptRef(*new SessionStorageNamespace(quotaInBytes));
-    }
-    
+    explicit SessionStorageNamespace(unsigned quotaInBytes);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    Ref<StorageArea> getOrCreateStorageArea(WebCore::SecurityOriginData&&);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
@@ -55,11 +52,9 @@ public:
     void clearAllStorageAreas();
 
 private:
-    explicit SessionStorageNamespace(unsigned quotaInBytes);
-
     unsigned m_quotaInBytes { 0 };
 
-    HashMap<WebCore::SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
+    HashMap<WebCore::SecurityOriginData, std::unique_ptr<StorageArea>> m_storageAreaMap;
 };
 
 } // namespace WebKit
