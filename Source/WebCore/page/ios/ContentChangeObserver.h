@@ -128,7 +128,7 @@ private:
 
     void didRecognizeLongPress();
 
-    void contentVisibilityDidChange(const Element&);
+    void elementDidBecomeVisible(const Element&);
 
     void setShouldObserveDOMTimerSchedulingAndTransitions(bool);
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
@@ -195,7 +195,7 @@ private:
         CanceledTransition,
         StartedFixedObservationTimeWindow,
         EndedFixedObservationTimeWindow,
-        ContentVisibilityChanged
+        ElementDidBecomeVisible
     };
     void adjustObservedState(Event);
 

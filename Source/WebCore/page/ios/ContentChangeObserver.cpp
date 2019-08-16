@@ -253,7 +253,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
             return;
         }
         if (isConsideredClickable(*targetElement, ElementHadRenderer::Yes))
-            weakThis->contentVisibilityDidChange(*targetElement);
+            weakThis->elementDidBecomeVisible(*targetElement);
         weakThis->adjustObservedState(Event::CompletedTransition);
     });
 }
@@ -409,11 +409,11 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
     }
 }
 
-void ContentChangeObserver::contentVisibilityDidChange(const Element& element)
+void ContentChangeObserver::elementDidBecomeVisible(const Element& element)
 {
-    LOG(ContentObservation, "contentVisibilityDidChange: visible content change did happen.");
+    LOG(ContentObservation, "elementDidBecomeVisible: visible content change did happen.");
     m_visibilityCandidateList.add(element);
-    adjustObservedState(Event::ContentVisibilityChanged);
+    adjustObservedState(Event::ElementDidBecomeVisible);
 }
 
 void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
@@ -612,7 +612,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         return;
     }
     // The page produced an visible change on an actionable content.
-    if (event == Event::ContentVisibilityChanged) {
+    if (event == Event::ElementDidBecomeVisible) {
         setHasVisibleChangeState();
         // Stop pending activities. We don't need to observe them anymore.
         stopObservingPendingActivities();
@@ -641,7 +641,7 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     };
 
     if (changedFromHiddenToVisible() && isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
-        m_contentChangeObserver.contentVisibilityDidChange(m_element);
+        m_contentChangeObserver.elementDidBecomeVisible(m_element);
 }
 
 #if ENABLE(TOUCH_EVENTS)
