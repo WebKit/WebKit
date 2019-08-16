@@ -68,44 +68,45 @@ function longPressAndHoldAtPoint(x, y)
     return new Promise(resolve => {
         testRunner.runUIScript(`
             (function() {
-            var eventStream = {
-            events : [
-                {
-                    interpolate : "linear",
-                    timestep: 0.1,
-                    coordinateSpace : "content",
-                    startEvent : {
-                        inputType : "hand",
-                        timeOffset : 0,
-                        touches : [
-                            {
-                                inputType : "finger",
-                                phase : "began",
-                                id : 1,
-                                x : ${x},
-                                y : ${y},
-                                pressure : 0
+                const eventStream = {
+                    events : [
+                        {
+                            interpolate : "linear",
+                            timestep: 0.1,
+                            coordinateSpace : "content",
+                            startEvent : {
+                                inputType : "hand",
+                                timeOffset : 0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "began",
+                                        id : 1,
+                                        x : ${x},
+                                        y : ${y},
+                                        pressure : 0
+                                    }
+                                ]
+                            },
+                            endEvent : {
+                                inputType : "hand",
+                                timeOffset : 2.0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${x},
+                                        y : ${y},
+                                        pressure : 0
+                                    }
+                                ]
                             }
-                        ]
-                    },
-                    endEvent : {
-                        inputType : "hand",
-                        timeOffset : 2.0,
-                        touches : [
-                            {
-                                inputType : "finger",
-                                phase : "moved",
-                                id : 1,
-                                x : ${x},
-                                y : ${y},
-                                pressure : 0
-                            }
-                        ]
-                    }
-            }]};
+                        }
+                    ]
+                };
 
-            uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                uiController.uiScriptComplete();
+                uiController.sendEventStream(JSON.stringify(eventStream), () => uiController.uiScriptComplete());
             })();`, resolve);
     });
 }
@@ -127,44 +128,45 @@ function touchAndDragFromPointToPoint(startX, startY, endX, endY)
     return new Promise(resolve => {
         testRunner.runUIScript(`
             (function() {
-            var eventStream = {
-            events : [
-                {
-                    interpolate : "linear",
-                    timestep: 0.1,
-                    coordinateSpace : "content",
-                    startEvent : {
-                        inputType : "hand",
-                        timeOffset : 0,
-                        touches : [
-                            {
-                                inputType : "finger",
-                                phase : "began",
-                                id : 1,
-                                x : ${startX},
-                                y : ${startY},
-                                pressure : 0
+                const eventStream = {
+                    events : [
+                        {
+                            interpolate : "linear",
+                            timestep: 0.1,
+                            coordinateSpace : "content",
+                            startEvent : {
+                                inputType : "hand",
+                                timeOffset : 0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "began",
+                                        id : 1,
+                                        x : ${startX},
+                                        y : ${startY},
+                                        pressure : 0
+                                    }
+                                ]
+                            },
+                            endEvent : {
+                                inputType : "hand",
+                                timeOffset : 0.5,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${endX},
+                                        y : ${endY},
+                                        pressure : 0
+                                    }
+                                ]
                             }
-                        ]
-                    },
-                    endEvent : {
-                        inputType : "hand",
-                        timeOffset : 0.5,
-                        touches : [
-                            {
-                                inputType : "finger",
-                                phase : "moved",
-                                id : 1,
-                                x : ${endX},
-                                y : ${endY},
-                                pressure : 0
-                            }
-                        ]
-                    }
-            }]};
+                        }
+                    ]
+                };
 
-            uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                uiController.uiScriptComplete();
+                uiController.sendEventStream(JSON.stringify(eventStream), () => uiController.uiScriptComplete());
             })();`, resolve);
     });
 }
@@ -174,44 +176,45 @@ function holdAtPoint(x, y)
     return new Promise(resolve => {
         testRunner.runUIScript(`
             (function() {
-            var eventStream = {
-            events : [
-                {
-                    interpolate : "linear",
-                    timestep: 0.1,
-                    coordinateSpace : "content",
-                    startEvent : {
-                        inputType : "hand",
-                        timeOffset : 0,
-                        touches : [
-                            {
-                                inputType : "finger",
-                                phase : "moved",
-                                id : 1,
-                                x : ${x},
-                                y : ${y},
-                                pressure : 0
+                const eventStream = {
+                    events : [
+                        {
+                            interpolate : "linear",
+                            timestep: 0.1,
+                            coordinateSpace : "content",
+                            startEvent : {
+                                inputType : "hand",
+                                timeOffset : 0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${x},
+                                        y : ${y},
+                                        pressure : 0
+                                    }
+                                ]
+                            },
+                            endEvent : {
+                                inputType : "hand",
+                                timeOffset : 5.0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${x},
+                                        y : ${y},
+                                        pressure : 0
+                                    }
+                                ]
                             }
-                        ]
-                    },
-                    endEvent : {
-                        inputType : "hand",
-                        timeOffset : 5.0,
-                        touches : [
-                            {
-                                inputType : "finger",
-                                phase : "moved",
-                                id : 1,
-                                x : ${x},
-                                y : ${y},
-                                pressure : 0
-                            }
-                        ]
-                    }
-            }]};
+                        }
+                    ]
+                };
 
-            uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                uiController.uiScriptComplete();
+                uiController.sendEventStream(JSON.stringify(eventStream), () => uiController.uiScriptComplete());
             })();`, resolve);
     });
 }
@@ -221,44 +224,45 @@ function continueTouchAndDragFromPointToPoint(startX, startY, endX, endY)
     return new Promise(resolve => {
         testRunner.runUIScript(`
             (function() {
-             var eventStream = {
-             events : [
-                       {
-                       interpolate : "linear",
-                       timestep: 0.1,
-                       coordinateSpace : "content",
-                       startEvent : {
-                           inputType : "hand",
-                           timeOffset : 0,
-                           touches : [
-                               {
-                                   inputType : "finger",
-                                   phase : "moved",
-                                   id : 1,
-                                   x : ${startX},
-                                   y : ${startY},
-                                   pressure : 0
-                               }
-                           ]
-                       },
-                       endEvent : {
-                           inputType : "hand",
-                           timeOffset : 0.5,
-                           touches : [
-                               {
-                                   inputType : "finger",
-                                   phase : "moved",
-                                   id : 1,
-                                   x : ${endX},
-                                   y : ${endY},
-                                   pressure : 0
-                               }
-                           ]
-                       }
-             }]};
+                const eventStream = {
+                    events : [
+                        {
+                            interpolate : "linear",
+                            timestep: 0.1,
+                            coordinateSpace : "content",
+                            startEvent : {
+                                inputType : "hand",
+                                timeOffset : 0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${startX},
+                                        y : ${startY},
+                                        pressure : 0
+                                    }
+                                ]
+                            },
+                            endEvent : {
+                                inputType : "hand",
+                                timeOffset : 0.5,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${endX},
+                                        y : ${endY},
+                                        pressure : 0
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                };
 
-             uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                 uiController.uiScriptComplete();
-             })();`, resolve);
+                uiController.sendEventStream(JSON.stringify(eventStream), () => uiController.uiScriptComplete());
+            })();`, resolve);
     });
 }

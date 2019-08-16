@@ -1,3 +1,19 @@
+2019-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Tidy up some event stream helpers in basic-gestures.js
+        https://bugs.webkit.org/show_bug.cgi?id=200783
+
+        Reviewed by Tim Horton.
+
+        * resources/basic-gestures.js:
+
+        Make a few small adjustments:
+        (1) Invoke uiScriptComplete within the completion callback of sendEventStream. This actually doesn't result in
+            any behavior differences, since UIScriptController will, by default, wait for non-persistent asynchronous
+            tasks to finish before allowing the UI-side script invocation to finish.
+        (2) Fix some minor indentation issues in longPressAndHoldAtPoint, touchAndDragFromPointToPoint, holdAtPoint,
+            and continueTouchAndDragFromPointToPoint.
+
 2019-08-15  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Dispatch synthetic click when the visibility candidate element becomes hidden again.
