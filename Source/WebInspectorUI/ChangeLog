@@ -1,5 +1,30 @@
 2019-08-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: there should be an opposite icon for Eye.svg when we want to hide things instead of showing them
+        https://bugs.webkit.org/show_bug.cgi?id=200736
+
+        Reviewed by Joseph Pecoraro.
+
+        We currently use Eye.svg for disabling, or turning "off", Shader Programs, but it's not very
+        clear that clicking on the eye (which looks like "show me this", not "hide this") will do
+        that. Furthermore, a greyed out version also isn't clear that the Shader Program is disabled,
+        instead making the user think that the disable toggle is somehow "not working".
+
+        The new hide icon is clearer, as it uses a strikethrough, rather than some shading/greying.
+
+        * UserInterface/Views/ShaderProgramTreeElement.css:
+        (.item.shader-program .status > img):
+        (.item.shader-program.disabled:matches:hover .status > img): Added.
+        (.item.shader-program.disabled > :not(.status)): Added.
+        (.item.shader-program.disabled > *): Deleted.
+        * UserInterface/Images/Hide.svg: Added.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property .getter):
+        * UserInterface/Images/Show.svg: Renamed from UserInterface/Images/Eye.svg.
+
+2019-08-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: rename "Invalid Characters" to "Invisible Characters" for clarity
         https://bugs.webkit.org/show_bug.cgi?id=200808
 

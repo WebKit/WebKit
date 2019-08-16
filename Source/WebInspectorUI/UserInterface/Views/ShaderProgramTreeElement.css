@@ -26,7 +26,11 @@
 .item.shader-program .status > img {
     width: 18px;
     margin-top: 2px;
-    content: url(../Images/Eye.svg);
+    content: url(../Images/Hide.svg);
+}
+
+.item.shader-program.disabled:hover .status > img {
+    content: url(../Images/Show.svg);
 }
 
 .item.shader-program:not(:hover, .selected, .disabled) .status > img {
@@ -37,7 +41,7 @@
     filter: invert();
 }
 
-.item.shader-program.disabled > * {
+.item.shader-program.disabled > :not(.status) {
     opacity: 0.5;
 }
 
