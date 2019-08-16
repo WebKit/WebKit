@@ -1,5 +1,18 @@
 2019-08-16  Mark Lam  <mark.lam@apple.com>
 
+        More missing exception checks in string comparison operators.
+        https://bugs.webkit.org/show_bug.cgi?id=200844
+        <rdar://problem/54378684>
+
+        Reviewed by Saam Barati.
+
+        * stress/missing-exception-check-in-string-greater-than-compare.js: Added.
+        * stress/missing-exception-check-in-string-greater-than-or-equal-compare.js: Added.
+        * stress/missing-exception-check-in-string-less-than-compare.js: Added.
+        * stress/missing-exception-check-in-string-less-than-or-equal-compare.js: Added.
+
+2019-08-16  Mark Lam  <mark.lam@apple.com>
+
         CodeBlock destructor should clear all of its watchpoints.
         https://bugs.webkit.org/show_bug.cgi?id=200792
         <rdar://problem/53947800>

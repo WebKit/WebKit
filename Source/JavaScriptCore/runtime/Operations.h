@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -352,8 +352,13 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     if (v1.isNumber() && v2.isNumber())
         return v1.asNumber() < v2.asNumber();
 
-    if (isJSString(v1) && isJSString(v2))
-        return codePointCompareLessThan(asString(v1)->value(callFrame), asString(v2)->value(callFrame));
+    if (isJSString(v1) && isJSString(v2)) {
+        String s1 = asString(v1)->value(callFrame);
+        RETURN_IF_EXCEPTION(scope, false);
+        String s2 = asString(v2)->value(callFrame);
+        RETURN_IF_EXCEPTION(scope, false);
+        return codePointCompareLessThan(s1, s2);
+    }
 
     double n1;
     double n2;
@@ -397,8 +402,13 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
     if (v1.isNumber() && v2.isNumber())
         return v1.asNumber() <= v2.asNumber();
 
-    if (isJSString(v1) && isJSString(v2))
-        return !codePointCompareLessThan(asString(v2)->value(callFrame), asString(v1)->value(callFrame));
+    if (isJSString(v1) && isJSString(v2)) {
+        String s1 = asString(v1)->value(callFrame);
+        RETURN_IF_EXCEPTION(scope, false);
+        String s2 = asString(v2)->value(callFrame);
+        RETURN_IF_EXCEPTION(scope, false);
+        return !codePointCompareLessThan(s2, s1);
+    }
 
     double n1;
     double n2;
