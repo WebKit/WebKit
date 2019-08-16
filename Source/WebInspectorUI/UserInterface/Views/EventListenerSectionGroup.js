@@ -59,6 +59,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
                 this._updateDisabledToggle();
                 this._eventListenerEnabledToggleElement.addEventListener("change", (event) => {
                     this.isEventListenerDisabled = !this._eventListenerEnabledToggleElement.checked;
+                    this.hasEventListenerBreakpoint = false;
                 });
 
                 let toggleLabel = document.createElement("span");
@@ -75,6 +76,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
                 this._eventListenerBreakpointToggleElement.type = "checkbox";
                 this._updateBreakpointToggle();
                 this._eventListenerBreakpointToggleElement.addEventListener("change", (event) => {
+                    this.isEventListenerDisabled = false;
                     this.hasEventListenerBreakpoint = !!this._eventListenerBreakpointToggleElement.checked;
                 });
 
