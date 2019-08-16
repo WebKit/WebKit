@@ -371,7 +371,7 @@ void ContentChangeObserver::reset()
     m_isInObservedStyleRecalc = false;
     m_observedDomTimerIsBeingExecuted = false;
 
-    m_visibilityCandidateElement = { };
+    m_visibilityCandidateList.clear();
 
     m_contentObservationTimer.stop();
     m_elementsWithDestroyedVisibleRenderer.clear();
@@ -401,19 +401,18 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
     if (!isVisuallyHidden(element))
         m_elementsWithDestroyedVisibleRenderer.add(&element);
     // Candidate element is no longer visible.
-    if (m_visibilityCandidateElement == &element) {
+    if (m_visibilityCandidateList.remove(element)) {
         // FIXME: We should also check for other type of visiblity changes.
         ASSERT(hasVisibleChangeState());
-        m_visibilityCandidateElement = { };
-        setHasIndeterminateState();
+        if (m_visibilityCandidateList.computesEmpty())
+            setHasIndeterminateState();
     }
 }
 
 void ContentChangeObserver::contentVisibilityDidChange(const Element& element)
 {
     LOG(ContentObservation, "contentVisibilityDidChange: visible content change did happen.");
-    // FIXME: This should evolve into a list of candidate elements.
-    m_visibilityCandidateElement = makeWeakPtr(element);
+    m_visibilityCandidateList.add(element);
     adjustObservedState(Event::ContentVisibilityChanged);
 }
 
@@ -623,7 +622,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
 
 bool ContentChangeObserver::shouldObserveVisibilityChangeForElement(const Element& element)
 {
-    return isObservingContentChanges() && !hasVisibleChangeState() && !visibleRendererWasDestroyed(element) && !element.document().quirks().shouldIgnoreContentChange(element);
+    return isObservingContentChanges() && !visibleRendererWasDestroyed(element) && !element.document().quirks().shouldIgnoreContentChange(element);
 }
 
 ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)

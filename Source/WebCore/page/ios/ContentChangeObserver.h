@@ -207,7 +207,7 @@ private:
     HashSet<const Element*> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
     WeakPtr<Element> m_hiddenTouchTargetElement;
-    WeakPtr<Element> m_visibilityCandidateElement;
+    WeakHashSet<Element> m_visibilityCandidateList;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
     bool m_isInObservedStyleRecalc { false };

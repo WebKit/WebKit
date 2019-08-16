@@ -112,6 +112,8 @@ public:
         return m_set.remove(*weakPtrImpl);
     }
 
+    void clear() { m_set.clear(); }
+
     template <typename U>
     bool contains(const U& value) const
     {
