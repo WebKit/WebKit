@@ -2134,6 +2134,8 @@ ProductVersion: 10.13.4
 Xcode 9.4.1
 Build version 9F2000''')
             + 0,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.4), Xcode: 9.4.1')
         return self.runStep()
@@ -2172,6 +2174,8 @@ ProductVersion: 12.2
 Xcode 10.2
 Build version 10E125''')
             + 0,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Mojave (10.14.5), Xcode: 10.2')
         return self.runStep()
@@ -2190,6 +2194,8 @@ ProductVersion:	10.13.6
 BuildVersion:	17G7024'''),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''Xcode 10.2\nBuild version 10E125'''),
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 22 seconds, 12:05, 2 users, load averages: 3.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.6), Xcode: 10.2')
         return self.runStep()
@@ -2208,6 +2214,8 @@ BuildVersion:	17G7024'''),
             + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
             ExpectShell(command=['uname', '-a'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''Linux kodama-ews 5.0.4-arch1-1-ARCH #1 SMP PREEMPT Sat Mar 23 21:00:33 UTC 2019 x86_64 GNU/Linux'''),
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 22 seconds, 12:05, 2 users, load averages: 3.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
         return self.runStep()
@@ -2221,6 +2229,7 @@ BuildVersion:	17G7024'''),
             ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['uname', '-a'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
         return self.runStep()
@@ -2267,6 +2276,7 @@ OSError: [Errno 2] No such file or directory'''),
     func(fullname, *argrest)
 OSError: [Errno 2] No such file or directory''')
             + 1,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to print configuration')
         return self.runStep()

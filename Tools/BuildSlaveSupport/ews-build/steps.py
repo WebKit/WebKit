@@ -1506,8 +1506,8 @@ class PrintConfiguration(steps.ShellSequence):
     warnOnFailure = False
     logEnviron = False
     command_list_generic = [['hostname']]
-    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['xcodebuild', '-sdk', '-version']]
-    command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a']]
+    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['xcodebuild', '-sdk', '-version'], ['uptime']]
+    command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a'], ['uptime']]
     command_list_win = [[]]  # TODO: add windows specific commands here
 
     def __init__(self, **kwargs):

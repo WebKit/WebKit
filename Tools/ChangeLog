@@ -1,3 +1,14 @@
+2019-08-16  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Report machine uptime in PrintConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=200812
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PrintConfiguration): Added uptime command.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2019-08-16  Chris Lord  <clord@igalia.com>
 
         Add shared-mime-info to WPE WebKit jhbuild
