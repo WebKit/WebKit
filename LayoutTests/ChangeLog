@@ -1,5 +1,14 @@
 2019-08-16  Russell Epstein  <repstein@apple.com>
 
+        rdar://52557916 (REGRESSION: fast/css/paint-order.html and fast/css/paint-order-shadow.html are failing)
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations: Corrected typo in previous entry and
+	added test expectations for fast/css/paint-order.html and fast/css/paint-order-shadow.html
+
+2019-08-16  Russell Epstein  <repstein@apple.com>
+
         rdar://52594556 (Layout test fast/text/international/system-language/han-quotes.html is failing)
 
         Unreviewed Test Gardening.
