@@ -1,3 +1,21 @@
+2019-08-16  Mark Lam  <mark.lam@apple.com>
+
+        [Re-land] ProxyObject should not be allow to access its target's private properties.
+        https://bugs.webkit.org/show_bug.cgi?id=200739
+        <rdar://problem/53972768>
+
+        Reviewed by Yusuke Suzuki.
+
+        Re-landing this after r200829 which resolves the test262 failure uncovered by this patch.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performDefineOwnProperty):
+
 2019-08-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Promise.prototype.finally should accept non-promise objects
