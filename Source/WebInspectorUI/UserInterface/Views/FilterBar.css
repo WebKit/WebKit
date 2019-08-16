@@ -40,7 +40,6 @@
 
 .filter-bar > .navigation-bar > .item {
     padding: 0 0 3px;
-    -webkit-padding-start: 8px;
 }
 
 .filter-bar > input[type="search"] {
@@ -48,7 +47,8 @@
     flex: 1;
     min-width: 0;
 
-    margin: 3px 6px 4px;
+    margin: 3px 0 4px;
+    -webkit-margin-start: 6px;
     padding-top: 0;
 
     outline: none;
@@ -61,6 +61,10 @@
     background-clip: padding-box;
 
     height: 22px;
+}
+
+.filter-bar > .navigation-bar + input[type="search"] {
+    -webkit-margin-start: 0;
 }
 
 .filter-bar > input[type="search"]::placeholder {
@@ -95,4 +99,8 @@
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-timing-function: step-start;
+}
+
+.filter-bar > input[type="search"] + .navigation-bar:empty {
+    -webkit-margin-start: 6px;
 }

@@ -191,7 +191,7 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         this._tooltipHandledSeparately = !!x;
     }
 
-    createFoldersAsNeededForSubpath(subpath)
+    createFoldersAsNeededForSubpath(subpath, comparator)
     {
         if (!subpath)
             return this;
@@ -223,7 +223,7 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
             let newFolder = new WI.FolderTreeElement(component);
             this._subpathFolderTreeElementMap.set(currentPath, newFolder);
 
-            let index = insertionIndexForObjectInListSortedByFunction(newFolder, currentFolderTreeElement.children, WI.ResourceTreeElement.compareFolderAndResourceTreeElements);
+            let index = insertionIndexForObjectInListSortedByFunction(newFolder, currentFolderTreeElement.children, comparator || WI.ResourceTreeElement.compareFolderAndResourceTreeElements);
             currentFolderTreeElement.insertChild(newFolder, index);
             currentFolderTreeElement = newFolder;
         }

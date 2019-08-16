@@ -178,8 +178,8 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
                 this.addChildForRepresentedObject(extraScript);
         }
 
-        const doNotCreateIfMissing = true;
-        WI.cssManager.preferredInspectorStyleSheetForFrame(this._frame, this.addRepresentedObjectToNewChildQueue.bind(this), doNotCreateIfMissing);
+        for (let styleSheet of WI.cssManager.inspectorStyleSheetsForFrame(this._frame))
+            this.addChildForRepresentedObject(styleSheet);
     }
 
     onexpand()

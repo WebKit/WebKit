@@ -1,5 +1,75 @@
 2019-08-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: provide a way to create an arbitrary Inspector Style Sheet
+        https://bugs.webkit.org/show_bug.cgi?id=200425
+
+        Reviewed by Joseph Pecoraro.
+
+        Right now, the only way to create an Inspector Style Sheet is by creating a new rule in the
+        Styles sidebar of the Elements Tab. This is unnecessarily restrictive, especially for those
+        who don't use the Elements tab.
+
+        Add a + button after the filter bar in the Navigation sidebar. Clicking on the + button will
+        show a menu with the following (more likely to be added later):
+         - Inspector Style Sheet
+         - Frames (if there are subframes)
+           - (name of subframe)
+              - Inspector Style Sheet
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.treeElementForRepresentedObject): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._filterByResourcesWithIssues): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._updateMainFrameTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addResource):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateResourceContextMenu): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceGroupingModeChanged):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleFrameWasAdded): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleMainFrameDidChange): Deleted.
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WI.GeneralTreeElement.prototype.createFoldersAsNeededForSubpath):
+        Drive-by: sort `WI.ResourceTreeElement`s alongside `WI.FolderTreeElement`s for easier readability.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.onpopulate):
+        Add all `inspectorStyleSheetsForFrame` instead of just the preferred one so that they all
+        are visible/selectable for editing.
+
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar):
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > .navigation-bar > .item):
+        (.filter-bar > input[type="search"]):
+        (.filter-bar > .navigation-bar + input[type="search"]): Added.
+        (.filter-bar > input[type="search"] + .navigation-bar:empty): Added.
+        Move the position of the filter bar buttons to be after the filter bar itself, so that other
+        parents can add action items before the filter bar to keep a consistent positioning.
+         - to the left of the filter bar are action items (e.g. "+")
+         - the filter bar itself
+         - to the right of the filter bar are filter buttons (e.g. "filter by resoure with issue")
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.get frames):
+        Drive-by: use `Array.from`, instead of `[...map.values()]`.
+
+        * UserInterface/Models/Frame.js:
+        (WI.Frame.prototype.get url):
+        (WI.Frame.prototype.get urlComponents): Added.
+
+        * UserInterface/Base/URLUtilities.js.js:
+        (parseURL):
+        Calculate and include the `origin` string with the output.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype.preferredInspectorStyleSheetForFrame):
+        Remove `doNotCreateIfMissing` now that the last caller has been removed.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-08-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: CodeMirror still inserts a tab even when "Prefer indent using" is set to "Spaces"
         https://bugs.webkit.org/show_bug.cgi?id=200770
 

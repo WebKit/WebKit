@@ -27,13 +27,14 @@ function test()
                 InspectorTest.log("");
                 InspectorTest.log("Test Valid: " + url);
 
-                let {scheme: expectedScheme, userinfo: expectedUserInfo, host: expectedHost, port: expectedPort, path: expectedPath, queryString: expectedQueryString, fragment: expectedFragment, lastPathComponent: expectedLastPathComponent} = expected;
-                let {scheme: actualScheme, userinfo: actualUserInfo, host: actualHost, port: actualPort, path: actualPath, queryString: actualQueryString, fragment: actualFragment, lastPathComponent: actualLastPathComponent} = parseURL(url);
+                let {scheme: expectedScheme, userinfo: expectedUserInfo, host: expectedHost, port: expectedPort, origin: expectedOrigin, path: expectedPath, queryString: expectedQueryString, fragment: expectedFragment, lastPathComponent: expectedLastPathComponent} = expected;
+                let {scheme: actualScheme, userinfo: actualUserInfo, host: actualHost, port: actualPort, origin: actualOrigin, path: actualPath, queryString: actualQueryString, fragment: actualFragment, lastPathComponent: actualLastPathComponent} = parseURL(url);
 
                 InspectorTest.expectEqual(actualScheme, expectedScheme, `scheme should be: '${expectedScheme}'`);
                 InspectorTest.expectEqual(actualUserInfo, expectedUserInfo, `userinfo should be: '${expectedUserInfo}'`);
                 InspectorTest.expectEqual(actualHost, expectedHost, `host should be: '${expectedHost}'`);
                 InspectorTest.expectEqual(actualPort, expectedPort, `port should be: '${expectedPort}'`);
+                InspectorTest.expectEqual(actualOrigin, expectedOrigin, `origin should be: '${expectedOrigin}'`);
                 InspectorTest.expectEqual(actualPath, expectedPath, `path should be: '${expectedPath}'`);
                 InspectorTest.expectEqual(actualQueryString, expectedQueryString, `queryString should be: '${expectedQueryString}'`);
                 InspectorTest.expectEqual(actualFragment, expectedFragment, `fragment should be: '${expectedFragment}'`);
@@ -48,6 +49,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: null,
                 queryString: null,
                 fragment: null,
@@ -59,6 +61,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -70,6 +73,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: 80,
+                origin: "http://example.com:80",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -81,6 +85,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/path/to/page.html",
                 queryString: null,
                 fragment: null,
@@ -92,6 +97,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/path/to/page.html",
                 queryString: "",
                 fragment: null,
@@ -103,6 +109,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/path/to/page.html",
                 queryString: "a=1",
                 fragment: null,
@@ -114,6 +121,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/path/to/page.html",
                 queryString: "a=1&b=2",
                 fragment: null,
@@ -125,6 +133,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/path/to/page.html",
                 queryString: "a=1&b=2",
                 fragment: "test",
@@ -136,6 +145,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: 123,
+                origin: "http://example.com:123",
                 path: "/path/to/page.html",
                 queryString: "a=1&b=2",
                 fragment: "test",
@@ -147,6 +157,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/path/to/page.html",
                 queryString: null,
                 fragment: "test",
@@ -158,6 +169,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: null,
                 queryString: null,
                 fragment: "alpha/beta",
@@ -169,6 +181,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "app-specific://example.com",
                 path: null,
                 queryString: null,
                 fragment: null,
@@ -180,6 +193,7 @@ function test()
                 userinfo: null,
                 host: "example",
                 port: null,
+                origin: "http://example",
                 path: null,
                 queryString: null,
                 fragment: null,
@@ -191,6 +205,7 @@ function test()
                 userinfo: null,
                 host: "my.example.com",
                 port: null,
+                origin: "http://my.example.com",
                 path: null,
                 queryString: null,
                 fragment: null,
@@ -203,6 +218,7 @@ function test()
                 userinfo: null,
                 host: null,
                 port: null,
+                origin: null,
                 path: null,
                 queryString: null,
                 fragment: null,
@@ -221,6 +237,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -232,6 +249,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -243,6 +261,7 @@ function test()
                 userinfo: "user:pass",
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -254,6 +273,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -265,6 +285,7 @@ function test()
                 userinfo: null,
                 host: "example.com",
                 port: null,
+                origin: "http://example.com",
                 path: null,
                 queryString: "key=alpha/beta",
                 fragment: null,
@@ -416,6 +437,50 @@ function test()
 
             return true;
         }
+    });
+
+    suite.addTestCase({
+        name: "WI.displayNameForURL",
+        test() {
+            const tests = [
+                {url: "a", expected: "a"},
+                {url: "http://", expected: "http://"},
+                {url: "http://example", expected: "example"},
+                {url: "http://example.com", expected: "example.com"},
+                {url: "http://example.com/", expected: "example.com", directory: "/"},
+                {url: "http://example.com:999999999", expected: "example.com"},
+                {url: "http://example.com:80/", expected: "example.com", directory: "/"},
+                {url: "http://example.com/path", expected: "path"},
+                {url: "http://example.com/path/", expected: "path", directory: "/"},
+                {url: "http://example.com/path/to", expected: "to"},
+                {url: "http://example.com/path/to/", expected: "to", directory: "/"},
+                {url: "http://example.com/path/to/page.html", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html?", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html?a=1", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html?a=1&b=2", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html?a=1&b=2#test", expected: "page.html"},
+                {url: "http://example.com:123/path/to/page.html?a=1&b=2#test", expected: "page.html"},
+                {url: "http://example.com/path/to/page.html#test", expected: "page.html"},
+                {url: "http://example.com#alpha/beta", expected: "example.com"},
+                {url: "http://example.com?key=alpha/beta", expected: "beta"},
+                {url: "http://user:pass@example.com/", expected: "example.com", directory: "/"},
+                {url: "http://my.example.com", expected: "my.example.com"},
+                {url: "file://foo/bar", expected: "bar"},
+                {url: "data:text/plain,test", expected: "data:text/plain,test"},
+                {url: "about:blank", expected: "about:blank"},
+                {url: "about:srcdoc", expected: "about:srcdoc"},
+                {url: "app-specific://example.com", expected: "example.com"},
+            ];
+
+            for (let {url, expected} of tests)
+                InspectorTest.expectEqual(WI.displayNameForURL(url), expected, `Display name of '${url}' should be '${expected}'.`);
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Allowing directory as name...");
+            for (let {url, expected, directory} of tests)
+                InspectorTest.expectEqual(WI.displayNameForURL(url, null, {allowDirectoryAsName: true}), directory || expected, `Display name of '${url}' should be '${directory || expected}'.`);
+        },
     });
 
     suite.addTestCase({

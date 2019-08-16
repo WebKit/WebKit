@@ -300,6 +300,7 @@ localizedStrings["Could not fetch properties. Object may no longer exist."] = "C
 localizedStrings["Count"] = "Count";
 localizedStrings["Create %s Rule"] = "Create %s Rule";
 localizedStrings["Create Breakpoint"] = "Create Breakpoint";
+localizedStrings["Create Resource"] = "Create Resource";
 localizedStrings["Create a new tab"] = "Create a new tab";
 localizedStrings["Cross-Origin Restrictions"] = "Cross-Origin Restrictions";
 localizedStrings["Current"] = "Current";

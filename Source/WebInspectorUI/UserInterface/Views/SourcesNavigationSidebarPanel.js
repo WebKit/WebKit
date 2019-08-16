@@ -242,23 +242,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
-        let onlyShowResourcesWithIssuesFilterFunction = (treeElement) => {
-            if (treeElement.treeOutline !== this._resourcesTreeOutline)
-                return true;
+        if (InspectorBackend.domains.CSS) {
+            let createResourceNavigationBar = new WI.NavigationBar;
 
-            if (treeElement instanceof WI.IssueTreeElement)
-                return true;
+            let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
+            WI.addMouseDownContextMenuHandlers(createResourceButtonNavigationItem.element, this._populateCreateResourceContextMenu.bind(this));
+            createResourceNavigationBar.addNavigationItem(createResourceButtonNavigationItem);
 
-            if (treeElement.hasChildren) {
-                for (let child of treeElement.children) {
-                    if (child instanceof WI.IssueTreeElement)
-                        return true;
-                }
-            }
-            return false;
-        };
+            this.filterBar.element.insertBefore(createResourceNavigationBar.element, this.filterBar.element.firstChild);
+        }
+
         const activatedByDefault = false;
-        this.filterBar.addFilterBarButton("sources-only-show-resources-with-issues", onlyShowResourcesWithIssuesFilterFunction, activatedByDefault, WI.UIString("Only show resources with issues"), WI.UIString("Show all resources"), "Images/Errors.svg", 15, 15);
+        this.filterBar.addFilterBarButton("sources-only-show-resources-with-issues", this._filterByResourcesWithIssues.bind(this), activatedByDefault, WI.UIString("Only show resources with issues"), WI.UIString("Show all resources"), "Images/Errors.svg", 15, 15);
 
         WI.settings.resourceGroupingMode.addEventListener(WI.Setting.Event.Changed, this._handleResourceGroupingModeChanged, this);
 
@@ -266,7 +261,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
         WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
 
-        WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._handleMainFrameDidChange, this);
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
@@ -429,8 +424,21 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return null;
         }
 
-        if (representedObject instanceof WI.Resource && representedObject.parentFrame && representedObject.parentFrame.mainResource === representedObject)
-            representedObject = representedObject.parentFrame;
+        switch (WI.settings.resourceGroupingMode.value) {
+        case WI.Resource.GroupingMode.Path:
+            if (representedObject instanceof WI.Frame)
+                representedObject = representedObject.mainResource;
+            break;
+
+        default:
+            WI.reportInternalError("Unknown resource grouping mode", {"Resource Grouping Mode": WI.settings.resourceGroupingMode.value});
+            // Fallthrough for default value.
+
+        case WI.Resource.GroupingMode.Type:
+            if (representedObject instanceof WI.Resource && representedObject.parentFrame && representedObject.parentFrame.mainResource === representedObject)
+                representedObject = representedObject.parentFrame;
+            break;
+        }
 
         function isAncestor(ancestor, resourceOrFrame) {
             // SourceMapResources are descendants of another SourceCode object.
@@ -597,6 +605,23 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     // Private
 
+    _filterByResourcesWithIssues(treeElement)
+    {
+        if (treeElement.treeOutline !== this._resourcesTreeOutline)
+            return true;
+
+        if (treeElement instanceof WI.IssueTreeElement)
+            return true;
+
+        if (treeElement.hasChildren) {
+            for (let child of treeElement.children) {
+                if (child instanceof WI.IssueTreeElement)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     _compareTreeElements(a, b)
     {
         const rankFunctions = [
@@ -604,8 +629,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             (treeElement) => treeElement === this._mainFrameTreeElement,
             (treeElement) => treeElement instanceof WI.FrameTreeElement,
             (treeElement) => {
-                return treeElement instanceof WI.FolderTreeElement
-                    && treeElement !== this._extensionScriptsFolderTreeElement
+                return treeElement !== this._extensionScriptsFolderTreeElement
                     && treeElement !== this._extraScriptsFolderTreeElement
                     && treeElement !== this._anonymousScriptsFolderTreeElement;
             },
@@ -638,18 +662,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (!mainFrame)
             return;
 
-        let resourceGroupingMode = WI.settings.resourceGroupingMode.value;
-        switch (resourceGroupingMode) {
-        case WI.Resource.GroupingMode.Path:
+        switch (WI.settings.resourceGroupingMode.value) {
+        case WI.Resource.GroupingMode.Path: {
             for (let treeElement of this._originTreeElementMap.values()) {
                 if (treeElement !== oldMainFrameTreeElement)
                     this._resourcesTreeOutline.removeChild(treeElement);
             }
             this._originTreeElementMap.clear();
 
-            this._mainFrameTreeElement = new WI.FolderTreeElement(mainFrame.securityOrigin, mainFrame);
-            this._originTreeElementMap.set(mainFrame.securityOrigin, this._mainFrameTreeElement);
+            let origin = mainFrame.urlComponents.origin;
+            this._mainFrameTreeElement = new WI.FolderTreeElement(origin);
+            this._originTreeElementMap.set(origin, this._mainFrameTreeElement);
             break;
+        }
 
         default:
             WI.reportInternalError("Unknown resource grouping mode", {"Resource Grouping Mode": WI.settings.resourceGroupingMode.value});
@@ -711,32 +736,30 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!this._mainFrameTreeElement || this._resourcesTreeOutline.findTreeElement(resource))
                 return;
 
-            let origin = null;
-            if (resource.urlComponents.scheme && resource.urlComponents.host) {
-                origin = resource.urlComponents.scheme + "://" + resource.urlComponents.host;
-                if (resource.urlComponents.port)
-                    origin += ":" + resource.urlComponents.port;
-            } else if (resource.parentFrame)
-                origin = resource.parentFrame.securityOrigin;
-
             let parentTreeElement = null;
-            if (origin) {
-                let frameTreeElement = this._originTreeElementMap.get(origin);
-                if (!frameTreeElement) {
-                    frameTreeElement = new WI.FolderTreeElement(origin, origin === resource.parentFrame.securityOrigin ? resource.parentFrame : null);
-                    this._originTreeElementMap.set(origin, frameTreeElement);
 
-                    let index = insertionIndexForObjectInListSortedByFunction(frameTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
-                    this._resourcesTreeOutline.insertChild(frameTreeElement, index);
-                }
+            if (resource instanceof WI.CSSStyleSheet && resource.isInspectorStyleSheet())
+                parentTreeElement = this._resourcesTreeOutline.findTreeElement(resource.parentFrame.mainResource);
 
-                let subpath = resource.urlComponents.path;
-                if (subpath && subpath[0] === "/")
-                    subpath = subpath.substring(1);
+            if (!parentTreeElement) {
+                let origin = resource.urlComponents.origin;
+                if (origin) {
+                    let frameTreeElement = this._originTreeElementMap.get(origin);
+                    if (!frameTreeElement) {
+                        frameTreeElement = new WI.FolderTreeElement(origin);
+                        this._originTreeElementMap.set(origin, frameTreeElement);
 
-                parentTreeElement = frameTreeElement.createFoldersAsNeededForSubpath(subpath);
-            } else {
-                parentTreeElement = this._resourcesTreeOutline;
+                        let index = insertionIndexForObjectInListSortedByFunction(frameTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                        this._resourcesTreeOutline.insertChild(frameTreeElement, index);
+                    }
+
+                    let subpath = resource.urlComponents.path;
+                    if (subpath && subpath[0] === "/")
+                        subpath = subpath.substring(1);
+
+                    parentTreeElement = frameTreeElement.createFoldersAsNeededForSubpath(subpath, this._boundCompareTreeElements);
+                } else
+                    parentTreeElement = this._resourcesTreeOutline;
             }
 
             let resourceTreeElement = null;
@@ -1505,7 +1528,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             || treeElement instanceof WI.ScriptTreeElement
             || treeElement instanceof WI.CSSStyleSheetTreeElement) {
             let representedObject = treeElement.representedObject;
-            if (representedObject instanceof WI.Collection || representedObject instanceof WI.SourceCode)
+            if (representedObject instanceof WI.Collection || representedObject instanceof WI.SourceCode || representedObject instanceof WI.Frame)
                 WI.showRepresentedObject(representedObject);
             return;
         }
@@ -1646,6 +1669,42 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _populateCreateResourceContextMenu(contextMenu)
+    {
+        if (InspectorBackend.domains.CSS) {
+            let addInspectorStyleSheetItem = (menu, frame) => {
+                menu.appendItem(WI.UIString("Inspector Style Sheet"), () => {
+                    if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {
+                        // Force the parent to populate.
+                        let parentFrameTreeElement = this._resourcesTreeOutline.findTreeElement(frame.mainResource);
+                        parentFrameTreeElement.reveal();
+                        parentFrameTreeElement.expand();
+                    }
+
+                    WI.cssManager.preferredInspectorStyleSheetForFrame(frame, (styleSheet) => {
+                        WI.showRepresentedObject(styleSheet);
+                    });
+                });
+            };
+
+            addInspectorStyleSheetItem(contextMenu, WI.networkManager.mainFrame);
+
+            let frames = WI.networkManager.frames;
+            if (frames.length > 2) {
+                let framesSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Frames"));
+
+                for (let frame of frames) {
+                    if (frame === WI.networkManager.mainFrame || frame.mainResource.type !== WI.Resource.Type.Document)
+                        continue;
+
+                    let frameSubMenuItem = framesSubMenu.appendSubMenuItem(frame.name ? WI.UIString("%s (%s)").format(frame.name, frame.mainResource.displayName) : frame.mainResource.displayName);
+
+                    addInspectorStyleSheetItem(frameSubMenuItem, frame);
+                }
+            }
+        }
+    }
+
     _handleResourceGroupingModeChanged(event)
     {
         this._workerTargetTreeElementMap.clear();
@@ -1662,6 +1721,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (mainFrame) {
             this._updateMainFrameTreeElement(mainFrame);
             this._addResourcesRecursivelyForFrame(mainFrame);
+
+            for (let frame of WI.networkManager.frames) {
+                if (frame !== mainFrame)
+                    this._addResourcesRecursivelyForFrame(frame);
+            }
         }
 
         for (let script of WI.debuggerManager.knownNonResourceScripts) {
@@ -1695,11 +1759,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._addResource(event.data.resource);
     }
 
-    _handleMainFrameDidChange(event)
+    _handleFrameWasAdded(event)
     {
-        let mainFrame = WI.networkManager.mainFrame;
-        this._updateMainFrameTreeElement(mainFrame);
-        this._addResourcesRecursivelyForFrame(mainFrame);
+        let {frame} = event.data;
+
+        if (frame.isMainFrame())
+            this._updateMainFrameTreeElement(frame);
+
+        this._addResourcesRecursivelyForFrame(frame);
     }
 
     _handleDebuggerBreakpointAdded(event)

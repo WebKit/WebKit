@@ -96,11 +96,11 @@ function parseURL(url)
     url = url ? url.trim() : "";
 
     if (url.startsWith("data:"))
-        return {scheme: "data", userinfo: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
+        return {scheme: "data", userinfo: null, host: null, port: null, origin: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
     let match = url.match(/^(?<scheme>[^\/:]+):\/\/(?:(?<userinfo>[^#@\/]+)@)?(?<host>[^\/#:]*)(?::(?<port>[\d]+))?(?:(?<path>\/[^#]*)?(?:#(?<fragment>.*))?)?$/i);
     if (!match)
-        return {scheme: null, userinfo: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
+        return {scheme: null, userinfo: null, host: null, port: null, origin: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
     let scheme = match.groups.scheme.toLowerCase();
     let userinfo = match.groups.userinfo || null;
@@ -131,7 +131,14 @@ function parseURL(url)
             lastPathComponent = path.substring(lastSlashIndex + 1, path.length - endOffset);
     }
 
-    return {scheme, userinfo, host, port, path, queryString, fragment, lastPathComponent};
+    let origin = null;
+    if (scheme && host) {
+        origin = scheme + "://" + host;
+        if (port)
+            origin += ":" + port;
+    }
+
+    return {scheme, userinfo, host, port, origin, path, queryString, fragment, lastPathComponent};
 }
 
 function absoluteURL(partialURL, baseURL)
@@ -234,7 +241,7 @@ WI.displayNameForURL = function(url, urlComponents, options = {})
         displayName = urlComponents.lastPathComponent;
     }
 
-    if (options.allowDirectoryAsName && (!displayName || urlComponents.path.endsWith(displayName + "/")))
+    if (options.allowDirectoryAsName && (urlComponents.path === "/" || (displayName && urlComponents.path.endsWith(displayName + "/"))))
         displayName = "/";
 
     return displayName || WI.displayNameForHost(urlComponents.host) || url;

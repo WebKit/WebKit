@@ -113,7 +113,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     get frames()
     {
-        return [...this._frameIdentifierMap.values()];
+        return Array.from(this._frameIdentifierMap.values());
     }
 
     frameForIdentifier(frameId)

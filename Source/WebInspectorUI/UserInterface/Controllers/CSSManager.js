@@ -305,7 +305,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         return this.styleSheets.filter((styleSheet) => styleSheet.isInspectorStyleSheet() && styleSheet.parentFrame === frame);
     }
 
-    preferredInspectorStyleSheetForFrame(frame, callback, doNotCreateIfMissing)
+    preferredInspectorStyleSheetForFrame(frame, callback)
     {
         var inspectorStyleSheets = this.inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
@@ -314,9 +314,6 @@ WI.CSSManager = class CSSManager extends WI.Object
                 return;
             }
         }
-
-        if (doNotCreateIfMissing)
-            return;
 
         if (CSSAgent.createStyleSheet) {
             CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {

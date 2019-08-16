@@ -187,7 +187,12 @@ WI.Frame = class Frame extends WI.Object
 
     get url()
     {
-        return this._mainResource._url;
+        return this._mainResource.url;
+    }
+
+    get urlComponents()
+    {
+        return this._mainResource.urlComponents;
     }
 
     get domTree()

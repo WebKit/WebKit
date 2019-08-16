@@ -32,9 +32,6 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._element = element || document.createElement("div");
         this._element.classList.add("filter-bar");
 
-        this._filtersNavigationBar = new WI.NavigationBar;
-        this._element.appendChild(this._filtersNavigationBar.element);
-
         this._filterFunctionsMap = new Map;
 
         this._inputField = document.createElement("input");
@@ -45,6 +42,9 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._inputField.addEventListener("search", this._handleFilterChanged.bind(this));
         this._inputField.addEventListener("input", this._handleFilterInputEvent.bind(this));
         this._element.appendChild(this._inputField);
+
+        this._filtersNavigationBar = new WI.NavigationBar;
+        this._element.appendChild(this._filtersNavigationBar.element);
 
         this._lastFilterValue = this.filters;
     }
