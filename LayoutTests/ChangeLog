@@ -1,3 +1,17 @@
+2019-08-16  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make operator== native and add bool matrices
+        https://bugs.webkit.org/show_bug.cgi?id=200749
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl/bool-matrix-expected.txt: Added.
+        * webgpu/whlsl/bool-matrix.html: Added.
+        * webgpu/whlsl/builtin-vectors.html:
+        * webgpu/whlsl/matrices-spec-tests.html:
+        * webgpu/whlsl/operator-equal-equal-expected.txt: Added.
+        * webgpu/whlsl/operator-equal-equal.html: Added.
+
 2019-08-16  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add ContentChangeObserver::elementDidBecomeHidden

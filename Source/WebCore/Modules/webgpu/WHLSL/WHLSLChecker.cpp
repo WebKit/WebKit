@@ -427,7 +427,7 @@ static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPoint
     return true;
 }
 
-static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinition, const Intrinsics& intrinsics, NameContext& nameContext)
+static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinition, NameContext& nameContext)
 {
     enum class CheckKind {
         Index,
@@ -541,14 +541,6 @@ static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinit
         return functionDefinition.parameters().size() == 2;
     if (functionDefinition.name() == "operator~")
         return functionDefinition.parameters().size() == 1;
-    if (functionDefinition.name() == "operator=="
-        || functionDefinition.name() == "operator<"
-        || functionDefinition.name() == "operator<="
-        || functionDefinition.name() == "operator>"
-        || functionDefinition.name() == "operator>=") {
-        return functionDefinition.parameters().size() == 2
-            && matches(functionDefinition.type(), intrinsics.boolType());
-    }
     if (functionDefinition.name() == "operator[]")
         return checkGetter(CheckKind::Index);
     if (functionDefinition.name() == "operator[]=")
@@ -759,7 +751,7 @@ void Checker::visit(AST::FunctionDefinition& functionDefinition)
             return;
         }
     }
-    if (!checkOperatorOverload(functionDefinition, m_intrinsics, m_program.nameContext())) {
+    if (!checkOperatorOverload(functionDefinition, m_program.nameContext())) {
         setError(Error("Operator does not match expected signature.", functionDefinition.codeLocation()));
         return;
     }

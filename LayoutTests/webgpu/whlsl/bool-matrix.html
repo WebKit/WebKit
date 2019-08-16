@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>bool matrix.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.boolMatrix = async () => {
+    const program = `
+        int foo() {
+            bool2x2 m;
+            m[0] = bool2(true, false);
+            m[1] = bool2(true, true);
+            return int(m[0][0]) + int(m[0][1]) + int(m[1][0]) + int(m[1][1]);
+        }
+    `;
+
+    assert_equals(await callIntFunction(program,  "foo", []), 3);
+};
+
+whlslTests.boolMatrix2 = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m = bool2x2(true, false, true, false);
+            return m[0][0] && !m[0][1] && m[1][0] && !m[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrix3 = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m = bool2x2(true, false, true, false);
+            return m[0][0] && !m[0][1] && m[1][0] && !m[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrix4 = async () => {
+    const program = `
+        bool foo() {
+            bool2x3 m = bool2x3(true, true, true, false, false, false);
+            return m[0][0] && m[0][1] && m[0][2] && !m[1][0] && !m[1][1] && !m[1][2];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrix5 = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m;
+            m[0] = bool2(true, false);
+            m[1] = bool2(true, false);
+            return m[0][0] && !m[0][1] && m[1][0] && !m[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrixAny = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m = bool2x2(false, false, false, false);
+            return !any(m);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrixAny2 = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m = bool2x2(false, false, true, false);
+            return any(m);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrixAll = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m = bool2x2(true, true, true, false);
+            return !all(m);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.boolMatrixAll2 = async () => {
+    const program = `
+        bool foo() {
+            bool2x2 m = bool2x2(true, true, true, true);
+            return all(m);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

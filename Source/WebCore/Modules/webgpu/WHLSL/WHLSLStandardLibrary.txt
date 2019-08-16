@@ -55,6 +55,26 @@ native typedef matrix<float, 4, 3>;
 typedef float4x3 = matrix<float, 4, 3>;
 native typedef matrix<float, 4, 4>;
 typedef float4x4 = matrix<float, 4, 4>;
+
+native typedef matrix<bool, 2, 2>;
+typedef bool2x2 = matrix<bool, 2, 2>;
+native typedef matrix<bool, 2, 3>;
+typedef bool2x3 = matrix<bool, 2, 3>;
+native typedef matrix<bool, 2, 4>;
+typedef bool2x4 = matrix<bool, 2, 4>;
+native typedef matrix<bool, 3, 2>;
+typedef bool3x2 = matrix<bool, 3, 2>;
+native typedef matrix<bool, 3, 3>;
+typedef bool3x3 = matrix<bool, 3, 3>;
+native typedef matrix<bool, 3, 4>;
+typedef bool3x4 = matrix<bool, 3, 4>;
+native typedef matrix<bool, 4, 2>;
+typedef bool4x2 = matrix<bool, 4, 2>;
+native typedef matrix<bool, 4, 3>;
+typedef bool4x3 = matrix<bool, 4, 3>;
+native typedef matrix<bool, 4, 4>;
+typedef bool4x4 = matrix<bool, 4, 4>;
+
 native typedef sampler;
 native typedef Texture1D<uint>;
 native typedef Texture1D<uint2>;
@@ -2469,6 +2489,15 @@ native float3x4 operator[]=(float3x4, uint, float4);
 native float4x2 operator[]=(float4x2, uint, float2);
 native float4x3 operator[]=(float4x3, uint, float3);
 native float4x4 operator[]=(float4x4, uint, float4);
+native bool2x2 operator[]=(bool2x2, uint, bool2);
+native bool2x3 operator[]=(bool2x3, uint, bool3);
+native bool2x4 operator[]=(bool2x4, uint, bool4);
+native bool3x2 operator[]=(bool3x2, uint, bool2);
+native bool3x3 operator[]=(bool3x3, uint, bool3);
+native bool3x4 operator[]=(bool3x4, uint, bool4);
+native bool4x2 operator[]=(bool4x2, uint, bool2);
+native bool4x3 operator[]=(bool4x3, uint, bool3);
+native bool4x4 operator[]=(bool4x4, uint, bool4);
 
 
 /* Functions named operator.yxyx */
@@ -11019,6 +11048,15 @@ native float4 operator[](float3x4, uint);
 native float2 operator[](float4x2, uint);
 native float3 operator[](float4x3, uint);
 native float4 operator[](float4x4, uint);
+native bool2 operator[](bool2x2, uint);
+native bool3 operator[](bool2x3, uint);
+native bool4 operator[](bool2x4, uint);
+native bool2 operator[](bool3x2, uint);
+native bool3 operator[](bool3x3, uint);
+native bool4 operator[](bool3x4, uint);
+native bool2 operator[](bool4x2, uint);
+native bool3 operator[](bool4x3, uint);
+native bool4 operator[](bool4x4, uint);
 
 /* Functions named operator.yywz */
 bool4 operator.yywz(bool4 v) {
@@ -12183,6 +12221,123 @@ bool all(float4x4 x) {
     result = result && (x[3][3] != 0);
     return result;
 }
+bool all(bool2x2 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    return result;
+}
+bool all(bool2x3 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[0][2];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[1][2];
+    return result;
+}
+bool all(bool2x4 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[0][2];
+    result = result && x[0][3];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[1][2];
+    result = result && x[1][3];
+    return result;
+}
+bool all(bool3x2 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[2][0];
+    result = result && x[2][1];
+    return result;
+}
+bool all(bool3x3 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[0][2];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[1][2];
+    result = result && x[2][0];
+    result = result && x[2][1];
+    result = result && x[2][2];
+    return result;
+}
+bool all(bool3x4 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[0][2];
+    result = result && x[0][3];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[1][2];
+    result = result && x[1][3];
+    result = result && x[2][0];
+    result = result && x[2][1];
+    result = result && x[2][2];
+    result = result && x[2][3];
+    return result;
+}
+bool all(bool4x2 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[2][0];
+    result = result && x[2][1];
+    result = result && x[3][0];
+    result = result && x[3][1];
+    return result;
+}
+bool all(bool4x3 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[0][2];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[1][2];
+    result = result && x[2][0];
+    result = result && x[2][1];
+    result = result && x[2][2];
+    result = result && x[3][0];
+    result = result && x[3][1];
+    result = result && x[3][2];
+    return result;
+}
+bool all(bool4x4 x) {
+    bool result = true;
+    result = result && x[0][0];
+    result = result && x[0][1];
+    result = result && x[0][2];
+    result = result && x[0][3];
+    result = result && x[1][0];
+    result = result && x[1][1];
+    result = result && x[1][2];
+    result = result && x[1][3];
+    result = result && x[2][0];
+    result = result && x[2][1];
+    result = result && x[2][2];
+    result = result && x[2][3];
+    result = result && x[3][0];
+    result = result && x[3][1];
+    result = result && x[3][2];
+    result = result && x[3][3];
+    return result;
+}
 
 
 /* Functions named operator.w= */
@@ -12304,7 +12459,96 @@ uint4 firstbitlow(int4 x) {
     result[3] = firstbitlow(x[3]);
     return result;
 }
-
+operator bool2x2(bool2 a, bool2 b) {
+    bool2x2 result;
+    result[0] = a;
+    result[1] = b;
+    return result;
+}
+operator bool2x3(bool3 a, bool3 b) {
+    bool2x3 result;
+    result[0] = a;
+    result[1] = b;
+    return result;
+}
+operator bool2x4(bool4 a, bool4 b) {
+    bool2x4 result;
+    result[0] = a;
+    result[1] = b;
+    return result;
+}
+operator bool3x2(bool2 a, bool2 b, bool2 c) {
+    bool3x2 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    return result;
+}
+operator bool3x3(bool3 a, bool3 b, bool3 c) {
+    bool3x3 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    return result;
+}
+operator bool3x4(bool4 a, bool4 b, bool4 c) {
+    bool3x4 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    return result;
+}
+operator bool4x2(bool2 a, bool2 b, bool2 c, bool2 d) {
+    bool4x2 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    return result;
+}
+operator bool4x3(bool3 a, bool3 b, bool3 c, bool3 d) {
+    bool4x3 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    return result;
+}
+operator bool4x4(bool4 a, bool4 b, bool4 c, bool4 d) {
+    bool4x4 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    return result;
+}
+operator bool2x2(bool a, bool b, bool e, bool f) {
+    return bool2x2(bool2(a, b), bool2(e, f));
+}
+operator bool2x3(bool a, bool b, bool c, bool e, bool f, bool g) {
+    return bool2x3(bool3(a, b, c), bool3(e, f, g));
+}
+operator bool2x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h) {
+    return bool2x4(bool4(a, b, c, d), bool4(e, f, g, h));
+}
+operator bool3x2(bool a, bool b, bool e, bool f, bool i, bool j) {
+    return bool3x2(bool2(a, b), bool2(e, f), bool2(i, j));
+}
+operator bool3x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k) {
+    return bool3x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k));
+}
+operator bool3x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l) {
+    return bool3x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l));
+}
+operator bool4x2(bool a, bool b, bool e, bool f, bool i, bool j, bool m, bool n) {
+    return bool4x2(bool2(a, b), bool2(e, f), bool2(i, j), bool2(m, n));
+}
+operator bool4x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k, bool m, bool n, bool o) {
+    return bool4x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k), bool3(m, n, o));
+}
+operator bool4x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l, bool m, bool n, bool o, bool p) {
+    return bool4x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l), bool4(m, n, o, p));
+}
 
 /* Functions named operator.xwxy */
 bool4 operator.xwxy(bool4 v) {
@@ -16195,159 +16439,36 @@ native bool operator==(bool, bool);
 native bool operator==(int, int);
 native bool operator==(uint, uint);
 native bool operator==(float, float);
-bool operator==(bool2 a, bool2 b) {
-    return a.x == b.x && a.y == b.y;
-}
-bool operator==(bool3 a, bool3 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-bool operator==(bool4 a, bool4 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
-}
-bool operator==(uint2 a, uint2 b) {
-    return a.x == b.x && a.y == b.y;
-}
-bool operator==(uint3 a, uint3 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-bool operator==(uint4 a, uint4 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
-}
-bool operator==(int2 a, int2 b) {
-    return a.x == b.x && a.y == b.y;
-}
-bool operator==(int3 a, int3 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-bool operator==(int4 a, int4 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
-}
-bool operator==(float2 a, float2 b) {
-    return a.x == b.x && a.y == b.y;
-}
-bool operator==(float3 a, float3 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-bool operator==(float4 a, float4 b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
-}
-bool operator==(float2x2 a, float2x2 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-    true;
-}
-bool operator==(float2x3 a, float2x3 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[0][2] == b[0][2] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[1][2] == b[1][2] &&
-    true;
-}
-bool operator==(float2x4 a, float2x4 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[0][2] == b[0][2] &&
-        a[0][3] == b[0][3] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[1][2] == b[1][2] &&
-        a[1][3] == b[1][3] &&
-    true;
-}
-bool operator==(float3x2 a, float3x2 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[2][0] == b[2][0] &&
-        a[2][1] == b[2][1] &&
-    true;
-}
-bool operator==(float3x3 a, float3x3 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[0][2] == b[0][2] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[1][2] == b[1][2] &&
-        a[2][0] == b[2][0] &&
-        a[2][1] == b[2][1] &&
-        a[2][2] == b[2][2] &&
-    true;
-}
-bool operator==(float3x4 a, float3x4 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[0][2] == b[0][2] &&
-        a[0][3] == b[0][3] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[1][2] == b[1][2] &&
-        a[1][3] == b[1][3] &&
-        a[2][0] == b[2][0] &&
-        a[2][1] == b[2][1] &&
-        a[2][2] == b[2][2] &&
-        a[2][3] == b[2][3] &&
-    true;
-}
-bool operator==(float4x2 a, float4x2 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[2][0] == b[2][0] &&
-        a[2][1] == b[2][1] &&
-        a[3][0] == b[3][0] &&
-        a[3][1] == b[3][1] &&
-    true;
-}
-bool operator==(float4x3 a, float4x3 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[0][2] == b[0][2] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[1][2] == b[1][2] &&
-        a[2][0] == b[2][0] &&
-        a[2][1] == b[2][1] &&
-        a[2][2] == b[2][2] &&
-        a[3][0] == b[3][0] &&
-        a[3][1] == b[3][1] &&
-        a[3][2] == b[3][2] &&
-    true;
-}
-bool operator==(float4x4 a, float4x4 b) {
-    return
-        a[0][0] == b[0][0] &&
-        a[0][1] == b[0][1] &&
-        a[0][2] == b[0][2] &&
-        a[0][3] == b[0][3] &&
-        a[1][0] == b[1][0] &&
-        a[1][1] == b[1][1] &&
-        a[1][2] == b[1][2] &&
-        a[1][3] == b[1][3] &&
-        a[2][0] == b[2][0] &&
-        a[2][1] == b[2][1] &&
-        a[2][2] == b[2][2] &&
-        a[2][3] == b[2][3] &&
-        a[3][0] == b[3][0] &&
-        a[3][1] == b[3][1] &&
-        a[3][2] == b[3][2] &&
-        a[3][3] == b[3][3] &&
-    true;
-}
+native bool2 operator==(bool2, bool2);
+native bool3 operator==(bool3, bool3);
+native bool4 operator==(bool4, bool4);
+native bool2 operator==(uint2, uint2);
+native bool3 operator==(uint3, uint3);
+native bool4 operator==(uint4, uint4);
+native bool2 operator==(int2, int2);
+native bool3 operator==(int3, int3);
+native bool4 operator==(int4, int4);
+native bool2 operator==(float2, float2);
+native bool3 operator==(float3, float3);
+native bool4 operator==(float4, float4);
+native bool2x2 operator==(float2x2, float2x2);
+native bool2x3 operator==(float2x3, float2x3);
+native bool2x4 operator==(float2x4, float2x4);
+native bool3x2 operator==(float3x2, float3x2);
+native bool3x3 operator==(float3x3, float3x3);
+native bool3x4 operator==(float3x4, float3x4);
+native bool4x2 operator==(float4x2, float4x2);
+native bool4x3 operator==(float4x3, float4x3);
+native bool4x4 operator==(float4x4, float4x4);
+native bool2x2 operator==(bool2x2, bool2x2);
+native bool2x3 operator==(bool2x3, bool2x3);
+native bool2x4 operator==(bool2x4, bool2x4);
+native bool3x2 operator==(bool3x2, bool3x2);
+native bool3x3 operator==(bool3x3, bool3x3);
+native bool3x4 operator==(bool3x4, bool3x4);
+native bool4x2 operator==(bool4x2, bool4x2);
+native bool4x3 operator==(bool4x3, bool4x3);
+native bool4x4 operator==(bool4x4, bool4x4);
 
 /* Functions named operator>> */
 native int operator>>(int, uint);
@@ -34561,7 +34682,123 @@ bool any(float4x4 x) {
     result = result || (x[3][3] != 0);
     return result;
 }
-
+bool any(bool2x2 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    return result;
+}
+bool any(bool2x3 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[0][2];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[1][2];
+    return result;
+}
+bool any(bool2x4 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[0][2];
+    result = result || x[0][3];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[1][2];
+    result = result || x[1][3];
+    return result;
+}
+bool any(bool3x2 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[2][0];
+    result = result || x[2][1];
+    return result;
+}
+bool any(bool3x3 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[0][2];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[1][2];
+    result = result || x[2][0];
+    result = result || x[2][1];
+    result = result || x[2][2];
+    return result;
+}
+bool any(bool3x4 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[0][2];
+    result = result || x[0][3];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[1][2];
+    result = result || x[1][3];
+    result = result || x[2][0];
+    result = result || x[2][1];
+    result = result || x[2][2];
+    result = result || x[2][3];
+    return result;
+}
+bool any(bool4x2 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[2][0];
+    result = result || x[2][1];
+    result = result || x[3][0];
+    result = result || x[3][1];
+    return result;
+}
+bool any(bool4x3 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[0][2];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[1][2];
+    result = result || x[2][0];
+    result = result || x[2][1];
+    result = result || x[2][2];
+    result = result || x[3][0];
+    result = result || x[3][1];
+    result = result || x[3][2];
+    return result;
+}
+bool any(bool4x4 x) {
+    bool result = false;
+    result = result || x[0][0];
+    result = result || x[0][1];
+    result = result || x[0][2];
+    result = result || x[0][3];
+    result = result || x[1][0];
+    result = result || x[1][1];
+    result = result || x[1][2];
+    result = result || x[1][3];
+    result = result || x[2][0];
+    result = result || x[2][1];
+    result = result || x[2][2];
+    result = result || x[2][3];
+    result = result || x[3][0];
+    result = result || x[3][1];
+    result = result || x[3][2];
+    result = result || x[3][3];
+    return result;
+}
 
 /* Functions named operator.yxww */
 bool4 operator.yxww(bool4 v) {

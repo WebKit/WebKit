@@ -174,8 +174,6 @@ private:
     AST::NativeTypeDeclaration* m_vectorInt[3] { 0 };
     AST::NativeTypeDeclaration* m_vectorFloat[3] { 0 };
 
-    AST::NativeTypeDeclaration* m_matrixFloat[3][3] {{ 0 }};
-
     static constexpr const char* m_textureTypeNames[] = { "Texture1D", "RWTexture1D", "Texture2D", "RWTexture2D", "Texture3D", "RWTexture3D", "TextureCube", "Texture1DArray", "RWTexture1DArray", "Texture2DArray", "RWTexture2DArray" };
 
     static constexpr const char* m_textureInnerTypeNames[] = { "uint", "int", "float" };

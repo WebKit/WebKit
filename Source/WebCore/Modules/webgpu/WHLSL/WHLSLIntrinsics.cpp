@@ -187,22 +187,12 @@ bool Intrinsics::addMatrix(AST::NativeTypeDeclaration& nativeTypeDeclaration)
     if (nativeTypeDeclaration.name() != "matrix")
         return false;
 
+    nativeTypeDeclaration.setIsMatrix();
+
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 3);
     ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
     ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]));
     ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]));
-    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
-    auto& rowExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]);
-    auto& columnExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]);
-    ASSERT_UNUSED(innerType, !innerType.typeArguments().size());
-    ASSERT_UNUSED(innerType, innerType.name() == "float");
-    auto array = m_matrixFloat;
-    int row = rowExpression.integerLiteral().value();
-    ASSERT(row >= 2 && row <= 4);
-    int column = columnExpression.integerLiteral().value();
-    ASSERT(column >= 2 && column <= 4);
-    nativeTypeDeclaration.setIsMatrix();
-    array[row - 2][column - 2] = &nativeTypeDeclaration;
     return true;
 }
 

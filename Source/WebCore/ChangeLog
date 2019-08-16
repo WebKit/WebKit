@@ -1,3 +1,41 @@
+2019-08-16  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make operator== native and add bool matrices
+        https://bugs.webkit.org/show_bug.cgi?id=200749
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch makes operator== native and implements them the right way
+        for vectors and matrices. Previously, we would just return a single
+        boolean indicating if all elements were equal. However, to be compatible
+        with HLSL, we should return a boolean vector or matrix, indicating which
+        elements are equal or not. This patch makes this change, and in the process,
+        adds a bool matrix.
+
+        This patch also:
+        - Lifts the requirement that all comparison operators in user code must return bool.
+        We no longer follow this in the standard library, and don't want to require user
+        code to do so. It seems reasonable to have a custom comparison operator
+        which returns an enum of the form { LessThan, Equal, GreaterThan, Incomparable }
+        - Changes the native operator inliner to no longer assume that operations on
+        matrices return the same type as the arguments. This was true for math, but
+        is not true for comparison operators.
+
+        Tests: webgpu/whlsl/bool-matrix.html
+               webgpu/whlsl/operator-equal-equal.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::checkOperatorOverload):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::addMatrix):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::WTF_ARRAY_LENGTH):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-08-16  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add ContentChangeObserver::elementDidBecomeHidden

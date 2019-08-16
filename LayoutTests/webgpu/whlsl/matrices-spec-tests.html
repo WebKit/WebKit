@@ -54,7 +54,7 @@ whlslTests.builtinMatrices = async () => {
                     a[i][j] += 4;
                 }
             }
-            return a == b;
+            return all(a == b);
         }
         bool foo5()
         {
@@ -66,7 +66,7 @@ whlslTests.builtinMatrices = async () => {
             b[0][1] = 2;
             b[1][0] = 3;
             b[1][1] = 4;
-            return a == b;
+            return all(a == b);
         }
         bool foo6()
         {
@@ -82,7 +82,7 @@ whlslTests.builtinMatrices = async () => {
             b[1][1] = 24;
             a[0] *= 5;
             a[1] *= 6;
-            return a == b;
+            return all(a == b);
         }
         float foo7()
         {

@@ -97,7 +97,9 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         auto& namedType = downcast<AST::NamedType>(unifyNode);
         auto& parameterType = downcast<AST::NativeTypeDeclaration>(namedType);
         auto prefix = ([&]() -> String {
-            ASSERT_UNUSED(parameterType, parameterType.name() == "float");
+            if (parameterType.name() == "bool")
+                return "bool";
+            ASSERT(parameterType.name() == "float");
             return "float";
         })();
 

@@ -79,14 +79,14 @@ whlslTests.builtinVectors = async () =>
             int4 a = int4(3, 4, 5, 6);
             int2 b = int2(4, 5);
             int4 c = int4(3, b, 6);
-            return a == c;
+            return all(a == c);
         }
         bool foo6()
         {
             int2 a = int2(4, 5);
             int3 b = int3(3, a);
             int3 c = int3(3, 4, 6);
-            return b == c;
+            return all(b == c);
         }
         uint foou()
         {
@@ -117,14 +117,14 @@ whlslTests.builtinVectors = async () =>
             uint4 a = uint4(3, 4, 5, 6);
             uint2 b = uint2(4, 5);
             uint4 c = uint4(3, b, 6);
-            return a == c;
+            return all(a == c);
         }
         bool foou6()
         {
             uint2 a = uint2(4, 5);
             uint3 b = uint3(3, a);
             uint3 c = uint3(3, 4, 6);
-            return b == c;
+            return all(b == c);
         }
         float foof()
         {
@@ -155,14 +155,14 @@ whlslTests.builtinVectors = async () =>
             float4 a = float4(3., 4., 5., 6.);
             float2 b = float2(4., 5.);
             float4 c = float4(3., b, 6.);
-            return a == c;
+            return all(a == c);
         }
         bool foof6()
         {
             float2 a = float2(4., 5.);
             float3 b = float3(3., a);
             float3 c = float3(3., 4., 6.);
-            return b == c;
+            return all(b == c);
         }
     `;
     assert_equals(await callIntFunction(program, "foo", []), 3);

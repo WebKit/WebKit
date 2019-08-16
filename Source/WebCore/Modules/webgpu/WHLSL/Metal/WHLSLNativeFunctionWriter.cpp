@@ -375,34 +375,33 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
 
     if (nativeFunctionDeclaration.isOperator()) {
         auto operatorName = nativeFunctionDeclaration.name().substring("operator"_str.length());
-        auto firstParameterType = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
+        auto metalReturnType = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
         if (nativeFunctionDeclaration.parameters().size() == 1) {
             if (auto* matrixType = asMatrixType(nativeFunctionDeclaration.type())) {
                 stringBuilder.flexibleAppend(
-                    "{\n", firstParameterType, " x = ", args[0], ";\n",
+                    "{\n", metalReturnType, " x = ", args[0], ";\n",
                     "for (size_t i = 0; i < x.size(); ++i) x[i] = ", operatorName, "x[i];\n",
                     returnName, " = x;\n}\n");
             } else {
                 stringBuilder.flexibleAppend(
-                    "{\n", firstParameterType, " x = ", args[0], ";\n", 
+                    "{\n", metalReturnType, " x = ", args[0], ";\n", 
                     returnName, " = ", operatorName, "x;\n}\n");
             }
             return;
         }
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
-        auto secondParameterType = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         if (auto* leftMatrix = asMatrixType(*nativeFunctionDeclaration.parameters()[0]->type())) {
             if (auto* rightMatrix = asMatrixType(*nativeFunctionDeclaration.parameters()[1]->type())) {
                 // matrix <op> matrix
                 stringBuilder.flexibleAppend(
-                    "{\n", firstParameterType, " x;\n",
+                    "{\n", metalReturnType, " x;\n",
                     "for (size_t i = 0; i < x.size(); ++i) x[i] = ", args[0], "[i] ", operatorName, ' ', args[1], "[i];\n",
                     returnName, " = x;\n}\n");
             } else {
                 // matrix <op> scalar
                 stringBuilder.flexibleAppend(
-                    "{\n", firstParameterType, " x;\n",
+                    "{\n", metalReturnType, " x;\n",
                     "for (size_t i = 0; i < x.size(); ++i) x[i] = ", args[0], "[i] ", operatorName, ' ', args[1], ";\n",
                     returnName, " = x;\n}\n");
             }
@@ -410,7 +409,7 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
             ASSERT(!asMatrixType(*nativeFunctionDeclaration.parameters()[0]->type()));
             // scalar <op> matrix
             stringBuilder.flexibleAppend(
-                "{\n", secondParameterType, " x;\n",
+                "{\n", metalReturnType, " x;\n",
                 "for (size_t i = 0; i < x.size(); ++i) x[i] = ", args[0], ' ', operatorName, ' ', args[1], "[i];\n",
                 returnName, " = x;\n}\n");
         } else {
