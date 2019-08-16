@@ -1,3 +1,11 @@
+2019-08-16  Russell Epstein  <repstein@apple.com>
+
+        Landing TestExpectation Changes for rdar://52594556 and rdar://52557916.
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations:
+
 2019-08-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248722. rdar://problem/54360866
