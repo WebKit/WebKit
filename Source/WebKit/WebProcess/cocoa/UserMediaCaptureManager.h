@@ -46,6 +46,7 @@ class CrossProcessRealtimeAudioSource;
 class WebProcess;
 
 class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver, public WebCore::AudioCaptureFactory, public WebCore::VideoCaptureFactory, public WebCore::DisplayCaptureFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();

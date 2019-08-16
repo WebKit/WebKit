@@ -60,6 +60,7 @@ using namespace WebKit;
 namespace WebKit {
     
 class SoftwareCARenderer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SoftwareCARenderer(uint32_t contextID)
         : m_context { [CAContext localContext] }

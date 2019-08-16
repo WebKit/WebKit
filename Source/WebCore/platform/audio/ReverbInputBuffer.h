@@ -34,7 +34,8 @@
 namespace WebCore {
 
 // ReverbInputBuffer is used to buffer input samples for deferred processing by the background threads.
-class ReverbInputBuffer {
+class ReverbInputBuffer final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ReverbInputBuffer(size_t length);
 

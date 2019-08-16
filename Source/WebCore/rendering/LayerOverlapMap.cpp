@@ -71,6 +71,7 @@ static TextStream& operator<<(TextStream& ts, const RectList& rectList)
 // Checking for overlap involves finding the node for the clipping layer enclosing the given layer (or the root),
 // and comparing against the bounds of earlier siblings.
 class OverlapMapContainer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     OverlapMapContainer(const RenderLayer& rootLayer)
         : m_rootScope(rootLayer)

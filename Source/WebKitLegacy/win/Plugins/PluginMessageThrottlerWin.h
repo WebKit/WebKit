@@ -35,6 +35,7 @@ namespace WebCore {
     class PluginView;
 
     struct PluginMessage {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         HWND hWnd;
         UINT msg;
         WPARAM wParam;
@@ -44,6 +45,7 @@ namespace WebCore {
     };
 
     class PluginMessageThrottlerWin {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         PluginMessageThrottlerWin(PluginView*);
         ~PluginMessageThrottlerWin();

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class GraphicsContextImpl {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GraphicsContextImpl);
 public:
     GraphicsContextImpl(GraphicsContext&, const FloatRect& initialClip, const AffineTransform&);

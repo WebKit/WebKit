@@ -37,6 +37,7 @@ class CurlResponse;
 class SharedBuffer;
 
 class CurlMultipartHandle {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<CurlMultipartHandle> createIfNeeded(CurlMultipartHandleClient&, const CurlResponse&);
 

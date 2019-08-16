@@ -35,6 +35,7 @@ namespace WebCore {
 struct FourCC;
 
 class CDMFactoryFairPlayStreaming final : public CDMFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static CDMFactoryFairPlayStreaming& singleton();
 
@@ -49,6 +50,7 @@ private:
 };
 
 class CDMPrivateFairPlayStreaming final : public CDMPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMPrivateFairPlayStreaming();
     virtual ~CDMPrivateFairPlayStreaming();

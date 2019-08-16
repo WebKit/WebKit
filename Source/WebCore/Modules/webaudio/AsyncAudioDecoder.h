@@ -42,7 +42,8 @@ class AudioBufferCallback;
 // AsyncAudioDecoder asynchronously decodes audio file data from an ArrayBuffer in a worker thread.
 // Upon successful decoding, a completion callback will be invoked with the decoded PCM data in an AudioBuffer.
 
-class AsyncAudioDecoder {
+class AsyncAudioDecoder final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AsyncAudioDecoder);
 public:
     AsyncAudioDecoder();

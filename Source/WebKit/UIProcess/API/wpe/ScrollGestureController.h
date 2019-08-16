@@ -30,6 +30,7 @@
 namespace WebKit {
 
 class ScrollGestureController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScrollGestureController() = default;
 

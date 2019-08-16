@@ -45,6 +45,7 @@ class WebPage;
 class WebProcess;
 
 class WebNotificationManager : public WebProcessSupplement, public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebNotificationManager);
 public:
     explicit WebNotificationManager(WebProcess&);

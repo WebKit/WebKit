@@ -70,6 +70,7 @@ static guint signals[LAST_SIGNAL] = { 0, };
 WEBKIT_DEFINE_TYPE(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT)
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AutomationSessionClient(WebKitAutomationSession* session)
         : m_session(session)

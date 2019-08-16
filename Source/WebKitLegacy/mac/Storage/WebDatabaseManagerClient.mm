@@ -94,6 +94,7 @@ WebDatabaseManagerClient::~WebDatabaseManagerClient()
 }
 
 class DidModifyOriginData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static void dispatchToMainThread(WebDatabaseManagerClient& client, const SecurityOriginData& origin)
     {

@@ -2576,6 +2576,7 @@ void NetworkProcess::requestStorageSpace(PAL::SessionID sessionID, const ClientO
 }
 
 class QuotaUserInitializer final : public WebCore::StorageQuotaUser {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit QuotaUserInitializer(StorageQuotaManager& manager)
         : m_manager(makeWeakPtr(manager))

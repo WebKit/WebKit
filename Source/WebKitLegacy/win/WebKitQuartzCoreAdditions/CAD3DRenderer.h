@@ -43,6 +43,7 @@ namespace WKQCA {
 class Image;
 
 class D3DPostProcessingContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     D3DPostProcessingContext(const CComPtr<IDirect3DTexture9>&, const CComPtr<IDirect3DVertexBuffer9>&);
 

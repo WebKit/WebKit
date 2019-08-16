@@ -37,6 +37,7 @@ WEBCORE_EXPORT extern const char* const errorDomainWebKitInternal; // Used for e
 WEBCORE_EXPORT extern const char* const errorDomainWebKitServiceWorker; // Used for errors that happen when loading a resource from a service worker.
 
 class ResourceErrorBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT ResourceError isolatedCopy() const;
 

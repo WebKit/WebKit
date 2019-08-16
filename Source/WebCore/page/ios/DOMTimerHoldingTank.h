@@ -35,6 +35,7 @@ namespace WebCore {
 class DOMTimer;
 
 class DOMTimerHoldingTank {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMTimerHoldingTank();
     ~DOMTimerHoldingTank();

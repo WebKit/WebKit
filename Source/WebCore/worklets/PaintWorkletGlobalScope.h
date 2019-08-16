@@ -49,6 +49,7 @@ public:
 
     // All paint definitions must be destroyed before the vm is destroyed, because otherwise they will point to freed memory.
     struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<String>&& inputProperties, Vector<String>&& inputArguments);
 
         const AtomString name;

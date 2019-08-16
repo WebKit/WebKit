@@ -41,6 +41,7 @@ enum AutomationSessionBrowsingContextOptions : uint16_t {
 };
 
 class AutomationSessionClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class JavaScriptDialogType {
         Alert,

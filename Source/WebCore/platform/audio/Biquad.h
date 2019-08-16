@@ -41,6 +41,7 @@ namespace WebCore {
 //    lowpass, highpass, shelving, parameteric, notch, allpass, ...
 
 class Biquad final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:   
     Biquad();
     ~Biquad();

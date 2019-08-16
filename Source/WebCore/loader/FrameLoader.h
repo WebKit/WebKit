@@ -95,7 +95,8 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 
 using ContentPolicyDecisionFunction = WTF::Function<void(PolicyAction, PolicyCheckIdentifier)>;
 
-class FrameLoader {
+class FrameLoader final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
     FrameLoader(Frame&, FrameLoaderClient&);

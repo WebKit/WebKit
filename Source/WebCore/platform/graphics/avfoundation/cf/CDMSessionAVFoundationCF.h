@@ -38,6 +38,7 @@ namespace WebCore {
 class MediaPlayerPrivateAVFoundationCF;
 
 class CDMSessionAVFoundationCF final : public LegacyCDMSession {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient*);
 

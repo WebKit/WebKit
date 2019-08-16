@@ -70,6 +70,7 @@ class WebUserContentControllerProxy;
 struct WebsiteData;
 
 class NetworkProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<NetworkProcessProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;
     using TopFrameDomain = WebCore::RegistrableDomain;

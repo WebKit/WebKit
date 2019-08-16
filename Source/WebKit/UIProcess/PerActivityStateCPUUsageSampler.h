@@ -35,6 +35,7 @@ class WebPageProxy;
 class WebProcessPool;
 
 class PerActivityStateCPUUsageSampler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PerActivityStateCPUUsageSampler(WebProcessPool&);
     ~PerActivityStateCPUUsageSampler();

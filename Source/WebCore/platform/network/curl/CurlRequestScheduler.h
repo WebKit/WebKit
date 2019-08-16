@@ -38,6 +38,7 @@ namespace WebCore {
 class CurlRequestSchedulerClient;
 
 class CurlRequestScheduler {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CurlRequestScheduler);
     friend NeverDestroyed<CurlRequestScheduler>;
 public:

@@ -32,6 +32,7 @@
 #include <objidl.h>
 
 class DraggingInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DraggingInfo(IDataObject* object, IDropSource* source)
         : m_object(object)

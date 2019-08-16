@@ -231,6 +231,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InternalSettingsWrapper(Page* page)
         : m_internalSettings(InternalSettings::create(page)) { }

@@ -47,6 +47,7 @@
 using std::wstring;
 
 class DRTUndoObject {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DRTUndoObject(IWebUndoTarget* target, BSTR actionName, IUnknown* obj)
         : m_target(target)
@@ -71,6 +72,7 @@ private:
 };
 
 class DRTUndoStack {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     bool isEmpty() const { return m_undoVector.isEmpty(); }
     void clear() { m_undoVector.clear(); }
@@ -83,6 +85,7 @@ private:
 };
 
 class DRTUndoManager {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DRTUndoManager();
 

@@ -37,7 +37,6 @@ class VideoEncoderFactory;
 namespace WebCore {
 
 class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCProviderCocoa() = default;
     ~LibWebRTCProviderCocoa();

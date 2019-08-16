@@ -43,6 +43,7 @@ namespace WebCore {
 static const int kFullScreenAnimationDuration = 500; // milliseconds 
 
 class FullScreenController::Private : public MediaPlayerPrivateFullscreenClient  {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Private(FullScreenController* controller, FullScreenControllerClient* client) 
         : m_controller(controller)

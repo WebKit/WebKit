@@ -38,7 +38,7 @@ namespace WebCore {
 // N bytes : CueTimeBox : box : optional
 // N bytes : CueSettingsBox : box : optional
 // N bytes : CuePayloadBox : box : required
-class ISOWebVTTCue : public ISOBox {
+class ISOWebVTTCue final : public ISOBox {
 public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
 

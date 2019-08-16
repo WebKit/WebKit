@@ -198,6 +198,7 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 #if ENABLE(REMOTE_INSPECTOR)
 class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebKitAutomationClient(WebKitWebContext* context)
         : m_webContext(context)

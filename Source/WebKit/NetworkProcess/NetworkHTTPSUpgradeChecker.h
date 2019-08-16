@@ -42,6 +42,7 @@ class SessionID;
 namespace WebKit {
 
 class NetworkHTTPSUpgradeChecker {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NetworkHTTPSUpgradeChecker();
     ~NetworkHTTPSUpgradeChecker();

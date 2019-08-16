@@ -78,6 +78,7 @@ enum class OperatingDatesWindow : bool { Long, Short };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsStore : public CanMakeWeakPtr<ResourceLoadStatisticsStore> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
     using RegistrableDomain = WebCore::RegistrableDomain;

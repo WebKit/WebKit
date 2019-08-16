@@ -33,6 +33,7 @@ OBJC_CLASS UIView;
 namespace WebKit {
 
 class InputViewUpdateDeferrer {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(InputViewUpdateDeferrer);
 public:
     explicit InputViewUpdateDeferrer(UIView *);

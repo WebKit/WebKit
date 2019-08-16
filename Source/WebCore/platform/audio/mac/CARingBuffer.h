@@ -39,6 +39,7 @@ typedef struct AudioBufferList AudioBufferList;
 namespace WebCore {
 
 class CARingBufferStorage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CARingBufferStorage() = default;
     virtual void allocate(size_t) = 0;
@@ -46,7 +47,7 @@ public:
     virtual void* data() = 0;
 };
 
-class CARingBufferStorageVector : public CARingBufferStorage {
+class CARingBufferStorageVector final : public CARingBufferStorage {
 public:
     ~CARingBufferStorageVector() = default;
 

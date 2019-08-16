@@ -48,6 +48,7 @@ namespace WebKit {
 class NetworkProcess;
 
 class WebCookieManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebCookieManager);
 public:
     WebCookieManager(NetworkProcess&);

@@ -268,6 +268,7 @@ private:
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         PendingSeek(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
             : targetTime(targetTime)
             , negativeThreshold(negativeThreshold)

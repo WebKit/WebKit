@@ -42,6 +42,7 @@ namespace WebCore {
 #endif
 
     class SuddenTerminationDisabler {
+        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(SuddenTerminationDisabler);
     public:
         SuddenTerminationDisabler()

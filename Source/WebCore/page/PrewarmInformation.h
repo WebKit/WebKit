@@ -32,6 +32,7 @@
 namespace WebCore {
 
 struct WEBCORE_EXPORT PrewarmInformation {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     FontCache::PrewarmInformation fontCache;
 
     template<class Encoder> void encode(Encoder&) const;

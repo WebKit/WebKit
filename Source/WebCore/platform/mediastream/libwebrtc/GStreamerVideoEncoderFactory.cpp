@@ -60,6 +60,7 @@ GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
 namespace WebCore {
 
 class GStreamerVideoEncoder : public webrtc::VideoEncoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GStreamerVideoEncoder(const webrtc::SdpVideoFormat&)
         : m_firstFramePts(GST_CLOCK_TIME_NONE)

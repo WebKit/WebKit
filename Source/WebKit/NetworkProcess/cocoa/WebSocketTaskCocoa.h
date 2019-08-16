@@ -41,6 +41,7 @@ class NetworkSession;
 class NetworkSocketChannel;
 
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSocketTask(NetworkSocketChannel&, RetainPtr<NSURLSessionWebSocketTask>&&);
     ~WebSocketTask();

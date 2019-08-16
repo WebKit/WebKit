@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 
 class ResourceLoadDelegate : public IWebResourceLoadDelegate, public IWebResourceLoadDelegatePrivate2 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ResourceLoadDelegate();
     virtual ~ResourceLoadDelegate();

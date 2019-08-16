@@ -45,6 +45,7 @@ struct ShadowState;
 }
 
 class PlatformContextDirect2D {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContextDirect2D);
 public:
     PlatformContextDirect2D(ID2D1RenderTarget*);

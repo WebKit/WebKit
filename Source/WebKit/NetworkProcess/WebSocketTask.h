@@ -34,6 +34,7 @@
 namespace WebKit {
 
 class WebSocketTask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef uint64_t TaskIdentifier;
 

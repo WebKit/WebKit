@@ -92,6 +92,7 @@ static const unsigned statusCheckThreshold = 5;
 // FIXME: This class is currently empty on Mac, but will get populated as
 // the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
 class GraphicsContext3DPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsContext3DPrivate(GraphicsContext3D*) { }
     

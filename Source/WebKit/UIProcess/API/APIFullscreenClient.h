@@ -32,6 +32,7 @@ class WebPageProxy;
 namespace API {
 
 class FullscreenClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Type {
         APIType,

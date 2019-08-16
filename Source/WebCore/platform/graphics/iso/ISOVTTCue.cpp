@@ -35,7 +35,7 @@ using JSC::DataView;
 
 namespace WebCore {
 
-class ISOStringBox : public ISOBox {
+class ISOStringBox final : public ISOBox {
 public:
     const String& contents() { return m_contents; }
 

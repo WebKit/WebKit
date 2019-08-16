@@ -34,6 +34,7 @@ class WebGeolocationManagerProxy;
 namespace API {
 
 class GeolocationProvider {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~GeolocationProvider() { }
 

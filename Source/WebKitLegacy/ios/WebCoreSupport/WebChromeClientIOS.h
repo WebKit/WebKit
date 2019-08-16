@@ -28,6 +28,7 @@
 #import "WebChromeClient.h"
 
 class WebChromeClientIOS final : public WebChromeClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebChromeClientIOS(WebView* webView)
         : WebChromeClient(webView)

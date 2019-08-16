@@ -50,6 +50,7 @@ struct Int : public CanMakeWeakPtr<Int> {
 };
 
 class Base : public CanMakeWeakPtr<Base> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Base() { }
 

@@ -44,6 +44,7 @@ class WebProcess;
 class WebPage;
 
 class WebGeolocationManager : public WebProcessSupplement, public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
 public:
     explicit WebGeolocationManager(WebProcess&);

@@ -40,6 +40,7 @@ ALLOW_UNUSED_PARAMETERS_END
 namespace WebCore {
 
 class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&&);
     ~LibWebRTCDTMFSenderBackend();

@@ -26,6 +26,7 @@
 #include <wtf/glib/GUniquePtr.h>
 
 struct AsyncReadData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     AsyncReadData(GRefPtr<GTask>&& task, void* buffer, gsize count)
         : task(WTFMove(task))
         , buffer(buffer)
@@ -39,6 +40,7 @@ struct AsyncReadData {
 };
 
 struct _WebKitSoupRequestInputStreamPrivate {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     uint64_t contentLength;
     uint64_t bytesReceived;
     uint64_t bytesRead;

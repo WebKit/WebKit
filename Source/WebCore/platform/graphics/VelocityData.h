@@ -65,6 +65,7 @@ struct VelocityData  {
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const VelocityData&);
 
 class HistoricalVelocityData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     HistoricalVelocityData() = default;
 

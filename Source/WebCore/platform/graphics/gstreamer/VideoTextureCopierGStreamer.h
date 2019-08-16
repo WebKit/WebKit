@@ -33,6 +33,7 @@ class TextureMapperShaderProgram;
 class ImageOrientation;
 
 class VideoTextureCopierGStreamer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class ColorConversion {
         ConvertBGRAToRGBA,

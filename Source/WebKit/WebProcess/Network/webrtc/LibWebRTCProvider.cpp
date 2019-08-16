@@ -37,6 +37,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class AsyncResolverFactory : public webrtc::AsyncResolverFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 private:
     rtc::AsyncResolverInterface* Create() final
     {
@@ -65,6 +66,7 @@ void LibWebRTCProvider::registerMDNSName(PAL::SessionID sessionID, uint64_t docu
 }
 
 class RTCSocketFactory final : public rtc::PacketSocketFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RTCSocketFactory(PAL::SessionID sessionID, String&& userAgent)
         : m_sessionID(sessionID)

@@ -41,6 +41,7 @@
 namespace Nicosia {
 
 class BackingStoreTextureMapperImpl final : public BackingStore::Impl, public WebCore::TiledBackingStoreClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Factory createFactory();
 

@@ -44,6 +44,7 @@ class WebContextMenuClient : public WebCore::ContextMenuClient
     , public WebSharingServicePickerClient
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebContextMenuClient(WebView *webView);
     virtual ~WebContextMenuClient();

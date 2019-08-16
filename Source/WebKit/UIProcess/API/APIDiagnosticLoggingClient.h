@@ -37,6 +37,7 @@ namespace API {
 class Dictionary;
 
 class DiagnosticLoggingClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DiagnosticLoggingClient() { }
 

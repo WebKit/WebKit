@@ -38,6 +38,7 @@ class View;
 namespace API {
 
 class ViewClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ViewClient() = default;
 

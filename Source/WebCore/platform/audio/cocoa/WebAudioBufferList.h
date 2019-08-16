@@ -39,7 +39,7 @@ namespace WebCore {
 
 class CAAudioStreamDescription;
 
-class WebAudioBufferList : public PlatformAudioData {
+class WebAudioBufferList final : public PlatformAudioData {
 public:
     WebAudioBufferList(const CAAudioStreamDescription&);
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, uint32_t sampleCount);

@@ -36,7 +36,8 @@ namespace WebCore {
 // ReverbAccumulationBuffer is a circular delay buffer with one client reading from it and multiple clients
 // writing/accumulating to it at different delay offsets from the read position.  The read operation will zero the memory
 // just read from the buffer, so it will be ready for accumulation the next time around.
-class ReverbAccumulationBuffer {
+class ReverbAccumulationBuffer final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ReverbAccumulationBuffer(size_t length);
 

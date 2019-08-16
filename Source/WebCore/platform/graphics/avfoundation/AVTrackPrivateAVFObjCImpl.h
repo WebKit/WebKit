@@ -44,6 +44,7 @@ namespace WebCore {
 class MediaSelectionOptionAVFObjC;
 
 class AVTrackPrivateAVFObjCImpl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
     explicit AVTrackPrivateAVFObjCImpl(AVAssetTrack*);

@@ -139,6 +139,7 @@ private:
 #endif
 
     struct PendingPromise {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         PendingPromise(Ref<DeferredPromise>&& promise, Ref<PendingActivity<ServiceWorkerContainer>>&& pendingActivity)
             : promise(WTFMove(promise))
             , pendingActivity(WTFMove(pendingActivity))

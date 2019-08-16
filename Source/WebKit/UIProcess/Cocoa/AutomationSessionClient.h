@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AutomationSessionClient(id <_WKAutomationSessionDelegate>);
 

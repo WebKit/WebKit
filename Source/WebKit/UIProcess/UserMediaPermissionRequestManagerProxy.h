@@ -48,6 +48,7 @@ class UserMediaPermissionRequestManagerProxy
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UserMediaPermissionRequestManagerProxy(WebPageProxy&);
     ~UserMediaPermissionRequestManagerProxy();

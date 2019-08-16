@@ -159,6 +159,7 @@ public:
 
     // Helper class for delaying destruction of a plug-in.
     class PluginDestructionProtector {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit PluginDestructionProtector(PluginController* pluginController)
             : m_pluginController(pluginController)

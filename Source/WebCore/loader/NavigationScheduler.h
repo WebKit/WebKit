@@ -46,6 +46,7 @@ class SecurityOrigin;
 enum class NewLoadInProgress : bool { No, Yes };
     
 class NavigationScheduler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();

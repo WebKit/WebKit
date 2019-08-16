@@ -36,6 +36,7 @@ namespace WebKit {
 class NetworkSocketChannel;
 
 class WebSocketTask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSocketTask(NetworkSocketChannel&, SoupSession*, SoupMessage*, const String& protocol);
     ~WebSocketTask();

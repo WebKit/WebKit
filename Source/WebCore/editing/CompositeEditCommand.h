@@ -41,6 +41,7 @@ class StyledElement;
 class Text;
 
 class AccessibilityUndoReplacedText {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AccessibilityUndoReplacedText() { }
     void configureRangeDeletedByReapplyWithStartingSelection(const VisibleSelection&);

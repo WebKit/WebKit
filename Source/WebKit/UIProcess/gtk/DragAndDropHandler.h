@@ -49,6 +49,7 @@ class ShareableBitmap;
 class WebPageProxy;
 
 class DragAndDropHandler {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DragAndDropHandler);
 public:
     DragAndDropHandler(WebPageProxy&);
@@ -64,6 +65,7 @@ public:
 
 private:
     struct DroppingContext {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         DroppingContext(GdkDragContext*, const WebCore::IntPoint& position);
 
         GdkDragContext* gdkContext { nullptr };

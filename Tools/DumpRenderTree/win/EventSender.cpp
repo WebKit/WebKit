@@ -59,6 +59,7 @@ static int timeOffset;
 static POINT lastMousePosition;
 
 struct DelayedMessage {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     MSG msg;
     unsigned delay;
 };

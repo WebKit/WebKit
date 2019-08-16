@@ -895,6 +895,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     class IconLoadingClient : public API::IconLoadingClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit IconLoadingClient(WKView *wkView)
             : m_wkView(wkView)

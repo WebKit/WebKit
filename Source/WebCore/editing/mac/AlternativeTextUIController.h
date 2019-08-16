@@ -37,6 +37,7 @@ OBJC_CLASS NSView;
 namespace WebCore {
 
 class AlternativeTextUIController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AlternativeTextUIController() { }
     // Returns a context ID.
@@ -52,6 +53,7 @@ private:
     void dismissAlternatives();
 
     class AlernativeTextContextController {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         AlernativeTextContextController() { }
         uint64_t addAlternatives(const RetainPtr<NSTextAlternatives>&);

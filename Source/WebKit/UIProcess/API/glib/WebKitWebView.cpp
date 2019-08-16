@@ -201,6 +201,7 @@ class PageLoadStateObserver;
 #if PLATFORM(WPE)
 static unsigned frameDisplayCallbackID;
 struct FrameDisplayedCallback {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     FrameDisplayedCallback(WebKitFrameDisplayedCallback callback, gpointer userData = nullptr, GDestroyNotify destroyNotifyFunction = nullptr)
         : id(++frameDisplayCallbackID)
         , callback(callback)
@@ -227,6 +228,7 @@ struct FrameDisplayedCallback {
 #endif // PLATFORM(WPE)
 
 struct _WebKitWebViewPrivate {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     ~_WebKitWebViewPrivate()
     {
         // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
@@ -326,6 +328,7 @@ void webkitWebViewIsPlayingAudioChanged(WebKitWebView* webView)
 }
 
 class PageLoadStateObserver final : public PageLoadState::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PageLoadStateObserver(WebKitWebView* webView)
         : m_webView(webView)
@@ -399,6 +402,7 @@ private:
 
 #if PLATFORM(WPE)
 class WebViewClient final : public API::ViewClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebViewClient(WebKitWebView* webView)
         : m_webView(webView)
@@ -3701,6 +3705,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* 
 }
 
 struct ViewSaveAsyncData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RefPtr<API::Data> webData;
     GRefPtr<GFile> file;
 };

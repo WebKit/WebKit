@@ -31,7 +31,7 @@ namespace WebCore {
 
 // Common type of stereo panner as found in normal audio mixing equipment.
 
-class EqualPowerPanner : public Panner {
+class EqualPowerPanner final : public Panner {
 public:
     explicit EqualPowerPanner(float sampleRate);
 

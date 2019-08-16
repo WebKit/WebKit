@@ -147,6 +147,7 @@ private:
 // CurlMultiHandle --------------------------------------------
 
 class CurlMultiHandle {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CurlMultiHandle);
 
 public:
@@ -202,6 +203,7 @@ class HTTPHeaderMap;
 class NetworkLoadMetrics;
 
 class CurlHandle {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CurlHandle);
 
 public:

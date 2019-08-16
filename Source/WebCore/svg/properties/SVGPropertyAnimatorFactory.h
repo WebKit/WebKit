@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class SVGPropertyAnimatorFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGPropertyAnimatorFactory() = default;
 

@@ -41,7 +41,8 @@ class RenderFullScreen;
 class RenderTreeBuilder;
 class RenderStyle;
 
-class FullscreenManager {
+class FullscreenManager final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FullscreenManager(Document&);
     ~FullscreenManager();

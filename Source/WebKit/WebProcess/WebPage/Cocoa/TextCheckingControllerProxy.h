@@ -47,6 +47,7 @@ namespace WebKit {
 class WebPage;
 
 class TextCheckingControllerProxy : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TextCheckingControllerProxy(WebPage&);
     ~TextCheckingControllerProxy();

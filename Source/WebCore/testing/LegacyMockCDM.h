@@ -34,6 +34,7 @@ namespace WebCore {
 class LegacyCDM;
 
 class LegacyMockCDM : public CDMPrivateInterface {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LegacyMockCDM(LegacyCDM* cdm)
         : m_cdm(cdm)

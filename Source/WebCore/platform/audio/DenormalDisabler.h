@@ -41,7 +41,8 @@ namespace WebCore {
 #endif
 
 #ifdef HAVE_DENORMAL
-class DenormalDisabler {
+class DenormalDisabler final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DenormalDisabler()
             : m_savedCSR(0)
@@ -103,7 +104,8 @@ private:
 
 #else
 // FIXME: add implementations for other architectures and compilers
-class DenormalDisabler {
+class DenormalDisabler final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DenormalDisabler() { }
 

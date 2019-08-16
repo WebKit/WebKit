@@ -590,6 +590,7 @@ TEST(WTF_HashMap, Ensure_RefPtr)
 }
 
 class ObjectWithRefLogger {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjectWithRefLogger(Ref<RefLogger>&& logger)
         : m_logger(WTFMove(logger))
@@ -680,23 +681,24 @@ TEST(WTF_HashMap, ValueIsDestructedOnRemove)
     EXPECT_TRUE(destructed);
 }
 
+struct DerefObserver {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    NEVER_INLINE void ref()
+    {
+        ++count;
+    }
+    NEVER_INLINE void deref()
+    {
+        --count;
+        observedBucket = bucketAddress->get();
+    }
+    unsigned count { 1 };
+    const RefPtr<DerefObserver>* bucketAddress { nullptr };
+    const DerefObserver* observedBucket { nullptr };
+};
+
 TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
 {
-    struct DerefObserver {
-        NEVER_INLINE void ref()
-        {
-            ++count;
-        }
-        NEVER_INLINE void deref()
-        {
-            --count;
-            observedBucket = bucketAddress->get();
-        }
-        unsigned count { 1 };
-        const RefPtr<DerefObserver>* bucketAddress { nullptr };
-        const DerefObserver* observedBucket { nullptr };
-    };
-
     auto observer = std::make_unique<DerefObserver>();
 
     HashMap<RefPtr<DerefObserver>, int> map;

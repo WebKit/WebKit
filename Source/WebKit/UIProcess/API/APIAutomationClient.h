@@ -35,6 +35,7 @@ class WebProcessPool;
 namespace API {
 
 class AutomationClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~AutomationClient() { }
 

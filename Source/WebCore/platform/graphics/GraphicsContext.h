@@ -557,6 +557,7 @@ public:
     bool shouldIncludeChildWindows() const;
 
     class WindowsBitmap {
+        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(WindowsBitmap);
     public:
         WindowsBitmap(HDC, const IntSize&);

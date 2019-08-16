@@ -44,7 +44,8 @@ enum class RouteSharingPolicy : uint8_t {
     LongFormVideo
 };
 
-class AudioSession {
+class AudioSession final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioSession);
 public:
     WEBCORE_EXPORT static AudioSession& sharedSession();

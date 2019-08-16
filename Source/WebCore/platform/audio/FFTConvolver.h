@@ -34,7 +34,9 @@
 
 namespace WebCore {
 
-class FFTConvolver {
+class FFTConvolver final {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(FFTConvolver);
 public:
     // fftSize must be a power of two
     FFTConvolver(size_t fftSize);

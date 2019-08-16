@@ -40,6 +40,7 @@ class TextureMapperLayer;
 namespace Nicosia {
 
 class CompositionLayerTextureMapperImpl final : public CompositionLayer::Impl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Factory createFactory();
 

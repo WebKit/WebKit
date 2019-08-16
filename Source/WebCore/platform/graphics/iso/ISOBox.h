@@ -36,6 +36,7 @@ class DataView;
 namespace WebCore {
 
 class WEBCORE_EXPORT ISOBox {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ISOBox() = default;
 

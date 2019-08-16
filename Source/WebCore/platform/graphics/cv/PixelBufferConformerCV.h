@@ -36,6 +36,7 @@ typedef struct __CVBuffer *CVPixelBufferRef;
 namespace WebCore {
 
 class PixelBufferConformerCV {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PixelBufferConformerCV(CFDictionaryRef attributes);
     RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);

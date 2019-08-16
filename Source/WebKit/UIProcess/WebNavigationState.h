@@ -45,6 +45,7 @@ class WebPageProxy;
 class WebBackForwardListItem;
 
 class WebNavigationState {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebNavigationState();
     ~WebNavigationState();

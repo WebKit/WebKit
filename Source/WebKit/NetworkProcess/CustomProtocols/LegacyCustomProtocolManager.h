@@ -63,6 +63,7 @@ class NetworkProcess;
 struct NetworkProcessCreationParameters;
 
 class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LegacyCustomProtocolManager);
 public:
     explicit LegacyCustomProtocolManager(NetworkProcess&);
@@ -78,6 +79,7 @@ public:
 #endif
 #if USE(SOUP)
     struct WebSoupRequestAsyncData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WebSoupRequestAsyncData(GRefPtr<GTask>&&, WebKitSoupRequestGeneric*);
         ~WebSoupRequestAsyncData();
 

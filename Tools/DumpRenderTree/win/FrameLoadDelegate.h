@@ -36,6 +36,7 @@ class TextInputController;
 class GCController;
 
 class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate2, public IWebNotificationObserver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FrameLoadDelegate();
     virtual ~FrameLoadDelegate();

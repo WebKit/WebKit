@@ -43,6 +43,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class SystemPreviewController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SystemPreviewController(WebPageProxy&);
 

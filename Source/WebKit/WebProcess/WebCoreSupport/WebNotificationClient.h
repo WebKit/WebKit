@@ -41,6 +41,7 @@ namespace WebKit {
 class WebPage;
 
 class WebNotificationClient : public WebCore::NotificationClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebNotificationClient(WebPage*);
     virtual ~WebNotificationClient();

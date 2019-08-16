@@ -30,8 +30,11 @@
 
 namespace TestWebKitAPI {
     
-class A { };
+class A {
+    WTF_MAKE_FAST_ALLOCATED;
+};
 class B {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     B(int a, int b, int c)
         : a(a)
@@ -43,6 +46,7 @@ public:
     int c;
 };
 class C {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     C(UniqueRef<A>&& a)
         : a(WTFMove(a))

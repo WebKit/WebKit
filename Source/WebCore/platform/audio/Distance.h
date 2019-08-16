@@ -40,7 +40,8 @@ enum class DistanceModelType {
     Exponential
 };
 
-class DistanceEffect {
+class DistanceEffect final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DistanceEffect();
 

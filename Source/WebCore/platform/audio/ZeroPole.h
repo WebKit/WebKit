@@ -33,7 +33,8 @@ namespace WebCore {
 
 // ZeroPole is a simple filter with one zero and one pole.
 
-class ZeroPole {
+class ZeroPole final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ZeroPole()
         : m_zero(0)

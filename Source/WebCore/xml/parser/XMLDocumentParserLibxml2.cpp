@@ -197,6 +197,7 @@ public:
 
 private:
     struct PendingCallback {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         virtual ~PendingCallback() = default;
         virtual void call(XMLDocumentParser* parser) = 0;
     };

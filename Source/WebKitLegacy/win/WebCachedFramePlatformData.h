@@ -33,6 +33,7 @@
 #include <WebCore/CachedFramePlatformData.h>
 
 class WebCachedFramePlatformData : public WebCore::CachedFramePlatformData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebCachedFramePlatformData(IWebDataSource* webDataSource) : m_webDataSource(webDataSource) { }
 

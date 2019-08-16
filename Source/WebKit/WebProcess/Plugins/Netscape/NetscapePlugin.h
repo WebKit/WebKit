@@ -308,6 +308,7 @@ private:
     Vector<bool, 8> m_popupEnabledStates;
 
     class Timer {
+        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Timer);
 
     public:

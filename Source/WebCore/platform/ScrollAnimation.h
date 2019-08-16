@@ -34,6 +34,7 @@ class FloatPoint;
 class ScrollableArea;
 
 class ScrollAnimation {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ScrollAnimation() { };
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float /* step */, float /* multiplier */) { return true; };

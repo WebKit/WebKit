@@ -34,8 +34,10 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <vector>
+#include <wtf/FastMalloc.h>
 
 class TextInputController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 

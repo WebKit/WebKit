@@ -35,6 +35,7 @@ class LegacyCDMSession;
 class LegacyCDMSessionClient;
 
 class CDMPrivateInterface {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMPrivateInterface() = default;
     virtual ~CDMPrivateInterface() = default;

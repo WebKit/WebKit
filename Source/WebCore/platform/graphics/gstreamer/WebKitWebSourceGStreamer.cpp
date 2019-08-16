@@ -50,6 +50,7 @@ using namespace WebCore;
 #define LOW_QUEUE_FACTOR_THRESHOLD 0.2
 
 class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
 public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&);

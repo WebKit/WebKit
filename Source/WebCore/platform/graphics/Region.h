@@ -91,6 +91,7 @@ private:
     };
 
     class Shape {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         Shape() = default;
         Shape(const IntRect&);

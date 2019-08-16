@@ -71,6 +71,7 @@ class OpenPanelParameters;
 class SecurityOrigin;
 
 class UIClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~UIClient() { }
 

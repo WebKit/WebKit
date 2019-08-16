@@ -41,6 +41,7 @@
 #endif
 
 class AccessibilityController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AccessibilityController();
     ~AccessibilityController();

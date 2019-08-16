@@ -34,6 +34,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPlugInClient : public WebCore::PlugInClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebPlugInClient(WebPage&);
     virtual ~WebPlugInClient();

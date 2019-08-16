@@ -49,6 +49,7 @@ class RootObject;
 class RuntimeObject;
 
 class Field {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual JSValue valueFromInstance(ExecState*, const Instance*) const = 0;
     virtual bool setValueToInstance(ExecState*, const Instance*, JSValue) const = 0;

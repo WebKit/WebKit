@@ -45,6 +45,7 @@ typedef ObjectObserverList::iterator ObserverListIterator;
 typedef HashMap<String, ObjectObserverList> MappedObservers;
 
 struct WebNotificationCenterPrivate {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     MappedObservers m_mappedObservers;
 };
 

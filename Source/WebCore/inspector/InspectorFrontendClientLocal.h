@@ -50,6 +50,7 @@ class InspectorFrontendClientLocal : public InspectorFrontendClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class WEBCORE_EXPORT Settings {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         Settings() = default;
         virtual ~Settings() = default;

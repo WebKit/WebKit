@@ -107,6 +107,7 @@ GstStream* webkitMediaStreamNew(MediaStreamTrackPrivate* track)
 
 class WebKitMediaStreamTrackObserver
     : public MediaStreamTrackPrivate::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebKitMediaStreamTrackObserver() { };
     WebKitMediaStreamTrackObserver(WebKitMediaStreamSrc* src)
@@ -143,6 +144,7 @@ private:
 
 class WebKitMediaStreamObserver
     : public MediaStreamPrivate::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebKitMediaStreamObserver() { };
     WebKitMediaStreamObserver(WebKitMediaStreamSrc* src)

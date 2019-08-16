@@ -47,6 +47,7 @@ namespace API {
 class Object;
 
 class PolicyClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PolicyClient() { }
 

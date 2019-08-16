@@ -35,7 +35,8 @@ class CachedSVGDocument;
 class CachedResourceLoader;
 struct ResourceLoaderOptions;
 
-class CachedSVGDocumentReference : public CachedSVGDocumentClient {
+class CachedSVGDocumentReference final : public CachedSVGDocumentClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CachedSVGDocumentReference(const String&);
 

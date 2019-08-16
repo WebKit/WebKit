@@ -213,6 +213,7 @@ public:
 #endif
 
 struct PrintPagesData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     PrintPagesData(WebPrintOperationGtk* printOperation)
         : printOperation(printOperation)
         , totalPrinted(-1)

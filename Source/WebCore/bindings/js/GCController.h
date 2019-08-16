@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class GCController {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GCController);
     friend class WTF::NeverDestroyed<GCController>;
 public:

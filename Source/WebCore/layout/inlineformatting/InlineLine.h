@@ -52,8 +52,10 @@ public:
     Line(const LayoutState&, const InitialConstraints&, SkipVerticalAligment);
 
     class Content {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         struct Run {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
             struct TextContext {
                 unsigned start { 0 };
                 unsigned length { 0 };

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class GStreamerVideoEncoderFactory final : public webrtc::VideoEncoderFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GStreamerVideoEncoderFactory();
 

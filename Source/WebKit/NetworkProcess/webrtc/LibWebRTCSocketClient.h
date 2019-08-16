@@ -48,6 +48,7 @@ namespace WebKit {
 class NetworkRTCProvider;
 
 class LibWebRTCSocketClient final : public sigslot::has_slots<> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type { UDP, ServerTCP, ClientTCP, ServerConnectionTCP };
 

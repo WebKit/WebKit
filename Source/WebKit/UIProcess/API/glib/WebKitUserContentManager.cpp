@@ -182,6 +182,7 @@ void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* ma
 }
 
 class ScriptMessageClientGtk final : public WebScriptMessageHandler::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScriptMessageClientGtk(WebKitUserContentManager* manager, const char* handlerName)
         : m_handlerName(g_quark_from_string(handlerName))

@@ -48,6 +48,7 @@ class VariableDeclaration final {
 // Final because we made the destructor non-virtual.
 public:
     struct RareData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         RareData(Qualifiers&& qualifiersArgument, std::unique_ptr<Semantic>&& semanticArgument)
             : qualifiers(WTFMove(qualifiersArgument))
             , semantic(WTFMove(semanticArgument))

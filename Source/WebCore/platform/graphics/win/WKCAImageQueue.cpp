@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class WKCAImageQueuePrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RetainPtr<CAImageQueueRef> m_imageQueue;
 };

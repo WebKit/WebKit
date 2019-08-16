@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-class CDMSessionClearKey : public LegacyCDMSession {
+class CDMSessionClearKey final : public LegacyCDMSession {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMSessionClearKey(LegacyCDMSessionClient*);
     virtual ~CDMSessionClearKey();

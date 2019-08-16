@@ -31,6 +31,7 @@
 @class WebView;
 
 class WebAlternativeTextClient : public WebCore::AlternativeTextClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebAlternativeTextClient(WebView*);
     virtual ~WebAlternativeTextClient();

@@ -36,6 +36,7 @@ class ResourceRequest;
 class ResourceResponse;
 
 class PreviewConverter {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PreviewConverter);
 public:
     PreviewConverter(id delegate, const ResourceResponse&, const String& password = { });

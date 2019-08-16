@@ -34,6 +34,7 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class WebsiteDataStoreClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebsiteDataStoreClient() { }
 

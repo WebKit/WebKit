@@ -34,6 +34,7 @@
 namespace WebKit {
 
 struct DOMObjectCacheData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     DOMObjectCacheData(GObject* wrapper)
         : object(wrapper)
         , cacheReferences(1)
@@ -86,6 +87,7 @@ static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCo
 }
 
 class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMObjectCacheFrameObserver(WebCore::Frame& frame)
         : FrameDestructionObserver(&frame)

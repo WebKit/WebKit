@@ -37,6 +37,7 @@ class DRTUndoManager;
 class DRTDesktopNotificationPresenter;
 
 class UIDelegate final : public IWebUIDelegate2, IWebUIDelegatePrivate3 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     UIDelegate();
 

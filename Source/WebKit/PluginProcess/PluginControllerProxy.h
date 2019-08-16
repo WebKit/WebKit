@@ -49,7 +49,8 @@ class ShareableBitmap;
 class WebProcessConnection;
 struct PluginCreationParameters;
 
-class PluginControllerProxy : PluginController {
+class PluginControllerProxy : public PluginController {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PluginControllerProxy);
 
 public:

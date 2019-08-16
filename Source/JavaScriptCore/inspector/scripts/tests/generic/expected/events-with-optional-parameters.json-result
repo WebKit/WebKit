@@ -914,6 +914,8 @@ __attribute__((visibility ("default")))
 @end
 
 
+#import <WebInspector/RWIProtocolBuildCompatibilityObjects.h>
+
 ### End File: TestProtocol.h
 
 ### Begin File: TestProtocolInternal.h

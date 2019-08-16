@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RTCDataChannelHandlerMock final : public RTCDataChannelHandler, public TimerEventBasedMock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
 

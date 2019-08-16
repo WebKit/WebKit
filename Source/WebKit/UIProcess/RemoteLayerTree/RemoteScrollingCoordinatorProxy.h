@@ -49,6 +49,7 @@ class RemoteScrollingTree;
 class WebPageProxy;
 
 class RemoteScrollingCoordinatorProxy {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RemoteScrollingCoordinatorProxy);
 public:
     explicit RemoteScrollingCoordinatorProxy(WebPageProxy&);

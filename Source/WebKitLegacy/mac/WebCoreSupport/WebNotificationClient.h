@@ -36,6 +36,7 @@
 @class WebView;
 
 class WebNotificationClient : public WebCore::NotificationClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebNotificationClient(WebView *);
     WebView *webView() { return m_webView; }

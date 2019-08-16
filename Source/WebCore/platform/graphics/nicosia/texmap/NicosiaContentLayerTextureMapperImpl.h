@@ -41,6 +41,7 @@ class TextureMapperPlatformLayerProxy;
 namespace Nicosia {
 
 class ContentLayerTextureMapperImpl final : public ContentLayer::Impl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Client {
     public:

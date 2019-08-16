@@ -30,6 +30,7 @@
 @class WebView;
 
 class WebDragClient : public WebCore::DragClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebDragClient(WebView*);
 

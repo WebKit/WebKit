@@ -34,6 +34,7 @@ namespace WebCore {
 class MediaStreamPrivate;
 
 class MediaRecorderPrivateAVFImpl final : public MediaRecorderPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<MediaRecorderPrivateAVFImpl> create(const MediaStreamPrivate&);
 

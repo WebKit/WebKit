@@ -40,6 +40,7 @@
 class WebView;
 
 class AcceleratedCompositingContext : public WebCore::GraphicsLayerClient {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AcceleratedCompositingContext);
 public:
     explicit AcceleratedCompositingContext(WebView&);

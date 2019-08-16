@@ -35,6 +35,7 @@ class WebNotification;
 class WebEditorUndoTarget;
 
 class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebEditorClient(WebView*);
     ~WebEditorClient();

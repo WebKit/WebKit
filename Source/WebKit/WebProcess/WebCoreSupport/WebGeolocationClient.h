@@ -32,6 +32,7 @@ namespace WebKit {
 class WebPage;
 
 class WebGeolocationClient : public WebCore::GeolocationClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebGeolocationClient(WebPage& page)
         : m_page(page)

@@ -44,7 +44,7 @@ class MediaPlayerPrivateHolePunch : public MediaPlayerPrivateInterface, public C
     , public PlatformLayer
 #endif
 {
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerPrivateHolePunch(MediaPlayer*);
     ~MediaPlayerPrivateHolePunch();

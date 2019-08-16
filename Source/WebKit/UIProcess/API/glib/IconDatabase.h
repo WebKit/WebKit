@@ -44,6 +44,7 @@ class SharedBuffer;
 namespace WebKit {
 
 class IconDatabaseClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~IconDatabaseClient() = default;
 
@@ -58,6 +59,7 @@ class IconDatabase {
 
 private:
     class IconSnapshot {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         IconSnapshot() = default;
 
@@ -118,6 +120,7 @@ private:
     };
 
     class PageURLSnapshot {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         PageURLSnapshot() = default;
 
@@ -172,6 +175,7 @@ private:
     };
 
     class MainThreadNotifier {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         MainThreadNotifier()
             : m_timer(RunLoop::main(), this, &MainThreadNotifier::timerFired)

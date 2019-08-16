@@ -42,6 +42,7 @@ class Image;
 namespace Nicosia {
 
 class ImageBackingTextureMapperImpl final : public ImageBacking::Impl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Factory createFactory();
 

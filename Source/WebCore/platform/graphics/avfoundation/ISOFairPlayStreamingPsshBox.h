@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOFairPlayStreamingInfoBox : public ISOFullBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingInfoBox final : public ISOFullBox {
 public:
     static FourCC boxTypeName() { return "fpsi"; }
 
@@ -42,7 +42,7 @@ private:
     FourCC m_scheme;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox : public ISOFullBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox final : public ISOFullBox {
 public:
     static FourCC boxTypeName() { return "fkri"; }
 
@@ -55,7 +55,7 @@ private:
     KeyID m_keyID;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox : public ISOBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox final : public ISOBox {
 public:
     static FourCC boxTypeName() { return "fkai"; }
     const Vector<uint8_t> data() const { return m_data; }
@@ -66,7 +66,7 @@ private:
     Vector<uint8_t> m_data;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox : public ISOBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox final : public ISOBox {
 public:
     static FourCC boxTypeName() { return "fkcx"; }
     const Vector<uint8_t> data() const { return m_data; }
@@ -77,7 +77,7 @@ private:
     Vector<uint8_t> m_data;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox : public ISOBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox final : public ISOBox {
 public:
     static FourCC boxTypeName() { return "fkvl"; }
     const Vector<uint8_t> versions() const { return m_versions; }
@@ -88,7 +88,7 @@ private:
     Vector<uint8_t> m_versions;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox : public ISOBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox final : public ISOBox {
 public:
     static FourCC boxTypeName() { return "fpsk"; }
 
@@ -106,7 +106,7 @@ private:
     Optional<ISOFairPlayStreamingKeyVersionListBox> m_versionList;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingInitDataBox : public ISOBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingInitDataBox final : public ISOBox {
 public:
     static FourCC boxTypeName() { return "fpsd"; }
 
@@ -120,7 +120,7 @@ private:
     Vector<ISOFairPlayStreamingKeyRequestBox> m_requests;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingPsshBox : public ISOProtectionSystemSpecificHeaderBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingPsshBox final : public ISOProtectionSystemSpecificHeaderBox {
 public:
     static const Vector<uint8_t>& fairPlaySystemID();
 

@@ -355,6 +355,7 @@ HRESULT WebDatabaseManager::setIDBPerOriginQuota(unsigned long long quota)
 }
 
 class DidModifyOriginData {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DidModifyOriginData);
 public:
     static void dispatchToMainThread(WebDatabaseManager* databaseManager, const SecurityOriginData& origin)

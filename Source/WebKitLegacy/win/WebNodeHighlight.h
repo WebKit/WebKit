@@ -35,6 +35,7 @@
 class WebView;
 
 class WebNodeHighlight : WebCore::WindowMessageListener {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebNodeHighlight(WebView*);
     ~WebNodeHighlight();

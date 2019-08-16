@@ -256,6 +256,7 @@ static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconst
 }
 
 class Tunnel {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Tunnel(SoupServer* server, SoupMessage* message)
         : m_server(server)

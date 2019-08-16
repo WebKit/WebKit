@@ -55,6 +55,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class TextFinderFindClient : public API::FindMatchesClient, public API::FindClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit TextFinderFindClient(WKTextFinderClient *textFinderClient)
         : m_textFinderClient(textFinderClient)

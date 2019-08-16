@@ -50,6 +50,7 @@ class WebNodeHighlight;
 class WebView;
 
 class WebInspectorClient final : public WebCore::InspectorClient, public Inspector::FrontendChannel {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebInspectorClient(WebView*);
 
@@ -94,6 +95,7 @@ private:
 };
 
 class WebInspectorFrontendClient final : public WebCore::InspectorFrontendClientLocal, WebCore::WindowMessageListener {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frotnendWebView, HWND frontendWebViewHwnd, WebInspectorClient*, std::unique_ptr<Settings>);
     virtual ~WebInspectorFrontendClient();

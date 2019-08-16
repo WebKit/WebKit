@@ -39,6 +39,7 @@
 namespace WebKit {
 
 class AdClickAttributionManager : public CanMakeWeakPtr<AdClickAttributionManager> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
 
     using RegistrableDomain = WebCore::RegistrableDomain;

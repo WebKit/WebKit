@@ -41,6 +41,7 @@ enum class CookieAcceptPolicy {
 };
 
 class CookieJarDB {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CookieJarDB);
 
 public:

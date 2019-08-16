@@ -36,6 +36,7 @@
 namespace WebCore {
 
 struct HIDGamepadElement {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     HIDGamepadElement(double theMin, double theMax, IOHIDElementRef element)
         : min(theMin)
         , max(theMax)

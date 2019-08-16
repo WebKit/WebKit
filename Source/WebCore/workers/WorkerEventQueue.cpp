@@ -44,6 +44,7 @@ WorkerEventQueue::~WorkerEventQueue()
 
 class WorkerEventQueue::EventDispatcher
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     EventDispatcher(RefPtr<Event>&& event, WorkerEventQueue& eventQueue)
         : m_event(WTFMove(event))

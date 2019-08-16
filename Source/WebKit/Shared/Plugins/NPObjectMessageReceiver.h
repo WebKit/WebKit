@@ -39,6 +39,7 @@ class NPVariantData;
 class Plugin;
 
 class NPObjectMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(NPObjectMessageReceiver);
 
 public:

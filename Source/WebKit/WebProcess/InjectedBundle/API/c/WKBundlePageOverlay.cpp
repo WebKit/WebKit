@@ -54,6 +54,7 @@ template<> struct ClientTraits<WKBundlePageOverlayAccessibilityClientBase> {
 }
 
 class PageOverlayClientImpl : API::Client<WKBundlePageOverlayClientBase>, public WebKit::WebPageOverlay::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageOverlayClientImpl(WKBundlePageOverlayClientBase* client)
     {

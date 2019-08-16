@@ -26,6 +26,8 @@
 #ifndef PlatformWebView_h
 #define PlatformWebView_h
 
+#include <wtf/FastMalloc.h>
+
 #if USE(CG)
 #include <CoreGraphics/CGGeometry.h>
 #endif
@@ -63,6 +65,7 @@ typedef uint32_t WKEventModifiers;
 namespace TestWebKitAPI {
 
 class PlatformWebView {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PlatformWebView(WKPageConfigurationRef);
     explicit PlatformWebView(WKContextRef, WKPageGroupRef = 0);

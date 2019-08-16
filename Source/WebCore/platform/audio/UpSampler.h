@@ -36,7 +36,7 @@ namespace WebCore {
 
 // UpSampler up-samples the source stream by a factor of 2x.
 
-class UpSampler {
+class UpSampler final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UpSampler(size_t inputBlockSize);

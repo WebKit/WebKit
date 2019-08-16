@@ -50,6 +50,7 @@ namespace Metal {
 class TypeNamer;
 
 class EntryPointScaffolding {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~EntryPointScaffolding() = default;
 

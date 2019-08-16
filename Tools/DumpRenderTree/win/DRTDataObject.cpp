@@ -48,6 +48,7 @@ FORMATETC* cfUrlWFormat()
 }
 
 class WCEnumFormatEtc final : public IEnumFORMATETC {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WCEnumFormatEtc(const Vector<FORMATETC>& formats);
     explicit WCEnumFormatEtc(const Vector<std::unique_ptr<FORMATETC>>& formats);

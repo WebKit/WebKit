@@ -49,6 +49,7 @@ namespace WebKit {
 class WebPage;
 
 class FindController : private WebCore::PageOverlay::Client {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FindController);
 
 public:

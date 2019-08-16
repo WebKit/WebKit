@@ -42,6 +42,7 @@ class Scrollbar;
 enum class HitTestProgress { Stop, Continue };
 
 class HitTestResult {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef ListHashSet<RefPtr<Node>> NodeSet;
 

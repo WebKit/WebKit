@@ -41,6 +41,7 @@ class GLContext;
 namespace Nicosia {
 
 class GC3DLayer : public ContentLayerTextureMapperImpl::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GC3DLayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::RenderStyle);
     virtual ~GC3DLayer();

@@ -37,6 +37,7 @@ namespace WebKit {
 class NetscapePlugin;
 
 class NetscapePluginX11 final : public NetscapePluginUnix {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetscapePluginX11> create(NetscapePlugin&);
     NetscapePluginX11(NetscapePlugin&, Display*);

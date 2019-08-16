@@ -59,6 +59,7 @@ static const char* categoryName(AudioSession::CategoryType category)
 #endif
 
 class AudioSessionPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioSessionPrivate(AudioSession*);
     AudioSession::CategoryType m_categoryOverride;

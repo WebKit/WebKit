@@ -48,6 +48,7 @@ struct ShadowState;
 // code from the platform-independent GraphicsContext.
 
 class PlatformContextCairo {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContextCairo);
 public:
     PlatformContextCairo(cairo_t*);

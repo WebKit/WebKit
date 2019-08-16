@@ -31,6 +31,7 @@
 struct WebNotificationCenterPrivate;
 
 class WebNotificationCenter final : public IWebNotificationCenter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static WebNotificationCenter* createInstance();
 

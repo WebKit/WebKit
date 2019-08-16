@@ -30,8 +30,10 @@
 #define GCController_h
 
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/FastMalloc.h>
 
 class GCController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GCController();
     ~GCController();

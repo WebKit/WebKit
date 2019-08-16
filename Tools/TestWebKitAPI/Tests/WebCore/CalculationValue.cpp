@@ -37,6 +37,7 @@ namespace TestWebKitAPI {
 static unsigned deletionCount;
 
 class CalculationDeletionTestNode : public WebCore::CalcExpressionNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CalculationDeletionTestNode()
     {

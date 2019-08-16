@@ -34,6 +34,7 @@
 class TestRunner;
 
 class PolicyDelegate final : public IWebPolicyDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PolicyDelegate();
 

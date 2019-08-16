@@ -2293,162 +2293,164 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
     webPageProxy->setNavigationClient(makeUniqueRef<NavigationClient>(wkClient));
 }
 
+class StateClient final : public API::Client<WKPageStateClientBase>, public PageLoadState::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit StateClient(const WKPageStateClientBase* client)
+    {
+        initialize(client);
+    }
+private:
+    void willChangeIsLoading() override
+    {
+        if (!m_client.willChangeIsLoading)
+            return;
+        m_client.willChangeIsLoading(m_client.base.clientInfo);
+    }
+
+    void didChangeIsLoading() override
+    {
+        if (!m_client.didChangeIsLoading)
+            return;
+        m_client.didChangeIsLoading(m_client.base.clientInfo);
+    }
+
+    void willChangeTitle() override
+    {
+        if (!m_client.willChangeTitle)
+            return;
+        m_client.willChangeTitle(m_client.base.clientInfo);
+    }
+
+    void didChangeTitle() override
+    {
+        if (!m_client.didChangeTitle)
+            return;
+        m_client.didChangeTitle(m_client.base.clientInfo);
+    }
+
+    void willChangeActiveURL() override
+    {
+        if (!m_client.willChangeActiveURL)
+            return;
+        m_client.willChangeActiveURL(m_client.base.clientInfo);
+    }
+
+    void didChangeActiveURL() override
+    {
+        if (!m_client.didChangeActiveURL)
+            return;
+        m_client.didChangeActiveURL(m_client.base.clientInfo);
+    }
+
+    void willChangeHasOnlySecureContent() override
+    {
+        if (!m_client.willChangeHasOnlySecureContent)
+            return;
+        m_client.willChangeHasOnlySecureContent(m_client.base.clientInfo);
+    }
+
+    void didChangeHasOnlySecureContent() override
+    {
+        if (!m_client.didChangeHasOnlySecureContent)
+            return;
+        m_client.didChangeHasOnlySecureContent(m_client.base.clientInfo);
+    }
+
+    void willChangeEstimatedProgress() override
+    {
+        if (!m_client.willChangeEstimatedProgress)
+            return;
+        m_client.willChangeEstimatedProgress(m_client.base.clientInfo);
+    }
+
+    void didChangeEstimatedProgress() override
+    {
+        if (!m_client.didChangeEstimatedProgress)
+            return;
+        m_client.didChangeEstimatedProgress(m_client.base.clientInfo);
+    }
+
+    void willChangeCanGoBack() override
+    {
+        if (!m_client.willChangeCanGoBack)
+            return;
+        m_client.willChangeCanGoBack(m_client.base.clientInfo);
+    }
+
+    void didChangeCanGoBack() override
+    {
+        if (!m_client.didChangeCanGoBack)
+            return;
+        m_client.didChangeCanGoBack(m_client.base.clientInfo);
+    }
+
+    void willChangeCanGoForward() override
+    {
+        if (!m_client.willChangeCanGoForward)
+            return;
+        m_client.willChangeCanGoForward(m_client.base.clientInfo);
+    }
+
+    void didChangeCanGoForward() override
+    {
+        if (!m_client.didChangeCanGoForward)
+            return;
+        m_client.didChangeCanGoForward(m_client.base.clientInfo);
+    }
+
+    void willChangeNetworkRequestsInProgress() override
+    {
+        if (!m_client.willChangeNetworkRequestsInProgress)
+            return;
+        m_client.willChangeNetworkRequestsInProgress(m_client.base.clientInfo);
+    }
+
+    void didChangeNetworkRequestsInProgress() override
+    {
+        if (!m_client.didChangeNetworkRequestsInProgress)
+            return;
+        m_client.didChangeNetworkRequestsInProgress(m_client.base.clientInfo);
+    }
+
+    void willChangeCertificateInfo() override
+    {
+        if (!m_client.willChangeCertificateInfo)
+            return;
+        m_client.willChangeCertificateInfo(m_client.base.clientInfo);
+    }
+
+    void didChangeCertificateInfo() override
+    {
+        if (!m_client.didChangeCertificateInfo)
+            return;
+        m_client.didChangeCertificateInfo(m_client.base.clientInfo);
+    }
+
+    void willChangeWebProcessIsResponsive() override
+    {
+        if (!m_client.willChangeWebProcessIsResponsive)
+            return;
+        m_client.willChangeWebProcessIsResponsive(m_client.base.clientInfo);
+    }
+
+    void didChangeWebProcessIsResponsive() override
+    {
+        if (!m_client.didChangeWebProcessIsResponsive)
+            return;
+        m_client.didChangeWebProcessIsResponsive(m_client.base.clientInfo);
+    }
+
+    void didSwapWebProcesses() override
+    {
+        if (!m_client.didSwapWebProcesses)
+            return;
+        m_client.didSwapWebProcesses(m_client.base.clientInfo);
+    }
+};
+
 void WKPageSetPageStateClient(WKPageRef page, WKPageStateClientBase* client)
 {
-    class StateClient final : public API::Client<WKPageStateClientBase>, public PageLoadState::Observer {
-    public:
-        explicit StateClient(const WKPageStateClientBase* client)
-        {
-            initialize(client);
-        }
-    private:
-        void willChangeIsLoading() override
-        {
-            if (!m_client.willChangeIsLoading)
-                return;
-            m_client.willChangeIsLoading(m_client.base.clientInfo);
-        }
-
-        void didChangeIsLoading() override
-        {
-            if (!m_client.didChangeIsLoading)
-                return;
-            m_client.didChangeIsLoading(m_client.base.clientInfo);
-        }
-
-        void willChangeTitle() override
-        {
-            if (!m_client.willChangeTitle)
-                return;
-            m_client.willChangeTitle(m_client.base.clientInfo);
-        }
-
-        void didChangeTitle() override
-        {
-            if (!m_client.didChangeTitle)
-                return;
-            m_client.didChangeTitle(m_client.base.clientInfo);
-        }
-
-        void willChangeActiveURL() override
-        {
-            if (!m_client.willChangeActiveURL)
-                return;
-            m_client.willChangeActiveURL(m_client.base.clientInfo);
-        }
-
-        void didChangeActiveURL() override
-        {
-            if (!m_client.didChangeActiveURL)
-                return;
-            m_client.didChangeActiveURL(m_client.base.clientInfo);
-        }
-
-        void willChangeHasOnlySecureContent() override
-        {
-            if (!m_client.willChangeHasOnlySecureContent)
-                return;
-            m_client.willChangeHasOnlySecureContent(m_client.base.clientInfo);
-        }
-
-        void didChangeHasOnlySecureContent() override
-        {
-            if (!m_client.didChangeHasOnlySecureContent)
-                return;
-            m_client.didChangeHasOnlySecureContent(m_client.base.clientInfo);
-        }
-
-        void willChangeEstimatedProgress() override
-        {
-            if (!m_client.willChangeEstimatedProgress)
-                return;
-            m_client.willChangeEstimatedProgress(m_client.base.clientInfo);
-        }
-
-        void didChangeEstimatedProgress() override
-        {
-            if (!m_client.didChangeEstimatedProgress)
-                return;
-            m_client.didChangeEstimatedProgress(m_client.base.clientInfo);
-        }
-
-        void willChangeCanGoBack() override
-        {
-            if (!m_client.willChangeCanGoBack)
-                return;
-            m_client.willChangeCanGoBack(m_client.base.clientInfo);
-        }
-
-        void didChangeCanGoBack() override
-        {
-            if (!m_client.didChangeCanGoBack)
-                return;
-            m_client.didChangeCanGoBack(m_client.base.clientInfo);
-        }
-
-        void willChangeCanGoForward() override
-        {
-            if (!m_client.willChangeCanGoForward)
-                return;
-            m_client.willChangeCanGoForward(m_client.base.clientInfo);
-        }
-
-        void didChangeCanGoForward() override
-        {
-            if (!m_client.didChangeCanGoForward)
-                return;
-            m_client.didChangeCanGoForward(m_client.base.clientInfo);
-        }
-
-        void willChangeNetworkRequestsInProgress() override
-        {
-            if (!m_client.willChangeNetworkRequestsInProgress)
-                return;
-            m_client.willChangeNetworkRequestsInProgress(m_client.base.clientInfo);
-        }
-
-        void didChangeNetworkRequestsInProgress() override
-        {
-            if (!m_client.didChangeNetworkRequestsInProgress)
-                return;
-            m_client.didChangeNetworkRequestsInProgress(m_client.base.clientInfo);
-        }
-
-        void willChangeCertificateInfo() override
-        {
-            if (!m_client.willChangeCertificateInfo)
-                return;
-            m_client.willChangeCertificateInfo(m_client.base.clientInfo);
-        }
-
-        void didChangeCertificateInfo() override
-        {
-            if (!m_client.didChangeCertificateInfo)
-                return;
-            m_client.didChangeCertificateInfo(m_client.base.clientInfo);
-        }
-
-        void willChangeWebProcessIsResponsive() override
-        {
-            if (!m_client.willChangeWebProcessIsResponsive)
-                return;
-            m_client.willChangeWebProcessIsResponsive(m_client.base.clientInfo);
-        }
-
-        void didChangeWebProcessIsResponsive() override
-        {
-            if (!m_client.didChangeWebProcessIsResponsive)
-                return;
-            m_client.didChangeWebProcessIsResponsive(m_client.base.clientInfo);
-        }
-
-        void didSwapWebProcesses() override
-        {
-            if (!m_client.didSwapWebProcesses)
-                return;
-            m_client.didSwapWebProcesses(m_client.base.clientInfo);
-        }
-    };
     if (client)
         toImpl(page)->setPageLoadStateObserver(std::make_unique<StateClient>(client));
     else

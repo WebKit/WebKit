@@ -37,6 +37,7 @@
 namespace WebKit {
 
 class IconLoadingDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit IconLoadingDelegate(WKWebView *);
     ~IconLoadingDelegate();
@@ -48,6 +49,7 @@ public:
 
 private:
     class IconLoadingClient : public API::IconLoadingClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit IconLoadingClient(IconLoadingDelegate&);
         ~IconLoadingClient();

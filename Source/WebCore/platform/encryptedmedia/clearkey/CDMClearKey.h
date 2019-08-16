@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class CDMFactoryClearKey final : public CDMFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static CDMFactoryClearKey& singleton();
 
@@ -54,6 +55,7 @@ private:
 };
 
 class CDMPrivateClearKey final : public CDMPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMPrivateClearKey();
     virtual ~CDMPrivateClearKey();

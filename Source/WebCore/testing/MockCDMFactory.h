@@ -100,6 +100,7 @@ private:
 };
 
 class MockCDM : public CDMPrivate, public CanMakeWeakPtr<MockCDM> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MockCDM(WeakPtr<MockCDMFactory>);
 

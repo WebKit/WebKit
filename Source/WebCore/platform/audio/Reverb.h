@@ -38,7 +38,7 @@ class AudioBus;
     
 // Multi-channel convolution reverb with channel matrixing - one or more ReverbConvolver objects are used internally.
 
-class Reverb {
+class Reverb final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum { MaxFrameSize = 256 };

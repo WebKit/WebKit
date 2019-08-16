@@ -52,6 +52,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class DrawingAreaProxy : public IPC::MessageReceiver, protected IPC::MessageSender {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
 
 public:

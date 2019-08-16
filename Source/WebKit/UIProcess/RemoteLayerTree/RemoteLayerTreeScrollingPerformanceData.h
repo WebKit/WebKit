@@ -33,6 +33,7 @@ namespace WebKit {
 class RemoteLayerTreeDrawingAreaProxy;
 
 class RemoteLayerTreeScrollingPerformanceData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeScrollingPerformanceData();

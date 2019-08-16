@@ -33,6 +33,7 @@ namespace WebKit {
 class WebPage;
 
 class WebProgressTrackerClient : public WebCore::ProgressTrackerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebProgressTrackerClient(WebPage&);
     

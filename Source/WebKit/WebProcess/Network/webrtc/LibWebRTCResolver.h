@@ -40,6 +40,7 @@ namespace WebKit {
 class LibWebRTCSocketFactory;
 
 class LibWebRTCResolver final : public rtc::AsyncResolverInterface {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCResolver(uint64_t identifier) : m_identifier(identifier) { }
 

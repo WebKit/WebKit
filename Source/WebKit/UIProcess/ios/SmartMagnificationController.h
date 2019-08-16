@@ -40,6 +40,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class SmartMagnificationController : private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SmartMagnificationController);
 public:
     SmartMagnificationController(WKContentView *);

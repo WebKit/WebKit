@@ -609,6 +609,7 @@ namespace Inspector {
 
 #if PLATFORM(WEB_COMMANDS)
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
     virtual void loadResource(long requestId) override;
@@ -954,6 +955,8 @@ __attribute__((visibility ("default")))
 - (void)resourceLoaded;
 @end
 
+
+#import <WebInspector/RWIProtocolBuildCompatibilityObjects.h>
 
 ### End File: TestProtocol.h
 

@@ -28,6 +28,7 @@
 #include "AccessibilityUIElement.h"
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Platform.h>
 #if USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"

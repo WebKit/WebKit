@@ -44,6 +44,7 @@ class VM;
 typedef ExecState CallFrame;
 
 class JS_EXPORT_PRIVATE Debugger {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Debugger(VM&);
     virtual ~Debugger();

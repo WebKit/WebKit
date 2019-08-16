@@ -38,6 +38,7 @@ struct WebNavigationDataStore;
 namespace API {
 
 class LegacyContextHistoryClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~LegacyContextHistoryClient() { }
 

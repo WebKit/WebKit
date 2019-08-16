@@ -280,23 +280,24 @@ TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
     }
 }
 
+struct DerefObserver {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    NEVER_INLINE void ref()
+    {
+        ++count;
+    }
+    NEVER_INLINE void deref()
+    {
+        --count;
+        observedBucket = bucketAddress->get();
+    }
+    unsigned count { 1 };
+    const RefPtr<DerefObserver>* bucketAddress { nullptr };
+    const DerefObserver* observedBucket { nullptr };
+};
+
 TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
 {
-    struct DerefObserver {
-        NEVER_INLINE void ref()
-        {
-            ++count;
-        }
-        NEVER_INLINE void deref()
-        {
-            --count;
-            observedBucket = bucketAddress->get();
-        }
-        unsigned count { 1 };
-        const RefPtr<DerefObserver>* bucketAddress { nullptr };
-        const DerefObserver* observedBucket { nullptr };
-    };
-
     auto observer = std::make_unique<DerefObserver>();
 
     HashSet<RefPtr<DerefObserver>> set;

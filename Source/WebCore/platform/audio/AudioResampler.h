@@ -37,7 +37,8 @@ namespace WebCore {
 // The audio stream may be single or multi-channel.
 // The default constructor defaults to single-channel (mono).
 
-class AudioResampler {
+class AudioResampler final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioResampler();
     AudioResampler(unsigned numberOfChannels);

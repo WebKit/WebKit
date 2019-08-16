@@ -79,6 +79,7 @@ static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& 
 }
 
 class BasicPacketSocketFactory : public rtc::BasicPacketSocketFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit BasicPacketSocketFactory(rtc::Thread& networkThread)
         : m_socketFactory(makeUniqueRef<rtc::BasicPacketSocketFactory>(&networkThread))

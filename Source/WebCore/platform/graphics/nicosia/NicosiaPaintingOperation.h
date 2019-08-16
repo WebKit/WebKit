@@ -40,6 +40,7 @@ namespace Nicosia {
 struct PaintingOperationReplay { };
 
 struct PaintingOperation {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     virtual ~PaintingOperation() = default;
     virtual void execute(PaintingOperationReplay&) = 0;
     virtual void dump(WTF::TextStream&) = 0;

@@ -35,6 +35,7 @@ struct WebNavigationDataStore;
 namespace API {
 
 class HistoryClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~HistoryClient() { }
 

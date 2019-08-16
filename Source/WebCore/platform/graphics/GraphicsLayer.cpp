@@ -112,7 +112,7 @@ bool GraphicsLayer::supportsContentsTiling()
 #endif
 
 // Singleton client used for layers on which clearClient has been called.
-class EmptyGraphicsLayerClient : public GraphicsLayerClient {
+class EmptyGraphicsLayerClient final : public GraphicsLayerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static EmptyGraphicsLayerClient& singleton();

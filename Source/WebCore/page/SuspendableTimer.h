@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class SuspendableTimer : private TimerBase, public ActiveDOMObject {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SuspendableTimer(ScriptExecutionContext&);
     virtual ~SuspendableTimer();

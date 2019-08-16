@@ -31,6 +31,7 @@ namespace WebCore {
 class GraphicsContext;
 
 struct MaskerData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     std::unique_ptr<ImageBuffer> maskImage;
 };
 

@@ -32,6 +32,7 @@
 typedef unsigned long ULONG;
 
 struct MD5_CTX {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     ULONG i[2];
     ULONG buf[4];
     unsigned char in[64];

@@ -176,6 +176,7 @@ void HUDSlider::drag(const IntPoint& point, bool start)
 
 #if USE(CA)
 class FullscreenVideoController::LayerClient : public WebCore::PlatformCALayerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LayerClient(FullscreenVideoController* parent) : m_parent(parent) { }
 

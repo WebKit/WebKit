@@ -134,6 +134,7 @@ class WebProcess
     , ProcessTaskStateObserver::Client
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static WebProcess& singleton();
     static constexpr ProcessType processType = ProcessType::WebContent;

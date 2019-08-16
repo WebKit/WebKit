@@ -102,6 +102,7 @@ ${commandDeclarations}
 
     BackendDispatcherHeaderDomainHandlerObjCDeclaration = (
     """class ObjCInspector${domainName}BackendDispatcher final : public Alternate${domainName}BackendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspector${domainName}BackendDispatcher(id<${objcPrefix}${domainName}DomainHandler> handler) { m_delegate = handler; }
 ${commandDeclarations}

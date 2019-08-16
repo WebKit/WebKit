@@ -31,6 +31,7 @@
 #include <windows.h>
 
 class DRTDropSource final : public IDropSource {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);        
     virtual ULONG STDMETHODCALLTYPE AddRef();

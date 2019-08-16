@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class VRPlatformDisplayOpenVR : public VRPlatformDisplay {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit VRPlatformDisplayOpenVR(vr::IVRSystem*, vr::IVRChaperone*, vr::IVRCompositor*);
 

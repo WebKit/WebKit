@@ -37,6 +37,7 @@ class WebProcessPool;
 namespace API {
 
 class InjectedBundleClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~InjectedBundleClient() = default;
 

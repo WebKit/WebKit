@@ -51,6 +51,7 @@ class Encoder;
 namespace WebKit {
 
 class RemoteLayerTreeTransaction {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum LayerChange {
         NameChanged                     = 1LLU << 1,
@@ -94,6 +95,7 @@ public:
     };
 
     struct LayerCreationProperties {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         LayerCreationProperties();
 
         void encode(IPC::Encoder&) const;
@@ -109,6 +111,7 @@ public:
     };
 
     struct LayerProperties {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         LayerProperties();
         LayerProperties(const LayerProperties& other);
 

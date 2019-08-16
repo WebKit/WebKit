@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOTrackEncryptionBox : public ISOFullBox {
+class WEBCORE_EXPORT ISOTrackEncryptionBox final : public ISOFullBox {
 public:
     static FourCC boxTypeName() { return "tenc"; }
 

@@ -32,6 +32,7 @@ class WebNotification;
 class WebPageProxy;
 
 class WebKitNotificationProvider {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebKitNotificationProvider(WebNotificationManagerProxy*, WebKitWebContext*);
     ~WebKitNotificationProvider();

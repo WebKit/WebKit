@@ -50,7 +50,8 @@ public:
     virtual RefPtr<MediaPlayer> cdmMediaPlayer(const LegacyCDM*) const = 0;
 };
 
-class LegacyCDM {
+class LegacyCDM final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LegacyCDM(const String& keySystem);
 

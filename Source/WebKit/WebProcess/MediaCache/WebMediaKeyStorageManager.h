@@ -39,6 +39,7 @@ namespace WebKit {
 class WebProcess;
 
 class WebMediaKeyStorageManager : public WebProcessSupplement {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebMediaKeyStorageManager);
 public:
     explicit WebMediaKeyStorageManager(WebProcess&) { }

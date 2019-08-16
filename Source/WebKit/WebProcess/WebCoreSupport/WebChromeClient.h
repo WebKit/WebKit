@@ -41,6 +41,7 @@ class WebFrame;
 class WebPage;
 
 class WebChromeClient final : public WebCore::ChromeClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebChromeClient(WebPage&);
 

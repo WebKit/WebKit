@@ -37,6 +37,7 @@ class DataReference;
 namespace API {
 
 class IconLoadingClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~IconLoadingClient() { }
 

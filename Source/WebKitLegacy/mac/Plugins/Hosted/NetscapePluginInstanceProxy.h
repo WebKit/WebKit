@@ -171,6 +171,7 @@ public:
 
     // Reply structs
     struct Reply {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         enum Type {
             InstantiatePlugin,
             GetScriptableNPObject,

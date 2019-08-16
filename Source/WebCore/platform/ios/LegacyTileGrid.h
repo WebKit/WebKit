@@ -46,6 +46,7 @@ namespace WebCore {
 class LegacyTileGridTile;
 
 class LegacyTileGrid {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef IntPoint TileIndex;
 

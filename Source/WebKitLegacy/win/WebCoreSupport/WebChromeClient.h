@@ -38,6 +38,7 @@ class WebDesktopNotificationsDelegate;
 interface IWebUIDelegate;
 
 class WebChromeClient final : public WebCore::ChromeClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebChromeClient(WebView*);
 

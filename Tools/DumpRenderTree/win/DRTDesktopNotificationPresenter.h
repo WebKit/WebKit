@@ -33,6 +33,7 @@
 #include <windef.h>
 
 class DRTDesktopNotificationPresenter final : public IWebDesktopNotificationsDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DRTDesktopNotificationPresenter();
 

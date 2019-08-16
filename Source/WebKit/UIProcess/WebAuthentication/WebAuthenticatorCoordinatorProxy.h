@@ -44,6 +44,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebAuthenticatorCoordinatorProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
 public:
     explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);

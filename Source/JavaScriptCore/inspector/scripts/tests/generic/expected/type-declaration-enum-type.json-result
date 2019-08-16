@@ -797,6 +797,8 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeTwoLeggedAnimals) {
 
 
 
+#import <WebInspector/RWIProtocolBuildCompatibilityObjects.h>
+
 ### End File: TestProtocol.h
 
 ### Begin File: TestProtocolInternal.h

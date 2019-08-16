@@ -40,6 +40,7 @@ namespace WebKit {
 class WebPage;
 
 class ViewGestureGeometryCollector : private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ViewGestureGeometryCollector(WebPage&);
     ~ViewGestureGeometryCollector();

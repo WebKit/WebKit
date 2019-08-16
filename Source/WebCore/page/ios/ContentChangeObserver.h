@@ -44,6 +44,7 @@ class DOMTimer;
 class Element;
 
 class ContentChangeObserver : public CanMakeWeakPtr<ContentChangeObserver> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ContentChangeObserver(Document&);
 

@@ -53,6 +53,7 @@ class Navigation;
 class Object;
 
 class LoaderClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~LoaderClient() { }
     virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) { }

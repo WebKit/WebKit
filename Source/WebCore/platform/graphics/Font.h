@@ -264,9 +264,7 @@ private:
 #endif
 
     struct DerivedFonts {
-#if !COMPILER(MSVC)
-        WTF_MAKE_FAST_ALLOCATED;
-#endif
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
 
         RefPtr<Font> smallCapsFont;

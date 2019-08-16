@@ -35,7 +35,8 @@ namespace WebCore {
 
 // Cone gain is defined according to the OpenAL specification
 
-class ConeEffect {
+class ConeEffect final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ConeEffect();
 

@@ -38,6 +38,7 @@ class ResourceRequest;
 namespace API {
 
 class CustomProtocolManagerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CustomProtocolManagerClient() { }
 

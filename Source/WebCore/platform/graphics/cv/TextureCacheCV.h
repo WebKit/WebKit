@@ -44,6 +44,7 @@ namespace WebCore {
 class GraphicsContext3D;
 
 class TextureCacheCV : public CanMakeWeakPtr<TextureCacheCV> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<TextureCacheCV> create(GraphicsContext3D&);
 

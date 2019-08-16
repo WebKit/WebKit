@@ -1,3 +1,29 @@
+2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * FullscreenVideoController.cpp:
+        * FullscreenVideoController.h:
+        * Plugins/PluginMessageThrottlerWin.h:
+        * WebCachedFramePlatformData.h:
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebGeolocationClient.h:
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebDatabaseManager.cpp:
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.h:
+        * WebNodeHighlight.h:
+        * WebNotificationCenter.cpp:
+        * WebNotificationCenter.h:
+
 2019-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Enable CoreFoundation use if building for Apple target

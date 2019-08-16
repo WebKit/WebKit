@@ -42,6 +42,7 @@ namespace WebCore {
 class CDMPrivateMediaSourceAVFObjC;
 
 class CDMSessionMediaSourceAVFObjC : public LegacyCDMSession, public SourceBufferPrivateAVFObjCErrorClient, public CanMakeWeakPtr<CDMSessionMediaSourceAVFObjC> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
     virtual ~CDMSessionMediaSourceAVFObjC();

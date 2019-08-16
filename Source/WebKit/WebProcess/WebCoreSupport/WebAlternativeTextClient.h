@@ -32,6 +32,7 @@ namespace WebKit {
 class WebPage;
 
 class WebAlternativeTextClient : public WebCore::AlternativeTextClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebAlternativeTextClient(WebPage*);
     virtual ~WebAlternativeTextClient();

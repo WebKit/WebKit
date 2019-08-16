@@ -38,6 +38,7 @@
 namespace WebKit {
 
 class _WKRemoteWebInspectorProxyClient final : public RemoteWebInspectorProxyClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     _WKRemoteWebInspectorProxyClient(_WKRemoteWebInspectorViewController *controller)
         : m_controller(controller)

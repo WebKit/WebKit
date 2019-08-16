@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class LegacyCDMSessionClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~LegacyCDMSessionClient() = default;
     virtual void sendMessage(Uint8Array*, String destinationURL) = 0;

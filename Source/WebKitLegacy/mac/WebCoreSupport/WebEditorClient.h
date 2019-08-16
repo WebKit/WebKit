@@ -45,6 +45,7 @@
 @class WebEditorUndoTarget;
 
 class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient, public CanMakeWeakPtr<WebEditorClient> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();

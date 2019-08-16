@@ -40,6 +40,7 @@ namespace WebCore {
 class TextureCacheCV;
 
 class VideoTextureCopierCV {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     VideoTextureCopierCV(GraphicsContext3D&);
     ~VideoTextureCopierCV();

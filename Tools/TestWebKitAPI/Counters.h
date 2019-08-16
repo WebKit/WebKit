@@ -27,6 +27,8 @@
 #ifndef Counters_h
 #define Counters_h
 
+#include <wtf/FastMalloc.h>
+
 struct CopyMoveCounter {
     static unsigned constructionCount;
     static unsigned copyCount;
@@ -50,6 +52,7 @@ struct CopyMoveCounter {
 
 
 struct ConstructorDestructorCounter {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     static unsigned constructionCount;
     static unsigned destructionCount;
 

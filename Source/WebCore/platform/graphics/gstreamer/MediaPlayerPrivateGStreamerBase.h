@@ -97,7 +97,7 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface, publ
 #endif
 #endif
 {
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static void initializeDebugCategory();
 

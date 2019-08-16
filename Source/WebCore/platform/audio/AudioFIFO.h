@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-class AudioFIFO {
+class AudioFIFO final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Create a FIFO large enough to hold |fifoLength| frames of data of |numberOfChannels| channels.
     AudioFIFO(unsigned numberOfChannels, size_t fifoLength);

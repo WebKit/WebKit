@@ -573,6 +573,7 @@ namespace Inspector {
 
 
 class ObjCInspectorDomainABackendDispatcher final : public AlternateDomainABackendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorDomainABackendDispatcher(id<TestProtocolDomainADomainHandler> handler) { m_delegate = handler; }
     virtual void enable(long requestId) override;
@@ -581,6 +582,7 @@ private:
 };
 
 class ObjCInspectorDomainBBackendDispatcher final : public AlternateDomainBBackendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorDomainBBackendDispatcher(id<TestProtocolDomainBDomainHandler> handler) { m_delegate = handler; }
     virtual void enable(long requestId) override;
@@ -917,6 +919,8 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 
 
 
+
+#import <WebInspector/RWIProtocolBuildCompatibilityObjects.h>
 
 ### End File: TestProtocol.h
 

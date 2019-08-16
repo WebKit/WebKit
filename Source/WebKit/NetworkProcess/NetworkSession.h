@@ -64,6 +64,7 @@ class Cache;
 }
 
 class NetworkSession : public CanMakeWeakPtr<NetworkSession> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     virtual ~NetworkSession();

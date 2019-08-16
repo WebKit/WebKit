@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class HRTFPanner : public Panner {
+class HRTFPanner final : public Panner {
 public:
     explicit HRTFPanner(float sampleRate, HRTFDatabaseLoader*);
     virtual ~HRTFPanner();

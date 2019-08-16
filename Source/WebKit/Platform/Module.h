@@ -44,6 +44,7 @@ typedef struct _GModule GModule;
 namespace WebKit {
 
 class Module {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Module);
 public:
     explicit Module(const String& path);

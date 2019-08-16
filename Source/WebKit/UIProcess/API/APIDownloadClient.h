@@ -46,6 +46,7 @@ enum class AllowOverwrite { No, Yes };
 namespace API {
 
 class DownloadClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DownloadClient() { }
 

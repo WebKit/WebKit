@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class MockCDMSession : public LegacyCDMSession {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MockCDMSession(LegacyCDMSessionClient*);
     virtual ~MockCDMSession() = default;

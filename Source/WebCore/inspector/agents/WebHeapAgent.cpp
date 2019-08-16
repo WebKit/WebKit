@@ -40,7 +40,8 @@ struct GarbageCollectionData {
     Seconds endTime;
 };
 
-class SendGarbageCollectionEventsTask {
+class SendGarbageCollectionEventsTask final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SendGarbageCollectionEventsTask(WebHeapAgent&);
     void addGarbageCollection(GarbageCollectionData&&);

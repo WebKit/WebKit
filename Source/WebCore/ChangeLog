@@ -1,3 +1,345 @@
+2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/encryptedmedia/legacy/LegacyCDM.h:
+        (WebCore::LegacyCDM::keySystem const): Deleted.
+        (WebCore::LegacyCDM::client const): Deleted.
+        (WebCore::LegacyCDM::setClient): Deleted.
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivate.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h:
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        (WebCore::AsyncAudioDecoder::DecodingTask::audioData): Deleted.
+        (WebCore::AsyncAudioDecoder::DecodingTask::sampleRate const): Deleted.
+        (WebCore::AsyncAudioDecoder::DecodingTask::successCallback): Deleted.
+        (WebCore::AsyncAudioDecoder::DecodingTask::errorCallback): Deleted.
+        (WebCore::AsyncAudioDecoder::DecodingTask::audioBuffer): Deleted.
+        * Modules/webauthn/AuthenticatorCoordinator.h:
+        * Modules/webdatabase/SQLStatement.h:
+        (WebCore::SQLStatement::hasStatementCallback const): Deleted.
+        (WebCore::SQLStatement::hasStatementErrorCallback const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/WHLSLResolvingType.h:
+        * bindings/js/DOMPromiseProxy.h:
+        * bindings/js/GCController.h:
+        * bridge/jsc/BridgeJSC.h:
+        * contentextensions/ContentExtensionsBackend.h:
+        * dom/FullscreenManager.h:
+        (WebCore::FullscreenManager::document): Deleted.
+        (WebCore::FullscreenManager::document const): Deleted.
+        (WebCore::FullscreenManager::topDocument const): Deleted.
+        (WebCore::FullscreenManager::page const): Deleted.
+        (WebCore::FullscreenManager::frame const): Deleted.
+        (WebCore::FullscreenManager::documentElement const): Deleted.
+        (WebCore::FullscreenManager::hasLivingRenderTree const): Deleted.
+        (WebCore::FullscreenManager::pageCacheState const): Deleted.
+        (WebCore::FullscreenManager::scheduleFullStyleRebuild): Deleted.
+        (WebCore::FullscreenManager::fullscreenElement const): Deleted.
+        (WebCore::FullscreenManager::isFullscreen const): Deleted.
+        (WebCore::FullscreenManager::isFullscreenKeyboardInputAllowed const): Deleted.
+        (WebCore::FullscreenManager::currentFullscreenElement const): Deleted.
+        * dom/Microtasks.h:
+        (WebCore::MicrotaskQueue::vm const): Deleted.
+        * editing/CompositeEditCommand.h:
+        * editing/mac/AlternativeTextUIController.h:
+        * html/HTMLMediaElement.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/agents/WebHeapAgent.cpp:
+        * layout/displaytree/DisplayRun.h:
+        * layout/inlineformatting/InlineItem.h:
+        * layout/inlineformatting/InlineLine.h:
+        * layout/tableformatting/TableGrid.h:
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::frame const): Deleted.
+        (WebCore::FrameLoader::policyChecker const): Deleted.
+        (WebCore::FrameLoader::history const): Deleted.
+        (WebCore::FrameLoader::notifier const): Deleted.
+        (WebCore::FrameLoader::subframeLoader const): Deleted.
+        (WebCore::FrameLoader::mixedContentChecker const): Deleted.
+        (WebCore::FrameLoader::urlSelected): Deleted.
+        (WebCore::FrameLoader::reload): Deleted.
+        (WebCore::FrameLoader::requestedHistoryItem const): Deleted.
+        (WebCore::FrameLoader::documentLoader const): Deleted.
+        (WebCore::FrameLoader::policyDocumentLoader const): Deleted.
+        (WebCore::FrameLoader::provisionalDocumentLoader const): Deleted.
+        (WebCore::FrameLoader::state const): Deleted.
+        (WebCore::FrameLoader::shouldReportResourceTimingToParentFrame const): Deleted.
+        (WebCore::FrameLoader::client const): Deleted.
+        (WebCore::FrameLoader::forceSandboxFlags): Deleted.
+        (WebCore::FrameLoader::hasOpenedFrames const): Deleted.
+        (WebCore::FrameLoader::setLoadsSynchronously): Deleted.
+        (WebCore::FrameLoader::loadsSynchronously const): Deleted.
+        (WebCore::FrameLoader::stateMachine): Deleted.
+        (WebCore::FrameLoader::quickRedirectComing const): Deleted.
+        (WebCore::FrameLoader::pageDismissalEventBeingDispatched const): Deleted.
+        (WebCore::FrameLoader::previousURL const): Deleted.
+        (WebCore::FrameLoader::setOverrideCachePolicyForTesting): Deleted.
+        (WebCore::FrameLoader::setOverrideResourceLoadPriorityForTesting): Deleted.
+        (WebCore::FrameLoader::setStrictRawResourceValidationPolicyDisabledForTesting): Deleted.
+        (WebCore::FrameLoader::isStrictRawResourceValidationPolicyDisabledForTesting): Deleted.
+        (WebCore::FrameLoader::provisionalLoadErrorBeingHandledURL const): Deleted.
+        (WebCore::FrameLoader::setProvisionalLoadErrorBeingHandledURL): Deleted.
+        (WebCore::FrameLoader::isReloadingFromOrigin const): Deleted.
+        (WebCore::FrameLoader::setAlwaysAllowLocalWebarchive): Deleted.
+        (WebCore::FrameLoader::alwaysAllowLocalWebarchive const): Deleted.
+        (WebCore::FrameLoader::loadWithDocumentLoader): Deleted.
+        (WebCore::FrameLoader::loadWithNavigationAction): Deleted.
+        (WebCore::FrameLoader::shouldTreatCurrentLoadAsContinuingLoad const): Deleted.
+        * loader/NavigationDisabler.h:
+        * loader/NavigationScheduler.h:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedSVGDocumentReference.h:
+        (WebCore::CachedSVGDocumentReference::loadRequested const): Deleted.
+        (WebCore::CachedSVGDocumentReference::document): Deleted.
+        * loader/ios/PreviewLoader.h:
+        * page/CaptionUserPreferences.h:
+        * page/PrewarmInformation.h:
+        * page/ResizeObserver.h:
+        * page/SuspendableTimer.h:
+        * page/csp/ContentSecurityPolicyDirective.h:
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/DOMTimerHoldingTank.h:
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        * page/mac/TextIndicatorWindow.h:
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        * page/scrolling/ScrollingMomentumCalculator.h:
+        * platform/CPUMonitor.h:
+        * platform/FileMonitor.h:
+        * platform/ScrollAnimation.h:
+        * platform/SuddenTermination.h:
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::numberOfChannels const): Deleted.
+        (WebCore::AudioBus::channel): Deleted.
+        (WebCore::AudioBus::channel const): Deleted.
+        (WebCore::AudioBus::length const): Deleted.
+        (WebCore::AudioBus::sampleRate const): Deleted.
+        (WebCore::AudioBus::setSampleRate): Deleted.
+        (WebCore::AudioBus::reset): Deleted.
+        (WebCore::AudioBus::AudioBus): Deleted.
+        * platform/audio/AudioChannel.h:
+        (WebCore::AudioChannel::AudioChannel): Deleted.
+        (WebCore::AudioChannel::set): Deleted.
+        (WebCore::AudioChannel::length const): Deleted.
+        (WebCore::AudioChannel::mutableData): Deleted.
+        (WebCore::AudioChannel::data const): Deleted.
+        (WebCore::AudioChannel::zero): Deleted.
+        (WebCore::AudioChannel::clearSilentFlag): Deleted.
+        (WebCore::AudioChannel::isSilent const): Deleted.
+        * platform/audio/AudioFIFO.h:
+        (WebCore::AudioFIFO::framesInFifo const): Deleted.
+        (WebCore::AudioFIFO::updateIndex): Deleted.
+        * platform/audio/AudioPullFIFO.h:
+        * platform/audio/AudioResampler.h:
+        (WebCore::AudioResampler::rate const): Deleted.
+        * platform/audio/AudioResamplerKernel.h:
+        * platform/audio/AudioSession.cpp:
+        * platform/audio/AudioSession.h:
+        (WebCore::AudioSession::isActive const): Deleted.
+        * platform/audio/Biquad.h:
+        * platform/audio/Cone.h:
+        (WebCore::ConeEffect::setInnerAngle): Deleted.
+        (WebCore::ConeEffect::innerAngle const): Deleted.
+        (WebCore::ConeEffect::setOuterAngle): Deleted.
+        (WebCore::ConeEffect::outerAngle const): Deleted.
+        (WebCore::ConeEffect::setOuterGain): Deleted.
+        (WebCore::ConeEffect::outerGain const): Deleted.
+        * platform/audio/DenormalDisabler.h:
+        (WebCore::DenormalDisabler::DenormalDisabler): Deleted.
+        (WebCore::DenormalDisabler::~DenormalDisabler): Deleted.
+        (WebCore::DenormalDisabler::flushDenormalFloatToZero): Deleted.
+        (WebCore::DenormalDisabler::getCSR): Deleted.
+        (WebCore::DenormalDisabler::setCSR): Deleted.
+        * platform/audio/DirectConvolver.h:
+        * platform/audio/Distance.h:
+        (WebCore::DistanceEffect::model): Deleted.
+        (WebCore::DistanceEffect::setModel): Deleted.
+        (WebCore::DistanceEffect::setRefDistance): Deleted.
+        (WebCore::DistanceEffect::setMaxDistance): Deleted.
+        (WebCore::DistanceEffect::setRolloffFactor): Deleted.
+        (WebCore::DistanceEffect::refDistance const): Deleted.
+        (WebCore::DistanceEffect::maxDistance const): Deleted.
+        (WebCore::DistanceEffect::rolloffFactor const): Deleted.
+        * platform/audio/DownSampler.h:
+        * platform/audio/DynamicsCompressor.h:
+        (WebCore::DynamicsCompressor::sampleRate const): Deleted.
+        (WebCore::DynamicsCompressor::nyquist const): Deleted.
+        (WebCore::DynamicsCompressor::tailTime const): Deleted.
+        (WebCore::DynamicsCompressor::latencyTime const): Deleted.
+        * platform/audio/DynamicsCompressorKernel.h:
+        (WebCore::DynamicsCompressorKernel::latencyFrames const): Deleted.
+        (WebCore::DynamicsCompressorKernel::sampleRate const): Deleted.
+        (WebCore::DynamicsCompressorKernel::meteringGain const): Deleted.
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/FFTConvolver.h:
+        (WebCore::FFTConvolver::fftSize const): Deleted.
+        * platform/audio/HRTFDatabase.h:
+        (WebCore::HRTFDatabase::numberOfAzimuths): Deleted.
+        (WebCore::HRTFDatabase::sampleRate const): Deleted.
+        * platform/audio/HRTFElevation.h:
+        (WebCore::HRTFElevation::HRTFElevation): Deleted.
+        (WebCore::HRTFElevation::kernelListL): Deleted.
+        (WebCore::HRTFElevation::kernelListR): Deleted.
+        (WebCore::HRTFElevation::elevationAngle const): Deleted.
+        (WebCore::HRTFElevation::numberOfAzimuths const): Deleted.
+        (WebCore::HRTFElevation::sampleRate const): Deleted.
+        * platform/audio/HRTFPanner.h:
+        (WebCore::HRTFPanner::fftSize const): Deleted.
+        (WebCore::HRTFPanner::sampleRate const): Deleted.
+        * platform/audio/MultiChannelResampler.h:
+        * platform/audio/PlatformAudioData.h:
+        * platform/audio/Reverb.h:
+        (WebCore::Reverb::impulseResponseLength const): Deleted.
+        * platform/audio/ReverbAccumulationBuffer.h:
+        (WebCore::ReverbAccumulationBuffer::readIndex const): Deleted.
+        (WebCore::ReverbAccumulationBuffer::readTimeFrame const): Deleted.
+        * platform/audio/ReverbConvolver.h:
+        (WebCore::ReverbConvolver::impulseResponseLength const): Deleted.
+        (WebCore::ReverbConvolver::inputBuffer): Deleted.
+        (WebCore::ReverbConvolver::useBackgroundThreads const): Deleted.
+        * platform/audio/ReverbConvolverStage.h:
+        (WebCore::ReverbConvolverStage::inputReadIndex const): Deleted.
+        * platform/audio/ReverbInputBuffer.h:
+        (WebCore::ReverbInputBuffer::writeIndex const): Deleted.
+        * platform/audio/SincResampler.h:
+        * platform/audio/UpSampler.h:
+        * platform/audio/ZeroPole.h:
+        (WebCore::ZeroPole::ZeroPole): Deleted.
+        (WebCore::ZeroPole::reset): Deleted.
+        (WebCore::ZeroPole::setZero): Deleted.
+        (WebCore::ZeroPole::setPole): Deleted.
+        (WebCore::ZeroPole::zero const): Deleted.
+        (WebCore::ZeroPole::pole const): Deleted.
+        * platform/audio/cocoa/WebAudioBufferList.h:
+        (WebCore::WebAudioBufferList::list const): Deleted.
+        (WebCore::WebAudioBufferList::operator AudioBufferList& const): Deleted.
+        (WebCore::WebAudioBufferList::kind const): Deleted.
+        * platform/audio/ios/AudioSessionIOS.mm:
+        * platform/audio/mac/CARingBuffer.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/gamepad/mac/HIDGamepad.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/Font.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/LegacyCDMSession.h:
+        * platform/graphics/Region.h:
+        * platform/graphics/VelocityData.h:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h:
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.h:
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        * platform/graphics/cv/ImageRotationSessionVT.h:
+        (WebCore::ImageRotationSessionVT::RotationProperties::isIdentity const): Deleted.
+        (WebCore::ImageRotationSessionVT::transform const): Deleted.
+        (WebCore::ImageRotationSessionVT::rotationProperties const): Deleted.
+        (WebCore::ImageRotationSessionVT::size): Deleted.
+        (WebCore::ImageRotationSessionVT::rotatedSize): Deleted.
+        * platform/graphics/cv/PixelBufferConformerCV.h:
+        * platform/graphics/cv/TextureCacheCV.h:
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h:
+        * platform/graphics/iso/ISOBox.h:
+        * platform/graphics/iso/ISOOriginalFormatBox.h:
+        * platform/graphics/iso/ISOProtectionSchemeInfoBox.h:
+        * platform/graphics/iso/ISOSchemeInformationBox.h:
+        * platform/graphics/iso/ISOSchemeTypeBox.h:
+        * platform/graphics/iso/ISOTrackEncryptionBox.h:
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        (WebCore::ISOStringBox::contents): Deleted.
+        * platform/graphics/iso/ISOVTTCue.h:
+        (WebCore::ISOWebVTTCue::boxTypeName): Deleted.
+        (WebCore::ISOWebVTTCue::presentationTime const): Deleted.
+        (WebCore::ISOWebVTTCue::duration const): Deleted.
+        (WebCore::ISOWebVTTCue::sourceID const): Deleted.
+        (WebCore::ISOWebVTTCue::id const): Deleted.
+        (WebCore::ISOWebVTTCue::originalStartTime const): Deleted.
+        (WebCore::ISOWebVTTCue::settings const): Deleted.
+        (WebCore::ISOWebVTTCue::cueText const): Deleted.
+        * platform/graphics/nicosia/NicosiaPaintingOperation.h:
+        * platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.h:
+        * platform/graphics/nicosia/texmap/NicosiaCompositionLayerTextureMapperImpl.h:
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.h:
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.h:
+        * platform/graphics/nicosia/texmap/NicosiaImageBackingTextureMapperImpl.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h:
+        * platform/graphics/texmap/coordinated/Tile.h:
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FullScreenController.cpp:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        * platform/graphics/win/PlatformContextDirect2D.h:
+        * platform/graphics/win/WKCAImageQueue.cpp:
+        * platform/gtk/PasteboardHelper.cpp:
+        * platform/ios/LegacyTileGrid.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediastream/gstreamer/GStreamerAudioData.h:
+        (WebCore::GStreamerAudioData::GStreamerAudioData): Deleted.
+        (WebCore::GStreamerAudioData::getSample): Deleted.
+        (WebCore::GStreamerAudioData::getAudioInfo): Deleted.
+        (WebCore::GStreamerAudioData::kind const): Deleted.
+        * platform/mediastream/gstreamer/GStreamerCapturer.h:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.h:
+        * platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h:
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+        * platform/mock/RTCDataChannelHandlerMock.h:
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/curl/CookieJarDB.h:
+        * platform/network/curl/CurlCacheEntry.h:
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlMultipartHandle.h:
+        * platform/network/curl/CurlRequestScheduler.h:
+        * platform/network/curl/CurlSSLVerifier.h:
+        * platform/network/ios/PreviewConverter.h:
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.h:
+        * platform/vr/openvr/VRPlatformManagerOpenVR.h:
+        * rendering/HitTestResult.h:
+        * rendering/LayerOverlapMap.cpp:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * replay/UserInputBridge.h:
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        * svg/properties/SVGAttributeAnimator.h:
+        * svg/properties/SVGDecoratedProperty.h:
+        * svg/properties/SVGPropertyAnimatorFactory.h:
+        * testing/InternalSettings.cpp:
+        * testing/LegacyMockCDM.cpp:
+        * testing/LegacyMockCDM.h:
+        * testing/MockCDMFactory.h:
+        * workers/WorkerEventQueue.cpp:
+        * workers/WorkerEventQueue.h:
+        * workers/service/ServiceWorkerContainer.h:
+        * worklets/PaintWorkletGlobalScope.h:
+        * xml/XMLErrors.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2019-08-15  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Rename contentVisibilityDidChange to elementDidBecomeVisible

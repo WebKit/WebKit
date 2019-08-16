@@ -29,6 +29,7 @@
 #include <WebKitLegacy/WebKit.h>
 
 class HistoryDelegate : public IWebHistoryDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     HistoryDelegate();
     virtual ~HistoryDelegate();

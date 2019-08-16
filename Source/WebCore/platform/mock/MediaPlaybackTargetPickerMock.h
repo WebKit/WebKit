@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class MediaPlaybackTargetPickerMock final : public MediaPlaybackTargetPicker {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMock);
 public:
     explicit MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client&);

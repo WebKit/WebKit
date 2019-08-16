@@ -37,6 +37,7 @@ struct ScrollOffsetRange {
 
 template <typename T>
 struct ScrollSnapOffsetsInfo {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     Vector<T> horizontalSnapOffsets;
     Vector<T> verticalSnapOffsets;
 

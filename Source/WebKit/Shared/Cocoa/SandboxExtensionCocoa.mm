@@ -38,6 +38,7 @@
 namespace WebKit {
 
 class SandboxExtensionImpl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type, Optional<pid_t> pid = WTF::nullopt)
     {

@@ -29,7 +29,7 @@
 #include <gst/audio/audio.h>
 
 namespace WebCore {
-class GStreamerAudioData : public PlatformAudioData {
+class GStreamerAudioData final : public PlatformAudioData {
 public:
     GStreamerAudioData(GRefPtr<GstSample>&& sample, GstAudioInfo info)
         : m_sample(WTFMove(sample))

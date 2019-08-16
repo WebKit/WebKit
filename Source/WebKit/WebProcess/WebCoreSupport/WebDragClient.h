@@ -35,6 +35,7 @@ namespace WebKit {
 class WebPage;
 
 class WebDragClient : public WebCore::DragClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebDragClient(WebPage* page)
         : m_page(page)

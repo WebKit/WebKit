@@ -37,6 +37,7 @@ namespace WebKit {
 class WebPage;
 
 class GeolocationPermissionRequestManager {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GeolocationPermissionRequestManager(WebPage&);
 

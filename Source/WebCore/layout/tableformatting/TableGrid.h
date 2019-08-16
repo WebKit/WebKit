@@ -49,6 +49,7 @@ public:
     using SlotPosition = IntPoint;
     using CellSize = IntSize;
     struct CellInfo : public CanMakeWeakPtr<CellInfo> {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         CellInfo(const Box& tableCellBox, SlotPosition, CellSize);
 
         const Box& tableCellBox;
@@ -60,6 +61,7 @@ public:
 
     using SlotLogicalSize = LayoutSize;
     struct SlotInfo {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         SlotInfo() = default;
         SlotInfo(CellInfo&);
 

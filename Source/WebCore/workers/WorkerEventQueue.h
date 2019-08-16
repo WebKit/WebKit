@@ -33,6 +33,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class WorkerEventQueue final : public EventQueue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerEventQueue(ScriptExecutionContext&);
     virtual ~WorkerEventQueue();

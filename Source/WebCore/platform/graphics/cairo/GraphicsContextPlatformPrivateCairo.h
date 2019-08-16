@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class GraphicsContextPlatformPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsContextPlatformPrivate(PlatformContextCairo& platformContext)
         : platformContext(platformContext)

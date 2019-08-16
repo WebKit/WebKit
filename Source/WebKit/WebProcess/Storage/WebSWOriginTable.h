@@ -37,6 +37,7 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class WebSWOriginTable {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSWOriginTable() = default;
 

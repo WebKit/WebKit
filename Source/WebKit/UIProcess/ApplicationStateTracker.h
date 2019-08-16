@@ -38,6 +38,7 @@ OBJC_CLASS UIView;
 namespace WebKit {
 
 class ApplicationStateTracker : public CanMakeWeakPtr<ApplicationStateTracker> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector);
     ~ApplicationStateTracker();

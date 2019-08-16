@@ -50,6 +50,7 @@ bool AudioSession::tryToSetActive(bool active)
 
 #if !PLATFORM(COCOA)
 class AudioSessionPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 };
 
 AudioSession::AudioSession()

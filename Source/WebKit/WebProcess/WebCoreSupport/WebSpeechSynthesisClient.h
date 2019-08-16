@@ -36,6 +36,7 @@ namespace WebKit {
 class WebPage;
     
 class WebSpeechSynthesisClient : public WebCore::SpeechSynthesisClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSpeechSynthesisClient(WebPage& page)
         : m_page(page)

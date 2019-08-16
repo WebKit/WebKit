@@ -990,6 +990,7 @@ private:
     RefPtr<MediaError> m_error;
 
     struct PendingSeek {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         PendingSeek(const MediaTime& now, const MediaTime& targetTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
             : now(now)
             , targetTime(targetTime)

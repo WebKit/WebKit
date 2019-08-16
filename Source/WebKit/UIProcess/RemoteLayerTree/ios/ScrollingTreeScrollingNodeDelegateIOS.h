@@ -48,6 +48,7 @@ class ScrollingTreeScrollingNode;
 namespace WebKit {
 
 class ScrollingTreeScrollingNodeDelegateIOS : public WebCore::ScrollingTreeScrollingNodeDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScrollingTreeScrollingNodeDelegateIOS(WebCore::ScrollingTreeScrollingNode&);
     ~ScrollingTreeScrollingNodeDelegateIOS() final;

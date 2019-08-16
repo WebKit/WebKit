@@ -40,6 +40,7 @@ class TextTrackList;
 struct MediaSelectionOption;
 
 class CaptionUserPreferences {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CaptionUserPreferences(PageGroup&);
     virtual ~CaptionUserPreferences();

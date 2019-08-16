@@ -52,6 +52,7 @@ enum class TextIndicatorWindowDismissalAnimation : uint8_t {
 #if PLATFORM(MAC)
 
 class TextIndicatorWindow {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
 
 public:

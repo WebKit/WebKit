@@ -43,7 +43,8 @@ class SQLError;
 class SQLResultSet;
 class SQLTransactionBackend;
 
-class SQLStatement {
+class SQLStatement final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SQLStatement(Database&, const String&, Vector<SQLValue>&&, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, int permissions);
     ~SQLStatement();

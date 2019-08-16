@@ -107,6 +107,7 @@ static constexpr OptionSet<ScrollCoordinationRole> allScrollCoordinationRoles()
 
 #if PLATFORM(IOS_FAMILY)
 class LegacyWebKitScrollingLayerCoordinator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LegacyWebKitScrollingLayerCoordinator(ChromeClient& chromeClient, bool coordinateViewportConstrainedLayers)
         : m_chromeClient(chromeClient)

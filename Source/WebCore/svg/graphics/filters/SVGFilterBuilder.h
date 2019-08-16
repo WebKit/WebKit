@@ -33,6 +33,7 @@ class RenderObject;
 class SVGFilterElement;
 
 class SVGFilterBuilder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef HashSet<FilterEffect*> FilterEffectSet;
 

@@ -37,6 +37,7 @@ namespace API {
 class Object;
 
 class FormClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~FormClient() { }
 

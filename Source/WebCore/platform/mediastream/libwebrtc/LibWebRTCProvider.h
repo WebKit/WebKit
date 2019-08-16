@@ -64,6 +64,7 @@ struct RTCRtpCapabilities;
 enum class MDNSRegisterError { NotImplemented, BadParameter, DNSSD, Internal, Timeout };
 
 class WEBCORE_EXPORT LibWebRTCProvider {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<LibWebRTCProvider> create();
 

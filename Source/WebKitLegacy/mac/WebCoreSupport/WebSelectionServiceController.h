@@ -43,6 +43,7 @@ class IntPoint;
 }
 
 class WebSelectionServiceController : public WebSharingServicePickerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSelectionServiceController(WebView*);
 

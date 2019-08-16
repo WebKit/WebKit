@@ -64,6 +64,7 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::DocumentIdentifier docume
 }
 
 struct PendingRegistrationRequest {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     PendingRegistrationRequest(Ref<IPC::Connection> connection, uint64_t requestIdentifier, String&& name, PAL::SessionID sessionID)
         : connection(WTFMove(connection))
         , requestIdentifier(requestIdentifier)

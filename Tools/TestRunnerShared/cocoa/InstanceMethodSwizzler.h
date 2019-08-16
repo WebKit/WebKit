@@ -26,9 +26,11 @@
 #pragma once
 
 #include <objc/runtime.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 class InstanceMethodSwizzler {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(InstanceMethodSwizzler);
 public:
     InstanceMethodSwizzler(Class, SEL, IMP);

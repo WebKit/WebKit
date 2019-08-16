@@ -32,6 +32,7 @@ namespace WebKit {
 class WebProcessPool;
 
 class HighPerformanceGraphicsUsageSampler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit HighPerformanceGraphicsUsageSampler(WebProcessPool&);
 

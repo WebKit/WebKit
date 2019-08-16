@@ -41,11 +41,13 @@ OBJC_CLASS WKDrawingView;
 namespace WebKit {
 
 struct EditableImage {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RetainPtr<WKDrawingView> drawingView;
     String attachmentID;
 };
 
 class EditableImageController : private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(EditableImageController);
 public:
     explicit EditableImageController(WebPageProxy&);

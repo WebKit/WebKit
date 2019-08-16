@@ -98,6 +98,7 @@ using namespace PAL;
 class LayerClient;
 
 class AVFWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AVFWrapper(MediaPlayerPrivateAVFoundationCF*);
     ~AVFWrapper();
@@ -213,6 +214,7 @@ private:
 uintptr_t AVFWrapper::s_nextAVFWrapperObjectID;
 
 class LayerClient : public PlatformCALayerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LayerClient(AVFWrapper* parent) : m_parent(parent) { }
     virtual ~LayerClient() { m_parent = 0; }
@@ -1641,6 +1643,7 @@ void AVFWrapper::periodicTimeObserverCallback(AVCFPlayerRef, CMTime cmTime, void
 }
 
 struct NotificationCallbackData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RetainPtr<CFStringRef> m_propertyName;
     void* m_context;
 
@@ -1785,6 +1788,7 @@ void AVFWrapper::seekToTime(const MediaTime& time, const MediaTime& negativeTole
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 struct LegibleOutputData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RetainPtr<CFArrayRef> m_attributedStrings;
     RetainPtr<CFArrayRef> m_samples;
     MediaTime m_time;
@@ -1841,6 +1845,7 @@ void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutpu
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 struct LoadRequestData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RetainPtr<AVCFAssetResourceLoadingRequestRef> m_request;
     void* m_context;
 

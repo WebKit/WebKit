@@ -32,6 +32,7 @@
 #include "WebNetscapePluginEventHandler.h"
 
 class WebNetscapePluginEventHandlerCocoa : public WebNetscapePluginEventHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebNetscapePluginEventHandlerCocoa(WebNetscapePluginView*); 
 

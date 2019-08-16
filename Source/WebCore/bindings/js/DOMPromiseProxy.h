@@ -60,6 +60,7 @@ private:
 
 template<>
 class DOMPromiseProxy<IDLVoid> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMPromiseProxy() = default;
     ~DOMPromiseProxy() = default;
@@ -84,6 +85,7 @@ private:
 // FontFace and FontFaceSet.
 template<typename IDLType>
 class DOMPromiseProxyWithResolveCallback {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResolveCallback = WTF::Function<typename IDLType::ParameterType ()>;
 

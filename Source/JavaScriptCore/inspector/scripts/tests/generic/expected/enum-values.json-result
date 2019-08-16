@@ -627,6 +627,7 @@ namespace Inspector {
 
 
 class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
     virtual void commandWithEnumReturnValue(long requestId) override;
@@ -972,6 +973,8 @@ __attribute__((visibility ("default")))
 - (void)eventWithEnumParameterWithParameter:(TestProtocolEventDomainEventWithEnumParameterParameter)parameter;
 @end
 
+
+#import <WebInspector/RWIProtocolBuildCompatibilityObjects.h>
 
 ### End File: TestProtocol.h
 

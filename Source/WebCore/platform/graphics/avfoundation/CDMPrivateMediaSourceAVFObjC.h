@@ -37,6 +37,7 @@ class LegacyCDM;
 class CDMSessionMediaSourceAVFObjC;
 
 class CDMPrivateMediaSourceAVFObjC : public CDMPrivateInterface {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CDMPrivateMediaSourceAVFObjC(LegacyCDM* cdm)
         : m_cdm(cdm)

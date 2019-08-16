@@ -37,6 +37,7 @@ namespace WebCore {
 class Document;
 
 class XMLErrors {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit XMLErrors(Document&);
 

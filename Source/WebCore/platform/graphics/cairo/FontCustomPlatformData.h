@@ -41,6 +41,7 @@ template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
 
 struct FontCustomPlatformData {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
     FontCustomPlatformData(FT_Face, SharedBuffer&);

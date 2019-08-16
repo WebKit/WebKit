@@ -32,7 +32,7 @@ namespace WebCore {
 class ISOSchemeTypeBox;
 class ISOSchemeInformationBox;
 
-class WEBCORE_EXPORT ISOProtectionSchemeInfoBox : public ISOBox {
+class WEBCORE_EXPORT ISOProtectionSchemeInfoBox final : public ISOBox {
 public:
     static FourCC boxTypeName() { return "sinf"; }
 

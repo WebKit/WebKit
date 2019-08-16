@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class GStreamerCapturer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GStreamerCapturer(GStreamerCaptureDevice, GRefPtr<GstCaps>);
     GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>);

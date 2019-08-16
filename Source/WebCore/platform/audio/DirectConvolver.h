@@ -30,10 +30,13 @@
 #define DirectConvolver_h
 
 #include "AudioArray.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class DirectConvolver {
+class DirectConvolver final {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DirectConvolver);
 public:
     explicit DirectConvolver(size_t inputBlockSize);
 

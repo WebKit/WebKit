@@ -43,8 +43,9 @@ namespace WebCore {
 
 class AudioChannel;
 
-class ReverbConvolver {
+class ReverbConvolver final {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ReverbConvolver);
 public:
     // maxFFTSize can be adjusted (from say 2048 to 32768) depending on how much precision is necessary.
     // For certain tweaky de-convolving applications the phase errors add up quickly and lead to non-sensical results with

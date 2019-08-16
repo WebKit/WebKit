@@ -33,6 +33,7 @@ class GeolocationPosition;
 @class WebView;
 
 class WebGeolocationClient : public WebCore::GeolocationClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebGeolocationClient(WebView *);
     WebView *webView() { return m_webView; }

@@ -34,6 +34,7 @@ class WebIconDatabase;
 namespace API {
 
 class IconDatabaseClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~IconDatabaseClient() { }
 

@@ -35,6 +35,7 @@ class MicrotaskQueue;
 class ScriptExecutionContext;
 
 class Microtask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~Microtask()
     {
@@ -52,7 +53,6 @@ protected:
 };
 
 class VoidMicrotask final : public Microtask {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit VoidMicrotask(Function<void()>&& function)
         : m_function(WTFMove(function))
@@ -69,7 +69,8 @@ private:
     Function<void()> m_function;
 };
 
-class MicrotaskQueue {
+class MicrotaskQueue final {
+    WTF_MAKE_FAST_ALLOCATED;
     friend NeverDestroyed<MicrotaskQueue>;
     friend class Microtask;
 public:

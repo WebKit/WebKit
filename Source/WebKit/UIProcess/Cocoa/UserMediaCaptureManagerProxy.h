@@ -39,6 +39,7 @@ class SharedMemory;
 class WebProcessProxy;
 
 class UserMediaCaptureManagerProxy : private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UserMediaCaptureManagerProxy(WebProcessProxy&);
     ~UserMediaCaptureManagerProxy();

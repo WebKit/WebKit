@@ -29,6 +29,7 @@ namespace WebCore {
 
 template<typename DecorationType>
 class SVGDecoratedProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGDecoratedProperty() = default;
     virtual ~SVGDecoratedProperty() = default;

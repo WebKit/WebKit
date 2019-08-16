@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CurlSSLVerifier {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CurlSSLVerifier);
 public:
     enum class SSLCertificateFlags {

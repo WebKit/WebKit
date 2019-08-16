@@ -36,7 +36,8 @@ typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 
 namespace WebCore {
 
-class ImageRotationSessionVT {
+class ImageRotationSessionVT final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct RotationProperties {
         bool flipX { false };

@@ -36,7 +36,9 @@ namespace WebCore {
 namespace Display {
 
 struct Run {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     struct TextContext {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
         TextContext(unsigned position, unsigned length);
 

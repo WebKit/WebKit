@@ -134,6 +134,7 @@ static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpa
 }
 
 struct SecretServiceSearchData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     SecretServiceSearchData(GCancellable* cancellable, Function<void (Credential&&)>&& completionHandler)
         : cancellable(cancellable)
         , completionHandler(WTFMove(completionHandler))

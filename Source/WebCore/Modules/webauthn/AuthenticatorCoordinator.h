@@ -43,7 +43,8 @@ struct PublicKeyCredentialRequestOptions;
 
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
-class AuthenticatorCoordinator {
+class AuthenticatorCoordinator final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinator);
 public:
     WEBCORE_EXPORT explicit AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&&);

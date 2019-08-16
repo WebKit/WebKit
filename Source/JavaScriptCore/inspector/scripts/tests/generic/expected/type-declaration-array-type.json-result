@@ -765,6 +765,8 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 
 
 
+#import <WebInspector/RWIProtocolBuildCompatibilityObjects.h>
+
 ### End File: TestProtocol.h
 
 ### Begin File: TestProtocolInternal.h

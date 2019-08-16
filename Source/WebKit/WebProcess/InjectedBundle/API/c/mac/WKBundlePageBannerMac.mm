@@ -43,6 +43,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class PageBannerClientImpl : API::Client<WKBundlePageBannerClientBase>, public PageBanner::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageBannerClientImpl(WKBundlePageBannerClientBase* client)
     {

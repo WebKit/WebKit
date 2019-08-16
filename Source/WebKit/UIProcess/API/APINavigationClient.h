@@ -73,6 +73,7 @@ class NavigationResponse;
 class Object;
 
 class NavigationClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~NavigationClient() { }
 

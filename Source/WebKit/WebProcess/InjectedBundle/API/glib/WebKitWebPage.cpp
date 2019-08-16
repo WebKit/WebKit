@@ -95,6 +95,7 @@ WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
 static void webFrameDestroyed(WebFrame*);
 
 class WebKitFrameWrapper final: public FrameDestructionObserver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebKitFrameWrapper(WebFrame& webFrame)
         : FrameDestructionObserver(webFrame.coreFrame())

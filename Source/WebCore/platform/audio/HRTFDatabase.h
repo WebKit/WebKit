@@ -39,7 +39,7 @@ namespace WebCore {
 
 class HRTFKernel;
 
-class HRTFDatabase {
+class HRTFDatabase final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(HRTFDatabase);
 public:

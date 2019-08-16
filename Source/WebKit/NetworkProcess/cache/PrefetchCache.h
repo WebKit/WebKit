@@ -46,6 +46,7 @@ public:
     void clear();
 
     struct Entry {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         Entry(WebCore::ResourceResponse&&, RefPtr<WebCore::SharedBuffer>&&);
         Entry(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 

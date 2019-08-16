@@ -49,6 +49,7 @@ enum class InputSource {
 };
 
 class UserInputBridge {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UserInputBridge);
 public:
     UserInputBridge(Page&);

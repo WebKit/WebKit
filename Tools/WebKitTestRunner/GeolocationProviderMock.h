@@ -27,10 +27,12 @@
 #define GeolocationProviderMock_h
 
 #include <WebKit/WKRetainPtr.h>
+#include <wtf/FastMalloc.h>
 
 namespace WTR {
 
 class GeolocationProviderMock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GeolocationProviderMock(WKContextRef);
     ~GeolocationProviderMock();

@@ -35,6 +35,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class ScriptMessageClient final : public WebScriptMessageHandler::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScriptMessageClient(RemoteInspectorProtocolHandler& inspectorProtocolHandler)
         : m_inspectorProtocolHandler(inspectorProtocolHandler)

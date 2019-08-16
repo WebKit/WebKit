@@ -157,6 +157,7 @@ public:
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
     struct CommitState {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         unsigned treeDepth { 0 };
         unsigned totalBackdropFilterArea { 0 };
         bool ancestorHadChanges { false };
@@ -309,6 +310,7 @@ private:
     typedef unsigned ComputeVisibleRectFlags;
     
     struct VisibleAndCoverageRects {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         FloatRect visibleRect;
         FloatRect coverageRect;
         TransformationMatrix animatingTransform;
@@ -328,6 +330,7 @@ private:
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         static const size_t maxReplicaDepth = 16;
         enum ReplicaBranchType { ChildBranch = 0, ReplicaBranch = 1 };
         ReplicaState(ReplicaBranchType firstBranch)
@@ -579,6 +582,7 @@ private:
 
     // References to clones of our layers, for replicated layers.
     struct LayerClones {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         LayerMap primaryLayerClones;
         LayerMap structuralLayerClones;
         LayerMap contentsLayerClones;
@@ -608,6 +612,7 @@ private:
     typedef HashMap<String, Vector<AnimationProcessingAction>> AnimationsToProcessMap;
     typedef HashMap<String, Vector<LayerPropertyAnimation>> AnimationsMap;
     struct LayerAnimations {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         Vector<LayerPropertyAnimation> uncomittedAnimations;
         AnimationsToProcessMap animationsToProcess;
         AnimationsMap runningAnimations;

@@ -113,6 +113,7 @@ bool SessionHost::isConnected() const
 }
 
 struct ConnectToBrowserAsyncData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& dbusAddress, GCancellable* cancellable, Function<void (Optional<String> error)>&& completionHandler)
         : sessionHost(sessionHost)
         , dbusAddress(WTFMove(dbusAddress))
@@ -371,6 +372,7 @@ void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID
 }
 
 struct MessageContext {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     long messageID;
     SessionHost* host;
 };

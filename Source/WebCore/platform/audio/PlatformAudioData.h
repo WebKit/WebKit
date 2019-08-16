@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class PlatformAudioData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PlatformAudioData() = default;
 

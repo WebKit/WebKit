@@ -88,6 +88,7 @@ private:
 };
 
 class WKFullScreenViewControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 

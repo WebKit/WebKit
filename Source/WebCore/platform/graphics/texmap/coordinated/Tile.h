@@ -37,6 +37,7 @@ namespace WebCore {
 class TiledBackingStore;
 
 class Tile {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef IntPoint Coordinate;
 

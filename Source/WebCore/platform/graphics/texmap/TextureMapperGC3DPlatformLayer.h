@@ -32,6 +32,7 @@ class GLContext;
 class TextureMapperPlatformLayerProxy;
 
 class TextureMapperGC3DPlatformLayer : public PlatformLayer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TextureMapperGC3DPlatformLayer(GraphicsContext3D&, GraphicsContext3D::RenderStyle);
     virtual ~TextureMapperGC3DPlatformLayer();

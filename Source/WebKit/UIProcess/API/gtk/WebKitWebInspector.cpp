@@ -284,6 +284,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
 }
 
 class WebKitInspectorClient final : public WebInspectorProxyClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebKitInspectorClient(WebKitWebInspector* inspector)
         : m_inspector(inspector)

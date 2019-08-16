@@ -68,6 +68,7 @@ typedef enum  {
 } CallbackType;
 
 class UIScriptContext {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UIScriptContext);
 public:
     UIScriptContext(UIScriptContextDelegate&);

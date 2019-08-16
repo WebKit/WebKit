@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class GStreamerVideoDecoderFactory : public webrtc::VideoDecoderFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GStreamerVideoDecoderFactory();
     static bool newSource(String trackId, GstElement *source);

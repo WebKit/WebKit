@@ -612,6 +612,7 @@ void EventSendingController::monitorWheelEvents()
 }
 
 struct ScrollCompletionCallbackData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     JSContextRef m_context;
     JSObjectRef m_function;
 

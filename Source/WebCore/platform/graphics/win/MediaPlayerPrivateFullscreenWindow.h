@@ -48,6 +48,7 @@ protected:
 };
 
 class MediaPlayerPrivateFullscreenWindow {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerPrivateFullscreenWindow(MediaPlayerPrivateFullscreenClient*);
     ~MediaPlayerPrivateFullscreenWindow();

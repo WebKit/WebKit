@@ -1,3 +1,134 @@
+2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/AdClickAttributionManager.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/WebSocketTask.h:
+        * NetworkProcess/cache/PrefetchCache.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/soup/WebKitSoupRequestInputStream.cpp:
+        * NetworkProcess/soup/WebSocketTaskSoup.h:
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        * Platform/Module.h:
+        * PluginProcess/PluginControllerProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * UIProcess/API/APIAutomationClient.h:
+        * UIProcess/API/APIAutomationSessionClient.h:
+        * UIProcess/API/APIContextMenuClient.h:
+        * UIProcess/API/APICustomProtocolManagerClient.h:
+        * UIProcess/API/APIDiagnosticLoggingClient.h:
+        * UIProcess/API/APIDownloadClient.h:
+        * UIProcess/API/APIFindClient.h:
+        * UIProcess/API/APIFindMatchesClient.h:
+        * UIProcess/API/APIFormClient.h:
+        * UIProcess/API/APIFullscreenClient.h:
+        * UIProcess/API/APIGeolocationProvider.h:
+        * UIProcess/API/APIHistoryClient.h:
+        * UIProcess/API/APIIconDatabaseClient.h:
+        * UIProcess/API/APIIconLoadingClient.h:
+        * UIProcess/API/APIInjectedBundleClient.h:
+        * UIProcess/API/APILegacyContextHistoryClient.h:
+        * UIProcess/API/APILoaderClient.h:
+        * UIProcess/API/APINavigationClient.h:
+        * UIProcess/API/APIPolicyClient.h:
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageStateClient):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        * UIProcess/API/glib/IconDatabase.h:
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        * UIProcess/API/glib/WebKitIconLoadingClient.cpp:
+        * UIProcess/API/glib/WebKitNotificationProvider.h:
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView maybeInstallIconLoadingClient]):
+        * UIProcess/API/wpe/APIViewClient.h:
+        * UIProcess/API/wpe/ScrollGestureController.h:
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/IconLoadingDelegate.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/HighPerformanceGraphicsUsageSampler.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/PerActivityStateCPUUsageSampler.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/SystemPreviewController.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebNavigationState.h:
+        * UIProcess/WebPageInjectedBundleClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreClient.h:
+        * UIProcess/gtk/DragAndDropHandler.h:
+        * UIProcess/ios/EditableImageController.h:
+        * UIProcess/ios/InputViewUpdateDeferrer.h:
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.h:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+        * WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp:
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        * WebProcess/Network/webrtc/LibWebRTCResolver.h:
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Storage/WebSWOriginTable.h:
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.h:
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+        * WebProcess/WebCoreSupport/WebPlugInClient.h:
+        * WebProcess/WebCoreSupport/WebProgressTrackerClient.h:
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.h:
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h:
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        * WebProcess/WebPage/ios/FindIndicatorOverlayClientIOS.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2019-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Enable CoreFoundation use if building for Apple target

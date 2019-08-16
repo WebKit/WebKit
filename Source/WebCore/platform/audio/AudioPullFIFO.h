@@ -41,7 +41,8 @@ namespace WebCore {
 // the FIFO will ask the provider for more data when necessary to fulfill a request. Contrast this
 // with a "push" FIFO, where the sender pushes data to the FIFO which will itself push the data to
 // the receiver when the FIFO is full.
-class AudioPullFIFO {
+class AudioPullFIFO final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Create a FIFO that gets data from |provider|. The FIFO will be large enough to hold
     // |fifoLength| frames of data of |numberOfChannels| channels. The AudioSourceProvider will be

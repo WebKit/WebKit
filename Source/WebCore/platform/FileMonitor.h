@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class FileMonitor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class FileChangeType { Modification, Removal };
 

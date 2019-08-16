@@ -1,3 +1,55 @@
+2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/GCController.h:
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        * DumpRenderTree/win/DRTDataObject.h:
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.h:
+        * DumpRenderTree/win/DRTDropSource.h:
+        * DumpRenderTree/win/DraggingInfo.h:
+        * DumpRenderTree/win/EditingDelegate.h:
+        * DumpRenderTree/win/EventSender.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        * DumpRenderTree/win/HistoryDelegate.h:
+        * DumpRenderTree/win/MD5.h:
+        * DumpRenderTree/win/PolicyDelegate.h:
+        * DumpRenderTree/win/ResourceLoadDelegate.h:
+        * DumpRenderTree/win/TextInputController.h:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        * DumpRenderTree/win/UIDelegate.h:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/cocoa/ClassMethodSwizzler.h:
+        * TestRunnerShared/cocoa/InstanceMethodSwizzler.h:
+        * TestWebKitAPI/Counters.h:
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/Tests/WTF/Expected.cpp:
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::DerefObserver::ref):
+        (TestWebKitAPI::DerefObserver::deref):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::DerefObserver::ref):
+        (TestWebKitAPI::DerefObserver::deref):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/UniqueRef.cpp:
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.h:
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/GeolocationProviderMock.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestInvocation.h:
+
 2019-08-15  Sihui Liu  <sihui_liu@apple.com>
 
         Some improvements on web storage

@@ -39,6 +39,7 @@ class WebPageProxy;
 namespace API {
 
 class FindClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~FindClient() { }
 

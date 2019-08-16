@@ -37,7 +37,8 @@ namespace WebCore {
 
 // An AudioChannel represents a buffer of non-interleaved floating-point audio samples.
 // The PCM samples are normally assumed to be in a nominal range -1.0 -> +1.0
-class AudioChannel {
+class AudioChannel final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioChannel);
 public:
     // Memory can be externally referenced, or can be internally allocated with an AudioFloatArray.

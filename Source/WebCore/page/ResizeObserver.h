@@ -40,6 +40,7 @@ class Document;
 class Element;
 
 struct ResizeObserverData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     Vector<WeakPtr<ResizeObserver>> observers;
 };
 

@@ -37,6 +37,7 @@ class Page;
 }
 
 class WebMediaPlaybackTargetPicker : public WebCore::WebMediaSessionManagerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<WebMediaPlaybackTargetPicker> create(WebCore::Page&);
 

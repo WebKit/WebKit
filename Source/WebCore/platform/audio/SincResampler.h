@@ -36,7 +36,8 @@ namespace WebCore {
 
 // SincResampler is a high-quality sample-rate converter.
 
-class SincResampler {
+class SincResampler final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:   
     // scaleFactor == sourceSampleRate / destinationSampleRate
     // kernelSize can be adjusted for quality (higher is better)

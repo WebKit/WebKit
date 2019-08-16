@@ -54,6 +54,7 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 namespace WebKit {
 
 class WKFullScreenWindowControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
 

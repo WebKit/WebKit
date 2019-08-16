@@ -30,6 +30,7 @@
 class WebView;
 
 class WebContextMenuClient : public WebCore::ContextMenuClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebContextMenuClient(WebView*);
 

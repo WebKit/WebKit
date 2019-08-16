@@ -72,6 +72,7 @@ class WebPaymentCoordinatorProxy
     , private IPC::MessageSender
     , public CanMakeWeakPtr<WebPaymentCoordinatorProxy>
     , public PaymentAuthorizationPresenter::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct Client {
         virtual ~Client() = default;

@@ -93,6 +93,7 @@ static WebDataSource* getWebDataSource(DocumentLoader* loader)
 }
 
 class WebFrameLoaderClient::WebFramePolicyListenerPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebFramePolicyListenerPrivate() 
         : m_policyFunction(nullptr)

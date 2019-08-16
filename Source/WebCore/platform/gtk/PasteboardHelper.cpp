@@ -266,6 +266,7 @@ Vector<GdkAtom> PasteboardHelper::dropAtomsForContext(GtkWidget* widget, GdkDrag
 static SelectionData* settingClipboardSelection;
 
 struct ClipboardSetData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     ClipboardSetData(SelectionData& selection, WTF::Function<void()>&& selectionClearedCallback)
         : selectionData(selection)
         , selectionClearedCallback(WTFMove(selectionClearedCallback))

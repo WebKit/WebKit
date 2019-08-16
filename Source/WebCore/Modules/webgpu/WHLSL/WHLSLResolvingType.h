@@ -74,6 +74,7 @@ private:
 // It exists so we can make sure that the default constructor does the right thing.
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198158 This wrapper might not be necessary.
 class ResolvingType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ResolvingType()
         : m_inner(RefPtr<ResolvableTypeReference>())

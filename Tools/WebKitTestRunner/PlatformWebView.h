@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TestOptions.h"
+#include <wtf/FastMalloc.h>
 
 #if PLATFORM(COCOA) && !defined(BUILDING_GTK__)
 #include <WebKit/WKFoundation.h>
@@ -64,6 +65,7 @@ typedef cairo_surface_t* PlatformImage;
 namespace WTR {
 
 class PlatformWebView {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
 #if PLATFORM(COCOA)
     PlatformWebView(WKWebViewConfiguration*, const TestOptions&);
