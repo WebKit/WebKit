@@ -83,7 +83,7 @@ public:
     private:
         ContentChangeObserver& m_contentChangeObserver;
         const Element& m_element;
-        bool m_wasHidden { false };
+        Optional<bool> m_wasHidden;
         bool m_hadRenderer { false };
     };
 
@@ -130,6 +130,7 @@ private:
     void didRecognizeLongPress();
 
     void elementDidBecomeVisible(const Element&);
+    void elementDidBecomeHidden(const Element&);
 
     void setShouldObserveDOMTimerSchedulingAndTransitions(bool);
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }

@@ -400,20 +400,25 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
 
     if (!isVisuallyHidden(element))
         m_elementsWithDestroyedVisibleRenderer.add(&element);
-    // Candidate element is no longer visible.
-    if (m_visibilityCandidateList.remove(element)) {
-        // FIXME: We should also check for other type of visiblity changes.
-        ASSERT(hasVisibleChangeState());
-        if (m_visibilityCandidateList.computesEmpty())
-            setHasIndeterminateState();
-    }
+    elementDidBecomeHidden(element);
 }
 
 void ContentChangeObserver::elementDidBecomeVisible(const Element& element)
 {
-    LOG(ContentObservation, "elementDidBecomeVisible: visible content change did happen.");
+    LOG_WITH_STREAM(ContentObservation, stream << "elementDidBecomeVisible: element went from hidden to visible: " << &element);
     m_visibilityCandidateList.add(element);
     adjustObservedState(Event::ElementDidBecomeVisible);
+}
+
+void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
+{
+    LOG_WITH_STREAM(ContentObservation, stream << "elementDidBecomeHidden: element went from visible to hidden: " << &element);
+    // Candidate element is no longer visible.
+    if (!m_visibilityCandidateList.remove(element))
+        return;
+    ASSERT(hasVisibleChangeState());
+    if (m_visibilityCandidateList.computesEmpty())
+        setHasIndeterminateState();
 }
 
 void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
@@ -636,12 +641,19 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
 
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 {
-    auto changedFromHiddenToVisible = [&] {
-        return m_wasHidden && isConsideredVisible(m_element);
-    };
+    // Do we track this element?
+    if (!m_wasHidden.hasValue())
+        return;
 
-    if (changedFromHiddenToVisible() && isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
+    if (!isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
+        return;
+
+    auto wasVisible = !m_wasHidden.value();
+    auto isVisible = isConsideredVisible(m_element);
+    if (!wasVisible && isVisible)
         m_contentChangeObserver.elementDidBecomeVisible(m_element);
+    else if (wasVisible && !isVisible)
+        m_contentChangeObserver.elementDidBecomeHidden(m_element);
 }
 
 #if ENABLE(TOUCH_EVENTS)

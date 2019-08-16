@@ -1,3 +1,14 @@
+2019-08-16  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add ContentChangeObserver::elementDidBecomeHidden
+        https://bugs.webkit.org/show_bug.cgi?id=200819
+        <rdar://problem/54400223>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/going-from-hidden-to-visible-and-to-hidden3-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/going-from-hidden-to-visible-and-to-hidden3.html: Added.
+
 2019-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScript formatting of single statement arrow function can be poor
