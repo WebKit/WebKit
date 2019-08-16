@@ -29,10 +29,7 @@
 
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
-
-namespace PAL {
-class SessionID;
-}
+#include <pal/SessionID.h>
 
 namespace JSC {
 class ExecState;
