@@ -32,9 +32,9 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKPageConfigurationGetTypeID();
+WK_EXPORT WKTypeID WKPageConfigurationGetTypeID(void);
 
-WK_EXPORT WKPageConfigurationRef WKPageConfigurationCreate();
+WK_EXPORT WKPageConfigurationRef WKPageConfigurationCreate(void);
 
 WK_EXPORT WKContextRef WKPageConfigurationGetContext(WKPageConfigurationRef configuration);
 WK_EXPORT void WKPageConfigurationSetContext(WKPageConfigurationRef configuration, WKContextRef context);

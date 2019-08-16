@@ -55,9 +55,9 @@ enum _WKUserInterfaceDirectionPolicy {
 };
 typedef enum _WKUserInterfaceDirectionPolicy _WKUserInterfaceDirectionPolicy;
 
-WK_EXPORT WKTypeID WKPreferencesGetTypeID();
+WK_EXPORT WKTypeID WKPreferencesGetTypeID(void);
 
-WK_EXPORT WKPreferencesRef WKPreferencesCreate();
+WK_EXPORT WKPreferencesRef WKPreferencesCreate(void);
 WK_EXPORT WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifier);
 
 // Defaults to true.

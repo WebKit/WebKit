@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKGeolocationPositionGetTypeID();
+WK_EXPORT WKTypeID WKGeolocationPositionGetTypeID(void);
 
 WK_EXPORT WKGeolocationPositionRef WKGeolocationPositionCreate(double timestamp, double latitude, double longitude, double accuracy);
 WK_EXPORT WKGeolocationPositionRef WKGeolocationPositionCreate_b(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);

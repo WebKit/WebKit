@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKURLGetTypeID();
+WK_EXPORT WKTypeID WKURLGetTypeID(void);
 
 WK_EXPORT WKURLRef WKURLCreateWithUTF8CString(const char* string);
 WK_EXPORT WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative);

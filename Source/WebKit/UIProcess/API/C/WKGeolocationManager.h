@@ -62,7 +62,7 @@ typedef struct WKGeolocationProviderV1 {
 } WKGeolocationProviderV1;
 
 
-WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID();
+WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID(void);
 
 WK_EXPORT void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManager, const WKGeolocationProviderBase* provider);
 

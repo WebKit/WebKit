@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBackForwardListItemGetTypeID();
+WK_EXPORT WKTypeID WKBackForwardListItemGetTypeID(void);
 
 WK_EXPORT WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef item);
 WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item);

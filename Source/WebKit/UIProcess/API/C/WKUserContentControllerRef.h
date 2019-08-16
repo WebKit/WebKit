@@ -32,9 +32,9 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKUserContentControllerGetTypeID();
+WK_EXPORT WKTypeID WKUserContentControllerGetTypeID(void);
 
-WK_EXPORT WKUserContentControllerRef WKUserContentControllerCreate();
+WK_EXPORT WKUserContentControllerRef WKUserContentControllerCreate(void);
 
 WK_EXPORT WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef userContentController);
 WK_EXPORT void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentController, WKUserScriptRef userScript);

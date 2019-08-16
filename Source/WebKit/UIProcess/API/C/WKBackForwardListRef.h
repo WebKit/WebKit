@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBackForwardListGetTypeID();
+WK_EXPORT WKTypeID WKBackForwardListGetTypeID(void);
 
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef list);
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef list);

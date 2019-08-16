@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKUserScriptGetTypeID();
+WK_EXPORT WKTypeID WKUserScriptGetTypeID(void);
 
 WK_EXPORT WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef source, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly);
 

@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKNavigationDataGetTypeID();
+WK_EXPORT WKTypeID WKNavigationDataGetTypeID(void);
 
 WK_EXPORT WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationData);
 WK_EXPORT WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData);

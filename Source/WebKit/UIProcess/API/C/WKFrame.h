@@ -43,7 +43,7 @@ enum {
 };
 typedef uint32_t WKFrameLoadState;
 
-WK_EXPORT WKTypeID WKFrameGetTypeID();
+WK_EXPORT WKTypeID WKFrameGetTypeID(void);
  
 WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
 WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);

@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKFormSubmissionListenerGetTypeID();
+WK_EXPORT WKTypeID WKFormSubmissionListenerGetTypeID(void);
 
 WK_EXPORT void WKFormSubmissionListenerContinue(WKFormSubmissionListenerRef submissionListener);
 

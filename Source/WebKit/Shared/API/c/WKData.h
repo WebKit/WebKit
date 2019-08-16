@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKDataGetTypeID();
+WK_EXPORT WKTypeID WKDataGetTypeID(void);
 
 WK_EXPORT WKDataRef WKDataCreate(const unsigned char* bytes, size_t size);
 

@@ -35,49 +35,49 @@ extern "C" {
 /* Plug-in module information keys */
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPluginInformationBundleIdentifierKey();
+WK_EXPORT WKStringRef WKPluginInformationBundleIdentifierKey(void);
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPluginInformationBundleVersionKey();
+WK_EXPORT WKStringRef WKPluginInformationBundleVersionKey(void);
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPluginInformationBundleShortVersionKey();
+WK_EXPORT WKStringRef WKPluginInformationBundleShortVersionKey(void);
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPluginInformationPathKey();
+WK_EXPORT WKStringRef WKPluginInformationPathKey(void);
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPluginInformationDisplayNameKey();
+WK_EXPORT WKStringRef WKPluginInformationDisplayNameKey(void);
 
 /* Value type: WKUInt64Ref */
-WK_EXPORT WKStringRef WKPluginInformationDefaultLoadPolicyKey();
+WK_EXPORT WKStringRef WKPluginInformationDefaultLoadPolicyKey(void);
 
 /* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey();
+WK_EXPORT WKStringRef WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(void);
 
 /* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPluginInformationHasSandboxProfileKey();
+WK_EXPORT WKStringRef WKPluginInformationHasSandboxProfileKey(void);
 
 
 /* Plug-in load specific information keys */
 
 /* Value type: WKURLRef */
-WK_EXPORT WKStringRef WKPluginInformationFrameURLKey();
+WK_EXPORT WKStringRef WKPluginInformationFrameURLKey(void);
 
 /* Value type: WKStringRef */
-WK_EXPORT WKStringRef WKPluginInformationMIMETypeKey();
+WK_EXPORT WKStringRef WKPluginInformationMIMETypeKey(void);
 
 /* Value type: WKURLRef */
-WK_EXPORT WKStringRef WKPluginInformationPageURLKey();
+WK_EXPORT WKStringRef WKPluginInformationPageURLKey(void);
 
 /* Value type: WKURLRef */
-WK_EXPORT WKStringRef WKPluginInformationPluginspageAttributeURLKey();
+WK_EXPORT WKStringRef WKPluginInformationPluginspageAttributeURLKey(void);
 
 /* Value type: WKURLRef */
-WK_EXPORT WKStringRef WKPluginInformationPluginURLKey();
+WK_EXPORT WKStringRef WKPluginInformationPluginURLKey(void);
 
 /* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPlugInInformationReplacementObscuredKey();
+WK_EXPORT WKStringRef WKPlugInInformationReplacementObscuredKey(void);
 
 #ifdef __cplusplus
 }

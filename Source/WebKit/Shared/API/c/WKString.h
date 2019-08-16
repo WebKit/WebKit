@@ -44,7 +44,7 @@ extern "C" {
     typedef wchar_t WKChar;
 #endif
 
-WK_EXPORT WKTypeID WKStringGetTypeID();
+WK_EXPORT WKTypeID WKStringGetTypeID(void);
 
 WK_EXPORT WKStringRef WKStringCreateWithUTF8CString(const char* string);
 

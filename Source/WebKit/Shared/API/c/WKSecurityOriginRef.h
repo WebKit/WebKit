@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKSecurityOriginGetTypeID();
+WK_EXPORT WKTypeID WKSecurityOriginGetTypeID(void);
 
 WK_EXPORT WKSecurityOriginRef WKSecurityOriginCreateFromString(WKStringRef string);
 WK_EXPORT WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef identifier);

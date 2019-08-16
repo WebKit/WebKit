@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKArrayGetTypeID();
+WK_EXPORT WKTypeID WKArrayGetTypeID(void);
 
 WK_EXPORT WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues);
 WK_EXPORT WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues);

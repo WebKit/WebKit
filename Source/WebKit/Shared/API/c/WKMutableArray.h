@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKMutableArrayRef WKMutableArrayCreate();
+WK_EXPORT WKMutableArrayRef WKMutableArrayCreate(void);
 
 WK_EXPORT void WKArrayAppendItem(WKMutableArrayRef array, WKTypeRef item);
 

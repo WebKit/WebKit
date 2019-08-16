@@ -1,3 +1,55 @@
+2019-08-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Functions with no parameters in WebKit/Shared/API/c and WebKit/UIProcess/API/C are
+        missing a "void" specifier in their argument list
+        https://bugs.webkit.org/show_bug.cgi?id=200826
+
+        Reviewed by Chris Dumez.
+
+        Added void to indicate functions with no arguments to satisfy compiler errors.
+        This error came to light when fixing another patch.
+
+        * Shared/API/c/WKArray.h:
+        * Shared/API/c/WKConnectionRef.h:
+        * Shared/API/c/WKContextMenuItem.h:
+        * Shared/API/c/WKData.h:
+        * Shared/API/c/WKDictionary.h:
+        * Shared/API/c/WKErrorRef.h:
+        * Shared/API/c/WKMutableArray.h:
+        * Shared/API/c/WKMutableDictionary.h:
+        * Shared/API/c/WKNumber.h:
+        * Shared/API/c/WKPluginInformation.h:
+        * Shared/API/c/WKRenderLayer.h:
+        * Shared/API/c/WKRenderObject.h:
+        * Shared/API/c/WKSecurityOriginRef.h:
+        * Shared/API/c/WKSerializedScriptValue.h:
+        * Shared/API/c/WKString.h:
+        * Shared/API/c/WKURL.h:
+        * Shared/API/c/WKURLRequest.h:
+        * Shared/API/c/WKURLResponse.h:
+        * Shared/API/c/WKUserContentURLPattern.h:
+        * UIProcess/API/C/WKBackForwardListItemRef.h:
+        * UIProcess/API/C/WKBackForwardListRef.h:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKFormSubmissionListener.h:
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/API/C/WKFramePolicyListener.h:
+        * UIProcess/API/C/WKGeolocationManager.h:
+        * UIProcess/API/C/WKGeolocationPermissionRequest.h:
+        * UIProcess/API/C/WKGeolocationPosition.h:
+        * UIProcess/API/C/WKHitTestResult.h:
+        * UIProcess/API/C/WKNavigationDataRef.h:
+        * UIProcess/API/C/WKOpenPanelParametersRef.h:
+        * UIProcess/API/C/WKOpenPanelResultListener.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPageConfigurationRef.h:
+        * UIProcess/API/C/WKPageGroup.h:
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/C/WKUserContentControllerRef.h:
+        * UIProcess/API/C/WKUserMediaPermissionRequest.h:
+        * UIProcess/API/C/WKUserScriptRef.h:
+
 2019-08-16  Chris Dumez  <cdumez@apple.com>
 
         LocalStorageDatabase does not need to subclass ThreadSafeRefCounted

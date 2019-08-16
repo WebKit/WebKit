@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKSerializedScriptValueGetTypeID();
+WK_EXPORT WKTypeID WKSerializedScriptValueGetTypeID(void);
 
 WK_EXPORT WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception);
 WK_EXPORT JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValue, JSContextRef context, JSValueRef* exception);

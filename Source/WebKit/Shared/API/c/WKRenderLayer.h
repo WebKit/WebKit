@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKRenderLayerGetTypeID();
+WK_EXPORT WKTypeID WKRenderLayerGetTypeID(void);
 
 WK_EXPORT WKRenderObjectRef WKRenderLayerGetRenderer(WKRenderLayerRef renderLayer);
 

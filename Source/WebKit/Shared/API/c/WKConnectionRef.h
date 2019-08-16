@@ -48,7 +48,7 @@ typedef struct WKConnectionClientV0 {
     WKConnectionDidCloseCallback                                        didClose;
 } WKConnectionClientV0;
 
-WK_EXPORT WKTypeID WKConnectionGetTypeID();
+WK_EXPORT WKTypeID WKConnectionGetTypeID(void);
 
 WK_EXPORT void WKConnectionSetConnectionClient(WKConnectionRef connection, const WKConnectionClientBase* client);
 WK_EXPORT void WKConnectionPostMessage(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody);

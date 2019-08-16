@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKUserMediaPermissionRequestGetTypeID();
+WK_EXPORT WKTypeID WKUserMediaPermissionRequestGetTypeID(void);
 
 enum {
     kWKNoConstraints = 0,

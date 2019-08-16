@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKPageGroupGetTypeID();
+WK_EXPORT WKTypeID WKPageGroupGetTypeID(void);
 
 WK_EXPORT WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier);
 

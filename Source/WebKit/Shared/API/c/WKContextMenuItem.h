@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKContextMenuItemGetTypeID();
+WK_EXPORT WKTypeID WKContextMenuItemGetTypeID(void);
 
 WK_EXPORT WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag, WKStringRef title, bool enabled);
 WK_EXPORT WKContextMenuItemRef WKContextMenuItemCreateAsCheckableAction(WKContextMenuItemTag, WKStringRef title, bool enabled, bool checked);

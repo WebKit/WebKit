@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKGeolocationPermissionRequestGetTypeID();
+WK_EXPORT WKTypeID WKGeolocationPermissionRequestGetTypeID(void);
 
 WK_EXPORT void WKGeolocationPermissionRequestAllow(WKGeolocationPermissionRequestRef geolocationPermissionRequest);
 WK_EXPORT void WKGeolocationPermissionRequestDeny(WKGeolocationPermissionRequestRef geolocationPermissionRequest);

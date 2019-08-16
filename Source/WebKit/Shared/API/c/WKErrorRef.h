@@ -49,9 +49,9 @@ enum {
     kWKErrorInternal =                                           300,
 };
 
-WK_EXPORT WKTypeID WKErrorGetTypeID();
+WK_EXPORT WKTypeID WKErrorGetTypeID(void);
 
-WK_EXPORT WKStringRef WKErrorCopyWKErrorDomain();
+WK_EXPORT WKStringRef WKErrorCopyWKErrorDomain(void);
 
 WK_EXPORT WKStringRef WKErrorCopyDomain(WKErrorRef error);
 WK_EXPORT int WKErrorGetErrorCode(WKErrorRef error);

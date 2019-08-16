@@ -104,9 +104,9 @@ enum {
 };
 typedef uint32_t WKStatisticsOptions;
 
-WK_EXPORT WKTypeID WKContextGetTypeID();
+WK_EXPORT WKTypeID WKContextGetTypeID(void);
 
-WK_EXPORT WKContextRef WKContextCreate() WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKContextCreateWithConfiguration);
+WK_EXPORT WKContextRef WKContextCreate(void) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKContextCreateWithConfiguration);
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKContextCreateWithConfiguration);
 WK_EXPORT WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration);
 

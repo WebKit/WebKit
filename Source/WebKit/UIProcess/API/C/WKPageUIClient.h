@@ -69,19 +69,19 @@ enum {
 };
 typedef uint32_t WKResourceLimit;
 
-WK_EXPORT WKTypeID WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID();
+WK_EXPORT WKTypeID WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID(void);
 WK_EXPORT void WKPageRunBeforeUnloadConfirmPanelResultListenerCall(WKPageRunBeforeUnloadConfirmPanelResultListenerRef listener, bool result);
 
-WK_EXPORT WKTypeID WKPageRunJavaScriptAlertResultListenerGetTypeID();
+WK_EXPORT WKTypeID WKPageRunJavaScriptAlertResultListenerGetTypeID(void);
 WK_EXPORT void WKPageRunJavaScriptAlertResultListenerCall(WKPageRunJavaScriptAlertResultListenerRef listener);
 
-WK_EXPORT WKTypeID WKPageRunJavaScriptConfirmResultListenerGetTypeID();
+WK_EXPORT WKTypeID WKPageRunJavaScriptConfirmResultListenerGetTypeID(void);
 WK_EXPORT void WKPageRunJavaScriptConfirmResultListenerCall(WKPageRunJavaScriptConfirmResultListenerRef listener, bool result);
 
-WK_EXPORT WKTypeID WKPageRunJavaScriptPromptResultListenerGetTypeID();
+WK_EXPORT WKTypeID WKPageRunJavaScriptPromptResultListenerGetTypeID(void);
 WK_EXPORT void WKPageRunJavaScriptPromptResultListenerCall(WKPageRunJavaScriptPromptResultListenerRef listener, WKStringRef result);
 
-WK_EXPORT WKTypeID WKPageRequestStorageAccessConfirmResultListenerGetTypeID();
+WK_EXPORT WKTypeID WKPageRequestStorageAccessConfirmResultListenerGetTypeID(void);
 WK_EXPORT void WKPageRequestStorageAccessConfirmResultListenerCall(WKPageRequestStorageAccessConfirmResultListenerRef listener, bool result);
     
 typedef void (*WKPageUIClientCallback)(WKPageRef page, const void* clientInfo);

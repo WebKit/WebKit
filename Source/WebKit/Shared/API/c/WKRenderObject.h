@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKRenderObjectGetTypeID();
+WK_EXPORT WKTypeID WKRenderObjectGetTypeID(void);
 
 WK_EXPORT WKStringRef WKRenderObjectCopyName(WKRenderObjectRef renderObject);
 WK_EXPORT WKStringRef WKRenderObjectCopyTextSnippet(WKRenderObjectRef renderObject);

@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKURLRequestGetTypeID();
+WK_EXPORT WKTypeID WKURLRequestGetTypeID(void);
 
 WK_EXPORT WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef);
 

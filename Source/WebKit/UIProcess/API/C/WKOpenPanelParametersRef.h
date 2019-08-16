@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKOpenPanelParametersGetTypeID();
+WK_EXPORT WKTypeID WKOpenPanelParametersGetTypeID(void);
 
 WK_EXPORT bool WKOpenPanelParametersGetAllowsDirectories(WKOpenPanelParametersRef parameters);
 WK_EXPORT bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParametersRef parameters);

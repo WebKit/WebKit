@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKUserContentURLPatternGetTypeID();
+WK_EXPORT WKTypeID WKUserContentURLPatternGetTypeID(void);
 
 WK_EXPORT WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef);
 
