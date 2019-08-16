@@ -1257,7 +1257,7 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
         listsMatch = validateTransformOperations(valueList, ignoredHasBigRotation) >= 0;
 
     m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
-    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, listsMatch, m_lastAnimationStartTime, 0_s, TextureMapperAnimation::AnimationState::Playing));
+    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, listsMatch, m_lastAnimationStartTime, 0_s, Nicosia::Animation::AnimationState::Playing));
     m_animationStartedTimer.startOneShot(0_s);
     didChangeAnimations();
     return true;

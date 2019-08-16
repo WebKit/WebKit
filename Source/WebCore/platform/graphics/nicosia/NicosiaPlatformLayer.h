@@ -35,8 +35,8 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "NicosiaAnimatedBackingStoreClient.h"
+#include "NicosiaAnimation.h"
 #include "NicosiaSceneIntegration.h"
-#include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
@@ -171,7 +171,7 @@ public:
         WebCore::FilterOperations filters;
         // FIXME: Despite the name, this implementation is not
         // TextureMapper-specific. Should be renamed when necessary.
-        WebCore::TextureMapperAnimations animations;
+        Animations animations;
 
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;

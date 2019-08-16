@@ -1,13 +1,14 @@
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/texmap"
+    "${WEBCORE_DIR}/platform/graphics/nicosia"
 )
 
 list(APPEND WebCore_SOURCES
+    platform/graphics/nicosia/NicosiaAnimation.cpp
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp
     platform/graphics/texmap/TextureMapper.cpp
-    platform/graphics/texmap/TextureMapperAnimation.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
     platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp
@@ -16,11 +17,11 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/nicosia/NicosiaAnimation.h
     platform/graphics/texmap/BitmapTexture.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
-    platform/graphics/texmap/TextureMapperAnimation.h
     platform/graphics/texmap/TextureMapperBackingStore.h
     platform/graphics/texmap/TextureMapperContextAttributes.h
     platform/graphics/texmap/TextureMapperFPSCounter.h
@@ -70,7 +71,6 @@ if (USE_COORDINATED_GRAPHICS)
 
     # FIXME: Move this into Nicosia.cmake once the component is set for long-term use.
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/nicosia"
         "${WEBCORE_DIR}/platform/graphics/nicosia/cairo"
         "${WEBCORE_DIR}/platform/graphics/nicosia/texmap"
     )

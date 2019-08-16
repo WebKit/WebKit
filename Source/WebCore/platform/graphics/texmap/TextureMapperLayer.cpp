@@ -640,7 +640,7 @@ void TextureMapperLayer::setContentsLayer(TextureMapperPlatformLayer* platformLa
     m_contentsLayer = platformLayer;
 }
 
-void TextureMapperLayer::setAnimations(const TextureMapperAnimations& animations)
+void TextureMapperLayer::setAnimations(const Nicosia::Animations& animations)
 {
     m_animations = animations;
 }
@@ -678,7 +678,7 @@ bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 
 bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 {
-    TextureMapperAnimation::ApplicationResult applicationResults;
+    Nicosia::Animation::ApplicationResult applicationResults;
     m_animations.apply(applicationResults, time);
 
     m_layerTransforms.localTransform = applicationResults.transform.valueOr(m_state.transform);
@@ -687,7 +687,7 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 
 #if USE(COORDINATED_GRAPHICS)
     // Calculate localTransform 50ms in the future.
-    TextureMapperAnimation::ApplicationResult futureApplicationResults;
+    Nicosia::Animation::ApplicationResult futureApplicationResults;
     m_animations.applyKeepingInternalState(futureApplicationResults, time + 50_ms);
     m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.valueOr(m_layerTransforms.localTransform);
 #endif

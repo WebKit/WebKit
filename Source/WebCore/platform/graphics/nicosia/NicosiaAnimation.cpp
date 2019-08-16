@@ -18,11 +18,13 @@
  */
 
 #include "config.h"
-#include "TextureMapperAnimation.h"
+#include "NicosiaAnimation.h"
 
 #include "LayoutSize.h"
 
-namespace WebCore {
+namespace Nicosia {
+
+using namespace WebCore;
 
 static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
 {
@@ -65,14 +67,14 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     return result;
 }
 
-static bool shouldReverseAnimationValue(Animation::AnimationDirection direction, int loopCount)
+static bool shouldReverseAnimationValue(WebCore::Animation::AnimationDirection direction, int loopCount)
 {
-    return (direction == Animation::AnimationDirectionAlternate && loopCount & 1)
-        || (direction == Animation::AnimationDirectionAlternateReverse && !(loopCount & 1))
-        || direction == Animation::AnimationDirectionReverse;
+    return (direction == WebCore::Animation::AnimationDirectionAlternate && loopCount & 1)
+        || (direction == WebCore::Animation::AnimationDirectionAlternateReverse && !(loopCount & 1))
+        || direction == WebCore::Animation::AnimationDirectionReverse;
 }
 
-static double normalizedAnimationValue(double runningTime, double duration, Animation::AnimationDirection direction, double iterationCount)
+static double normalizedAnimationValue(double runningTime, double duration, WebCore::Animation::AnimationDirection direction, double iterationCount)
 {
     if (!duration)
         return 0;
@@ -86,11 +88,11 @@ static double normalizedAnimationValue(double runningTime, double duration, Anim
     return shouldReverseAnimationValue(direction, loopCount) ? 1 - normalized : normalized;
 }
 
-static double normalizedAnimationValueForFillsForwards(double iterationCount, Animation::AnimationDirection direction)
+static double normalizedAnimationValueForFillsForwards(double iterationCount, WebCore::Animation::AnimationDirection direction)
 {
-    if (direction == Animation::AnimationDirectionNormal)
+    if (direction == WebCore::Animation::AnimationDirectionNormal)
         return 1;
-    if (direction == Animation::AnimationDirectionReverse)
+    if (direction == WebCore::Animation::AnimationDirectionReverse)
         return 0;
     return shouldReverseAnimationValue(direction, iterationCount) ? 1 : 0;
 }
@@ -155,7 +157,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     return matrix;
 }
 
-static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const TextureMapperAnimation& animation)
+static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const Animation& animation)
 {
     if (animationValue.timingFunction())
         return *animationValue.timingFunction();
@@ -164,7 +166,7 @@ static const TimingFunction& timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation& animation, bool listsMatch, MonotonicTime startTime, Seconds pauseTime, AnimationState state)
+Animation::Animation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const WebCore::Animation& animation, bool listsMatch, MonotonicTime startTime, Seconds pauseTime, AnimationState state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_keyframes(keyframes)
     , m_boxSize(boxSize)
@@ -182,7 +184,7 @@ TextureMapperAnimation::TextureMapperAnimation(const String& name, const Keyfram
 {
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
+Animation::Animation(const Animation& other)
     : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
     , m_keyframes(other.m_keyframes)
     , m_boxSize(other.m_boxSize)
@@ -200,7 +202,7 @@ TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& oth
 {
 }
 
-void TextureMapperAnimation::apply(ApplicationResult& applicationResults, MonotonicTime time)
+void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time)
 {
     if (!isActive())
         return;
@@ -208,7 +210,7 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
     Seconds totalRunningTime = computeTotalRunningTime(time);
     double normalizedValue = normalizedAnimationValue(totalRunningTime.seconds(), m_duration, m_direction, m_iterationCount);
 
-    if (m_iterationCount != Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
+    if (m_iterationCount != WebCore::Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
         m_state = AnimationState::Stopped;
         m_pauseTime = 0_s;
         if (m_fillsForwards)
@@ -247,7 +249,7 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
     }
 }
 
-void TextureMapperAnimation::applyKeepingInternalState(ApplicationResult& applicationResults, MonotonicTime time)
+void Animation::applyKeepingInternalState(ApplicationResult& applicationResults, MonotonicTime time)
 {
     MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
     Seconds oldTotalRunningTime = m_totalRunningTime;
@@ -260,13 +262,13 @@ void TextureMapperAnimation::applyKeepingInternalState(ApplicationResult& applic
     m_state = oldState;
 }
 
-void TextureMapperAnimation::pause(Seconds time)
+void Animation::pause(Seconds time)
 {
     m_state = AnimationState::Paused;
     m_pauseTime = time;
 }
 
-void TextureMapperAnimation::resume()
+void Animation::resume()
 {
     m_state = AnimationState::Playing;
     // FIXME: This seems wrong. m_totalRunningTime is cleared.
@@ -276,7 +278,7 @@ void TextureMapperAnimation::resume()
     m_lastRefreshedTime = MonotonicTime::now();
 }
 
-Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
+Seconds Animation::computeTotalRunningTime(MonotonicTime time)
 {
     if (m_state == AnimationState::Paused)
         return m_pauseTime;
@@ -287,12 +289,12 @@ Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
     return m_totalRunningTime;
 }
 
-bool TextureMapperAnimation::isActive() const
+bool Animation::isActive() const
 {
     return m_state != AnimationState::Stopped || m_fillsForwards;
 }
 
-void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
+void Animation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
     case AnimatedPropertyTransform:
@@ -309,7 +311,7 @@ void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults
     }
 }
 
-void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
+void Animations::add(const Animation& animation)
 {
     // Remove the old state if we are resuming a paused animation.
     remove(animation.name(), animation.keyframes().property());
@@ -317,21 +319,21 @@ void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
     m_animations.append(animation);
 }
 
-void TextureMapperAnimations::remove(const String& name)
+void Animations::remove(const String& name)
 {
-    m_animations.removeAllMatching([&name] (const TextureMapperAnimation& animation) {
+    m_animations.removeAllMatching([&name] (const Animation& animation) {
         return animation.name() == name;
     });
 }
 
-void TextureMapperAnimations::remove(const String& name, AnimatedPropertyID property)
+void Animations::remove(const String& name, AnimatedPropertyID property)
 {
-    m_animations.removeAllMatching([&name, property] (const TextureMapperAnimation& animation) {
+    m_animations.removeAllMatching([&name, property] (const Animation& animation) {
         return animation.name() == name && animation.keyframes().property() == property;
     });
 }
 
-void TextureMapperAnimations::pause(const String& name, Seconds offset)
+void Animations::pause(const String& name, Seconds offset)
 {
     for (auto& animation : m_animations) {
         if (animation.name() == name)
@@ -339,7 +341,7 @@ void TextureMapperAnimations::pause(const String& name, Seconds offset)
     }
 }
 
-void TextureMapperAnimations::suspend(MonotonicTime time)
+void Animations::suspend(MonotonicTime time)
 {
     // FIXME: This seems wrong. `pause` takes time offset (Seconds), not MonotonicTime.
     // https://bugs.webkit.org/show_bug.cgi?id=183112
@@ -347,39 +349,43 @@ void TextureMapperAnimations::suspend(MonotonicTime time)
         animation.pause(time.secondsSinceEpoch());
 }
 
-void TextureMapperAnimations::resume()
+void Animations::resume()
 {
     for (auto& animation : m_animations)
         animation.resume();
 }
 
-void TextureMapperAnimations::apply(TextureMapperAnimation::ApplicationResult& applicationResults, MonotonicTime time)
+void Animations::apply(Animation::ApplicationResult& applicationResults, MonotonicTime time)
 {
     for (auto& animation : m_animations)
         animation.apply(applicationResults, time);
 }
 
-void TextureMapperAnimations::applyKeepingInternalState(TextureMapperAnimation::ApplicationResult& applicationResults, MonotonicTime time)
+void Animations::applyKeepingInternalState(Animation::ApplicationResult& applicationResults, MonotonicTime time)
 {
     for (auto& animation : m_animations)
         animation.applyKeepingInternalState(applicationResults, time);
 }
 
-bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
+bool Animations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
 {
     return std::any_of(m_animations.begin(), m_animations.end(),
-        [&type](const TextureMapperAnimation& animation) { return animation.isActive() && animation.keyframes().property() == type; });
+        [&type](const Animation& animation) {
+            return animation.isActive() && animation.keyframes().property() == type;
+        });
 }
 
-bool TextureMapperAnimations::hasRunningAnimations() const
+bool Animations::hasRunningAnimations() const
 {
     return std::any_of(m_animations.begin(), m_animations.end(),
-        [](const TextureMapperAnimation& animation) { return animation.state() == TextureMapperAnimation::AnimationState::Playing; });
+        [](const Animation& animation) {
+            return animation.state() == Animation::AnimationState::Playing;
+        });
 }
 
-TextureMapperAnimations TextureMapperAnimations::getActiveAnimations() const
+Animations Animations::getActiveAnimations() const
 {
-    TextureMapperAnimations active;
+    Animations active;
     for (auto& animation : m_animations) {
         if (animation.isActive())
             active.add(animation);
@@ -387,4 +393,4 @@ TextureMapperAnimations TextureMapperAnimations::getActiveAnimations() const
     return active;
 }
 
-} // namespace WebCore
+} // namespace Nicosia

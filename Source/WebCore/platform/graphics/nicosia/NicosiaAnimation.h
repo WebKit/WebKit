@@ -17,31 +17,32 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextureMapperAnimation_h
-#define TextureMapperAnimation_h
+#pragma once
 
 #include "GraphicsLayer.h"
 
 namespace WebCore {
-
 class TransformationMatrix;
+}
 
-class TextureMapperAnimation {
+namespace Nicosia {
+
+class Animation {
 public:
     enum class AnimationState { Playing, Paused, Stopped };
 
     struct ApplicationResult {
-        Optional<TransformationMatrix> transform;
+        Optional<WebCore::TransformationMatrix> transform;
         Optional<double> opacity;
-        Optional<FilterOperations> filters;
+        Optional<WebCore::FilterOperations> filters;
         bool hasRunningAnimations { false };
     };
 
-    TextureMapperAnimation()
-        : m_keyframes(AnimatedPropertyInvalid)
+    Animation()
+        : m_keyframes(WebCore::AnimatedPropertyInvalid)
     { }
-    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, MonotonicTime, Seconds, AnimationState);
-    WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
+    Animation(const String&, const WebCore::KeyframeValueList&, const WebCore::FloatSize&, const WebCore::Animation&, bool, MonotonicTime, Seconds, AnimationState);
+    WEBCORE_EXPORT Animation(const Animation&);
 
     void apply(ApplicationResult&, MonotonicTime);
     void applyKeepingInternalState(ApplicationResult&, MonotonicTime);
@@ -50,21 +51,21 @@ public:
     bool isActive() const;
 
     const String& name() const { return m_name; }
-    const KeyframeValueList& keyframes() const { return m_keyframes; }
+    const WebCore::KeyframeValueList& keyframes() const { return m_keyframes; }
     AnimationState state() const { return m_state; }
-    TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    WebCore::TimingFunction* timingFunction() const { return m_timingFunction.get(); }
 
 private:
-    void applyInternal(ApplicationResult&, const AnimationValue& from, const AnimationValue& to, float progress);
+    void applyInternal(ApplicationResult&, const WebCore::AnimationValue& from, const WebCore::AnimationValue& to, float progress);
     Seconds computeTotalRunningTime(MonotonicTime);
 
     String m_name;
-    KeyframeValueList m_keyframes;
-    FloatSize m_boxSize;
-    RefPtr<TimingFunction> m_timingFunction;
+    WebCore::KeyframeValueList m_keyframes;
+    WebCore::FloatSize m_boxSize;
+    RefPtr<WebCore::TimingFunction> m_timingFunction;
     double m_iterationCount;
     double m_duration;
-    Animation::AnimationDirection m_direction;
+    WebCore::Animation::AnimationDirection m_direction;
     bool m_fillsForwards;
     bool m_listsMatch;
     MonotonicTime m_startTime;
@@ -74,33 +75,31 @@ private:
     AnimationState m_state;
 };
 
-class TextureMapperAnimations {
+class Animations {
 public:
-    TextureMapperAnimations() = default;
+    Animations() = default;
 
-    void add(const TextureMapperAnimation&);
+    void add(const Animation&);
     void remove(const String& name);
-    void remove(const String& name, AnimatedPropertyID);
+    void remove(const String& name, WebCore::AnimatedPropertyID);
     void pause(const String&, Seconds);
     void suspend(MonotonicTime);
     void resume();
 
-    void apply(TextureMapperAnimation::ApplicationResult&, MonotonicTime);
-    void applyKeepingInternalState(TextureMapperAnimation::ApplicationResult&, MonotonicTime);
+    void apply(Animation::ApplicationResult&, MonotonicTime);
+    void applyKeepingInternalState(Animation::ApplicationResult&, MonotonicTime);
 
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
-    const Vector<TextureMapperAnimation>& animations() const { return m_animations; }
-    Vector<TextureMapperAnimation>& animations() { return m_animations; }
+    const Vector<Animation>& animations() const { return m_animations; }
+    Vector<Animation>& animations() { return m_animations; }
 
     bool hasRunningAnimations() const;
-    bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
-    TextureMapperAnimations getActiveAnimations() const;
+    bool hasActiveAnimationsOfType(WebCore::AnimatedPropertyID type) const;
+    Animations getActiveAnimations() const;
 
 private:
-    Vector<TextureMapperAnimation> m_animations;
+    Vector<Animation> m_animations;
 };
 
 }
-
-#endif // TextureMapperAnimation_h

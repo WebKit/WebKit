@@ -162,7 +162,7 @@ private:
 
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatRect m_needsDisplayRect;
-    TextureMapperAnimations m_animations;
+    Nicosia::Animations m_animations;
     MonotonicTime m_animationStartTime;
 };
 
