@@ -83,6 +83,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
 
         if (this._resource && this._needsToRemoveResourceEventListeners) {
             this._resource.removeEventListener(null, null, this);
+            this._refreshRelatedResourcesSectionThrottler.cancel();
 
             this._needsToRemoveResourceEventListeners = false;
         }
@@ -211,7 +212,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
         this._refreshRequestHeaders();
         this._refreshImageSizeSection();
         this._refreshRequestDataSection();
-        this._refreshRelatedResourcesSection();
+        this._refreshRelatedResourcesSectionThrottler.force();
     }
 
     sizeDidChange()
