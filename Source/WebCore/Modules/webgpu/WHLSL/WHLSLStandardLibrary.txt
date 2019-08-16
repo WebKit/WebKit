@@ -13196,7 +13196,33 @@ operator float4x4(float4 a, float4 b, float4 c, float4 d) {
     result[3] = d;
     return result;
 }
-
+operator float2x2(float a, float b, float e, float f) {
+    return float2x2(float2(a, b), float2(e, f));
+}
+operator float2x3(float a, float b, float c, float e, float f, float g) {
+    return float2x3(float3(a, b, c), float3(e, f, g));
+}
+operator float2x4(float a, float b, float c, float d, float e, float f, float g, float h) {
+    return float2x4(float4(a, b, c, d), float4(e, f, g, h));
+}
+operator float3x2(float a, float b, float e, float f, float i, float j) {
+    return float3x2(float2(a, b), float2(e, f), float2(i, j));
+}
+operator float3x3(float a, float b, float c, float e, float f, float g, float i, float j, float k) {
+    return float3x3(float3(a, b, c), float3(e, f, g), float3(i, j, k));
+}
+operator float3x4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l) {
+    return float3x4(float4(a, b, c, d), float4(e, f, g, h), float4(i, j, k, l));
+}
+operator float4x2(float a, float b, float e, float f, float i, float j, float m, float n) {
+    return float4x2(float2(a, b), float2(e, f), float2(i, j), float2(m, n));
+}
+operator float4x3(float a, float b, float c, float e, float f, float g, float i, float j, float k, float m, float n, float o) {
+    return float4x3(float3(a, b, c), float3(e, f, g), float3(i, j, k), float3(m, n, o));
+}
+operator float4x4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p) {
+    return float4x4(float4(a, b, c, d), float4(e, f, g, h), float4(i, j, k, l), float4(m, n, o, p));
+}
 
 /* Functions named operator.wyx */
 bool3 operator.wyx(bool4 v) {
