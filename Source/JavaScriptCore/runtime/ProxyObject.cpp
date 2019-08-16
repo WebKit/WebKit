@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,7 +143,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     };
 
     if (propertyName.isPrivateName())
-        return jsUndefined();
+        return performDefaultGet();
 
     JSValue handlerValue = proxyObject->handler();
     if (handlerValue.isNull())
@@ -214,7 +214,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     };
 
     if (propertyName.isPrivateName())
-        return false;
+        RELEASE_AND_RETURN(scope, performDefaultGetOwnProperty());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -323,7 +323,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     };
 
     if (propertyName.isPrivateName())
-        return false;
+        RELEASE_AND_RETURN(scope, performDefaultHasProperty());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -425,7 +425,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     }
 
     if (propertyName.isPrivateName())
-        return false;
+        RELEASE_AND_RETURN(scope, performDefaultPut());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -628,7 +628,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
     }
 
     if (propertyName.isPrivateName())
-        return false;
+        RELEASE_AND_RETURN(scope, performDefaultDelete());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -827,7 +827,7 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
     };
 
     if (propertyName.isPrivateName())
-        return false;
+        return performDefaultDefineOwnProperty();
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
