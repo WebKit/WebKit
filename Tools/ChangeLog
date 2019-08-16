@@ -1,3 +1,20 @@
+2019-08-16  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r248436): WKWebView doesn’t respect isOpaque setting in NIB.
+        https://bugs.webkit.org/show_bug.cgi?id=200802
+        rdar://problem/54357818
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added WKWebViewOpaque.mm.
+        * TestWebKitAPI/Tests/ios/WKWebViewOpaque.mm: Added.
+        (-[OpaqueTestWKWebView isOpaque]): Added.
+        (-[NonOpaqueTestWKWebView isOpaque]): Added.
+        (isOpaque): Added.
+        (TEST): Added WKWebView.IsOpaqueDefault, WKWebView.SetOpaqueYes, WKWebView.SetOpaqueNo, WKWebView.IsOpaqueYesSubclassOverridden,
+        WKWebView.IsOpaqueNoSubclassOverridden, WKWebView.IsOpaqueYesDecodedFromArchive, WKWebView.IsOpaqueNoDecodedFromArchive,
+        WKWebView.IsOpaqueDrawsBackgroundYesConfiguration, WKWebView.IsOpaqueDrawsBackgroundNoConfiguration.
+
 2019-08-16  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build steps for Windows Factory

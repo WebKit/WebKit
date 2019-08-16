@@ -1,3 +1,20 @@
+2019-08-16  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r248436): WKWebView doesn’t respect isOpaque setting in NIB.
+        https://bugs.webkit.org/show_bug.cgi?id=200802
+        rdar://problem/54357818
+
+        Reviewed by Tim Horton.
+
+        Tests: WKWebView.IsOpaqueDefault, WKWebView.SetOpaqueYes, WKWebView.SetOpaqueNo, WKWebView.IsOpaqueYesSubclassOverridden,
+        WKWebView.IsOpaqueNoSubclassOverridden, WKWebView.IsOpaqueYesDecodedFromArchive, WKWebView.IsOpaqueNoDecodedFromArchive,
+        WKWebView.IsOpaqueDrawsBackgroundYesConfiguration, WKWebView.IsOpaqueDrawsBackgroundNoConfiguration.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Call _setOpaqueInternal:NO instead of self.opaque = NO.
+        (-[WKWebView _setOpaqueInternal:]): Added. Moved code from setOpaque:.
+        (-[WKWebView setOpaque:]): Call _setOpaqueInternal:.
+
 2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part

@@ -712,7 +712,7 @@ static void validate(WKWebViewConfiguration *configuration)
     [self _dispatchSetDeviceOrientation:deviceOrientation()];
 
     if (!self.opaque || !pageConfiguration->drawsBackground())
-        self.opaque = NO;
+        [self _setOpaqueInternal:NO];
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
@@ -2577,15 +2577,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->webViewDidMoveToWindow();
 }
 
-- (void)setOpaque:(BOOL)opaque
+- (void)_setOpaqueInternal:(BOOL)opaque
 {
-    BOOL oldOpaque = self.opaque;
-
     [super setOpaque:opaque];
-    [_contentView setOpaque:opaque];
 
-    if (oldOpaque == opaque)
-        return;
+    [_contentView setOpaque:opaque];
 
     if (!_page)
         return;
@@ -2594,7 +2590,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!opaque)
         backgroundColor = WebCore::Color(WebCore::Color::transparent);
     _page->setBackgroundColor(backgroundColor);
+
     [self _updateScrollViewBackground];
+}
+
+- (void)setOpaque:(BOOL)opaque
+{
+    if (opaque == self.opaque)
+        return;
+
+    [self _setOpaqueInternal:opaque];
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor
