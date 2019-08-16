@@ -221,10 +221,10 @@ bool MathMLElement::supportsFocus() const
     return isLink() || StyledElement::supportsFocus();
 }
 
-int MathMLElement::tabIndex() const
+int MathMLElement::defaultTabIndex() const
 {
-    // Skip the supportsFocus check in StyledElement.
-    return Element::tabIndex();
+    // FIXME: This seems wrong.
+    return 0;
 }
 
 }

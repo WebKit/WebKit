@@ -213,7 +213,7 @@ bool HTMLAreaElement::isFocusable() const
     if (!image || !image->renderer() || image->renderer()->style().visibility() != Visibility::Visible)
         return false;
 
-    return supportsFocus() && Element::tabIndex() >= 0;
+    return supportsFocus() && tabIndexSetExplicitly().valueOr(0) >= 0;
 }
     
 void HTMLAreaElement::setFocus(bool shouldBeFocused)

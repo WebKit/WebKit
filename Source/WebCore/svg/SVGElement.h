@@ -119,7 +119,6 @@ public:
     bool hasFocusEventListeners() const;
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
-    int tabIndex() const override;
 
     void callClearTarget() { clearTarget(); }
 

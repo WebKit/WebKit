@@ -409,10 +409,9 @@ bool HTMLFormControlElement::matchesInvalidPseudoClass() const
     return willValidate() && !isValidFormControlElement();
 }
 
-int HTMLFormControlElement::tabIndex() const
+int HTMLFormControlElement::defaultTabIndex() const
 {
-    // Skip the supportsFocus check in HTMLElement.
-    return Element::tabIndex();
+    return 0;
 }
 
 bool HTMLFormControlElement::computeWillValidate() const

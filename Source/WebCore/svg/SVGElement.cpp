@@ -183,13 +183,6 @@ SVGElement::~SVGElement()
     document().accessSVGExtensions().removeAllElementReferencesForTarget(*this);
 }
 
-int SVGElement::tabIndex() const
-{
-    if (supportsFocus())
-        return Element::tabIndex();
-    return -1;
-}
-
 void SVGElement::willRecalcStyle(Style::Change change)
 {
     if (!m_svgRareData || styleResolutionShouldRecompositeLayer())

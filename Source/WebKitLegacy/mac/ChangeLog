@@ -1,3 +1,14 @@
+2019-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Split tabIndex computation for DOM and the rest of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=200806
+
+        Reviewed by Chris Dumez.
+
+        * DOM/DOMHTMLElement.mm:
+        (-[DOMHTMLElement tabIndex]):
+        (-[DOMHTMLElement setTabIndex:]):
+
 2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part

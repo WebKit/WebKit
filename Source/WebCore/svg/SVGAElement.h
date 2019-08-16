@@ -60,7 +60,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
-    int tabIndex() const final;
+    int defaultTabIndex() const final;
 
     bool willRespondToMouseClickEvents() final;
 

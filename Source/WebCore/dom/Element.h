@@ -316,7 +316,8 @@ public:
     virtual void setFocus(bool flag);
     void setHasFocusWithin(bool flag);
 
-    bool tabIndexSetExplicitly() const;
+    Optional<int> tabIndexSetExplicitly() const;
+    bool shouldBeIgnoredInSequentialFocusNavigation() const { return defaultTabIndex() < 0 && !supportsFocus(); }
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
@@ -324,8 +325,8 @@ public:
 
     virtual bool shouldUseInputMethod();
 
-    virtual int tabIndex() const;
-    WEBCORE_EXPORT void setTabIndex(int);
+    virtual int tabIndexForBindings() const;
+    WEBCORE_EXPORT void setTabIndexForBindings(int);
     virtual RefPtr<Element> focusDelegate();
 
     ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
@@ -713,6 +714,8 @@ private:
 
     ElementRareData* elementRareData() const;
     ElementRareData& ensureElementRareData();
+
+    virtual int defaultTabIndex() const;
 
     void detachAllAttrNodesFromElement();
     void detachAttrNodeFromElementWithValue(Attr*, const AtomString& value);

@@ -54,7 +54,7 @@ public:
     void resetComputedStyle();
     void resetStyleRelations();
     
-    int tabIndex() const { return m_tabIndex; }
+    Optional<int> tabIndex() const { return m_tabIndexWasSetExplicitly ? Optional<int> { m_tabIndex } : WTF::nullopt; }
     void setTabIndexExplicitly(int index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
     void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }

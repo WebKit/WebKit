@@ -167,7 +167,7 @@ private:
 
     bool isFormControlElement() const final { return true; }
 
-    int tabIndex() const final;
+    int defaultTabIndex() const final;
 
     bool isValidFormControlElement() const;
 

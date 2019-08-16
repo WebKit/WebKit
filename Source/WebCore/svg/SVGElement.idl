@@ -31,7 +31,7 @@
 
     readonly attribute SVGAnimatedString className;
 
-    attribute long tabIndex;
+    [CEReactions=NotNeeded, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     // This method is deprecated, and we'd like to remove it someday.

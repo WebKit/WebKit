@@ -1,3 +1,73 @@
+2019-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Split tabIndex computation for DOM and the rest of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=200806
+
+        Reviewed by Chris Dumez.
+
+        This patch renames Element::tabIndex to Element::tabIndexForBindings and migrates its usage in
+        WebCore outside JS bindings code to: tabIndexSetExplicitly, which now returns Optional<int>,
+        and shouldBeIgnoredInSequentialFocusNavigation which returns true whenever the old tabIndex
+        function used to return -1.
+
+        Instead of overriding Element::tabIndex, each subclass of element now overrides defaultTabIndex
+        corresponding to the concept of the default value of tabIndex IDL attribute defined at:
+        https://html.spec.whatwg.org/multipage/interaction.html#the-tabindex-attribute
+
+        No new tests since there should be no observable behavior change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::tabIndexSetExplicitly const): Now returns Optional<int> instead of bool.
+        (WebCore::Element::defaultTabIndex const): Added. Return -1 here. HTMLElement and SVGElement
+        manually override tabIndex to implement this behavior. Now MathMLElement overrides this function
+        to return 0 instead, which is arguably a bug.
+        (WebCore::Element::supportsFocus const): Convert Optional<int> to bool.
+        (WebCore::Element::tabIndexForBindings const): Renamed from tabIndex. Migrated the code in
+        HTMLElement::tabIndex and SVGElement::tabIndex here. Note all overrides of HTMLElement::tabIndex
+        and SVGElement::tabIndex below were skipping supportsFocus check and using 0 as the default value.
+        This is now accomplished by having an explicit check defaultTabIndex returning 0. MathMLElement
+        overrides defaultTabIndex so it continues to use the old logic. All this complexity should go away
+        in webkit.org/b/199606.
+        (WebCore::Element::setTabIndexForBindings): Renamed from setTabIndex.
+        (WebCore::Element::isKeyboardFocusable const): Checks shouldBeIgnoredInSequentialFocusNavigation
+        in lieu of calling Element::tabIndexForBindings.
+        * dom/Element.h:
+        (WebCore::Element::shouldBeIgnoredInSequentialFocusNavigation const): Added. Returns true if the
+        old implementation of Element::tabIndex would have returned -1 due to supportsFocus returning false.
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::tabIndex const): Made this function return Optional<int>. Note that
+        ElementRareData continue to store a bit field and int for more efficient packing.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultTabIndex const): Replaced tabIndex.
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::isFocusable const):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::tabIndex const): Deleted. The logic is now in Element::tabIndex itself.
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::defaultTabIndex const): Replaced tabIndex.
+        * html/HTMLFormControlElement.h:
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::defaultTabIndex const): Replaced tabIndex. This is probably a bug since
+        this would put every MathML element in the sequential navigation order regardless of whether it
+        has tabIndex set or not.
+        * mathml/MathMLElement.h:
+        * page/FocusController.cpp:
+        (WebCore::tabIndexForElement): Added. Computes the "effective" tab index FocusController uses.
+        (WebCore::shadowAdjustedTabIndex):
+        (WebCore::nextElementWithGreaterTabIndex): This code should use shadowAdjustedTabIndex instead
+        but keeping the old behavior for now.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultTabIndex const): Replaced tabIndex.
+        * svg/SVGAElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::tabIndex const): Deleted. The logic is now in Element::tabIndex itself.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::hasTagName const):
+        * svg/SVGElement.idl:
+
 2019-08-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed restabilization of non-unified build.

@@ -714,13 +714,6 @@ String HTMLElement::title() const
     return attributeWithoutSynchronization(titleAttr);
 }
 
-int HTMLElement::tabIndex() const
-{
-    if (supportsFocus())
-        return Element::tabIndex();
-    return -1;
-}
-
 bool HTMLElement::translate() const
 {
     for (auto& element : lineageOfType<HTMLElement>(*this)) {

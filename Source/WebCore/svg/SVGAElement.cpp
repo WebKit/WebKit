@@ -151,10 +151,9 @@ void SVGAElement::defaultEventHandler(Event& event)
     SVGGraphicsElement::defaultEventHandler(event);
 }
 
-int SVGAElement::tabIndex() const
+int SVGAElement::defaultTabIndex() const
 {
-    // Skip the supportsFocus check in SVGElement.
-    return Element::tabIndex();
+    return 0;
 }
 
 bool SVGAElement::supportsFocus() const

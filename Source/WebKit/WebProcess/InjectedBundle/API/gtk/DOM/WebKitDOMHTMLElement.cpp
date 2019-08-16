@@ -457,7 +457,7 @@ glong webkit_dom_html_element_get_tab_index(WebKitDOMHTMLElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self), 0);
     WebCore::HTMLElement* item = WebKit::core(self);
-    glong result = item->tabIndex();
+    glong result = item->tabIndexForBindings();
     return result;
 }
 
@@ -466,7 +466,7 @@ void webkit_dom_html_element_set_tab_index(WebKitDOMHTMLElement* self, glong val
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setTabIndex(value);
+    item->setTabIndexForBindings(value);
 }
 
 gboolean webkit_dom_html_element_get_draggable(WebKitDOMHTMLElement* self)

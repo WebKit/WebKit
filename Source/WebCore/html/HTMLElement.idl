@@ -34,7 +34,7 @@
     // User interaction.
     [CEReactions, Reflect] attribute boolean hidden;
     void click();
-    [CEReactions] attribute long tabIndex;
+    [CEReactions, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
     void focus();
     void blur();
     [CEReactions, Reflect] attribute DOMString accessKey;

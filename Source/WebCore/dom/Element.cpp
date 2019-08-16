@@ -243,14 +243,21 @@ void Element::setTabIndexExplicitly(int tabIndex)
     ensureElementRareData().setTabIndexExplicitly(tabIndex);
 }
 
-bool Element::tabIndexSetExplicitly() const
+Optional<int> Element::tabIndexSetExplicitly() const
 {
-    return hasRareData() && elementRareData()->tabIndexSetExplicitly();
+    if (!hasRareData())
+        return WTF::nullopt;
+    return elementRareData()->tabIndex();
+}
+
+int Element::defaultTabIndex() const
+{
+    return -1;
 }
 
 bool Element::supportsFocus() const
 {
-    return tabIndexSetExplicitly();
+    return !!tabIndexSetExplicitly();
 }
 
 RefPtr<Element> Element::focusDelegate()
@@ -258,19 +265,24 @@ RefPtr<Element> Element::focusDelegate()
     return this;
 }
 
-int Element::tabIndex() const
+int Element::tabIndexForBindings() const
 {
-    return hasRareData() ? elementRareData()->tabIndex() : 0;
+    auto defaultIndex = defaultTabIndex();
+    ASSERT(!defaultIndex || defaultIndex == -1);
+    // FIXME: supportsFocus() check shouldn't be here.
+    if (!defaultIndex || supportsFocus())
+        return tabIndexSetExplicitly().valueOr(0);
+    return defaultIndex;
 }
 
-void Element::setTabIndex(int value)
+void Element::setTabIndexForBindings(int value)
 {
     setIntegralAttribute(tabindexAttr, value);
 }
 
 bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return isFocusable() && tabIndex() >= 0;
+    return isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().valueOr(0) >= 0;
 }
 
 bool Element::isMouseFocusable() const

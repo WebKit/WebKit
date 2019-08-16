@@ -1,3 +1,14 @@
+2019-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Split tabIndex computation for DOM and the rest of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=200806
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.cpp:
+        (webkit_dom_html_element_get_tab_index):
+        (webkit_dom_html_element_set_tab_index):
+
 2019-08-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed restabilization of non-unified build.
