@@ -1,3 +1,74 @@
+2019-08-16  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock destructor should clear all of its watchpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=200792
+        <rdar://problem/53947800>
+
+        Reviewed by Yusuke Suzuki.
+
+        We need to clear the watchpoints explicitly (just like we do in CodeBlock::jettison())
+        because the JITCode may outlive the CodeBlock for a while.  For example, the JITCode
+        is ref'd in Interpreter::execute(JSC::CallFrameClosure&) like so:
+
+            JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
+
+        The call to generatedJITCodeForCall() returns a Ref<JITCode> with the underlying
+        JITCode ref'd.  Hence, while the interpreter frame is still on the stack, the
+        executing JITCode instance will have a non-zero refCount, and be kept alive even
+        though its CodeBlock may have already been destructed.
+
+        Note: the Interpreter execute() methods aren't the only ones who would ref the JITCode:
+        ExecutableBase also holds a RefPtr<JITCode> m_jitCodeForCall and RefPtr<JITCode>
+        m_jitCodeForConstruct.  But a CodeBlock will be uninstalled before it gets destructed.
+        Hence, the uninstallation will deref the JITCode before we get to the CodeBlock
+        destructor.  That said, we should be aware that a JITCode's refCount is not always
+        1 after the JIT installs it into the CodeBlock, and it should not be assumed to be so.
+
+        For this patch, I also audited all Watchpoint subclasses to ensure that we are
+        clearing all the relevant watchpoints in the CodeBlock destructor.  Here is the
+        list of audited Watchpoints:
+
+            CodeBlockJettisoningWatchpoint
+            AdaptiveStructureWatchpoint
+            AdaptiveInferredPropertyValueWatchpoint
+                - these are held in the DFG::CommonData, and is tied to JITCode's life cycle.
+                - they need to be cleared eagerly in CodeBlock's destructor.
+
+            LLIntPrototypeLoadAdaptiveStructureWatchpoint
+                - stored in m_llintGetByIdWatchpointMap in the CodeBlock.
+                - this will be automatically cleared on CodeBlock destruction.
+
+        The following does not reference CodeBlock:
+
+            FunctionRareData::AllocationProfileClearingWatchpoint
+                - stored in FunctionRareData and will be cleared automatically on
+                  FunctionRareData destruction.
+                - only references the owner FunctionRareData.
+
+            ObjectToStringAdaptiveStructureWatchpoint
+            ObjectToStringAdaptiveInferredPropertyValueWatchpoint
+                - stored in StructureRareData and will be cleared automatically on
+                  StructureRareData destruction.
+
+            ObjectPropertyChangeAdaptiveWatchpoint
+                - stored in JSGlobalObject, and will be cleared automatically on
+                  JSGlobalObject destruction.
+                - only references the owner JSGlobalObject.
+
+            StructureStubClearingWatchpoint
+                - stored in WatchpointsOnStructureStubInfo and will be cleared automatically
+                  on WatchpointsOnStructureStubInfo destruction.
+
+            PropertyWatchpoint
+            StructureWatchpoint
+                - embedded in AdaptiveInferredPropertyValueWatchpointBase, which is extended
+                  as AdaptiveInferredPropertyValueWatchpoint, ObjectPropertyChangeAdaptiveWatchpoint,
+                  and ObjectToStringAdaptiveInferredPropertyValueWatchpoint.
+                - life cycle is handled by those 3 subclasses.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+
 2019-08-16  Justin Michaud  <justin_michaud@apple.com>
 
         Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value

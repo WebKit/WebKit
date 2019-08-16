@@ -1,3 +1,13 @@
+2019-08-16  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock destructor should clear all of its watchpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=200792
+        <rdar://problem/53947800>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/codeblock-should-clear-watchpoints-on-destruction.js: Added.
+
 2019-08-16  Justin Michaud  <justin_michaud@apple.com>
 
         Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value
