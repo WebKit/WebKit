@@ -45,7 +45,6 @@ using DeleteCallback = CompletionHandler<void()>;
 class StorageManagerSet : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<StorageManagerSet> create();
-    StorageManagerSet();
     ~StorageManagerSet();
 
     void add(PAL::SessionID, const String& localStorageDirectory, SandboxExtension::Handle& localStorageDirectoryHandle);
@@ -72,6 +71,8 @@ public:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
 
 private:
+    StorageManagerSet();
+
     // Message Handlers
     void connectToLocalStorageArea(IPC::Connection&, PAL::SessionID , uint64_t storageNamespaceID, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
     void connectToTransientLocalStorageArea(IPC::Connection&, PAL::SessionID , uint64_t storageNamespaceID, SecurityOriginData&&, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
