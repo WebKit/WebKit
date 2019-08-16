@@ -27,6 +27,8 @@
       <dep package="xdg-dbus-proxy"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="libxml2"/>
+      <dep package="shared-mime-info"/>
     </dependencies>
   </metamodule>
 
@@ -53,6 +55,8 @@
       href="https://wpewebkit.org/releases/"/>
   <repository type="tarball" name="webkitgtk-jhbuild-mirror"
       href="http://webkitgtk.org/jhbuild_mirror/"/>
+  <repository type="tarball" name="xmlsoft.org"
+      href="http://xmlsoft.org"/>
 
   <autotools id="libffi" autogen-sh="configure">
     <branch module="libffi/libffi-3.0.10.tar.gz" version="3.0.10"
@@ -295,5 +299,24 @@
       <dep package="at-spi2-core"/>
     </dependencies>
   </meson>
+
+  <autotools id="libxml2" supports-non-srcdir-builds="no"
+             autogen-sh="./autogen.sh; ./configure --with-python=no">
+    <branch module="/sources/libxml2-2.9.5.tar.gz" version="2.9.5"
+            repo="xmlsoft.org"
+            hash="sha256:4031c1ecee9ce7ba4f313e91ef6284164885cdb69937a123f6a83bb6a72dcd38"/>
+  </autotools>
+
+  <autotools id="shared-mime-info"
+             autogen-sh="configure"
+             autogenargs="--disable-default-make-check">
+    <dependencies>
+      <dep package="libxml2"/>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/~hadess/shared-mime-info-${version}.tar.xz" version="1.10"
+            repo="freedesktop.org"
+            hash="sha256:c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf"/>
+  </autotools>
 
 </moduleset>
