@@ -61,7 +61,7 @@ public:
 
         OriginDetails isolatedCopy() const { return { originIdentifier.isolatedCopy(), creationTime, modificationTime }; }
     };
-    Vector<OriginDetails> originDetails();
+    Vector<OriginDetails> originDetailsCrossThreadCopy();
 
 private:
     LocalStorageDatabaseTracker(String&& localStorageDirectory);

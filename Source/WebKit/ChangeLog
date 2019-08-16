@@ -1,5 +1,39 @@
 2019-08-16  Chris Dumez  <cdumez@apple.com>
 
+        Clarify StorageManagerSet / StorageManager threading model after r248734
+        https://bugs.webkit.org/show_bug.cgi?id=200817
+
+        Reviewed by Geoffrey Garen.
+
+        Clarify StorageManagerSet / StorageManager threading model after r248734. StorageManager is now
+        a background thread object but it still calls its completion handlers on the main thread, which
+        is very error prone. The pattern in WebKit for thread safety is that methods should always call
+        their completion handler of the thread / queue they were called on themselves. Doing differently
+        has caused so many thread-safety bugs in the past.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::getSessionStorageOrigins const):
+        (WebKit::StorageManager::deleteSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageEntriesForOrigins):
+        (WebKit::StorageManager::getLocalStorageOrigins const):
+        (WebKit::StorageManager::getLocalStorageOriginDetails const):
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+        (WebKit::StorageManager::getSessionStorageOrigins): Deleted.
+        (WebKit::StorageManager::getLocalStorageOrigins): Deleted.
+        (WebKit::StorageManager::getLocalStorageOriginDetails): Deleted.
+        * NetworkProcess/WebStorage/StorageManager.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::getSessionStorageOrigins):
+        (WebKit::StorageManagerSet::deleteSessionStorage):
+        (WebKit::StorageManagerSet::deleteSessionStorageForOrigins):
+        (WebKit::StorageManagerSet::getLocalStorageOrigins):
+        (WebKit::StorageManagerSet::deleteLocalStorageModifiedSince):
+        (WebKit::StorageManagerSet::deleteLocalStorageForOrigins):
+        (WebKit::StorageManagerSet::getLocalStorageOriginDetails):
+
+2019-08-16  Chris Dumez  <cdumez@apple.com>
+
         StorageManagerSet constructor should not be public
         https://bugs.webkit.org/show_bug.cgi?id=200816
 

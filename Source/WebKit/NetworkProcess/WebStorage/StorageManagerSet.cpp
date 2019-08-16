@@ -185,73 +185,100 @@ void StorageManagerSet::resume()
         m_stateChangeCondition.notifyOne();
 }
 
-void StorageManagerSet::getSessionStorageOrigins(PAL::SessionID sessionID, CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
+void StorageManagerSet::getSessionStorageOrigins(PAL::SessionID sessionID, GetOriginsCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->getSessionStorageOrigins(WTFMove(completionHandler));
+        auto origins = storageManager->getSessionStorageOriginsCrossThreadCopy();
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), origins = WTFMove(origins)]() mutable {
+            completionHandler(WTFMove(origins));
+        });
     });
 }
 
-void StorageManagerSet::deleteSessionStorage(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void StorageManagerSet::deleteSessionStorage(PAL::SessionID sessionID, DeleteCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->deleteSessionStorageOrigins(WTFMove(completionHandler));
+        storageManager->deleteSessionStorageOrigins();
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
 void StorageManagerSet::deleteSessionStorageForOrigins(PAL::SessionID sessionID, const Vector<WebCore::SecurityOriginData>& originDatas, DeleteCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, copiedOriginDatas = crossThreadCopy(originDatas), completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->deleteSessionStorageEntriesForOrigins(copiedOriginDatas, WTFMove(completionHandler));
+        storageManager->deleteSessionStorageEntriesForOrigins(copiedOriginDatas);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
 void StorageManagerSet::getLocalStorageOrigins(PAL::SessionID sessionID, GetOriginsCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->getLocalStorageOrigins(WTFMove(completionHandler));
+        auto origins = storageManager->getLocalStorageOriginsCrossThreadCopy();
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), origins = WTFMove(origins)]() mutable {
+            completionHandler(WTFMove(origins));
+        });
     });
 }
 
 void StorageManagerSet::deleteLocalStorageModifiedSince(PAL::SessionID sessionID, WallTime time, DeleteCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, time, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->deleteLocalStorageOriginsModifiedSince(time, WTFMove(completionHandler));
+        storageManager->deleteLocalStorageOriginsModifiedSince(time);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
 void StorageManagerSet::deleteLocalStorageForOrigins(PAL::SessionID sessionID, const Vector<WebCore::SecurityOriginData>& originDatas, DeleteCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, copiedOriginDatas = crossThreadCopy(originDatas), completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->deleteLocalStorageEntriesForOrigins(copiedOriginDatas, WTFMove(completionHandler));
+        storageManager->deleteLocalStorageEntriesForOrigins(copiedOriginDatas);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
-void StorageManagerSet::getLocalStorageOriginDetails(PAL::SessionID sessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
+void StorageManagerSet::getLocalStorageOriginDetails(PAL::SessionID sessionID, GetOriginDetailsCallback&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
-        storageManager->getLocalStorageOriginDetails(WTFMove(completionHandler));
+        auto originDetails = storageManager->getLocalStorageOriginDetailsCrossThreadCopy();
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), originDetails = WTFMove(originDetails)]() mutable {
+            completionHandler(WTFMove(originDetails));
+        });
     });
 }
 

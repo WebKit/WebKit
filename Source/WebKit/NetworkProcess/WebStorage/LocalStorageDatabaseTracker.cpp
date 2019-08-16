@@ -131,7 +131,7 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
     return databaseOrigins;
 }
 
-Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::originDetails()
+Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::originDetailsCrossThreadCopy()
 {
     Vector<OriginDetails> result;
     auto databaseOrigins = origins();
@@ -141,10 +141,10 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
         String path = databasePath(origin);
 
         OriginDetails details;
-        details.originIdentifier = origin.databaseIdentifier();
+        details.originIdentifier = crossThreadCopy(origin.databaseIdentifier());
         details.creationTime = SQLiteFileSystem::databaseCreationTime(path);
         details.modificationTime = SQLiteFileSystem::databaseModificationTime(path);
-        result.uncheckedAppend(details);
+        result.uncheckedAppend(WTFMove(details));
     }
 
     return result;

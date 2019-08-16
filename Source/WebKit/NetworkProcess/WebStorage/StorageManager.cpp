@@ -92,32 +92,28 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
     sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
 }
 
-void StorageManager::getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
+HashSet<WebCore::SecurityOriginData> StorageManager::getSessionStorageOriginsCrossThreadCopy() const
 {
     ASSERT(!RunLoop::isMain());
 
     HashSet<SecurityOriginData> origins;
     for (const auto& sessionStorageNamespace : m_sessionStorageNamespaces.values()) {
         for (auto& origin : sessionStorageNamespace->origins())
-        origins.add(crossThreadCopy(origin));
+            origins.add(crossThreadCopy(origin));
     }
 
-    RunLoop::main().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(WTFMove(origins));
-    });
+    return origins;
 }
 
-void StorageManager::deleteSessionStorageOrigins(Function<void()>&& completionHandler)
+void StorageManager::deleteSessionStorageOrigins()
 {
     ASSERT(!RunLoop::isMain());
 
     for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
         sessionStorageNamespace->clearAllStorageAreas();
-
-    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
+void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -125,11 +121,9 @@ void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore:
         for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
             sessionStorageNamespace->clearStorageAreasMatchingOrigin(origin);
     }
-
-    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void StorageManager::getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
+HashSet<WebCore::SecurityOriginData> StorageManager::getLocalStorageOriginsCrossThreadCopy() const
 {
     ASSERT(!RunLoop::isMain());
 
@@ -149,25 +143,19 @@ void StorageManager::getLocalStorageOrigins(Function<void(HashSet<WebCore::Secur
             origins.add(origin.isolatedCopy());
     }
 
-    RunLoop::main().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(WTFMove(origins));
-    });
+    return origins;
 }
 
-void StorageManager::getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
+Vector<LocalStorageDatabaseTracker::OriginDetails> StorageManager::getLocalStorageOriginDetailsCrossThreadCopy() const
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<LocalStorageDatabaseTracker::OriginDetails> originDetails;
     if (m_localStorageDatabaseTracker)
-        originDetails = crossThreadCopy(m_localStorageDatabaseTracker->originDetails());
-
-    RunLoop::main().dispatch([originDetails = WTFMove(originDetails), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(WTFMove(originDetails));
-    });
+        return m_localStorageDatabaseTracker->originDetailsCrossThreadCopy();
+    return { };
 }
 
-void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time, Function<void()>&& completionHandler)
+void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -186,11 +174,9 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time, Funct
         for (auto& localStorageNamespace : m_localStorageNamespaces.values())
             localStorageNamespace->clearAllStorageAreas();
     }
-
-    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
+void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -204,8 +190,6 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::S
         if (m_localStorageDatabaseTracker)
             m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(origin);
     }
-
-    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
 StorageArea* StorageManager::createLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& origin)

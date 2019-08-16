@@ -30,7 +30,6 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageMap.h>
 #include <wtf/Forward.h>
-#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
@@ -62,14 +61,14 @@ public:
     void destroySessionStorageNamespace(uint64_t storageNamespaceID);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
-    void getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
-    void deleteSessionStorageOrigins(Function<void()>&& completionHandler);
-    void deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&&);
+    HashSet<WebCore::SecurityOriginData> getSessionStorageOriginsCrossThreadCopy() const;
+    void deleteSessionStorageOrigins();
+    void deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&);
 
-    void getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
-    void deleteLocalStorageOriginsModifiedSince(WallTime, Function<void()>&&);
-    void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&&);
-    void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
+    HashSet<WebCore::SecurityOriginData> getLocalStorageOriginsCrossThreadCopy() const;
+    void deleteLocalStorageOriginsModifiedSince(WallTime);
+    void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&);
+    Vector<LocalStorageDatabaseTracker::OriginDetails> getLocalStorageOriginDetailsCrossThreadCopy() const;
 
     void clearStorageNamespaces();
 
