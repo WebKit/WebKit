@@ -1,5 +1,13 @@
 2019-08-16  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed. When I rebased to land r248795, I had a bad merge in 
+        WHLSLStandardLibrary.txt where the bool matrix constructors ended
+        up in the wrong section of the standard library.
+
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
+2019-08-16  Saam Barati  <sbarati@apple.com>
+
         [WHLSL] Make operator== native and add bool matrices
         https://bugs.webkit.org/show_bug.cgi?id=200749
 

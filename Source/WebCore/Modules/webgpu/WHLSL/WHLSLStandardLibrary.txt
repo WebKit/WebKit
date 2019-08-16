@@ -12459,96 +12459,6 @@ uint4 firstbitlow(int4 x) {
     result[3] = firstbitlow(x[3]);
     return result;
 }
-operator bool2x2(bool2 a, bool2 b) {
-    bool2x2 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator bool2x3(bool3 a, bool3 b) {
-    bool2x3 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator bool2x4(bool4 a, bool4 b) {
-    bool2x4 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator bool3x2(bool2 a, bool2 b, bool2 c) {
-    bool3x2 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator bool3x3(bool3 a, bool3 b, bool3 c) {
-    bool3x3 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator bool3x4(bool4 a, bool4 b, bool4 c) {
-    bool3x4 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator bool4x2(bool2 a, bool2 b, bool2 c, bool2 d) {
-    bool4x2 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator bool4x3(bool3 a, bool3 b, bool3 c, bool3 d) {
-    bool4x3 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator bool4x4(bool4 a, bool4 b, bool4 c, bool4 d) {
-    bool4x4 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator bool2x2(bool a, bool b, bool e, bool f) {
-    return bool2x2(bool2(a, b), bool2(e, f));
-}
-operator bool2x3(bool a, bool b, bool c, bool e, bool f, bool g) {
-    return bool2x3(bool3(a, b, c), bool3(e, f, g));
-}
-operator bool2x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h) {
-    return bool2x4(bool4(a, b, c, d), bool4(e, f, g, h));
-}
-operator bool3x2(bool a, bool b, bool e, bool f, bool i, bool j) {
-    return bool3x2(bool2(a, b), bool2(e, f), bool2(i, j));
-}
-operator bool3x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k) {
-    return bool3x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k));
-}
-operator bool3x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l) {
-    return bool3x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l));
-}
-operator bool4x2(bool a, bool b, bool e, bool f, bool i, bool j, bool m, bool n) {
-    return bool4x2(bool2(a, b), bool2(e, f), bool2(i, j), bool2(m, n));
-}
-operator bool4x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k, bool m, bool n, bool o) {
-    return bool4x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k), bool3(m, n, o));
-}
-operator bool4x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l, bool m, bool n, bool o, bool p) {
-    return bool4x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l), bool4(m, n, o, p));
-}
 
 /* Functions named operator.xwxy */
 bool4 operator.xwxy(bool4 v) {
@@ -13466,6 +13376,96 @@ operator float4x3(float a, float b, float c, float e, float f, float g, float i,
 }
 operator float4x4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p) {
     return float4x4(float4(a, b, c, d), float4(e, f, g, h), float4(i, j, k, l), float4(m, n, o, p));
+}
+operator bool2x2(bool2 a, bool2 b) {
+    bool2x2 result;
+    result[0] = a;
+    result[1] = b;
+    return result;
+}
+operator bool2x3(bool3 a, bool3 b) {
+    bool2x3 result;
+    result[0] = a;
+    result[1] = b;
+    return result;
+}
+operator bool2x4(bool4 a, bool4 b) {
+    bool2x4 result;
+    result[0] = a;
+    result[1] = b;
+    return result;
+}
+operator bool3x2(bool2 a, bool2 b, bool2 c) {
+    bool3x2 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    return result;
+}
+operator bool3x3(bool3 a, bool3 b, bool3 c) {
+    bool3x3 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    return result;
+}
+operator bool3x4(bool4 a, bool4 b, bool4 c) {
+    bool3x4 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    return result;
+}
+operator bool4x2(bool2 a, bool2 b, bool2 c, bool2 d) {
+    bool4x2 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    return result;
+}
+operator bool4x3(bool3 a, bool3 b, bool3 c, bool3 d) {
+    bool4x3 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    return result;
+}
+operator bool4x4(bool4 a, bool4 b, bool4 c, bool4 d) {
+    bool4x4 result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    return result;
+}
+operator bool2x2(bool a, bool b, bool e, bool f) {
+    return bool2x2(bool2(a, b), bool2(e, f));
+}
+operator bool2x3(bool a, bool b, bool c, bool e, bool f, bool g) {
+    return bool2x3(bool3(a, b, c), bool3(e, f, g));
+}
+operator bool2x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h) {
+    return bool2x4(bool4(a, b, c, d), bool4(e, f, g, h));
+}
+operator bool3x2(bool a, bool b, bool e, bool f, bool i, bool j) {
+    return bool3x2(bool2(a, b), bool2(e, f), bool2(i, j));
+}
+operator bool3x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k) {
+    return bool3x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k));
+}
+operator bool3x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l) {
+    return bool3x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l));
+}
+operator bool4x2(bool a, bool b, bool e, bool f, bool i, bool j, bool m, bool n) {
+    return bool4x2(bool2(a, b), bool2(e, f), bool2(i, j), bool2(m, n));
+}
+operator bool4x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k, bool m, bool n, bool o) {
+    return bool4x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k), bool3(m, n, o));
+}
+operator bool4x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l, bool m, bool n, bool o, bool p) {
+    return bool4x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l), bool4(m, n, o, p));
 }
 
 /* Functions named operator.wyx */
