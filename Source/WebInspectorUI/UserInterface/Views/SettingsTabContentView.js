@@ -207,7 +207,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let showGroup = generalSettingsView.addGroup(WI.UIString("Show:"));
         showGroup.addSetting(WI.settings.showWhitespaceCharacters, WI.UIString("Whitespace characters"));
-        showGroup.addSetting(WI.settings.showInvalidCharacters, WI.UIString("Invalid characters"));
+        showGroup.addSetting(WI.settings.showInvisibleCharacters, WI.UIString("Invisible characters"));
 
         generalSettingsView.addSeparator();
 

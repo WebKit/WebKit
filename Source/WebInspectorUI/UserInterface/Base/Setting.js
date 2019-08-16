@@ -167,7 +167,7 @@ WI.settings = {
     showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
     showImageGrid: new WI.Setting("show-image-grid", false),
-    showInvalidCharacters: new WI.Setting("show-invalid-characters", false),
+    showInvisibleCharacters: new WI.Setting("show-invisible-characters", !!WI.Setting.migrateValue("show-invalid-characters")),
     showJavaScriptTypeInformation: new WI.Setting("show-javascript-type-information", false),
     showPaintRects: new WI.Setting("show-paint-rects", false),
     showRulers: new WI.Setting("show-rulers", false),

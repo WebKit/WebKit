@@ -1,3 +1,23 @@
+2019-08-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename "Invalid Characters" to "Invisible Characters" for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=200808
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+
+        * UserInterface/Base/Main.js:
+        (setInvisibleCharacterClassName): Added.
+        (setInvalidCharacterClassName): Deleted.
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.show-invisible-characters .CodeMirror .cm-invalidchar): Added.
+        (.show-invalid-characters .CodeMirror .cm-invalidchar): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-08-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: RTL: Console should be always LTR

@@ -114,7 +114,7 @@
     color: hsl(0, 0%, 70%);
 }
 
-.show-invalid-characters .CodeMirror .cm-invalidchar {
+.show-invisible-characters .CodeMirror .cm-invalidchar {
     display: initial;
 }
 

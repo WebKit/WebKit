@@ -307,11 +307,11 @@ WI.contentLoaded = function()
     WI.settings.tabSize.addEventListener(WI.Setting.Event.Changed, setTabSize);
     setTabSize();
 
-    function setInvalidCharacterClassName() {
-        document.body.classList.toggle("show-invalid-characters", WI.settings.showInvalidCharacters.value);
+    function setInvisibleCharacterClassName() {
+        document.body.classList.toggle("show-invisible-characters", WI.settings.showInvisibleCharacters.value);
     }
-    WI.settings.showInvalidCharacters.addEventListener(WI.Setting.Event.Changed, setInvalidCharacterClassName);
-    setInvalidCharacterClassName();
+    WI.settings.showInvisibleCharacters.addEventListener(WI.Setting.Event.Changed, setInvisibleCharacterClassName);
+    setInvisibleCharacterClassName();
 
     function setWhitespaceCharacterClassName() {
         document.body.classList.toggle("show-whitespace-characters", WI.settings.showWhitespaceCharacters.value);
