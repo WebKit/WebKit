@@ -4433,3 +4433,6 @@ webkit.org/b/198112 http/tests/security/showModalDialog-sync-cross-origin-page-l
 webkit.org/b/198679 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
 
 imported/w3c/web-platform-tests/wasm [ Skip ]
+
+# Variation selectors are not implemented on Windows.
+webkit.org/b/220830 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]

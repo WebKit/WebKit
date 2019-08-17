@@ -1,3 +1,15 @@
+2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Emoji with variation selectors are rendered in text style, not emoji style
+        https://bugs.webkit.org/show_bug.cgi?id=200830
+        <rdar://problem/53076002>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/emoji-variation-selector-expected-mismatch.html: Added.
+        * fast/text/emoji-variation-selector.html: Added.
+        * platform/win/TestExpectations: Mark as failing on Windows, because it doesn't support variation selectors.
+
 2019-08-16  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make "operator cast" constructors native
