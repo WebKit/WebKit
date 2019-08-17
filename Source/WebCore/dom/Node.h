@@ -31,6 +31,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleValidity.h"
 #include "TreeScope.h"
+#include <wtf/CompactPointerTuple.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
@@ -63,20 +64,6 @@ class ShadowRoot;
 class TouchEvent;
 
 using NodeOrString = Variant<RefPtr<Node>, String>;
-
-class NodeRareDataBase {
-public:
-    RenderObject* renderer() const { return m_renderer; }
-    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
-
-protected:
-    NodeRareDataBase(RenderObject* renderer)
-        : m_renderer(renderer)
-    { }
-
-private:
-    RenderObject* m_renderer;
-};
 
 class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
@@ -410,14 +397,8 @@ public:
     // Integration with rendering tree
 
     // As renderer() includes a branch you should avoid calling it repeatedly in hot code paths.
-    RenderObject* renderer() const { return hasRareData() ? m_data.m_rareData->renderer() : m_data.m_renderer; };
-    void setRenderer(RenderObject* renderer)
-    {
-        if (hasRareData())
-            m_data.m_rareData->setRenderer(renderer);
-        else
-            m_data.m_renderer = renderer;
-    }
+    RenderObject* renderer() const { return m_rendererWithStyleFlags.pointer(); }
+    void setRenderer(RenderObject*); // Defined in RenderObject.h
 
     // Use these two methods with caution.
     WEBCORE_EXPORT RenderBox* renderBox() const;
@@ -528,7 +509,7 @@ public:
 
 #if ENABLE(JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
-    static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_data.m_rareData); }
+    static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareData); }
     static int32_t flagIsText() { return IsTextFlag; }
     static int32_t flagIsContainer() { return IsContainerFlag; }
     static int32_t flagIsElement() { return IsElementFlag; }
@@ -536,7 +517,6 @@ public:
     static int32_t flagIsHTML() { return IsHTMLFlag; }
     static int32_t flagIsLink() { return IsLinkFlag; }
     static int32_t flagHasFocusWithin() { return HasFocusWithin; }
-    static int32_t flagHasRareData() { return HasRareDataFlag; }
     static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
     static int32_t flagChildrenAffectedByFirstChildRulesFlag() { return ChildrenAffectedByFirstChildRulesFlag; }
     static int32_t flagChildrenAffectedByLastChildRulesFlag() { return ChildrenAffectedByLastChildRulesFlag; }
@@ -557,7 +537,7 @@ protected:
         IsShadowRootFlag = 1 << 7,
         IsConnectedFlag = 1 << 8,
         IsInShadowTreeFlag = 1 << 9,
-        HasRareDataFlag = 1 << 10,
+        StyleAffectedByFocusWithinFlag = 1 << 10,
         HasEventTargetDataFlag = 1 << 11,
 
         // These bits are used by derived classes, pulled up here so they can
@@ -620,11 +600,29 @@ protected:
     static constexpr uint32_t s_refCountIncrement = 2;
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
 
+    enum class ElementStyleFlag : uint8_t {
+        StyleAffectedByActive = 1 << 0,
+        StyleAffectedByEmpty = 1 << 1,
+        ChildrenAffectedByDrag = 1 << 2,
+
+        // Bits for dynamic child matching.
+        // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
+        // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
+        ChildrenAffectedByForwardPositionalRules = 1 << 3,
+        DescendantsAffectedByForwardPositionalRules = 1 << 4,
+        ChildrenAffectedByBackwardPositionalRules = 1 << 5,
+        DescendantsAffectedByBackwardPositionalRules = 1 << 6,
+        ChildrenAffectedByPropertyBasedBackwardPositionalRules = 1 << 7,
+    };
+
+    bool hasStyleFlag(ElementStyleFlag state) const { return m_rendererWithStyleFlags.type() & static_cast<uint8_t>(state); }
+    void setStyleFlag(ElementStyleFlag state) { m_rendererWithStyleFlags.setType(m_rendererWithStyleFlags.type() | static_cast<uint8_t>(state)); }
+    void clearStyleFlags() { m_rendererWithStyleFlags.setType(0); }
+
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
-    bool hasRareData() const { return getFlag(HasRareDataFlag); }
-
-    NodeRareData* rareData() const;
+    bool hasRareData() const { return !!m_rareData; }
+    NodeRareData* rareData() const { return m_rareData.get(); }
     NodeRareData& ensureRareData();
     void clearRareData();
 
@@ -673,11 +671,8 @@ private:
     TreeScope* m_treeScope { nullptr };
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
-    // When a node has rare data we move the renderer into the rare data.
-    union DataUnion {
-        RenderObject* m_renderer;
-        NodeRareDataBase* m_rareData;
-    } m_data { nullptr };
+    CompactPointerTuple<RenderObject*, uint8_t> m_rendererWithStyleFlags;
+    std::unique_ptr<NodeRareData> m_rareData;
 };
 
 #ifndef NDEBUG

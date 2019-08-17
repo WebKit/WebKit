@@ -3219,51 +3219,6 @@ bool Element::needsStyleInvalidation() const
     return true;
 }
 
-void Element::setStyleAffectedByEmpty()
-{
-    ensureElementRareData().setStyleAffectedByEmpty(true);
-}
-
-void Element::setStyleAffectedByFocusWithin()
-{
-    ensureElementRareData().setStyleAffectedByFocusWithin(true);
-}
-
-void Element::setStyleAffectedByActive()
-{
-    ensureElementRareData().setStyleAffectedByActive(true);
-}
-
-void Element::setChildrenAffectedByDrag()
-{
-    ensureElementRareData().setChildrenAffectedByDrag(true);
-}
-
-void Element::setChildrenAffectedByForwardPositionalRules()
-{
-    ensureElementRareData().setChildrenAffectedByForwardPositionalRules(true);
-}
-
-void Element::setDescendantsAffectedByForwardPositionalRules()
-{
-    ensureElementRareData().setDescendantsAffectedByForwardPositionalRules(true);
-}
-
-void Element::setChildrenAffectedByBackwardPositionalRules()
-{
-    ensureElementRareData().setChildrenAffectedByBackwardPositionalRules(true);
-}
-
-void Element::setDescendantsAffectedByBackwardPositionalRules()
-{
-    ensureElementRareData().setDescendantsAffectedByBackwardPositionalRules(true);
-}
-
-void Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules()
-{
-    ensureElementRareData().setChildrenAffectedByPropertyBasedBackwardPositionalRules(true);
-}
-
 void Element::setChildIndex(unsigned index)
 {
     ElementRareData& rareData = ensureElementRareData();
@@ -3272,72 +3227,16 @@ void Element::setChildIndex(unsigned index)
 
 bool Element::hasFlagsSetDuringStylingOfChildren() const
 {
-    if (childrenAffectedByHover() || childrenAffectedByFirstChildRules() || childrenAffectedByLastChildRules())
-        return true;
-
-    if (!hasRareData())
-        return false;
-    return rareDataStyleAffectedByActive()
-        || rareDataChildrenAffectedByDrag()
-        || rareDataChildrenAffectedByForwardPositionalRules()
-        || rareDataDescendantsAffectedByForwardPositionalRules()
-        || rareDataChildrenAffectedByBackwardPositionalRules()
-        || rareDataDescendantsAffectedByBackwardPositionalRules()
-        || rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules();
-}
-
-bool Element::rareDataStyleAffectedByEmpty() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->styleAffectedByEmpty();
-}
-
-bool Element::rareDataStyleAffectedByFocusWithin() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->styleAffectedByFocusWithin();
-}
-
-bool Element::rareDataStyleAffectedByActive() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->styleAffectedByActive();
-}
-
-bool Element::rareDataChildrenAffectedByDrag() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->childrenAffectedByDrag();
-}
-
-bool Element::rareDataChildrenAffectedByForwardPositionalRules() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->childrenAffectedByForwardPositionalRules();
-}
-
-bool Element::rareDataDescendantsAffectedByForwardPositionalRules() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->descendantsAffectedByForwardPositionalRules();
-}
-
-bool Element::rareDataChildrenAffectedByBackwardPositionalRules() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->childrenAffectedByBackwardPositionalRules();
-}
-
-bool Element::rareDataDescendantsAffectedByBackwardPositionalRules() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->descendantsAffectedByBackwardPositionalRules();
-}
-
-bool Element::rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->childrenAffectedByPropertyBasedBackwardPositionalRules();
+    return styleAffectedByActive()
+        || childrenAffectedByHover()
+        || childrenAffectedByFirstChildRules()
+        || childrenAffectedByLastChildRules()
+        || childrenAffectedByDrag()
+        || childrenAffectedByForwardPositionalRules()
+        || descendantsAffectedByForwardPositionalRules()
+        || childrenAffectedByBackwardPositionalRules()
+        || descendantsAffectedByBackwardPositionalRules()
+        || childrenAffectedByPropertyBasedBackwardPositionalRules();
 }
 
 unsigned Element::rareDataChildIndex() const
@@ -3970,6 +3869,9 @@ void Element::resetComputedStyle()
 
 void Element::resetStyleRelations()
 {
+    // FIXME: Make this code more consistent.
+    clearFlag(StyleAffectedByFocusWithinFlag);
+    clearStyleFlags();
     if (!hasRareData())
         return;
     elementRareData()->resetStyleRelations();

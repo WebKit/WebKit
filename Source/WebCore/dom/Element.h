@@ -340,37 +340,37 @@ public:
     bool needsStyleInvalidation() const;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
-    bool styleAffectedByActive() const { return hasRareData() && rareDataStyleAffectedByActive(); }
-    bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
-    bool styleAffectedByFocusWithin() const { return hasRareData() && rareDataStyleAffectedByFocusWithin(); }
+    bool styleAffectedByActive() const { return hasStyleFlag(ElementStyleFlag::StyleAffectedByActive); }
+    bool styleAffectedByEmpty() const { return hasStyleFlag(ElementStyleFlag::StyleAffectedByEmpty); }
+    bool styleAffectedByFocusWithin() const { return getFlag(StyleAffectedByFocusWithinFlag); }
     bool descendantsAffectedByPreviousSibling() const { return getFlag(DescendantsAffectedByPreviousSiblingFlag); }
     bool childrenAffectedByHover() const { return getFlag(ChildrenAffectedByHoverRulesFlag); }
-    bool childrenAffectedByDrag() const { return hasRareData() && rareDataChildrenAffectedByDrag(); }
+    bool childrenAffectedByDrag() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByDrag); }
     bool childrenAffectedByFirstChildRules() const { return getFlag(ChildrenAffectedByFirstChildRulesFlag); }
     bool childrenAffectedByLastChildRules() const { return getFlag(ChildrenAffectedByLastChildRulesFlag); }
-    bool childrenAffectedByForwardPositionalRules() const { return hasRareData() && rareDataChildrenAffectedByForwardPositionalRules(); }
-    bool descendantsAffectedByForwardPositionalRules() const { return hasRareData() && rareDataDescendantsAffectedByForwardPositionalRules(); }
-    bool childrenAffectedByBackwardPositionalRules() const { return hasRareData() && rareDataChildrenAffectedByBackwardPositionalRules(); }
-    bool descendantsAffectedByBackwardPositionalRules() const { return hasRareData() && rareDataDescendantsAffectedByBackwardPositionalRules(); }
-    bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return hasRareData() && rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules(); }
+    bool childrenAffectedByForwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByForwardPositionalRules); }
+    bool descendantsAffectedByForwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::DescendantsAffectedByForwardPositionalRules); }
+    bool childrenAffectedByBackwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
+    bool descendantsAffectedByBackwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
+    bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules); }
     bool affectsNextSiblingElementStyle() const { return getFlag(AffectsNextSiblingElementStyle); }
     unsigned childIndex() const { return hasRareData() ? rareDataChildIndex() : 0; }
 
     bool hasFlagsSetDuringStylingOfChildren() const;
 
-    void setStyleAffectedByEmpty();
-    void setStyleAffectedByFocusWithin();
-    void setDescendantsAffectedByPreviousSibling() const { return setFlag(DescendantsAffectedByPreviousSiblingFlag); }
+    void setStyleAffectedByEmpty() { setStyleFlag(ElementStyleFlag::StyleAffectedByEmpty); }
+    void setStyleAffectedByFocusWithin() { setFlag(StyleAffectedByFocusWithinFlag); }
+    void setDescendantsAffectedByPreviousSibling() { setFlag(DescendantsAffectedByPreviousSiblingFlag); }
     void setChildrenAffectedByHover() { setFlag(ChildrenAffectedByHoverRulesFlag); }
-    void setStyleAffectedByActive();
-    void setChildrenAffectedByDrag();
+    void setStyleAffectedByActive() { setStyleFlag(ElementStyleFlag::StyleAffectedByActive); }
+    void setChildrenAffectedByDrag() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByDrag); }
     void setChildrenAffectedByFirstChildRules() { setFlag(ChildrenAffectedByFirstChildRulesFlag); }
     void setChildrenAffectedByLastChildRules() { setFlag(ChildrenAffectedByLastChildRulesFlag); }
-    void setChildrenAffectedByForwardPositionalRules();
-    void setDescendantsAffectedByForwardPositionalRules();
-    void setChildrenAffectedByBackwardPositionalRules();
-    void setDescendantsAffectedByBackwardPositionalRules();
-    void setChildrenAffectedByPropertyBasedBackwardPositionalRules();
+    void setChildrenAffectedByForwardPositionalRules() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByForwardPositionalRules); }
+    void setDescendantsAffectedByForwardPositionalRules() { setStyleFlag(ElementStyleFlag::DescendantsAffectedByForwardPositionalRules); }
+    void setChildrenAffectedByBackwardPositionalRules() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
+    void setDescendantsAffectedByBackwardPositionalRules() { setStyleFlag(ElementStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
+    void setChildrenAffectedByPropertyBasedBackwardPositionalRules() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules); }
     void setAffectsNextSiblingElementStyle() { setFlag(AffectsNextSiblingElementStyle); }
     void setStyleIsAffectedByPreviousSibling() { setFlag(StyleIsAffectedByPreviousSibling); }
     void setChildIndex(unsigned);
@@ -695,17 +695,6 @@ private:
     const RenderStyle& resolveComputedStyle();
     const RenderStyle& resolvePseudoElementStyle(PseudoId);
 
-    bool rareDataStyleAffectedByEmpty() const;
-    bool rareDataStyleAffectedByFocusWithin() const;
-    bool rareDataChildrenAffectedByHover() const;
-    bool rareDataStyleAffectedByActive() const;
-    bool rareDataChildrenAffectedByDrag() const;
-    bool rareDataChildrenAffectedByLastChildRules() const;
-    bool rareDataChildrenAffectedByForwardPositionalRules() const;
-    bool rareDataDescendantsAffectedByForwardPositionalRules() const;
-    bool rareDataChildrenAffectedByBackwardPositionalRules() const;
-    bool rareDataDescendantsAffectedByBackwardPositionalRules() const;
-    bool rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules() const;
     unsigned rareDataChildIndex() const;
 
     SpellcheckAttributeState spellcheckAttributeState() const;

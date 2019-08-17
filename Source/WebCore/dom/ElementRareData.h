@@ -42,7 +42,7 @@ inline IntSize defaultMinimumSizeForResizing()
 
 class ElementRareData : public NodeRareData {
 public:
-    explicit ElementRareData(RenderElement*);
+    explicit ElementRareData();
     ~ElementRareData();
 
     void setBeforePseudoElement(RefPtr<PseudoElement>&&);
@@ -59,35 +59,10 @@ public:
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
     void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
-    bool styleAffectedByActive() const { return m_styleAffectedByActive; }
-    void setStyleAffectedByActive(bool value) { m_styleAffectedByActive = value; }
-
-    bool styleAffectedByEmpty() const { return m_styleAffectedByEmpty; }
-    void setStyleAffectedByEmpty(bool value) { m_styleAffectedByEmpty = value; }
-
-    bool styleAffectedByFocusWithin() const { return m_styleAffectedByFocusWithin; }
-    void setStyleAffectedByFocusWithin(bool value) { m_styleAffectedByFocusWithin = value; }
-
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() { return m_containsFullScreenElement; }
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
 #endif
-
-    bool childrenAffectedByDrag() const { return m_childrenAffectedByDrag; }
-    void setChildrenAffectedByDrag(bool value) { m_childrenAffectedByDrag = value; }
-
-    bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
-    void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
-    bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
-    void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
-    bool descendantsAffectedByForwardPositionalRules() const { return m_descendantsAffectedByForwardPositionalRules; }
-    void setDescendantsAffectedByForwardPositionalRules(bool value) { m_descendantsAffectedByForwardPositionalRules = value; }
-    bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
-    void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
-    bool descendantsAffectedByBackwardPositionalRules() const { return m_descendantsAffectedByBackwardPositionalRules; }
-    void setDescendantsAffectedByBackwardPositionalRules(bool value) { m_descendantsAffectedByBackwardPositionalRules = value; }
-    bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return m_childrenAffectedByPropertyBasedBackwardPositionalRules; }
-    void setChildrenAffectedByPropertyBasedBackwardPositionalRules(bool value) { m_childrenAffectedByPropertyBasedBackwardPositionalRules = value; }
 
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
@@ -148,11 +123,6 @@ public:
         auto result = NodeRareData::useTypes();
         if (m_tabIndexWasSetExplicitly)
             result.add(UseType::TabIndex);
-        if (m_styleAffectedByActive || m_styleAffectedByEmpty || m_styleAffectedByFocusWithin || m_childrenAffectedByHover
-            || m_childrenAffectedByDrag || m_childrenAffectedByLastChildRules || m_childrenAffectedByForwardPositionalRules
-            || m_descendantsAffectedByForwardPositionalRules || m_childrenAffectedByBackwardPositionalRules
-            || m_descendantsAffectedByBackwardPositionalRules || m_childrenAffectedByPropertyBasedBackwardPositionalRules)
-            result.add(UseType::StyleFlags);
         if (m_minimumSizeForResizing != defaultMinimumSizeForResizing())
             result.add(UseType::MinimumSize);
         if (!m_savedLayerScrollPosition.isZero())
@@ -185,26 +155,12 @@ private:
     int m_tabIndex;
     unsigned short m_childIndex;
     unsigned m_tabIndexWasSetExplicitly : 1;
-    unsigned m_styleAffectedByActive : 1;
-    unsigned m_styleAffectedByEmpty : 1;
-    unsigned m_styleAffectedByFocusWithin : 1;
 #if ENABLE(FULLSCREEN_API)
     unsigned m_containsFullScreenElement : 1;
 #endif
     unsigned m_hasPendingResources : 1;
     unsigned m_hasCSSAnimation : 1;
     unsigned m_hasElementIdentifier : 1;
-    unsigned m_childrenAffectedByHover : 1;
-    unsigned m_childrenAffectedByDrag : 1;
-    // Bits for dynamic child matching.
-    // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
-    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-    unsigned m_childrenAffectedByLastChildRules : 1;
-    unsigned m_childrenAffectedByForwardPositionalRules : 1;
-    unsigned m_descendantsAffectedByForwardPositionalRules : 1;
-    unsigned m_childrenAffectedByBackwardPositionalRules : 1;
-    unsigned m_descendantsAffectedByBackwardPositionalRules : 1;
-    unsigned m_childrenAffectedByPropertyBasedBackwardPositionalRules : 1;
 
     LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
@@ -233,28 +189,16 @@ private:
     void releasePseudoElement(PseudoElement*);
 };
 
-inline ElementRareData::ElementRareData(RenderElement* renderer)
-    : NodeRareData(renderer)
-    , m_tabIndex(0)
+inline ElementRareData::ElementRareData()
+    : m_tabIndex(0)
     , m_childIndex(0)
     , m_tabIndexWasSetExplicitly(false)
-    , m_styleAffectedByActive(false)
-    , m_styleAffectedByEmpty(false)
-    , m_styleAffectedByFocusWithin(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
 #endif
     , m_hasPendingResources(false)
     , m_hasCSSAnimation(false)
     , m_hasElementIdentifier(false)
-    , m_childrenAffectedByHover(false)
-    , m_childrenAffectedByDrag(false)
-    , m_childrenAffectedByLastChildRules(false)
-    , m_childrenAffectedByForwardPositionalRules(false)
-    , m_descendantsAffectedByForwardPositionalRules(false)
-    , m_childrenAffectedByBackwardPositionalRules(false)
-    , m_descendantsAffectedByBackwardPositionalRules(false)
-    , m_childrenAffectedByPropertyBasedBackwardPositionalRules(false)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
@@ -285,17 +229,7 @@ inline void ElementRareData::resetComputedStyle()
 
 inline void ElementRareData::resetStyleRelations()
 {
-    setStyleAffectedByEmpty(false);
-    setStyleAffectedByFocusWithin(false);
     setChildIndex(0);
-    setStyleAffectedByActive(false);
-    setChildrenAffectedByDrag(false);
-    setChildrenAffectedByLastChildRules(false);
-    setChildrenAffectedByForwardPositionalRules(false);
-    setDescendantsAffectedByForwardPositionalRules(false);
-    setChildrenAffectedByBackwardPositionalRules(false);
-    setDescendantsAffectedByBackwardPositionalRules(false);
-    setChildrenAffectedByPropertyBasedBackwardPositionalRules(false);
 }
 
 } // namespace WebCore

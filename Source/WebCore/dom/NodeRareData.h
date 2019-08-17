@@ -247,7 +247,7 @@ public:
     NodeMutationObserverData() { }
 };
 
-class NodeRareData : public NodeRareDataBase {
+class NodeRareData {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS
@@ -257,23 +257,20 @@ public:
         MutationObserver = 1 << 2,
 
         TabIndex = 1 << 3,
-        StyleFlags = 1 << 4,
-        MinimumSize = 1 << 5,
-        ScrollingPosition = 1 << 6,
-        ComputedStyle = 1 << 7,
-        Dataset = 1 << 8,
-        ClassList = 1 << 9,
-        ShadowRoot = 1 << 10,
-        CustomElementQueue = 1 << 11,
-        AttributeMap = 1 << 12,
-        InteractionObserver = 1 << 13,
-        PseudoElements = 1 << 14,
+        MinimumSize = 1 << 4,
+        ScrollingPosition = 1 << 5,
+        ComputedStyle = 1 << 6,
+        Dataset = 1 << 7,
+        ClassList = 1 << 8,
+        ShadowRoot = 1 << 9,
+        CustomElementQueue = 1 << 10,
+        AttributeMap = 1 << 11,
+        InteractionObserver = 1 << 12,
+        PseudoElements = 1 << 13,
     };
 #endif
 
-    NodeRareData(RenderObject* renderer)
-        : NodeRareDataBase(renderer)
-        , m_connectedFrameCount(0)
+    NodeRareData()
     { }
 
     void clearNodeLists() { m_nodeLists = nullptr; }
@@ -320,7 +317,7 @@ public:
 #endif
 
 private:
-    unsigned m_connectedFrameCount; // Must fit Page::maxNumberOfFrames.
+    unsigned m_connectedFrameCount { 0 }; // Must fit Page::maxNumberOfFrames.
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
@@ -334,12 +331,6 @@ inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLas
         return false;
     ownerNode.clearNodeLists();
     return true;
-}
-
-inline NodeRareData* Node::rareData() const
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
-    return static_cast<NodeRareData*>(m_data.m_rareData);
 }
 
 inline NodeRareData& Node::ensureRareData()

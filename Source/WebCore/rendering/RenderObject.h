@@ -1103,6 +1103,8 @@ inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
         && !m_bitfields.posChildNeedsLayout() && !m_bitfields.needsPositionedMovementLayout();
 }
 
+inline void Node::setRenderer(RenderObject* renderer) { m_rendererWithStyleFlags.setPointer(renderer); }
+
 #if ENABLE(TREE_DEBUGGING)
 void printRenderTreeForLiveDocuments();
 void printLayerTreeForLiveDocuments();

@@ -1,3 +1,118 @@
+2019-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't use union to store NodeRareData* and RenderObject*
+        https://bugs.webkit.org/show_bug.cgi?id=200744
+
+        Reviewed by Antti Koivisto.
+
+        This patch undoes unioning of NodeRareData* and RenderObject* in Node introduced in r133372 in order
+        to eliminate any possibility of type confusion bugs. Instead of re-introducing the global map, which
+        is known to be slow, this patch simply adds an extra pointer for NodeRareData: Node::m_rareData.
+
+        To compensate for the increased memory usage due to a new pointer type in Node, this patch also packs
+        the style related flags in ElementRareData, which is the most common reason for which ElementRareData
+        is created, into RenderObject* pointer using CompactPointerTuple as Node::m_rendererWithStyleFlags.
+
+        Unfortunately, there are 9 style related flags and they won't all fit into the single byte provided
+        by CompactPointerTuple. Luckily, this patch also eliminates the need for HasRareDataFlag as m_rareData
+        knows whether a node has rare data or not so we re-use that bitflag space for the extra one flag.
+
+        No new tests since there should be no observable behavioral change from this.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild): Check the nullity of
+        m_rareData directly instead of checking HasRareDataFlag, which has been removed.
+        * dom/Element.cpp:
+        (WebCore::Element::setStyleAffectedByEmpty): Deleted.
+        (WebCore::Element::setStyleAffectedByFocusWithin): Deleted.
+        (WebCore::Element::setStyleAffectedByActive): Deleted.
+        (WebCore::Element::setChildrenAffectedByDrag): Deleted.
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules): Deleted.
+        (WebCore::Element::setDescendantsAffectedByForwardPositionalRules): Deleted.
+        (WebCore::Element::setChildrenAffectedByBackwardPositionalRules): Deleted.
+        (WebCore::Element::setDescendantsAffectedByBackwardPositionalRules): Deleted.
+        (WebCore::Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules): Deleted.
+        (WebCore::Element::hasFlagsSetDuringStylingOfChildren const):
+        (WebCore::Element::resetStyleRelations): Clear the flags in m_rendererWithStyleFlags and m_nodeFlags.
+        (WebCore::Element::rareDataStyleAffectedByEmpty const): Deleted.
+        (WebCore::Element::rareDataStyleAffectedByFocusWithin const): Deleted.
+        (WebCore::Element::rareDataStyleAffectedByActive const): Deleted.
+        (WebCore::Element::rareDataChildrenAffectedByDrag const): Deleted.
+        (WebCore::Element::rareDataChildrenAffectedByForwardPositionalRules const): Deleted.
+        (WebCore::Element::rareDataDescendantsAffectedByForwardPositionalRules const): Deleted.
+        (WebCore::Element::rareDataChildrenAffectedByBackwardPositionalRules const): Deleted.
+        (WebCore::Element::rareDataDescendantsAffectedByBackwardPositionalRules const): Deleted.
+        (WebCore::Element::rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules const): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::styleAffectedByActive const): Now uses m_rendererWithStyleFlags.
+        (WebCore::Element::styleAffectedByEmpty const): Ditto.
+        (WebCore::Element::styleAffectedByFocusWithin const): Now uses m_nodeFlags.
+        (WebCore::Element::childrenAffectedByDrag const): Now uses m_rendererWithStyleFlags.
+        (WebCore::Element::childrenAffectedByForwardPositionalRules const): Ditto.
+        (WebCore::Element::descendantsAffectedByForwardPositionalRules const): Ditto.
+        (WebCore::Element::childrenAffectedByBackwardPositionalRules const): Ditto.
+        (WebCore::Element::descendantsAffectedByBackwardPositionalRules const): Ditto.
+        (WebCore::Element::childrenAffectedByPropertyBasedBackwardPositionalRules const): Ditto.
+        (WebCore::Element::setStyleAffectedByEmpty): Now stores into m_rendererWithStyleFlags.
+        (WebCore::Element::setStyleAffectedByFocusWithin): Now uses m_nodeFlags.
+        (WebCore::Element::setDescendantsAffectedByPreviousSibling): Removed const qualifier & useless return.
+        (WebCore::Element::setStyleAffectedByActive): Now stores into m_rendererWithStyleFlags.
+        (WebCore::Element::setChildrenAffectedByDrag): Ditto.
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules): Ditto.
+        (WebCore::Element::setDescendantsAffectedByForwardPositionalRules): Ditto.
+        (WebCore::Element::setChildrenAffectedByBackwardPositionalRules): Ditto.
+        (WebCore::Element::setDescendantsAffectedByBackwardPositionalRules): Ditto.
+        (WebCore::Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules): Ditto.
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::styleAffectedByActive const): Deleted.
+        (WebCore::ElementRareData::setStyleAffectedByActive): Deleted.
+        (WebCore::ElementRareData::styleAffectedByEmpty const): Deleted.
+        (WebCore::ElementRareData::setStyleAffectedByEmpty): Deleted.
+        (WebCore::ElementRareData::styleAffectedByFocusWithin const): Deleted.
+        (WebCore::ElementRareData::setStyleAffectedByFocusWithin): Deleted.
+        (WebCore::ElementRareData::childrenAffectedByDrag const): Deleted.
+        (WebCore::ElementRareData::setChildrenAffectedByDrag): Deleted.
+        (WebCore::ElementRareData::childrenAffectedByLastChildRules const): Deleted.
+        (WebCore::ElementRareData::setChildrenAffectedByLastChildRules): Deleted.
+        (WebCore::ElementRareData::childrenAffectedByForwardPositionalRules const): Deleted.
+        (WebCore::ElementRareData::setChildrenAffectedByForwardPositionalRules): Deleted.
+        (WebCore::ElementRareData::descendantsAffectedByForwardPositionalRules const): Deleted.
+        (WebCore::ElementRareData::setDescendantsAffectedByForwardPositionalRules): Deleted.
+        (WebCore::ElementRareData::childrenAffectedByBackwardPositionalRules const): Deleted.
+        (WebCore::ElementRareData::setChildrenAffectedByBackwardPositionalRules): Deleted.
+        (WebCore::ElementRareData::descendantsAffectedByBackwardPositionalRules const): Deleted.
+        (WebCore::ElementRareData::setDescendantsAffectedByBackwardPositionalRules): Deleted.
+        (WebCore::ElementRareData::childrenAffectedByPropertyBasedBackwardPositionalRules const): Deleted.
+        (WebCore::ElementRareData::setChildrenAffectedByPropertyBasedBackwardPositionalRules): Deleted.
+        (WebCore::ElementRareData::useTypes const): Removed UseType::StyleFlags.
+        (WebCore::ElementRareData::ElementRareData): No longer takes RenderElement*.
+        (WebCore::ElementRareData::resetStyleRelations): Only re-sets child index now since that's all left.
+        * dom/Node.cpp:
+        (WebCore::stringForRareDataUseType): Removed UseType::StyleFlags since there is no style related
+        flags in ElementRareData.
+        (WebCore::Node::materializeRareData): Simplified now that m_rareData is not a union.
+        (WebCore::Node::clearRareData): Ditto.
+        * dom/Node.h:
+        (WebCore::NodeRareDataBase): Deleted.
+        (WebCore::Node::renderer const):
+        (WebCore::Node::rareDataMemoryOffset):
+        (WebCore::Node::flagHasRareData): Deleted.
+        (WebCore::Node::NodeFlags): Replaced HasRareDataFlag with StyleAffectedByFocusWithinFlag.
+        (WebCore::Node::ElementStyleFlag): Added.
+        (WebCore::Node::hasStyleFlag const): Added. Checks a reprense of a flag in m_rendererWithStyleFlags.
+        (WebCore::Node::setStyleFlag): Ditto for setting a flag.
+        (WebCore::Node::clearStyleFlags): Ditto for clearing all flags.
+        (WebCore::Node::hasRareData const): Now checks the nullity of m_rareData directly.
+        (WebCore::Node::rareData const):
+        * dom/NodeRareData.cpp: The size of NodeRareData is shrunk by one pointer.
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData): No longer inherits from NodeRareDataBase which was needed to
+        to store RenderObject*.
+        (WebCore::Node::rareData const): Moved to Node.h.
+        * rendering/RenderObject.h:
+        (WebCore::Node::setRenderer): Moved from Node.h since CompactPointerTuple::setPointer has the
+        aforementioned static_assert which requires the definition of RenderObject.
+
 2019-08-16  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Add comparison operators for vectors and matrices

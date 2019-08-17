@@ -40,7 +40,6 @@ class CompactPointerTuple final {
 public:
     static_assert(sizeof(Type) == 1, "");
     static_assert(std::is_pointer<PointerType>::value, "");
-    static_assert(alignof(typename std::remove_pointer<PointerType>::type) >= alignof(void*), "");
     static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value, "");
 
     CompactPointerTuple() = default;
@@ -71,6 +70,7 @@ public:
     PointerType pointer() const { return bitwise_cast<PointerType>(m_data & pointerMask); }
     void setPointer(PointerType pointer)
     {
+        static_assert(alignof(typename std::remove_pointer<PointerType>::type) >= alignof(void*), "");
         ASSERT((bitwise_cast<uint64_t>(pointer) & 0b111) == 0x0);
         m_data = CompactPointerTuple(pointer, type()).m_data;
     }
