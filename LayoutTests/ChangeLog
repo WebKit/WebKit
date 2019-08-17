@@ -1,3 +1,15 @@
+2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add test for the interaction between setters and increments
+        https://bugs.webkit.org/show_bug.cgi?id=200848
+
+        Reviewed by Saam Barati.
+
+        As discovered by Robin in https://github.com/gpuweb/WHLSL/issues/308
+
+        * webgpu/whlsl/increment-setter-expected.txt: Added.
+        * webgpu/whlsl/increment-setter.html: Added.
+
 2019-08-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ContentChangeObserver] Keep track of all the visibility candidates.
