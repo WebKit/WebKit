@@ -1,5 +1,15 @@
 2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHLSL] Enums should be shadowed by local variables
+        https://bugs.webkit.org/show_bug.cgi?id=200847
+
+        Reviewed by Saam Barati.
+
+        * webgpu/whlsl/structure-field-enumeration-element-clash-expected.txt: Added.
+        * webgpu/whlsl/structure-field-enumeration-element-clash.html: Added.
+
+2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Add test for the interaction between setters and increments
         https://bugs.webkit.org/show_bug.cgi?id=200848
 

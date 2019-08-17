@@ -189,20 +189,23 @@ void NameResolver::visit(AST::VariableReference& variableReference)
 void NameResolver::visit(AST::DotExpression& dotExpression)
 {
     if (is<AST::VariableReference>(dotExpression.base())) {
-        auto baseName = downcast<AST::VariableReference>(dotExpression.base()).name();
-        if (auto enumerationTypes = m_nameContext.getTypes(baseName)) {
-            ASSERT(enumerationTypes->size() == 1);
-            AST::NamedType& type = (*enumerationTypes)[0];
-            if (is<AST::EnumerationDefinition>(type)) {
-                AST::EnumerationDefinition& enumerationDefinition = downcast<AST::EnumerationDefinition>(type);
-                auto memberName = dotExpression.fieldName();
-                if (auto* member = enumerationDefinition.memberByName(memberName)) {
-                    auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(dotExpression.codeLocation(), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
-                    AST::replaceWith<AST::EnumerationMemberLiteral>(dotExpression, WTFMove(enumerationMemberLiteral));
+        auto& variableReference = downcast<AST::VariableReference>(dotExpression.base());
+        if (!m_nameContext.getVariable(variableReference.name())) {
+            auto baseName = variableReference.name();
+            if (auto enumerationTypes = m_nameContext.getTypes(baseName)) {
+                ASSERT(enumerationTypes->size() == 1);
+                AST::NamedType& type = (*enumerationTypes)[0];
+                if (is<AST::EnumerationDefinition>(type)) {
+                    AST::EnumerationDefinition& enumerationDefinition = downcast<AST::EnumerationDefinition>(type);
+                    auto memberName = dotExpression.fieldName();
+                    if (auto* member = enumerationDefinition.memberByName(memberName)) {
+                        auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(dotExpression.codeLocation(), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
+                        AST::replaceWith<AST::EnumerationMemberLiteral>(dotExpression, WTFMove(enumerationMemberLiteral));
+                        return;
+                    }
+                    setError(Error("No enum member matches the used name.", dotExpression.codeLocation()));
                     return;
                 }
-                setError(Error("No enum member matches the used name.", dotExpression.codeLocation()));
-                return;
             }
         }
     }

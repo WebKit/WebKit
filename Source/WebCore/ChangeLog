@@ -1,3 +1,17 @@
+2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Enums should be shadowed by local variables
+        https://bugs.webkit.org/show_bug.cgi?id=200847
+
+        Reviewed by Saam Barati.
+
+        Only cause DotExpressions to become EnumerationMemberLiterals if they aren't valid variable names.
+
+        Test: webgpu/whlsl/structure-field-enumeration-element-clash.html
+
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::visit):
+
 2019-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't use union to store NodeRareData* and RenderObject*
