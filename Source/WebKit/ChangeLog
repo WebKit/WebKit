@@ -1,5 +1,62 @@
 2019-08-16  Chris Dumez  <cdumez@apple.com>
 
+        Use strongly typed identifiers for StorageArea / StorageAreaImpl
+        https://bugs.webkit.org/show_bug.cgi?id=200835
+
+        Reviewed by Alex Christensen.
+
+        Use strongly typed identifiers for StorageArea / StorageAreaImpl. They currently both use uint64_t
+        and are used in the same code, it is therefore very easy to confused the 2 types of identifiers.
+
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::StorageArea):
+        (WebKit::StorageArea::setItem):
+        (WebKit::StorageArea::removeItem):
+        (WebKit::StorageArea::clear):
+        (WebKit::StorageArea::dispatchEvents const):
+        * NetworkProcess/WebStorage/StorageArea.h:
+        (WebKit::StorageArea::identifier):
+        * NetworkProcess/WebStorage/StorageAreaIdentifier.h: Copied from Source/WebKit/WebProcess/WebStorage/StorageAreaImpl.h.
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::connectToLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToTransientLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToSessionStorageArea):
+        (WebKit::StorageManagerSet::disconnectFromStorageArea):
+        (WebKit::StorageManagerSet::getValues):
+        (WebKit::StorageManagerSet::setItem):
+        (WebKit::StorageManagerSet::removeItem):
+        (WebKit::StorageManagerSet::clear):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.messages.in:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerStorageAreaMap):
+        (WebKit::WebProcess::unregisterStorageAreaMap):
+        (WebKit::WebProcess::storageAreaMap const):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        * WebProcess/WebStorage/StorageAreaImpl.h:
+        * WebProcess/WebStorage/StorageAreaImplIdentifier.h: Copied from Source/WebKit/WebProcess/WebStorage/StorageAreaImpl.h.
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        (WebKit::StorageAreaMap::disconnect):
+        * WebProcess/WebStorage/StorageAreaMap.h:
+        (WebKit::StorageAreaMap::identifier const):
+        * WebProcess/WebStorage/StorageAreaMap.messages.in:
+
+2019-08-16  Chris Dumez  <cdumez@apple.com>
+
         Drop StorageArea::setWorkQueue() member function
         https://bugs.webkit.org/show_bug.cgi?id=200832
 

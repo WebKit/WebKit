@@ -25,6 +25,6 @@ messages -> StorageAreaMap {
     DidRemoveItem(uint64_t storageMapSeed, String key)
     DidClear(uint64_t storageMapSeed)
 
-    DispatchStorageEvent(uint64_t sourceStorageAreaID, String key, String oldValue, String newValue, String urlString)
+    DispatchStorageEvent(Optional<WebKit::StorageAreaImplIdentifier> storageAreaImplID, String key, String oldValue, String newValue, String urlString)
     ClearCache()
 }

@@ -34,8 +34,6 @@
 
 namespace WebKit {
 
-const uint64_t invalidStorageAreaID = 0;
-
 Ref<StorageManagerSet> StorageManagerSet::create()
 {
     return adoptRef(*new StorageManagerSet);
@@ -290,13 +288,13 @@ void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, P
 
     auto* storageManager = m_storageManagers.get(sessionID);
     if (!storageManager) {
-        completionHandler(invalidStorageAreaID);
+        completionHandler(WTF::nullopt);
         return;
     }
 
     auto* storageArea = storageManager->createLocalStorageArea(storageNamespaceID, WTFMove(originData), m_queue.copyRef());
     if (!storageArea) {
-        completionHandler(invalidStorageAreaID);
+        completionHandler(WTF::nullopt);
         return;
     }
 
@@ -315,13 +313,13 @@ void StorageManagerSet::connectToTransientLocalStorageArea(IPC::Connection& conn
 
     auto* storageManager = m_storageManagers.get(sessionID);
     if (!storageManager) {
-        completionHandler(invalidStorageAreaID);
+        completionHandler(WTF::nullopt);
         return;
     }
 
     auto* storageArea = storageManager->createTransientLocalStorageArea(storageNamespaceID, WTFMove(topLevelOriginData), WTFMove(originData), m_queue.copyRef());
     if (!storageArea) {
-        completionHandler(invalidStorageAreaID);
+        completionHandler(WTF::nullopt);
         return;
     }
 
@@ -340,13 +338,13 @@ void StorageManagerSet::connectToSessionStorageArea(IPC::Connection& connection,
 
     auto* storageManager = m_storageManagers.get(sessionID);
     if (!storageManager) {
-        completionHandler(invalidStorageAreaID);
+        completionHandler(WTF::nullopt);
         return;
     }
 
     auto* storageArea = storageManager->createSessionStorageArea(storageNamespaceID, WTFMove(originData), m_queue.copyRef());
     if (!storageArea) {
-        completionHandler(invalidStorageAreaID);
+        completionHandler(WTF::nullopt);
         return;
     }
 
@@ -359,7 +357,7 @@ void StorageManagerSet::connectToSessionStorageArea(IPC::Connection& connection,
     storageArea->addListener(connection.uniqueID());
 }
 
-void StorageManagerSet::disconnectFromStorageArea(IPC::Connection& connection, uint64_t storageAreaID)
+void StorageManagerSet::disconnectFromStorageArea(IPC::Connection& connection, StorageAreaIdentifier storageAreaID)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -370,7 +368,7 @@ void StorageManagerSet::disconnectFromStorageArea(IPC::Connection& connection, u
     storageArea->removeListener(connection.uniqueID());
 }
 
-void StorageManagerSet::getValues(IPC::Connection& connection, uint64_t storageAreaID, GetValuesCallback&& completionHandler)
+void StorageManagerSet::getValues(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, GetValuesCallback&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -380,7 +378,7 @@ void StorageManagerSet::getValues(IPC::Connection& connection, uint64_t storageA
     completionHandler(storageArea ? storageArea->items() : HashMap<String, String>());
 }
 
-void StorageManagerSet::setItem(IPC::Connection& connection, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
+void StorageManagerSet::setItem(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -388,31 +386,31 @@ void StorageManagerSet::setItem(IPC::Connection& connection, uint64_t storageAre
     ASSERT(storageArea);
 
     bool quotaError;
-    storageArea->setItem(connection.uniqueID(), sourceStorageAreaID, key, value, urlString, quotaError);
+    storageArea->setItem(connection.uniqueID(), storageAreaImplID, key, value, urlString, quotaError);
 
     connection.send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, quotaError), storageAreaID);
 } 
 
-void StorageManagerSet::removeItem(IPC::Connection& connection, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
+void StorageManagerSet::removeItem(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, const String& key, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
 
     auto* storageArea = m_storageAreas.get(storageAreaID);
     ASSERT(storageArea);
 
-    storageArea->removeItem(connection.uniqueID(), sourceStorageAreaID, key, urlString);
+    storageArea->removeItem(connection.uniqueID(), storageAreaImplID, key, urlString);
 
     connection.send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageAreaID);
 }
 
-void StorageManagerSet::clear(IPC::Connection& connection, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
+void StorageManagerSet::clear(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
 
     auto* storageArea = m_storageAreas.get(storageAreaID);
     ASSERT(storageArea);
 
-    storageArea->clear(connection.uniqueID(), sourceStorageAreaID, urlString);
+    storageArea->clear(connection.uniqueID(), storageAreaImplID, urlString);
 
     connection.send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageAreaID);
 }

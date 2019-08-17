@@ -36,18 +36,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static uint64_t generateStorageAreaIdentifier()
-{
-    static uint64_t identifier;
-    return ++identifier;
-}
-
 StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes, Ref<WorkQueue>&& queue)
     : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
-    , m_identifier(generateStorageAreaIdentifier())
+    , m_identifier(Identifier::generate())
     , m_queue(WTFMove(queue))
 {
     ASSERT(!RunLoop::isMain());
@@ -95,7 +89,7 @@ std::unique_ptr<StorageArea> StorageArea::clone() const
     return storageArea;
 }
 
-void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
+void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
     ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
@@ -112,10 +106,10 @@ void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t s
     if (m_localStorageDatabase)
         m_localStorageDatabase->setItem(key, value);
 
-    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
+    dispatchEvents(sourceConnection, storageAreaImplID, key, oldValue, value, urlString);
 }
 
-void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
+void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
@@ -131,10 +125,10 @@ void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_
     if (m_localStorageDatabase)
         m_localStorageDatabase->removeItem(key);
 
-    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, String(), urlString);
+    dispatchEvents(sourceConnection, storageAreaImplID, key, oldValue, String(), urlString);
 }
 
-void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
+void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
@@ -147,7 +141,7 @@ void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, uint64_t sou
     if (m_localStorageDatabase)
         m_localStorageDatabase->clear();
 
-    dispatchEvents(sourceConnection, sourceStorageAreaID, String(), String(), String(), urlString);
+    dispatchEvents(sourceConnection, storageAreaImplID, String(), String(), String(), urlString);
 }
 
 const HashMap<String, String>& StorageArea::items() const
@@ -194,15 +188,16 @@ void StorageArea::openDatabaseAndImportItemsIfNeeded() const
     m_didImportItemsFromDatabase = true;
 }
 
-void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
+void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
     ASSERT(!RunLoop::isMain());
+    ASSERT(storageAreaImplID);
     for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        sourceStorageAreaID = *it == sourceConnection ? sourceStorageAreaID : 0;
+        Optional<StorageAreaImplIdentifier> optionalStorageAreaImplID = *it == sourceConnection ? makeOptional(storageAreaImplID) : WTF::nullopt;
 
-        RunLoop::main().dispatch([connectionID = *it, sourceStorageAreaID, destinationStorageAreaID = m_identifier, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy()] {
+        RunLoop::main().dispatch([connectionID = *it, destinationStorageAreaID = m_identifier, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy(), optionalStorageAreaImplID = WTFMove(optionalStorageAreaImplID)] {
             if (auto* connection = IPC::Connection::connection(connectionID))
-                connection->send(Messages::StorageAreaMap::DispatchStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString), destinationStorageAreaID);
+                connection->send(Messages::StorageAreaMap::DispatchStorageEvent(optionalStorageAreaImplID, key, oldValue, newValue, urlString), destinationStorageAreaID);
         });
     }
 }

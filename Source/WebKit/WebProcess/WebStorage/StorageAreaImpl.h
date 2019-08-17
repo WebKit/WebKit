@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "StorageAreaImplIdentifier.h"
 #include <WebCore/StorageArea.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
@@ -40,10 +41,12 @@ class StorageAreaMap;
 
 class StorageAreaImpl final : public WebCore::StorageArea {
 public:
+    using Identifier = StorageAreaImplIdentifier;
+
     static Ref<StorageAreaImpl> create(Ref<StorageAreaMap>&&);
     virtual ~StorageAreaImpl();
 
-    uint64_t storageAreaID() const { return m_storageAreaID; }
+    Identifier identifier() const { return m_identifier; }
 
 private:
     StorageAreaImpl(Ref<StorageAreaMap>&&);
@@ -62,7 +65,7 @@ private:
     void decrementAccessCount() override;
     void closeDatabaseIfIdle() override;
 
-    uint64_t m_storageAreaID;
+    Identifier m_identifier;
     WeakPtr<StorageAreaMap> m_storageAreaMap;
 };
 

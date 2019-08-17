@@ -26,6 +26,8 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "StorageAreaIdentifier.h"
+#include "StorageAreaImplIdentifier.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageArea.h>
 #include <wtf/Forward.h>
@@ -66,7 +68,7 @@ public:
 
     void connect();
     void disconnect();
-    uint64_t identifier() const { return m_storageMapID; }
+    const Optional<StorageAreaIdentifier>& identifier() const { return m_storageMapID; }
 
 private:
     StorageAreaMap(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
@@ -75,7 +77,7 @@ private:
     void didRemoveItem(uint64_t storageMapSeed, const String& key);
     void didClear(uint64_t storageMapSeed);
 
-    void dispatchStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchStorageEvent(const Optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void clearCache();
 
     void resetValues();
@@ -84,12 +86,12 @@ private:
     bool shouldApplyChangeForKey(const String& key) const;
     void applyChange(const String& key, const String& newValue);
 
-    void dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
-    void dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchSessionStorageEvent(const Optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchLocalStorageEvent(const Optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
     StorageNamespaceImpl* m_storageNamespace;
 
-    uint64_t m_storageMapID;
+    Optional<StorageAreaIdentifier> m_storageMapID;
 
     WebCore::StorageType m_storageType;
     unsigned m_quotaInBytes;

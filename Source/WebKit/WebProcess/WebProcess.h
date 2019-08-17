@@ -33,6 +33,7 @@
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
+#include "StorageAreaIdentifier.h"
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
@@ -214,7 +215,7 @@ public:
 
     void registerStorageAreaMap(StorageAreaMap&);
     void unregisterStorageAreaMap(StorageAreaMap&);
-    StorageAreaMap* storageAreaMap(uint64_t identifier) const;
+    StorageAreaMap* storageAreaMap(StorageAreaIdentifier) const;
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
@@ -572,7 +573,7 @@ private:
     float m_backlightLevel { 0 };
 #endif
 
-    HashMap<uint64_t, StorageAreaMap*> m_storageAreaMaps;
+    HashMap<StorageAreaIdentifier, StorageAreaMap*> m_storageAreaMaps;
 };
 
 } // namespace WebKit

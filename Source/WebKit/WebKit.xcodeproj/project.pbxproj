@@ -3188,6 +3188,8 @@
 		465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKit2InitializeCocoa.mm; sourceTree = "<group>"; };
 		4657D88722664A19005DE823 /* WKOrientationAccessAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOrientationAccessAlert.h; sourceTree = "<group>"; };
 		4657D88822664A1A005DE823 /* WKOrientationAccessAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKOrientationAccessAlert.mm; sourceTree = "<group>"; };
+		465F4E02230759D5003CEDB7 /* StorageAreaIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageAreaIdentifier.h; sourceTree = "<group>"; };
+		465F4E032307604E003CEDB7 /* StorageAreaImplIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageAreaImplIdentifier.h; sourceTree = "<group>"; };
 		466BC0381FA266C9002FA9C1 /* WebSWContextManagerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWContextManagerConnection.cpp; sourceTree = "<group>"; };
 		466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWContextManagerConnection.h; sourceTree = "<group>"; };
 		466BC03A1FA266C9002FA9C1 /* WebSWContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWContextManagerConnection.messages.in; sourceTree = "<group>"; };
@@ -5152,6 +5154,7 @@
 			children = (
 				1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */,
 				1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */,
+				465F4E032307604E003CEDB7 /* StorageAreaImplIdentifier.h */,
 				1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */,
 				1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */,
 				1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */,
@@ -7307,6 +7310,7 @@
 				46BEB6DD22FBB16B00269867 /* SessionStorageNamespace.h */,
 				46BEB6D622FB9BD700269867 /* StorageArea.cpp */,
 				46BEB6D522FB9BD600269867 /* StorageArea.h */,
+				465F4E02230759D5003CEDB7 /* StorageAreaIdentifier.h */,
 				93B2614A227D147200B97A76 /* StorageManager.cpp */,
 				93B26149227D147200B97A76 /* StorageManager.h */,
 				936B05972303900B002FC06B /* StorageManagerSet.cpp */,

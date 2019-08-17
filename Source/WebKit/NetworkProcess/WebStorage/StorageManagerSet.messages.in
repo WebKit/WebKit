@@ -21,14 +21,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageManagerSet {
-    ConnectToLocalStorageArea(PAL::SessionID sessionID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (uint64_t storageAreaID) Synchronous WantsConnection
-    ConnectToTransientLocalStorageArea(PAL::SessionID sessionID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData topLevelSecurityOriginData, struct WebCore::SecurityOriginData securityOriginData) -> (uint64_t storageAreaID) Synchronous WantsConnection
-    ConnectToSessionStorageArea(PAL::SessionID sessionID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (uint64_t storageAreaID) Synchronous WantsConnection
-    DisconnectFromStorageArea(uint64_t storageAreaID) WantsConnection
-    GetValues(uint64_t storageAreaID) -> (HashMap<String, String> values) Synchronous WantsConnection
+    ConnectToLocalStorageArea(PAL::SessionID sessionID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (Optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
+    ConnectToTransientLocalStorageArea(PAL::SessionID sessionID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData topLevelSecurityOriginData, struct WebCore::SecurityOriginData securityOriginData) -> (Optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
+    ConnectToSessionStorageArea(PAL::SessionID sessionID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (Optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
+    DisconnectFromStorageArea(WebKit::StorageAreaIdentifier storageAreaID) WantsConnection
+    GetValues(WebKit::StorageAreaIdentifier storageAreaID) -> (HashMap<String, String> values) Synchronous WantsConnection
     CloneSessionStorageNamespace(PAL::SessionID sessionID, uint64_t fromStorageNamespaceID, uint64_t toStorageNamespaceID) WantsConnection
 
-    SetItem(uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
-    RemoveItem(uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String urlString) WantsConnection
-    Clear(uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String urlString) WantsConnection
+    SetItem(WebKit::StorageAreaIdentifier storageAreaID, WebKit::StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
+    RemoveItem(WebKit::StorageAreaIdentifier storageAreaID, WebKit::StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, String key, String urlString) WantsConnection
+    Clear(WebKit::StorageAreaIdentifier storageAreaID, WebKit::StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, String urlString) WantsConnection
 }

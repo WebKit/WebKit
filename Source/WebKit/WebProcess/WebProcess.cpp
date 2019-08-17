@@ -1660,18 +1660,20 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 
 void WebProcess::registerStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
-    ASSERT(!m_storageAreaMaps.contains(storageAreaMap.identifier()));
-    m_storageAreaMaps.set(storageAreaMap.identifier(), &storageAreaMap);
+    ASSERT(storageAreaMap.identifier());
+    ASSERT(!m_storageAreaMaps.contains(*storageAreaMap.identifier()));
+    m_storageAreaMaps.set(*storageAreaMap.identifier(), &storageAreaMap);
 }
 
 void WebProcess::unregisterStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
-    ASSERT(m_storageAreaMaps.contains(storageAreaMap.identifier()));
-    ASSERT(m_storageAreaMaps.get(storageAreaMap.identifier()) == &storageAreaMap);
-    m_storageAreaMaps.remove(storageAreaMap.identifier());
+    ASSERT(storageAreaMap.identifier());
+    ASSERT(m_storageAreaMaps.contains(*storageAreaMap.identifier()));
+    ASSERT(m_storageAreaMaps.get(*storageAreaMap.identifier()) == &storageAreaMap);
+    m_storageAreaMaps.remove(*storageAreaMap.identifier());
 }
 
-StorageAreaMap* WebProcess::storageAreaMap(uint64_t identifier) const
+StorageAreaMap* WebProcess::storageAreaMap(StorageAreaIdentifier identifier) const
 {
     return m_storageAreaMaps.get(identifier);
 }

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "SandboxExtension.h"
+#include "StorageAreaIdentifier.h"
+#include "StorageAreaImplIdentifier.h"
 #include "StorageManager.h"
 #include <WebCore/SecurityOriginData.h>
 #include <pal/SessionID.h>
@@ -36,7 +38,7 @@ namespace WebKit {
 
 class SandboxExtension;
 
-using ConnectToStorageAreaCallback = CompletionHandler<void(uint64_t)>;
+using ConnectToStorageAreaCallback = CompletionHandler<void(const Optional<StorageAreaIdentifier>&)>;
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 using GetOriginsCallback = CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>;
 using GetOriginDetailsCallback = CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>;
@@ -77,16 +79,16 @@ private:
     void connectToLocalStorageArea(IPC::Connection&, PAL::SessionID , uint64_t storageNamespaceID, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
     void connectToTransientLocalStorageArea(IPC::Connection&, PAL::SessionID , uint64_t storageNamespaceID, SecurityOriginData&&, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
     void connectToSessionStorageArea(IPC::Connection&, PAL::SessionID, uint64_t storageNamespaceID, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
-    void disconnectFromStorageArea(IPC::Connection&, uint64_t storageAreaID);
-    void getValues(IPC::Connection&, uint64_t storageAreaID, GetValuesCallback&&);
-    void setItem(IPC::Connection&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
-    void removeItem(IPC::Connection&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
-    void clear(IPC::Connection&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
+    void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
+    void getValues(IPC::Connection&, StorageAreaIdentifier, GetValuesCallback&&);
+    void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
+    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& key, const String& urlString);
+    void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& urlString);
     void cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID, uint64_t fromStorageNamespaceID, uint64_t toStorageNamespaceID);
 
     HashMap<PAL::SessionID, std::unique_ptr<StorageManager>> m_storageManagers;
     HashMap<PAL::SessionID, String> m_storageManagerPaths;
-    HashMap<uint64_t, StorageArea*> m_storageAreas;
+    HashMap<StorageAreaIdentifier, StorageArea*> m_storageAreas;
 
     HashSet<IPC::Connection::UniqueID> m_connections;
     Ref<WorkQueue> m_queue;

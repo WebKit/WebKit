@@ -38,19 +38,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t generateStorageAreaID()
-{
-    static uint64_t storageAreaID;
-    return ++storageAreaID;
-}
-
 Ref<StorageAreaImpl> StorageAreaImpl::create(Ref<StorageAreaMap>&& storageAreaMap)
 {
     return adoptRef(*new StorageAreaImpl(WTFMove(storageAreaMap)));
 }
 
 StorageAreaImpl::StorageAreaImpl(Ref<StorageAreaMap>&& storageAreaMap)
-    : m_storageAreaID(generateStorageAreaID())
+    : m_identifier(Identifier::generate())
     , m_storageAreaMap(makeWeakPtr(storageAreaMap.get()))
 {
 }
