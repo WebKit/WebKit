@@ -1,5 +1,29 @@
 2019-08-16  Chris Dumez  <cdumez@apple.com>
 
+        LocalStorageDatabaseTracker does not need to subclass ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200825
+
+        Reviewed by Alex Christensen.
+
+        LocalStorageDatabaseTracker does not need to subclass ThreadSafeRefCounted. It is currently always
+        ref'd / deref'd from the com.apple.WebKit.WebStorage serial WorkQueue, save from inside
+        LocalStorageDatabaseTracker::platformMaybeExcludeFromBackup() on iOS. However, it is probably
+        not a good idea to set FileSystem metadata from the main thread in platformMaybeExcludeFromBackup()
+        anyway.
+
+        Note that I had to get rid of an old linked-on-after check since those are currently only safe
+        to do on the main thread. I cleared this with Brady. It has been a while since we've shipped this
+        behavior now and apps have had a chance to update.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath const):
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * NetworkProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm:
+        (WebKit::LocalStorageDatabaseTracker::platformMaybeExcludeFromBackup const):
+        * UIProcess/Cocoa/VersionChecks.h:
+
+2019-08-16  Chris Dumez  <cdumez@apple.com>
+
         LocalStorageDatabase should use inline initialization for its data members
         https://bugs.webkit.org/show_bug.cgi?id=200828
 

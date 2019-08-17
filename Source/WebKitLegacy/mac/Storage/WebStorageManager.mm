@@ -139,8 +139,7 @@ void WebKitInitializeStorageIfNecessary()
     WebKit::StorageTracker::initializeTracker(storagePath, WebStorageTrackerClient::sharedWebStorageTrackerClient());
 
 #if PLATFORM(IOS_FAMILY)
-    if (linkedOnOrAfter(SDKVersion::FirstToExcludeLocalStorageFromBackup))
-        [[NSURL fileURLWithPath:storagePath] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
+    [[NSURL fileURLWithPath:storagePath] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
 #endif
 
     initialized = YES;

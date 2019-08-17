@@ -27,15 +27,14 @@
 
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Markable.h>
-#include <wtf/RefPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
+class LocalStorageDatabaseTracker : public RefCounted<LocalStorageDatabaseTracker> {
 public:
     static Ref<LocalStorageDatabaseTracker> create(String&& localStorageDirectory);
     ~LocalStorageDatabaseTracker();

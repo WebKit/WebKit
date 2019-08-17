@@ -34,13 +34,13 @@ namespace WebKit {
 
 void LocalStorageDatabaseTracker::platformMaybeExcludeFromBackup() const
 {
+    ASSERT(!RunLoop::isMain());
     if (m_hasExcludedFromBackup)
         return;
 
     m_hasExcludedFromBackup = true;
 
-    if (linkedOnOrAfter(SDKVersion::FirstToExcludeLocalStorageFromBackup))
-        [[NSURL fileURLWithPath:(NSString *)localStorageDirectory() isDirectory:YES] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
+    [[NSURL fileURLWithPath:(NSString *)localStorageDirectory() isDirectory:YES] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
 }
 
 } // namespace WebKit
