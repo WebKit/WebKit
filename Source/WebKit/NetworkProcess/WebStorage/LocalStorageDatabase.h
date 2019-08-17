@@ -84,12 +84,12 @@ private:
 
     String m_databasePath;
     WebCore::SQLiteDatabase m_database;
-    bool m_failedToOpenDatabase;
-    bool m_didImportItems;
-    bool m_isClosed;
+    bool m_failedToOpenDatabase { false };
+    bool m_didImportItems { false };
+    bool m_isClosed { false };
 
-    bool m_didScheduleDatabaseUpdate;
-    bool m_shouldClearItems;
+    bool m_didScheduleDatabaseUpdate { false };
+    bool m_shouldClearItems { false };
     HashMap<String, String> m_changedItems;
 
     std::unique_ptr<WebCore::SuddenTerminationDisabler> m_disableSuddenTerminationWhileWritingToLocalStorage;
