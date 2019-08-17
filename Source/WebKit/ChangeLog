@@ -1,3 +1,15 @@
+2019-08-17  Eric Liang  <ericliang@apple.com>
+
+        Use bundlePath SPI in AccessibilitySupport for WebProcessLoader
+        https://bugs.webkit.org/show_bug.cgi?id=200367
+
+        Reviewed by Darin Adler.
+
+        * Platform/spi/ios/AccessibilitySupportSPI.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::accessibilityWebProcessLoaderBundlePath):
+        (WebKit::registerWithAccessibility):
+
 2019-08-17  Sam Weinig  <weinig@apple.com>
 
         Rename StringBuilder::flexibleAppend(...) to StringBuilder::append(...)

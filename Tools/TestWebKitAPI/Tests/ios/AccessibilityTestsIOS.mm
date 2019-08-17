@@ -27,9 +27,13 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "AccessibilityTestSupportProtocol.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKRemoteObjectInterface.h>
+#import <WebKit/_WKRemoteObjectRegistry.h>
 
 @implementation WKWebView (WKAccessibilityTesting)
 - (NSArray<NSValue *> *)rectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text
@@ -112,6 +116,33 @@ TEST(AccessibilityTests, StoreSelection)
     // Clear the stored selection, we should use the current selection to retrieve rects
     [webView _accessibilityClearSelection];
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 27, 26, 20), 0);
+}
+
+TEST(AccessibilityTests, WebProcessLoaderBundleLoaded)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AccessibilityTestPlugin"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(AccessibilityTestSupportProtocol)];
+    id <AccessibilityTestSupportProtocol> remoteObjectProxy = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><span id='first'>first</span><br><span id='second'>first</span>"];
+
+    __block bool isDone = false;
+    [remoteObjectProxy checkAccessibilityWebProcessLoaderBundleIsLoaded:^(BOOL bundleLoaded, NSString *loadedPath) {
+#if PLATFORM(IOS_FAMILY)
+        EXPECT_TRUE(bundleLoaded);
+#if PLATFORM(MACCATALYST)
+        EXPECT_TRUE([loadedPath hasSuffix:@"/System/iOSSupport/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"]);
+#else
+        EXPECT_TRUE([loadedPath hasSuffix:@"/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"]);
+        EXPECT_FALSE([loadedPath hasSuffix:@"/System/iOSSupport/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"]);
+#endif
+#elif PLATFORM(MAC)
+        EXPECT_FALSE(bundleLoaded);
+#endif // PLATFORM(IOS_FAMILY)
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 } // namespace TestWebKitAPI
