@@ -83,6 +83,13 @@
 @end
 
 #if PLATFORM(IOS_FAMILY)
+@interface UIView (WKTestingUIViewUtilities)
+- (UIView *)wkFirstSubviewWithClass:(Class)targetClass;
+- (UIView *)wkFirstSubviewWithBoundsSize:(CGSize)size;
+@end
+#endif
+
+#if PLATFORM(IOS_FAMILY)
 @interface WKContentView : UIView
 @end
 

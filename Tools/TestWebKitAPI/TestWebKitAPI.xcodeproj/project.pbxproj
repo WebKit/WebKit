@@ -67,8 +67,11 @@
 		0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
 		0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
+		0F16BED82304A1F300B4A167 /* composited.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F16BED72304A1D100B4A167 /* composited.html */; };
 		0F2C20B81DCD545000542D9E /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C20B71DCD544800542D9E /* Time.cpp */; };
 		0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */; };
+		0F34077623037FDC0060A1A0 /* OverflowScrollViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F34077523037FDC0060A1A0 /* OverflowScrollViewTests.mm */; };
+		0F340779230382870060A1A0 /* overflow-scroll.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F340777230382540060A1A0 /* overflow-scroll.html */; };
 		0F3B94A71A77267400DE3272 /* WKWebViewEvaluateJavaScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */; };
 		0F4FFA9E1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */; };
 		0F5651F71FCE4DDC00310FBC /* NoHistoryItemScrollToFragment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5651F61FCE4DDB00310FBC /* NoHistoryItemScrollToFragment.mm */; };
@@ -1153,6 +1156,7 @@
 				9B270FEE1DDC2C0B002D53F3 /* closed-shadow-tree-test.html in Copy Resources */,
 				9BAE177B22E2BBFB00DF3098 /* cocoa-writer-markup-with-system-fonts.html in Copy Resources */,
 				E5036F78211BC25400BFDBE2 /* color-drop.html in Copy Resources */,
+				0F16BED82304A1F300B4A167 /* composited.html in Copy Resources */,
 				F4B825D81EF4DBFB006E417F /* compressed-files.zip in Copy Resources */,
 				5C9E56871DF914AE00C9EE33 /* contentBlockerCheck.html in Copy Resources */,
 				F469FB241F01804B00401539 /* contenteditable-and-target.html in Copy Resources */,
@@ -1341,6 +1345,7 @@
 				468BC45522653A1000A36C96 /* open-window-then-write-to-it.html in Copy Resources */,
 				931C281E22BC579A001D98C4 /* opendatabase-always-exists.html in Copy Resources */,
 				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
+				0F340779230382870060A1A0 /* overflow-scroll.html in Copy Resources */,
 				83148B09202AC78D00BADE99 /* override-builtins-test.html in Copy Resources */,
 				CEBCA1391E3A807A00C73293 /* page-with-csp-iframe.html in Copy Resources */,
 				CEBCA1381E3A807A00C73293 /* page-with-csp.html in Copy Resources */,
@@ -1450,9 +1455,12 @@
 		0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "pop-up-check.html"; sourceTree = "<group>"; };
 		0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformUtilitiesCocoa.mm; path = cocoa/PlatformUtilitiesCocoa.mm; sourceTree = "<group>"; };
 		0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WeakObjCPtr.mm; path = cocoa/WeakObjCPtr.mm; sourceTree = "<group>"; };
+		0F16BED72304A1D100B4A167 /* composited.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = composited.html; path = ios/composited.html; sourceTree = SOURCE_ROOT; };
 		0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreStatisticsWithNoWebProcess.cpp; sourceTree = "<group>"; };
 		0F2C20B71DCD544800542D9E /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Time.cpp; sourceTree = "<group>"; };
 		0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentPtrHashSet.cpp; sourceTree = "<group>"; };
+		0F34077523037FDC0060A1A0 /* OverflowScrollViewTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OverflowScrollViewTests.mm; sourceTree = "<group>"; };
+		0F340777230382540060A1A0 /* overflow-scroll.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "overflow-scroll.html"; path = "ios/overflow-scroll.html"; sourceTree = SOURCE_ROOT; };
 		0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewEvaluateJavaScript.mm; sourceTree = "<group>"; };
 		0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SnapshotViaRenderInContext.mm; sourceTree = "<group>"; };
 		0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -3033,6 +3041,7 @@
 				CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
 				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
+				0F34077523037FDC0060A1A0 /* OverflowScrollViewTests.mm */,
 				F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */,
 				F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */,
 				0FF1134D22D68679009A81DA /* ScrollViewScrollabilityTests.mm */,
@@ -3327,6 +3336,8 @@
 		A1C4FB6F1BACCEFA003742D0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0F16BED72304A1D100B4A167 /* composited.html */,
+				0F340777230382540060A1A0 /* overflow-scroll.html */,
 				A1C4FB721BACD1B7003742D0 /* pages.pages */,
 				CE6E81A320A933B800E2C80F /* set-timeout-function.html */,
 			);
@@ -4575,6 +4586,7 @@
 				37A22AA71DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm in Sources */,
 				2D70059921EDA4D0003463CB /* OffscreenWindow.mm in Sources */,
 				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,
+				0F34077623037FDC0060A1A0 /* OverflowScrollViewTests.mm in Sources */,
 				CEBCA12F1E3A660100C73293 /* OverrideContentSecurityPolicy.mm in Sources */,
 				2DA2586F225C67DC00B45C1C /* OverrideViewportArguments.mm in Sources */,
 				7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */,
