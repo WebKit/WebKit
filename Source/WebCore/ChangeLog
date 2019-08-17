@@ -1,3 +1,18 @@
+2019-08-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r248772.
+        https://bugs.webkit.org/show_bug.cgi?id=200853
+
+        Causes timeouts in some WebGL tests (Requested by anttik on
+        #webkit).
+
+        Reverted changeset:
+
+        "Content in <iframe> should override "touch-action" set in
+        embedding document"
+        https://bugs.webkit.org/show_bug.cgi?id=200204
+        https://trac.webkit.org/changeset/248772
+
 2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Emoji with variation selectors are rendered in text style, not emoji style
