@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# WebKit builds ANGLE as a static library, and exports some of the
+# internal header files as "public headers" in the Xcode project for
+# consumption by other build targets - e.g. WebCore.
+#
+# The build phase which copies these headers also flattens the
+# directory structure (so that "ANGLE" is the top-level directory
+# containing all of them - e.g., "#include <ANGLE/gl2.h>").
+#
+# It isn't practical to override the include paths so drastically for
+# the other build targets (like WebCore) that we could make the
+# original include paths, like <GLES2/gl2.h> work. Changing them so
+# their namespace is "ANGLE", which implicitly occurs during the "copy
+# headers" phase, is a reasonable solution.
+#
+# This script processes the header files after they're copied during
+# the Copy Header Files build phase, and adjusts their #includes so
+# that they refer to each other. This avoids modifying the ANGLE
+# sources, and allows WebCore to more easily call ANGLE APIs directly.
+
+if [[ -n "${SCRIPT_HEADER_VISIBILITY}" ]]
+then
+    sed \
+        -e 's/^#include <EGL\/\(.*\)>/#include <ANGLE\/\1>/' \
+        -e 's/^#include <GLES\/\(.*\)>/#include <ANGLE\/\1>/' \
+        -e 's/^#include <GLES2\/\(.*\)>/#include <ANGLE\/\1>/' \
+        -e 's/^#include <GLES3\/\(.*\)>/#include <ANGLE\/\1>/' \
+        -e 's/^#include <KHR\/\(.*\)>/#include <ANGLE\/\1>/' \
+        -e 's/^#include <export.h>/#include <ANGLE\/export.h>/' \
+        -e 's/^#include "\(eglext_angle\|gl2ext_angle\|ShaderVars\).h"/#include <ANGLE\/\1.h>/' \
+        "${SCRIPT_INPUT_FILE}" > "${SCRIPT_OUTPUT_FILE_0}"
+    echo "Postprocessed ANGLE header: ${SCRIPT_OUTPUT_FILE_0}"
+fi
+exit 0

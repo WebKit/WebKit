@@ -630,6 +630,23 @@
 		FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BF1200F3E600088E69 /* ShaderLang.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		53E934DB230609D800DE060C /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.h";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			name = "Files '*.h' using Script";
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+			);
+			script = "exec \"${SRCROOT}/adjust-angle-include-paths-rule\"\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		312BDB0B15FECAB00097EBC7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -2607,6 +2624,7 @@
 				6E28B8742294DD8000717E69 /* ShellScript */,
 			);
 			buildRules = (
+				53E934DB230609D800DE060C /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -2659,7 +2677,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh $SRCROOT/adjust-angle-include-paths.sh\n";
+			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1100\" -a \"${USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,3 +1,38 @@
+2019-08-16  Keith Rollin  <krollin@apple.com>
+
+        Add XCBuild support to ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=200836
+        <rdar://problem/54410420>
+
+        Reviewed by Alex Christensen.
+
+        The ANGLE Xcode project contains two Build Phases: one that copies
+        some headers, and another that modifies those headers. This
+        combination does not work with XCBuild, which gets confused when it
+        finds that headers that it's copied have been changed. When it detects
+        this, XCBuild thinks that it should recopy those headers on the next
+        build, causing their modification dates to change and for all
+        dependent files to be rebuilt. This essentially turns an incremental
+        rebuild into a full rebuild.
+
+        Address this problem by using a new facility in Xcode 11. This
+        facility supports the copying and modifying headers files in a single
+        step. It is achieved by first enabling the facility by setting
+        APPLY_RULES_IN_COPY_HEADERS to YES. Next, we add a new Build Rule that
+        invokes a custom script when the header files are copied. Third, we
+        provide this script, which can essentially be a stripped down version
+        of the one already used to modify the exported headers files. Finally,
+        we disable the use of that old script when we are using Xcode 11. In
+        this way, the old script that modifies the exported headers is used in
+        Xcode 10, and the new facility is used in Xcode 11.
+
+        See also Bug 197340 for where this process was also applied to
+        JavaScriptCore, WebKit, and WebKitLegacy.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE.xcconfig:
+        * adjust-angle-include-paths-rule: Added.
+
 2019-08-08  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Get WebKit, WebKit2, and MiniBrowser building and executing
