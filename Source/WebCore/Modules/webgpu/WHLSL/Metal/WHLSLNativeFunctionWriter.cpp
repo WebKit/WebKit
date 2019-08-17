@@ -122,40 +122,94 @@ static const char* vectorSuffix(int vectorLength)
 
 void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDeclaration& nativeFunctionDeclaration, MangledVariableName returnName, const Vector<MangledVariableName>& args, Intrinsics& intrinsics, TypeNamer& typeNamer)
 {
+    auto asMatrixType = [&] (AST::UnnamedType& unnamedType) -> AST::NativeTypeDeclaration* {
+        auto& realType = unnamedType.unifyNode();
+        if (!realType.isNativeTypeDeclaration())
+            return nullptr;
+
+        auto& maybeMatrixType = downcast<AST::NativeTypeDeclaration>(realType);
+        if (maybeMatrixType.isMatrix())
+            return &maybeMatrixType;
+
+        return nullptr;
+    };
+
     if (nativeFunctionDeclaration.isCast()) {
         auto& returnType = nativeFunctionDeclaration.type();
-        auto metalReturnName = typeNamer.mangledNameForType(returnType);
+        auto metalReturnTypeName = typeNamer.mangledNameForType(returnType);
+
         if (!nativeFunctionDeclaration.parameters().size()) {
             stringBuilder.flexibleAppend(returnName, " = { };\n");
             return;
         }
 
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
-        auto& parameterType = *nativeFunctionDeclaration.parameters()[0]->type();
-        auto metalParameterName = typeNamer.mangledNameForType(parameterType);
-        stringBuilder.flexibleAppend("{\n", metalParameterName, " x = ", args[0], ";\n");
 
-        {
-            auto isEnumerationDefinition = [] (auto& type) {
-                return is<AST::NamedType>(type) && is<AST::EnumerationDefinition>(downcast<AST::NamedType>(type));
-            };
-            auto& unifiedReturnType = returnType.unifyNode();
-            if (isEnumerationDefinition(unifiedReturnType) && !isEnumerationDefinition(parameterType.unifyNode())) { 
-                auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(downcast<AST::NamedType>(unifiedReturnType));
-                stringBuilder.append("    switch (x) {\n");
-                bool hasZeroCase = false;
-                for (auto& member : enumerationDefinition.enumerationMembers()) {
-                    hasZeroCase |= !member.get().value();
-                    stringBuilder.flexibleAppend("        case ", member.get().value(), ": break;\n");
+        if (nativeFunctionDeclaration.parameters().size() == 1) {
+            auto& parameterType = *nativeFunctionDeclaration.parameters()[0]->type();
+            auto metalParameterTypeName = typeNamer.mangledNameForType(parameterType);
+            stringBuilder.flexibleAppend("{\n", metalParameterTypeName, " x = ", args[0], ";\n");
+
+            {
+                auto isEnumerationDefinition = [] (auto& type) {
+                    return is<AST::NamedType>(type) && is<AST::EnumerationDefinition>(downcast<AST::NamedType>(type));
+                };
+                auto& unifiedReturnType = returnType.unifyNode();
+                if (isEnumerationDefinition(unifiedReturnType) && !isEnumerationDefinition(parameterType.unifyNode())) { 
+                    auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(downcast<AST::NamedType>(unifiedReturnType));
+                    stringBuilder.append("    switch (x) {\n");
+                    bool hasZeroCase = false;
+                    for (auto& member : enumerationDefinition.enumerationMembers()) {
+                        hasZeroCase |= !member.get().value();
+                        stringBuilder.flexibleAppend("        case ", member.get().value(), ": break;\n");
+                    }
+                    ASSERT_UNUSED(hasZeroCase, hasZeroCase);
+                    stringBuilder.append("        default: x = 0; break; }\n");
                 }
-                ASSERT_UNUSED(hasZeroCase, hasZeroCase);
-                stringBuilder.append("        default: x = 0; break; }\n");
             }
+
+            stringBuilder.flexibleAppend(
+                returnName, " = static_cast<", metalReturnTypeName, ">(x);\n}\n");
+
+            return;
         }
 
-        stringBuilder.flexibleAppend(
-            returnName, " = static_cast<", metalReturnName, ">(x);\n}\n");
+        if (auto* matrixType = asMatrixType(returnType)) {
+            unsigned numRows = matrixType->numberOfMatrixRows();
+            unsigned numColumns = matrixType->numberOfMatrixColumns();
+            RELEASE_ASSERT(nativeFunctionDeclaration.parameters().size() == numRows || nativeFunctionDeclaration.parameters().size() == numRows * numColumns);
 
+            stringBuilder.flexibleAppend("{\n", metalReturnTypeName, " x;\n");
+
+            // We need to abide by the memory layout we use for matrices here.
+            if (nativeFunctionDeclaration.parameters().size() == numRows) {
+                // operator matrixMxN (vectorN, ..., vectorN)
+                for (unsigned i = 0; i < numRows; ++i) {
+                    for (unsigned j = 0; j < numColumns; ++j)
+                        stringBuilder.flexibleAppend("x[", j * numRows + i, "] = ", args[i], "[", j, "];\n");
+                }
+
+            } else {
+                // operator matrixMxN (scalar, ..., scalar)
+                unsigned index = 0;
+                for (unsigned i = 0; i < numRows; ++i) {
+                    for (unsigned j = 0; j < numColumns; ++j) {
+                        stringBuilder.flexibleAppend("x[", j * numRows + i, "] = ", args[index], ";\n");
+                        ++index;
+                    }
+                }
+            }
+
+            stringBuilder.flexibleAppend(returnName, " = x;\n}\n");
+            return;
+        }
+
+        stringBuilder.flexibleAppend(returnName, " = ", metalReturnTypeName, "(");
+        for (unsigned i = 0; i < nativeFunctionDeclaration.parameters().size(); ++i) {
+            if (i > 0)
+                stringBuilder.append(", ");
+            stringBuilder.flexibleAppend(args[i]);
+        }
+        stringBuilder.append(");\n");
         return;
     }
 
@@ -256,18 +310,12 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         ASSERT(vectorType.typeArguments().size() == 2);
         return WTF::get<AST::ConstantExpression>(vectorType.typeArguments()[1]).integerLiteral().value();
     };
-    auto matrixDimension = [&] (unsigned typeArgumentIndex) -> unsigned {
+
+    auto getMatrixType = [&] () -> AST::NativeTypeDeclaration& {
         auto& typeReference = downcast<AST::TypeReference>(*nativeFunctionDeclaration.parameters()[0]->type());
-        auto& matrixType = downcast<AST::NativeTypeDeclaration>(downcast<AST::TypeReference>(downcast<AST::TypeDefinition>(typeReference.resolvedType()).type()).resolvedType());
-        ASSERT(matrixType.name() == "matrix");
-        ASSERT(matrixType.typeArguments().size() == 3);
-        return WTF::get<AST::ConstantExpression>(matrixType.typeArguments()[typeArgumentIndex]).integerLiteral().value();
-    };
-    auto numberOfMatrixRows = [&] {
-        return matrixDimension(1);
-    };
-    auto numberOfMatrixColumns = [&] {
-        return matrixDimension(2);
+        auto& result = downcast<AST::NativeTypeDeclaration>(downcast<AST::TypeReference>(downcast<AST::TypeDefinition>(typeReference.resolvedType()).type()).resolvedType());
+        ASSERT(result.isMatrix());
+        return result;
     };
 
     if (nativeFunctionDeclaration.name() == "operator[]") {
@@ -277,8 +325,8 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         if (numTypeArguments == 3) {
             auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
 
-            unsigned numberOfRows = numberOfMatrixRows();
-            unsigned numberOfColumns = numberOfMatrixColumns();
+            unsigned numberOfRows = getMatrixType().numberOfMatrixRows();
+            unsigned numberOfColumns = getMatrixType().numberOfMatrixColumns();
             stringBuilder.flexibleAppend("do {\n", metalReturnName, " result;\n");
 
             stringBuilder.flexibleAppend(
@@ -321,8 +369,8 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
             auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
             auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
 
-            unsigned numberOfRows = numberOfMatrixRows();
-            unsigned numberOfColumns = numberOfMatrixColumns();
+            unsigned numberOfRows = getMatrixType().numberOfMatrixRows();
+            unsigned numberOfColumns = getMatrixType().numberOfMatrixColumns();
 
             stringBuilder.flexibleAppend("do {\n", metalReturnName, " m = ", args[0], ";\n",
                 metalParameter2Name, " i = ", args[1], ";\n");
@@ -360,18 +408,6 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
 
         return;
     }
-
-    auto asMatrixType = [&] (AST::UnnamedType& unnamedType) -> AST::NativeTypeDeclaration* {
-        auto& realType = unnamedType.unifyNode();
-        if (!realType.isNativeTypeDeclaration())
-            return nullptr;
-
-        auto& maybeMatrixType = downcast<AST::NativeTypeDeclaration>(realType);
-        if (maybeMatrixType.isMatrix())
-            return &maybeMatrixType;
-
-        return nullptr;
-    };
 
     if (nativeFunctionDeclaration.isOperator()) {
         auto operatorName = nativeFunctionDeclaration.name().substring("operator"_str.length());

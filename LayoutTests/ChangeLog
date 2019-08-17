@@ -1,3 +1,15 @@
+2019-08-16  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make "operator cast" constructors native
+        https://bugs.webkit.org/show_bug.cgi?id=200748
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl/matrix-constructors-expected.txt: Added.
+        * webgpu/whlsl/matrix-constructors.html: Added.
+        * webgpu/whlsl/vector-constructors-expected.txt: Added.
+        * webgpu/whlsl/vector-constructors.html: Added.
+
 2019-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Enums should be shadowed by local variables

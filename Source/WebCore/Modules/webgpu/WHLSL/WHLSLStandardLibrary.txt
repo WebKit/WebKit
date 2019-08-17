@@ -12959,532 +12959,90 @@ native operator int(uint);
 native operator int(float);
 native operator float(uint);
 native operator float(int);
-
-operator int(bool x) {
-    return x ? 1 : 0;
-}
-operator bool(uint x) {
-    return x != 0;
-}
-operator bool(int x) {
-    return x != 0;
-}
-operator bool(float x) {
-    return x != 0;
-}
-
-operator bool2(bool x, bool y) {
-    bool2 result;
-    result.x = x;
-    result.y = y;
-    return result;
-}
-operator bool3(bool x, bool y, bool z) {
-    bool3 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    return result;
-}
-operator bool3(bool2 x, bool y) {
-    bool3 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    return result;
-}
-operator bool3(bool x, bool2 y) {
-    bool3 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    return result;
-}
-operator bool4(bool x, bool y, bool z, bool w) {
-    bool4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    result.w = w;
-    return result;
-}
-operator bool4(bool2 x, bool y, bool z) {
-    bool4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    result.w = z;
-    return result;
-}
-operator bool4(bool x, bool2 y, bool z) {
-    bool4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = z;
-    return result;
-}
-operator bool4(bool x, bool y, bool2 z) {
-    bool4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z.x;
-    result.w = z.y;
-    return result;
-}
-operator bool4(bool2 x, bool2 y) {
-    bool4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y.x;
-    result.w = y.y;
-    return result;
-}
-operator bool4(bool3 x, bool y) {
-    bool4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = x.z;
-    result.w = y;
-    return result;
-}
-operator bool4(bool x, bool3 y) {
-    bool4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = y.z;
-    return result;
-}
-operator uint2(uint x, uint y) {
-    uint2 result;
-    result.x = x;
-    result.y = y;
-    return result;
-}
-operator uint3(uint x, uint y, uint z) {
-    uint3 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    return result;
-}
-operator uint3(uint2 x, uint y) {
-    uint3 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    return result;
-}
-operator uint3(uint x, uint2 y) {
-    uint3 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    return result;
-}
-operator uint4(uint x, uint y, uint z, uint w) {
-    uint4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    result.w = w;
-    return result;
-}
-operator uint4(uint2 x, uint y, uint z) {
-    uint4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    result.w = z;
-    return result;
-}
-operator uint4(uint x, uint2 y, uint z) {
-    uint4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = z;
-    return result;
-}
-operator uint4(uint x, uint y, uint2 z) {
-    uint4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z.x;
-    result.w = z.y;
-    return result;
-}
-operator uint4(uint2 x, uint2 y) {
-    uint4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y.x;
-    result.w = y.y;
-    return result;
-}
-operator uint4(uint3 x, uint y) {
-    uint4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = x.z;
-    result.w = y;
-    return result;
-}
-operator uint4(uint x, uint3 y) {
-    uint4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = y.z;
-    return result;
-}
-operator int2(int x, int y) {
-    int2 result;
-    result.x = x;
-    result.y = y;
-    return result;
-}
-operator int3(int x, int y, int z) {
-    int3 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    return result;
-}
-operator int3(int2 x, int y) {
-    int3 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    return result;
-}
-operator int3(int x, int2 y) {
-    int3 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    return result;
-}
-operator int4(int x, int y, int z, int w) {
-    int4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    result.w = w;
-    return result;
-}
-operator int4(int2 x, int y, int z) {
-    int4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    result.w = z;
-    return result;
-}
-operator int4(int x, int2 y, int z) {
-    int4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = z;
-    return result;
-}
-operator int4(int x, int y, int2 z) {
-    int4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z.x;
-    result.w = z.y;
-    return result;
-}
-operator int4(int2 x, int2 y) {
-    int4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y.x;
-    result.w = y.y;
-    return result;
-}
-operator int4(int3 x, int y) {
-    int4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = x.z;
-    result.w = y;
-    return result;
-}
-operator int4(int x, int3 y) {
-    int4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = y.z;
-    return result;
-}
-operator float2(float x, float y) {
-    float2 result;
-    result.x = x;
-    result.y = y;
-    return result;
-}
-operator float3(float x, float y, float z) {
-    float3 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    return result;
-}
-operator float3(float2 x, float y) {
-    float3 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    return result;
-}
-operator float3(float x, float2 y) {
-    float3 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    return result;
-}
-operator float4(float x, float y, float z, float w) {
-    float4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    result.w = w;
-    return result;
-}
-operator float4(float2 x, float y, float z) {
-    float4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y;
-    result.w = z;
-    return result;
-}
-operator float4(float x, float2 y, float z) {
-    float4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = z;
-    return result;
-}
-operator float4(float x, float y, float2 z) {
-    float4 result;
-    result.x = x;
-    result.y = y;
-    result.z = z.x;
-    result.w = z.y;
-    return result;
-}
-operator float4(float2 x, float2 y) {
-    float4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = y.x;
-    result.w = y.y;
-    return result;
-}
-operator float4(float3 x, float y) {
-    float4 result;
-    result.x = x.x;
-    result.y = x.y;
-    result.z = x.z;
-    result.w = y;
-    return result;
-}
-operator float4(float x, float3 y) {
-    float4 result;
-    result.x = x;
-    result.y = y.x;
-    result.z = y.y;
-    result.w = y.z;
-    return result;
-}
-operator float2x2(float2 a, float2 b) {
-    float2x2 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator float2x3(float3 a, float3 b) {
-    float2x3 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator float2x4(float4 a, float4 b) {
-    float2x4 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator float3x2(float2 a, float2 b, float2 c) {
-    float3x2 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator float3x3(float3 a, float3 b, float3 c) {
-    float3x3 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator float3x4(float4 a, float4 b, float4 c) {
-    float3x4 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator float4x2(float2 a, float2 b, float2 c, float2 d) {
-    float4x2 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator float4x3(float3 a, float3 b, float3 c, float3 d) {
-    float4x3 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator float4x4(float4 a, float4 b, float4 c, float4 d) {
-    float4x4 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator float2x2(float a, float b, float e, float f) {
-    return float2x2(float2(a, b), float2(e, f));
-}
-operator float2x3(float a, float b, float c, float e, float f, float g) {
-    return float2x3(float3(a, b, c), float3(e, f, g));
-}
-operator float2x4(float a, float b, float c, float d, float e, float f, float g, float h) {
-    return float2x4(float4(a, b, c, d), float4(e, f, g, h));
-}
-operator float3x2(float a, float b, float e, float f, float i, float j) {
-    return float3x2(float2(a, b), float2(e, f), float2(i, j));
-}
-operator float3x3(float a, float b, float c, float e, float f, float g, float i, float j, float k) {
-    return float3x3(float3(a, b, c), float3(e, f, g), float3(i, j, k));
-}
-operator float3x4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l) {
-    return float3x4(float4(a, b, c, d), float4(e, f, g, h), float4(i, j, k, l));
-}
-operator float4x2(float a, float b, float e, float f, float i, float j, float m, float n) {
-    return float4x2(float2(a, b), float2(e, f), float2(i, j), float2(m, n));
-}
-operator float4x3(float a, float b, float c, float e, float f, float g, float i, float j, float k, float m, float n, float o) {
-    return float4x3(float3(a, b, c), float3(e, f, g), float3(i, j, k), float3(m, n, o));
-}
-operator float4x4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p) {
-    return float4x4(float4(a, b, c, d), float4(e, f, g, h), float4(i, j, k, l), float4(m, n, o, p));
-}
-operator bool2x2(bool2 a, bool2 b) {
-    bool2x2 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator bool2x3(bool3 a, bool3 b) {
-    bool2x3 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator bool2x4(bool4 a, bool4 b) {
-    bool2x4 result;
-    result[0] = a;
-    result[1] = b;
-    return result;
-}
-operator bool3x2(bool2 a, bool2 b, bool2 c) {
-    bool3x2 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator bool3x3(bool3 a, bool3 b, bool3 c) {
-    bool3x3 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator bool3x4(bool4 a, bool4 b, bool4 c) {
-    bool3x4 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    return result;
-}
-operator bool4x2(bool2 a, bool2 b, bool2 c, bool2 d) {
-    bool4x2 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator bool4x3(bool3 a, bool3 b, bool3 c, bool3 d) {
-    bool4x3 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator bool4x4(bool4 a, bool4 b, bool4 c, bool4 d) {
-    bool4x4 result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    return result;
-}
-operator bool2x2(bool a, bool b, bool e, bool f) {
-    return bool2x2(bool2(a, b), bool2(e, f));
-}
-operator bool2x3(bool a, bool b, bool c, bool e, bool f, bool g) {
-    return bool2x3(bool3(a, b, c), bool3(e, f, g));
-}
-operator bool2x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h) {
-    return bool2x4(bool4(a, b, c, d), bool4(e, f, g, h));
-}
-operator bool3x2(bool a, bool b, bool e, bool f, bool i, bool j) {
-    return bool3x2(bool2(a, b), bool2(e, f), bool2(i, j));
-}
-operator bool3x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k) {
-    return bool3x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k));
-}
-operator bool3x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l) {
-    return bool3x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l));
-}
-operator bool4x2(bool a, bool b, bool e, bool f, bool i, bool j, bool m, bool n) {
-    return bool4x2(bool2(a, b), bool2(e, f), bool2(i, j), bool2(m, n));
-}
-operator bool4x3(bool a, bool b, bool c, bool e, bool f, bool g, bool i, bool j, bool k, bool m, bool n, bool o) {
-    return bool4x3(bool3(a, b, c), bool3(e, f, g), bool3(i, j, k), bool3(m, n, o));
-}
-operator bool4x4(bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k, bool l, bool m, bool n, bool o, bool p) {
-    return bool4x4(bool4(a, b, c, d), bool4(e, f, g, h), bool4(i, j, k, l), bool4(m, n, o, p));
-}
+native operator int(bool);
+native operator bool(uint);
+native operator bool(int);
+native operator bool(float);
+native operator bool2(bool, bool);
+native operator bool3(bool, bool, bool);
+native operator bool3(bool2, bool);
+native operator bool3(bool, bool2);
+native operator bool4(bool, bool, bool, bool);
+native operator bool4(bool2, bool, bool);
+native operator bool4(bool, bool2, bool);
+native operator bool4(bool, bool, bool2);
+native operator bool4(bool2, bool2);
+native operator bool4(bool3, bool);
+native operator bool4(bool, bool3);
+native operator uint2(uint, uint);
+native operator uint3(uint, uint, uint);
+native operator uint3(uint2, uint);
+native operator uint3(uint, uint2);
+native operator uint4(uint, uint, uint, uint);
+native operator uint4(uint2, uint, uint);
+native operator uint4(uint, uint2, uint);
+native operator uint4(uint, uint, uint2);
+native operator uint4(uint2, uint2);
+native operator uint4(uint3, uint);
+native operator uint4(uint, uint3);
+native operator int2(int, int);
+native operator int3(int, int, int);
+native operator int3(int2, int);
+native operator int3(int, int2);
+native operator int4(int, int, int, int);
+native operator int4(int2, int, int);
+native operator int4(int, int2, int);
+native operator int4(int, int, int2);
+native operator int4(int2, int2);
+native operator int4(int3, int);
+native operator int4(int, int3);
+native operator float2(float, float);
+native operator float3(float, float, float);
+native operator float3(float2, float);
+native operator float3(float, float2);
+native operator float4(float, float, float, float);
+native operator float4(float2, float, float);
+native operator float4(float, float2, float);
+native operator float4(float, float, float2);
+native operator float4(float2, float2);
+native operator float4(float3, float);
+native operator float4(float, float3);
+native operator float2x2(float2, float2);
+native operator float2x3(float3, float3);
+native operator float2x4(float4, float4);
+native operator float3x2(float2, float2, float2);
+native operator float3x3(float3, float3, float3);
+native operator float3x4(float4, float4, float4);
+native operator float4x2(float2, float2, float2, float2);
+native operator float4x3(float3, float3, float3, float3);
+native operator float4x4(float4, float4, float4, float4);
+native operator float2x2(float, float, float, float);
+native operator float2x3(float, float, float, float, float, float);
+native operator float2x4(float, float, float, float, float, float, float, float);
+native operator float3x2(float, float, float, float, float, float);
+native operator float3x3(float, float, float, float, float, float, float, float, float);
+native operator float3x4(float, float, float, float, float, float, float, float, float, float, float, float);
+native operator float4x2(float, float, float, float, float, float, float, float);
+native operator float4x3(float, float, float, float, float, float, float, float, float, float, float, float);
+native operator float4x4(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float);
+native operator bool2x2(bool2, bool2);
+native operator bool2x3(bool3, bool3);
+native operator bool2x4(bool4, bool4);
+native operator bool3x2(bool2, bool2, bool2);
+native operator bool3x3(bool3, bool3, bool3);
+native operator bool3x4(bool4, bool4, bool4);
+native operator bool4x2(bool2, bool2, bool2, bool2);
+native operator bool4x3(bool3, bool3, bool3, bool3);
+native operator bool4x4(bool4, bool4, bool4, bool4);
+native operator bool2x2(bool, bool, bool, bool);
+native operator bool2x3(bool, bool, bool, bool, bool, bool);
+native operator bool2x4(bool, bool, bool, bool, bool, bool, bool, bool);
+native operator bool3x2(bool, bool, bool, bool, bool, bool);
+native operator bool3x3(bool, bool, bool, bool, bool, bool, bool, bool, bool);
+native operator bool3x4(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
+native operator bool4x2(bool, bool, bool, bool, bool, bool, bool, bool);
+native operator bool4x3(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
+native operator bool4x4(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
 
 /* Functions named operator.wyx */
 bool3 operator.wyx(bool4 v) {
