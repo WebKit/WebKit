@@ -930,7 +930,7 @@ EditableLinkBehavior:
 
 InspectorAttachedHeight:
   type: uint32_t
-  defaultValue: 300
+  defaultValue: 500
   webcoreBinding: none
 
 InspectorAttachedWidth:
