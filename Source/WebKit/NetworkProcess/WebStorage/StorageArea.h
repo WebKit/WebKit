@@ -42,7 +42,7 @@ class StorageArea {
     WTF_MAKE_NONCOPYABLE(StorageArea);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
+    StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes, Ref<WorkQueue>&&);
     ~StorageArea();
 
     const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
@@ -65,8 +65,6 @@ public:
 
     void openDatabaseAndImportItemsIfNeeded() const;
 
-    void setWorkQueue(RefPtr<WorkQueue>&& queue) { m_queue = WTFMove(queue); }
-
     void syncToDatabase();
 
 private:
@@ -84,7 +82,7 @@ private:
     HashSet<IPC::Connection::UniqueID> m_eventListeners;
 
     uint64_t m_identifier;
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

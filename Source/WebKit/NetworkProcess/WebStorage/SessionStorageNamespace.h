@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ public:
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 

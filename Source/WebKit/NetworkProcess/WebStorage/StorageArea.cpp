@@ -42,12 +42,13 @@ static uint64_t generateStorageAreaIdentifier()
     return ++identifier;
 }
 
-StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
+StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes, Ref<WorkQueue>&& queue)
     : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
     , m_identifier(generateStorageAreaIdentifier())
+    , m_queue(WTFMove(queue))
 {
     ASSERT(!RunLoop::isMain());
 }
@@ -88,7 +89,7 @@ std::unique_ptr<StorageArea> StorageArea::clone() const
     ASSERT(!RunLoop::isMain());
     ASSERT(!m_localStorageNamespace);
 
-    auto storageArea = std::make_unique<StorageArea>(nullptr, m_securityOrigin, m_quotaInBytes);
+    auto storageArea = std::make_unique<StorageArea>(nullptr, m_securityOrigin, m_quotaInBytes, m_queue.copyRef());
     storageArea->m_storageMap = m_storageMap;
 
     return storageArea;
@@ -182,10 +183,9 @@ void StorageArea::openDatabaseAndImportItemsIfNeeded() const
         return;
 
     ASSERT(m_localStorageNamespace->storageManager()->localStorageDatabaseTracker());
-    ASSERT(m_queue);
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(*m_queue, *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin);
+        m_localStorageDatabase = LocalStorageDatabase::create(m_queue.copyRef(), *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin);
 
     if (m_didImportItemsFromDatabase)
         return;

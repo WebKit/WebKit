@@ -294,19 +294,15 @@ void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, P
         return;
     }
 
-    auto* storageArea = storageManager->createLocalStorageArea(storageNamespaceID, WTFMove(originData));
+    auto* storageArea = storageManager->createLocalStorageArea(storageNamespaceID, WTFMove(originData), m_queue.copyRef());
     if (!storageArea) {
         completionHandler(invalidStorageAreaID);
         return;
     }
 
     auto storageAreaID = storageArea->identifier();
-    auto[iter, isNewEntry] = m_storageAreas.add(storageAreaID, nullptr);
-    if (isNewEntry) {
-        storageArea->setWorkQueue(m_queue.ptr());
-        iter->value = storageArea;
-    } else
-        ASSERT(storageArea == iter->value);
+    auto iter = m_storageAreas.add(storageAreaID, storageArea).iterator;
+    ASSERT_UNUSED(iter, storageArea == iter->value);
 
     completionHandler(storageAreaID);
 
@@ -323,18 +319,15 @@ void StorageManagerSet::connectToTransientLocalStorageArea(IPC::Connection& conn
         return;
     }
 
-    auto* storageArea = storageManager->createTransientLocalStorageArea(storageNamespaceID, WTFMove(topLevelOriginData), WTFMove(originData));
+    auto* storageArea = storageManager->createTransientLocalStorageArea(storageNamespaceID, WTFMove(topLevelOriginData), WTFMove(originData), m_queue.copyRef());
     if (!storageArea) {
         completionHandler(invalidStorageAreaID);
         return;
     }
 
     auto storageAreaID = storageArea->identifier();
-    auto[iter, isNewEntry] = m_storageAreas.add(storageAreaID, nullptr);
-    if (isNewEntry)
-        iter->value = storageArea;
-    else
-        ASSERT(storageArea == iter->value);
+    auto iter = m_storageAreas.add(storageAreaID, storageArea).iterator;
+    ASSERT_UNUSED(iter, storageArea == iter->value);
 
     completionHandler(storageAreaID);
 
@@ -351,18 +344,15 @@ void StorageManagerSet::connectToSessionStorageArea(IPC::Connection& connection,
         return;
     }
 
-    auto* storageArea = storageManager->createSessionStorageArea(storageNamespaceID, WTFMove(originData));
+    auto* storageArea = storageManager->createSessionStorageArea(storageNamespaceID, WTFMove(originData), m_queue.copyRef());
     if (!storageArea) {
         completionHandler(invalidStorageAreaID);
         return;
     }
 
     auto storageAreaID = storageArea->identifier();
-    auto[iter, isNewEntry] = m_storageAreas.add(storageAreaID, nullptr);
-    if (isNewEntry)
-        iter->value = storageArea;
-    else
-        ASSERT(storageArea == iter->value);
+    auto iter = m_storageAreas.add(storageAreaID, storageArea).iterator;
+    ASSERT_UNUSED(iter, storageArea == iter->value);
 
     completionHandler(storageAreaID);
     

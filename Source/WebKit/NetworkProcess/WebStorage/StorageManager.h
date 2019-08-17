@@ -77,9 +77,9 @@ public:
     
     static const unsigned localStorageDatabaseQuotaInBytes;
 
-    StorageArea* createLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
-    StorageArea* createTransientLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&);
-    StorageArea* createSessionStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
+    StorageArea* createLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea* createTransientLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea* createSessionStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
 
 private:
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
