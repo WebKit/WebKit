@@ -116,25 +116,25 @@ TEST(StringBuilderTest, Append)
     }
 }
 
-TEST(StringBuilderTest, FlexibleAppend)
+TEST(StringBuilderTest, VariadicAppend)
 {
     {
         StringBuilder builder;
-        builder.flexibleAppend(String("0123456789"));
+        builder.append(String("0123456789"));
         expectBuilderContent("0123456789", builder);
-        builder.flexibleAppend("abcd");
+        builder.append("abcd");
         expectBuilderContent("0123456789abcd", builder);
-        builder.flexibleAppend('e');
+        builder.append('e');
         expectBuilderContent("0123456789abcde", builder);
-        builder.flexibleAppend("");
+        builder.append("");
         expectBuilderContent("0123456789abcde", builder);
     }
 
     {
         StringBuilder builder;
-        builder.flexibleAppend(String("0123456789"), "abcd", 'e', "");
+        builder.append(String("0123456789"), "abcd", 'e', "");
         expectBuilderContent("0123456789abcde", builder);
-        builder.flexibleAppend(String("A"), "B", 'C', "");
+        builder.append(String("A"), "B", 'C', "");
         expectBuilderContent("0123456789abcdeABC", builder);
     }
 }

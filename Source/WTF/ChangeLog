@@ -1,3 +1,29 @@
+2019-08-17  Sam Weinig  <weinig@apple.com>
+
+        Rename StringBuilder::flexibleAppend(...) to StringBuilder::append(...)
+        https://bugs.webkit.org/show_bug.cgi?id=200756
+
+        Reviewed by Darin Adler.
+
+        Now that there are no remaining multi-parameter or behavior changing overloads
+        of StringBuilder::append(...), we can rename StringBuilder::flexibleAppend(...)
+        to StringBuilder::append(...).
+        
+        This change leaves the existing single parameter overloads StringBuilder::append(...)
+        for now, and since they have specify specific types, they will continue to be prefered
+        in overload resolution. Once we have concluded the variadic StringBuilder::append(...)
+        can provide the same performance as the single parameter variant, we can remove the
+        single parameter variant.
+
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendFromAdapters):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::flexibleAppendFromAdapters): Deleted.
+        (WTF::StringBuilder::flexibleAppend): Deleted.
+        Update for rename from StringBuilder::flexibleAppend(...) to StringBuilder::append(...).
+
 2019-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't use union to store NodeRareData* and RenderObject*

@@ -1,3 +1,16 @@
+2019-08-17  Sam Weinig  <weinig@apple.com>
+
+        Rename StringBuilder::flexibleAppend(...) to StringBuilder::append(...)
+        https://bugs.webkit.org/show_bug.cgi?id=200756
+
+        Reviewed by Darin Adler.
+
+        Update call sites for rename from StringBuilder::flexibleAppend(...) to 
+        StringBuilder::append(...).
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-08-17  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Scroll indicators disappear sometimes

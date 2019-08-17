@@ -1,3 +1,19 @@
+2019-08-17  Sam Weinig  <weinig@apple.com>
+
+        Rename StringBuilder::flexibleAppend(...) to StringBuilder::append(...)
+        https://bugs.webkit.org/show_bug.cgi?id=200756
+
+        Reviewed by Darin Adler.
+
+        Update call sites for rename from StringBuilder::flexibleAppend(...) to 
+        StringBuilder::append(...).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::dumpHistoryItem):
+        We have to explicitly access the underlying String of the URL rather than
+        relying on the implicit conversion since it is now ambiguous which append(...)
+        overload should be used.
+
 2019-08-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: make the initial height bigger when attached

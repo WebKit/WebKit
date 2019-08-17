@@ -1870,7 +1870,7 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
         stringBuilder.appendLiteral("(file test):");
         stringBuilder.append(url.string().substring(start));
     } else
-        stringBuilder.append(url);
+        stringBuilder.append(url.string());
     
     auto& target = item.target();
     if (target.length()) {

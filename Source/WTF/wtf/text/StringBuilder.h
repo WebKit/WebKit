@@ -235,8 +235,7 @@ public:
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(double, unsigned decimalPlaces);
 
-    // FIXME: Rename to append(...) after renaming any overloads of append that take more than one argument.
-    template<typename... StringTypes> void flexibleAppend(StringTypes...);
+    template<typename... StringTypes> void append(StringTypes...);
 
     String toString()
     {
@@ -368,7 +367,7 @@ private:
     template<typename CharacterType> ALWAYS_INLINE CharacterType* getBufferCharacters();
     WTF_EXPORT_PRIVATE void reifyString() const;
 
-    template<typename... StringTypeAdapters> void flexibleAppendFromAdapters(StringTypeAdapters...);
+    template<typename... StringTypeAdapters> void appendFromAdapters(StringTypeAdapters...);
 
     mutable String m_string;
     RefPtr<StringImpl> m_buffer;
@@ -399,7 +398,7 @@ ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
 }
 
 template<typename... StringTypeAdapters>
-void StringBuilder::flexibleAppendFromAdapters(StringTypeAdapters... adapters)
+void StringBuilder::appendFromAdapters(StringTypeAdapters... adapters)
 {
     auto requiredLength = checkedSum<int32_t>(m_length, adapters.length()...);
     if (requiredLength.hasOverflowed()) {
@@ -425,9 +424,9 @@ void StringBuilder::flexibleAppendFromAdapters(StringTypeAdapters... adapters)
 }
 
 template<typename... StringTypes>
-void StringBuilder::flexibleAppend(StringTypes... strings)
+void StringBuilder::append(StringTypes... strings)
 {
-    flexibleAppendFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
+    appendFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
 template<typename CharacterType>

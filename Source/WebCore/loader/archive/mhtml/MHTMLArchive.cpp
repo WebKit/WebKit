@@ -180,7 +180,7 @@ Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         stringBuilder.append("\r\nContent-Transfer-Encoding: ");
         stringBuilder.append(contentEncoding);
         stringBuilder.append("\r\nContent-Location: ");
-        stringBuilder.append(resource.url);
+        stringBuilder.append(resource.url.string());
         stringBuilder.append("\r\n\r\n");
 
         asciiString = stringBuilder.toString().utf8();

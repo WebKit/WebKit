@@ -335,7 +335,7 @@ public:
 private:
     void visit(AST::StructureDefinition& structureDefinition) override
     {
-        m_stringBuilder.flexibleAppend("struct ", m_mangledNameForNamedType(structureDefinition), ";\n");
+        m_stringBuilder.append("struct ", m_mangledNameForNamedType(structureDefinition), ";\n");
     }
 
     std::function<MangledOrNativeTypeName(AST::NamedType&)> m_mangledNameForNamedType;
@@ -362,19 +362,19 @@ void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, BaseType
     case AST::UnnamedType::Kind::TypeReference: {
         auto& namedType = downcast<ReferenceTypeNameNode>(baseTypeNameNode).namedType();
         emitNamedTypeDefinition(stringBuilder, namedType, emittedNamedTypes, emittedUnnamedTypes);
-        stringBuilder.flexibleAppend("typedef ", mangledNameForType(namedType), ' ', baseTypeNameNode.mangledName(), ";\n");
+        stringBuilder.append("typedef ", mangledNameForType(namedType), ' ', baseTypeNameNode.mangledName(), ";\n");
         break;
     }
     case AST::UnnamedType::Kind::Pointer: {
         auto& pointerType = downcast<PointerTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
-        stringBuilder.flexibleAppend("typedef ", toString(pointerType.addressSpace()), ' ', pointerType.parent()->mangledName(), "* ", pointerType.mangledName(), ";\n");
+        stringBuilder.append("typedef ", toString(pointerType.addressSpace()), ' ', pointerType.parent()->mangledName(), "* ", pointerType.mangledName(), ";\n");
         break;
     }
     case AST::UnnamedType::Kind::ArrayReference: {
         auto& arrayReferenceType = downcast<ArrayReferenceTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
-        stringBuilder.flexibleAppend(
+        stringBuilder.append(
             "struct ", arrayReferenceType.mangledName(), "{ \n"
             "    ", toString(arrayReferenceType.addressSpace()), ' ', arrayReferenceType.parent()->mangledName(), "* pointer;\n"
             "    uint32_t length;\n"
@@ -385,7 +385,7 @@ void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, BaseType
     case AST::UnnamedType::Kind::Array: {
         auto& arrayType = downcast<ArrayTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
-        stringBuilder.flexibleAppend("typedef array<", arrayType.parent()->mangledName(), ", ", arrayType.numElements(), "> ", arrayType.mangledName(), ";\n");
+        stringBuilder.append("typedef array<", arrayType.parent()->mangledName(), ", ", arrayType.numElements(), "> ", arrayType.mangledName(), ";\n");
         break;
     }
     default:
@@ -406,21 +406,21 @@ void TypeNamer::emitNamedTypeDefinition(StringBuilder& stringBuilder, AST::Named
     if (is<AST::EnumerationDefinition>(namedType)) {
         auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(namedType);
         auto& baseType = enumerationDefinition.type().unifyNode();
-        stringBuilder.flexibleAppend("enum class ", mangledNameForType(enumerationDefinition), " : ", mangledNameForType(downcast<AST::NamedType>(baseType)), " {\n");
+        stringBuilder.append("enum class ", mangledNameForType(enumerationDefinition), " : ", mangledNameForType(downcast<AST::NamedType>(baseType)), " {\n");
         for (auto& enumerationMember : enumerationDefinition.enumerationMembers())
-            stringBuilder.flexibleAppend("    ", mangledNameForEnumerationMember(enumerationMember), " = ", enumerationMember.get().value(), ",\n");
+            stringBuilder.append("    ", mangledNameForEnumerationMember(enumerationMember), " = ", enumerationMember.get().value(), ",\n");
         stringBuilder.append("};\n");
     } else if (is<AST::NativeTypeDeclaration>(namedType)) {
         // Native types already have definitions. There's nothing to do.
     } else if (is<AST::StructureDefinition>(namedType)) {
         auto& structureDefinition = downcast<AST::StructureDefinition>(namedType);
-        stringBuilder.flexibleAppend("struct ", mangledNameForType(structureDefinition), " {\n");
+        stringBuilder.append("struct ", mangledNameForType(structureDefinition), " {\n");
         for (auto& structureElement : structureDefinition.structureElements())
-            stringBuilder.flexibleAppend("    ", mangledNameForType(structureElement.type()), ' ', mangledNameForStructureElement(structureElement), ";\n");
+            stringBuilder.append("    ", mangledNameForType(structureElement.type()), ' ', mangledNameForStructureElement(structureElement), ";\n");
         stringBuilder.append("};\n");
     } else {
         auto& typeDefinition = downcast<AST::TypeDefinition>(namedType);
-        stringBuilder.flexibleAppend("typedef ", mangledNameForType(typeDefinition.type()), ' ', mangledNameForType(typeDefinition), ";\n");
+        stringBuilder.append("typedef ", mangledNameForType(typeDefinition.type()), ' ', mangledNameForType(typeDefinition), ";\n");
     }
     emittedNamedTypes.add(&namedType);
 }

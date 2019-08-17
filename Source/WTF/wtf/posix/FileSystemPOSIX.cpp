@@ -308,7 +308,7 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
     StringBuilder builder;
     builder.append(path);
     for (auto& component : components)
-        builder.flexibleAppend('/', component);
+        builder.append('/', component);
     return builder.toString();
 }
 
