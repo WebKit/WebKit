@@ -12760,6 +12760,24 @@ float4 operator.yyww(float4 v) {
 native bool operator<=(int, int);
 native bool operator<=(uint, uint);
 native bool operator<=(float, float);
+native bool2 operator<=(uint2, uint2);
+native bool3 operator<=(uint3, uint3);
+native bool4 operator<=(uint4, uint4);
+native bool2 operator<=(int2, int2);
+native bool3 operator<=(int3, int3);
+native bool4 operator<=(int4, int4);
+native bool2 operator<=(float2, float2);
+native bool3 operator<=(float3, float3);
+native bool4 operator<=(float4, float4);
+native bool2x2 operator<=(float2x2, float2x2);
+native bool2x3 operator<=(float2x3, float2x3);
+native bool2x4 operator<=(float2x4, float2x4);
+native bool3x2 operator<=(float3x2, float3x2);
+native bool3x3 operator<=(float3x3, float3x3);
+native bool3x4 operator<=(float3x4, float3x4);
+native bool4x2 operator<=(float4x2, float4x2);
+native bool4x3 operator<=(float4x3, float4x3);
+native bool4x4 operator<=(float4x4, float4x4);
 
 /* Functions named ddx_fine */
 float ddx_fine(float x) {
@@ -15457,6 +15475,24 @@ float4 operator.xyww(float4 v) {
 native bool operator>(int, int);
 native bool operator>(uint, uint);
 native bool operator>(float, float);
+native bool2 operator>(uint2, uint2);
+native bool3 operator>(uint3, uint3);
+native bool4 operator>(uint4, uint4);
+native bool2 operator>(int2, int2);
+native bool3 operator>(int3, int3);
+native bool4 operator>(int4, int4);
+native bool2 operator>(float2, float2);
+native bool3 operator>(float3, float3);
+native bool4 operator>(float4, float4);
+native bool2x2 operator>(float2x2, float2x2);
+native bool2x3 operator>(float2x3, float2x3);
+native bool2x4 operator>(float2x4, float2x4);
+native bool3x2 operator>(float3x2, float3x2);
+native bool3x3 operator>(float3x3, float3x3);
+native bool3x4 operator>(float3x4, float3x4);
+native bool4x2 operator>(float4x2, float4x2);
+native bool4x3 operator>(float4x3, float4x3);
+native bool4x4 operator>(float4x4, float4x4);
 
 /* Functions named operator& */
 bool operator&(bool a, bool b) {
@@ -26744,6 +26780,24 @@ float3 operator.xwy(float4 v) {
 native bool operator<(int, int);
 native bool operator<(uint, uint);
 native bool operator<(float, float);
+native bool2 operator<(uint2, uint2);
+native bool3 operator<(uint3, uint3);
+native bool4 operator<(uint4, uint4);
+native bool2 operator<(int2, int2);
+native bool3 operator<(int3, int3);
+native bool4 operator<(int4, int4);
+native bool2 operator<(float2, float2);
+native bool3 operator<(float3, float3);
+native bool4 operator<(float4, float4);
+native bool2x2 operator<(float2x2, float2x2);
+native bool2x3 operator<(float2x3, float2x3);
+native bool2x4 operator<(float2x4, float2x4);
+native bool3x2 operator<(float3x2, float3x2);
+native bool3x3 operator<(float3x3, float3x3);
+native bool3x4 operator<(float3x4, float3x4);
+native bool4x2 operator<(float4x2, float4x2);
+native bool4x3 operator<(float4x3, float4x3);
+native bool4x4 operator<(float4x4, float4x4);
 
 /* Functions named operator.wyw */
 bool3 operator.wyw(bool4 v) {
@@ -28760,6 +28814,24 @@ float4x4 ddy(float4x4 x) {
 native bool operator>=(int, int);
 native bool operator>=(uint, uint);
 native bool operator>=(float, float);
+native bool2 operator>=(uint2, uint2);
+native bool3 operator>=(uint3, uint3);
+native bool4 operator>=(uint4, uint4);
+native bool2 operator>=(int2, int2);
+native bool3 operator>=(int3, int3);
+native bool4 operator>=(int4, int4);
+native bool2 operator>=(float2, float2);
+native bool3 operator>=(float3, float3);
+native bool4 operator>=(float4, float4);
+native bool2x2 operator>=(float2x2, float2x2);
+native bool2x3 operator>=(float2x3, float2x3);
+native bool2x4 operator>=(float2x4, float2x4);
+native bool3x2 operator>=(float3x2, float3x2);
+native bool3x3 operator>=(float3x3, float3x3);
+native bool3x4 operator>=(float3x4, float3x4);
+native bool4x2 operator>=(float4x2, float4x2);
+native bool4x3 operator>=(float4x3, float4x3);
+native bool4x4 operator>=(float4x4, float4x4);
 
 /* Functions named dst */
 uint4 dst(uint4 src0, uint4 src1) {

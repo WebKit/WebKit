@@ -1,5 +1,17 @@
 2019-08-16  Saam Barati  <sbarati@apple.com>
 
+        [WHLSL] Add comparison operators for vectors and matrices
+        https://bugs.webkit.org/show_bug.cgi?id=200823
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl/matrix-compare-expected.txt: Added.
+        * webgpu/whlsl/matrix-compare.html: Added.
+        * webgpu/whlsl/vector-compare-expected.txt: Added.
+        * webgpu/whlsl/vector-compare.html: Added.
+
+2019-08-16  Saam Barati  <sbarati@apple.com>
+
         [WHLSL] Make operator== native and add bool matrices
         https://bugs.webkit.org/show_bug.cgi?id=200749
 
