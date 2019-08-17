@@ -56,14 +56,14 @@ WI.NavigationItem = class NavigationItem extends WI.Object
     get width()
     {
         if (isNaN(this._cachedWidth))
-            this._cachedWidth = this._element.realOffsetWidth;
+            this._cachedWidth = this._element.realOffsetWidth + this.totalMargin;
         return this._cachedWidth;
     }
 
     get visibilityPriority() { return this._visibilityPriority; }
     set visibilityPriority(priority) { this._visibilityPriority = priority; }
 
-    updateLayout(expandOnly)
+    update(options = {})
     {
         // Implemented by subclasses.
 
@@ -99,6 +99,12 @@ WI.NavigationItem = class NavigationItem extends WI.Object
     }
 
     // Protected
+
+    get totalMargin()
+    {
+        // Implemented by subclasses if needed.
+        return 0;
+    }
 
     didAttach(navigationBar)
     {

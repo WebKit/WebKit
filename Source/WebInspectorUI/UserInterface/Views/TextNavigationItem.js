@@ -46,4 +46,11 @@ WI.TextNavigationItem = class TextNavigationItem extends WI.NavigationItem
     {
         this._element.textContent = x || "";
     }
+
+    // Protected
+
+    get totalMargin()
+    {
+        return super.totalMargin + 4; /* .navigation-bar .item.text */
+    }
 };

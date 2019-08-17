@@ -26,7 +26,7 @@
 .navigation-bar .item.text {
     width: auto;
     padding: 1px 8px 3px;
-    margin: 0 2px;
+    margin: 0 2px; /* WI.TextNavigationItem.prototype.get totalMargin */
 
     line-height: 11px;
     color: hsl(0, 0%, 18%);

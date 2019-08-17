@@ -1,3 +1,65 @@
+2019-08-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: gear icons moves to 2nd line when sidebar is narrow
+        https://bugs.webkit.org/show_bug.cgi?id=198017
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar):
+        (WI.NavigationBar.prototype.layout):
+        (WI.NavigationBar.prototype.layout.forceItemHidden): Added.
+        (WI.NavigationBar.prototype.layout.isDivider): Added.
+        (WI.NavigationBar.prototype.layout.calculateVisibleItemWidth): Added.
+        (WI.NavigationBar.prototype.needsLayout): Deleted.
+        (WI.NavigationBar.prototype.sizeDidChange): Deleted.
+        (WI.NavigationBar.prototype._updateContent): Deleted.
+        (WI.NavigationBar.prototype._updateContent.forceItemHidden): Deleted.
+        (WI.NavigationBar.prototype._updateContent.isDivider): Deleted.
+        (WI.NavigationBar.prototype._updateContent.calculateVisibleItemWidth): Deleted.
+        Reset the cached `_minimumWidth` whenever updating in `layout()`.
+
+        * UserInterface/Views/NavigationItem.js:
+        (WI.NavigationItem.prototype.get width):
+        (WI.NavigationItem.prototype.update): Added.
+        (WI.NavigationItem.prototype.updateLayout): Deleted.
+        (WI.NavigationItem.prototype.get totalMargin): Added.
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WI.ButtonNavigationItem.prototype.get totalMargin): Added.
+        * UserInterface/Views/ButtonNavigationItem.css:
+        * UserInterface/Views/TextNavigationItem.js:
+        (WI.TextNavigationItem.prototype.get totalMargin): Added.
+        * UserInterface/Views/TextNavigationItem.css:
+        `Element.prototype.getBoundingClientRect` doesn't include the `margin` box of an element.
+        Rather than create a CSS variable and parse a computed style, save the total `margin` amount
+        to a getter that can then be added when computing the minimum width.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar):
+        (WI.Sidebar.prototype._recalculateWidth):
+        * UserInterface/Views/FlexibleSpaceNavigationItem.js:
+        (WI.FlexibleSpaceNavigationItem.prototype.update): Added.
+        (WI.FlexibleSpaceNavigationItem.prototype.updateLayout): Deleted.
+        * UserInterface/Views/GroupNavigationItem.js:
+        (WI.GroupNavigationItem.prototype.update): Added.
+        (WI.GroupNavigationItem.prototype.updateLayout): Deleted.
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WI.HierarchicalPathNavigationItem.prototype.update): Added.
+        (WI.HierarchicalPathNavigationItem.prototype.updateLayout): Deleted.
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WI.RadioButtonNavigationItem.prototype.update): Added.
+        (WI.RadioButtonNavigationItem.prototype.updateLayout): Deleted.
+        Rename `updateLayout` to `update` so it doesn't clash with `WI.View` naming.
+
+        * UserInterface/Views/SidebarNavigationBar.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar .item): Added.
+        (.navigation-bar .item, .sidebar-navigation-bar > .holder .item): Deleted.
+        (.sidebar-navigation-bar): Deleted.
+        (.sidebar-navigation-bar .holder): Deleted.
+        Remove unnecessary class.
+
 2019-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Syntax Highlight more CSS media queries

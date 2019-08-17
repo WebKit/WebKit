@@ -60,11 +60,11 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
         this.element.classList.toggle(WI.RadioButtonNavigationItem.ActiveStyleClassName, flag);
     }
 
-    updateLayout(expandOnly)
+    update(options = {})
     {
-        super.updateLayout(expandOnly);
+        super.update(options);
 
-        if (expandOnly)
+        if (options.expandOnly)
             return;
 
         var isSelected = this.selected;

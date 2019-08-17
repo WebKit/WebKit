@@ -46,27 +46,28 @@ WI.FlexibleSpaceNavigationItem = class FlexibleSpaceNavigationItem extends WI.Na
         return ["flexible-space"];
     }
 
-    updateLayout(expandOnly)
+    update(options = {})
     {
-        super.updateLayout(expandOnly);
+        super.update(options);
 
         if (!this._navigationItem)
             return;
 
-        if (expandOnly) {
-            let flexibleWidth = this.width;
-            if (!flexibleWidth)
-                return;
+        if (!options.expandOnly)
+            return;
 
-            this.element.appendChild(this._navigationItem.element);
+        let flexibleWidth = this.width;
+        if (!flexibleWidth)
+            return;
 
-            this._navigationItem.updateLayout(true);
-            let itemWidth = this._navigationItem.width;
+        this.element.appendChild(this._navigationItem.element);
 
-            let remainingWidth = flexibleWidth - itemWidth;
-            if (remainingWidth <= 0)
-                this.element.removeChild(this._navigationItem.element);
-        }
+        this._navigationItem.update(options);
+        let itemWidth = this._navigationItem.width;
+
+        let remainingWidth = flexibleWidth - itemWidth;
+        if (remainingWidth <= 0)
+            this.element.removeChild(this._navigationItem.element);
     }
 };
 

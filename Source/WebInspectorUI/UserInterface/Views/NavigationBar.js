@@ -45,7 +45,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
         this._mouseMovedEventListener = this._mouseMoved.bind(this);
         this._mouseUpEventListener = this._mouseUp.bind(this);
 
-        this._forceLayout = false;
         this._minimumWidth = NaN;
         this._navigationItems = [];
         this._selectedNavigationItem = null;
@@ -201,35 +200,11 @@ WI.NavigationBar = class NavigationBar extends WI.View
         return null;
     }
 
-    needsLayout()
-    {
-        this._forceLayout = true;
-
-        super.needsLayout();
-    }
-
-    sizeDidChange()
-    {
-        super.sizeDidChange();
-
-        this._updateContent();
-    }
-
     layout()
     {
         super.layout();
 
-        if (!this._forceLayout)
-            return;
-
-        this._updateContent();
-    }
-
-    // Private
-
-    _updateContent()
-    {
-        this._forceLayout = false;
+        this._minimumWidth = NaN;
 
         // Remove the collapsed style class to test if the items can fit at full width.
         this.element.classList.remove(WI.NavigationBar.CollapsedStyleClassName);
@@ -246,7 +221,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
         // Tell each navigation item to update to full width if needed.
         for (let item of this._navigationItems) {
             forceItemHidden(item, false);
-            item.updateLayout(true);
+            item.update({expandOnly: true});
         }
 
         if (this.sizesToFit)
@@ -268,11 +243,16 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         // Give each navigation item the opportunity to collapse further.
         for (let item of visibleNavigationItems)
-            item.updateLayout(false);
+            item.update();
 
         totalItemWidth = calculateVisibleItemWidth();
 
         if (totalItemWidth > barWidth) {
+            if (this.parentView instanceof WI.Sidebar) {
+                this.parentView.width = this.minimumWidth;
+                return;
+            }
+
             // Hide visible items, starting with the lowest priority item, until
             // the bar fits the available width.
             visibleNavigationItems.sort((a, b) => a.visibilityPriority - b.visibilityPriority);
@@ -300,6 +280,8 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (isDivider(previousItem))
             forceItemHidden(previousItem);
     }
+
+    // Private
 
     _mouseDown(event)
     {

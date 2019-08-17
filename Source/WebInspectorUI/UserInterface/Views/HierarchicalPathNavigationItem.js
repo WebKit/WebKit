@@ -99,11 +99,11 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
             this.element.classList.remove(WI.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
     }
 
-    updateLayout(expandOnly)
+    update(options = {})
     {
         this._updateComponentsIfNeeded();
 
-        super.updateLayout(expandOnly);
+        super.update(options);
 
         var navigationBar = this.parentNavigationBar;
         if (!navigationBar)
@@ -121,7 +121,7 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
             this._components[i].hideTooltip = true;
         }
 
-        if (expandOnly)
+        if (options.expandOnly)
             return;
 
         if (navigationBar.sizesToFit)
