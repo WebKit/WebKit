@@ -1,3 +1,20 @@
+2019-08-17  Tim Horton  <timothy_horton@apple.com>
+
+        Layout tests that call resizeTo() crash when run on iOS with IOSurface support enabled
+        https://bugs.webkit.org/show_bug.cgi?id=200866
+        <rdar://problem/50254021>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        Implement convertTo{Device,User}Space in PageClientImplIOS.
+        We don't actually do any conversion. For our purposes, the window is
+        "device" space, and we never allow iOS WebKit clients to resize the window...
+        except for in tests! So just pass the rects straight through, instead of
+        returning an empty rect.
+
 2019-08-17  Eric Liang  <ericliang@apple.com>
 
         Use bundlePath SPI in AccessibilitySupport for WebProcessLoader

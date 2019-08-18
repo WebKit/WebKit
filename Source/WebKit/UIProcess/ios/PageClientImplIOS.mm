@@ -371,14 +371,12 @@ void PageClientImpl::makeFirstResponder()
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
-    notImplemented();
-    return FloatRect();
+    return rect;
 }
 
 FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
-    notImplemented();
-    return FloatRect();
+    return rect;
 }
 
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
