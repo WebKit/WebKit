@@ -35,7 +35,7 @@ function then(onFulfilled, onRejected)
     "use strict";
 
     if (!@isPromise(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not a Promise");
 
     var constructor = @speciesConstructor(this, @Promise);
 
@@ -69,7 +69,7 @@ function finally(onFinally)
     "use strict";
 
     if (!@isObject(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not an object");
 
     const constructor = @speciesConstructor(this, @Promise);
 

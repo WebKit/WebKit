@@ -28,7 +28,7 @@ function all(iterable)
     "use strict";
 
     if (!@isObject(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not an object");
 
     var promiseCapability = @newPromiseCapability(this);
 
@@ -84,7 +84,7 @@ function allSettled(iterable)
     "use strict";
 
     if (!@isObject(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not an object");
 
     var promiseCapability = @newPromiseCapability(this);
 
@@ -168,7 +168,7 @@ function race(iterable)
     "use strict";
 
     if (!@isObject(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not an object");
 
     var promiseCapability = @newPromiseCapability(this);
 
@@ -193,7 +193,7 @@ function reject(reason)
     "use strict";
 
     if (!@isObject(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not an object");
 
     var promiseCapability = @newPromiseCapability(this);
 
@@ -207,7 +207,7 @@ function resolve(value)
     "use strict";
 
     if (!@isObject(this))
-        @throwTypeError("|this| is not a object");
+        @throwTypeError("|this| is not an object");
 
     if (@isPromise(value)) {
         var valueConstructor = value.constructor;

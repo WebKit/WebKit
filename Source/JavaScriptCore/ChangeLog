@@ -1,3 +1,24 @@
+2019-08-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Correct a->an in error messages and API docblocks
+        https://bugs.webkit.org/show_bug.cgi?id=200833
+
+        Reviewed by Don Olmstead.
+
+        * API/JSObjectRef.h:
+        * builtins/PromiseConstructor.js:
+        (race):
+        (reject):
+        (resolve):
+        * builtins/PromisePrototype.js:
+        (finally):
+        * jsc.cpp:
+        (functionAsyncTestStart):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseIfStatement):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseResizableLimits):
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Tidy up checks to see if a character is in the Latin-1 range by using isLatin1 consistently

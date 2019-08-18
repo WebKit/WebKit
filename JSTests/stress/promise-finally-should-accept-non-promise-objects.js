@@ -39,4 +39,4 @@ Promise.prototype.finally.call(rejected, function () { counter++; });
 drainMicrotasks();
 shouldBe(counter, 2);
 
-shouldThrow(() => Promise.prototype.finally.call(32), `TypeError: |this| is not a object`);
+shouldThrow(() => Promise.prototype.finally.call(32), `TypeError: |this| is not an object`);

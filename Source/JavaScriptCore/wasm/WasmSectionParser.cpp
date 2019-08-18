@@ -185,7 +185,7 @@ auto SectionParser::parseResizableLimits(uint32_t& initial, Optional<uint32_t>& 
     if (flags) {
         uint32_t maximumInt;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(maximumInt), "can't parse resizable limits maximum page count");
-        WASM_PARSER_FAIL_IF(initial > maximumInt, "resizable limits has a initial page count of ", initial, " which is greater than its maximum ", maximumInt);
+        WASM_PARSER_FAIL_IF(initial > maximumInt, "resizable limits has an initial page count of ", initial, " which is greater than its maximum ", maximumInt);
         maximum = maximumInt;
     }
 

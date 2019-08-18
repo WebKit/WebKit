@@ -2350,7 +2350,7 @@ EncodedJSValue JSC_HOST_CALL functionAsyncTestStart(ExecState* exec)
 
     JSValue numberOfAsyncPasses = exec->argument(0);
     if (!numberOfAsyncPasses.isUInt32())
-        return throwVMError(exec, scope, "Expected first argument to a uint32"_s);
+        return throwVMError(exec, scope, "Expected first argument to be a uint32"_s);
 
     asyncTestExpectedPasses += numberOfAsyncPasses.asUInt32();
     return encodedJSUndefined();

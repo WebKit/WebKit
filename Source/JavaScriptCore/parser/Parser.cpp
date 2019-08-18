@@ -3104,7 +3104,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     handleProductionOrFail2(OPENPAREN, "(", "start", "'if' condition");
 
     TreeExpression condition = parseExpression(context);
-    failIfFalse(condition, "Expected a expression as the condition for an if statement");
+    failIfFalse(condition, "Expected an expression as the condition for an if statement");
     recordPauseLocation(context.breakpointLocation(condition));
     int end = tokenLine();
     handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
@@ -3140,7 +3140,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         handleProductionOrFail2(OPENPAREN, "(", "start", "'if' condition");
 
         TreeExpression innerCondition = parseExpression(context);
-        failIfFalse(innerCondition, "Expected a expression as the condition for an if statement");
+        failIfFalse(innerCondition, "Expected an expression as the condition for an if statement");
         recordPauseLocation(context.breakpointLocation(innerCondition));
         int innerEnd = tokenLine();
         handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");

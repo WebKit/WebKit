@@ -414,15 +414,15 @@ var assert = function assert() {
                 },
                 {
                     regexp: /Promise.prototype.then: 'this' is not a Promise object/,
-                    replStr: "|this| is not a object"
+                    replStr: "|this| is not a Promise"
                 },
                 {
                     regexp: /Promise.resolve: 'this' is not an Object/,
-                    replStr: "|this| is not a object"
+                    replStr: "|this| is not an object"
                 },
                 {
                     regexp: /Promise.reject: 'this' is not an Object/,
-                    replStr: "|this| is not a object"
+                    replStr: "|this| is not an object"
                 },
                 {
                     regexp: /Proxy trap `setPrototypeOf` returned false/,

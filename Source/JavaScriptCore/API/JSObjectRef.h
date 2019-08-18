@@ -461,7 +461,7 @@ JS_EXPORT JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, c
  @param argumentCount An integer count of the number of arguments in arguments.
  @param arguments A JSValue array of arguments to pass to the Error Constructor. Pass NULL if argumentCount is 0.
  @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
- @result A JSObject that is a Error.
+ @result A JSObject that is an Error.
  */
 JS_EXPORT JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
 
