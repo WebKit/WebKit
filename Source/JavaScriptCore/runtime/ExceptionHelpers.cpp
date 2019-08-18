@@ -176,6 +176,10 @@ static String functionCallBase(const String& sourceText)
         return String();
     }
 
+    // Don't display the ?. of an optional call.
+    if (idx > 1 && sourceText[idx] == '.' && sourceText[idx - 1] == '?')
+        idx -= 2;
+
     return sourceText.left(idx + 1);
 }
 

@@ -875,8 +875,7 @@ equalNullComparisonOp(op_neq_null, OpNeqNull,
 
 llintOpWithReturn(op_is_undefined_or_null, OpIsUndefinedOrNull, macro (size, get, dispatch, return)
     get(m_operand, t0)
-    assertNotConstant(size, t0)
-    loadi TagOffset[cfr, t0, 8], t1
+    loadConstantOrVariableTag(size, t0, t1)
     ori 1, t1
     cieq t1, NullTag, t1
     return(BooleanTag, t1)

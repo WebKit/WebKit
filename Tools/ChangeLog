@@ -1,3 +1,12 @@
+2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ESNext] Implement optional chaining
+        https://bugs.webkit.org/show_bug.cgi?id=200199
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-08-17  Tim Horton  <timothy_horton@apple.com>
 
         Layout tests that call resizeTo() crash when run on iOS with IOSurface support enabled

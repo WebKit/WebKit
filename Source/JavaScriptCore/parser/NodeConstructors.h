@@ -676,6 +676,13 @@ namespace JSC {
     {
     }
 
+    inline OptionalChainNode::OptionalChainNode(const JSTokenLocation& location, ExpressionNode* expr, bool isOutermost)
+        : ExpressionNode(location)
+        , m_expr(expr)
+        , m_isOutermost(isOutermost)
+    {
+    }
+
     inline ConditionalNode::ConditionalNode(const JSTokenLocation& location, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2)
         : ExpressionNode(location)
         , m_logical(logical)

@@ -827,8 +827,8 @@ equalNullComparisonOp(op_neq_null, OpNeqNull,
 
 
 llintOpWithReturn(op_is_undefined_or_null, OpIsUndefinedOrNull, macro (size, get, dispatch, return)
-    get(m_operand, t0)
-    loadq [cfr, t0, 8], t0
+    get(m_operand, t1)
+    loadConstantOrVariable(size, t1, t0)
     andq ~TagBitUndefined, t0
     cqeq t0, ValueNull, t0
     orq ValueFalse, t0

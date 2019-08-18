@@ -1,3 +1,5 @@
+//@ runNullishAwareOperatorsEnabled
+
 function callerMustBeRun() {
     if (!Object.is(callerMustBeRun.caller, runTests))
         throw new Error("Wrong caller, expected run but got ", callerMustBeRun.caller);
@@ -150,6 +152,11 @@ function runTests() {
         return false || callerMustBeRun();
     })();
 
+    (function tailCallCoalesce() {
+        "use strict";
+        return false ?? callerMustBeRun();
+    })();
+
     (function memberTailCall() {
         "use strict";
         return { f: callerMustBeRun }.f();
@@ -158,6 +165,11 @@ function runTests() {
     (function bindTailCall() {
         "use strict";
         return callerMustBeRun.bind()();
+    })();
+
+    (function optionalTailCall() {
+        "use strict";
+        return callerMustBeRun?.();
     })();
 
     // Function.prototype tests

@@ -1,5 +1,16 @@
 2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
 
+        [ESNext] Implement optional chaining
+        https://bugs.webkit.org/show_bug.cgi?id=200199
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/nullish-coalescing.js:
+        * stress/optional-chaining.js: Added.
+        * stress/tail-call-recognize.js:
+
+2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
+
         [ESNext] Support hashbang.
         https://bugs.webkit.org/show_bug.cgi?id=200865
 

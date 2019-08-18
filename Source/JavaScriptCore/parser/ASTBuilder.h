@@ -129,7 +129,7 @@ public:
     static const int  DontBuildStrings = 0;
 
     ExpressionNode* makeBinaryNode(const JSTokenLocation&, int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
-    ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth);
+    ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth, bool isOptionalCall);
 
     JSC::SourceElements* createSourceElements() { return new (m_parserArena) JSC::SourceElements(); }
 
@@ -358,6 +358,12 @@ public:
         NewExprNode* node = new (m_parserArena) NewExprNode(location, expr);
         setExceptionLocation(node, start, end, end);
         return node;
+    }
+
+    ExpressionNode* createOptionalChain(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* expr, bool isOutermost)
+    {
+        base->setIsOptionalChainBase();
+        return new (m_parserArena) OptionalChainNode(location, expr, isOutermost);
     }
 
     ExpressionNode* createConditionalExpr(const JSTokenLocation& location, ExpressionNode* condition, ExpressionNode* lhs, ExpressionNode* rhs)
@@ -1148,6 +1154,16 @@ ExpressionNode* ASTBuilder::makeTypeOfNode(const JSTokenLocation& location, Expr
 
 ExpressionNode* ASTBuilder::makeDeleteNode(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
+    if (expr->isOptionalChain()) {
+        OptionalChainNode* optionalChain = static_cast<OptionalChainNode*>(expr);
+        if (optionalChain->expr()->isLocation()) {
+            ASSERT(!optionalChain->expr()->isResolveNode());
+            optionalChain->setExpr(makeDeleteNode(location, optionalChain->expr(), start, divot, end));
+            optionalChain->setIsDelete();
+            return optionalChain;
+        }
+    }
+
     if (!expr->isLocation())
         return new (m_parserArena) DeleteValueNode(location, expr);
     if (expr->isResolveNode()) {
@@ -1345,17 +1361,31 @@ ExpressionNode* ASTBuilder::makeBitXOrNode(const JSTokenLocation& location, Expr
     return new (m_parserArena) BitXOrNode(location, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth)
+ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth, bool isOptionalCall)
 {
     ASSERT(divot.offset >= divot.lineStartOffset);
     if (func->isSuperNode())
         usesSuperCall();
 
     if (func->isBytecodeIntrinsicNode()) {
+        ASSERT(!isOptionalCall);
         BytecodeIntrinsicNode* intrinsic = static_cast<BytecodeIntrinsicNode*>(func);
         if (intrinsic->type() == BytecodeIntrinsicNode::Type::Constant)
             return new (m_parserArena) BytecodeIntrinsicNode(BytecodeIntrinsicNode::Type::Function, location, intrinsic->emitter(), intrinsic->identifier(), args, divot, divotStart, divotEnd);
     }
+
+    if (func->isOptionalChain()) {
+        OptionalChainNode* optionalChain = static_cast<OptionalChainNode*>(func);
+        if (optionalChain->expr()->isLocation()) {
+            ASSERT(!optionalChain->expr()->isResolveNode());
+            // We must take care to preserve our `this` value in cases like `a?.b?.()` and `(a?.b)()`, respectively.
+            if (isOptionalCall)
+                return makeFunctionCallNode(location, optionalChain->expr(), previousBaseWasSuper, args, divotStart, divot, divotEnd, callOrApplyChildDepth, isOptionalCall);  
+            optionalChain->setExpr(makeFunctionCallNode(location, optionalChain->expr(), previousBaseWasSuper, args, divotStart, divot, divotEnd, callOrApplyChildDepth, isOptionalCall));
+            return optionalChain;
+        }
+    }
+
     if (!func->isLocation())
         return new (m_parserArena) FunctionCallValueNode(location, func, args, divot, divotStart, divotEnd);
     if (func->isResolveNode()) {

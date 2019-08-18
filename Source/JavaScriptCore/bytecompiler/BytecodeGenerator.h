@@ -959,6 +959,10 @@ namespace JSC {
         void pushFinallyControlFlowScope(FinallyContext&);
         void popFinallyControlFlowScope();
 
+        void pushOptionalChainTarget();
+        void popOptionalChainTarget(RegisterID* dst, bool isDelete = false);
+        void emitOptionalCheck(RegisterID* src);
+
         void pushIndexedForInScope(RegisterID* local, RegisterID* index);
         void popIndexedForInScope(RegisterID* local);
         void pushStructureForInScope(RegisterID* local, RegisterID* index, RegisterID* property, RegisterID* enumerator);
@@ -1265,6 +1269,8 @@ namespace JSC {
         
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;
+
+        Vector<Ref<Label>> m_optionalChainTargetStack;
 
         int m_nextConstantOffset { 0 };
 

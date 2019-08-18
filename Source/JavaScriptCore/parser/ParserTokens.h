@@ -136,6 +136,7 @@ enum JSTokenType {
     OREQUAL,
     DOTDOTDOT,
     ARROWFUNCTION,
+    QUESTIONDOT,
     LastUntaggedToken,
 
     // Begin tagged tokens

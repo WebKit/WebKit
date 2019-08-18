@@ -4964,6 +4964,30 @@ void BytecodeGenerator::emitJumpIf(RegisterID* completionTypeRegister, Completio
     emitJumpIfTrue(equivalenceResult, jumpTarget);
 }
 
+void BytecodeGenerator::pushOptionalChainTarget()
+{
+    m_optionalChainTargetStack.append(newLabel());
+}
+
+void BytecodeGenerator::popOptionalChainTarget(RegisterID* dst, bool isDelete)
+{
+    ASSERT(m_optionalChainTargetStack.size());
+
+    Ref<Label> endLabel = newLabel();
+    emitJump(endLabel.get());
+
+    emitLabel(m_optionalChainTargetStack.takeLast().get());
+    emitLoad(dst, isDelete ? jsBoolean(true) : jsUndefined());
+
+    emitLabel(endLabel.get());
+}
+
+void BytecodeGenerator::emitOptionalCheck(RegisterID* src)
+{
+    ASSERT(m_optionalChainTargetStack.size());
+    emitJumpIfTrue(emitIsUndefinedOrNull(newTemporary(), src), m_optionalChainTargetStack.last().get());
+}
+
 void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlock* codeBlock, unsigned bodyBytecodeEndOffset)
 {
     // Lexically invalidating ForInContexts is kind of weak sauce, but it only occurs if

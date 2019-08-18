@@ -4808,103 +4808,136 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     failIfFalse(base, "Cannot parse base expression");
-    while (true) {
-        location = tokenLocation();
-        switch (m_token.m_type) {
-        case OPENBRACKET: {
-            m_parserState.nonTrivialExpressionCount++;
-            JSTextPosition expressionEnd = lastTokenEndPosition();
+
+    do {
+        TreeExpression optionalChainBase = 0;
+        JSTokenLocation optionalChainLocation;
+        JSTokenType type = m_token.m_type;
+
+        if (match(QUESTIONDOT)) {
+            semanticFailIfTrue(newCount, "Cannot call constructor in an optional chain");
+            semanticFailIfTrue(baseIsSuper, "Cannot use super as the base of an optional chain");
+            optionalChainBase = base;
+            optionalChainLocation = tokenLocation();
+
+            SavePoint savePoint = createSavePoint();
             next();
-            int nonLHSCount = m_parserState.nonLHSCount;
-            int initialAssignments = m_parserState.assignmentCount;
-            TreeExpression property = parseExpression(context);
-            failIfFalse(property, "Cannot parse subscript expression");
-            base = context.createBracketAccess(startLocation, base, property, initialAssignments != m_parserState.assignmentCount, expressionStart, expressionEnd, tokenEndPosition());
-            
-            if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
-                currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
-            
-            handleProductionOrFail(CLOSEBRACKET, "]", "end", "subscript expression");
-            m_parserState.nonLHSCount = nonLHSCount;
-            break;
-        }
-        case OPENPAREN: {
-            m_parserState.nonTrivialExpressionCount++;
-            int nonLHSCount = m_parserState.nonLHSCount;
-            if (newCount) {
-                newCount--;
-                JSTextPosition expressionEnd = lastTokenEndPosition();
-                TreeArguments arguments = parseArguments(context);
-                failIfFalse(arguments, "Cannot parse call arguments");
-                base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
-            } else {
-                size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
-                JSTextPosition expressionEnd = lastTokenEndPosition();
-                Optional<CallOrApplyDepthScope> callOrApplyDepthScope;
-                recordCallOrApplyDepth<TreeBuilder>(this, *m_vm, callOrApplyDepthScope, base);
-
-                TreeArguments arguments = parseArguments(context);
-
-                if (baseIsAsyncKeyword && (!arguments || match(ARROWFUNCTION))) {
-                    currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
-                    forceClassifyExpressionError(ErrorIndicatesAsyncArrowFunction);
-                    failDueToUnexpectedToken();
-                }
-
-                failIfFalse(arguments, "Cannot parse call arguments");
-                if (baseIsSuper) {
-                    ScopeRef functionScope = currentFunctionScope();
-                    if (!functionScope->setHasDirectSuper()) {
-                        // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
-                        // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
-                        // inside of the constructor or method.
-                        if (!m_lexer->isReparsingFunction()) {
-                            ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
-                            ConstructorKind functionConstructorKind = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
-                                ? functionScope->constructorKind()
-                                : closestOrdinaryFunctionScope->constructorKind();
-                            semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "super is not valid in this context");
-                            semanticFailIfTrue(functionConstructorKind != ConstructorKind::Extends, "super is not valid in this context");
-                        }
-                    }
-                    if (currentScope()->isArrowFunction())
-                        functionScope->setInnerArrowFunctionUsesSuperCall();
-                }
-                base = context.makeFunctionCallNode(startLocation, base, previousBaseWasSuper, arguments, expressionStart,
-                    expressionEnd, lastTokenEndPosition(), callOrApplyDepthScope ? callOrApplyDepthScope->distanceToInnermostChild() : 0);
+            if (match(OPENBRACKET) || match(OPENPAREN) || match(BACKQUOTE))
+                type = m_token.m_type;
+            else {
+                type = DOT;
+                restoreSavePoint(savePoint);
             }
-            m_parserState.nonLHSCount = nonLHSCount;
-            break;
         }
-        case DOT: {
-            m_parserState.nonTrivialExpressionCount++;
-            JSTextPosition expressionEnd = lastTokenEndPosition();
-            nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
-            matchOrFail(IDENT, "Expected a property name after '.'");
-            base = context.createDotAccess(startLocation, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
-            if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
-                currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
-            next();
-            break;
+
+        while (true) {
+            location = tokenLocation();
+            switch (type) {
+            case OPENBRACKET: {
+                m_parserState.nonTrivialExpressionCount++;
+                JSTextPosition expressionEnd = lastTokenEndPosition();
+                next();
+                int nonLHSCount = m_parserState.nonLHSCount;
+                int initialAssignments = m_parserState.assignmentCount;
+                TreeExpression property = parseExpression(context);
+                failIfFalse(property, "Cannot parse subscript expression");
+                base = context.createBracketAccess(startLocation, base, property, initialAssignments != m_parserState.assignmentCount, expressionStart, expressionEnd, tokenEndPosition());
+
+                if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
+                    currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
+
+                handleProductionOrFail(CLOSEBRACKET, "]", "end", "subscript expression");
+                m_parserState.nonLHSCount = nonLHSCount;
+                break;
+            }
+            case OPENPAREN: {
+                m_parserState.nonTrivialExpressionCount++;
+                int nonLHSCount = m_parserState.nonLHSCount;
+                if (newCount) {
+                    newCount--;
+                    JSTextPosition expressionEnd = lastTokenEndPosition();
+                    TreeArguments arguments = parseArguments(context);
+                    failIfFalse(arguments, "Cannot parse call arguments");
+                    base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
+                } else {
+                    size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
+                    JSTextPosition expressionEnd = lastTokenEndPosition();
+                    Optional<CallOrApplyDepthScope> callOrApplyDepthScope;
+                    recordCallOrApplyDepth<TreeBuilder>(this, *m_vm, callOrApplyDepthScope, base);
+
+                    TreeArguments arguments = parseArguments(context);
+
+                    if (baseIsAsyncKeyword && (!arguments || match(ARROWFUNCTION))) {
+                        currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
+                        forceClassifyExpressionError(ErrorIndicatesAsyncArrowFunction);
+                        failDueToUnexpectedToken();
+                    }
+
+                    failIfFalse(arguments, "Cannot parse call arguments");
+                    if (baseIsSuper) {
+                        ScopeRef functionScope = currentFunctionScope();
+                        if (!functionScope->setHasDirectSuper()) {
+                            // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
+                            // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
+                            // inside of the constructor or method.
+                            if (!m_lexer->isReparsingFunction()) {
+                                ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
+                                ConstructorKind functionConstructorKind = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
+                                    ? functionScope->constructorKind()
+                                    : closestOrdinaryFunctionScope->constructorKind();
+                                semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "super is not valid in this context");
+                                semanticFailIfTrue(functionConstructorKind != ConstructorKind::Extends, "super is not valid in this context");
+                            }
+                        }
+                        if (currentScope()->isArrowFunction())
+                            functionScope->setInnerArrowFunctionUsesSuperCall();
+                    }
+
+                    bool isOptionalCall = optionalChainLocation.endOffset == static_cast<unsigned>(expressionEnd.offset);
+                    base = context.makeFunctionCallNode(startLocation, base, previousBaseWasSuper, arguments, expressionStart,
+                        expressionEnd, lastTokenEndPosition(), callOrApplyDepthScope ? callOrApplyDepthScope->distanceToInnermostChild() : 0, isOptionalCall);
+
+                    if (isOptionalCall)
+                        optionalChainBase = base;
+                }
+                m_parserState.nonLHSCount = nonLHSCount;
+                break;
+            }
+            case DOT: {
+                m_parserState.nonTrivialExpressionCount++;
+                JSTextPosition expressionEnd = lastTokenEndPosition();
+                nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+                matchOrFail(IDENT, "Expected a property name after ", optionalChainBase ? "'?.'" : "'.'");
+                base = context.createDotAccess(startLocation, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
+                if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
+                    currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
+                next();
+                break;
+            }
+            case BACKQUOTE: {
+                semanticFailIfTrue(optionalChainBase, "Cannot use tagged templates in an optional chain");
+                semanticFailIfTrue(baseIsSuper, "Cannot use super as tag for tagged templates");
+                JSTextPosition expressionEnd = lastTokenEndPosition();
+                int nonLHSCount = m_parserState.nonLHSCount;
+                typename TreeBuilder::TemplateLiteral templateLiteral = parseTemplateLiteral(context, LexerType::RawStringsBuildMode::BuildRawStrings);
+                failIfFalse(templateLiteral, "Cannot parse template literal");
+                base = context.createTaggedTemplate(startLocation, base, templateLiteral, expressionStart, expressionEnd, lastTokenEndPosition());
+                m_parserState.nonLHSCount = nonLHSCount;
+                m_seenTaggedTemplate = true;
+                break;
+            }
+            default:
+                goto endOfChain;
+            }
+            previousBaseWasSuper = baseIsSuper;
+            baseIsSuper = false;
+            type = m_token.m_type;
         }
-        case BACKQUOTE: {
-            semanticFailIfTrue(baseIsSuper, "Cannot use super as tag for tagged templates");
-            JSTextPosition expressionEnd = lastTokenEndPosition();
-            int nonLHSCount = m_parserState.nonLHSCount;
-            typename TreeBuilder::TemplateLiteral templateLiteral = parseTemplateLiteral(context, LexerType::RawStringsBuildMode::BuildRawStrings);
-            failIfFalse(templateLiteral, "Cannot parse template literal");
-            base = context.createTaggedTemplate(startLocation, base, templateLiteral, expressionStart, expressionEnd, lastTokenEndPosition());
-            m_parserState.nonLHSCount = nonLHSCount;
-            m_seenTaggedTemplate = true;
-            break;
-        }
-        default:
-            goto endMemberExpression;
-        }
-        previousBaseWasSuper = baseIsSuper;
-        baseIsSuper = false;
-    }
-endMemberExpression:
+endOfChain:
+        if (optionalChainBase)
+            base = context.createOptionalChain(optionalChainLocation, optionalChainBase, base, !match(QUESTIONDOT));
+    } while (match(QUESTIONDOT));
+
     semanticFailIfTrue(baseIsSuper, "super is not valid in this context");
     while (newCount--)
         base = context.createNewExpr(location, base, expressionStart, lastTokenEndPosition());

@@ -1,4 +1,4 @@
-//@ runNullishCoalescingEnabled
+//@ runNullishAwareOperatorsEnabled
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

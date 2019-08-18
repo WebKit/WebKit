@@ -1,5 +1,81 @@
 2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
 
+        [ESNext] Implement optional chaining
+        https://bugs.webkit.org/show_bug.cgi?id=200199
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement the optional chaining proposal, which has now reached Stage 3 at TC39.
+
+        This introduces a ?. operator which:
+         - guards member access when the LHS is nullish, i.e. `null?.foo` and `null?.['foo']` are undefined
+         - guards function calls when the LHS is nullish, i.e. `null?.()` is undefined
+         - short-circuits over a whole access/call chain, i.e. `null?.a['b'](c++)` is undefined and does not increment c
+
+        This feature can be naively viewed as a ternary in disguise, i.e. `a?.b` is like `a == null ? undefined : a.b`.
+        However, since we must be sure not to double-evaluate the LHS, it's actually rather akin to a try block --
+        namely, we have the bytecode generator keep an early-out label for use throughout the access and call chain.
+
+        (Also note that document.all behaves as an object, so "nullish" means *strictly* equal to null or undefined.)
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushOptionalChainTarget): Added.
+        (JSC::BytecodeGenerator::popOptionalChainTarget): Added.
+        (JSC::BytecodeGenerator::emitOptionalCheck): Added.
+        * bytecompiler/BytecodeGenerator.h:
+        Implement early-out logic.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode): Refactor so we can emitOptionalCheck in a single location.
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode): Refactor so we can emitOptionalCheck in a single location.
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::DeleteBracketNode::emitBytecode):
+        (JSC::DeleteDotNode::emitBytecode):
+        (JSC::CoalesceNode::emitBytecode): Clean up.
+        (JSC::OptionalChainNode::emitBytecode): Added.
+        Implement ?. node and emit checks where needed.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Have OpIsUndefinedOrNull support constant registers.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createOptionalChain): Added.
+        (JSC::ASTBuilder::makeDeleteNode):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/NodeConstructors.h:
+        (JSC::OptionalChainNode::OptionalChainNode): Added.
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isOptionalChain const): Added.
+        (JSC::ExpressionNode::isOptionalChainBase const): Added.
+        (JSC::ExpressionNode::setIsOptionalChainBase): Added.
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+        (JSC::SyntaxChecker::createOptionalChain): Added.
+        Introduce new token and AST node, as well as an ExpressionNode field to mark LHSes with.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        Parse optional chains by wrapping the access/call parse loop.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::functionCallBase):
+        Ensure that TypeError messages don't include the '?.'.
+
+        * runtime/Options.h:
+        Update feature flag, as ?. and ?? are a double feature of "nullish-aware" operators.
+
+2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
+
         [ESNext] Support hashbang.
         https://bugs.webkit.org/show_bug.cgi?id=200865
 

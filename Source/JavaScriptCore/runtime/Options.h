@@ -499,7 +499,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useWebAssemblyReferences, false, Normal, "Allow types from the wasm references spec.") \
     v(bool, useWeakRefs, false, Normal, "Expose the WeakRef constructor.") \
     v(bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
-    v(bool, useNullishCoalescing, false, Normal, "Enable support for the ?? operator.") \
+    v(bool, useNullishAwareOperators, false, Normal, "Enable support for ?. and ?? operators.") \
     v(bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
     v(bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \
     v(bool, forceMiniVMMode, false, Normal, "If true, it will force mini VM mode on.") \

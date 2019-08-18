@@ -744,12 +744,18 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
     RegisterID* ret;
     RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
 
-    if (isNonIndexStringElement(*m_subscript)) {
-        RefPtr<RegisterID> base = generator.emitNode(m_base);
+    bool subscriptIsNonIndexString = isNonIndexStringElement(*m_subscript);
+    RefPtr<RegisterID> base = subscriptIsNonIndexString
+        ? generator.emitNode(m_base)
+        : generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
+
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(base.get());
+
+    if (subscriptIsNonIndexString) {
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         ret = generator.emitGetById(finalDest.get(), base.get(), static_cast<StringNode*>(m_subscript)->value());
     } else {
-        RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
         RegisterID* property = generator.emitNodeForProperty(m_subscript);
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         ret = generator.emitGetByVal(finalDest.get(), base.get(), property);
@@ -763,17 +769,26 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
 
 RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
     bool baseIsSuper = m_base->isSuperNode();
-    RefPtr<RegisterID> base = baseIsSuper ? emitSuperBaseForCallee(generator) : generator.emitNode(m_base);
+
+    RefPtr<RegisterID> base;
+    if (baseIsSuper)
+        base = emitSuperBaseForCallee(generator);
+    else {
+        base = generator.emitNode(m_base);
+        if (m_base->isOptionalChainBase())
+            generator.emitOptionalCheck(base.get());
+    }
+
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    RegisterID* finalDest = generator.finalDestination(dst);
     RegisterID* ret;
     if (baseIsSuper) {
         RefPtr<RegisterID> thisValue = generator.ensureThis();
-        ret = generator.emitGetById(finalDest, base.get(), thisValue.get(), m_ident);
+        ret = generator.emitGetById(finalDest.get(), base.get(), thisValue.get(), m_ident);
     } else
-        ret = generator.emitGetById(finalDest, base.get(), m_ident);
-    generator.emitProfileType(finalDest, divotStart(), divotEnd());
+        ret = generator.emitGetById(finalDest.get(), base.get(), m_ident);
+    generator.emitProfileType(finalDest.get(), divotStart(), divotEnd());
     return ret;
 }
 
@@ -848,24 +863,32 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
         generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
 
     Variable var = generator.variable(generator.propertyNames().eval);
-    if (RegisterID* local = var.local()) {
-        generator.emitTDZCheckIfNecessary(var, local, nullptr);
-        RefPtr<RegisterID> func = generator.move(generator.tempDestination(dst), local);
-        CallArguments callArguments(generator, m_args);
+    RefPtr<RegisterID> local = var.local();
+    RefPtr<RegisterID> func;
+    if (local) {
+        generator.emitTDZCheckIfNecessary(var, local.get(), nullptr);
+        func = generator.move(generator.tempDestination(dst), local.get());
+    } else
+        func = generator.newTemporary();
+    CallArguments callArguments(generator, m_args);
+
+    if (local)
         generator.emitLoad(callArguments.thisRegister(), jsUndefined());
-        return generator.emitCallEval(generator.finalDestination(dst, func.get()), func.get(), callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    else {
+        JSTextPosition newDivot = divotStart() + 4;
+        generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
+        generator.move(
+            callArguments.thisRegister(),
+            generator.emitResolveScope(callArguments.thisRegister(), var));
+        generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
+        generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
     }
 
-    RefPtr<RegisterID> func = generator.newTemporary();
-    CallArguments callArguments(generator, m_args);
-    JSTextPosition newDivot = divotStart() + 4;
-    generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
-    generator.move(
-        callArguments.thisRegister(),
-        generator.emitResolveScope(callArguments.thisRegister(), var));
-    generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
-    generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
-    return generator.emitCallEval(generator.finalDestination(dst, func.get()), func.get(), callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
+    if (isOptionalChainBase())
+        generator.emitOptionalCheck(func.get());
+
+    return generator.emitCallEval(returnValue.get(), func.get(), callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
 }
 
 // ------------------------------ FunctionCallValueNode ----------------------------------
@@ -899,8 +922,12 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
         
         return ret;
     }
+
     RefPtr<RegisterID> func = generator.emitNode(m_expr);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
+    if (isOptionalChainBase())
+        generator.emitOptionalCheck(func.get());
+
     CallArguments callArguments(generator, m_args);
     generator.emitLoad(callArguments.thisRegister(), jsUndefined());
     RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
@@ -920,30 +947,34 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
     ExpectedFunction expectedFunction = generator.expectedFunctionForIdentifier(m_ident);
 
     Variable var = generator.variable(m_ident);
-    if (RegisterID* local = var.local()) {
-        generator.emitTDZCheckIfNecessary(var, local, nullptr);
-        RefPtr<RegisterID> func = generator.move(generator.tempDestination(dst), local);
-        RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
-        CallArguments callArguments(generator, m_args);
+    RefPtr<RegisterID> local = var.local();
+    RefPtr<RegisterID> func;
+    if (local) {
+        generator.emitTDZCheckIfNecessary(var, local.get(), nullptr);
+        func = generator.move(generator.tempDestination(dst), local.get());
+    } else
+        func = generator.newTemporary();
+    CallArguments callArguments(generator, m_args);
+
+    if (local) {
         generator.emitLoad(callArguments.thisRegister(), jsUndefined());
         // This passes NoExpectedFunction because we expect that if the function is in a
         // local variable, then it's not one of our built-in constructors.
-        RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
-        generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
-        return ret;
+        expectedFunction = NoExpectedFunction;
+    } else {
+        JSTextPosition newDivot = divotStart() + m_ident.length();
+        generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
+        generator.move(
+            callArguments.thisRegister(),
+            generator.emitResolveScope(callArguments.thisRegister(), var));
+        generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
+        generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
     }
 
-    RefPtr<RegisterID> func = generator.newTemporary();
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
-    CallArguments callArguments(generator, m_args);
+    if (isOptionalChainBase())
+        generator.emitOptionalCheck(func.get());
 
-    JSTextPosition newDivot = divotStart() + m_ident.length();
-    generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
-    generator.move(
-        callArguments.thisRegister(),
-        generator.emitResolveScope(callArguments.thisRegister(), var));
-    generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
-    generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
     RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), func.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
     generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
     return ret;
@@ -1275,6 +1306,8 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_defineEnumerableWritableConfig
 
 RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    RefPtr<RegisterID> function = generator.tempDestination(dst);
+    RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     bool baseIsSuper = m_base->isSuperNode();
     bool subscriptIsNonIndexString = isNonIndexStringElement(*m_subscript);
 
@@ -1286,9 +1319,11 @@ RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, 
             base = generator.emitNode(m_base);
         else
             base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
+
+        if (m_base->isOptionalChainBase())
+            generator.emitOptionalCheck(base.get());
     }
 
-    RefPtr<RegisterID> function;
     RefPtr<RegisterID> thisRegister;
     if (baseIsSuper) {
         // Note that we only need to do this once because we either have a non-TDZ this or we throw. Once we have a non-TDZ this, we can't change its value back to TDZ.
@@ -1297,19 +1332,20 @@ RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, 
     if (subscriptIsNonIndexString) {
         generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
         if (baseIsSuper)
-            function = generator.emitGetById(generator.tempDestination(dst), base.get(), thisRegister.get(), static_cast<StringNode*>(m_subscript)->value());
+            generator.emitGetById(function.get(), base.get(), thisRegister.get(), static_cast<StringNode*>(m_subscript)->value());
         else
-            function = generator.emitGetById(generator.tempDestination(dst), base.get(), static_cast<StringNode*>(m_subscript)->value());
+            generator.emitGetById(function.get(), base.get(), static_cast<StringNode*>(m_subscript)->value());
     } else {
         RefPtr<RegisterID> property = generator.emitNodeForProperty(m_subscript);
         generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
         if (baseIsSuper)
-            function = generator.emitGetByVal(generator.tempDestination(dst), base.get(), thisRegister.get(), property.get());
+            generator.emitGetByVal(function.get(), base.get(), thisRegister.get(), property.get());
         else
-            function = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
+            generator.emitGetByVal(function.get(), base.get(), property.get());
     }
+    if (isOptionalChainBase())
+        generator.emitOptionalCheck(function.get());
 
-    RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     CallArguments callArguments(generator, m_args);
     if (baseIsSuper) {
         generator.emitTDZCheck(generator.thisRegister());
@@ -1331,14 +1367,21 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     bool baseIsSuper = m_base->isSuperNode();
     if (baseIsSuper)
         generator.move(callArguments.thisRegister(), generator.ensureThis());
-    else
+    else {
         generator.emitNode(callArguments.thisRegister(), m_base);
+        if (m_base->isOptionalChainBase())
+            generator.emitOptionalCheck(callArguments.thisRegister());
+    }
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     if (baseIsSuper) {
         RefPtr<RegisterID> superBase = emitSuperBaseForCallee(generator);
         generator.emitGetById(function.get(), superBase.get(), callArguments.thisRegister(), m_ident);
     } else
         generator.emitGetById(function.get(), callArguments.thisRegister(), m_ident);
+
+    if (isOptionalChainBase())
+        generator.emitOptionalCheck(function.get());
+
     RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
     generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
     return ret;
@@ -1348,17 +1391,24 @@ static constexpr size_t maxDistanceToInnermostCallOrApply = 2;
 
 RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
-    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
-    RefPtr<RegisterID> function;
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
+    RefPtr<RegisterID> base = generator.emitNode(m_base);
 
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(base.get());
+
+    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+
+    RefPtr<RegisterID> function;
     auto makeFunction = [&] {
         if (m_base->isSuperNode()) {
             RefPtr<RegisterID> thisValue = generator.ensureThis();
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), thisValue.get(), generator.propertyNames().builtinNames().callPublicName());
         } else
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().builtinNames().callPublicName());
+
+        if (isOptionalChainBase())
+            generator.emitOptionalCheck(function.get());
     };
 
     bool emitCallCheck = !generator.isBuiltinFunction();
@@ -1430,15 +1480,22 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     // function.apply(thisArg, [arg0, arg1, ...]) -> can be trivially coerced into function.call(thisArg, arg0, arg1, ...) and saves object allocation
     bool mayBeCall = areTrivialApplyArguments(m_args);
 
-    RefPtr<RegisterID> function;
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
+    RefPtr<RegisterID> base = generator.emitNode(m_base);
+
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(base.get());
+
+    RefPtr<RegisterID> function;
     auto makeFunction = [&] {
         if (m_base->isSuperNode()) {
             RefPtr<RegisterID> thisValue = generator.ensureThis();
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), thisValue.get(), generator.propertyNames().builtinNames().applyPublicName());
         } else
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().builtinNames().applyPublicName());
+
+        if (isOptionalChainBase())
+            generator.emitOptionalCheck(function.get());
     };
 
     bool emitCallCheck = !generator.isBuiltinFunction();
@@ -1692,25 +1749,33 @@ RegisterID* DeleteResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
 
 RegisterID* DeleteBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
     RefPtr<RegisterID> r0 = generator.emitNode(m_base);
-    RefPtr<RegisterID> r1 = generator.emitNode(m_subscript);
 
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(r0.get());
+
+    RefPtr<RegisterID> r1 = generator.emitNode(m_subscript);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
         return emitThrowReferenceError(generator, "Cannot delete a super property");
-    return generator.emitDeleteByVal(generator.finalDestination(dst), r0.get(), r1.get());
+    return generator.emitDeleteByVal(finalDest.get(), r0.get(), r1.get());
 }
 
 // ------------------------------ DeleteDotNode -----------------------------------
 
 RegisterID* DeleteDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
     RefPtr<RegisterID> r0 = generator.emitNode(m_base);
+
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(r0.get());
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
         return emitThrowReferenceError(generator, "Cannot delete a super property");
-    return generator.emitDeleteById(generator.finalDestination(dst), r0.get(), m_ident);
+    return generator.emitDeleteById(finalDest.get(), r0.get(), m_ident);
 }
 
 // ------------------------------ DeleteValueNode -----------------------------------
@@ -2346,11 +2411,26 @@ RegisterID* CoalesceNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     Ref<Label> target = generator.newLabel();
 
     generator.emitNode(temp.get(), m_expr1);
-    generator.emitJumpIfFalse(generator.emitUnaryOp<OpIsUndefinedOrNull>(generator.newTemporary(), temp.get()), target.get());
+    generator.emitJumpIfFalse(generator.emitIsUndefinedOrNull(generator.newTemporary(), temp.get()), target.get());
     generator.emitNodeInTailPosition(temp.get(), m_expr2);
     generator.emitLabel(target.get());
 
     return generator.move(dst, temp.get());
+}
+
+// ------------------------------ OptionalChainNode ----------------------------
+
+RegisterID* OptionalChainNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
+
+    if (m_isOutermost)
+        generator.pushOptionalChainTarget();
+    generator.emitNodeInTailPosition(finalDest.get(), m_expr);
+    if (m_isOutermost)
+        generator.popOptionalChainTarget(finalDest.get(), m_isDelete);
+
+    return finalDest.get();
 }
 
 // ------------------------------ ConditionalNode ------------------------------
