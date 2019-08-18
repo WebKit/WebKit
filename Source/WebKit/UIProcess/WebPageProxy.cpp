@@ -1076,6 +1076,12 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // Inspector resources are in a directory with assumed access.
     ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (SandboxExtension::createHandleForReadByPid("/", process.processIdentifier(), sandboxExtensionHandle)) {
+        willAcquireUniversalFileReadSandboxExtension(process);
+        return;
+    }
+#endif
     if (SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
         willAcquireUniversalFileReadSandboxExtension(process);
         return;
@@ -1194,6 +1200,9 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     loadParameters.request = fileURL;
     loadParameters.shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (!SandboxExtension::createHandleForReadByPid(resourceDirectoryPath, processIdentifier(), loadParameters.sandboxExtensionHandle))
+#endif
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::Type::ReadOnly, loadParameters.sandboxExtensionHandle);
     addPlatformLoadParameters(loadParameters);
 

@@ -1,3 +1,24 @@
+2019-08-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac] Use the PID of the WebContent process when issuing local file read sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=200543
+        <rdar://problem/49394015>
+        
+        Reviewed by Brent Fulgham.
+
+        Adopt SPI to issue a process-specific sandbox extension for local file read, passing it the process
+        identifier of the WebContent process.
+        
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+        (WebKit::SandboxExtension::createHandleForReadByPid):
+        * Shared/SandboxExtension.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createSandboxExtensionsIfNeeded):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::loadFile):
+
 2019-08-17  Tim Horton  <timothy_horton@apple.com>
 
         Layout tests that call resizeTo() crash when run on iOS with IOSurface support enabled
