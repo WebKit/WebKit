@@ -1,3 +1,29 @@
+2019-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] WebAssembly BBQ should switch compile mode for size of modules
+        https://bugs.webkit.org/show_bug.cgi?id=200807
+
+        Reviewed by Mark Lam.
+
+        Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is 128MB.
+        The long term solution should be introducing Wasm interpreter. But as a short term solution, we introduce heuristics switching back to BBQ B3 at
+        the sacrifice of start-up time, since BBQ Air bloats such lengthy code, and thereby consumes a large amount of executable memory.
+
+        Currently, I picked 10MB since the reported website is using 11MB wasm module.
+
+        * runtime/Options.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::parseAndCompileAir):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmModuleInformation.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseCode):
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::parseCodeSectionSize):
+
 2019-08-16  Mark Lam  <mark.lam@apple.com>
 
         More missing exception checks in string comparison operators.

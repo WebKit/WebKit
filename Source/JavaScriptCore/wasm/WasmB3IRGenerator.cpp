@@ -1570,7 +1570,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     procedure.setNeedsUsedRegisters(false);
     
     procedure.setOptLevel(compilationMode == CompilationMode::BBQMode
-        ? Options::webAssemblyBBQOptimizationLevel()
+        ? Options::webAssemblyBBQB3OptimizationLevel()
         : Options::webAssemblyOMGOptimizationLevel());
 
     B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, compilationMode, functionIndex, tierUp, throwWasmException);

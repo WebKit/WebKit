@@ -2158,7 +2158,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
     
-    procedure.setOptLevel(Options::webAssemblyBBQOptimizationLevel());
+    procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
     AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, throwWasmException, signature);
     FunctionParser<AirIRGenerator> parser(irGenerator, functionStart, functionLength, signature, info);

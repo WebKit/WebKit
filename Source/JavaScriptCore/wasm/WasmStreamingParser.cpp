@@ -110,6 +110,7 @@ auto StreamingParser::parseSectionSize(uint32_t sectionLength) -> State
 
 auto StreamingParser::parseCodeSectionSize(uint32_t functionCount) -> State
 {
+    m_info->codeSectionSize = m_sectionLength;
     m_functionCount = functionCount;
     m_functionIndex = 0;
     m_codeOffset = m_offset;

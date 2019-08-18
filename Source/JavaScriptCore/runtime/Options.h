@@ -476,7 +476,8 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
     v(size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
-    v(unsigned, webAssemblyBBQOptimizationLevel, 0, Normal, "B3 Optimization level for BBQ Web Assembly module compilations.") \
+    v(unsigned, webAssemblyBBQAirOptimizationLevel, 0, Normal, "Air Optimization level for BBQ Web Assembly module compilations.") \
+    v(unsigned, webAssemblyBBQB3OptimizationLevel, 1, Normal, "B3 Optimization level for BBQ Web Assembly module compilations.") \
     v(unsigned, webAssemblyOMGOptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for OMG Web Assembly module compilations.") \
     \
     v(bool, useBBQTierUpChecks, true, Normal, "Enables tier up checks for our BBQ code.") \
@@ -491,6 +492,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, maxNumWebAssemblyFastMemories, 4, Normal, nullptr) \
     v(bool, useFastTLSForWasmContext, true, Normal, "If true, we will store context in fast TLS. If false, we will pin it to a register.") \
     v(bool, wasmBBQUsesAir, true, Normal, nullptr) \
+    v(size, webAssemblyBBQAirModeThreshold, isIOS() ? (10 * MB) : 0, Normal, "If 0, we always use BBQ Air. If Wasm module code size hits this threshold, we compile Wasm module with B3 BBQ mode.") \
     v(bool, useWebAssemblyStreamingApi, enableWebAssemblyStreamingApi, Normal, "Allow to run WebAssembly's Streaming API") \
     v(bool, useCallICsForWebAssemblyToJSCalls, true, Normal, "If true, we will use CallLinkInfo to inline cache Wasm to JS calls.") \
     v(bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \

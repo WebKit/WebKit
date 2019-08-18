@@ -86,6 +86,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     Vector<TableInformation> tables;
     Vector<Global> globals;
     unsigned firstInternalGlobal { 0 };
+    uint32_t codeSectionSize { 0 };
     Vector<CustomSection> customSections;
     Ref<NameSection> nameSection;
     
