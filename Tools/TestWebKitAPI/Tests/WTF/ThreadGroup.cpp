@@ -156,7 +156,9 @@ TEST(WTF, ThreadGroupRemove)
     const unsigned NumberOfThreads = 64;
 
     Lock lock;
+    Condition condition;
     Condition threadRunningCondition;
+    unsigned waitingThreads = 0;
     bool threadRunning = true;
 
     Vector<Ref<Thread>> threads;
@@ -165,6 +167,8 @@ TEST(WTF, ThreadGroupRemove)
     for (unsigned i = 0; i < NumberOfThreads; i++) {
         auto thread = Thread::create("ThreadGroupWorker", [&]() {
             auto locker = holdLock(lock);
+            ++waitingThreads;
+            condition.notifyOne();
             threadRunningCondition.wait(lock, [&]() {
                 return !threadRunning;
             });
@@ -175,12 +179,24 @@ TEST(WTF, ThreadGroupRemove)
 
     EXPECT_EQ(NumberOfThreads, countThreadGroups(threads));
 
+    {
+        auto locker = holdLock(lock);
+        condition.wait(lock, [&] {
+            return waitingThreads == NumberOfThreads;
+        });
+    }
+
+    EXPECT_EQ(NumberOfThreads, countThreadGroups(threads));
+
     threadGroup = nullptr;
 
     EXPECT_EQ(0U, countThreadGroups(threads));
 
-    threadRunning = false;
-    threadRunningCondition.notifyAll();
+    {
+        auto locker = holdLock(lock);
+        threadRunning = false;
+        threadRunningCondition.notifyAll();
+    }
     for (unsigned i = 0; i < NumberOfThreads; i++)
         threads[i]->waitForCompletion();
 }

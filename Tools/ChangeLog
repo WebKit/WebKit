@@ -1,3 +1,18 @@
+2019-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] ThreadGroupRemove test is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=200763
+
+        Reviewed by Mark Lam.
+
+        ThreadGroup.ThreadGroupRemove test is flaky since its `threadRunning` modification and check in Thread are racy.
+        It can lead to infinite wait on waitForCompletion. We should do more idiomatic to avoid race: When notifying condition
+        variables, we should first take a lock, modify the condition shared and notify the condition change while taking a lock,
+        and releasing the lock after that.
+
+        * TestWebKitAPI/Tests/WTF/ThreadGroup.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-08-17  Eric Liang  <ericliang@apple.com>
 
         Tested that accessibility WebProcessLoader bundle is loaded for the correct path.
