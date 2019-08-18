@@ -1,3 +1,25 @@
+2019-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG ToNumber should support Boolean in fixup
+        https://bugs.webkit.org/show_bug.cgi?id=200864
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/to-number-boolean.js: Added.
+        (test):
+        * stress/to-number-boolean-int32.js: Added.
+        (shouldBe):
+        (test):
+        (check):
+        * stress/to-number-boolean.js: Added.
+        (shouldBe):
+        (test):
+        (check):
+        * stress/to-number-int32.js: Added.
+        (shouldBe):
+        (test):
+        (check):
+
 2019-08-16  Mark Lam  <mark.lam@apple.com>
 
         More missing exception checks in string comparison operators.

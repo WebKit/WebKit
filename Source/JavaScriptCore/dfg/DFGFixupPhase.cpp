@@ -2820,6 +2820,15 @@ private:
 
     void fixupToNumber(Node* node)
     {
+        // At first, attempt to fold Boolean or Int32 to Int32.
+        if (node->child1()->shouldSpeculateInt32OrBoolean()) {
+            if (isInt32Speculation(node->getHeapPrediction())) {
+                fixIntOrBooleanEdge(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+        }
+
         // If the prediction of the child is Number, we attempt to convert ToNumber to Identity.
         if (node->child1()->shouldSpeculateNumber()) {
             if (isInt32Speculation(node->getHeapPrediction())) {
