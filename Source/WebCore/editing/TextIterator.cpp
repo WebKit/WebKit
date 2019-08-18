@@ -2044,7 +2044,7 @@ static void normalizeCharacters(const UChar* characters, unsigned length, Vector
 
 static bool isNonLatin1Separator(UChar32 character)
 {
-    ASSERT_ARG(character, character >= 256);
+    ASSERT_ARG(character, !isLatin1(character));
 
     return U_GET_GC_MASK(character) & (U_GC_S_MASK | U_GC_P_MASK | U_GC_Z_MASK | U_GC_CF_MASK);
 }
@@ -2070,7 +2070,7 @@ static inline bool isSeparator(UChar32 character)
         0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
     };
 
-    if (character < 256)
+    if (isLatin1(character))
         return latin1SeparatorTable[character];
 
     return isNonLatin1Separator(character);

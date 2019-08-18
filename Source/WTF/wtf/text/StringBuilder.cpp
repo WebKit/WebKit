@@ -29,8 +29,6 @@
 
 #include <wtf/dtoa.h>
 #include <wtf/MathExtras.h>
-#include <wtf/text/WTFString.h>
-#include <wtf/text/IntegerToStringConversion.h>
 
 namespace WTF {
 
@@ -45,6 +43,7 @@ static unsigned expandedCapacity(unsigned capacity, unsigned requiredLength)
 void StringBuilder::reifyString() const
 {
     ASSERT(!hasOverflowed());
+
     // Check if the string already exists.
     if (!m_string.isNull()) {
         ASSERT(m_string.length() == m_length.unsafeGet<unsigned>());
@@ -234,8 +233,7 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
 // Make 'additionalLength' additional capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
 // Returns nullptr if the size of the new builder would have overflowed
-template<typename CharacterType>
-ALWAYS_INLINE CharacterType* StringBuilder::appendUninitialized(unsigned additionalLength)
+template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::appendUninitialized(unsigned additionalLength)
 {
     ASSERT(additionalLength);
 
@@ -249,8 +247,7 @@ ALWAYS_INLINE CharacterType* StringBuilder::appendUninitialized(unsigned additio
     return appendUninitializedWithoutOverflowCheck<CharacterType>(requiredLength);
 }
 
-template<typename CharacterType>
-ALWAYS_INLINE CharacterType* StringBuilder::appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength)
+template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength)
 {
     ASSERT(!requiredLength.hasOverflowed());
 
@@ -278,8 +275,7 @@ LChar* StringBuilder::appendUninitializedWithoutOverflowCheckForLChar(CheckedInt
 
 // Make 'requiredLength' capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
-template<typename CharacterType>
-CharacterType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
+template<typename CharacterType> CharacterType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
 {
     ASSERT(!hasOverflowed());
     ASSERT(requiredLength);
@@ -311,11 +307,12 @@ void StringBuilder::appendCharacters(const UChar* characters, unsigned length)
     ASSERT(characters);
 
     if (m_is8Bit) {
-        if (length == 1 && !(*characters & ~0xff)) {
-            // Append as 8 bit character
-            LChar lChar = static_cast<LChar>(*characters);
-            return appendCharacters(&lChar, 1);
+        if (length == 1 && isLatin1(characters[0])) {
+            append(static_cast<LChar>(characters[0]));
+            return;
         }
+
+        // FIXME: Should we optimize memory by keeping the string 8-bit when all the characters are Latin-1?
 
         // Calculate the new size of the builder after appending.
         CheckedInt32 requiredLength = m_length + length;
@@ -359,8 +356,9 @@ void StringBuilder::appendCharacters(const LChar* characters, unsigned length)
             return;
         }
         if (length > 8)
-            memcpy(dest, characters, static_cast<size_t>(length) * sizeof(LChar));
+            memcpy(dest, characters, length);
         else {
+            // FIXME: How strong is our evidence that this is faster than memcpy? What platforms is this true for?
             const LChar* end = characters + length;
             while (characters < end)
                 *(dest++) = *(characters++);
@@ -461,7 +459,8 @@ bool StringBuilder::canShrink() const
 {
     if (hasOverflowed())
         return false;
-    // Only shrink the buffer if it's less than 80% full. Need to tune this heuristic!
+    // Only shrink the buffer if it's less than 80% full.
+    // FIXME: We should tune this heuristic based some actual test case measurements.
     unsigned length = m_length.unsafeGet();
     return m_buffer && m_buffer->length() > (length + (length >> 2));
 }

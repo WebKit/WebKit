@@ -1,3 +1,25 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Tidy up checks to see if a character is in the Latin-1 range by using isLatin1 consistently
+        https://bugs.webkit.org/show_bug.cgi?id=200861
+
+        Reviewed by Ross Kirsling.
+
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py: Use isLatin1.
+        * css/makeSelectorPseudoElementsMap.py: Ditto.
+        * editing/TextIterator.cpp:
+        (WebCore::isNonLatin1Separator): Ditto.
+        (WebCore::isSeparator): Ditto.
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidReasonPhrase): Ditto.
+        (WebCore::isValidHTTPHeaderValue): Ditto.
+        (WebCore::isValidAcceptHeaderValue): Ditto.
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode): Ditto.
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::handlePartialSequence): Ditto.
+        (WebCore::TextCodecUTF8::decode): Ditto.
+
 2019-08-18  Cathie Chen  <cathiechen@igalia.com>
 
         Crash in Document::deliverResizeObservations

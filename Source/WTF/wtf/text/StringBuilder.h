@@ -175,7 +175,7 @@ public:
                 return;
             }
 
-            if (!(c & ~0xff)) {
+            if (isLatin1(c)) {
                 m_bufferCharacters8[length] = static_cast<LChar>(c);
                 m_length++;
                 return;

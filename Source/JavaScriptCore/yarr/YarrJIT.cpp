@@ -1373,7 +1373,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         PatternTerm* term = op.m_term;
         UChar32 ch = term->patternCharacter;
 
-        if ((ch > 0xff) && (m_charSize == Char8)) {
+        if (!isLatin1(ch) && (m_charSize == Char8)) {
             // Have a 16 bit pattern character and an 8 bit string - short circuit
             op.m_jumps.append(jump());
             return;
@@ -1428,7 +1428,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
             UChar32 currentCharacter = nextTerm->patternCharacter;
 
-            if ((currentCharacter > 0xff) && (m_charSize == Char8)) {
+            if (!isLatin1(currentCharacter) && (m_charSize == Char8)) {
                 // Have a 16 bit pattern character and an 8 bit string - short circuit
                 op.m_jumps.append(jump());
                 return;
@@ -1623,7 +1623,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         move(TrustedImm32(0), countRegister);
 
         // Unless have a 16 bit pattern character and an 8 bit string - short circuit
-        if (!((ch > 0xff) && (m_charSize == Char8))) {
+        if (!(!isLatin1(ch) && (m_charSize == Char8))) {
             JumpList failures;
             Label loop(this);
             failures.append(atEndOfInput());
@@ -1696,7 +1696,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         loadFromFrame(term->frameLocation + BackTrackInfoPatternCharacter::matchAmountIndex(), countRegister);
 
         // Unless have a 16 bit pattern character and an 8 bit string - short circuit
-        if (!((ch > 0xff) && (m_charSize == Char8))) {
+        if (!(!isLatin1(ch) && (m_charSize == Char8))) {
             JumpList nonGreedyFailures;
             nonGreedyFailures.append(atEndOfInput());
             if (term->quantityMaxCount != quantifyInfinite)

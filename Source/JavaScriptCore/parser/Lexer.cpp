@@ -850,29 +850,8 @@ static inline LChar singleEscape(int c)
 template <typename T>
 inline void Lexer<T>::record8(int c)
 {
-    ASSERT(c >= 0);
-    ASSERT(c <= 0xFF);
+    ASSERT(isLatin1(c));
     m_buffer8.append(static_cast<LChar>(c));
-}
-
-template <typename T>
-inline void assertCharIsIn8BitRange(T c)
-{
-    UNUSED_PARAM(c);
-    ASSERT(c >= 0);
-    ASSERT(c <= 0xFF);
-}
-
-template <>
-inline void assertCharIsIn8BitRange(UChar c)
-{
-    UNUSED_PARAM(c);
-    ASSERT(c <= 0xFF);
-}
-
-template <>
-inline void assertCharIsIn8BitRange(LChar)
-{
 }
 
 template <typename T>
@@ -884,7 +863,7 @@ inline void Lexer<T>::append8(const T* p, size_t length)
 
     for (size_t i = 0; i < length; i++) {
         T c = p[i];
-        assertCharIsIn8BitRange(c);
+        ASSERT(isLatin1(c));
         rawBuffer[i] = c;
     }
 }
@@ -1160,7 +1139,7 @@ static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(LChar character)
 
 static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(UChar character)
 {
-    return character < 0xE || character > 0xFF;
+    return character < 0xE || !isLatin1(character);
 }
 
 template <typename T>

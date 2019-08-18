@@ -1,3 +1,13 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Tidy up checks to see if a character is in the Latin-1 range by using isLatin1 consistently
+        https://bugs.webkit.org/show_bug.cgi?id=200861
+
+        Reviewed by Ross Kirsling.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (canUseFastRenderer): Use isLatin1.
+
 2019-08-16  Chris Dumez  <cdumez@apple.com>
 
         LocalStorageDatabaseTracker does not need to subclass ThreadSafeRefCounted

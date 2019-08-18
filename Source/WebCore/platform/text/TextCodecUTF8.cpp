@@ -208,7 +208,7 @@ bool TextCodecUTF8::handlePartialSequence(LChar*& destination, const uint8_t*& s
             m_partialSequenceSize = count;
         }
         int character = decodeNonASCIISequence(m_partialSequence, count);
-        if (character == nonCharacter || character > 0xFF)
+        if (!isLatin1(character))
             return true;
 
         m_partialSequenceSize -= count;
@@ -345,7 +345,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
 
                 goto upConvertTo16Bit;
             }
-            if (character > 0xFF)
+            if (!isLatin1(character))
                 goto upConvertTo16Bit;
 
             source += count;

@@ -175,7 +175,7 @@ static inline CSSSelector::PseudoElementType parsePseudoElementString(const UCha
 
     for (unsigned i = 0; i < length; ++i) {
         UChar character = characters[i];
-        if (character & ~0xff)
+        if (!isLatin1(character))
             return CSSSelector::PseudoElementUnknown;
 
         buffer[i] = static_cast<LChar>(character);

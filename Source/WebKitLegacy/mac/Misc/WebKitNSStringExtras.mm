@@ -49,7 +49,7 @@ using namespace WebCore;
 static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 {
     for (unsigned i = 0; i < length; i++) {
-        if (buffer[i] > 0xFF) {
+        if (!isLatin1(buffer[i])) {
             auto direction = u_charDirection(buffer[i]);
             if (direction == U_RIGHT_TO_LEFT || (direction > U_OTHER_NEUTRAL && direction != U_DIR_NON_SPACING_MARK && direction != U_BOUNDARY_NEUTRAL))
                 return false;

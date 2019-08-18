@@ -453,7 +453,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
     token.type = TokError;
     token.start = m_ptr;
     CharType character = *m_ptr;
-    if (LIKELY(character < 256)) {
+    if (LIKELY(isLatin1(character))) {
         TokenType tokenType = TokenTypesOfLatin1Characters[character];
         switch (tokenType) {
         case TokString:
@@ -579,7 +579,7 @@ static ALWAYS_INLINE bool isSafeStringCharacter(LChar c, LChar terminator)
 template <SafeStringCharacterSet set>
 static ALWAYS_INLINE bool isSafeStringCharacter(UChar c, UChar terminator)
 {
-    return (c >= ' ' && (set == SafeStringCharacterSet::Strict || c <= 0xff) && c != '\\' && c != terminator) || (c == '\t' && set != SafeStringCharacterSet::Strict);
+    return (c >= ' ' && (set == SafeStringCharacterSet::Strict || isLatin1(c)) && c != '\\' && c != terminator) || (c == '\t' && set != SafeStringCharacterSet::Strict);
 }
 
 template <typename CharType>

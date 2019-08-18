@@ -174,7 +174,7 @@ static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parseP
 
     for (unsigned i = 0; i < length; ++i) {
         UChar character = characters[i];
-        if (character & ~0xff)
+        if (!isLatin1(character))
             return nullptr;
 
         buffer[i] = static_cast<LChar>(character);

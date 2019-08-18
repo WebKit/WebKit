@@ -1,3 +1,28 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Tidy up checks to see if a character is in the Latin-1 range by using isLatin1 consistently
+        https://bugs.webkit.org/show_bug.cgi?id=200861
+
+        Reviewed by Ross Kirsling.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendCharacters): Use isLatin1 and also call append rather than
+        calling appendCharacters, since it's the same thing, inlined, and removes the need for
+        a local variable. Also tweaked the idiom of the code using memcpy.
+        (WTF::StringBuilder::canShrink const): Reworded a comment.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append): Use isLatin1.
+
+        * wtf/text/StringCommon.h:
+        (WTF::isLatin1): Moved this function template here so it can be used here.
+        (WTF::find): Use isLatin1.
+
+        * wtf/text/StringImpl.h:
+        (WTF::isLatin1): Deleted. Moved to StringCommon.h.
+        (WTF::reverseFind): Use isLatin1.
+        (WTF::isSpaceOrNewline): Ditto.
+
 2019-08-17  Eric Liang  <ericliang@apple.com>
 
         Added HAVE_ACCESSIBILITY_BUNDLES_PATH

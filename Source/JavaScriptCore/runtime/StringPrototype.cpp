@@ -875,7 +875,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
     scope.assertNoException();
     UChar character = view[0];
     scope.release();
-    if (!(character & ~0xff))
+    if (isLatin1(character))
         return JSValue::encode(repeatCharacter(*exec, static_cast<LChar>(character), repeatCount));
     return JSValue::encode(repeatCharacter(*exec, character, repeatCount));
 }

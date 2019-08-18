@@ -134,7 +134,7 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, boo
             *destination = *source;
         } else {
 useLookupTable:
-            if (latin1ConversionTable[*source] > 0xff)
+            if (!isLatin1(latin1ConversionTable[*source]))
                 goto upConvertTo16Bit;
 
             *destination = latin1ConversionTable[*source];

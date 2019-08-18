@@ -54,7 +54,7 @@ Ref<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
 {
     if (length == 1) {
         UChar c = s[0];
-        ASSERT(c <= 0xff);
+        ASSERT(isLatin1(c));
         if (canUseSingleCharacterString(c))
             return vm->smallStrings.singleCharacterStringRep(c);
     }

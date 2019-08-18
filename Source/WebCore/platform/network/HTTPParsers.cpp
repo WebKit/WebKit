@@ -102,7 +102,7 @@ bool isValidReasonPhrase(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
         UChar c = value[i];
-        if (c == 0x7F || c > 0xFF || (c < 0x20 && c != '\t'))
+        if (c == 0x7F || !isLatin1(c) || (c < 0x20 && c != '\t'))
             return false;
     }
     return true;
@@ -119,7 +119,7 @@ bool isValidHTTPHeaderValue(const String& value)
         return false;
     for (unsigned i = 0; i < value.length(); ++i) {
         c = value[i];
-        ASSERT(c <= 0xFF);
+        ASSERT(isLatin1(c));
         if (c == 0x00 || c == 0x0A || c == 0x0D)
             return false;
     }
@@ -145,7 +145,7 @@ bool isValidAcceptHeaderValue(const String& value)
         if (isASCIIAlphanumeric(c) || c == ',' || c == '/' || c == ';' || c == '=')
             continue;
 
-        ASSERT(c <= 0xFF);
+        ASSERT(isLatin1(c));
         if (c == 0x7F || (c < 0x20 && c != '\t'))
             return false;
 
