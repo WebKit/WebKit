@@ -95,6 +95,7 @@ enum CharacterType {
 
     // Other types (only one so far)
     CharacterWhiteSpace,
+    CharacterHash,
     CharacterPrivateIdentifierStart
 };
 
@@ -135,7 +136,7 @@ static constexpr const unsigned short typesOfLatin1Characters[256] = {
 /*  32 - Space              */ CharacterWhiteSpace,
 /*  33 - !                  */ CharacterExclamationMark,
 /*  34 - "                  */ CharacterQuote,
-/*  35 - #                  */ CharacterInvalid,
+/*  35 - #                  */ CharacterHash,
 /*  36 - $                  */ CharacterIdentifierStart,
 /*  37 - %                  */ CharacterModulo,
 /*  38 - &                  */ CharacterAnd,
@@ -2422,16 +2423,21 @@ start:
         m_hasLineTerminatorBeforeToken = true;
         m_lineStart = m_code;
         goto start;
+    case CharacterHash:
+        // Hashbang is only permitted at the start of the source text.
+        if (peek(1) == '!' && !currentOffset()) {
+            shift();
+            shift();
+            goto inSingleLineComment;
+        }
+        goto invalidCharacter;
     case CharacterPrivateIdentifierStart:
         if (m_parsingBuiltinFunction)
             goto parseIdent;
-
-        FALLTHROUGH;
+        goto invalidCharacter;
     case CharacterOtherIdentifierPart:
     case CharacterInvalid:
-        m_lexErrorMessage = invalidCharacterMessage();
-        token = ERRORTOK;
-        goto returnError;
+        goto invalidCharacter;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         m_lexErrorMessage = "Internal Error"_s;
@@ -2481,6 +2487,11 @@ inSingleLineComment:
 returnToken:
     fillTokenInfo(tokenRecord, token, m_lineNumber, currentOffset(), currentLineStartOffset(), currentPosition());
     return token;
+
+invalidCharacter:
+    m_lexErrorMessage = invalidCharacterMessage();
+    token = ERRORTOK;
+    // Falls through to return error.
 
 returnError:
     m_error = true;

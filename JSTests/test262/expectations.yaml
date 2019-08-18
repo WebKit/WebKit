@@ -2252,15 +2252,6 @@ test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-f
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/comments/hashbang/eval-indirect.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/comments/hashbang/eval.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/comments/hashbang/no-line-separator.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
 test/language/computed-property-names/class/static/method-number.js:
   default: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'prototype', 'name', 'a', 'c'])` returns `true`"
   strict mode: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'prototype', 'name', 'a', 'c'])` returns `true`"

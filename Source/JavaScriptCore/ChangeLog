@@ -1,3 +1,19 @@
+2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ESNext] Support hashbang.
+        https://bugs.webkit.org/show_bug.cgi?id=200865
+
+        Reviewed by Mark Lam.
+
+        Hashbang (a.k.a. shebang) support is at Stage 3 in TC39:
+        https://github.com/tc39/proposal-hashbang
+
+        This allows `#!` to be treated like `//`, but only at the very start of the source text.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+
 2019-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG ToNumber should support Boolean in fixup
