@@ -48,7 +48,7 @@ private:
     void ensureTableGrid() const;
     void computePreferredWidthForColumns() const;
     void computeTableWidth() const;
-    void distributeAvailabeWidth() const;
+    void distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const;
     void computeTableHeight() const;
     void distributeAvailableHeight() const;
 

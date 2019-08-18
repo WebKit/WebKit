@@ -35,6 +35,45 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableGrid);
 
+void TableGrid::Column::setWidthConstraints(FormattingContext::IntrinsicWidthConstraints widthConstraints)
+{
+#ifndef NDEBUG
+    m_hasWidthConstraints = true;
+#endif
+    m_widthConstraints = widthConstraints;
+}
+
+FormattingContext::IntrinsicWidthConstraints TableGrid::Column::widthConstraints() const
+{
+    ASSERT(m_hasWidthConstraints);
+    return m_widthConstraints;
+}
+
+void TableGrid::Column::setLogicalWidth(LayoutUnit computedLogicalWidth)
+{
+#ifndef NDEBUG
+    m_hasComputedWidth = true;
+#endif
+    m_computedLogicalWidth = computedLogicalWidth;
+}
+
+LayoutUnit TableGrid::Column::logicalWidth() const
+{
+    ASSERT(m_hasComputedWidth);
+    return m_computedLogicalWidth;
+}
+
+void TableGrid::ColumnsContext::addColumn()
+{
+    m_columns.append({ });
+}
+
+void TableGrid::ColumnsContext::useAsLogicalWidth(WidthConstraintsType type)
+{
+    for (auto& column : m_columns)
+        column.setLogicalWidth(type == WidthConstraintsType::Minimum ? column.widthConstraints().minimum : column.widthConstraints().maximum);
+}
+
 TableGrid::CellInfo::CellInfo(const Box& tableCellBox, SlotPosition position, CellSize size)
     : tableCellBox(tableCellBox)
     , position(position)
@@ -60,13 +99,14 @@ void TableGrid::appendCell(const Box& tableCellBox)
 {
     int rowSpan = tableCellBox.rowSpan();
     int columnSpan = tableCellBox.columnSpan();
+    auto isInNewRow = !tableCellBox.previousSibling();
     auto initialSlotPosition = SlotPosition { };
 
     if (!m_cellList.isEmpty()) {
         auto& lastCell = m_cellList.last();
         auto lastSlotPosition = lastCell->position;
         // First table cell in this row?
-        if (!tableCellBox.previousSibling())
+        if (isInNewRow)
             initialSlotPosition = SlotPosition { 0, lastSlotPosition.y() + 1 };
         else
             initialSlotPosition = SlotPosition { lastSlotPosition.x() + 1, lastSlotPosition.y() };
@@ -87,6 +127,14 @@ void TableGrid::appendCell(const Box& tableCellBox)
             m_slotMap.add(position, std::make_unique<SlotInfo>(*cellInfo));
         }
     }
+    // Initialize columns/rows if needed.
+    auto missingNumberOfColumns = std::max<unsigned>(0, (initialSlotPosition.x() + columnSpan) - m_columnsContext.columns().size()); 
+    for (unsigned column = 0; column < missingNumberOfColumns; ++column)
+        m_columnsContext.addColumn();
+
+    if (isInNewRow)
+        m_rows.append({ });
+
     m_cellList.add(WTFMove(cellInfo));
 }
 
@@ -99,6 +147,15 @@ void TableGrid::insertCell(const Box& tableCellBox, const Box& before)
 void TableGrid::removeCell(const Box& tableCellBox)
 {
     UNUSED_PARAM(tableCellBox);
+}
+
+FormattingContext::IntrinsicWidthConstraints TableGrid::widthConstraints() const
+{
+    // FIXME: We should probably cache this value.
+    auto widthConstraints = FormattingContext::IntrinsicWidthConstraints { };
+    for (auto& column : m_columnsContext.columns())
+        widthConstraints += column.widthConstraints();
+    return widthConstraints;
 }
 
 }

@@ -1,3 +1,23 @@
+2019-08-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Compute column min/max widths and table width.
+        https://bugs.webkit.org/show_bug.cgi?id=200757
+        <rdar://problem/54333148>
+
+        Reviewed by Antti Koivisto.
+
+        For each column, determine a maximum and minimum column width from the cells that span only that column.
+        The minimum is that required by the cell with the largest minimum cell width (or the column 'width', whichever is larger).
+        The maximum is that required by the cell with the largest maximum cell width (or the column 'width', whichever is larger).
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns const):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::appendCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::columns):
+        (WebCore::Layout::TableGrid::rows):
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Tidy up checks to see if a character is in the Latin-1 range by using isLatin1 consistently

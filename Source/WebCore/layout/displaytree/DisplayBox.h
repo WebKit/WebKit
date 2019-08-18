@@ -44,6 +44,7 @@ class FormattingContext;
 class FloatingContext;
 class InlineFormattingContext;
 class LayoutState;
+class TableFormattingContext;
 }
 
 namespace Display {
@@ -58,6 +59,7 @@ public:
     friend class Layout::FloatingContext;
     friend class Layout::InlineFormattingContext;
     friend class Layout::LayoutState;
+    friend class Layout::TableFormattingContext;
 
     Box(const RenderStyle&);
     Box(const Box&);
