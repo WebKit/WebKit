@@ -7565,8 +7565,9 @@ size_t Document::gatherResizeObservations(size_t deeperThan)
 
 void Document::deliverResizeObservations()
 {
-    for (const auto& observer : m_resizeObservers) {
-        if (!observer->hasActiveObservations())
+    auto observersToNotify = m_resizeObservers;
+    for (const auto& observer : observersToNotify) {
+        if (!observer || !observer->hasActiveObservations())
             continue;
         observer->deliverObservations();
     }

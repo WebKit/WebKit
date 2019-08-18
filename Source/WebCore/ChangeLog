@@ -1,3 +1,19 @@
+2019-08-18  Cathie Chen  <cathiechen@igalia.com>
+
+        Crash in Document::deliverResizeObservations
+        https://bugs.webkit.org/show_bug.cgi?id=200635
+
+        Reviewed by Simon Fraser.
+
+        Document::deliverResizeObservations will crash if m_resizeObservers in Document
+        is modified in JS callbacks when we are traversing observers in m_resizeObservers.
+        This patch copy m_resizeObservers to a new vector, and check null for observers.
+
+        Test: resize-observer/delete-observers-in-callbacks.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::deliverResizeObservations):
+
 2019-08-17  Sam Weinig  <weinig@apple.com>
 
         Rename StringBuilder::flexibleAppend(...) to StringBuilder::append(...)

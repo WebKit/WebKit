@@ -1,3 +1,15 @@
+2019-08-18  Cathie Chen  <cathiechen@igalia.com>
+
+        Crash in Document::deliverResizeObservations
+        https://bugs.webkit.org/show_bug.cgi?id=200635
+
+        Reviewed by Simon Fraser.
+
+        Test deleting the next/previous sibling of observer list in callbacks, and the order of notifications.
+
+        * resize-observer/delete-observers-in-callbacks-expected.txt: Added.
+        * resize-observer/delete-observers-in-callbacks.html: Added.
+
 2019-08-17  Antti Koivisto  <antti@apple.com>
 
         Content in <iframe> should override "touch-action" set in embedding document
