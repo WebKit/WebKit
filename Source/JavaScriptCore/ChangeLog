@@ -1,3 +1,17 @@
+2019-08-19  Michael Saboff  <msaboff@apple.com>
+
+        Webkit jsc Crash in RegExp::matchInline (this=<optimized out>
+        https://bugs.webkit.org/show_bug.cgi?id=197090
+
+        Reviewed by Yusuke Suzuki.
+
+        Turned the debug JIT assert into falling back to the interpreter.  In release builds, that is effectively what we do
+        after exhausting the loop try count.  No sense of looping until we exceed the count, as we can exit immediately.
+
+        * assembler/AbortReason.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generate):
+
 2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part

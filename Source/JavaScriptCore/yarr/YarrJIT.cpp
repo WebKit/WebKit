@@ -2508,14 +2508,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 const RegisterID indexTemporary = regT0;
                 ASSERT(term->quantityMaxCount == 1);
 
-                // Runtime ASSERT to make sure that the nested alternative handled the
-                // "no input consumed" check.
-                if (!ASSERT_DISABLED && term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize) {
-                    Jump pastBreakpoint;
-                    pastBreakpoint = branch32(NotEqual, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*)));
-                    abortWithReason(YARRNoInputConsumed);
-                    pastBreakpoint.link(this);
-                }
+                // If the nested alternative matched without consuming any characters, punt this back to the interpreter.
+                // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=200786> Add ability for the YARR JIT to properly
+                // handle nested expressions that can match without consuming characters
+                if (term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize)
+                    m_abortExecution.append(branch32(Equal, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*))));
 
                 // If the parenthese are capturing, store the ending index value to the
                 // captures array, offsetting as necessary.
@@ -2562,16 +2559,13 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             }
             case OpParenthesesSubpatternTerminalEnd: {
                 YarrOp& beginOp = m_ops[op.m_previousOp];
-                if (!ASSERT_DISABLED) {
-                    PatternTerm* term = op.m_term;
-                    
-                    // Runtime ASSERT to make sure that the nested alternative handled the
-                    // "no input consumed" check.
-                    Jump pastBreakpoint;
-                    pastBreakpoint = branch32(NotEqual, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*)));
-                    abortWithReason(YARRNoInputConsumed);
-                    pastBreakpoint.link(this);
-                }
+                PatternTerm* term = op.m_term;
+
+                // If the nested alternative matched without consuming any characters, punt this back to the interpreter.
+                // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=200786> Add ability for the YARR JIT to properly
+                // handle nested expressions that can match without consuming characters
+                if (term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize)
+                    m_abortExecution.append(branch32(Equal, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*))));
 
                 // We know that the match is non-zero, we can accept it and
                 // loop back up to the head of the subpattern.
@@ -2654,14 +2648,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 PatternTerm* term = op.m_term;
                 unsigned parenthesesFrameLocation = term->frameLocation;
 
-                // Runtime ASSERT to make sure that the nested alternative handled the
-                // "no input consumed" check.
-                if (!ASSERT_DISABLED && term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize) {
-                    Jump pastBreakpoint;
-                    pastBreakpoint = branch32(NotEqual, index, Address(stackPointerRegister, parenthesesFrameLocation * sizeof(void*)));
-                    abortWithReason(YARRNoInputConsumed);
-                    pastBreakpoint.link(this);
-                }
+                // If the nested alternative matched without consuming any characters, punt this back to the interpreter.
+                // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=200786> Add ability for the YARR JIT to properly
+                // handle nested expressions that can match without consuming characters
+                if (term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize)
+                    m_abortExecution.append(branch32(Equal, index, Address(stackPointerRegister, parenthesesFrameLocation * sizeof(void*))));
 
                 const RegisterID countTemporary = regT1;
 
