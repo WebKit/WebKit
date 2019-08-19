@@ -74,6 +74,8 @@ extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, 
 void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
+    WTF::initializeMainThread();
+
     // FIXME: Add support for teardown from PluginProcessMain.mm
 
     // Remove the PluginProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes
