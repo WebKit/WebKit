@@ -126,6 +126,9 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     if (files.size() == 1) {
         BOOL isDirectory;
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+            if (!SandboxExtension::createHandleForReadByPid("/", processIdentifier(), fileReadHandle))
+#endif
             SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, fileReadHandle);
             willAcquireUniversalFileReadSandboxExtension(m_process);
         }
