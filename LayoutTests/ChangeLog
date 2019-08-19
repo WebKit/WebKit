@@ -1,3 +1,25 @@
+2019-08-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r248863. rdar://problem/54481698
+
+    rdar://54481698 (Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing)
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ios-12/platform/ios/ios/fast/text/opticalFont-expected.txt: Copied from LayoutTests/platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt.
+    * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt: Rebaseline.
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248863 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-19  Russell Epstein  <repstein@apple.com>
+
+            rdar://54481698 (Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing)
+
+            Unreviewed Test Gardening.
+
+            * platform/ios-12/platform/ios/ios/fast/text/opticalFont-expected.txt: Copied from LayoutTests/platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt.
+            * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt: Rebaseline.
+
 2019-08-18  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r248819. rdar://problem/54455005
