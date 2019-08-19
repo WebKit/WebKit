@@ -1,3 +1,12 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix for PLATFORM_DRIVEN_TEXT_CHECKING
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        It is enabled if PLATFORM(MACCATALYST) is true.
+
+        * UIProcess/Cocoa/TextCheckingController.h:
+
 2019-08-19  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDB-specific quota

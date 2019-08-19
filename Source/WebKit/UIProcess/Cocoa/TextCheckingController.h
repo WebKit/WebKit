@@ -37,6 +37,7 @@ OBJC_CLASS NSAttributedString;
 namespace WebKit {
 
 class TextCheckingController final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(TextCheckingController);
 public:
     explicit TextCheckingController(WebPageProxy&);
