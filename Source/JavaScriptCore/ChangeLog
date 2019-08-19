@@ -1,3 +1,17 @@
+2019-08-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JSC tool targets should unlock the keychain before codesigning
+        https://bugs.webkit.org/show_bug.cgi?id=200733
+        <rdar://problem/54223095>
+
+        Reviewed by Alexey Proskuryakov.
+
+        In r245564, we started codesigning JSC tool targets to run the datavault tests
+        in testapi, but we should unlock the keychain first so that it doesn't require
+        the password during builds.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-08-19  Michael Saboff  <msaboff@apple.com>
 
         Webkit jsc Crash in RegExp::matchInline (this=<optimized out>

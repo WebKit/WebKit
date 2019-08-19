@@ -111,6 +111,17 @@
 			name = All;
 			productName = All;
 		};
+		E1AC2E2720F7B94C00B0897D /* Unlock Keychain */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 14CFB10523035EF300F0048C /* Build configuration list */;
+			buildPhases = (
+				E1AC2E2C20F7B95800B0897D /* Unlock Keychain */,
+			);
+			dependencies = (
+			);
+			name = "Unlock Keychain";
+			productName = "Unlock keychain";
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -1968,6 +1979,83 @@
 			proxyType = 1;
 			remoteGlobalIDString = 14BD688F215191450050DAFF;
 			remoteInfo = "LLInt Settings";
+		};
+		14CFB0FF23035EF300F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB10623035F0F00F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB10823035F1300F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB10A23035F1A00F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB10C23035F4600F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB10E23035F4D00F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB11023035F5300F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB11223035F5800F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB11423035F5E00F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB11623035F6300F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		14CFB11823035F6900F0048C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
 		};
 		14D9D9D9218462B5009126C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -10146,6 +10234,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB11323035F5800F0048C /* PBXTargetDependency */,
 			);
 			name = testair;
 			productName = testapi;
@@ -10162,6 +10251,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB11123035F5300F0048C /* PBXTargetDependency */,
 			);
 			name = dynbench;
 			productName = testapi;
@@ -10178,6 +10268,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB10F23035F4D00F0048C /* PBXTargetDependency */,
 			);
 			name = testb3;
 			productName = testapi;
@@ -10194,6 +10285,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB10923035F1300F0048C /* PBXTargetDependency */,
 				65788AAB18B40A3B00C189FF /* PBXTargetDependency */,
 				0FF922D314F46B2F0041A24E /* PBXTargetDependency */,
 			);
@@ -10215,6 +10307,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB10023035EF300F0048C /* PBXTargetDependency */,
 			);
 			name = minidom;
 			productName = minidom;
@@ -10233,6 +10326,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB10B23035F1A00F0048C /* PBXTargetDependency */,
 			);
 			name = testapi;
 			productName = testapi;
@@ -10249,6 +10343,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB10723035F0F00F0048C /* PBXTargetDependency */,
 				14BD6882215191310050DAFF /* PBXTargetDependency */,
 				14BD689B215191740050DAFF /* PBXTargetDependency */,
 			);
@@ -10268,6 +10363,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB11923035F6900F0048C /* PBXTargetDependency */,
 			);
 			name = testdfg;
 			productName = testapi;
@@ -10284,6 +10380,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB10D23035F4600F0048C /* PBXTargetDependency */,
 			);
 			name = testRegExp;
 			productInstallPath = /usr/local/bin;
@@ -10301,6 +10398,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB11723035F6300F0048C /* PBXTargetDependency */,
 			);
 			name = testmem;
 			productName = testapi;
@@ -10366,6 +10464,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14CFB11523035F5E00F0048C /* PBXTargetDependency */,
 			);
 			name = testmasm;
 			productName = testapi;
@@ -10410,6 +10509,7 @@
 				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				65788A9D18B409EB00C189FF /* Offline Assembler */,
 				53B4BD041F68AF8900D2BEA3 /* Generate Unified Sources */,
+				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 				1412111F0A48793C00480255 /* minidom */,
 				14BD59BE0A3E8F9000BAF59C /* testapi */,
 				932F5BDA0822A1C700736975 /* jsc */,
@@ -10725,6 +10825,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders/JSBasePrivate.h\nfi\n";
+		};
+		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Unlock Keychain";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -11068,6 +11182,61 @@
 			isa = PBXTargetDependency;
 			target = 14BD688F215191450050DAFF /* LLInt Settings */;
 			targetProxy = 14BD689A215191740050DAFF /* PBXContainerItemProxy */;
+		};
+		14CFB10023035EF300F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB0FF23035EF300F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB10723035F0F00F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB10623035F0F00F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB10923035F1300F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB10823035F1300F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB10B23035F1A00F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB10A23035F1A00F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB10D23035F4600F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB10C23035F4600F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB10F23035F4D00F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB10E23035F4D00F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB11123035F5300F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB11023035F5300F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB11323035F5800F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB11223035F5800F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB11523035F5E00F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB11423035F5E00F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB11723035F6300F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB11623035F6300F0048C /* PBXContainerItemProxy */;
+		};
+		14CFB11923035F6900F0048C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 14CFB11823035F6900F0048C /* PBXContainerItemProxy */;
 		};
 		14D9D9DA218462B5009126C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11481,6 +11650,39 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		14CFB10123035EF300F0048C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Unlock keychain";
+			};
+			name = Debug;
+		};
+		14CFB10223035EF300F0048C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				PRODUCT_NAME = "Unlock keychain";
+			};
+			name = Release;
+		};
+		14CFB10323035EF300F0048C /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Unlock keychain";
+			};
+			name = Profiling;
+		};
+		14CFB10423035EF300F0048C /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Unlock keychain";
 			};
 			name = Production;
 		};
@@ -11953,6 +12155,17 @@
 				14BD6895215191450050DAFF /* Release */,
 				14BD6896215191450050DAFF /* Profiling */,
 				14BD6897215191450050DAFF /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		14CFB10523035EF300F0048C /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CFB10123035EF300F0048C /* Debug */,
+				14CFB10223035EF300F0048C /* Release */,
+				14CFB10323035EF300F0048C /* Profiling */,
+				14CFB10423035EF300F0048C /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
