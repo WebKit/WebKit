@@ -426,8 +426,9 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     // https://w3c.github.io/pointerevents/#process-pending-pointer-capture
     // 1. If the pointer capture target override for this pointer is set and is not equal to the pending pointer capture target override,
     // then fire a pointer event named lostpointercapture at the pointer capture target override node.
-    if (capturingData.targetOverride && capturingData.targetOverride->isConnected() && capturingData.targetOverride != pendingTargetOverride) {
-        capturingData.targetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData.isPrimary, capturingData.pointerType));
+    if (capturingData.targetOverride && capturingData.targetOverride != pendingTargetOverride) {
+        if (capturingData.targetOverride->isConnected())
+            capturingData.targetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData.isPrimary, capturingData.pointerType));
         if (capturingData.pointerType == PointerEvent::mousePointerType()) {
             if (auto* frame = capturingData.targetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(nullptr);
