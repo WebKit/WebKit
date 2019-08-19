@@ -49,6 +49,7 @@ public:
     AudioSourceProviderGStreamer(MediaStreamTrackPrivate&);
 #else
 class AudioSourceProviderGStreamer : public AudioSourceProvider {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioSourceProviderGStreamer);
 public:
 #endif

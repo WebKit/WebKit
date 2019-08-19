@@ -1,5 +1,12 @@
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, speculative build fix for GTK and WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix in WinCairo and GTK ports
         https://bugs.webkit.org/show_bug.cgi?id=200767
 

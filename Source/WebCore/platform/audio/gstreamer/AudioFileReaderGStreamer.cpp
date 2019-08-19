@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class AudioFileReader : public CanMakeWeakPtr<AudioFileReader> {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioFileReader);
 public:
     AudioFileReader(const char* filePath);
