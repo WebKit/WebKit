@@ -811,6 +811,26 @@ CodeBlock::~CodeBlock()
 {
     VM& vm = *m_vm;
 
+#if ENABLE(DFG_JIT)
+    // The JITCode (and its corresponding DFG::CommonData) may outlive the CodeBlock by
+    // a short amount of time after the CodeBlock is destructed. For example, the
+    // Interpreter::execute methods will ref JITCode before invoking it. This can
+    // result in the JITCode having a non-zero refCount when its owner CodeBlock is
+    // destructed.
+    //
+    // Hence, we cannot rely on DFG::CommonData destruction to clear these now invalid
+    // watchpoints in a timely manner. We'll ensure they are cleared here eagerly.
+    //
+    // We only need to do this for a DFG/FTL CodeBlock because only these will have a
+    // DFG:CommonData. Hence, the LLInt and Baseline will not have any of these watchpoints.
+    //
+    // Note also that the LLIntPrototypeLoadAdaptiveStructureWatchpoint is also related
+    // to the CodeBlock. However, its lifecycle is tied directly to the CodeBlock, and
+    // will be automatically cleared when the CodeBlock destructs.
+
+    if (JITCode::isOptimizingJIT(jitType()))
+        jitCode()->dfgCommon()->clearWatchpoints();
+#endif
     vm.heap.codeBlockSet().remove(this);
     
     if (UNLIKELY(vm.m_perBytecodeProfiler))
