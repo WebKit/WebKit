@@ -1,3 +1,16 @@
+2019-08-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix for missing WebCore library when linking TestNetscapePlugIn
+
+        Using LDFLAGS='-Wl,--no-undefined' would cause TestNetscapePlugIn to
+        fail linking as it uses WTF::Sleep() but the WTF library is not
+        directly listed for linking. While the library would be linked
+        indirectly, passing --no-undefined to the linker disallows that, so
+        it is needed to list it explicitly for it to succeed.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt: Add dependency on
+        the WTF library.
+
 2019-07-08  Charlie Turner  <cturner@igalia.com>
 
         REGRESSION(r243197): [GStreamer] Web process hangs when scrolling twitter timeline which contains HLS videos

@@ -1,5 +1,7 @@
 set(WEBKIT_TESTNETSCAPEPLUGIN_DIR "${TOOLS_DIR}/DumpRenderTree/TestNetscapePlugIn")
 
+set(WebKitTestNetscapePlugIn_LIBRARIES WTF)
+
 set(WebKitTestNetscapePlugIn_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/PluginObject.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/PluginTest.cpp
@@ -41,7 +43,7 @@ if (MOZ_X11)
         ${X11_INCLUDE_DIR}
     )
 
-    set(WebKitTestNetscapePlugIn_LIBRARIES
+    list(APPEND WebKitTestNetscapePlugIn_LIBRARIES
         ${X11_LIBRARIES}
     )
 
