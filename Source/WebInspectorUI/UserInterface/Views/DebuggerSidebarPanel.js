@@ -978,29 +978,43 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             breakpoints[i].disabled = disabled;
     }
 
-    _breakpointTreeOutlineDeleteTreeElement(treeElement)
+    _breakpointTreeOutlineDeleteTreeElement(selectedTreeElement)
     {
-        console.assert(treeElement.selected);
+        console.assert(selectedTreeElement.selected);
 
-        if (treeElement.representedObject === DebuggerSidebarPanel.__windowEventTargetRepresentedObject) {
+        let treeElementToSelect = null;
+        function checkIfSelectionAdjustmentNeeded(treeElement) {
+            if (!treeElement)
+                return;
+
+            let representedObjects = [
+                WI.debuggerManager.allExceptionsBreakpoint,
+                WI.debuggerManager.uncaughtExceptionsBreakpoint,
+                WI.debuggerManager.assertionFailuresBreakpoint,
+            ];
+            if (representedObjects.includes(treeElement.representedObject))
+                treeElementToSelect = selectedTreeElement.nextSibling;
+        }
+        checkIfSelectionAdjustmentNeeded(selectedTreeElement);
+
+        if (selectedTreeElement instanceof WI.ResourceTreeElement || selectedTreeElement instanceof WI.ScriptTreeElement) {
+            checkIfSelectionAdjustmentNeeded(selectedTreeElement.previousSibling);
+
+            let breakpoints = this._breakpointsBeneathTreeElement(selectedTreeElement);
+            this._removeAllBreakpoints(breakpoints);
+        } else if (selectedTreeElement.representedObject === DebuggerSidebarPanel.__windowEventTargetRepresentedObject) {
+            checkIfSelectionAdjustmentNeeded(selectedTreeElement.previousSibling);
+
             let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow);
             for (let eventBreakpoint of eventBreakpointsOnWindow)
                 WI.domManager.removeBreakpointForEventListener(eventBreakpoint.eventListener);
-            return true;
         }
 
-        console.assert(treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement);
-        if (!(treeElement instanceof WI.ResourceTreeElement) && !(treeElement instanceof WI.ScriptTreeElement))
-            return false;
-
-        var wasTopResourceTreeElement = treeElement.previousSibling === this._assertionsBreakpointTreeElement || treeElement.previousSibling === this._allUncaughtExceptionsBreakpointTreeElement;
-        var nextSibling = treeElement.nextSibling;
-
-        var breakpoints = this._breakpointsBeneathTreeElement(treeElement);
-        this._removeAllBreakpoints(breakpoints);
-
-        if (wasTopResourceTreeElement && nextSibling)
-            nextSibling.select(true, true);
+        if (treeElementToSelect) {
+            const omitFocus = true;
+            const selectedByUser = true;
+            treeElementToSelect.select(omitFocus, selectedByUser);
+        }
 
         return true;
     }

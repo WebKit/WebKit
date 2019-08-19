@@ -82,7 +82,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
                 InspectorFrontendHost.beep();
             else
                 this._breakpoint.disabled = true;
-            return true;
+            return;
         }
 
         // We set this flag so that TreeOutlines that will remove this
@@ -91,7 +91,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this.__deletedViaDeleteKeyboardShortcut = true;
 
         WI.debuggerManager.removeBreakpoint(this._breakpoint);
-        return true;
     }
 
     onenter()

@@ -92,7 +92,6 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
             WI.domManager.removeBreakpointForEventListener(this.representedObject.eventListener);
         else
             WI.domDebuggerManager.removeEventBreakpoint(this.representedObject);
-        return true;
     }
 
     onenter()

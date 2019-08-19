@@ -138,30 +138,41 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._handleBreakpointElementAddedOrRemoved, this);
         this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleBreakpointElementAddedOrRemoved, this);
         this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
-        this._breakpointsTreeOutline.ondelete = (treeElement) => {
-            console.assert(treeElement.selected);
+        this._breakpointsTreeOutline.ondelete = (selectedTreeElement) => {
+            console.assert(selectedTreeElement.selected);
 
-            if (treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject) {
+            let treeElementToSelect = null;
+            function checkIfSelectionAdjustmentNeeded(treeElement) {
+                if (!treeElement)
+                    return;
+
+                let representedObjects = [
+                    WI.debuggerManager.allExceptionsBreakpoint,
+                    WI.debuggerManager.uncaughtExceptionsBreakpoint,
+                    WI.debuggerManager.assertionFailuresBreakpoint,
+                ];
+                if (representedObjects.includes(treeElement.representedObject))
+                    treeElementToSelect = selectedTreeElement.nextSibling;
+            }
+            checkIfSelectionAdjustmentNeeded(selectedTreeElement);
+
+            if (selectedTreeElement instanceof WI.ResourceTreeElement || selectedTreeElement instanceof WI.ScriptTreeElement) {
+                checkIfSelectionAdjustmentNeeded(selectedTreeElement.previousSibling);
+
+                let breakpoints = this._breakpointsBeneathTreeElement(selectedTreeElement);
+                this._removeAllBreakpoints(breakpoints);
+            } else if (selectedTreeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject) {
+                checkIfSelectionAdjustmentNeeded(selectedTreeElement.previousSibling);
+
                 let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow);
                 for (let eventBreakpoint of eventBreakpointsOnWindow)
                     WI.domManager.removeBreakpointForEventListener(eventBreakpoint.eventListener);
-                return true;
             }
 
-            console.assert(treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement);
-            if (!(treeElement instanceof WI.ResourceTreeElement) && !(treeElement instanceof WI.ScriptTreeElement))
-                return false;
-
-            let wasTopResourceTreeElement = treeElement.previousSibling === this._assertionsBreakpointTreeElement || treeElement.previousSibling === this._allUncaughtExceptionsBreakpointTreeElement;
-            let nextSibling = treeElement.nextSibling;
-
-            let breakpoints = this._breakpointsBeneathTreeElement(treeElement);
-            this._removeAllBreakpoints(breakpoints);
-
-            if (wasTopResourceTreeElement && nextSibling) {
+            if (treeElementToSelect) {
                 const omitFocus = true;
                 const selectedByUser = true;
-                nextSibling.select(omitFocus, selectedByUser);
+                treeElementToSelect.select(omitFocus, selectedByUser);
             }
 
             return true;

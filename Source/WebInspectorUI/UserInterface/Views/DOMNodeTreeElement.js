@@ -47,8 +47,6 @@ WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
 
         WI.domDebuggerManager.removeDOMBreakpointsForNode(this.representedObject);
         WI.domManager.removeEventListenerBreakpointsForNode(this.representedObject);
-
-        return true;
     }
 
     populateContextMenu(contextMenu, event)

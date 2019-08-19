@@ -1,5 +1,40 @@
 2019-08-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: Debugger: pressing delete when the all/uncaught exceptions breakpoint is selected should select the next tree element
+        https://bugs.webkit.org/show_bug.cgi?id=200876
+
+        Reviewed by Joseph Pecoraro.
+
+        Removing the `return true;` from the various `WI.TreeElement` breakpoint classes allows the
+        owner `WI.TreeOutline` to also handle the delete event. In the Debugger/Sources navigation
+        sidebar, the owner `WI.TreeOutline` checks to see if the currently selected `WI.TreeElement`
+        is one of the "top" items ("All Exceptions", "Uncaught Exceptions", "Assertion Failures")
+        and if so, select the next tree element (if able) instead of the previous one.
+
+        This is a preferred experience because the "top" items can only be disabled, not deleted, so
+        trying to delete them wouldn't actually change the selection. They should only ever be
+        selected if there's nothing else that can be selected.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._breakpointTreeOutlineDeleteTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._breakpointTreeOutlineDeleteTreeElement.checkIfSelectionAdjustmentNeeded): Added.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.checkIfSelectionAdjustmentNeeded): Added.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement.prototype.ondelete):
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement.prototype.ondelete):
+
+2019-08-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: don't show the All Requests breakpoint by default
         https://bugs.webkit.org/show_bug.cgi?id=200892
 
