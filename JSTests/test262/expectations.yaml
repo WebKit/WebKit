@@ -858,18 +858,9 @@ test/built-ins/Date/proto-from-ctor-realm-two.js:
 test/built-ins/Date/proto-from-ctor-realm-zero.js:
   default: 'TypeError: Type error'
   strict mode: 'TypeError: Type error'
-test/built-ins/Date/prototype/toJSON/invoke-result.js:
-  default: 'TypeError: toISOString did not return a primitive value'
-  strict mode: 'TypeError: toISOString did not return a primitive value'
 test/built-ins/Date/prototype/toJSON/to-object.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Date/prototype/toJSON/to-primitive-symbol.js:
-  default: 'TypeError: toISOString did not return a primitive value'
-  strict mode: 'TypeError: toISOString did not return a primitive value'
-test/built-ins/Date/prototype/toJSON/to-primitive-value-of.js:
-  default: 'TypeError: toISOString did not return a primitive value'
-  strict mode: 'TypeError: toISOString did not return a primitive value'
 test/built-ins/Error/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'

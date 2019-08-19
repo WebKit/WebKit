@@ -91,7 +91,7 @@ PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject){
         return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ return {}; }});
     }
-PASS tests[i](nativeJSON) threw exception TypeError: toISOString did not return a primitive value.
+PASS tests[i](nativeJSON) is tests[i].expected
 function (jsonObject){
         return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ throw "An exception"; }});
     }

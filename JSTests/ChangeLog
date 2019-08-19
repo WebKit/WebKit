@@ -1,3 +1,12 @@
+2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Date.prototype.toJSON throws if toISOString returns an object
+        https://bugs.webkit.org/show_bug.cgi?id=198495
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 6 test cases as passing.
+
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG DataView get/set optimization should take care of the case little-endian flag is JSEmpty

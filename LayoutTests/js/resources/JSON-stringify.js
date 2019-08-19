@@ -95,7 +95,7 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ return {}; }});
     });
-    result[result.length - 1].throws = true;
+    result[result.length - 1].expected = '{}';
     result.push(function(jsonObject){
         return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ throw "An exception"; }});
     });

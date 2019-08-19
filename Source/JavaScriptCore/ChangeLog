@@ -1,3 +1,16 @@
+2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Date.prototype.toJSON throws if toISOString returns an object
+        https://bugs.webkit.org/show_bug.cgi?id=198495
+
+        Reviewed by Ross Kirsling.
+
+        Don't throw TypeError if result of toISOString call is not a primitive.
+        (step 4 of https://tc39.es/ecma262/#sec-date.prototype.tojson)
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToJSON): Remove isObject check.
+
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG DataView get/set optimization should take care of the case little-endian flag is JSEmpty

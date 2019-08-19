@@ -1,3 +1,16 @@
+2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Date.prototype.toJSON throws if toISOString returns an object
+        https://bugs.webkit.org/show_bug.cgi?id=198495
+
+        Reviewed by Ross Kirsling.
+
+        TypeError shouldn't be thrown if result of toISOString call is an object.
+        (step 4 of https://tc39.es/ecma262/#sec-date.prototype.tojson)
+
+        * js/dom/JSON-stringify-expected.txt:
+        * js/resources/JSON-stringify.js:
+
 2019-08-19  Russell Epstein  <repstein@apple.com>
 
         rdar://52961406 (scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky image failure on iOS)
