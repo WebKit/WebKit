@@ -47,6 +47,8 @@ static bool shouldFillWithVerticalGlyphs(const UChar* buffer, unsigned bufferLen
     return false;
 }
 
+static const constexpr CGGlyph deletedGlyph = 0xFFFF;
+
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 {
     ASSERT(bufferLength == GlyphPage::size || bufferLength == 2 * GlyphPage::size);
@@ -62,8 +64,9 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 
     bool haveGlyphs = false;
     for (unsigned i = 0; i < GlyphPage::size; ++i) {
-        if (glyphs[i * glyphStep]) {
-            setGlyphForIndex(i, glyphs[i * glyphStep]);
+        auto theGlyph = glyphs[i * glyphStep];
+        if (theGlyph && theGlyph != deletedGlyph) {
+            setGlyphForIndex(i, theGlyph);
             haveGlyphs = true;
         }
     }
