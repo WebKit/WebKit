@@ -38,6 +38,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UserMediaRequest.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -121,27 +122,32 @@ void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
     if (!m_page.hasRunningProcess() || !m_page.mainFrame())
         return;
 
-    auto handler = [this](PermissionInfo permissionInfo) mutable {
-        switch (permissionInfo) {
-        case PermissionInfo::Error:
-            return;
-        case PermissionInfo::Unknown:
-            if (m_grantedRequests.isEmpty())
-                return;
-            break;
-        case PermissionInfo::Granted:
-            break;
-        }
-        if (!m_page.hasRunningProcess())
-            return;
-
-        m_page.process().send(Messages::WebPage::CaptureDevicesChanged(), m_page.pageID());
-    };
-
     auto origin = WebCore::SecurityOrigin::create(m_page.mainFrame()->url());
-    getUserMediaPermissionInfo(m_page.mainFrame()->frameID(), origin.get(), WTFMove(origin), WTFMove(handler));
+    getUserMediaPermissionInfo(m_page.mainFrame()->frameID(), origin.get(), WTFMove(origin), [this](PermissionInfo permissionInfo) {
+        captureDevicesChanged(permissionInfo);
+    });
 #endif
 }
+
+#if ENABLE(MEDIA_STREAM)
+void UserMediaPermissionRequestManagerProxy::captureDevicesChanged(PermissionInfo permissionInfo)
+{
+    switch (permissionInfo) {
+    case PermissionInfo::Error:
+        return;
+    case PermissionInfo::Unknown:
+        if (m_grantedRequests.isEmpty())
+            return;
+        break;
+    case PermissionInfo::Granted:
+        break;
+    }
+    if (!m_page.hasRunningProcess())
+        return;
+
+    m_page.process().send(Messages::WebPage::CaptureDevicesChanged(), m_page.pageID());
+}
+#endif
 
 void UserMediaPermissionRequestManagerProxy::clearCachedState()
 {
@@ -226,8 +232,9 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     if (request.requestType() == MediaStreamRequest::Type::UserMedia)
         m_grantedRequests.append(makeRef(request));
 
+    // FIXME: m_hasFilteredDeviceList will trigger ondevicechange events for various documents from different origins.
     if (m_hasFilteredDeviceList)
-        captureDevicesChanged();
+        captureDevicesChanged(PermissionInfo::Granted);
     m_hasFilteredDeviceList = false;
 
     ++m_hasPendingCapture;
@@ -604,12 +611,15 @@ Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDev
 }
 #endif
 
-void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
+void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
-    ALWAYS_LOG(LOGIDENTIFIER, userMediaID);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto completionHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](PermissionInfo permissionInfo) mutable {
+    auto callback = [this, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef(), completionHandler = WTFMove(completionHandler)](PermissionInfo permissionInfo) mutable {
+        auto callCompletionHandler = makeScopeExit([&completionHandler] {
+            completionHandler({ }, { });
+        });
 
         bool originHasPersistentAccess;
         switch (permissionInfo) {
@@ -631,7 +641,13 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
 
         auto& requestOrigin = userMediaDocumentOrigin.get();
         auto& topOrigin = topLevelDocumentOrigin.get();
-        m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(requestOrigin, topOrigin, [this, weakThis = makeWeakPtr(*this), requestID, frameID, userMediaID, userMediaDocumentOrigin = WTFMove(userMediaDocumentOrigin), topLevelDocumentOrigin = WTFMove(topLevelDocumentOrigin), originHasPersistentAccess] (String&& deviceIDHashSalt) {
+
+        callCompletionHandler.release();
+        m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(requestOrigin, topOrigin, [this, weakThis = makeWeakPtr(*this), requestID, frameID, userMediaDocumentOrigin = WTFMove(userMediaDocumentOrigin), topLevelDocumentOrigin = WTFMove(topLevelDocumentOrigin), originHasPersistentAccess, completionHandler = WTFMove(completionHandler)](String&& deviceIDHashSalt) mutable {
+            auto callCompletionHandler = makeScopeExit([&completionHandler] {
+                completionHandler({ }, { });
+            });
+
             if (!weakThis || !m_pendingDeviceRequests.remove(requestID))
                 return;
 
@@ -642,16 +658,17 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
 
             bool revealIdsAndLabels = originHasPersistentAccess || wasGrantedVideoOrAudioAccess(frameID, userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
 
-            m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration { userMediaID, computeFilteredDeviceList(revealIdsAndLabels, deviceIDHashSalt), deviceIDHashSalt, originHasPersistentAccess }, m_page.pageID());
+            callCompletionHandler.release();
+            completionHandler(computeFilteredDeviceList(revealIdsAndLabels, deviceIDHashSalt), deviceIDHashSalt);
         });
     };
 
-    getUserMediaPermissionInfo(frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(completionHandler));
+    getUserMediaPermissionInfo(frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(callback));
 #else
-    UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOrigin);
     UNUSED_PARAM(topLevelDocumentOrigin);
+    completionHandler({ }, { });
 #endif
 }
 

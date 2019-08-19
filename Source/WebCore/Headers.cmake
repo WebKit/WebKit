@@ -90,7 +90,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/mediastream/DoubleRange.h
     Modules/mediastream/LongRange.h
-    Modules/mediastream/MediaDevicesEnumerationRequest.h
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackConstraints.h
     Modules/mediastream/RTCController.h

@@ -69,7 +69,7 @@ public:
     void grantRequest(UserMediaPermissionRequestProxy&);
     void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& invalidConstraint = { });
 
-    void enumerateMediaDevicesForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
+    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
 
     void stopCapture();
     void scheduleNextRejection();
@@ -105,6 +105,7 @@ private:
 
     using PermissionInfo = UserMediaPermissionCheckProxy::PermissionInfo;
     void getUserMediaPermissionInfo(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&&);
+    void captureDevicesChanged(PermissionInfo);
 
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 

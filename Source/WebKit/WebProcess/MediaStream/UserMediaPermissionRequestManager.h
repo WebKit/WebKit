@@ -24,7 +24,6 @@
 #include "SandboxExtension.h"
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
-#include <WebCore/MediaDevicesEnumerationRequest.h>
 #include <WebCore/UserMediaClient.h>
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/HashMap.h>
@@ -46,9 +45,7 @@ public:
     void userMediaAccessWasGranted(uint64_t, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&&);
     void userMediaAccessWasDenied(uint64_t, WebCore::UserMediaRequest::MediaAccessDenialReason, String&&);
 
-    void enumerateMediaDevices(WebCore::MediaDevicesEnumerationRequest&);
-    void cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest&);
-    void didCompleteMediaDeviceEnumeration(uint64_t, const Vector<WebCore::CaptureDevice>& deviceList, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess);
+    void enumerateMediaDevices(WebCore::Document&, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
 
     WebCore::UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
     void removeDeviceChangeObserver(WebCore::UserMediaClient::DeviceChangeObserverToken);
@@ -68,9 +65,6 @@ private:
     HashMap<uint64_t, RefPtr<WebCore::UserMediaRequest>> m_idToUserMediaRequestMap;
     HashMap<RefPtr<WebCore::UserMediaRequest>, uint64_t> m_userMediaRequestToIDMap;
     HashMap<RefPtr<WebCore::Document>, Vector<RefPtr<WebCore::UserMediaRequest>>> m_blockedUserMediaRequests;
-
-    HashMap<uint64_t, RefPtr<WebCore::MediaDevicesEnumerationRequest>> m_idToMediaDevicesEnumerationRequestMap;
-    HashMap<RefPtr<WebCore::MediaDevicesEnumerationRequest>, uint64_t> m_mediaDevicesEnumerationRequestToIDMap;
 
     HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, WTF::Function<void()>> m_deviceChangeObserverMap;
     bool m_monitoringDeviceChange { false };

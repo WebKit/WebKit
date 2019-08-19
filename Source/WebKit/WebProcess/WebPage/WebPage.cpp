@@ -4200,11 +4200,6 @@ void WebPage::userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, St
     m_userMediaPermissionRequestManager->userMediaAccessWasDenied(userMediaID, static_cast<UserMediaRequest::MediaAccessDenialReason>(reason), WTFMove(invalidConstraint));
 }
 
-void WebPage::didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<CaptureDevice>& devices, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess)
-{
-    m_userMediaPermissionRequestManager->didCompleteMediaDeviceEnumeration(userMediaID, devices, WTFMove(deviceIdentifierHashSalt), originHasPersistentAccess);
-}
-
 void WebPage::captureDevicesChanged()
 {
     m_userMediaPermissionRequestManager->captureDevicesChanged();

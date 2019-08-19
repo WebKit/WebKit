@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "MediaDevicesRequest.h"
+#include "JSMediaDeviceInfo.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RuntimeEnabledFeatures.h"
@@ -61,6 +61,11 @@ inline MediaDevices::MediaDevices(Document& document)
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Window) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Window), "MediaDevices::DisplayCaptureSurfaceType::Window is not RealtimeMediaSourceSettings::DisplaySurfaceType::Window as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Application) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Application), "MediaDevices::DisplayCaptureSurfaceType::Application is not RealtimeMediaSourceSettings::DisplaySurfaceType::Application as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Browser) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Browser), "MediaDevices::DisplayCaptureSurfaceType::Browser is not RealtimeMediaSourceSettings::DisplaySurfaceType::Browser as expected");
+
+    if (auto* controller = UserMediaController::from(document.page())) {
+        m_canAccessCamera = controller->canCallGetUserMedia(document, { UserMediaController::CaptureType::Camera }) == UserMediaController::GetUserMediaAccess::CanCall;
+        m_canAccessMicrophone = controller->canCallGetUserMedia(document, { UserMediaController::CaptureType::Microphone }) == UserMediaController::GetUserMediaAccess::CanCall;
+    }
 }
 
 MediaDevices::~MediaDevices() = default;
@@ -73,6 +78,7 @@ void MediaDevices::stop()
         if (document && controller)
             controller->removeDeviceChangeObserver(m_deviceChangeToken);
     }
+    m_devices.clear();
 }
 
 Ref<MediaDevices> MediaDevices::create(Document& document)
@@ -129,12 +135,54 @@ void MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise
     request->start();
 }
 
-void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
+void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
+{
+    Vector<Ref<MediaDeviceInfo>> devices;
+    for (auto& newDevice : newDevices) {
+        if (!m_canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
+            continue;
+        if (!m_canAccessCamera && newDevice.type() == CaptureDevice::DeviceType::Camera)
+            continue;
+
+        auto index = m_devices.findMatching([&newDevice](auto& oldDevice) {
+            return oldDevice->deviceId() == newDevice.persistentId();
+        });
+        if (index != notFound) {
+            devices.append(m_devices[index].copyRef());
+            continue;
+        }
+
+        auto deviceType = newDevice.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
+        devices.append(MediaDeviceInfo::create(newDevice.label(), newDevice.persistentId(), newDevice.groupId(), deviceType));
+    }
+    m_devices = WTFMove(devices);
+}
+
+void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
 {
     auto* document = this->document();
     if (!document)
         return;
-    MediaDevicesRequest::create(*document, WTFMove(promise))->start();
+
+    auto* controller = UserMediaController::from(document->page());
+    if (!controller) {
+        promise.resolve({ });
+        return;
+    }
+    if (!m_canAccessCamera && !m_canAccessMicrophone) {
+        controller->logGetUserMediaDenial(*document, UserMediaController::GetUserMediaAccess::BlockedByFeaturePolicy, UserMediaController::BlockedCaller::EnumerateDevices);
+        promise.resolve({ });
+        return;
+    }
+
+    controller->enumerateMediaDevices(*document, [this, weakThis = makeWeakPtr(this), promise = WTFMove(promise)](const auto& newDevices, const auto& deviceIDHashSalt) mutable {
+        if (!weakThis || isContextStopped())
+            return;
+
+        this->document()->setDeviceIDHashSalt(deviceIDHashSalt);
+        refreshDevices(newDevices);
+        promise.resolve(m_devices);
+    });
 }
 
 MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
@@ -158,8 +206,10 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 
 void MediaDevices::scheduledEventTimerFired()
 {
-    if (scriptExecutionContext())
-        dispatchEvent(Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    if (isContextStopped())
+        return;
+
+    dispatchEvent(Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 bool MediaDevices::hasPendingActivity() const
@@ -177,33 +227,30 @@ bool MediaDevices::canSuspendForDocumentSuspension() const
     return true;
 }
 
+void MediaDevices::listenForDeviceChanges()
+{
+    if (m_listeningForDeviceChanges || (!m_canAccessCamera && !m_canAccessMicrophone))
+        return;
+
+    m_listeningForDeviceChanges = true;
+
+    auto* document = this->document();
+    auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
+    if (!controller)
+        return;
+
+    m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = makeWeakPtr(*this), this]() {
+        if (!weakThis || m_scheduledEventTimer.isActive())
+            return;
+
+        m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
+    });
+}
+
 bool MediaDevices::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    if (!m_listeningForDeviceChanges && eventType == eventNames().devicechangeEvent) {
-        auto* document = this->document();
-        auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
-        if (document && controller) {
-            m_listeningForDeviceChanges = true;
-
-            m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = makeWeakPtr(*this), this]() {
-
-                if (!weakThis || m_scheduledEventTimer.isActive())
-                    return;
-
-                auto* document = this->document();
-                auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
-                if (!controller)
-                    return;
-
-                bool canAccessMicrophone = controller->canCallGetUserMedia(*document, { UserMediaController::CaptureType::Microphone }) == UserMediaController::GetUserMediaAccess::CanCall;
-                bool canAccessCamera = controller->canCallGetUserMedia(*document, { UserMediaController::CaptureType::Camera }) == UserMediaController::GetUserMediaAccess::CanCall;
-                if (!canAccessMicrophone && !canAccessCamera)
-                    return;
-
-                m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
-            });
-        }
-    }
+    if (eventType == eventNames().devicechangeEvent)
+        listenForDeviceChanges();
 
     return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
 }

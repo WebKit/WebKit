@@ -282,11 +282,11 @@ messages -> WebPageProxy {
 
     # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, WebCore::FrameIdentifier frameID, String originIdentifier)
-    
+
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
     RequestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
-    EnumerateMediaDevicesForFrame(uint64_t userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier)
+    EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt) Async
     BeginMonitoringCaptureDevices()
 #endif
 
@@ -298,7 +298,7 @@ messages -> WebPageProxy {
     DidDestroyNotification(uint64_t notificationID)
 
     # Spelling and grammar messages
-#if USE(UNIFIED_TEXT_CHECKING)  
+#if USE(UNIFIED_TEXT_CHECKING)
     CheckTextOfParagraph(String text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint) -> (Vector<WebCore::TextCheckingResult> results) Synchronous
 #endif
     CheckSpellingOfString(String text) -> (int32_t misspellingLocation, int32_t misspellingLength) Synchronous

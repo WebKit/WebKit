@@ -160,8 +160,6 @@ Modules/mediasource/VideoPlaybackQuality.cpp
 Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp
 Modules/mediastream/MediaDeviceInfo.cpp
 Modules/mediastream/MediaDevices.cpp
-Modules/mediastream/MediaDevicesEnumerationRequest.cpp
-Modules/mediastream/MediaDevicesRequest.cpp
 Modules/mediastream/MediaStream.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackEvent.cpp

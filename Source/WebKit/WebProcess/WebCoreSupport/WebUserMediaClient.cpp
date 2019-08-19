@@ -50,14 +50,9 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
     m_page.userMediaPermissionRequestManager().cancelUserMediaRequest(request);
 }
 
-void WebUserMediaClient::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
+void WebUserMediaClient::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
 {
-    m_page.userMediaPermissionRequestManager().enumerateMediaDevices(request);
-}
-
-void WebUserMediaClient::cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest& request)
-{
-    m_page.userMediaPermissionRequestManager().cancelMediaDevicesEnumeration(request);
+    m_page.userMediaPermissionRequestManager().enumerateMediaDevices(document, WTFMove(completionHandler));
 }
 
 WebUserMediaClient::DeviceChangeObserverToken WebUserMediaClient::addDeviceChangeObserver(WTF::Function<void()>&& observer)

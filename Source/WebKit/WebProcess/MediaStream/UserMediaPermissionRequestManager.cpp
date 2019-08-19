@@ -159,45 +159,15 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t reques
     request->deny(reason, WTFMove(invalidConstraint));
 }
 
-void UserMediaPermissionRequestManager::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
+void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
 {
-    auto* document = downcast<Document>(request.scriptExecutionContext());
-    auto* frame = document ? document->frame() : nullptr;
-
+    auto* frame = document.frame();
     if (!frame) {
-        request.setDeviceInfo(Vector<CaptureDevice>(), emptyString(), false);
+        completionHandler({ }, emptyString());
         return;
     }
 
-    uint64_t requestID = generateRequestID();
-    m_idToMediaDevicesEnumerationRequestMap.add(requestID, &request);
-    m_mediaDevicesEnumerationRequestToIDMap.add(&request, requestID);
-
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
-    ASSERT(webFrame);
-
-    SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
-    ASSERT(topLevelDocumentOrigin);
-    m_page.send(Messages::WebPageProxy::EnumerateMediaDevicesForFrame(requestID, webFrame->frameID(), request.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data()));
-}
-
-void UserMediaPermissionRequestManager::cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest& request)
-{
-    uint64_t requestID = m_mediaDevicesEnumerationRequestToIDMap.take(&request);
-    if (!requestID)
-        return;
-    request.setDeviceInfo(Vector<CaptureDevice>(), emptyString(), false);
-    m_idToMediaDevicesEnumerationRequestMap.remove(requestID);
-}
-
-void UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration(uint64_t requestID, const Vector<CaptureDevice>& deviceList, String&& mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
-{
-    RefPtr<MediaDevicesEnumerationRequest> request = m_idToMediaDevicesEnumerationRequestMap.take(requestID);
-    if (!request)
-        return;
-    m_mediaDevicesEnumerationRequestToIDMap.remove(request);
-    
-    request->setDeviceInfo(deviceList, WTFMove(mediaDeviceIdentifierHashSalt), hasPersistentAccess);
+    m_page.sendWithAsyncReply(Messages::WebPageProxy::EnumerateMediaDevicesForFrame { WebFrame::fromCoreFrame(*frame)->frameID(), document.securityOrigin().data(), document.topOrigin().data() }, WTFMove(completionHandler));
 }
 
 UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::addDeviceChangeObserver(WTF::Function<void()>&& observer)

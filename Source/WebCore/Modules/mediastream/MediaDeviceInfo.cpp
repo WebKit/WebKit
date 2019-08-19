@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,18 +34,17 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaDeviceInfo);
 
-inline MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, Kind kind)
-    : ContextDestructionObserver(context)
-    , m_label(label)
+Ref<MediaDeviceInfo> MediaDeviceInfo::create(const String& label, const String& deviceId, const String& groupId, Kind kind)
+{
+    return adoptRef(*new MediaDeviceInfo(label, deviceId, groupId, kind));
+}
+
+MediaDeviceInfo::MediaDeviceInfo(const String& label, const String& deviceId, const String& groupId, Kind kind)
+    : m_label(label)
     , m_deviceId(deviceId)
     , m_groupId(groupId)
     , m_kind(kind)
 {
-}
-
-Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, Kind kind)
-{
-    return adoptRef(*new MediaDeviceInfo(context, label, deviceId, groupId, kind));
 }
 
 } // namespace WebCore

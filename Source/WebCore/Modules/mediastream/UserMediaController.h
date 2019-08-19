@@ -29,6 +29,7 @@
 
 #include "Page.h"
 #include "UserMediaClient.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -45,8 +46,7 @@ public:
     void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);
 
-    void enumerateMediaDevices(MediaDevicesEnumerationRequest&);
-    void cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest&);
+    void enumerateMediaDevices(Document&, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&&);
 
     UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
@@ -63,7 +63,7 @@ public:
         Camera = 1 << 1,
         Display = 1 << 3
     };
-    GetUserMediaAccess canCallGetUserMedia(Document&, OptionSet<CaptureType>);
+    GetUserMediaAccess canCallGetUserMedia(const Document&, OptionSet<CaptureType>) const;
 
     enum class BlockedCaller {
         GetUserMedia,
@@ -89,15 +89,11 @@ inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& 
     m_client->cancelUserMediaAccessRequest(request);
 }
 
-inline void UserMediaController::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
+inline void UserMediaController::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
 {
-    m_client->enumerateMediaDevices(request);
+    m_client->enumerateMediaDevices(document, WTFMove(completionHandler));
 }
 
-inline void UserMediaController::cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest& request)
-{
-    m_client->cancelMediaDevicesEnumerationRequest(request);
-}
 
 inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDeviceChangeObserver(WTF::Function<void()>&& observer)
 {

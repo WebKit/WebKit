@@ -77,7 +77,7 @@ public:
     };
     void getUserMedia(const StreamConstraints&, Promise&&) const;
     void getDisplayMedia(const StreamConstraints&, Promise&&) const;
-    void enumerateDevices(EnumerateDevicesPromise&&) const;
+    void enumerateDevices(EnumerateDevicesPromise&&);
     MediaTrackSupportedConstraints getSupportedConstraints();
 
     using RefCounted<MediaDevices>::ref;
@@ -90,6 +90,9 @@ private:
 
     void scheduledEventTimerFired();
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+
+    void refreshDevices(const Vector<CaptureDevice>&);
+    void listenForDeviceChanges();
 
     friend class JSMediaDevicesOwner;
 
@@ -110,6 +113,10 @@ private:
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
     bool m_listeningForDeviceChanges { false };
     bool m_disableGetDisplayMediaUserGestureConstraint { false };
+
+    Vector<Ref<MediaDeviceInfo>> m_devices;
+    bool m_canAccessCamera { false };
+    bool m_canAccessMicrophone { false };
 };
 
 } // namespace WebCore

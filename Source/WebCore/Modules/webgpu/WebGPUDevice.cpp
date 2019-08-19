@@ -36,6 +36,7 @@
 #include "GPUBufferBinding.h"
 #include "GPUBufferDescriptor.h"
 #include "GPUCommandBuffer.h"
+#include "GPUComputePipelineDescriptor.h"
 #include "GPUPipelineStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUSampler.h"

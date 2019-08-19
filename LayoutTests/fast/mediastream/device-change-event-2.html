@@ -27,33 +27,39 @@
             .then(s => stream = s)
 
         let devices = await navigator.mediaDevices.enumerateDevices();
+        let devices2 = await navigator.mediaDevices.enumerateDevices();
 
         assert_true(!!devices.length, "check there are some devices");
+        assert_array_equals(devices, devices2);
 
         testRunner.clearMockMediaDevices();
-
-        devices = await navigator.mediaDevices.enumerateDevices();
-        assert_false(!!devices.length, "check there are no more devices");
-
         await new Promise((resolve, reject) => {
             navigator.mediaDevices.ondevicechange = resolve;
             setTimeout(() => {
-                console.log("event 1 took too long");
-                resolve();
+                reject("event 1 took too long");
             }, 5000);
-            testRunner.addMockCameraDevice("id1", "my camera");
         });
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_false(!!devices.length, "check there are no more devices");
+
+        testRunner.addMockCameraDevice("id1", "my camera");
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = resolve;
+            setTimeout(() => {
+                reject("event 2 took too long");
+            }, 5000);
+        });
+
         devices = await navigator.mediaDevices.enumerateDevices();
         assert_equals(devices[0].kind, "videoinput");
         assert_equals(devices[0].label, "my camera");
 
+        testRunner.addMockMicrophoneDevice("id2", "my mic");
         await new Promise((resolve, reject) => {
             navigator.mediaDevices.ondevicechange = resolve;
             setTimeout(() => {
-                console.log("event 2 took too long");
-                resolve();
+                reject("event 3 took too long");
             }, 5000);
-            testRunner.addMockMicrophoneDevice("id2", "my mic");
         });
         devices = await navigator.mediaDevices.enumerateDevices();
         assert_equals(devices[0].kind, "audioinput");

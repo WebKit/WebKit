@@ -36,6 +36,7 @@
 #include "RTCDTMFSender.h"
 #include "RTCDTMFSenderBackend.h"
 #include "RTCRtpCapabilities.h"
+#include "RTCRtpTransceiver.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
 

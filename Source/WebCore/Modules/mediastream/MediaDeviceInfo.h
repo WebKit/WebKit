@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-class MediaDeviceInfo final : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, private ContextDestructionObserver {
+class MediaDeviceInfo final : public RefCounted<MediaDeviceInfo>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(MediaDeviceInfo);
 public:
     enum class Kind { Audioinput, Audiooutput, Videoinput };
 
-    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, Kind);
+    static Ref<MediaDeviceInfo> create(const String&, const String&, const String&, Kind);
 
     const String& label() const { return m_label; }
     const String& deviceId() const { return m_deviceId; }
@@ -46,7 +46,7 @@ public:
     Kind kind() const { return m_kind; }
 
 private:
-    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, Kind);
+    MediaDeviceInfo(const String&, const String&, const String&, Kind);
 
     const String m_label;
     const String m_deviceId;

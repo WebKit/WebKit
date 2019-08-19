@@ -1,3 +1,49 @@
+2019-08-19  Youenn Fablet  <youenn@apple.com>
+
+        enumerateDevices should return the same JS objects if called twice
+        https://bugs.webkit.org/show_bug.cgi?id=200767
+
+        Reviewed by Eric Carlson.
+
+        Make MediaDevices store the last list of enumerated MediaDeviceInfo objects.
+        Reuse them for the next enumerateDevices call if needed.
+        In case of a device change event, make sure the next enumerateDevices call will fetch the new list of devices.
+        When constructing the new list of devices, reuse any preexisting device in the old list as specified by
+        https://w3c.github.io/mediacapture-main/#dom-mediadevices-enumeratedevices.
+
+        Update enumerateDevices to use a completion handler.
+        Remove MediaDevicesRequest and MediaDevicesEnumerationRequest.
+        Covered by updated test and existing tests.
+
+        * Modules/mediastream/MediaDeviceInfo.cpp:
+        (WebCore::MediaDeviceInfo::MediaDeviceInfo):
+        (WebCore::MediaDeviceInfo::create):
+        * Modules/mediastream/MediaDeviceInfo.h:
+        * Modules/mediastream/MediaDeviceInfo.idl:
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices):
+        (WebCore::MediaDevices::stop):
+        (WebCore::MediaDevices::refreshDevices):
+        (WebCore::MediaDevices::enumerateDevices):
+        (WebCore::MediaDevices::scheduledEventTimerFired):
+        (WebCore::MediaDevices::listenForDeviceChanges):
+        (WebCore::MediaDevices::addEventListener):
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaDevices.idl:
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp: Removed.
+        * Modules/mediastream/MediaDevicesEnumerationRequest.h: Removed.
+        * Modules/mediastream/MediaDevicesRequest.cpp: Removed.
+        * Modules/mediastream/MediaDevicesRequest.h: Removed.
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/mediastream/UserMediaClient.h:
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::isAllowedToUse):
+        (WebCore::UserMediaController::canCallGetUserMedia const):
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::enumerateMediaDevices):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
