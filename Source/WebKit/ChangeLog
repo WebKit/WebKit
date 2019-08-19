@@ -1,3 +1,21 @@
+2019-08-19  Chris Dumez  <cdumez@apple.com>
+
+        NetworkDataTask is being ref'd / deref'd from several threads and is not ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200897
+
+        Reviewed by Geoffrey Garen.
+
+        NetworkDataTask subclasses RefCounted and is ref'd / deref'd on the main thread. However, there
+        is code in NetworkDataTaskCocoa::resume() that was ref'ing / deref'ing it on a background thread,
+        which is unsafe. To address the issue, Have NetworkDataTask subclass ThreadSafeRefCounted, and
+        make sure it always gets destroyed on the main thread.
+
+        * NetworkProcess/NetworkDataTask.h:
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::resume):
+        Avoid some unnecessary refcounting churn.
+
 2019-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Move call to initializeMainThread introduced in r248549 to after WebKit.framework has been loaded

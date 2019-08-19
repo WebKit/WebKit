@@ -35,6 +35,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -78,7 +79,7 @@ public:
     virtual ~NetworkDataTaskClient() { }
 };
 
-class NetworkDataTask : public RefCounted<NetworkDataTask>, public CanMakeWeakPtr<NetworkDataTask> {
+class NetworkDataTask : public ThreadSafeRefCounted<NetworkDataTask, WTF::DestructionThread::Main>, public CanMakeWeakPtr<NetworkDataTask> {
 public:
     static Ref<NetworkDataTask> create(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
