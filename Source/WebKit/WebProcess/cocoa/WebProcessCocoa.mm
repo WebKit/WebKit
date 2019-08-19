@@ -88,6 +88,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import "AccessibilitySupportSPI.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -315,20 +316,34 @@ void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState t
 }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+static NSString *webProcessLoaderAccessibilityBundlePath()
+{
+    NSString *accessibilityBundlesPath = nil;
+#if HAVE(ACCESSIBILITY_BUNDLES_PATH)
+    accessibilityBundlesPath = (__bridge NSString *)_AXSAccessibilityBundlesPath();
+#else
+    accessibilityBundlesPath = (__bridge NSString *)GSSystemRootDirectory();
+#if PLATFORM(MACCATALYST)
+    accessibilityBundlesPath = [accessibilityBundlesPath stringByAppendingPathComponent:@"System/iOSSupport"];
+#endif
+    accessibilityBundlesPath = [accessibilityBundlesPath stringByAppendingPathComponent:@"System/Library/AccessibilityBundles"];
+#endif // HAVE(ACCESSIBILITY_BUNDLES_PATH)
+    return [accessibilityBundlesPath stringByAppendingPathComponent:@"WebProcessLoader.axbundle"];
+}
+#endif
+
 static void registerWithAccessibility()
 {
 #if USE(APPKIT)
     [NSAccessibilityRemoteUIElement setRemoteUIApp:YES];
 #endif
+
 #if PLATFORM(IOS_FAMILY)
-    NSString *accessibilityBundlePath = (NSString *)GSSystemRootDirectory();
-#if PLATFORM(MACCATALYST)
-    accessibilityBundlePath = [accessibilityBundlePath stringByAppendingString:@"System/iOSSupport"];
-#endif
-    accessibilityBundlePath = [accessibilityBundlePath stringByAppendingString:@"System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
+    NSString *bundlePath = webProcessLoaderAccessibilityBundlePath();
     NSError *error = nil;
-    if (![[NSBundle bundleWithPath:accessibilityBundlePath] loadAndReturnError:&error])
-        LOG_ERROR("Failed to load accessibility bundle at %@: %@", accessibilityBundlePath, error);
+    if (![[NSBundle bundleWithPath:bundlePath] loadAndReturnError:&error])
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath, error);
 #endif
 }
 

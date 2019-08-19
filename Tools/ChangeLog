@@ -1,5 +1,66 @@
 2019-08-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r248823. rdar://problem/54454713
+
+    Source/WebKit:
+    Use bundlePath SPI in AccessibilitySupport for WebProcessLoader
+    https://bugs.webkit.org/show_bug.cgi?id=200367
+    
+    Patch by Eric Liang <ericliang@apple.com> on 2019-08-17
+    Reviewed by Darin Adler.
+    
+    * Platform/spi/ios/AccessibilitySupportSPI.h:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::accessibilityWebProcessLoaderBundlePath):
+    (WebKit::registerWithAccessibility):
+    
+    Source/WTF:
+    Added HAVE_ACCESSIBILITY_BUNDLES_PATH
+    https://bugs.webkit.org/show_bug.cgi?id=200367
+    
+    Patch by Eric Liang <ericliang@apple.com> on 2019-08-17
+    Reviewed by Darin Adler.
+    
+    * wtf/Platform.h:
+    
+    Tools:
+    Tested that accessibility WebProcessLoader bundle is loaded for the correct path.
+    https://bugs.webkit.org/show_bug.cgi?id=200367
+    
+    Patch by Eric Liang <ericliang@apple.com> on 2019-08-17
+    Reviewed by Darin Adler.
+    
+    Added AccessibilityTestPlugin on the web process to report whether a bundle is loaded and its path, so that it can be tested on WKContentView.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/AccessibilityTestPlugin.mm: Added.
+    (-[AccessibilityTestPlugin webProcessPlugIn:didCreateBrowserContextController:]):
+    (-[AccessibilityTestPlugin checkAccessibilityWebProcessLoaderBundleIsLoaded:]):
+    * TestWebKitAPI/Tests/WebKitCocoa/AccessibilityTestSupportProtocol.h: Added.
+    * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248823 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-17  Eric Liang  <ericliang@apple.com>
+
+            Tested that accessibility WebProcessLoader bundle is loaded for the correct path.
+            https://bugs.webkit.org/show_bug.cgi?id=200367
+
+            Reviewed by Darin Adler.
+
+            Added AccessibilityTestPlugin on the web process to report whether a bundle is loaded and its path, so that it can be tested on WKContentView.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/AccessibilityTestPlugin.mm: Added.
+            (-[AccessibilityTestPlugin webProcessPlugIn:didCreateBrowserContextController:]):
+            (-[AccessibilityTestPlugin checkAccessibilityWebProcessLoaderBundleIsLoaded:]):
+            * TestWebKitAPI/Tests/WebKitCocoa/AccessibilityTestSupportProtocol.h: Added.
+            * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+            (TestWebKitAPI::TEST):
+
+2019-08-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r248776. rdar://problem/54455007
 
     REGRESSION (r248436): WKWebView doesn’t respect isOpaque setting in NIB.

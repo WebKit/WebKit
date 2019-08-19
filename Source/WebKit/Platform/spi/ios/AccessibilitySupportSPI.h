@@ -42,7 +42,11 @@ WTF_EXTERN_C_BEGIN
 extern Boolean _AXSKeyRepeatEnabled();
 extern Boolean _AXSApplicationAccessibilityEnabled();
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
+#if HAVE(ACCESSIBILITY_BUNDLES_PATH)
+extern CFStringRef _AXSAccessibilityBundlesPath();
 #endif
+
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(FULL_KEYBOARD_ACCESS)
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
