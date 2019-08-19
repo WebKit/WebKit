@@ -1,3 +1,20 @@
+2019-08-19  Youenn Fablet  <youenn@apple.com>
+
+        Stop MediaDevices timer when stopping MediaDevices
+        https://bugs.webkit.org/show_bug.cgi?id=200880
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+        Stop timer when stopping MediaDevices and check for MediaDevices being stopped before scheduling the timer.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::stop):
+        Remove document/controller check since at that point,
+        the document should not be null and the controller should be there.
+        (WebCore::MediaDevices::scheduledEventTimerFired):
+        (WebCore::MediaDevices::listenForDeviceChanges):
+
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative build fix for GTK and WinCairo

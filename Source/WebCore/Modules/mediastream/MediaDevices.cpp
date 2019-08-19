@@ -73,12 +73,11 @@ MediaDevices::~MediaDevices() = default;
 void MediaDevices::stop()
 {
     if (m_deviceChangeToken) {
-        auto* document = this->document();
-        auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
-        if (document && controller)
-            controller->removeDeviceChangeObserver(m_deviceChangeToken);
+        auto* controller = UserMediaController::from(document()->page());
+        controller->removeDeviceChangeObserver(m_deviceChangeToken);
     }
     m_devices.clear();
+    m_scheduledEventTimer.stop();
 }
 
 Ref<MediaDevices> MediaDevices::create(Document& document)
@@ -206,9 +205,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 
 void MediaDevices::scheduledEventTimerFired()
 {
-    if (isContextStopped())
-        return;
-
+    ASSERT(!isContextStopped());
     dispatchEvent(Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
@@ -240,7 +237,7 @@ void MediaDevices::listenForDeviceChanges()
         return;
 
     m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = makeWeakPtr(*this), this]() {
-        if (!weakThis || m_scheduledEventTimer.isActive())
+        if (!weakThis || isContextStopped() || m_scheduledEventTimer.isActive())
             return;
 
         m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
