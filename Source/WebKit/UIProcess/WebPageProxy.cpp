@@ -7470,10 +7470,10 @@ void WebPageProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, const 
 
     userMediaPermissionRequestManager().enumerateMediaDevicesForFrame(frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin(), WTFMove(completionHandler));
 #else
-    UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOriginData);
     UNUSED_PARAM(topLevelDocumentOriginData);
+    UNUSED_PARAM(completionHandler);
 #endif
 }
 
