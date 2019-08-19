@@ -1,3 +1,14 @@
+2019-08-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove IDB-specific quota
+        https://bugs.webkit.org/show_bug.cgi?id=196545
+        <rdar://problem/54201783>
+
+        Reviewed by Youenn Fablet.
+
+        * IndexedDB/large-binary-keys.html:
+        * IndexedDB/large-string-keys.html:
+
 2019-08-14  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13

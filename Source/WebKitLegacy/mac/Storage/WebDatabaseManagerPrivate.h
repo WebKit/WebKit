@@ -70,7 +70,6 @@ extern CFStringRef WebDatabaseOriginsDidChangeNotification;
 
 // For DumpRenderTree support only
 - (void)deleteAllIndexedDatabases;
-- (void)setIDBPerOriginQuota:(uint64_t)quota;
 
 #if TARGET_OS_IPHONE
 + (void)scheduleEmptyDatabaseRemoval;

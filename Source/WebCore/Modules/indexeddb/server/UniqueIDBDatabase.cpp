@@ -2298,12 +2298,6 @@ void UniqueIDBDatabase::forgetErrorCallback(uint64_t callbackIdentifier)
     m_errorCallbacks.remove(callbackIdentifier);
 }
 
-void UniqueIDBDatabase::setQuota(uint64_t quota)
-{
-    if (m_backingStore)
-        m_backingStore->setQuota(quota);
-}
-
 void UniqueIDBDatabase::abortTransactionOnMainThread(UniqueIDBDatabaseTransaction& transaction)
 {
     transaction.setResult(m_backingStore->abortTransaction(transaction.info().identifier()));

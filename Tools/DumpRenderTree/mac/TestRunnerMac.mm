@@ -439,11 +439,6 @@ void TestRunner::setDatabaseQuota(unsigned long long quota)
     [origin release];
 }
 
-void TestRunner::setIDBPerOriginQuota(uint64_t quota)
-{
-    [[WebDatabaseManager sharedWebDatabaseManager] setIDBPerOriginQuota:quota];
-}
-
 void TestRunner::goBack()
 {
     [[mainFrame webView] goBack];

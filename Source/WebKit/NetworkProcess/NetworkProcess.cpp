@@ -2258,13 +2258,11 @@ Ref<IDBServer::IDBServer> NetworkProcess::createIDBServer(PAL::SessionID session
         path = m_idbDatabasePaths.get(sessionID);
     }
 
-    auto server = IDBServer::IDBServer::create(sessionID, path, *this, [this, weakThis = makeWeakPtr(this)](PAL::SessionID sessionID, const auto& origin) -> StorageQuotaManager* {
+    return IDBServer::IDBServer::create(sessionID, path, *this, [this, weakThis = makeWeakPtr(this)](PAL::SessionID sessionID, const auto& origin) -> StorageQuotaManager* {
         if (!weakThis)
             return nullptr;
         return &this->storageQuotaManager(sessionID, origin);
     });
-    server->setPerOriginQuota(m_idbPerOriginQuota);
-    return server;
 }
 
 IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
@@ -2359,14 +2357,6 @@ void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String&
         if (!indexedDatabaseDirectory.isEmpty())
             postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, indexedDatabaseDirectory));
     }
-}
-
-void NetworkProcess::setIDBPerOriginQuota(uint64_t quota)
-{
-    m_idbPerOriginQuota = quota;
-    
-    for (auto& server : m_idbServers.values())
-        server->setPerOriginQuota(quota);
 }
 #endif // ENABLE(INDEXED_DATABASE)
 

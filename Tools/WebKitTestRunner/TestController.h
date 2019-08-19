@@ -275,8 +275,6 @@ public:
 
     void setAllowStorageQuotaIncrease(bool);
 
-    void setIDBPerOriginQuota(uint64_t);
-
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
 

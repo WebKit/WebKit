@@ -1,3 +1,32 @@
+2019-08-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove IDB-specific quota
+        https://bugs.webkit.org/show_bug.cgi?id=196545
+        <rdar://problem/54201783>
+
+        Reviewed by Youenn Fablet.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        (setIDBPerOriginQuotaCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setIDBPerOriginQuota): Deleted.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setIDBPerOriginQuota): Deleted.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setIDBPerOriginQuota): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::setIDBPerOriginQuota): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Style checker should tell errors when it finds std::make_unique

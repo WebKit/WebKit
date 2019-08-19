@@ -346,14 +346,6 @@ HRESULT WebDatabaseManager::deleteAllIndexedDatabases()
     return S_OK;
 }
 
-HRESULT WebDatabaseManager::setIDBPerOriginQuota(unsigned long long quota)
-{
-#if ENABLE(INDEXED_DATABASE)
-    WebDatabaseProvider::singleton().setIDBPerOriginQuota(quota);
-#endif
-    return S_OK;
-}
-
 class DidModifyOriginData {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DidModifyOriginData);

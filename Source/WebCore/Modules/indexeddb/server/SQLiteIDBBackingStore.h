@@ -49,7 +49,7 @@ class SQLiteIDBCursor;
 class SQLiteIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&, uint64_t quota);
+    SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&);
     
     ~SQLiteIDBBackingStore() final;
 
@@ -82,7 +82,6 @@ public:
     IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) final;
     void deleteBackingStore() final;
 
-    void setQuota(uint64_t quota) final { m_quota = quota; }
     uint64_t databasesSizeForOrigin() const final;
 
     bool supportsSimultaneousTransactions() final { return false; }
@@ -109,9 +108,6 @@ private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
-
-    uint64_t quotaForOrigin() const;
-    uint64_t maximumSize() const;
 
     bool ensureValidRecordsTable();
     bool ensureValidIndexRecordsTable();
@@ -205,8 +201,6 @@ private:
     String m_databaseDirectory;
 
     IDBBackingStoreTemporaryFileHandler& m_temporaryFileHandler;
-    
-    uint64_t m_quota;
 
     Ref<IDBSerializationContext> m_serializationContext;
 };
