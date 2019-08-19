@@ -123,8 +123,9 @@ public: \
     \
     void* operator new[](size_t size) = delete; \
     void operator delete[](void* p) = delete; \
+using webkitFastMalloced = int; \
 private: \
-typedef int __makeBisoMallocedInlineMacroSemicolonifier
+using __makeBisoMallocedInlineMacroSemicolonifier = int
 
 #define MAKE_BISO_MALLOCED_IMPL(isoType) \
 ::bmalloc::api::IsoHeap<isoType>& isoType::bisoHeap() \

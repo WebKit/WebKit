@@ -42,6 +42,7 @@ struct SameSiteInfo;
 enum class CookieAcceptPolicy;
 
 class CookieJarCurl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier> frameID, Optional<PageIdentifier>, IncludeSecureCookies) const;
     void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier> frameID, Optional<PageIdentifier>, const String&) const;

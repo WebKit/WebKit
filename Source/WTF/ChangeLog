@@ -1,3 +1,20 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, actual static_assert part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoff Garen.
+
+        This is the last part of the split patch from https://bugs.webkit.org/show_bug.cgi?id=200620.
+        Expose T::webkitFastMalloced type to perform static_assert in makeUnique.
+        makeUnique and makeUniqueRef start performing static_assert check to ensure that the type T is FastMalloced / IsoHeaped.
+
+        * wtf/FastMalloc.h:
+        * wtf/StdLibExtras.h:
+        (WTF::makeUnique):
+        * wtf/UniqueRef.h:
+        (WTF::makeUniqueRef):
+
 2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part

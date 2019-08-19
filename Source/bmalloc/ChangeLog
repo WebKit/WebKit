@@ -1,3 +1,15 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, actual static_assert part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoff Garen.
+
+        Expose T::webkitFastMalloced type to perform static_assert in makeUnique.
+
+        * bmalloc/IsoHeap.h:
+        * bmalloc/IsoHeapInlines.h:
+
 2019-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Add IsoHeap test to ensure that IsoHeap pages are not allocating too large VA

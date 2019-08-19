@@ -570,6 +570,7 @@ namespace WTF {
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 {
+    static_assert(std::is_same<typename T::webkitFastMalloced, int>::value, "T is FastMalloced");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
