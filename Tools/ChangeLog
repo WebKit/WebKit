@@ -1,3 +1,55 @@
+2019-08-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r248776. rdar://problem/54455007
+
+    REGRESSION (r248436): WKWebView doesn’t respect isOpaque setting in NIB.
+    https://bugs.webkit.org/show_bug.cgi?id=200802
+    rdar://problem/54357818
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Tests: WKWebView.IsOpaqueDefault, WKWebView.SetOpaqueYes, WKWebView.SetOpaqueNo, WKWebView.IsOpaqueYesSubclassOverridden,
+    WKWebView.IsOpaqueNoSubclassOverridden, WKWebView.IsOpaqueYesDecodedFromArchive, WKWebView.IsOpaqueNoDecodedFromArchive,
+    WKWebView.IsOpaqueDrawsBackgroundYesConfiguration, WKWebView.IsOpaqueDrawsBackgroundNoConfiguration.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _initializeWithConfiguration:]): Call _setOpaqueInternal:NO instead of self.opaque = NO.
+    (-[WKWebView _setOpaqueInternal:]): Added. Moved code from setOpaque:.
+    (-[WKWebView setOpaque:]): Call _setOpaqueInternal:.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added WKWebViewOpaque.mm.
+    * TestWebKitAPI/Tests/ios/WKWebViewOpaque.mm: Added.
+    (-[OpaqueTestWKWebView isOpaque]): Added.
+    (-[NonOpaqueTestWKWebView isOpaque]): Added.
+    (isOpaque): Added.
+    (TEST): Added WKWebView.IsOpaqueDefault, WKWebView.SetOpaqueYes, WKWebView.SetOpaqueNo, WKWebView.IsOpaqueYesSubclassOverridden,
+    WKWebView.IsOpaqueNoSubclassOverridden, WKWebView.IsOpaqueYesDecodedFromArchive, WKWebView.IsOpaqueNoDecodedFromArchive,
+    WKWebView.IsOpaqueDrawsBackgroundYesConfiguration, WKWebView.IsOpaqueDrawsBackgroundNoConfiguration.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248776 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-16  Timothy Hatcher  <timothy@apple.com>
+
+            REGRESSION (r248436): WKWebView doesn’t respect isOpaque setting in NIB.
+            https://bugs.webkit.org/show_bug.cgi?id=200802
+            rdar://problem/54357818
+
+            Reviewed by Tim Horton.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added WKWebViewOpaque.mm.
+            * TestWebKitAPI/Tests/ios/WKWebViewOpaque.mm: Added.
+            (-[OpaqueTestWKWebView isOpaque]): Added.
+            (-[NonOpaqueTestWKWebView isOpaque]): Added.
+            (isOpaque): Added.
+            (TEST): Added WKWebView.IsOpaqueDefault, WKWebView.SetOpaqueYes, WKWebView.SetOpaqueNo, WKWebView.IsOpaqueYesSubclassOverridden,
+            WKWebView.IsOpaqueNoSubclassOverridden, WKWebView.IsOpaqueYesDecodedFromArchive, WKWebView.IsOpaqueNoDecodedFromArchive,
+            WKWebView.IsOpaqueDrawsBackgroundYesConfiguration, WKWebView.IsOpaqueDrawsBackgroundNoConfiguration.
+
 2019-08-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248717. rdar://problem/54360854
