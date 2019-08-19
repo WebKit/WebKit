@@ -106,6 +106,11 @@ OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const Web
 
     UIView *hitView = nil;
     for (auto *view : WTF::makeReversedRange(viewsAtPoint)) {
+        // We only hit WKChildScrollView directly if its content layer doesn't have an event region.
+        // We don't generate the region if there is nothing interesting in it, meaning the touch-action is auto.
+        if ([view isKindOfClass:[WKChildScrollView class]])
+            return WebCore::TouchAction::Auto;
+
         if ([view isKindOfClass:[WKCompositingView class]]) {
             hitView = view;
             break;
