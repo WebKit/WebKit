@@ -2732,7 +2732,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [NSNumber numberWithBool:m_object->caretBrowsingEnabled()];
         if ([attributeName isEqualToString:NSAccessibilityWebSessionIDAttribute]) {
             if (Document* doc = m_object->topDocument())
-                return [NSNumber numberWithUnsignedLongLong:doc->sessionID().sessionID()];
+                return [NSNumber numberWithUnsignedLongLong:doc->sessionID().toUInt64()];
         }
     }
     

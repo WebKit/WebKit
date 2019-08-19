@@ -568,36 +568,27 @@ void NetworkProcess::forEachNetworkStorageSession(const Function<void(WebCore::N
         functor(*storageSession);
 }
 
-NetworkSession* NetworkProcess::networkSession(const PAL::SessionID& sessionID) const
+NetworkSession* NetworkProcess::networkSession(PAL::SessionID sessionID) const
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(sessionID.isValid());
-    return sessionID.isValid() ? m_networkSessions.get(sessionID) : nullptr;
+    return m_networkSessions.get(sessionID);
 }
 
 NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& connection) const
 {
-    auto sessionID = m_sessionByConnection.get(connection.uniqueID());
-    return sessionID.isValid() ? networkSession(sessionID) : nullptr;
+    auto iterator = m_sessionByConnection.find(connection.uniqueID());
+    return iterator != m_sessionByConnection.end() ? networkSession(iterator->value) : nullptr;
 }
 
-void NetworkProcess::setSession(const PAL::SessionID& sessionID, std::unique_ptr<NetworkSession>&& session)
+void NetworkProcess::setSession(PAL::SessionID sessionID, std::unique_ptr<NetworkSession>&& session)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
     m_networkSessions.set(sessionID, WTFMove(session));
 }
 
-void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
+void NetworkProcess::destroySession(PAL::SessionID sessionID)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
 #if !USE(SOUP)
     // Soup based ports destroy the default session right before the process exits to avoid leaking
     // network resources like the cookies database.
@@ -1301,10 +1292,6 @@ static void fetchDiskCacheEntries(NetworkCache::Cache* cache, PAL::SessionID ses
 
 void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
 {
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void (WebsiteData)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
@@ -1402,10 +1389,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
 {
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
         if (auto* networkStorageSession = storageSession(sessionID))
@@ -1616,10 +1599,6 @@ static Vector<WebCore::SecurityOriginData> filterForRegistrableDomains(const Has
 
 void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
 
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
@@ -1824,10 +1803,6 @@ void NetworkProcess::deleteCookiesForTesting(PAL::SessionID sessionID, Registrab
 
 void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
     
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
@@ -2456,8 +2431,6 @@ bool NetworkProcess::needsServerToContextConnectionForRegistrableDomain(const Re
 
 SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
 {
-    ASSERT(sessionID.isValid());
-
     auto result = m_swServers.ensure(sessionID, [&] {
         auto path = m_swDatabasePaths.get(sessionID);
         // There should already be a registered path for this PAL::SessionID.
@@ -2475,10 +2448,6 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
 
 WebSWOriginStore* NetworkProcess::existingSWOriginStoreForSession(PAL::SessionID sessionID) const
 {
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return nullptr;
-
     auto* swServer = m_swServers.get(sessionID);
     if (!swServer)
         return nullptr;

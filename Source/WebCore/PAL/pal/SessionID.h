@@ -42,58 +42,55 @@ public:
         HashTableDeletedValueID = std::numeric_limits<uint64_t>::max(),
     };
 
-    static SessionID emptySessionID() { return SessionID(HashTableEmptyValueID); }
-    static SessionID hashTableDeletedValue() { return SessionID(HashTableDeletedValueID); }
     static SessionID defaultSessionID() { return SessionID(DefaultSessionID); }
     static SessionID legacyPrivateSessionID() { return SessionID(LegacyPrivateSessionID); }
 
-    bool isValid() const { return isValidSessionIDValue(m_sessionID); }
-    bool isEphemeral() const { return m_sessionID & EphemeralSessionMask && m_sessionID != HashTableDeletedValueID; }
+    explicit SessionID(WTF::HashTableDeletedValueType)
+        : m_identifier(HashTableDeletedValueID)
+    {
+    }
+
+    explicit SessionID(WTF::HashTableEmptyValueType)
+        : m_identifier(HashTableEmptyValueID)
+    {
+    }
 
     PAL_EXPORT static SessionID generateEphemeralSessionID();
     PAL_EXPORT static SessionID generatePersistentSessionID();
     PAL_EXPORT static void enableGenerationProtection();
 
-    uint64_t sessionID() const { return m_sessionID; }
-    bool operator==(SessionID sessionID) const { return m_sessionID == sessionID.m_sessionID; }
-    bool operator!=(SessionID sessionID) const { return m_sessionID != sessionID.m_sessionID; }
+    bool isValid() const { return isValidSessionIDValue(m_identifier); }
+    bool isEphemeral() const { return m_identifier & EphemeralSessionMask && m_identifier != HashTableDeletedValueID; }
+    bool isHashTableDeletedValue() const { return m_identifier == HashTableDeletedValueID; }
+
+    uint64_t toUInt64() const { return m_identifier; }
+    bool operator==(SessionID sessionID) const { return m_identifier == sessionID.m_identifier; }
+    bool operator!=(SessionID sessionID) const { return m_identifier != sessionID.m_identifier; }
     bool isAlwaysOnLoggingAllowed() const { return !isEphemeral(); }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, SessionID&);
     template<class Decoder> static Optional<SessionID> decode(Decoder&);
 
-    SessionID isolatedCopy() const;
+    SessionID isolatedCopy() const { return *this; }
+
+    explicit operator bool() const { return m_identifier; }
 
 private:
-    explicit SessionID(uint64_t sessionID)
-        : m_sessionID(sessionID)
+    explicit SessionID(uint64_t identifier)
+        : m_identifier(identifier)
     {
     }
 
     static bool isValidSessionIDValue(uint64_t sessionID) { return sessionID != HashTableEmptyValueID && sessionID != HashTableDeletedValueID; }
 
-    uint64_t m_sessionID;
+    uint64_t m_identifier;
 };
 
 template<class Encoder>
 void SessionID::encode(Encoder& encoder) const
 {
-    // FIXME: Change to a regular ASSERT.
-    RELEASE_ASSERT(isValid());
-    encoder << m_sessionID;
-}
-
-template<class Decoder>
-bool SessionID::decode(Decoder& decoder, SessionID& sessionID)
-{
-    Optional<SessionID> decodedSessionID;
-    decoder >> decodedSessionID;
-    if (!decodedSessionID)
-        return false;
-
-    sessionID = *decodedSessionID;
-    return true;
+    ASSERT(isValid());
+    encoder << m_identifier;
 }
 
 template<class Decoder>
@@ -101,9 +98,9 @@ Optional<SessionID> SessionID::decode(Decoder& decoder)
 {
     Optional<uint64_t> sessionID;
     decoder >> sessionID;
-    if (!sessionID || !isValidSessionIDValue(*sessionID))
+    if (!sessionID)
         return WTF::nullopt;
-
+    ASSERT(isValidSessionIDValue(*sessionID));
     return SessionID { *sessionID };
 }
 
@@ -112,16 +109,17 @@ Optional<SessionID> SessionID::decode(Decoder& decoder)
 namespace WTF {
 
 struct SessionIDHash {
-    static unsigned hash(const PAL::SessionID& p) { return intHash(p.sessionID()); }
+    static unsigned hash(const PAL::SessionID& p) { return intHash(p.toUInt64()); }
     static bool equal(const PAL::SessionID& a, const PAL::SessionID& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
-template<> struct HashTraits<PAL::SessionID> : GenericHashTraits<PAL::SessionID> {
-    static PAL::SessionID emptyValue() { return PAL::SessionID::emptySessionID(); }
 
-    static void constructDeletedValue(PAL::SessionID& slot) { slot = PAL::SessionID::hashTableDeletedValue(); }
-    static bool isDeletedValue(const PAL::SessionID& slot) { return slot == PAL::SessionID::hashTableDeletedValue(); }
+template<> struct HashTraits<PAL::SessionID> : GenericHashTraits<PAL::SessionID> {
+    static PAL::SessionID emptyValue() { return PAL::SessionID(HashTableEmptyValue); }
+    static void constructDeletedValue(PAL::SessionID& slot) { slot = PAL::SessionID(HashTableDeletedValue); }
+    static bool isDeletedValue(const PAL::SessionID& slot) { return slot.isHashTableDeletedValue(); }
 };
+
 template<> struct DefaultHash<PAL::SessionID> {
     typedef SessionIDHash Hash;
 };

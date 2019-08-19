@@ -1104,7 +1104,7 @@ void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionI
     auto* store = websiteDataStoreFromSessionID(sessionID);
 
     if (!store) {
-        RELEASE_LOG_ERROR(CacheStorage, "%p - NetworkProcessProxy is unable to retrieve CacheStorage parameters from the given session ID %" PRIu64, this, sessionID.sessionID());
+        RELEASE_LOG_ERROR(CacheStorage, "%p - NetworkProcessProxy is unable to retrieve CacheStorage parameters from the given session ID %" PRIu64, this, sessionID.toUInt64());
         send(Messages::NetworkProcess::SetCacheStorageParameters { sessionID, { }, { } }, 0);
         return;
     }

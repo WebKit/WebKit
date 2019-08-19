@@ -62,7 +62,6 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionFo
 
 WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnectionForSession(SessionID sessionID)
 {
-    ASSERT(sessionID.isValid());
     auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)
         return nullptr;

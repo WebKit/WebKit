@@ -160,10 +160,10 @@ public:
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
 
-    void setSession(const PAL::SessionID&, std::unique_ptr<NetworkSession>&&);
-    NetworkSession* networkSession(const PAL::SessionID&) const final;
+    void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
+    NetworkSession* networkSession(PAL::SessionID) const final;
     NetworkSession* networkSessionByConnection(IPC::Connection&) const;
-    void destroySession(const PAL::SessionID&);
+    void destroySession(PAL::SessionID);
 
     void forEachNetworkSession(const Function<void(NetworkSession&)>&);
 

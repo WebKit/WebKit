@@ -56,6 +56,7 @@ WebSWClientConnection::WebSWClientConnection(SessionID sessionID)
     : m_sessionID(sessionID)
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
+    ASSERT(m_sessionID.isValid());
     initializeConnectionIfNeeded();
 }
 
@@ -67,10 +68,6 @@ WebSWClientConnection::~WebSWClientConnection()
 
 void WebSWClientConnection::initializeConnectionIfNeeded()
 {
-    ASSERT(m_sessionID.isValid());
-    if (!m_sessionID.isValid())
-        return;
-
     if (m_connection)
         return;
 

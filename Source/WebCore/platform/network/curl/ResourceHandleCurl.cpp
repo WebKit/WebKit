@@ -155,7 +155,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
 
     CurlRequest::ShouldSuspend shouldSuspend = d->m_defersLoading ? CurlRequest::ShouldSuspend::Yes : CurlRequest::ShouldSuspend::No;
     // FIXME: Use a correct sessionID.
-    auto curlRequest = CurlRequest::create(request, *delegate(), PAL::SessionID::emptySessionID(), shouldSuspend, CurlRequest::EnableMultipart::Yes, CurlRequest::CaptureNetworkLoadMetrics::Basic, d->m_messageQueue);
+    auto curlRequest = CurlRequest::create(request, *delegate(), PAL::SessionID::defaultSessionID(), shouldSuspend, CurlRequest::EnableMultipart::Yes, CurlRequest::CaptureNetworkLoadMetrics::Basic, d->m_messageQueue);
     
     return curlRequest;
 }

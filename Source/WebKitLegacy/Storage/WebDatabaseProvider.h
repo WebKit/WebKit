@@ -54,7 +54,7 @@ private:
     static String indexedDatabaseDirectoryPath();
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<uint64_t, RefPtr<WebCore::InProcessIDBServer>> m_idbServerMap;
+    HashMap<PAL::SessionID, RefPtr<WebCore::InProcessIDBServer>> m_idbServerMap;
     uint64_t m_idbPerOriginQuota { WebCore::IDBServer::defaultPerOriginQuota };
 #endif
 };

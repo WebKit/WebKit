@@ -5066,12 +5066,6 @@ URL Document::completeURL(const String& url) const
 
 PAL::SessionID Document::sessionID() const
 {
-    if (m_sessionID.isValid())
-        return m_sessionID;
-
-    if (auto* page = this->page())
-        m_sessionID = page->sessionID();
-
     return m_sessionID;
 }
 
@@ -5280,8 +5274,7 @@ void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
         element->privateBrowsingStateDidChange(sessionID);
 
 #if ENABLE(SERVICE_WORKER)
-    ASSERT(sessionID.isValid());
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && m_serviceWorkerConnection && sessionID.isValid())
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && m_serviceWorkerConnection)
         setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID));
 #endif
 }

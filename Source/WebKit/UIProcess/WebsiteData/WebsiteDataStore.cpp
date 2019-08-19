@@ -145,7 +145,7 @@ WebsiteDataStore::~WebsiteDataStore()
 
     platformDestroy();
 
-    if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
+    if (m_sessionID != PAL::SessionID::defaultSessionID()) {
         ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
         nonDefaultDataStores().remove(m_sessionID);
         for (auto& processPool : WebProcessPool::allProcessPools()) {
@@ -157,7 +157,7 @@ WebsiteDataStore::~WebsiteDataStore()
 
 void WebsiteDataStore::maybeRegisterWithSessionIDMap()
 {
-    if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
+    if (m_sessionID != PAL::SessionID::defaultSessionID()) {
         auto result = nonDefaultDataStores().add(m_sessionID, this);
         ASSERT_UNUSED(result, result.isNewEntry);
     }
@@ -165,7 +165,7 @@ void WebsiteDataStore::maybeRegisterWithSessionIDMap()
 
 WebsiteDataStore* WebsiteDataStore::existingNonDefaultDataStoreForSessionID(PAL::SessionID sessionID)
 {
-    return sessionID.isValid() && sessionID != PAL::SessionID::defaultSessionID() ? nonDefaultDataStores().get(sessionID) : nullptr;
+    return sessionID != PAL::SessionID::defaultSessionID() ? nonDefaultDataStores().get(sessionID) : nullptr;
 }
 
 void WebsiteDataStore::registerProcess(WebProcessProxy& process)

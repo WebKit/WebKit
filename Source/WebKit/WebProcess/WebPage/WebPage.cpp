@@ -502,9 +502,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
-    // Set the sessionID *before* updating the preferences as the privateBrowsingEnabled preferences may need to override it.
-    if (parameters.sessionID.isValid())
-        setSessionID(parameters.sessionID);
+    setSessionID(parameters.sessionID);
 
     updatePreferences(parameters.store);
 

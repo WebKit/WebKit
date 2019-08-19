@@ -393,10 +393,17 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
+        explicit EmptyStorageNamespace(PAL::SessionID sessionID)
+            : m_sessionID(sessionID)
+        {
+        }
+    private:
         Ref<StorageArea> storageArea(const SecurityOriginData&) final { return adoptRef(*new EmptyStorageArea); }
-        Ref<StorageNamespace> copy(Page*) final { return adoptRef(*new EmptyStorageNamespace); }
-        PAL::SessionID sessionID() const { return PAL::SessionID::emptySessionID(); }
-        void setSessionIDForTesting(PAL::SessionID) { };
+        Ref<StorageNamespace> copy(Page*) final { return adoptRef(*new EmptyStorageNamespace { m_sessionID }); }
+        PAL::SessionID sessionID() const final { return m_sessionID; }
+        void setSessionIDForTesting(PAL::SessionID sessionID) final { m_sessionID = sessionID; };
+
+        PAL::SessionID m_sessionID;
     };
 
     Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
@@ -521,19 +528,19 @@ void EmptyEditorClient::registerRedoStep(UndoStep&)
 {
 }
 
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned)
 {
-    return adoptRef(*new EmptyStorageNamespace);
+    return adoptRef(*new EmptyStorageNamespace { page.sessionID() });
 }
 
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned, PAL::SessionID)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned, PAL::SessionID sessionID)
 {
-    return adoptRef(*new EmptyStorageNamespace);
+    return adoptRef(*new EmptyStorageNamespace { sessionID });
 }
 
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned, PAL::SessionID)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned, PAL::SessionID sessionID)
 {
-    return adoptRef(*new EmptyStorageNamespace);
+    return adoptRef(*new EmptyStorageNamespace { sessionID });
 }
 
 class EmptyStorageSessionProvider : public StorageSessionProvider {

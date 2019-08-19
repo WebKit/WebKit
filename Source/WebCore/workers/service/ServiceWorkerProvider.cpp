@@ -66,9 +66,6 @@ void ServiceWorkerProvider::registerServiceWorkerClients()
     setMayHaveRegisteredServiceWorkers();
     for (auto* document : Document::allDocuments()) {
         auto sessionID = document->sessionID();
-        if (!sessionID.isValid())
-            continue;
-
         if (SchemeRegistry::canServiceWorkersHandleURLScheme(document->url().protocol().toStringWithoutCopying()))
             document->setServiceWorkerConnection(&serviceWorkerConnectionForSession(sessionID));
     }

@@ -1,3 +1,51 @@
+2019-08-19  Youenn Fablet  <youenn@apple.com>
+
+        Remove SessionID::emptySessionID()
+        https://bugs.webkit.org/show_bug.cgi?id=200811
+
+        Reviewed by Alex Christensen.
+
+        Update SessionID call sites to use toUInt64.
+        Remove debug asserts to isValid since construction of invalid session IDs can only happen in very specific cases
+        typically for HashMaps.
+
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::logUserInteraction):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::networkSession const):
+        (WebKit::NetworkProcess::networkSessionByConnection const):
+        (WebKit::NetworkProcess::setSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::existingSWOriginStoreForSession const):
+        (WebKit::NetworkProcess::webProcessWasDisconnected):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::maybeRegisterWithSessionIDMap):
+        (WebKit::WebsiteDataStore::existingNonDefaultDataStoreForSessionID):
+        * WebProcess/Cache/WebCacheStorageProvider.cpp:
+        (WebKit::WebCacheStorageProvider::createCacheStorageConnection):
+        * WebProcess/Cache/WebCacheStorageProvider.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        (WebKit::WebSWClientConnection::initializeConnectionIfNeeded):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::existingServiceWorkerConnectionForSession):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative build fix for GTK and WinCairo

@@ -488,7 +488,6 @@ void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectio
 
 static NetworkStorageSession& storageSession(const NetworkProcess& networkProcess, PAL::SessionID sessionID)
 {
-    ASSERT(sessionID.isValid());
     if (sessionID != PAL::SessionID::defaultSessionID()) {
         if (auto* storageSession = networkProcess.storageSession(sessionID))
             return *storageSession;
@@ -683,10 +682,6 @@ void NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatisti
 
 void NetworkConnectionToWebProcess::logUserInteraction(PAL::SessionID sessionID, const RegistrableDomain& domain)
 {
-    ASSERT(sessionID.isValid());
-    if (!sessionID.isValid())
-        return;
-
     if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logUserInteraction(domain, [] { });
