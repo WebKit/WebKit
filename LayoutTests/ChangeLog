@@ -1,3 +1,12 @@
+2019-08-19  Russell Epstein  <repstein@apple.com>
+
+        rdar://54481698 (Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing)
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-12/platform/ios/ios/fast/text/opticalFont-expected.txt: Copied from LayoutTests/platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt.
+        * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt: Rebaseline.
+
 2019-08-19  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Removing the capture element prevents future pointer events from being dispatched on macOS
