@@ -1,3 +1,15 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Style checker should tell errors when it finds std::make_unique
+        https://bugs.webkit.org/show_bug.cgi?id=200878
+
+        Reviewed by Ross Kirsling.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_wtf_make_unique):
+        (check_style):
+        (CppChecker):
+
 2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part

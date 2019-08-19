@@ -2398,6 +2398,26 @@ def check_wtf_optional(clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/wtf_optional', 4, "Use 'WTF::Optional<>' instead of 'std::optional<>'.")
 
 
+def check_wtf_make_unique(clean_lines, line_number, file_state, error):
+    """Looks for use of 'std::make_unique<>' which should be replaced with 'WTF::makeUnique<>'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_std_make_unique = search(r'\bstd::make_unique\s*\<', line)
+    if not using_std_make_unique:
+        return
+
+    error(line_number, 'runtime/wtf_make_unique', 4, "Use 'WTF::makeUnique<>' instead of 'std::make_unique<>'.")
+
+
 def check_ctype_functions(clean_lines, line_number, file_state, error):
     """Looks for use of the standard functions in ctype.h and suggest they be replaced
        by use of equivilent ones in <wtf/ASCIICType.h>?.
@@ -2957,6 +2977,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_optional(clean_lines, line_number, file_state, error)
+    check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
     check_braces(clean_lines, line_number, file_state, error)
@@ -4113,6 +4134,7 @@ class CppChecker(object):
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_optional',
+        'runtime/wtf_make_unique',
         'runtime/wtf_move',
         'security/assertion',
         'security/printf',
