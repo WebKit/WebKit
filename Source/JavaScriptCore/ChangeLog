@@ -1,3 +1,18 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG DataView get/set optimization should take care of the case little-endian flag is JSEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=200899
+        <rdar://problem/54073341>
+
+        Reviewed by Mark Lam.
+
+        DFGByteCodeParser attempt to get constant flag for isLittleEndian for DataView get/set.
+        When getting a constant in DFG, we first need to check whether it is JSEmpty. But we are missing
+        this check for DataView get/set optimization.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+
 2019-08-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSC tool targets should unlock the keychain before codesigning

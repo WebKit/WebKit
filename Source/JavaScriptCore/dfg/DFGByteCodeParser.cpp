@@ -3244,9 +3244,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                     littleEndianChild = get(virtualRegisterForArgument(2, registerOffset));
                     if (littleEndianChild->hasConstant()) {
                         JSValue constant = littleEndianChild->constant()->value();
-                        isLittleEndian = constant.pureToBoolean();
-                        if (isLittleEndian != MixedTriState)
-                            littleEndianChild = nullptr;
+                        if (constant) {
+                            isLittleEndian = constant.pureToBoolean();
+                            if (isLittleEndian != MixedTriState)
+                                littleEndianChild = nullptr;
+                        }
                     } else
                         isLittleEndian = MixedTriState;
                 }
@@ -3327,9 +3329,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                     littleEndianChild = get(virtualRegisterForArgument(3, registerOffset));
                     if (littleEndianChild->hasConstant()) {
                         JSValue constant = littleEndianChild->constant()->value();
-                        isLittleEndian = constant.pureToBoolean();
-                        if (isLittleEndian != MixedTriState)
-                            littleEndianChild = nullptr;
+                        if (constant) {
+                            isLittleEndian = constant.pureToBoolean();
+                            if (isLittleEndian != MixedTriState)
+                                littleEndianChild = nullptr;
+                        }
                     } else
                         isLittleEndian = MixedTriState;
                 }

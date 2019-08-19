@@ -1,3 +1,16 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG DataView get/set optimization should take care of the case little-endian flag is JSEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=200899
+        <rdar://problem/54073341>
+
+        Reviewed by Mark Lam.
+
+        * stress/data-view-get-dfg-should-handle-empty-constant.js: Added.
+        (i.new.Promise):
+        * stress/data-view-set-dfg-should-handle-empty-constant.js: Added.
+        (i.new.Promise):
+
 2019-08-19  Michael Saboff  <msaboff@apple.com>
 
         Webkit jsc Crash in RegExp::matchInline (this=<optimized out>
