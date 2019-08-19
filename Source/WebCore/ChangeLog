@@ -1,3 +1,24 @@
+2019-08-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r248028. rdar://problem/54454990
+
+    ASSERTion failure under takeSnapshot after r247846
+    
+    * page/TextIndicator.cpp:
+    (WebCore::takeSnapshots):
+    We now sometimes inflate the scale factor; allow this.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248028 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-30  Tim Horton  <timothy_horton@apple.com>
+
+            ASSERTion failure under takeSnapshot after r247846
+
+            * page/TextIndicator.cpp:
+            (WebCore::takeSnapshots):
+            We now sometimes inflate the scale factor; allow this.
+
 2019-08-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248722. rdar://problem/54360866
