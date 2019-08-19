@@ -82,4 +82,16 @@ function createInsertionObservers(element, callback=()=>{}, startThreshold=0.0, 
     });
 }
 
-export {timeDifference, isDarkMode, Cookie, createInsertionObservers};
+function disableBackGesture() {
+    window.addEventListener('mousewheel', e => {
+        const target = e.target;
+        for (let parent = target.parentElement; parent; parent = parent.parentElement ) {
+            if (parent.scrollLeft !== 0 && e.deltaX < 0)
+                return;
+        }
+        if (e.deltaX < 0)
+            e.preventDefault();
+    });
+}
+
+export {timeDifference, isDarkMode, Cookie, createInsertionObservers, disableBackGesture};

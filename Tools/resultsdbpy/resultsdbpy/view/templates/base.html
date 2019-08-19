@@ -50,5 +50,9 @@
     </div>
 </div>
 {% block content %}{% endblock %}
+<script type="module">
+    import {disableBackGesture} from '/library/js/Utils.js';
+    disableBackGesture();
+</script>
 </body>
 </html>

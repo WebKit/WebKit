@@ -1,3 +1,13 @@
+2019-08-19  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org Timeline] Disable back gesture
+        https://bugs.webkit.org/show_bug.cgi?id=200839
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/Utils.js:
+        * resultsdbpy/resultsdbpy/view/templates/base.html:
+
 2019-08-19  Jonathan Bedard  <jbedard@apple.com>
 
         results-webkit.org: Add timeout to Redis locks
