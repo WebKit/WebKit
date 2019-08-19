@@ -1,3 +1,21 @@
+2019-08-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248852. rdar://problem/54454547
+
+    Unreviewed build fix for macOS 10.14 after r248832.
+    
+    * wtf/Platform.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248852 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-19  Per Arne Vollan  <pvollan@apple.com>
+
+            Unreviewed build fix for macOS 10.14 after r248832.
+
+            * wtf/Platform.h:
+
 2019-08-18  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r248832. rdar://problem/54454547
