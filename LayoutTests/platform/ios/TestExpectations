@@ -3363,3 +3363,7 @@ editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.htm
 
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]
+
+# rdar://52961406 (scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky image failure on iOS)
+scrollingcoordinator/ios/scroll-position-after-reattach.html [ Pass ImageOnlyFailure ]
+

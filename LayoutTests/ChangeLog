@@ -1,5 +1,13 @@
 2019-08-19  Russell Epstein  <repstein@apple.com>
 
+        rdar://52961406 (scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky image failure on iOS)
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/TestExpectations: Updated test expectations to [ Pass Failure ]
+
+2019-08-19  Russell Epstein  <repstein@apple.com>
+
         rdar://54481698 (Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing)
 
         Unreviewed Test Gardening.
