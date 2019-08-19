@@ -162,7 +162,7 @@ WI.settings = {
     showAllAnimationFramesBreakpoint: new WI.Setting("show-all-animation-frames-breakpoint", false),
     showAllIntervalsBreakpoint: new WI.Setting("show-all-inteverals-breakpoint", false),
     showAllListenersBreakpoint: new WI.Setting("show-all-listeners-breakpoint", false),
-    showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", true),
+    showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", false),
     showAllTimeoutsBreakpoint: new WI.Setting("show-all-timeouts-breakpoint", false),
     showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
