@@ -67,7 +67,7 @@ void MarkingConstraintSet::didStartMarking()
 
 void MarkingConstraintSet::add(CString abbreviatedName, CString name, ::Function<void(SlotVisitor&)> function, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
 {
-    add(std::make_unique<SimpleMarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility, concurrency, parallelism));
+    add(makeUnique<SimpleMarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility, concurrency, parallelism));
 }
 
 void MarkingConstraintSet::add(

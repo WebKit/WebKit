@@ -49,7 +49,7 @@ void TextCodecReplacement::registerEncodingNames(EncodingNameRegistrar registrar
 void TextCodecReplacement::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("replacement", [] {
-        return std::make_unique<TextCodecReplacement>();
+        return makeUnique<TextCodecReplacement>();
     });
 }
 

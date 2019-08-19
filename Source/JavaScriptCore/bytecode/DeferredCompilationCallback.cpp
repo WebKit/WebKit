@@ -50,7 +50,7 @@ void DeferredCompilationCallback::compilationDidComplete(CodeBlock*, CodeBlock*,
 Vector<DeferredSourceDump>& DeferredCompilationCallback::ensureDeferredSourceDump()
 {
     if (!m_deferredSourceDump)
-        m_deferredSourceDump = std::make_unique<Vector<DeferredSourceDump>>();
+        m_deferredSourceDump = makeUnique<Vector<DeferredSourceDump>>();
     return *m_deferredSourceDump;
 }
 

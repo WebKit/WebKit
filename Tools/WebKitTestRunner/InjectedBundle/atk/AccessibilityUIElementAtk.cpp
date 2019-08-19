@@ -38,6 +38,7 @@
 #include <WebKit/WKBundleFrame.h>
 #include <atk/atk.h>
 #include <wtf/Assertions.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -730,7 +731,7 @@ static JSValueRef convertToJSObjectArray(const Vector<RefPtr<AccessibilityUIElem
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     size_t elementCount = children.size();
-    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    auto valueElements = makeUniqueArray<JSValueRef>(elementCount);
     for (size_t i = 0; i < elementCount; i++)
         valueElements[i] = JSObjectMake(context, children[i]->wrapperClass(), children[i].get());
 

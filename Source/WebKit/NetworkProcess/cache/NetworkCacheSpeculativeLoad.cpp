@@ -59,7 +59,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
     parameters.request = m_originalRequest;
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *cache.networkProcess().networkSession(PAL::SessionID::defaultSessionID()));
+    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *cache.networkProcess().networkSession(PAL::SessionID::defaultSessionID()));
 }
 
 SpeculativeLoad::~SpeculativeLoad()

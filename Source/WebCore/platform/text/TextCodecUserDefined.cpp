@@ -41,7 +41,7 @@ void TextCodecUserDefined::registerEncodingNames(EncodingNameRegistrar registrar
 void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("x-user-defined", [] {
-        return std::make_unique<TextCodecUserDefined>();
+        return makeUnique<TextCodecUserDefined>();
     });
 }
 

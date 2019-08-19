@@ -816,8 +816,8 @@ using namespace Inspector;
     [_commandDomainHandler release];
     _commandDomainHandler = [handler retain];
 
-    auto alternateDispatcher = std::make_unique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTFMove(alternateDispatcher));
+    auto alternateDispatcher = makeUnique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
+    auto alternateAgent = makeUnique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 

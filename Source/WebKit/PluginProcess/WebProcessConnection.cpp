@@ -212,7 +212,7 @@ void WebProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Strin
 
 void WebProcessConnection::createPluginInternal(const PluginCreationParameters& creationParameters, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID)
 {
-    auto pluginControllerProxy = std::make_unique<PluginControllerProxy>(this, creationParameters);
+    auto pluginControllerProxy = makeUnique<PluginControllerProxy>(this, creationParameters);
 
     PluginControllerProxy* pluginControllerProxyPtr = pluginControllerProxy.get();
 

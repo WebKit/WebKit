@@ -71,8 +71,8 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
     if (m_targetLayer && m_currentBuffer)
         m_targetLayer->setContentsLayer(m_currentBuffer.get());
 
-    m_releaseUnusedBuffersTimer = std::make_unique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired);
-    m_compositorThreadUpdateTimer = std::make_unique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
+    m_releaseUnusedBuffersTimer = makeUnique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired);
+    m_compositorThreadUpdateTimer = makeUnique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
 
 #if USE(GLIB_EVENT_LOOP)
     m_compositorThreadUpdateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);

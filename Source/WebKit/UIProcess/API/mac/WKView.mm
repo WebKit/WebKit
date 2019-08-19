@@ -933,7 +933,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([self respondsToSelector:IconLoadingClient::delegateSelector()])
-        _data->_impl->page().setIconLoadingClient(std::make_unique<IconLoadingClient>(self));
+        _data->_impl->page().setIconLoadingClient(makeUnique<IconLoadingClient>(self));
 }
 
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
@@ -945,7 +945,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     WebKit::InitializeWebKit2();
 
     _data = [[WKViewData alloc] init];
-    _data->_impl = std::make_unique<WebKit::WebViewImpl>(self, nullptr, processPool, WTFMove(configuration));
+    _data->_impl = makeUnique<WebKit::WebViewImpl>(self, nullptr, processPool, WTFMove(configuration));
 
     [self maybeInstallIconLoadingClient];
 

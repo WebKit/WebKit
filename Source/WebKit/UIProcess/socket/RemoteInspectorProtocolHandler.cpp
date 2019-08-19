@@ -84,11 +84,11 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
         return;
 
     auto* client = m_inspectorClients.ensure(requestURL.hostAndPort(), [this, &requestURL] {
-        return std::make_unique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
+        return makeUnique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
     }).iterator->value.get();
 
     // Setup target postMessage listener
-    auto handler = WebScriptMessageHandler::create(std::make_unique<ScriptMessageClient>(*this), "inspector", API::UserContentWorld::normalWorld());
+    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector", API::UserContentWorld::normalWorld());
     pageProxy.pageGroup().userContentController().addUserScriptMessageHandler(handler.get());
 
     StringBuilder htmlBuilder;

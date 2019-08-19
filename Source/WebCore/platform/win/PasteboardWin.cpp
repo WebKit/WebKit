@@ -93,7 +93,7 @@ static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM w
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    auto pasteboard = std::make_unique<Pasteboard>();
+    auto pasteboard = makeUnique<Pasteboard>();
     COMPtr<IDataObject> clipboardData;
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
@@ -106,16 +106,16 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject);
-    return std::make_unique<Pasteboard>(dataObject.get());
+    return makeUnique<Pasteboard>(dataObject.get());
 }
 
 // static
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
     if (dragData.platformData())
-        return std::make_unique<Pasteboard>(dragData.platformData());
+        return makeUnique<Pasteboard>(dragData.platformData());
     // FIXME: Should add a const overload of dragDataMap so we don't need a const_cast here.
-    return std::make_unique<Pasteboard>(const_cast<DragData&>(dragData).dragDataMap());
+    return makeUnique<Pasteboard>(const_cast<DragData&>(dragData).dragDataMap());
 }
 #endif
 

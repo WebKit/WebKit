@@ -77,7 +77,7 @@ const Vector<char>* CurlFormDataStream::getPostData()
         return nullptr;
 
     if (!m_postData)
-        m_postData = std::make_unique<Vector<char>>(m_formData->flatten());
+        m_postData = makeUnique<Vector<char>>(m_formData->flatten());
 
     return m_postData.get();
 }

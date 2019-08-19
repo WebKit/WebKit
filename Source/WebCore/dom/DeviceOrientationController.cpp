@@ -100,7 +100,7 @@ bool DeviceOrientationController::isActiveAt(Page* page)
 
 void provideDeviceOrientationTo(Page& page, DeviceOrientationClient& client)
 {
-    DeviceOrientationController::provideTo(&page, DeviceOrientationController::supplementName(), std::make_unique<DeviceOrientationController>(client));
+    DeviceOrientationController::provideTo(&page, DeviceOrientationController::supplementName(), makeUnique<DeviceOrientationController>(client));
 }
 
 } // namespace WebCore

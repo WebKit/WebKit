@@ -35,20 +35,20 @@ std::unique_ptr<RenderThemeGadget> RenderThemeGadget::create(const RenderThemeGa
 {
     switch (info.type) {
     case RenderThemeGadget::Type::Generic:
-        return std::make_unique<RenderThemeGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::TextField:
-        return std::make_unique<RenderThemeTextFieldGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeTextFieldGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Radio:
     case RenderThemeGadget::Type::Check:
-        return std::make_unique<RenderThemeToggleGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeToggleGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Arrow:
-        return std::make_unique<RenderThemeArrowGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeArrowGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Icon:
-        return std::make_unique<RenderThemeIconGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeIconGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Scrollbar:
-        return std::make_unique<RenderThemeScrollbarGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeScrollbarGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Button:
-        return std::make_unique<RenderThemeButtonGadget>(info, parent, siblings, position);
+        return makeUnique<RenderThemeButtonGadget>(info, parent, siblings, position);
     }
 
     ASSERT_NOT_REACHED();

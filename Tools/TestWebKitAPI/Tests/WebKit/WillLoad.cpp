@@ -72,7 +72,7 @@ public:
         context = adoptWK(Util::createContextForInjectedBundleTest("WillLoadTest"));
         setInjectedBundleClient(context.get(), this);
 
-        webView = std::make_unique<PlatformWebView>(context.get());
+        webView = makeUnique<PlatformWebView>(context.get());
 
         didReceiveMessage = false;
     }

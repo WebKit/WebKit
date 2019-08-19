@@ -109,7 +109,7 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
 
 std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMediaSessionClient& client)
 {
-    return std::make_unique<PlatformMediaSession>(client);
+    return makeUnique<PlatformMediaSession>(client);
 }
 
 PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)

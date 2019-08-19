@@ -72,7 +72,7 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
     if (!writer)
         return nullptr;
 
-    return std::make_unique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
+    return makeUnique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
 }
 
 MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&& writer, String&& audioTrackId, String&& videoTrackId)

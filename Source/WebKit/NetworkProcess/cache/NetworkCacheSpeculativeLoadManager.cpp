@@ -174,7 +174,7 @@ public:
     void registerSubresourceLoad(const ResourceRequest& request, const Key& subresourceKey)
     {
         ASSERT(RunLoop::isMain());
-        m_subresourceLoads.append(std::make_unique<SubresourceLoad>(request, subresourceKey));
+        m_subresourceLoads.append(makeUnique<SubresourceLoad>(request, subresourceKey));
         m_loadHysteresisActivity.impulse();
     }
 
@@ -355,7 +355,7 @@ void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionH
     ASSERT(m_pendingPreloads.contains(storageKey));
     // FIXME: This breaks incremental loading when the revalidation is not successful.
     auto addResult = m_pendingRetrieveRequests.ensure(storageKey, [] {
-        return std::make_unique<Vector<RetrieveCompletionHandler>>();
+        return makeUnique<Vector<RetrieveCompletionHandler>>();
     });
     addResult.iterator->value->append(WTFMove(completionHandler));
 }
@@ -404,7 +404,7 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
     ASSERT(entry);
     ASSERT(!entry->needsValidation());
     auto key = entry->key();
-    m_preloadedEntries.add(key, std::make_unique<PreloadedEntry>(WTFMove(entry), WTFMove(revalidationRequest), [this, key, frameID] {
+    m_preloadedEntries.add(key, makeUnique<PreloadedEntry>(WTFMove(entry), WTFMove(revalidationRequest), [this, key, frameID] {
         auto preloadedEntry = m_preloadedEntries.take(key);
         ASSERT(preloadedEntry);
         if (preloadedEntry->wasRevalidated())
@@ -449,7 +449,7 @@ bool SpeculativeLoadManager::satisfyPendingRequests(const Key& key, Entry* entry
         return false;
 
     for (auto& completionHandler : *completionHandlers)
-        completionHandler(entry ? std::make_unique<Entry>(*entry) : nullptr);
+        completionHandler(entry ? makeUnique<Entry>(*entry) : nullptr);
 
     return true;
 }
@@ -468,7 +468,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
 
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
 
-    auto revalidator = std::make_unique<SpeculativeLoad>(m_cache, frameID, revalidationRequest, WTFMove(entry), [this, key, revalidationRequest, frameID](std::unique_ptr<Entry> revalidatedEntry) {
+    auto revalidator = makeUnique<SpeculativeLoad>(m_cache, frameID, revalidationRequest, WTFMove(entry), [this, key, revalidationRequest, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
 
@@ -559,7 +559,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
             preloadEntry(key, subresourceInfo, frameID);
         else {
             LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", key.identifier().utf8().data());
-            m_notPreloadedEntries.add(key, std::make_unique<ExpiringEntry>([this, key, frameID] {
+            m_notPreloadedEntries.add(key, makeUnique<ExpiringEntry>([this, key, frameID] {
                 logSpeculativeLoadingDiagnosticMessage(m_cache.networkProcess(), frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
                 m_notPreloadedEntries.remove(key);
             }));

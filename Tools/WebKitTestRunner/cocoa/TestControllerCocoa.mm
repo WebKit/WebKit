@@ -168,7 +168,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
 
-    m_mainWebView = std::make_unique<PlatformWebView>(copiedConfiguration.get(), options);
+    m_mainWebView = makeUnique<PlatformWebView>(copiedConfiguration.get(), options);
     finishCreatingPlatformWebView(m_mainWebView.get(), options);
 
     if (options.punchOutWhiteBackgroundsInDarkMode)
@@ -226,7 +226,7 @@ void TestController::setDefaultCalendarType(NSString *identifier)
 {
     m_overriddenCalendarIdentifier = identifier;
     if (!m_calendarSwizzler)
-        m_calendarSwizzler = std::make_unique<ClassMethodSwizzler>([NSCalendar class], @selector(currentCalendar), reinterpret_cast<IMP>(swizzledCalendar));
+        m_calendarSwizzler = makeUnique<ClassMethodSwizzler>([NSCalendar class], @selector(currentCalendar), reinterpret_cast<IMP>(swizzledCalendar));
 }
 
 void TestController::resetContentExtensions()

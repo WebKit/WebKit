@@ -57,7 +57,7 @@ private:
 
 std::unique_ptr<Locale> Locale::create(const AtomString&)
 {
-    return std::make_unique<LocaleNone>();
+    return makeUnique<LocaleNone>();
 }
 
 LocaleNone::~LocaleNone() = default;

@@ -89,7 +89,7 @@ FloatPointGraph::Node* FloatPointGraph::findOrCreateNode(FloatPoint point)
             return testNode.get();
     }
 
-    m_allNodes.append(std::make_unique<FloatPointGraph::Node>(point));
+    m_allNodes.append(makeUnique<FloatPointGraph::Node>(point));
     return m_allNodes.last().get();
 }
 

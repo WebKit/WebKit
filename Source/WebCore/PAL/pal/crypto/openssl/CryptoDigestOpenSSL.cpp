@@ -79,7 +79,7 @@ struct CryptoDigestContextImpl : public CryptoDigestContext {
 
     static std::unique_ptr<CryptoDigestContext> create()
     {
-        return std::make_unique<CryptoDigestContextImpl>();
+        return makeUnique<CryptoDigestContextImpl>();
     }
 
     CryptoDigestContextImpl()

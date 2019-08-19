@@ -1,3 +1,53 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate init]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetScriptableNPObjectReply):
+        (WKPCBooleanReply):
+        (WKPCBooleanAndDataReply):
+        (WKPCInstantiatePluginReply):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::methodNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]):
+        * Storage/WebDatabaseManagerClient.mm:
+        (DidModifyOriginData::dispatchToMainThread):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (addRedirectURL):
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::openLocalFrontend):
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]):
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::create):
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator initWithRange:]):
+        * WebView/WebView.mm:
+        (-[WebView _injectOutlookQuirksScript]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        (-[WebView _selectionServiceController]):
+        (-[WebView _setTextIndicator:withLifetime:]):
+        * WebView/WebViewData.mm:
+        (WebViewLayerFlushScheduler::WebViewLayerFlushScheduler):
+        (-[WebViewPrivate init]):
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Tidy up checks to see if a character is in the Latin-1 range by using isLatin1 consistently

@@ -104,7 +104,7 @@ LRESULT FullScreenController::Private::fullscreenClientWndProc(HWND hwnd, UINT m
 }
 
 FullScreenController::FullScreenController(FullScreenControllerClient* client)
-    : m_private(std::make_unique<Private>(this, client))
+    : m_private(makeUnique<Private>(this, client))
 {
     ASSERT_ARG(client, client);
 }
@@ -132,13 +132,13 @@ void FullScreenController::enterFullScreen()
     m_private->m_originalFrame = originalFrame;
 
     ASSERT(!m_private->m_backgroundWindow);
-    m_private->m_backgroundWindow = std::make_unique<MediaPlayerPrivateFullscreenWindow>(m_private.get());
+    m_private->m_backgroundWindow = makeUnique<MediaPlayerPrivateFullscreenWindow>(m_private.get());
     m_private->m_backgroundWindow->createWindow(0);
     ::AnimateWindow(m_private->m_backgroundWindow->hwnd(), kFullScreenAnimationDuration, AW_BLEND | AW_ACTIVATE);
 
     m_private->m_client->fullScreenClientWillEnterFullScreen();
     ASSERT(!m_private->m_fullScreenWindow);
-    m_private->m_fullScreenWindow = std::make_unique<MediaPlayerPrivateFullscreenWindow>(m_private.get());
+    m_private->m_fullScreenWindow = makeUnique<MediaPlayerPrivateFullscreenWindow>(m_private.get());
     ASSERT(m_private->m_fullScreenWindow);
     m_private->m_fullScreenWindow->createWindow(0);
 

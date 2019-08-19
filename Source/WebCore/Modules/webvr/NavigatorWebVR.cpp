@@ -94,7 +94,7 @@ NavigatorWebVR* NavigatorWebVR::from(Navigator* navigator)
 {
     NavigatorWebVR* supplement = static_cast<NavigatorWebVR*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorWebVR>();
+        auto newSupplement = makeUnique<NavigatorWebVR>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

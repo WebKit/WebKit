@@ -39,7 +39,7 @@ auto CompositionLayerTextureMapperImpl::createFactory() -> Factory
 {
     return Factory(
         [](uint64_t, CompositionLayer&) {
-            return std::make_unique<CompositionLayerTextureMapperImpl>();
+            return makeUnique<CompositionLayerTextureMapperImpl>();
         });
 }
 

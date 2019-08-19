@@ -37,7 +37,7 @@ namespace WebCore {
 
 std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
-    return std::make_unique<RemoteCommandListenerMac>(client);
+    return makeUnique<RemoteCommandListenerMac>(client);
 }
 
 void RemoteCommandListenerMac::updateSupportedCommands()

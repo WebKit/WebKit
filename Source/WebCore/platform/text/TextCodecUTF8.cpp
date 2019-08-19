@@ -57,7 +57,7 @@ void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)
 void TextCodecUTF8::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("UTF-8", [] {
-        return std::make_unique<TextCodecUTF8>();
+        return makeUnique<TextCodecUTF8>();
     });
 }
 

@@ -1115,7 +1115,7 @@ RenderFragmentContainer* RenderFragmentedFlow::currentFragment() const
 ContainingFragmentMap& RenderFragmentedFlow::containingFragmentMap()
 {
     if (!m_lineToFragmentMap)
-        m_lineToFragmentMap = std::make_unique<ContainingFragmentMap>();
+        m_lineToFragmentMap = makeUnique<ContainingFragmentMap>();
 
     return *m_lineToFragmentMap.get();
 }

@@ -57,7 +57,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_pcToCodeOriginMapBuilder(dfg.m_vm)
 {
     if (UNLIKELY(shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler))
-        m_disassembler = std::make_unique<Disassembler>(dfg);
+        m_disassembler = makeUnique<Disassembler>(dfg);
 #if ENABLE(FTL_JIT)
     m_jitCode->tierUpInLoopHierarchy = WTFMove(m_graph.m_plan.tierUpInLoopHierarchy());
     for (unsigned tierUpBytecode : m_graph.m_plan.tierUpAndOSREnterBytecodes())
@@ -343,7 +343,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer));
+        m_codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer));
 }
 
 static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& stackOverflow)
@@ -363,7 +363,7 @@ void JITCompiler::compile()
 
     setStartOfCode();
     compileEntry();
-    m_speculative = std::make_unique<SpeculativeJIT>(*this);
+    m_speculative = makeUnique<SpeculativeJIT>(*this);
 
     // Plant a check that sufficient space is available in the JSStack.
     JumpList stackOverflow;
@@ -402,9 +402,9 @@ void JITCompiler::compile()
     m_speculative->createOSREntries();
     setEndOfCode();
 
-    auto linkBuffer = std::make_unique<LinkBuffer>(*this, m_codeBlock, JITCompilationCanFail);
+    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer->didFailToAllocate()) {
-        m_graph.m_plan.setFinalizer(std::make_unique<FailedFinalizer>(m_graph.m_plan));
+        m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
         return;
     }
     
@@ -416,7 +416,7 @@ void JITCompiler::compile()
 
     disassemble(*linkBuffer);
 
-    m_graph.m_plan.setFinalizer(std::make_unique<JITFinalizer>(
+    m_graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(
         m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer)));
 }
 
@@ -447,7 +447,7 @@ void JITCompiler::compileFunction()
     compileEntryExecutionFlag();
 
     // === Function body code generation ===
-    m_speculative = std::make_unique<SpeculativeJIT>(*this);
+    m_speculative = makeUnique<SpeculativeJIT>(*this);
     compileBody();
     setEndOfMainPath();
 
@@ -507,9 +507,9 @@ void JITCompiler::compileFunction()
     setEndOfCode();
 
     // === Link ===
-    auto linkBuffer = std::make_unique<LinkBuffer>(*this, m_codeBlock, JITCompilationCanFail);
+    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer->didFailToAllocate()) {
-        m_graph.m_plan.setFinalizer(std::make_unique<FailedFinalizer>(m_graph.m_plan));
+        m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
         return;
     }
     link(*linkBuffer);
@@ -525,7 +525,7 @@ void JITCompiler::compileFunction()
 
     MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
 
-    m_graph.m_plan.setFinalizer(std::make_unique<JITFinalizer>(
+    m_graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(
         m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck));
 }
 
@@ -550,7 +550,7 @@ void* JITCompiler::addressOfDoubleConstant(Node* node)
         return it->second;
 
     if (!m_graph.m_doubleConstants)
-        m_graph.m_doubleConstants = std::make_unique<Bag<double>>();
+        m_graph.m_doubleConstants = makeUnique<Bag<double>>();
 
     double* addressInConstantPool = m_graph.m_doubleConstants->add();
     *addressInConstantPool = value;

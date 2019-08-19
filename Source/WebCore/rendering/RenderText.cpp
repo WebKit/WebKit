@@ -1311,7 +1311,7 @@ void RenderText::dirtyLineBoxes(bool fullLayout)
 
 std::unique_ptr<InlineTextBox> RenderText::createTextBox()
 {
-    return std::make_unique<InlineTextBox>(*this);
+    return makeUnique<InlineTextBox>(*this);
 }
 
 void RenderText::positionLineBox(InlineTextBox& textBox)
@@ -1545,7 +1545,7 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTyp
         return;
     auto& secureTextTimer = secureTextTimers().add(this, nullptr).iterator->value;
     if (!secureTextTimer)
-        secureTextTimer = std::make_unique<SecureTextTimer>(*this);
+        secureTextTimer = makeUnique<SecureTextTimer>(*this);
     secureTextTimer->restart(offsetAfterLastTypedCharacter);
 }
 

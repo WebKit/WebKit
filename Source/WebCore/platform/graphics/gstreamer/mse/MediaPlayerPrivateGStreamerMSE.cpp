@@ -77,7 +77,7 @@ void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar re
     initializeGStreamerAndRegisterWebKitElements();
     GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
     if (isAvailable()) {
-        registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateGStreamerMSE>(player); },
+        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateGStreamerMSE>(player); },
             getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
     }
 }
@@ -459,7 +459,7 @@ void MediaPlayerPrivateGStreamerMSE::setRate(float)
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() const
 {
-    return m_mediaSource ? m_mediaSource->buffered() : std::make_unique<PlatformTimeRanges>();
+    return m_mediaSource ? m_mediaSource->buffered() : makeUnique<PlatformTimeRanges>();
 }
 
 void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)

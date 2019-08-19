@@ -329,7 +329,7 @@ RefPtr<CSSRuleList> CSSStyleSheet::cssRules()
     if (!canAccessRules())
         return nullptr;
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = std::make_unique<StyleSheetCSSRuleList>(this);
+        m_ruleListCSSOMWrapper = makeUnique<StyleSheetCSSRuleList>(this);
     return m_ruleListCSSOMWrapper.get();
 }
 

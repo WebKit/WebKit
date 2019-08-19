@@ -217,7 +217,7 @@ WKTypeID WKBundlePageOverlayGetTypeID()
 
 WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* wkClient)
 {
-    auto clientImpl = std::make_unique<PageOverlayClientImpl>(wkClient);
+    auto clientImpl = makeUnique<PageOverlayClientImpl>(wkClient);
     return toAPI(&WebKit::WebPageOverlay::create(WTFMove(clientImpl)).leakRef());
 }
 

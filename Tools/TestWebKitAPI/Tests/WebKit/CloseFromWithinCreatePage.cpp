@@ -46,7 +46,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
 {
     EXPECT_TRUE(openedWebView == nullptr);
 
-    openedWebView = std::make_unique<PlatformWebView>(page);
+    openedWebView = makeUnique<PlatformWebView>(page);
 
     WKPageUIClientV5 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

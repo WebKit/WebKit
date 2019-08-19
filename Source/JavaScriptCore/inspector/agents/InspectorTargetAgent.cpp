@@ -32,7 +32,7 @@ namespace Inspector {
 
 InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, BackendDispatcher& backendDispatcher)
     : InspectorAgentBase("Target"_s)
-    , m_frontendDispatcher(std::make_unique<TargetFrontendDispatcher>(frontendRouter))
+    , m_frontendDispatcher(makeUnique<TargetFrontendDispatcher>(frontendRouter))
     , m_backendDispatcher(TargetBackendDispatcher::create(backendDispatcher, this))
 {
 }

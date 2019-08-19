@@ -43,7 +43,7 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& page)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
-    auto targetAgent = std::make_unique<WebPageInspectorTargetAgent>(m_frontendRouter.get(), m_backendDispatcher.get());
+    auto targetAgent = makeUnique<WebPageInspectorTargetAgent>(m_frontendRouter.get(), m_backendDispatcher.get());
 
     m_targetAgent = targetAgent.get();
 

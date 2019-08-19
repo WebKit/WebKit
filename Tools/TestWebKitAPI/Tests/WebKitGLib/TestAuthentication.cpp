@@ -300,7 +300,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 {
     if (message->method == SOUP_METHOD_CONNECT) {
         g_assert_cmpuint(soup_server_get_port(server), ==, gProxyServerPort);
-        auto tunnel = std::make_unique<Tunnel>(server, message);
+        auto tunnel = makeUnique<Tunnel>(server, message);
         auto* tunnelPtr = tunnel.get();
         tunnelPtr->connect([tunnel = WTFMove(tunnel)](const char* errorMessage) {
             if (errorMessage) {
@@ -395,7 +395,7 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
 
 static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, gconstpointer)
 {
-    auto httpsServer = std::make_unique<WebKitTestServer>(WebKitTestServer::ServerHTTPS);
+    auto httpsServer = makeUnique<WebKitTestServer>(WebKitTestServer::ServerHTTPS);
     httpsServer->run(serverCallback);
 
     test->loadURI(httpsServer->getURIForPath("/proxy/auth-test.html").data());

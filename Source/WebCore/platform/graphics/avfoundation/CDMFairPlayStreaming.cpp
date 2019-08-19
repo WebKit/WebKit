@@ -234,7 +234,7 @@ std::unique_ptr<CDMPrivate> CDMFactoryFairPlayStreaming::createCDM(const String&
     if (!supportsKeySystem(keySystem))
         return nullptr;
 
-    return std::make_unique<CDMPrivateFairPlayStreaming>();
+    return makeUnique<CDMPrivateFairPlayStreaming>();
 }
 
 bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)

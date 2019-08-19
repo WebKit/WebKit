@@ -793,7 +793,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
 
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
-    return std::make_unique<WebColorChooser>(&m_page, &client, initialColor);
+    return makeUnique<WebColorChooser>(&m_page, &client, initialColor);
 }
 
 #endif
@@ -802,7 +802,7 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
 
 std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
-    return std::make_unique<WebDataListSuggestionPicker>(&m_page, &client);
+    return makeUnique<WebDataListSuggestionPicker>(&m_page, &client);
 }
 
 #endif

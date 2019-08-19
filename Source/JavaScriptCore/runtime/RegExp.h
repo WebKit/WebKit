@@ -164,7 +164,7 @@ private:
     Yarr::YarrCodeBlock& ensureRegExpJITCode()
     {
         if (!m_regExpJITCode)
-            m_regExpJITCode = std::make_unique<Yarr::YarrCodeBlock>();
+            m_regExpJITCode = makeUnique<Yarr::YarrCodeBlock>();
         return *m_regExpJITCode.get();
     }
 #endif

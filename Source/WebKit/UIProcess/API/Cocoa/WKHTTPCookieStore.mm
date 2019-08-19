@@ -108,7 +108,7 @@ private:
     if (!result.isNewEntry)
         return;
 
-    result.iterator->value = std::make_unique<WKHTTPCookieStoreObserver>(observer);
+    result.iterator->value = makeUnique<WKHTTPCookieStoreObserver>(observer);
     _cookieStore->registerObserver(*result.iterator->value);
 }
 

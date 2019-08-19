@@ -602,7 +602,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     _page = WebKit::toImpl(pageRef);
 
-    _pageLoadStateObserver = std::make_unique<WebKit::PageLoadStateObserver>(self);
+    _pageLoadStateObserver = makeUnique<WebKit::PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 
     ASSERT(!browsingContextControllerMap().contains(_page.get()));

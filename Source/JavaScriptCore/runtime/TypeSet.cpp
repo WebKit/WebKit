@@ -362,7 +362,7 @@ String StructureShape::propertyHash()
         builder.append(m_proto->propertyHash());
     }
 
-    m_propertyHash = std::make_unique<String>(builder.toString());
+    m_propertyHash = makeUnique<String>(builder.toString());
     return *m_propertyHash;
 }
 

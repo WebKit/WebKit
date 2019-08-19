@@ -33,7 +33,7 @@
 
 std::unique_ptr<WebMediaPlaybackTargetPicker> WebMediaPlaybackTargetPicker::create(WebCore::Page& page)
 {
-    return std::make_unique<WebMediaPlaybackTargetPicker>(page);
+    return makeUnique<WebMediaPlaybackTargetPicker>(page);
 }
 
 WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker(WebCore::Page& page)

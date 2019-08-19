@@ -61,7 +61,7 @@ Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, con
 StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
 {
     return m_quotaManagers.ensure(origin, [] {
-        return std::make_unique<StorageQuotaManager>(StorageQuotaManager::defaultQuota(), [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+        return makeUnique<StorageQuotaManager>(StorageQuotaManager::defaultQuota(), [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             callback(quota + currentSpace + spaceIncrease);
         });
     }).iterator->value.get();

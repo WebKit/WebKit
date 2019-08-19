@@ -72,9 +72,9 @@ string descriptionSuitableForTestResult(IWebFrame* webFrame)
 }
 
 FrameLoadDelegate::FrameLoadDelegate()
-    : m_gcController(std::make_unique<GCController>())
-    , m_accessibilityController(std::make_unique<AccessibilityController>())
-    , m_textInputController(std::make_unique<TextInputController>())
+    : m_gcController(makeUnique<GCController>())
+    , m_accessibilityController(makeUnique<AccessibilityController>())
+    , m_textInputController(makeUnique<TextInputController>())
 {
 }
 

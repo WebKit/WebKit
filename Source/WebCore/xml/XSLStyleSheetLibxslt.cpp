@@ -231,7 +231,7 @@ void XSLStyleSheet::loadChildSheets()
 
 void XSLStyleSheet::loadChildSheet(const String& href)
 {
-    auto childRule = std::make_unique<XSLImportRule>(this, href);
+    auto childRule = makeUnique<XSLImportRule>(this, href);
     m_children.append(childRule.release());
     m_children.last()->loadSheet();
 }

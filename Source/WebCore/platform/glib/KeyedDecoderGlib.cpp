@@ -32,7 +32,7 @@ namespace WebCore {
 
 std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
 {
-    return std::make_unique<KeyedDecoderGlib>(data, size);
+    return makeUnique<KeyedDecoderGlib>(data, size);
 }
 
 KeyedDecoderGlib::KeyedDecoderGlib(const uint8_t* data, size_t size)

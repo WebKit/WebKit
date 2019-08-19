@@ -84,7 +84,7 @@ DOMCSSRegisterCustomProperty* DOMCSSRegisterCustomProperty::from(DOMCSSNamespace
 {
     auto* supplement = static_cast<DOMCSSRegisterCustomProperty*>(Supplement<DOMCSSNamespace>::from(&css, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<DOMCSSRegisterCustomProperty>(css);
+        auto newSupplement = makeUnique<DOMCSSRegisterCustomProperty>(css);
         supplement = newSupplement.get();
         provideTo(&css, supplementName(), WTFMove(newSupplement));
     }

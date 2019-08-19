@@ -85,7 +85,7 @@ void HRTFDatabaseLoader::load()
     ASSERT(!isMainThread());
     if (!m_hrtfDatabase.get()) {
         // Load the default HRTF database.
-        m_hrtfDatabase = std::make_unique<HRTFDatabase>(m_databaseSampleRate);
+        m_hrtfDatabase = makeUnique<HRTFDatabase>(m_databaseSampleRate);
     }
 }
 

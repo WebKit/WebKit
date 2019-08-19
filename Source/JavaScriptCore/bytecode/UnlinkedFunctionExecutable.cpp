@@ -275,7 +275,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
 UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareDataSlow()
 {
     ASSERT(!m_rareData);
-    m_rareData = std::make_unique<RareData>();
+    m_rareData = makeUnique<RareData>();
     return *m_rareData;
 }
 

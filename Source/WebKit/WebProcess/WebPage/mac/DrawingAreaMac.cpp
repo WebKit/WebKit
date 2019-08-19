@@ -83,7 +83,7 @@ bool DisplayRefreshMonitorMac::requestRefreshCallback()
     if (!m_hasSentMessage) {
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID()), 0);
         m_hasSentMessage = true;
-        m_runLoopObserver = std::make_unique<RunLoopObserver>(kCFRunLoopEntry, [this]() {
+        m_runLoopObserver = makeUnique<RunLoopObserver>(kCFRunLoopEntry, [this]() {
             this->m_firstCallbackInCurrentRunloop = true;
         });
         m_runLoopObserver->schedule(CFRunLoopGetCurrent());

@@ -78,13 +78,13 @@ UIDelegate::~UIDelegate()
 #if ENABLE(CONTEXT_MENUS)
 std::unique_ptr<API::ContextMenuClient> UIDelegate::createContextMenuClient()
 {
-    return std::make_unique<ContextMenuClient>(*this);
+    return makeUnique<ContextMenuClient>(*this);
 }
 #endif
 
 std::unique_ptr<API::UIClient> UIDelegate::createUIClient()
 {
-    return std::make_unique<UIClient>(*this);
+    return makeUnique<UIClient>(*this);
 }
 
 RetainPtr<id <WKUIDelegate> > UIDelegate::delegate()

@@ -997,7 +997,7 @@ Layout::Layout(const RunVector& runVector, unsigned lineCount, const RenderBlock
 const RunResolver& Layout::runResolver() const
 {
     if (!m_runResolver)
-        m_runResolver = std::make_unique<RunResolver>(m_blockFlowRenderer, *this);
+        m_runResolver = makeUnique<RunResolver>(m_blockFlowRenderer, *this);
     return *m_runResolver;
 }
 

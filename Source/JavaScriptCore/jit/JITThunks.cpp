@@ -37,7 +37,7 @@
 namespace JSC {
 
 JITThunks::JITThunks()
-    : m_hostFunctionStubMap(std::make_unique<HostFunctionStubMap>())
+    : m_hostFunctionStubMap(makeUnique<HostFunctionStubMap>())
 {
 }
 

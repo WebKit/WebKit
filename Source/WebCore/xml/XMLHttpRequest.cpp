@@ -275,7 +275,7 @@ String XMLHttpRequest::responseURL() const
 XMLHttpRequestUpload& XMLHttpRequest::upload()
 {
     if (!m_upload)
-        m_upload = std::make_unique<XMLHttpRequestUpload>(*this);
+        m_upload = makeUnique<XMLHttpRequestUpload>(*this);
     return *m_upload;
 }
 

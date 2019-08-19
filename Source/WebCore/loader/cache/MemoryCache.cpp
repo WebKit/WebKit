@@ -86,7 +86,7 @@ auto MemoryCache::ensureSessionResourceMap(PAL::SessionID sessionID) -> CachedRe
     ASSERT(sessionID.isValid());
     auto& map = m_sessionResources.add(sessionID, nullptr).iterator->value;
     if (!map)
-        map = std::make_unique<CachedResourceMap>();
+        map = makeUnique<CachedResourceMap>();
     return *map;
 }
 
@@ -216,7 +216,7 @@ bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const 
     removeImageFromCache(url, domainForCachePartition); // Remove cache entry if it already exists.
 
     auto bitmapImage = BitmapImage::create(WTFMove(image), nullptr);
-    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.ptr(), sessionID, cookieJar, domainForCachePartition);
+    auto cachedImage = makeUnique<CachedImage>(url, bitmapImage.ptr(), sessionID, cookieJar, domainForCachePartition);
 
     cachedImage->addClient(dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
@@ -473,7 +473,7 @@ auto MemoryCache::lruListFor(CachedResource& resource) -> LRUList&
 
     m_allResources.reserveCapacity(queueIndex + 1);
     while (m_allResources.size() <= queueIndex)
-        m_allResources.uncheckedAppend(std::make_unique<LRUList>());
+        m_allResources.uncheckedAppend(makeUnique<LRUList>());
     return *m_allResources[queueIndex];
 }
 

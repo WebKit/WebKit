@@ -114,7 +114,7 @@ Ref<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* c
 
 Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
-    auto frame = create(std::make_unique<WebFrameLoaderClient>());
+    auto frame = create(makeUnique<WebFrameLoaderClient>());
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
 
     auto coreFrame = Frame::create(page->corePage(), ownerElement, frame->m_frameLoaderClient.get());

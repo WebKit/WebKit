@@ -3300,7 +3300,7 @@ static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffe
     if (arrayBuffers.isEmpty())
         return nullptr;
 
-    auto contents = std::make_unique<ArrayBufferContentsArray>(arrayBuffers.size());
+    auto contents = makeUnique<ArrayBufferContentsArray>(arrayBuffers.size());
 
     HashSet<JSC::ArrayBuffer*> visited;
     for (size_t arrayBufferIndex = 0; arrayBufferIndex < arrayBuffers.size(); arrayBufferIndex++) {
@@ -3451,7 +3451,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(ExecState&
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray wasmModules;
 #endif
-    std::unique_ptr<ArrayBufferContentsArray> sharedBuffers = std::make_unique<ArrayBufferContentsArray>();
+    std::unique_ptr<ArrayBufferContentsArray> sharedBuffers = makeUnique<ArrayBufferContentsArray>();
     auto code = CloneSerializer::serialize(&state, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(WEBASSEMBLY)
         wasmModules, 
@@ -3469,7 +3469,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(ExecState&
 
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer), blobURLs, arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(imageBuffers)
 #if ENABLE(WEBASSEMBLY)
-                , std::make_unique<WasmModuleArray>(wasmModules)
+                , makeUnique<WasmModuleArray>(wasmModules)
 #endif
                 ));
 }

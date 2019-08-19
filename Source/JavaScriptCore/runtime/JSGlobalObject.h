@@ -521,7 +521,7 @@ public:
     {
         if (m_rareData)
             return;
-        m_rareData = std::make_unique<JSGlobalObjectRareData>();
+        m_rareData = makeUnique<JSGlobalObjectRareData>();
     }
         
 public:

@@ -130,10 +130,10 @@ template<class T> typename GlyphMetricsMap<T>::GlyphMetricsPage& GlyphMetricsMap
     }
 
     if (!m_pages)
-        m_pages = std::make_unique<HashMap<int, std::unique_ptr<GlyphMetricsPage>>>();
+        m_pages = makeUnique<HashMap<int, std::unique_ptr<GlyphMetricsPage>>>();
 
     auto& page = m_pages->ensure(pageNumber, [] {
-        return std::make_unique<GlyphMetricsPage>(unknownMetrics());
+        return makeUnique<GlyphMetricsPage>(unknownMetrics());
     }).iterator->value;
     return *page;
 }

@@ -37,7 +37,7 @@ auto BackingStoreTextureMapperImpl::createFactory() -> Factory
 {
     return Factory(
         [](BackingStore&) {
-            return std::make_unique<BackingStoreTextureMapperImpl>();
+            return makeUnique<BackingStoreTextureMapperImpl>();
         });
 }
 

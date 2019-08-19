@@ -290,7 +290,7 @@ void DataTransfer::didAddFileToItemList()
 DataTransferItemList& DataTransfer::items()
 {
     if (!m_itemList)
-        m_itemList = std::make_unique<DataTransferItemList>(*this);
+        m_itemList = makeUnique<DataTransferItemList>(*this);
     return *m_itemList;
 }
 
@@ -416,7 +416,7 @@ bool DataTransfer::hasStringOfType(const String& type)
 
 Ref<DataTransfer> DataTransfer::createForInputEvent(const Document& document, const String& plainText, const String& htmlText)
 {
-    auto pasteboard = std::make_unique<StaticPasteboard>();
+    auto pasteboard = makeUnique<StaticPasteboard>();
     pasteboard->writeString("text/plain"_s, plainText);
     pasteboard->writeString("text/html"_s, htmlText);
     return adoptRef(*new DataTransfer(document, StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
@@ -471,7 +471,7 @@ Ref<DataTransfer> DataTransfer::createForDrag(const Document& document)
 
 Ref<DataTransfer> DataTransfer::createForDragStartEvent(const Document& document)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(document, StoreMode::ReadWrite, std::make_unique<StaticPasteboard>(), Type::DragAndDropData));
+    auto dataTransfer = adoptRef(*new DataTransfer(document, StoreMode::ReadWrite, makeUnique<StaticPasteboard>(), Type::DragAndDropData));
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
@@ -508,7 +508,7 @@ void DataTransfer::setDragImage(Element* element, int x, int y)
     m_dragImage = image;
     if (m_dragImage) {
         if (!m_dragImageLoader)
-            m_dragImageLoader = std::make_unique<DragImageLoader>(this);
+            m_dragImageLoader = makeUnique<DragImageLoader>(this);
         m_dragImageLoader->startLoading(m_dragImage);
     }
 

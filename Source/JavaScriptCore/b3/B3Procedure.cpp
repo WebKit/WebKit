@@ -49,7 +49,7 @@ namespace JSC { namespace B3 {
 Procedure::Procedure()
     : m_cfg(new CFG(*this))
     , m_lastPhaseName("initial")
-    , m_byproducts(std::make_unique<OpaqueByproducts>())
+    , m_byproducts(makeUnique<OpaqueByproducts>())
     , m_code(new Air::Code(*this))
 {
     m_code->setNumEntrypoints(m_numEntrypoints);
@@ -311,28 +311,28 @@ void Procedure::deleteOrphans()
 Dominators& Procedure::dominators()
 {
     if (!m_dominators)
-        m_dominators = std::make_unique<Dominators>(*this);
+        m_dominators = makeUnique<Dominators>(*this);
     return *m_dominators;
 }
 
 NaturalLoops& Procedure::naturalLoops()
 {
     if (!m_naturalLoops)
-        m_naturalLoops = std::make_unique<NaturalLoops>(*this);
+        m_naturalLoops = makeUnique<NaturalLoops>(*this);
     return *m_naturalLoops;
 }
 
 BackwardsCFG& Procedure::backwardsCFG()
 {
     if (!m_backwardsCFG)
-        m_backwardsCFG = std::make_unique<BackwardsCFG>(*this);
+        m_backwardsCFG = makeUnique<BackwardsCFG>(*this);
     return *m_backwardsCFG;
 }
 
 BackwardsDominators& Procedure::backwardsDominators()
 {
     if (!m_backwardsDominators)
-        m_backwardsDominators = std::make_unique<BackwardsDominators>(*this);
+        m_backwardsDominators = makeUnique<BackwardsDominators>(*this);
     return *m_backwardsDominators;
 }
 
@@ -358,7 +358,7 @@ void* Procedure::addDataSection(size_t size)
 {
     if (!size)
         return nullptr;
-    std::unique_ptr<DataSection> dataSection = std::make_unique<DataSection>(size);
+    std::unique_ptr<DataSection> dataSection = makeUnique<DataSection>(size);
     void* result = dataSection->data();
     m_byproducts->add(WTFMove(dataSection));
     return result;

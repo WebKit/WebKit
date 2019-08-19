@@ -77,7 +77,7 @@ WKTypeID WKBundlePageGetTypeID()
 void WKBundlePageSetContextMenuClient(WKBundlePageRef pageRef, WKBundlePageContextMenuClientBase* wkClient)
 {
 #if ENABLE(CONTEXT_MENUS)
-    WebKit::toImpl(pageRef)->setInjectedBundleContextMenuClient(std::make_unique<WebKit::InjectedBundlePageContextMenuClient>(wkClient));
+    WebKit::toImpl(pageRef)->setInjectedBundleContextMenuClient(makeUnique<WebKit::InjectedBundlePageContextMenuClient>(wkClient));
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(wkClient);
@@ -86,22 +86,22 @@ void WKBundlePageSetContextMenuClient(WKBundlePageRef pageRef, WKBundlePageConte
 
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClientBase* wkClient)
 {
-    WebKit::toImpl(pageRef)->setInjectedBundleEditorClient(wkClient ? std::make_unique<WebKit::InjectedBundlePageEditorClient>(*wkClient) : std::make_unique<API::InjectedBundle::EditorClient>());
+    WebKit::toImpl(pageRef)->setInjectedBundleEditorClient(wkClient ? makeUnique<WebKit::InjectedBundlePageEditorClient>(*wkClient) : makeUnique<API::InjectedBundle::EditorClient>());
 }
 
 void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClientBase* wkClient)
 {
-    WebKit::toImpl(pageRef)->setInjectedBundleFormClient(std::make_unique<WebKit::InjectedBundlePageFormClient>(wkClient));
+    WebKit::toImpl(pageRef)->setInjectedBundleFormClient(makeUnique<WebKit::InjectedBundlePageFormClient>(wkClient));
 }
 
 void WKBundlePageSetPageLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClientBase* wkClient)
 {
-    WebKit::toImpl(pageRef)->setInjectedBundlePageLoaderClient(std::make_unique<WebKit::InjectedBundlePageLoaderClient>(wkClient));
+    WebKit::toImpl(pageRef)->setInjectedBundlePageLoaderClient(makeUnique<WebKit::InjectedBundlePageLoaderClient>(wkClient));
 }
 
 void WKBundlePageSetResourceLoadClient(WKBundlePageRef pageRef, WKBundlePageResourceLoadClientBase* wkClient)
 {
-    WebKit::toImpl(pageRef)->setInjectedBundleResourceLoadClient(std::make_unique<WebKit::InjectedBundlePageResourceLoadClient>(wkClient));
+    WebKit::toImpl(pageRef)->setInjectedBundleResourceLoadClient(makeUnique<WebKit::InjectedBundlePageResourceLoadClient>(wkClient));
 }
 
 void WKBundlePageSetPolicyClient(WKBundlePageRef pageRef, WKBundlePagePolicyClientBase* wkClient)
@@ -111,7 +111,7 @@ void WKBundlePageSetPolicyClient(WKBundlePageRef pageRef, WKBundlePagePolicyClie
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClientBase* wkClient)
 {
-    WebKit::toImpl(pageRef)->setInjectedBundleUIClient(std::make_unique<WebKit::InjectedBundlePageUIClient>(wkClient));
+    WebKit::toImpl(pageRef)->setInjectedBundleUIClient(makeUnique<WebKit::InjectedBundlePageUIClient>(wkClient));
 }
 
 void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullScreenClientBase* wkClient)

@@ -62,9 +62,9 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
     , m_identifier(identifier)
     , m_userAgent(userAgent)
     , m_thread(thread)
-    , m_script(std::make_unique<WorkerScriptController>(this))
-    , m_inspectorController(std::make_unique<WorkerInspectorController>(*this))
-    , m_microtaskQueue(std::make_unique<MicrotaskQueue>(m_script->vm()))
+    , m_script(makeUnique<WorkerScriptController>(this))
+    , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
+    , m_microtaskQueue(makeUnique<MicrotaskQueue>(m_script->vm()))
     , m_isOnline(isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
@@ -86,7 +86,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
         origin->grantStorageAccessFromFileURLsQuirk();
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
-    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { m_url }, *this));
+    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
 }
 
 WorkerGlobalScope::~WorkerGlobalScope()
@@ -362,9 +362,9 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
 
     std::unique_ptr<Inspector::ConsoleMessage> message;
     if (callStack)
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
     else
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
     InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }
 

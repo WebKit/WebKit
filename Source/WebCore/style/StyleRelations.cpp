@@ -40,7 +40,7 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
 
     auto appendStyleRelation = [&remainingRelations] (const Relation& relation) {
         if (!remainingRelations)
-            remainingRelations = std::make_unique<Relations>();
+            remainingRelations = makeUnique<Relations>();
         remainingRelations->append(relation);
     };
 

@@ -141,7 +141,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
     // I want a slow path that also loads out the storage pointer, and that's
     // what this custom CallArrayAllocatorSlowPathGenerator gives me. It's a lot
     // of work for a very small piece of functionality. :-/
-    addSlowPathGenerator(std::make_unique<CallArrayAllocatorSlowPathGenerator>(
+    addSlowPathGenerator(makeUnique<CallArrayAllocatorSlowPathGenerator>(
         slowCases, this, operationNewRawObject, resultGPR, storageGPR,
         structure, vectorLength));
 
@@ -899,7 +899,7 @@ void SpeculativeJIT::arrayify(Node* node, GPRReg baseReg, GPRReg propertyReg)
         slowPath.append(jumpSlowForUnwantedArrayMode(tempGPR, node->arrayMode()));
     }
     
-    addSlowPathGenerator(std::make_unique<ArrayifySlowPathGenerator>(
+    addSlowPathGenerator(makeUnique<ArrayifySlowPathGenerator>(
         slowPath, this, node, baseReg, propertyReg, tempGPR, structureGPR));
     
     noResult(m_currentNode);
@@ -2242,10 +2242,10 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         }
         if (prototypeChainIsSane) {
 #if USE(JSVALUE64)
-            addSlowPathGenerator(std::make_unique<SaneStringGetByValSlowPathGenerator>(
+            addSlowPathGenerator(makeUnique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg));
 #else
-            addSlowPathGenerator(std::make_unique<SaneStringGetByValSlowPathGenerator>(
+            addSlowPathGenerator(makeUnique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, JSValueRegs(resultTagReg, scratchReg),
                 baseReg, propertyReg));
 #endif
@@ -7619,7 +7619,7 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
                 slowPath, this, operationCreateDirectArguments, resultGPR, structure,
                 knownLength, minCapacity));
     } else {
-        auto generator = std::make_unique<CallCreateDirectArgumentsSlowPathGenerator>(
+        auto generator = makeUnique<CallCreateDirectArgumentsSlowPathGenerator>(
             slowPath, this, resultGPR, structure, lengthGPR, minCapacity);
         addSlowPathGenerator(WTFMove(generator));
     }
@@ -8439,7 +8439,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
             slowCases.append(m_jit.jump());
         }
 
-        addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator>(
+        addSlowPathGenerator(makeUnique<CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator>(
             slowCases, this, operationNewArrayWithSize, resultGPR, tempValue, sizeGPR, storageResultGPR));
     }
 
@@ -9135,7 +9135,7 @@ void SpeculativeJIT::emitStructureCheck(Node* node, GPRReg cellGPR, GPRReg tempG
         GPRReg structureGPR;
         
         if (tempGPR == InvalidGPRReg) {
-            structure = std::make_unique<GPRTemporary>(this);
+            structure = makeUnique<GPRTemporary>(this);
             structureGPR = structure->gpr();
         } else
             structureGPR = tempGPR;
@@ -13176,7 +13176,7 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
 
     m_jit.mutatorFence(*m_jit.vm());
 
-    addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
+    addSlowPathGenerator(makeUnique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,
         structure,
         shouldConvertLargeSizeToArrayStorage ? m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage)) : structure,

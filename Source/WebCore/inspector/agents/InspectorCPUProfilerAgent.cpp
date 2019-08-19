@@ -39,7 +39,7 @@ using namespace Inspector;
 
 InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(PageAgentContext& context)
     : InspectorAgentBase("CPUProfiler"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::CPUProfilerFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::CPUProfilerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CPUProfilerBackendDispatcher::create(context.backendDispatcher, this))
 {
 }

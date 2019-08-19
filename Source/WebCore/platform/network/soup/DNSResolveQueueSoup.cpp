@@ -186,7 +186,7 @@ void DNSResolveQueueSoup::resolve(const String& hostname, uint64_t identifier, D
 
     g_object_set_data(G_OBJECT(address.get()), "identifier", GUINT_TO_POINTER(identifier));
 
-    m_completionAndCancelHandlers.add(identifier, std::make_unique<DNSResolveQueueSoup::CompletionAndCancelHandlers>(WTFMove(completionHandler), WTFMove(cancellable)));
+    m_completionAndCancelHandlers.add(identifier, makeUniqueWithoutFastMallocCheck<DNSResolveQueueSoup::CompletionAndCancelHandlers>(WTFMove(completionHandler), WTFMove(cancellable)));
 }
 
 void DNSResolveQueueSoup::stopResolve(uint64_t identifier)

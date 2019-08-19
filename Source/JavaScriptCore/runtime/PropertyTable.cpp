@@ -83,7 +83,7 @@ PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
     // Copy the m_deletedOffsets vector.
     Vector<PropertyOffset>* otherDeletedOffsets = other.m_deletedOffsets.get();
     if (otherDeletedOffsets)
-        m_deletedOffsets = std::make_unique<Vector<PropertyOffset>>(*otherDeletedOffsets);
+        m_deletedOffsets = makeUnique<Vector<PropertyOffset>>(*otherDeletedOffsets);
 }
 
 PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTable& other)
@@ -107,7 +107,7 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
     // Copy the m_deletedOffsets vector.
     Vector<PropertyOffset>* otherDeletedOffsets = other.m_deletedOffsets.get();
     if (otherDeletedOffsets)
-        m_deletedOffsets = std::make_unique<Vector<PropertyOffset>>(*otherDeletedOffsets);
+        m_deletedOffsets = makeUnique<Vector<PropertyOffset>>(*otherDeletedOffsets);
 }
 
 void PropertyTable::destroy(JSCell* cell)

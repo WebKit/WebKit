@@ -41,7 +41,7 @@ using namespace WebCore;
 
 NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     : NetworkSession(networkProcess, parameters)
-    , m_networkSession(std::make_unique<SoupNetworkSession>(m_sessionID))
+    , m_networkSession(makeUnique<SoupNetworkSession>(m_sessionID))
 {
     auto* storageSession = networkStorageSession();
     ASSERT(storageSession);
@@ -124,7 +124,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSo
     request.updateSoupMessage(soupMessage.get(), blobRegistry());
     if (request.url().protocolIs("wss"))
         g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), nullptr);
-    return std::make_unique<WebSocketTask>(channel, soupSession(), soupMessage.get(), protocol);
+    return makeUnique<WebSocketTask>(channel, soupSession(), soupMessage.get(), protocol);
 }
 
 } // namespace WebKit

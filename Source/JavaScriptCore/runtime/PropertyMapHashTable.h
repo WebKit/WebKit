@@ -448,7 +448,7 @@ inline PropertyOffset PropertyTable::getDeletedOffset()
 inline void PropertyTable::addDeletedOffset(PropertyOffset offset)
 {
     if (!m_deletedOffsets)
-        m_deletedOffsets = std::make_unique<Vector<PropertyOffset>>();
+        m_deletedOffsets = makeUnique<Vector<PropertyOffset>>();
     m_deletedOffsets->append(offset);
 }
 

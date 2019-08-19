@@ -61,7 +61,7 @@ static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithView = [&] (RetainPtr<UIView> view) {
-        return std::make_unique<RemoteLayerTreeNode>(properties.layerID, WTFMove(view));
+        return makeUnique<RemoteLayerTreeNode>(properties.layerID, WTFMove(view));
     };
     auto makeAdoptingView = [&] (UIView* view) {
         return makeWithView(adoptNS(view));

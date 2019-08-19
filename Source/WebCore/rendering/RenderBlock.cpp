@@ -104,7 +104,7 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
     }
     
     auto& descendantSet = percentHeightDescendantsMap->ensure(&container, [] {
-        return std::make_unique<TrackedRendererListHashSet>();
+        return makeUnique<TrackedRendererListHashSet>();
     }).iterator->value;
 
     bool added = descendantSet->add(&descendant).isNewEntry;
@@ -115,7 +115,7 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
     }
     
     auto& containerSet = percentHeightContainerMap->ensure(&descendant, [] {
-        return std::make_unique<HashSet<const RenderBlock*>>();
+        return makeUnique<HashSet<const RenderBlock*>>();
     }).iterator->value;
 
     ASSERT(!containerSet->contains(&container));
@@ -161,7 +161,7 @@ public:
         }
 
         auto& descendants = m_descendantsMap.ensure(&containingBlock, [] {
-            return std::make_unique<TrackedRendererListHashSet>();
+            return makeUnique<TrackedRendererListHashSet>();
         }).iterator->value;
 
         bool isNewEntry = moveDescendantToEnd == MoveDescendantToEnd::Yes ? descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry
@@ -528,7 +528,7 @@ static inline UpdateScrollInfoAfterLayoutTransaction* currentUpdateScrollInfoAft
 void RenderBlock::beginUpdateScrollInfoAfterLayoutTransaction()
 {
     if (!updateScrollInfoAfterLayoutTransactionStack())
-        updateScrollInfoAfterLayoutTransactionStack() = std::make_unique<DelayedUpdateScrollInfoStack>();
+        updateScrollInfoAfterLayoutTransactionStack() = makeUnique<DelayedUpdateScrollInfoStack>();
     if (updateScrollInfoAfterLayoutTransactionStack()->isEmpty() || currentUpdateScrollInfoAfterLayoutTransaction()->view != &view())
         updateScrollInfoAfterLayoutTransactionStack()->append(UpdateScrollInfoAfterLayoutTransaction(view()));
     ++currentUpdateScrollInfoAfterLayoutTransaction()->nestedCount;
@@ -620,7 +620,7 @@ static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
     
     auto& rareData = gRareDataMap->add(&block, nullptr).iterator->value;
     if (!rareData)
-        rareData = std::make_unique<RenderBlockRareData>();
+        rareData = makeUnique<RenderBlockRareData>();
     return *rareData.get();
 }
 

@@ -43,7 +43,7 @@ public:
     {
         static_assert(!U::isSync, "Message is sync!");
 
-        auto encoder = std::make_unique<Encoder>(U::receiverName(), U::name(), destinationID);
+        auto encoder = makeUnique<Encoder>(U::receiverName(), U::name(), destinationID);
         encoder->encode(message.arguments());
         
         return sendMessage(WTFMove(encoder), sendOptions);

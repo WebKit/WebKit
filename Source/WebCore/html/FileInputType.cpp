@@ -332,7 +332,7 @@ void FileInputType::requestIcon(const Vector<String>& paths)
         m_fileIconLoader->invalidate();
 
     FileIconLoaderClient& client = *this;
-    m_fileIconLoader = std::make_unique<FileIconLoader>(client);
+    m_fileIconLoader = makeUnique<FileIconLoader>(client);
 
     chrome->loadIconForFiles(paths, *m_fileIconLoader);
 }

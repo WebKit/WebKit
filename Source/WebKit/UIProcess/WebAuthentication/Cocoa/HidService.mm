@@ -92,7 +92,7 @@ UniqueRef<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) 
 
 void HidService::deviceAdded(IOHIDDeviceRef device)
 {
-    auto driver = std::make_unique<CtapHidDriver>(createHidConnection(device));
+    auto driver = makeUnique<CtapHidDriver>(createHidConnection(device));
     // Get authenticator info from the device.
     driver->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetInfo), [weakThis = makeWeakPtr(*this), ptr = driver.get()](Vector<uint8_t>&& response) {
         ASSERT(RunLoop::isMain());

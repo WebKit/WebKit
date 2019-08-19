@@ -148,7 +148,7 @@ TEST_F(FileMonitorTest, DetectChange)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
+    auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -190,7 +190,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
+    auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -250,7 +250,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
+    auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -289,7 +289,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
+    auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
             case FileMonitor::FileChangeType::Modification:
@@ -346,7 +346,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
+    auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
             case FileMonitor::FileChangeType::Modification:

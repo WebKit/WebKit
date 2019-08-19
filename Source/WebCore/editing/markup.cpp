@@ -178,7 +178,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
 {
     auto pageConfiguration = pageConfigurationWithEmptyClients();
     
-    auto page = std::make_unique<Page>(WTFMove(pageConfiguration));
+    auto page = makeUnique<Page>(WTFMove(pageConfiguration));
     page->setIsForSanitizingWebContent();
     page->settings().setMediaEnabled(false);
     page->settings().setScriptEnabled(false);

@@ -417,7 +417,7 @@ private:
     void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, Tmp result, Vector<ConstrainedTmp, inlineSize>&& args)
     {
         if (!m_patchpointSpecial)
-            m_patchpointSpecial = static_cast<B3::PatchpointSpecial*>(m_code.addSpecial(std::make_unique<B3::PatchpointSpecial>()));
+            m_patchpointSpecial = static_cast<B3::PatchpointSpecial*>(m_code.addSpecial(makeUnique<B3::PatchpointSpecial>()));
 
         Inst inst(Patch, patch, Arg::special(m_patchpointSpecial));
         Inst resultMov;
@@ -487,7 +487,7 @@ private:
 
         // FIXME: Make a hashmap of these.
         B3::CheckSpecial::Key key(branch);
-        B3::CheckSpecial* special = static_cast<B3::CheckSpecial*>(m_code.addSpecial(std::make_unique<B3::CheckSpecial>(key)));
+        B3::CheckSpecial* special = static_cast<B3::CheckSpecial*>(m_code.addSpecial(makeUnique<B3::CheckSpecial>(key)));
 
         // FIXME: Remove the need for dummy values
         // https://bugs.webkit.org/show_bug.cgi?id=194040
@@ -2139,10 +2139,10 @@ auto AirIRGenerator::origin() -> B3::Origin
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
-    auto result = std::make_unique<InternalFunction>();
+    auto result = makeUnique<InternalFunction>();
 
-    compilationContext.embedderEntrypointJIT = std::make_unique<CCallHelpers>();
-    compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>();
+    compilationContext.embedderEntrypointJIT = makeUnique<CCallHelpers>();
+    compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
     B3::Procedure procedure;
     Code& code = procedure.code();

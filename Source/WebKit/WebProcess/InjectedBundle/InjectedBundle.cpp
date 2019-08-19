@@ -104,7 +104,7 @@ RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& para
 InjectedBundle::InjectedBundle(const WebProcessCreationParameters& parameters)
     : m_path(parameters.injectedBundlePath)
     , m_platformBundle(0)
-    , m_client(std::make_unique<API::InjectedBundle::Client>())
+    , m_client(makeUnique<API::InjectedBundle::Client>())
 {
 }
 
@@ -115,7 +115,7 @@ InjectedBundle::~InjectedBundle()
 void InjectedBundle::setClient(std::unique_ptr<API::InjectedBundle::Client>&& client)
 {
     if (!client)
-        m_client = std::make_unique<API::InjectedBundle::Client>();
+        m_client = makeUnique<API::InjectedBundle::Client>();
     else
         m_client = WTFMove(client);
 }

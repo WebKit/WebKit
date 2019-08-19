@@ -43,11 +43,11 @@ std::unique_ptr<Panner> Panner::create(PanningModelType model, float sampleRate,
 
     switch (model) {
     case PanningModelType::Equalpower:
-        panner = std::make_unique<EqualPowerPanner>(sampleRate);
+        panner = makeUnique<EqualPowerPanner>(sampleRate);
         break;
 
     case PanningModelType::HRTF:
-        panner = std::make_unique<HRTFPanner>(sampleRate, databaseLoader);
+        panner = makeUnique<HRTFPanner>(sampleRate, databaseLoader);
         break;
     }
 

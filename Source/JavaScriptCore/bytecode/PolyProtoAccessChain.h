@@ -47,7 +47,7 @@ public:
 
     std::unique_ptr<PolyProtoAccessChain> clone()
     {
-        return std::make_unique<PolyProtoAccessChain>(*this);
+        return makeUnique<PolyProtoAccessChain>(*this);
     }
 
     const Vector<Structure*>& chain() const { return m_chain; }

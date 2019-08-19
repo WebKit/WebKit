@@ -1225,7 +1225,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 -(void)_injectOutlookQuirksScript
 {
     static NSString *outlookQuirksScriptContents = leakOutlookQuirksUserScriptContents();
-    _private->group->userContentController().addUserScript(*core([WebScriptWorld world]), std::make_unique<UserScript>(outlookQuirksScriptContents, URL(), Vector<String>(), Vector<String>(), InjectAtDocumentEnd, InjectInAllFrames));
+    _private->group->userContentController().addUserScript(*core([WebScriptWorld world]), makeUnique<UserScript>(outlookQuirksScriptContents, URL(), Vector<String>(), Vector<String>(), InjectAtDocumentEnd, InjectInAllFrames));
 
 }
 #endif
@@ -1439,7 +1439,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.chromeClient = new WebChromeClient(self);
     pageConfiguration.contextMenuClient = new WebContextMenuClient(self);
     // FIXME: We should enable this on iOS as well.
-    pageConfiguration.validationMessageClient = std::make_unique<WebValidationMessageClient>(self);
+    pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #else
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
@@ -4630,7 +4630,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!world)
         return;
 
-    auto userScript = std::make_unique<UserScript>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd, injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+    auto userScript = makeUnique<UserScript>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd, injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
     viewGroup->userContentController().addUserScript(*core(world), WTFMove(userScript));
 }
 
@@ -4653,7 +4653,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!world)
         return;
 
-    auto styleSheet = std::make_unique<UserStyleSheet>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
+    auto styleSheet = makeUnique<UserStyleSheet>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
     viewGroup->userContentController().addUserStyleSheet(*core(world), WTFMove(styleSheet), InjectInExistingDocuments);
 }
 
@@ -9404,7 +9404,7 @@ bool LayerFlushController::flushLayers()
 - (WebSelectionServiceController&)_selectionServiceController
 {
     if (!_private->_selectionServiceController)
-        _private->_selectionServiceController = std::make_unique<WebSelectionServiceController>(self);
+        _private->_selectionServiceController = makeUnique<WebSelectionServiceController>(self);
     return *_private->_selectionServiceController;
 }
 #endif
@@ -9463,7 +9463,7 @@ bool LayerFlushController::flushLayers()
 - (void)_setTextIndicator:(TextIndicator&)textIndicator withLifetime:(TextIndicatorWindowLifetime)lifetime
 {
     if (!_private->textIndicatorWindow)
-        _private->textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
+        _private->textIndicatorWindow = makeUnique<TextIndicatorWindow>(self);
 
     NSRect textBoundingRectInWindowCoordinates = [self convertRect:[self _convertRectFromRootView:textIndicator.textBoundingRectInRootViewCoordinates()] toView:nil];
     NSRect textBoundingRectInScreenCoordinates = [self.window convertRectToScreen:textBoundingRectInWindowCoordinates];

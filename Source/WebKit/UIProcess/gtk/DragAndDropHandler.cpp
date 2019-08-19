@@ -202,7 +202,7 @@ SelectionData* DragAndDropHandler::dragDataSelection(GdkDragContext* context, co
     std::unique_ptr<DroppingContext>& droppingContext = m_droppingContexts.add(context, nullptr).iterator->value;
     if (!droppingContext) {
         GtkWidget* widget = m_page.viewWidget();
-        droppingContext = std::make_unique<DroppingContext>(context, position);
+        droppingContext = makeUnique<DroppingContext>(context, position);
         Vector<GdkAtom> acceptableTargets(PasteboardHelper::singleton().dropAtomsForContext(widget, droppingContext->gdkContext));
         droppingContext->pendingDataRequests = acceptableTargets.size();
         for (auto& target : acceptableTargets)

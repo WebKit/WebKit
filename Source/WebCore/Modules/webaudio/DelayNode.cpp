@@ -41,7 +41,7 @@ inline DelayNode::DelayNode(AudioContext& context, float sampleRate, double maxD
     : AudioBasicProcessorNode(context, sampleRate)
 {
     setNodeType(NodeTypeDelay);
-    m_processor = std::make_unique<DelayProcessor>(context, sampleRate, 1, maxDelayTime);
+    m_processor = makeUnique<DelayProcessor>(context, sampleRate, 1, maxDelayTime);
 }
 
 ExceptionOr<Ref<DelayNode>> DelayNode::create(AudioContext& context, float sampleRate, double maxDelayTime)

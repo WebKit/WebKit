@@ -45,7 +45,7 @@ namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKWPE::View& view)
     : m_view(view)
-    , m_scrollGestureController(std::make_unique<ScrollGestureController>())
+    , m_scrollGestureController(makeUnique<ScrollGestureController>())
 {
 }
 
@@ -63,7 +63,7 @@ IPC::Attachment PageClientImpl::hostFileDescriptor()
 
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
-    return std::make_unique<DrawingAreaProxyCoordinatedGraphics>(m_view.page(), process);
+    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(m_view.page(), process);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)

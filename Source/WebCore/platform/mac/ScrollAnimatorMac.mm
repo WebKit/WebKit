@@ -697,7 +697,7 @@ namespace WebCore {
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return std::make_unique<ScrollAnimatorMac>(scrollableArea);
+    return makeUnique<ScrollAnimatorMac>(scrollableArea);
 }
 
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)

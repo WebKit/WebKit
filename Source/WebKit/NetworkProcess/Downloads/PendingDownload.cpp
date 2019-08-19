@@ -37,7 +37,7 @@ namespace WebKit {
 using namespace WebCore;
 
 PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, WebCore::BlobRegistryImpl* blobRegistry, const String& suggestedName)
-    : m_networkLoad(std::make_unique<NetworkLoad>(*this, blobRegistry, WTFMove(parameters), networkSession))
+    : m_networkLoad(makeUnique<NetworkLoad>(*this, blobRegistry, WTFMove(parameters), networkSession))
     , m_parentProcessConnection(parentProcessConnection)
 {
     m_isAllowedToAskUserForCredentials = parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;

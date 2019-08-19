@@ -50,7 +50,7 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : RenderSVGModelObject(element, WTFMove(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
-    , m_imageResource(std::make_unique<RenderImageResource>())
+    , m_imageResource(makeUnique<RenderImageResource>())
 {
     imageResource().initialize(*this);
 }

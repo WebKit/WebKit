@@ -66,12 +66,12 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
-    return std::make_unique<Pasteboard>("data interaction pasteboard");
+    return makeUnique<Pasteboard>("data interaction pasteboard");
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
-    return std::make_unique<Pasteboard>(dragData.pasteboardName());
+    return makeUnique<Pasteboard>(dragData.pasteboardName());
 }
 
 #endif
@@ -101,7 +101,7 @@ void Pasteboard::writeMarkup(const String&)
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return std::make_unique<Pasteboard>(changeCountForPasteboard());
+    return makeUnique<Pasteboard>(changeCountForPasteboard());
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)

@@ -115,7 +115,7 @@ CurlContext::CurlContext()
     if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAX_HOST_CONNECTIONS"))
         maxHostConnections = *value;
 
-    m_scheduler = std::make_unique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
+    m_scheduler = makeUnique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
 #ifndef NDEBUG
     m_verbose = envVar.defined("DEBUG_CURL");
@@ -336,7 +336,7 @@ CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
         return CURLE_ABORTED_BY_CALLBACK;
 
     if (!m_sslVerifier)
-        m_sslVerifier = std::make_unique<CurlSSLVerifier>(sslCtx);
+        m_sslVerifier = makeUnique<CurlSSLVerifier>(sslCtx);
 
     return CURLE_OK;
 }

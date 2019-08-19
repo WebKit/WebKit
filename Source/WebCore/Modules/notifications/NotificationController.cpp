@@ -58,7 +58,7 @@ const char* NotificationController::supplementName()
 
 void provideNotification(Page* page, NotificationClient* client)
 {
-    NotificationController::provideTo(page, NotificationController::supplementName(), std::make_unique<NotificationController>(client));
+    NotificationController::provideTo(page, NotificationController::supplementName(), makeUnique<NotificationController>(client));
 }
 
 } // namespace WebCore

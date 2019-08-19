@@ -358,7 +358,7 @@ Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, double progress) c
 
     auto& fromPath = downcast<BasicShapePath>(from);
 
-    auto resultingPathBytes = std::make_unique<SVGPathByteStream>();
+    auto resultingPathBytes = makeUnique<SVGPathByteStream>();
     buildAnimatedSVGPathByteStream(*fromPath.m_byteStream, *m_byteStream, *resultingPathBytes, progress);
 
     auto result = BasicShapePath::create(WTFMove(resultingPathBytes));

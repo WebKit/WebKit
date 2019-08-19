@@ -254,7 +254,7 @@ private:
     void allocateSegment()
     {
         m_segments.grow(m_numSegments + 1);
-        m_segments[m_numSegments++] = std::make_unique<Segment>();
+        m_segments[m_numSegments++] = makeUnique<Segment>();
     }
 
     size_t m_size { 0 };

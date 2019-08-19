@@ -1100,7 +1100,7 @@ void RenderInline::deleteLines()
 
 std::unique_ptr<InlineFlowBox> RenderInline::createInlineFlowBox()
 {
-    return std::make_unique<InlineFlowBox>(*this);
+    return makeUnique<InlineFlowBox>(*this);
 }
 
 InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()

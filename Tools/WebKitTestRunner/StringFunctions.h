@@ -37,6 +37,7 @@
 #include <string>
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -73,7 +74,7 @@ inline JSRetainPtr<JSStringRef> toJS(const WKRetainPtr<WKStringRef>& string)
 inline std::string toSTD(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
     return std::string(buffer.get(), stringLength - 1);
 }
@@ -86,7 +87,7 @@ inline std::string toSTD(const WKRetainPtr<WKStringRef>& string)
 inline WTF::String toWTFString(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CStringNonStrict(string, buffer.get(), bufferSize);
     return WTF::String::fromUTF8WithLatin1Fallback(buffer.get(), stringLength - 1);
 }

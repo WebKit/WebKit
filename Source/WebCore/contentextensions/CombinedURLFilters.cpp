@@ -135,7 +135,7 @@ void CombinedURLFilters::print() const
 #endif
 
 CombinedURLFilters::CombinedURLFilters()
-    : m_prefixTreeRoot(std::make_unique<PrefixTreeVertex>())
+    : m_prefixTreeRoot(makeUnique<PrefixTreeVertex>())
 {
 }
 
@@ -209,7 +209,7 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
         if (nextEntryIndex != WTF::notFound)
             lastPrefixTree = lastPrefixTree->edges[nextEntryIndex].child.get();
         else {
-            lastPrefixTree->edges.append(PrefixTreeEdge({m_alphabet.interned(term), std::make_unique<PrefixTreeVertex>()}));
+            lastPrefixTree->edges.append(PrefixTreeEdge({m_alphabet.interned(term), makeUnique<PrefixTreeVertex>()}));
             lastPrefixTree = lastPrefixTree->edges.last().child.get();
         }
     }

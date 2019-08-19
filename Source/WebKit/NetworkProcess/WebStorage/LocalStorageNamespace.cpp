@@ -51,7 +51,7 @@ StorageArea& LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& 
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
-        return std::make_unique<StorageArea>(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes, WTFMove(workQueue));
+        return makeUnique<StorageArea>(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes, WTFMove(workQueue));
     }).iterator->value.get();
 }
 

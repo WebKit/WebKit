@@ -89,7 +89,7 @@ private:
     ExceptionOr<void> perform() final
     {
         if (m_node->parentNode()) {
-            m_removeChildAction = std::make_unique<RemoveChildAction>(*m_node->parentNode(), m_node);
+            m_removeChildAction = makeUnique<RemoveChildAction>(*m_node->parentNode(), m_node);
             auto result = m_removeChildAction->perform();
             if (result.hasException())
                 return result.releaseException();
@@ -385,27 +385,27 @@ DOMEditor::~DOMEditor() = default;
 
 ExceptionOr<void> DOMEditor::insertBefore(Node& parentNode, Ref<Node>&& node, Node* anchorNode)
 {
-    return m_history.perform(std::make_unique<InsertBeforeAction>(parentNode, WTFMove(node), anchorNode));
+    return m_history.perform(makeUnique<InsertBeforeAction>(parentNode, WTFMove(node), anchorNode));
 }
 
 ExceptionOr<void> DOMEditor::removeChild(Node& parentNode, Node& node)
 {
-    return m_history.perform(std::make_unique<RemoveChildAction>(parentNode, node));
+    return m_history.perform(makeUnique<RemoveChildAction>(parentNode, node));
 }
 
 ExceptionOr<void> DOMEditor::setAttribute(Element& element, const String& name, const String& value)
 {
-    return m_history.perform(std::make_unique<SetAttributeAction>(element, name, value));
+    return m_history.perform(makeUnique<SetAttributeAction>(element, name, value));
 }
 
 ExceptionOr<void> DOMEditor::removeAttribute(Element& element, const String& name)
 {
-    return m_history.perform(std::make_unique<RemoveAttributeAction>(element, name));
+    return m_history.perform(makeUnique<RemoveAttributeAction>(element, name));
 }
 
 ExceptionOr<void> DOMEditor::setOuterHTML(Node& node, const String& html, Node*& newNode)
 {
-    auto action = std::make_unique<SetOuterHTMLAction>(node, html);
+    auto action = makeUnique<SetOuterHTMLAction>(node, html);
     auto& rawAction = *action;
     auto result = m_history.perform(WTFMove(action));
     if (!result.hasException())
@@ -415,22 +415,22 @@ ExceptionOr<void> DOMEditor::setOuterHTML(Node& node, const String& html, Node*&
 
 ExceptionOr<void> DOMEditor::insertAdjacentHTML(Element& element, const String& where, const String& html)
 {
-    return m_history.perform(std::make_unique<InsertAdjacentHTMLAction>(element, where, html));
+    return m_history.perform(makeUnique<InsertAdjacentHTMLAction>(element, where, html));
 }
 
 ExceptionOr<void> DOMEditor::replaceWholeText(Text& textNode, const String& text)
 {
-    return m_history.perform(std::make_unique<ReplaceWholeTextAction>(textNode, text));
+    return m_history.perform(makeUnique<ReplaceWholeTextAction>(textNode, text));
 }
 
 ExceptionOr<void> DOMEditor::replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode)
 {
-    return m_history.perform(std::make_unique<ReplaceChildNodeAction>(parentNode, WTFMove(newNode), oldNode));
+    return m_history.perform(makeUnique<ReplaceChildNodeAction>(parentNode, WTFMove(newNode), oldNode));
 }
 
 ExceptionOr<void> DOMEditor::setNodeValue(Node& node, const String& value)
 {
-    return m_history.perform(std::make_unique<SetNodeValueAction>(node, value));
+    return m_history.perform(makeUnique<SetNodeValueAction>(node, value));
 }
 
 static bool populateErrorString(ExceptionOr<void>&& result, ErrorString& errorString)

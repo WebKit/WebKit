@@ -76,7 +76,7 @@ FillLayer::FillLayer(FillLayerType type)
 }
 
 FillLayer::FillLayer(const FillLayer& o)
-    : m_next(o.m_next ? std::make_unique<FillLayer>(*o.m_next) : nullptr)
+    : m_next(o.m_next ? makeUnique<FillLayer>(*o.m_next) : nullptr)
     , m_image(o.m_image)
     , m_xPosition(o.m_xPosition)
     , m_yPosition(o.m_yPosition)
@@ -117,7 +117,7 @@ FillLayer::~FillLayer()
 
 FillLayer& FillLayer::operator=(const FillLayer& o)
 {
-    m_next = o.m_next ? std::make_unique<FillLayer>(*o.m_next) : nullptr;
+    m_next = o.m_next ? makeUnique<FillLayer>(*o.m_next) : nullptr;
 
     m_image = o.m_image;
     m_xPosition = o.m_xPosition;

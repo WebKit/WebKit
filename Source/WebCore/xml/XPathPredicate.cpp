@@ -263,7 +263,7 @@ bool evaluatePredicate(const Expression& expression)
 
     // foo[3] means foo[position()=3]
     if (result.isNumber())
-        return EqTestOp(EqTestOp::OP_EQ, Function::create("position"_s), std::make_unique<Number>(result.toNumber())).evaluate().toBoolean();
+        return EqTestOp(EqTestOp::OP_EQ, Function::create("position"_s), makeUnique<Number>(result.toNumber())).evaluate().toBoolean();
 
     return result.toBoolean();
 }

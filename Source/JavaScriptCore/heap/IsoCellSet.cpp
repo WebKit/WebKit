@@ -87,7 +87,7 @@ NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(size_t bloc
     auto& bitsPtrRef = m_bits[blockIndex];
     auto* bits = bitsPtrRef.get();
     if (!bits) {
-        bitsPtrRef = std::make_unique<Bitmap<MarkedBlock::atomsPerBlock>>();
+        bitsPtrRef = makeUnique<Bitmap<MarkedBlock::atomsPerBlock>>();
         bits = bitsPtrRef.get();
         WTF::storeStoreFence();
         m_blocksWithBits[blockIndex] = true;

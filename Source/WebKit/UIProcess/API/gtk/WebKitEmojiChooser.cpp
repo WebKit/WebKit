@@ -519,7 +519,7 @@ static void webkitEmojiChooserSetupEmojiSections(WebKitEmojiChooser* chooser, Gt
         chooser->priv->populateSectionsTimer = nullptr;
     };
 
-    chooser->priv->populateSectionsTimer = std::make_unique<CallbackTimer>(WTFMove(populateSections));
+    chooser->priv->populateSectionsTimer = makeUnique<CallbackTimer>(WTFMove(populateSections));
     chooser->priv->populateSectionsTimer->setPriority(G_PRIORITY_DEFAULT_IDLE);
     chooser->priv->populateSectionsTimer->setName("[WebKitEmojiChooser] populate sections timer");
     chooser->priv->populateSectionsTimer->startRepeating({ });

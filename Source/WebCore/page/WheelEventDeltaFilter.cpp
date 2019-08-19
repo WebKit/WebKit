@@ -43,9 +43,9 @@ WheelEventDeltaFilter::~WheelEventDeltaFilter() = default;
 std::unique_ptr<WheelEventDeltaFilter> WheelEventDeltaFilter::create()
 {
 #if PLATFORM(MAC)
-    return std::make_unique<WheelEventDeltaFilterMac>();
+    return makeUnique<WheelEventDeltaFilterMac>();
 #else
-    return std::make_unique<BasicWheelEventDeltaFilter>();
+    return makeUnique<BasicWheelEventDeltaFilter>();
 #endif
 }
 

@@ -349,7 +349,7 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 void Image::startAnimationAsynchronously()
 {
     if (!m_animationStartTimer)
-        m_animationStartTimer = std::make_unique<Timer>(*this, &Image::startAnimation);
+        m_animationStartTimer = makeUnique<Timer>(*this, &Image::startAnimation);
     if (m_animationStartTimer->isActive())
         return;
     m_animationStartTimer->startOneShot(0_s);

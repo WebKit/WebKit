@@ -323,7 +323,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                     return;
                 }
 
-                m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = std::make_unique<B3::Compilation>(
+                m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = makeUnique<B3::Compilation>(
                     FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                     WTFMove(context.wasmEntrypointByproducts));
             }
@@ -335,7 +335,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                     return;
                 }
 
-                embedderToWasmInternalFunction->entrypoint.compilation = std::make_unique<B3::Compilation>(
+                embedderToWasmInternalFunction->entrypoint.compilation = makeUnique<B3::Compilation>(
                     FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                     WTFMove(context.embedderEntrypointByproducts));
             }

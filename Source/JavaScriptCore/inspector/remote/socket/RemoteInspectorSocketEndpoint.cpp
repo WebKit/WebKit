@@ -144,11 +144,11 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocke
 
     Socket::setup(socket);
 
-    auto connection = std::make_unique<Socket::Connection>();
+    auto connection = makeUnique<Socket::Connection>();
 
     connection->poll = Socket::preparePolling(socket);
     connection->socket = socket;
-    connection->parser = std::make_unique<MessageParser>(id, Socket::BufferSize);
+    connection->parser = makeUnique<MessageParser>(id, Socket::BufferSize);
     connection->parser->setDidParseMessageListener([this](ConnectionID id, Vector<uint8_t>&& data) {
         if (m_inspectorClient)
             m_inspectorClient->didReceiveWebInspectorEvent(id, WTFMove(data));

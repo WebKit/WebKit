@@ -136,7 +136,7 @@ void WorkletScriptController::initScriptWithSubclass()
     ASSERT(m_workletGlobalScopeWrapper->globalObject() == m_workletGlobalScopeWrapper);
     ASSERT(asObject(m_workletGlobalScopeWrapper->getPrototypeDirect(*m_vm))->globalObject() == m_workletGlobalScopeWrapper);
 
-    m_consoleClient = std::make_unique<WorkletConsoleClient>(*m_workletGlobalScope);
+    m_consoleClient = makeUnique<WorkletConsoleClient>(*m_workletGlobalScope);
     m_workletGlobalScopeWrapper->setConsoleClient(m_consoleClient.get());
 }
 

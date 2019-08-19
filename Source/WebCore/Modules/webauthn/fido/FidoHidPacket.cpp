@@ -70,7 +70,7 @@ std::unique_ptr<FidoHidInitPacket> FidoHidInitPacket::createFromSerializedData(c
     auto data = Vector<uint8_t>();
     data.append(serialized.begin() + index, dataSize);
 
-    return std::make_unique<FidoHidInitPacket>(channelId, command, WTFMove(data), payloadSize);
+    return makeUnique<FidoHidInitPacket>(channelId, command, WTFMove(data), payloadSize);
 }
 
 // U2F Initialization packet is defined as:
@@ -123,7 +123,7 @@ std::unique_ptr<FidoHidContinuationPacket> FidoHidContinuationPacket::createFrom
     auto data = Vector<uint8_t>();
     data.append(serialized.begin() + index, dataSize);
 
-    return std::make_unique<FidoHidContinuationPacket>(channelId, sequence, WTFMove(data));
+    return makeUnique<FidoHidContinuationPacket>(channelId, sequence, WTFMove(data));
 }
 
 // U2F Continuation packet is defined as:

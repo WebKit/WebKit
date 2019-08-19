@@ -948,7 +948,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
         }
     };
 
-    toImpl(pageRef)->setContextMenuClient(std::make_unique<ContextMenuClient>(wkClient));
+    toImpl(pageRef)->setContextMenuClient(makeUnique<ContextMenuClient>(wkClient));
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(wkClient);
@@ -957,7 +957,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 
 void WKPageSetPageDiagnosticLoggingClient(WKPageRef pageRef, const WKPageDiagnosticLoggingClientBase* wkClient)
 {
-    toImpl(pageRef)->setDiagnosticLoggingClient(std::make_unique<WebPageDiagnosticLoggingClient>(wkClient));
+    toImpl(pageRef)->setDiagnosticLoggingClient(makeUnique<WebPageDiagnosticLoggingClient>(wkClient));
 }
 
 void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkClient)
@@ -995,7 +995,7 @@ void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkCl
         }
     };
 
-    toImpl(pageRef)->setFindClient(std::make_unique<FindClient>(wkClient));
+    toImpl(pageRef)->setFindClient(makeUnique<FindClient>(wkClient));
 }
 
 void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesClientBase* wkClient)
@@ -1038,7 +1038,7 @@ void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesCl
         }
     };
 
-    toImpl(pageRef)->setFindMatchesClient(std::make_unique<FindMatchesClient>(wkClient));
+    toImpl(pageRef)->setFindMatchesClient(makeUnique<FindMatchesClient>(wkClient));
 }
 
 void WKPageSetPageInjectedBundleClient(WKPageRef pageRef, const WKPageInjectedBundleClientBase* wkClient)
@@ -1048,7 +1048,7 @@ void WKPageSetPageInjectedBundleClient(WKPageRef pageRef, const WKPageInjectedBu
 
 void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClientBase* wkClient)
 {
-    toImpl(pageRef)->setFormClient(std::make_unique<WebFormClient>(wkClient));
+    toImpl(pageRef)->setFormClient(makeUnique<WebFormClient>(wkClient));
 }
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* wkClient)
@@ -1199,7 +1199,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
     WebPageProxy* webPageProxy = toImpl(pageRef);
 
-    auto loaderClient = std::make_unique<LoaderClient>(wkClient);
+    auto loaderClient = makeUnique<LoaderClient>(wkClient);
 
     // It would be nice to get rid of this code and transition all clients to using didLayout instead of
     // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
@@ -1281,7 +1281,7 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
         }
     };
 
-    toImpl(pageRef)->setPolicyClient(std::make_unique<PolicyClient>(wkClient));
+    toImpl(pageRef)->setPolicyClient(makeUnique<PolicyClient>(wkClient));
 }
 
 namespace WebKit {
@@ -2075,7 +2075,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
     };
 
-    toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));
+    toImpl(pageRef)->setUIClient(makeUnique<UIClient>(wkClient));
 }
 
 void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClientBase* wkClient)
@@ -2452,7 +2452,7 @@ private:
 void WKPageSetPageStateClient(WKPageRef page, WKPageStateClientBase* client)
 {
     if (client)
-        toImpl(page)->setPageLoadStateObserver(std::make_unique<StateClient>(client));
+        toImpl(page)->setPageLoadStateObserver(makeUnique<StateClient>(client));
     else
         toImpl(page)->setPageLoadStateObserver(nullptr);
 }

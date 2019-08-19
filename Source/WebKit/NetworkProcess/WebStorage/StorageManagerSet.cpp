@@ -66,7 +66,7 @@ void StorageManagerSet::add(PAL::SessionID sessionID, const String& localStorage
 
         m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, localStorageDirectory = localStorageDirectory.isolatedCopy()]() mutable {
             m_storageManagers.ensure(sessionID, [&]() mutable {
-                return std::make_unique<StorageManager>(WTFMove(localStorageDirectory));
+                return makeUnique<StorageManager>(WTFMove(localStorageDirectory));
             });
         });
     }

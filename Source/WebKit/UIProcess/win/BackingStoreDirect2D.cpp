@@ -41,7 +41,7 @@ using namespace WebCore;
 
 std::unique_ptr<BackingStoreBackendDirect2D> BackingStore::createBackend()
 {
-    return std::make_unique<BackingStoreBackendDirect2DImpl>(m_size, m_deviceScaleFactor);
+    return makeUnique<BackingStoreBackendDirect2DImpl>(m_size, m_deviceScaleFactor);
 }
 
 void BackingStore::paint(ID2D1RenderTarget* renderTarget, const IntRect& rect)

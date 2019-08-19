@@ -53,7 +53,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSnapshottedPlugIn);
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element, RenderStyle&& style)
     : RenderEmbeddedObject(element, WTFMove(style))
-    , m_snapshotResource(std::make_unique<RenderImageResource>())
+    , m_snapshotResource(makeUnique<RenderImageResource>())
 {
     m_snapshotResource->initialize(*this);
 }

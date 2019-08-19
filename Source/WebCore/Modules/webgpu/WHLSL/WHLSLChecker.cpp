@@ -962,14 +962,14 @@ void Checker::visit(AST::VariableDeclaration& variableDeclaration)
 
 void Checker::assignConcreteType(AST::Expression& expression, Ref<AST::UnnamedType> unnamedType, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
-    auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(WTFMove(unnamedType)));
+    auto addResult = m_typeMap.add(&expression, makeUnique<ResolvingType>(WTFMove(unnamedType)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     expression.setTypeAnnotation(WTFMove(typeAnnotation));
 }
 
 void Checker::assignType(AST::Expression& expression, RefPtr<ResolvableTypeReference> resolvableTypeReference, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
-    auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(WTFMove(resolvableTypeReference)));
+    auto addResult = m_typeMap.add(&expression, makeUnique<ResolvingType>(WTFMove(resolvableTypeReference)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     expression.setTypeAnnotation(WTFMove(typeAnnotation));
 }
@@ -977,10 +977,10 @@ void Checker::assignType(AST::Expression& expression, RefPtr<ResolvableTypeRefer
 void Checker::forwardType(AST::Expression& expression, ResolvingType& resolvingType, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
     resolvingType.visit(WTF::makeVisitor([&](Ref<AST::UnnamedType>& result) {
-        auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(result.copyRef()));
+        auto addResult = m_typeMap.add(&expression, makeUnique<ResolvingType>(result.copyRef()));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }, [&](RefPtr<ResolvableTypeReference>& result) {
-        auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(result.copyRef()));
+        auto addResult = m_typeMap.add(&expression, makeUnique<ResolvingType>(result.copyRef()));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }));
     expression.setTypeAnnotation(WTFMove(typeAnnotation));

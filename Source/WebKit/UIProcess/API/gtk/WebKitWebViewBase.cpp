@@ -566,7 +566,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gtk_drag_dest_set_target_list(viewWidget, PasteboardHelper::singleton().targetList());
 
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
-    priv->pageClient = std::make_unique<PageClientImpl>(viewWidget);
+    priv->pageClient = makeUnique<PageClientImpl>(viewWidget);
     priv->dialog = nullptr;
 }
 
@@ -1220,7 +1220,7 @@ GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webView
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->gestureController)
-        priv->gestureController = std::make_unique<GestureController>(GTK_WIDGET(webViewBase), std::make_unique<TouchGestureController>(webViewBase));
+        priv->gestureController = makeUnique<GestureController>(GTK_WIDGET(webViewBase), makeUnique<TouchGestureController>(webViewBase));
     return *priv->gestureController;
 }
 
@@ -1501,7 +1501,7 @@ DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase* webVi
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->dragAndDropHandler)
-        priv->dragAndDropHandler = std::make_unique<DragAndDropHandler>(*priv->pageProxy);
+        priv->dragAndDropHandler = makeUnique<DragAndDropHandler>(*priv->pageProxy);
     return *priv->dragAndDropHandler;
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -1713,7 +1713,7 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     if (priv->viewGestureController)
         priv->viewGestureController->connectToProcess();
     else {
-        priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
+        priv->viewGestureController = makeUnique<WebKit::ViewGestureController>(*priv->pageProxy);
         priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
     }
 }

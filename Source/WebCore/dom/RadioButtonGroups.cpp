@@ -198,11 +198,11 @@ void RadioButtonGroups::addButton(HTMLInputElement& element)
         return;
 
     if (!m_nameToGroupMap)
-        m_nameToGroupMap = std::make_unique<NameToGroupMap>();
+        m_nameToGroupMap = makeUnique<NameToGroupMap>();
 
     auto& group = m_nameToGroupMap->add(element.name().impl(), nullptr).iterator->value;
     if (!group)
-        group = std::make_unique<RadioButtonGroup>();
+        group = makeUnique<RadioButtonGroup>();
     group->add(element);
 }
 

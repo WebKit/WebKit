@@ -51,7 +51,7 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     ASSERT(database);
 
     if (m_transactionInfo.mode() == IDBTransactionMode::Versionchange)
-        m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(database->info());
+        m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(database->info());
 
     if (auto* server = m_databaseConnection->server())
         server->registerTransaction(*this);

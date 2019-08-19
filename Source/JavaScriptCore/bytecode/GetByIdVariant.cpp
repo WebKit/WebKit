@@ -72,7 +72,7 @@ GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
     m_customAccessorGetter = other.m_customAccessorGetter;
     m_domAttribute = other.m_domAttribute;
     if (other.m_callLinkStatus)
-        m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
+        m_callLinkStatus = makeUnique<CallLinkStatus>(*other.m_callLinkStatus);
     else
         m_callLinkStatus = nullptr;
     return *this;

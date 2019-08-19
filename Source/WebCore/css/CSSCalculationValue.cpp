@@ -217,12 +217,12 @@ private:
     {
         switch (category()) {
         case CalculationCategory::Number:
-            return std::make_unique<CalcExpressionNumber>(m_value->floatValue());
+            return makeUnique<CalcExpressionNumber>(m_value->floatValue());
         case CalculationCategory::Length:
-            return std::make_unique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), WebCore::Fixed));
+            return makeUnique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), WebCore::Fixed));
         case CalculationCategory::Percent:
         case CalculationCategory::PercentLength: {
-            return std::make_unique<CalcExpressionLength>(m_value->convertToLength<FixedFloatConversion | PercentConversion>(conversionData));
+            return makeUnique<CalcExpressionLength>(m_value->convertToLength<FixedFloatConversion | PercentConversion>(conversionData));
         }
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalculationCategory::PercentNumber makes no sense as a Length.
@@ -520,7 +520,7 @@ private:
                 return nullptr;
             nodes.uncheckedAppend(WTFMove(node));
         }
-        return std::make_unique<CalcExpressionOperation>(WTFMove(nodes), m_operator);
+        return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator);
     }
 
     double doubleValue() const final

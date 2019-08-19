@@ -139,7 +139,7 @@ ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadTyp
     m_state = LOADING;
     m_error = nullptr;
 
-    m_loader = std::make_unique<FileReaderLoader>(m_readType, static_cast<FileReaderLoaderClient*>(this));
+    m_loader = makeUnique<FileReaderLoader>(m_readType, static_cast<FileReaderLoaderClient*>(this));
     m_loader->setEncoding(m_encoding);
     m_loader->setDataType(m_blob->type());
     m_loader->start(scriptExecutionContext(), blob);

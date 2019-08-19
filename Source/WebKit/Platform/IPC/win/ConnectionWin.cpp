@@ -140,7 +140,7 @@ void Connection::readEventHandler()
         if (!m_readBuffer.isEmpty()) {
             // We have a message, let's dispatch it.
             Vector<Attachment> attachments(0);
-            auto decoder = std::make_unique<Decoder>(m_readBuffer.data(), m_readBuffer.size(), nullptr, WTFMove(attachments));
+            auto decoder = makeUnique<Decoder>(m_readBuffer.data(), m_readBuffer.size(), nullptr, WTFMove(attachments));
             processIncomingMessage(WTFMove(decoder));
         }
 

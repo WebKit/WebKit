@@ -55,7 +55,7 @@ WKTypeID WKBundleGetTypeID()
 
 void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClientBase *wkClient)
 {
-    WebKit::toImpl(bundleRef)->setClient(std::make_unique<WebKit::InjectedBundleClient>(wkClient));
+    WebKit::toImpl(bundleRef)->setClient(makeUnique<WebKit::InjectedBundleClient>(wkClient));
 }
 
 void WKBundleSetServiceWorkerProxyCreationCallback(WKBundleRef bundleRef, void (*callback)(uint64_t))

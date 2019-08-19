@@ -80,7 +80,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
     if (numberOfOutputChannels != 2)
         LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    return std::make_unique<AudioDestinationIOS>(callback, sampleRate);
+    return makeUnique<AudioDestinationIOS>(callback, sampleRate);
 }
 
 float AudioDestination::hardwareSampleRate()

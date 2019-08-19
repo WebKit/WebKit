@@ -784,8 +784,8 @@ using namespace Inspector;
     [_domainAHandler release];
     _domainAHandler = [handler retain];
 
-    auto alternateDispatcher = std::make_unique<ObjCInspectorDomainABackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DomainABackendDispatcher, AlternateDomainABackendDispatcher>>("DomainA"_s, *_controller, WTFMove(alternateDispatcher));
+    auto alternateDispatcher = makeUnique<ObjCInspectorDomainABackendDispatcher>(handler);
+    auto alternateAgent = makeUnique<AlternateDispatchableAgent<DomainABackendDispatcher, AlternateDomainABackendDispatcher>>("DomainA"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -802,8 +802,8 @@ using namespace Inspector;
     [_domainBHandler release];
     _domainBHandler = [handler retain];
 
-    auto alternateDispatcher = std::make_unique<ObjCInspectorDomainBBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DomainBBackendDispatcher, AlternateDomainBBackendDispatcher>>("DomainB"_s, *_controller, WTFMove(alternateDispatcher));
+    auto alternateDispatcher = makeUnique<ObjCInspectorDomainBBackendDispatcher>(handler);
+    auto alternateAgent = makeUnique<AlternateDispatchableAgent<DomainBBackendDispatcher, AlternateDomainBBackendDispatcher>>("DomainB"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 

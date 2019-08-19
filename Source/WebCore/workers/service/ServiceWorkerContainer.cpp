@@ -88,7 +88,7 @@ void ServiceWorkerContainer::derefEventTarget()
 auto ServiceWorkerContainer::ready() -> ReadyPromise&
 {
     if (!m_readyPromise) {
-        m_readyPromise = std::make_unique<ReadyPromise>();
+        m_readyPromise = makeUnique<ReadyPromise>();
 
         if (m_isStopped || !scriptExecutionContext()->sessionID().isValid())
             return *m_readyPromise;
@@ -180,7 +180,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     jobData.type = ServiceWorkerJobType::Register;
     jobData.registrationOptions = options;
 
-    scheduleJob(std::make_unique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
+    scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
 void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&& promise)
@@ -206,7 +206,7 @@ void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<Deferre
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("removeRegistration: Unregistering service worker. Job ID: %" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
 
-    scheduleJob(std::make_unique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
+    scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
 void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, RefPtr<DeferredPromise>&& promise)
@@ -232,7 +232,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("removeRegistration: Updating service worker. Job ID: %" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
 
-    scheduleJob(std::make_unique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
+    scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
 void ServiceWorkerContainer::scheduleJob(std::unique_ptr<ServiceWorkerJob>&& job)
@@ -269,7 +269,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     }
 
     uint64_t pendingPromiseIdentifier = ++m_lastPendingPromiseIdentifier;
-    auto pendingPromise = std::make_unique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
+    auto pendingPromise = makeUnique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
     m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
     auto contextIdentifier = this->contextIdentifier();
@@ -334,7 +334,7 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
     }
 
     uint64_t pendingPromiseIdentifier = ++m_lastPendingPromiseIdentifier;
-    auto pendingPromise = std::make_unique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
+    auto pendingPromise = makeUnique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
     m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
     auto contextIdentifier = this->contextIdentifier();

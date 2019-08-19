@@ -297,7 +297,7 @@ bool LayerOverlapMap::overlapsLayers(const RenderLayer& layer, const LayoutRect&
 
 void LayerOverlapMap::pushCompositingContainer()
 {
-    m_overlapStack.append(std::make_unique<OverlapMapContainer>(m_rootLayer));
+    m_overlapStack.append(makeUnique<OverlapMapContainer>(m_rootLayer));
 }
 
 void LayerOverlapMap::popCompositingContainer()

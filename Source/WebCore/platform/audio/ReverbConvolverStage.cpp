@@ -55,16 +55,16 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
     ASSERT(accumulationBuffer);
 
     if (!m_directMode) {
-        m_fftKernel = std::make_unique<FFTFrame>(fftSize);
+        m_fftKernel = makeUnique<FFTFrame>(fftSize);
         m_fftKernel->doPaddedFFT(impulseResponse + stageOffset, stageLength);
-        m_fftConvolver = std::make_unique<FFTConvolver>(fftSize);
+        m_fftConvolver = makeUnique<FFTConvolver>(fftSize);
     } else {
         ASSERT(!stageOffset);
         ASSERT(stageLength <= fftSize / 2);
 
-        m_directKernel = std::make_unique<AudioFloatArray>(fftSize / 2);
+        m_directKernel = makeUnique<AudioFloatArray>(fftSize / 2);
         m_directKernel->copyToRange(impulseResponse, 0, stageLength);
-        m_directConvolver = std::make_unique<DirectConvolver>(renderSliceSize);
+        m_directConvolver = makeUnique<DirectConvolver>(renderSliceSize);
     }
     m_temporaryBuffer.allocate(renderSliceSize);
 

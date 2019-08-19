@@ -102,7 +102,7 @@ void WebMediaSessionFocusManager::updatePlaybackAttributesFromMediaState(WebPage
 
 void WebMediaSessionFocusManager::setFocusedMediaElement(WebPageProxy& proxy, uint64_t elementID)
 {
-    m_focusedMediaElement = std::make_unique<FocusedMediaElement>(&proxy, elementID);
+    m_focusedMediaElement = makeUnique<FocusedMediaElement>(&proxy, elementID);
 }
 
 void WebMediaSessionFocusManager::clearFocusedMediaElement()

@@ -38,7 +38,7 @@ Ref<StorageSyncManager> StorageSyncManager::create(const String& path)
 }
 
 StorageSyncManager::StorageSyncManager(const String& path)
-    : m_thread(std::make_unique<StorageThread>())
+    : m_thread(makeUnique<StorageThread>())
     , m_path(path.isolatedCopy())
 {
     ASSERT(isMainThread());

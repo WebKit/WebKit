@@ -34,7 +34,7 @@ namespace WebCore {
 
 std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
 {
-    return std::make_unique<KeyedEncoderCF>();
+    return makeUnique<KeyedEncoderCF>();
 }
 
 static RetainPtr<CFMutableDictionaryRef> createDictionary()

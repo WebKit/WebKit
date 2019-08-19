@@ -44,7 +44,7 @@ public:
     {
         ASSERT(baseURL);
         baseURL->parseURLIfNecessary();
-        auto absoluteURL = std::make_unique<WTF::URL>(*baseURL->m_parsedURL.get(), relativeURL);
+        auto absoluteURL = makeUnique<WTF::URL>(*baseURL->m_parsedURL.get(), relativeURL);
         const WTF::String& absoluteURLString = absoluteURL->string();
 
         return adoptRef(*new API::URL(WTFMove(absoluteURL), absoluteURLString));
@@ -121,7 +121,7 @@ private:
     {
         if (m_parsedURL)
             return;
-        m_parsedURL = std::make_unique<WTF::URL>(WTF::URL(), m_string);
+        m_parsedURL = makeUnique<WTF::URL>(WTF::URL(), m_string);
     }
 
     WTF::String m_string;

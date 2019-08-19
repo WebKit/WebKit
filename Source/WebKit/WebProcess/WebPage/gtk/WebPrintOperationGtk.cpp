@@ -727,7 +727,7 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
 {
     ASSERT(m_printContext);
 
-    auto data = std::make_unique<PrintPagesData>(this);
+    auto data = makeUnique<PrintPagesData>(this);
     if (!data->isValid) {
         cairo_surface_finish(surface);
         printDone(invalidPageRangeToPrint(frameURL()));

@@ -77,7 +77,7 @@ public:
     TextLayout(RenderText& text, const FontCascade& font, float xPos)
         : m_font(font)
         , m_run(constructTextRun(text, xPos))
-        , m_controller(std::make_unique<ComplexTextController>(m_font, m_run, true))
+        , m_controller(makeUnique<ComplexTextController>(m_font, m_run, true))
     {
     }
 

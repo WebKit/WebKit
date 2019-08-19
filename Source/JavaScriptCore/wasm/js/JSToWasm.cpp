@@ -46,7 +46,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
 {
     CCallHelpers& jit = *compilationContext.embedderEntrypointJIT;
 
-    auto result = std::make_unique<InternalFunction>();
+    auto result = makeUnique<InternalFunction>();
     jit.emitFunctionPrologue();
 
     // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321

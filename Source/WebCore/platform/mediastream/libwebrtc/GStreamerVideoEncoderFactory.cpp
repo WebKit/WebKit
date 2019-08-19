@@ -513,14 +513,14 @@ std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::CreateVideoE
         g_object_get(webrtcencoder.get(), "encoder", &encoder.outPtr(), NULL);
 
         if (encoder)
-            return std::make_unique<GStreamerVP8Encoder>(format);
+            return makeUnique<GStreamerVP8Encoder>(format);
 
         GST_INFO("Using VP8 Encoder from LibWebRTC.");
-        return std::make_unique<webrtc::LibvpxVp8Encoder>();
+        return makeUniqueWithoutFastMallocCheck<webrtc::LibvpxVp8Encoder>();
     }
 
     if (format.name == cricket::kH264CodecName)
-        return std::make_unique<GStreamerH264Encoder>(format);
+        return makeUnique<GStreamerH264Encoder>(format);
 
     return nullptr;
 }

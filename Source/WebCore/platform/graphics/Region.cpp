@@ -646,7 +646,7 @@ void Region::setShape(Shape&& shape)
     }
 
     if (!m_shape)
-        m_shape = std::make_unique<Shape>(WTFMove(shape));
+        m_shape = makeUnique<Shape>(WTFMove(shape));
     else
         *m_shape = WTFMove(shape);
 }

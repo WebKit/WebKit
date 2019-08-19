@@ -286,7 +286,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
             registration->setUpdateViaCache(job.registrationOptions.updateViaCache);
         RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found registration %llu for job %s but it needs updating", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());
     } else {
-        auto newRegistration = std::make_unique<SWServerRegistration>(m_server, m_registrationKey, job.registrationOptions.updateViaCache, job.scopeURL, job.scriptURL);
+        auto newRegistration = makeUnique<SWServerRegistration>(m_server, m_registrationKey, job.registrationOptions.updateViaCache, job.scopeURL, job.scriptURL);
         m_server.addRegistration(WTFMove(newRegistration));
 
         RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: No existing registration for job %s, constructing a new one.", this, job.identifier().loggingString().utf8().data());

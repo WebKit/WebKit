@@ -64,7 +64,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuff
     auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), m_internalFormat);
     texture->reset(m_size);
     static_cast<BitmapTextureGL&>(texture.get()).copyFromExternalTexture(m_textureID);
-    return std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), m_extraFlags);
+    return makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), m_extraFlags);
 }
 
 void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)

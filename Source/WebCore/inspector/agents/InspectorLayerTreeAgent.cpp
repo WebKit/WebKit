@@ -48,7 +48,7 @@ using namespace Inspector;
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
     : InspectorAgentBase("LayerTree"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::LayerTreeBackendDispatcher::create(context.backendDispatcher, this))
 {
 }

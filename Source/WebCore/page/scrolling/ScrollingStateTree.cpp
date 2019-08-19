@@ -293,7 +293,7 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     }
 
     // This function clones and resets the current state tree, but leaves the tree structure intact.
-    std::unique_ptr<ScrollingStateTree> treeStateClone = std::make_unique<ScrollingStateTree>();
+    std::unique_ptr<ScrollingStateTree> treeStateClone = makeUnique<ScrollingStateTree>();
     treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
 
     if (m_rootStateNode)

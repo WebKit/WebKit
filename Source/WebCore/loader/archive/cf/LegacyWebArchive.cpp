@@ -423,7 +423,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, WTF::Function<bool
     // but we can approximate that by checking if scripting is enabled right now.
     std::unique_ptr<Vector<QualifiedName>> tagNamesToFilter;
     if (frame->page() && frame->page()->settings().isScriptEnabled()) {
-        tagNamesToFilter = std::make_unique<Vector<QualifiedName>>();
+        tagNamesToFilter = makeUnique<Vector<QualifiedName>>();
         tagNamesToFilter->append(HTMLNames::noscriptTag);
     }
 

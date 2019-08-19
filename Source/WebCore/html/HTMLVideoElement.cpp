@@ -94,7 +94,7 @@ void HTMLVideoElement::didAttachRenderers()
     updateDisplayState();
     if (shouldDisplayPosterImage()) {
         if (!m_imageLoader)
-            m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+            m_imageLoader = makeUnique<HTMLImageLoader>(*this);
         m_imageLoader->updateFromElement();
         if (auto* renderer = this->renderer())
             renderer->imageResource().setCachedImage(m_imageLoader->image());
@@ -127,7 +127,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomStrin
 
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
-                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+                m_imageLoader = makeUnique<HTMLImageLoader>(*this);
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (auto* renderer = this->renderer())

@@ -295,7 +295,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
-        m_legacyScrollingLayerCoordinator = std::make_unique<LegacyWebKitScrollingLayerCoordinator>(page().chrome().client(), isMainFrameCompositor());
+        m_legacyScrollingLayerCoordinator = makeUnique<LegacyWebKitScrollingLayerCoordinator>(page().chrome().client(), isMainFrameCompositor());
 #endif
 }
 
@@ -612,7 +612,7 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
 {
     if (!m_layerUpdater) {
         PlatformDisplayID displayID = page().chrome().displayID();
-        m_layerUpdater = std::make_unique<GraphicsLayerUpdater>(*this, displayID);
+        m_layerUpdater = makeUnique<GraphicsLayerUpdater>(*this, displayID);
     }
     
     m_layerUpdater->scheduleUpdate();
@@ -4792,7 +4792,7 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
 
         std::unique_ptr<ViewportConstraints> constraints;
         if (layer->renderer().isStickilyPositioned()) {
-            constraints = std::make_unique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(*layer));
+            constraints = makeUnique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(*layer));
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
             if (compositor.isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
@@ -4800,7 +4800,7 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
                 stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollContainerLayer()->platformLayer());
             }
         } else if (layer->renderer().isFixedPositioned())
-            constraints = std::make_unique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(*layer));
+            constraints = makeUnique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(*layer));
         else
             continue;
 

@@ -1,3 +1,42 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::FullscreenVideoController):
+        * Plugins/PluginStream.cpp:
+        (WebCore::PluginStream::didReceiveData):
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::wndProc):
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::WebChromeClient):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openLocalFrontend):
+        (WebInspectorClient::highlight):
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::WebElementPropertyBag):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::CAD3DRenderer::createD3DPostProcessingContext):
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::WebNotificationCenter):
+        * WebView.cpp:
+        (WebView::handleMouseEvent):
+        (WebView::registerEmbeddedViewMIMEType):
+        (WebView::enterVideoFullscreenForVideoElement):
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+        (WebView::setAcceleratedCompositing):
+
 2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part

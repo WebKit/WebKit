@@ -61,15 +61,15 @@ public:
 static Vector<CDMFactory*>& installedCDMFactories()
 {
     static auto cdms = makeNeverDestroyed(Vector<CDMFactory*> {
-        new CDMFactory([](LegacyCDM* cdm) { return std::make_unique<LegacyCDMPrivateClearKey>(cdm); },
+        new CDMFactory([](LegacyCDM* cdm) { return makeUnique<LegacyCDMPrivateClearKey>(cdm); },
             LegacyCDMPrivateClearKey::supportsKeySystem, LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType),
 
         // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
-        new CDMFactory([](LegacyCDM* cdm) { return std::make_unique<CDMPrivateMediaPlayer>(cdm); },
+        new CDMFactory([](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaPlayer>(cdm); },
             CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType),
 
 #if (HAVE(AVCONTENTKEYSESSION) || HAVE(AVSTREAMSESSION)) && ENABLE(MEDIA_SOURCE)
-        new CDMFactory([](LegacyCDM* cdm) { return std::make_unique<CDMPrivateMediaSourceAVFObjC>(cdm); },
+        new CDMFactory([](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaSourceAVFObjC>(cdm); },
             CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType),
 #endif
     });
@@ -107,7 +107,7 @@ std::unique_ptr<LegacyCDM> LegacyCDM::create(const String& keySystem)
     if (!supportsKeySystem(keySystem))
         return nullptr;
 
-    return std::make_unique<LegacyCDM>(keySystem);
+    return makeUnique<LegacyCDM>(keySystem);
 }
 
 LegacyCDM::LegacyCDM(const String& keySystem)

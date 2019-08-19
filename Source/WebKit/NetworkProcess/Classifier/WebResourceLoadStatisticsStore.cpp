@@ -159,15 +159,15 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
     
     postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost] {
         if (RuntimeEnabledFeatures::sharedFeatures().isITPDatabaseEnabled()) {
-            m_statisticsStore = std::make_unique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory);
+            m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory);
 
-            auto memoryStore = std::make_unique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
-            auto persistentStore = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);
+            auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
+            auto persistentStore = makeUnique<ResourceLoadStatisticsPersistentStorage>(*memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);
 
             downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore.get()).populateFromMemoryStore(*memoryStore);
         } else {
-            m_statisticsStore = std::make_unique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
-            m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore), m_statisticsQueue, resourceLoadStatisticsDirectory);
+            m_statisticsStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
+            m_persistentStorage = makeUnique<ResourceLoadStatisticsPersistentStorage>(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore), m_statisticsQueue, resourceLoadStatisticsDirectory);
         }
 
         // FIXME(193297): This should be revised after the UIProcess version goes away.

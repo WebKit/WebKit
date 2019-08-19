@@ -2435,7 +2435,7 @@ static RefPtr<CSSBasicShapePath> consumeBasicShapePath(CSSParserTokenRange& args
     if (args.peek().type() != StringToken)
         return nullptr;
     
-    auto byteStream = std::make_unique<SVGPathByteStream>();
+    auto byteStream = makeUnique<SVGPathByteStream>();
     if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value().toString(), *byteStream, UnalteredParsing))
         return nullptr;
     

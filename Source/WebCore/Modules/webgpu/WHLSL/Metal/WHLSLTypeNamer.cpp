@@ -272,19 +272,19 @@ std::unique_ptr<BaseTypeNameNode> TypeNamer::createNameNode(AST::UnnamedType& un
     switch (unnamedType.kind()) {
     case AST::UnnamedType::Kind::TypeReference: {
         auto& typeReference = downcast<AST::TypeReference>(unnamedType);
-        return std::make_unique<ReferenceTypeNameNode>(parent, generateNextTypeName(), typeReference.resolvedType());
+        return makeUnique<ReferenceTypeNameNode>(parent, generateNextTypeName(), typeReference.resolvedType());
     }
     case AST::UnnamedType::Kind::Pointer: {
         auto& pointerType = downcast<AST::PointerType>(unnamedType);
-        return std::make_unique<PointerTypeNameNode>(parent, generateNextTypeName(), pointerType.addressSpace());
+        return makeUnique<PointerTypeNameNode>(parent, generateNextTypeName(), pointerType.addressSpace());
     }
     case AST::UnnamedType::Kind::ArrayReference: {
         auto& arrayReferenceType = downcast<AST::ArrayReferenceType>(unnamedType);
-        return std::make_unique<ArrayReferenceTypeNameNode>(parent, generateNextTypeName(), arrayReferenceType.addressSpace());
+        return makeUnique<ArrayReferenceTypeNameNode>(parent, generateNextTypeName(), arrayReferenceType.addressSpace());
     }
     case AST::UnnamedType::Kind::Array: {
         auto& arrayType = downcast<AST::ArrayType>(unnamedType);
-        return std::make_unique<ArrayTypeNameNode>(parent, generateNextTypeName(), arrayType.numElements());
+        return makeUnique<ArrayTypeNameNode>(parent, generateNextTypeName(), arrayType.numElements());
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();

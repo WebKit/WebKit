@@ -58,7 +58,7 @@ public:
     explicit PluginDestructionProtector(NetscapePlugin* plugin)
     {
         if (plugin)
-            m_protector = std::make_unique<PluginController::PluginDestructionProtector>(static_cast<Plugin*>(plugin)->controller());
+            m_protector = makeUnique<PluginController::PluginDestructionProtector>(static_cast<Plugin*>(plugin)->controller());
     }
     
 private:

@@ -200,7 +200,7 @@ std::unique_ptr<SavedFormState> SavedFormState::deserialize(const Vector<String>
     size_t itemCount = stateVector[index++].toUInt();
     if (!itemCount)
         return nullptr;
-    auto savedFormState = std::make_unique<SavedFormState>();
+    auto savedFormState = makeUnique<SavedFormState>();
     while (itemCount--) {
         if (index + 1 >= stateVector.size())
             return nullptr;
@@ -365,13 +365,13 @@ static String formStateSignature()
 std::unique_ptr<FormController::SavedFormStateMap> FormController::createSavedFormStateMap(const FormElementListHashSet& controlList)
 {
     FormKeyGenerator keyGenerator;
-    auto stateMap = std::make_unique<SavedFormStateMap>();
+    auto stateMap = makeUnique<SavedFormStateMap>();
     for (auto& control : controlList) {
         if (!control->shouldSaveAndRestoreFormControlState())
             continue;
         auto& formState = stateMap->add(keyGenerator.formKey(*control).impl(), nullptr).iterator->value;
         if (!formState)
-            formState = std::make_unique<SavedFormState>();
+            formState = makeUnique<SavedFormState>();
         formState->appendControlState(control->name(), control->type(), control->saveFormControlState());
     }
     return stateMap;
@@ -403,7 +403,7 @@ FormControlState FormController::takeStateForFormElement(const HTMLFormControlEl
     if (m_savedFormStateMap.isEmpty())
         return FormControlState();
     if (!m_formKeyGenerator)
-        m_formKeyGenerator = std::make_unique<FormKeyGenerator>();
+        m_formKeyGenerator = makeUnique<FormKeyGenerator>();
     SavedFormStateMap::iterator it = m_savedFormStateMap.find(m_formKeyGenerator->formKey(control).impl());
     if (it == m_savedFormStateMap.end())
         return FormControlState();

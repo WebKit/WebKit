@@ -35,7 +35,7 @@ std::unique_ptr<VRPlatformManagerOpenVR> VRPlatformManagerOpenVR::create()
     if (!vr::VR_IsRuntimeInstalled())
         return nullptr;
 
-    return std::make_unique<VRPlatformManagerOpenVR>();
+    return makeUnique<VRPlatformManagerOpenVR>();
 }
 
 VRPlatformManagerOpenVR::~VRPlatformManagerOpenVR()
@@ -78,7 +78,7 @@ Vector<WeakPtr<VRPlatformDisplay>> VRPlatformManagerOpenVR::getVRDisplays()
 
     Vector<WeakPtr<VRPlatformDisplay>> displays;
     if (!m_display)
-        m_display = std::make_unique<VRPlatformDisplayOpenVR>(m_system, chaperone, compositor);
+        m_display = makeUnique<VRPlatformDisplayOpenVR>(m_system, chaperone, compositor);
     displays.append(makeWeakPtr(*m_display));
     return displays;
 }

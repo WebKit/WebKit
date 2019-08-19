@@ -63,7 +63,7 @@ Notification::Notification(Document& document, const String& title, const Option
     , m_body(options.body)
     , m_tag(options.tag)
     , m_state(Idle)
-    , m_taskTimer(std::make_unique<Timer>([this] () { show(); }))
+    , m_taskTimer(makeUnique<Timer>([this] () { show(); }))
 {
     if (!options.icon.isEmpty()) {
         auto iconURL = document.completeURL(options.icon);

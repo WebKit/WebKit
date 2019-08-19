@@ -39,7 +39,7 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, s
     , m_size(size)
     , m_directory(&heap, WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_localAllocator(&m_directory)
-    , m_isoAlignedMemoryAllocator(std::make_unique<IsoAlignedMemoryAllocator>())
+    , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>())
 {
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
 

@@ -195,7 +195,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
             // We need to have already sized m_frameBufferCache before this, and
             // we must not resize it again later (see caution in frameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
-            m_bmpReaders[index] = std::make_unique<BMPImageReader>(this, dirEntry.m_imageOffset, 0, true);
+            m_bmpReaders[index] = makeUnique<BMPImageReader>(this, dirEntry.m_imageOffset, 0, true);
             m_bmpReaders[index]->setData(m_data.get());
             m_bmpReaders[index]->setBuffer(&m_frameBufferCache[index]);
         }

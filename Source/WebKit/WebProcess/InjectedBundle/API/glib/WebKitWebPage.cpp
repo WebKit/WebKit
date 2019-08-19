@@ -129,7 +129,7 @@ static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
     if (wrapperPtr)
         return wrapperPtr->webkitFrame();
 
-    std::unique_ptr<WebKitFrameWrapper> wrapper = std::make_unique<WebKitFrameWrapper>(*webFrame);
+    std::unique_ptr<WebKitFrameWrapper> wrapper = makeUnique<WebKitFrameWrapper>(*webFrame);
     wrapperPtr = wrapper.get();
     webFrameMap().set(webFrame, WTFMove(wrapper));
     return wrapperPtr->webkitFrame();
@@ -679,11 +679,11 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
     page->priv->webPage = webPage;
 
-    webPage->setInjectedBundleResourceLoadClient(std::make_unique<PageResourceLoadClient>(page));
-    webPage->setInjectedBundlePageLoaderClient(std::make_unique<PageLoaderClient>(page));
-    webPage->setInjectedBundleContextMenuClient(std::make_unique<PageContextMenuClient>(page));
-    webPage->setInjectedBundleUIClient(std::make_unique<PageUIClient>(page));
-    webPage->setInjectedBundleFormClient(std::make_unique<PageFormClient>(page));
+    webPage->setInjectedBundleResourceLoadClient(makeUnique<PageResourceLoadClient>(page));
+    webPage->setInjectedBundlePageLoaderClient(makeUnique<PageLoaderClient>(page));
+    webPage->setInjectedBundleContextMenuClient(makeUnique<PageContextMenuClient>(page));
+    webPage->setInjectedBundleUIClient(makeUnique<PageUIClient>(page));
+    webPage->setInjectedBundleFormClient(makeUnique<PageFormClient>(page));
 
     return page;
 }

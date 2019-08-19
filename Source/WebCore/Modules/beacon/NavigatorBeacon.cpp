@@ -52,7 +52,7 @@ NavigatorBeacon* NavigatorBeacon::from(Navigator& navigator)
 {
     auto* supplement = static_cast<NavigatorBeacon*>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorBeacon>(navigator);
+        auto newSupplement = makeUnique<NavigatorBeacon>(navigator);
         supplement = newSupplement.get();
         provideTo(&navigator, supplementName(), WTFMove(newSupplement));
     }

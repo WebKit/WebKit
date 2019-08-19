@@ -59,7 +59,7 @@ private:
 
 DocumentEventQueue::DocumentEventQueue(Document& document)
     : m_document(document)
-    , m_pendingEventTimer(std::make_unique<Timer>(*this))
+    , m_pendingEventTimer(makeUnique<Timer>(*this))
     , m_isClosed(false)
 {
     m_pendingEventTimer->suspendIfNeeded();

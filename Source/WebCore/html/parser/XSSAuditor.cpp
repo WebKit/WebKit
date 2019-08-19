@@ -376,7 +376,7 @@ std::unique_ptr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& reque
         return nullptr;
 
     bool didBlockEntirePage = m_xssProtection == XSSProtectionDisposition::BlockEnabled;
-    return std::make_unique<XSSInfo>(m_documentURL, didBlockEntirePage, m_didSendValidXSSProtectionHeader);
+    return makeUnique<XSSInfo>(m_documentURL, didBlockEntirePage, m_didSendValidXSSProtectionHeader);
 }
 
 bool XSSAuditor::filterStartToken(const FilterTokenRequest& request)
@@ -712,7 +712,7 @@ SuffixTree<ASCIICodebook>* XSSAuditor::decodedHTTPBodySuffixTree()
     const unsigned suffixTreeDepth = 5;
 
     if (!m_decodedHTTPBodySuffixTree && m_decodedHTTPBody.length() >= minimumLengthForSuffixTree)
-        m_decodedHTTPBodySuffixTree = std::make_unique<SuffixTree<ASCIICodebook>>(m_decodedHTTPBody, suffixTreeDepth);
+        m_decodedHTTPBodySuffixTree = makeUnique<SuffixTree<ASCIICodebook>>(m_decodedHTTPBody, suffixTreeDepth);
     return m_decodedHTTPBodySuffixTree.get();
 }
 

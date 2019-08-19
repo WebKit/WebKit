@@ -78,7 +78,7 @@ private:
         if (!customProtocolManager)
             return;
 
-        auto customProtocolID = customProtocolManager->addCustomProtocol(std::make_unique<LegacyCustomProtocolManager::WebSoupRequestAsyncData>(WTFMove(task), request));
+        auto customProtocolID = customProtocolManager->addCustomProtocol(makeUnique<LegacyCustomProtocolManager::WebSoupRequestAsyncData>(WTFMove(task), request));
         customProtocolManager->startLoading(customProtocolID, webkitSoupRequestGenericGetRequest(request));
     }
 };

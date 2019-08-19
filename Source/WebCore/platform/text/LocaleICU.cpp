@@ -44,7 +44,7 @@ using namespace icu;
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return std::make_unique<LocaleICU>(locale.string().utf8().data());
+    return makeUnique<LocaleICU>(locale.string().utf8().data());
 }
 
 LocaleICU::LocaleICU(const char* locale)
@@ -163,22 +163,22 @@ static String getDateFormatPattern(const UDateFormat* dateFormat)
 std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* dateFormat, UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
     if (!dateFormat)
-        return std::make_unique<Vector<String>>();
+        return makeUnique<Vector<String>>();
     if (udat_countSymbols(dateFormat, type) != startIndex + size)
-        return std::make_unique<Vector<String>>();
+        return makeUnique<Vector<String>>();
 
-    auto labels = std::make_unique<Vector<String>>();
+    auto labels = makeUnique<Vector<String>>();
     labels->reserveCapacity(size);
     for (int32_t i = 0; i < size; ++i) {
         UErrorCode status = U_ZERO_ERROR;
         int32_t length = udat_getSymbols(dateFormat, type, startIndex + i, 0, 0, &status);
         if (status != U_BUFFER_OVERFLOW_ERROR)
-            return std::make_unique<Vector<String>>();
+            return makeUnique<Vector<String>>();
         Vector<UChar> buffer(length);
         status = U_ZERO_ERROR;
         udat_getSymbols(dateFormat, type, startIndex + i, buffer.data(), length, &status);
         if (U_FAILURE(status))
-            return std::make_unique<Vector<String>>();
+            return makeUnique<Vector<String>>();
         labels->append(String::adopt(WTFMove(buffer)));
     }
     return WTFMove(labels);
@@ -186,7 +186,7 @@ std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* 
 
 static std::unique_ptr<Vector<String>> createFallbackMonthLabels()
 {
-    auto labels = std::make_unique<Vector<String>>();
+    auto labels = makeUnique<Vector<String>>();
     labels->reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthFullName));
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
         labels->append(WTF::monthFullName[i]);
@@ -208,7 +208,7 @@ const Vector<String>& LocaleICU::monthLabels()
 
 static std::unique_ptr<Vector<String>> createFallbackAMPMLabels()
 {
-    auto labels = std::make_unique<Vector<String>>();
+    auto labels = makeUnique<Vector<String>>();
     labels->reserveCapacity(2);
     labels->append("AM");
     labels->append("PM");

@@ -134,7 +134,7 @@ void MockRealtimeAudioSourceMac::reconfigure()
     const bool isNonInterleaved = true;
     FillOutASBDForLPCM(m_streamFormat, sampleRate(), channelCount, bitsPerByte * bytesPerFloat, bitsPerByte * bytesPerFloat, isFloat, isBigEndian, isNonInterleaved);
 
-    m_audioBufferList = std::make_unique<WebAudioBufferList>(m_streamFormat, m_streamFormat.mBytesPerFrame * m_maximiumFrameCount);
+    m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamFormat, m_streamFormat.mBytesPerFrame * m_maximiumFrameCount);
 
     CMFormatDescriptionRef formatDescription;
     CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);

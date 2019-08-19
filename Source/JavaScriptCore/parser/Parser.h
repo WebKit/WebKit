@@ -204,7 +204,7 @@ public:
     void pushLabel(const Identifier* label, bool isLoop)
     {
         if (!m_labels)
-            m_labels = std::make_unique<LabelStack>();
+            m_labels = makeUnique<LabelStack>();
         m_labels->append(ScopeLabelInfo { label->impl(), isLoop });
     }
 
@@ -1941,7 +1941,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
         endLocation.lineStartOffset = m_lexer->currentLineStartOffset();
         endLocation.startOffset = m_lexer->currentOffset();
         unsigned endColumn = endLocation.startOffset - endLocation.lineStartOffset;
-        result = std::make_unique<ParsedNode>(m_parserArena,
+        result = makeUnique<ParsedNode>(m_parserArena,
                                     startLocation,
                                     endLocation,
                                     startColumn,

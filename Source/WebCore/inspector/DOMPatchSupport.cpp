@@ -402,7 +402,7 @@ static void addStringToSHA1(SHA1& sha1, const String& string)
 
 std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node& node, UnusedNodesMap* unusedNodesMap)
 {
-    auto digest = std::make_unique<Digest>();
+    auto digest = makeUnique<Digest>();
     digest->node = &node;
     SHA1 sha1;
 

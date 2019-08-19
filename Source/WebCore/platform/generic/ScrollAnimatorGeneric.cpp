@@ -44,14 +44,14 @@ static const Seconds scrollCaptureThreshold { 150_ms };
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return std::make_unique<ScrollAnimatorGeneric>(scrollableArea);
+    return makeUnique<ScrollAnimatorGeneric>(scrollableArea);
 }
 
 ScrollAnimatorGeneric::ScrollAnimatorGeneric(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_overlayScrollbarAnimationTimer(*this, &ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired)
 {
-    m_kineticAnimation = std::make_unique<ScrollAnimationKinetic>(m_scrollableArea, [this](FloatPoint&& position) {
+    m_kineticAnimation = makeUnique<ScrollAnimationKinetic>(m_scrollableArea, [this](FloatPoint&& position) {
 #if ENABLE(SMOOTH_SCROLLING)
         if (m_smoothAnimation)
             m_smoothAnimation->setCurrentPosition(position);
@@ -73,7 +73,7 @@ void ScrollAnimatorGeneric::ensureSmoothScrollingAnimation()
     if (m_smoothAnimation)
         return;
 
-    m_smoothAnimation = std::make_unique<ScrollAnimationSmooth>(m_scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
+    m_smoothAnimation = makeUnique<ScrollAnimationSmooth>(m_scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
         updatePosition(WTFMove(position));
     });
 }

@@ -114,7 +114,7 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& name, const Strin
     , m_workerDebuggerProxy(workerDebuggerProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_runtimeFlags(runtimeFlags)
-    , m_startupData(std::make_unique<WorkerThreadStartupData>(scriptURL, name, identifier, userAgent, isOnline, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, timeOrigin, sessionID))
+    , m_startupData(makeUnique<WorkerThreadStartupData>(scriptURL, name, identifier, userAgent, isOnline, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, timeOrigin, sessionID))
 #if ENABLE(INDEXED_DATABASE)
     , m_idbConnectionProxy(connectionProxy)
 #endif

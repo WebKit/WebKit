@@ -402,7 +402,7 @@ private:
     {
         if (!m_rareData) {
             auto locker = lockDuringMarking(*heap(), cellLock());
-            m_rareData = std::make_unique<RareData>();
+            m_rareData = makeUnique<RareData>();
         }
     }
 

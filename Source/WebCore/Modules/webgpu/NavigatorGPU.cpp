@@ -38,7 +38,7 @@ NavigatorGPU* NavigatorGPU::from(Navigator* navigator)
 {
     NavigatorGPU* supplement = static_cast<NavigatorGPU*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorGPU>();
+        auto newSupplement = makeUnique<NavigatorGPU>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

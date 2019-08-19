@@ -413,7 +413,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_frameID,
         m_storedCredentialsPolicy
     };
-    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(m_networkProcess.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
+    m_corsPreflightChecker = makeUnique<NetworkCORSPreflightChecker>(m_networkProcess.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
         RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", error.isNull(), isRedirected);
 
         if (!error.isNull()) {
@@ -446,7 +446,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_cspResponseHeaders) {
         // FIXME: Pass the URL of the protected resource instead of its origin.
-        m_contentSecurityPolicy = std::make_unique<ContentSecurityPolicy>(URL { URL { }, m_origin->toString() });
+        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { URL { }, m_origin->toString() });
         m_contentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
     }
     return m_contentSecurityPolicy.get();

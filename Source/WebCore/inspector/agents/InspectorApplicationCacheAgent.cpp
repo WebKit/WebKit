@@ -44,7 +44,7 @@ using namespace Inspector;
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(PageAgentContext& context)
     : InspectorAgentBase("ApplicationCache"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::ApplicationCacheFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::ApplicationCacheFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::ApplicationCacheBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
 {

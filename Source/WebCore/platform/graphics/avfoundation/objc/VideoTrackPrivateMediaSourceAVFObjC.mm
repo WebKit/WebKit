@@ -35,7 +35,7 @@
 namespace WebCore {
 
 VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
-    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
+    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
     , m_parent(parent)
     , m_trackID(-1)
     , m_selected(false)
@@ -56,7 +56,7 @@ void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
 
 void VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)
 {
-    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
+    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
     resetPropertiesFromTrack();
 }
 

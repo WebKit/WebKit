@@ -46,7 +46,7 @@ public:
 
 std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient&)
 {
-    return std::make_unique<NullTextTrackRepresentation>();
+    return makeUnique<NullTextTrackRepresentation>();
 }
 
 #endif

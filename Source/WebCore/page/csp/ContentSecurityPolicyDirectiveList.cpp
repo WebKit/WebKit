@@ -123,7 +123,7 @@ ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList(ContentSe
 
 std::unique_ptr<ContentSecurityPolicyDirectiveList> ContentSecurityPolicyDirectiveList::create(ContentSecurityPolicy& policy, const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom from)
 {
-    auto directives = std::make_unique<ContentSecurityPolicyDirectiveList>(policy, type);
+    auto directives = makeUnique<ContentSecurityPolicyDirectiveList>(policy, type);
     directives->parse(header, from);
 
     if (!checkEval(directives->operativeDirective(directives->m_scriptSrc.get()))) {
@@ -452,7 +452,7 @@ void ContentSecurityPolicyDirectiveList::setCSPDirective(const String& name, con
         m_policy.reportDuplicateDirective(name);
         return;
     }
-    directive = std::make_unique<CSPDirectiveType>(*this, name, value);
+    directive = makeUnique<CSPDirectiveType>(*this, name, value);
 }
 
 void ContentSecurityPolicyDirectiveList::applySandboxPolicy(const String& name, const String& sandboxPolicy)

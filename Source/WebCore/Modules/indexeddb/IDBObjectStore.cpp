@@ -517,7 +517,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
     if (!info)
         return Exception { NotFoundError, "Failed to execute 'index' on 'IDBObjectStore': The specified index was not found."_s };
 
-    auto index = std::make_unique<IDBIndex>(*scriptExecutionContext(), *info, *this);
+    auto index = makeUnique<IDBIndex>(*scriptExecutionContext(), *info, *this);
 
     Ref<IDBIndex> referencedIndex { *index };
 

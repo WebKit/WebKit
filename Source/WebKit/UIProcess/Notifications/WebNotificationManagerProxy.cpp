@@ -56,14 +56,14 @@ Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessP
 
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
-    , m_provider(std::make_unique<API::NotificationProvider>())
+    , m_provider(makeUnique<API::NotificationProvider>())
 {
 }
 
 void WebNotificationManagerProxy::setProvider(std::unique_ptr<API::NotificationProvider>&& provider)
 {
     if (!provider) {
-        m_provider = std::make_unique<API::NotificationProvider>();
+        m_provider = makeUnique<API::NotificationProvider>();
         return;
     }
 

@@ -125,7 +125,7 @@ TextureMapperLayer& texmapLayer(Nicosia::CompositionLayer& compositionLayer)
 {
     auto& compositionState = compositionLayerImpl(compositionLayer).compositionState();
     if (!compositionState.layer) {
-        compositionState.layer = std::make_unique<TextureMapperLayer>();
+        compositionState.layer = makeUnique<TextureMapperLayer>();
         compositionState.layer->setID(compositionLayer.id());
     }
     return *compositionState.layer;
@@ -418,7 +418,7 @@ void CoordinatedGraphicsScene::ensureRootLayer()
     if (m_rootLayer)
         return;
 
-    m_rootLayer = std::make_unique<TextureMapperLayer>();
+    m_rootLayer = makeUnique<TextureMapperLayer>();
     m_rootLayer->setMasksToBounds(false);
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));

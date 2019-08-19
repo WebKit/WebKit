@@ -87,7 +87,7 @@ void JSRunLoopTimer::Manager::PerVMData::setRunLoop(Manager* manager, CFRunLoopR
 #else
 JSRunLoopTimer::Manager::PerVMData::PerVMData(Manager& manager)
     : runLoop(&RunLoop::current())
-    , timer(std::make_unique<RunLoop::Timer<Manager>>(*runLoop, &manager, &JSRunLoopTimer::Manager::timerDidFireCallback))
+    , timer(makeUnique<RunLoop::Timer<Manager>>(*runLoop, &manager, &JSRunLoopTimer::Manager::timerDidFireCallback))
 {
 #if USE(GLIB_EVENT_LOOP)
     timer->setPriority(RunLoopSourcePriority::JavascriptTimer);
@@ -172,7 +172,7 @@ JSRunLoopTimer::Manager& JSRunLoopTimer::Manager::shared()
 
 void JSRunLoopTimer::Manager::registerVM(VM& vm)
 {
-    auto data = std::make_unique<PerVMData>(*this);
+    auto data = makeUnique<PerVMData>(*this);
 #if USE(CF)
     data->setRunLoop(this, vm.runLoop());
 #endif

@@ -88,7 +88,7 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
     FloatRect targetBoundingBox = filter.targetBoundingBox();
 
     // Add effects to the builder
-    auto builder = std::make_unique<SVGFilterBuilder>(SourceGraphic::create(filter));
+    auto builder = makeUnique<SVGFilterBuilder>(SourceGraphic::create(filter));
     builder->setPrimitiveUnits(filterElement().primitiveUnits());
     builder->setTargetBoundingBox(targetBoundingBox);
     
@@ -122,7 +122,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
     }
 
-    auto filterData = std::make_unique<FilterData>();
+    auto filterData = makeUnique<FilterData>();
     FloatRect targetBoundingBox = renderer.objectBoundingBox();
 
     filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);

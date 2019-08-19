@@ -397,7 +397,7 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
     }
     }
 
-    receiver->setBackend(std::make_unique<LibWebRTCRtpReceiverBackend>(WTFMove(rtcReceiver)));
+    receiver->setBackend(makeUnique<LibWebRTCRtpReceiverBackend>(WTFMove(rtcReceiver)));
     auto& track = receiver->track();
     addPendingTrackEvent(receiver.releaseNonNull(), track, rtcStreams, nullptr);
 }
@@ -478,7 +478,7 @@ void LibWebRTCMediaEndpoint::collectTransceivers()
         if (!source)
             return;
 
-        m_peerConnectionBackend.newRemoteTransceiver(std::make_unique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), source.releaseNonNull());
+        m_peerConnectionBackend.newRemoteTransceiver(makeUnique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), source.releaseNonNull());
     }
 }
 
@@ -499,7 +499,7 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
     if (!source)
         return;
 
-    auto& newTransceiver = m_peerConnectionBackend.newRemoteTransceiver(std::make_unique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), source.releaseNonNull());
+    auto& newTransceiver = m_peerConnectionBackend.newRemoteTransceiver(makeUnique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), source.releaseNonNull());
 
     addPendingTrackEvent(makeRef(newTransceiver.receiver()), newTransceiver.receiver().track(), rtcReceiver->streams(), makeRef(newTransceiver));
 }
@@ -534,7 +534,7 @@ Optional<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::createTransce
     if (!result.ok())
         return WTF::nullopt;
 
-    auto transceiver = std::make_unique<LibWebRTCRtpTransceiverBackend>(result.MoveValue());
+    auto transceiver = makeUnique<LibWebRTCRtpTransceiverBackend>(result.MoveValue());
     return LibWebRTCMediaEndpoint::Backends { transceiver->createSenderBackend(m_peerConnectionBackend, WTFMove(source)), transceiver->createReceiverBackend(), WTFMove(transceiver) };
 }
 
@@ -585,7 +585,7 @@ std::unique_ptr<LibWebRTCRtpTransceiverBackend> LibWebRTCMediaEndpoint::transcei
 {
     for (auto& transceiver : m_backend->GetTransceivers()) {
         if (transceiver->sender().get() == backend.rtcSender())
-            return std::make_unique<LibWebRTCRtpTransceiverBackend>(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>(transceiver));
+            return makeUnique<LibWebRTCRtpTransceiverBackend>(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>(transceiver));
     }
     return nullptr;
 }
@@ -654,7 +654,7 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel
 {
     auto init = LibWebRTCDataChannelHandler::fromRTCDataChannelInit(options);
     auto channel = m_backend->CreateDataChannel(label.utf8().data(), &init);
-    return channel ? std::make_unique<LibWebRTCDataChannelHandler>(WTFMove(channel)) : nullptr;
+    return channel ? makeUnique<LibWebRTCDataChannelHandler>(WTFMove(channel)) : nullptr;
 }
 
 void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel)

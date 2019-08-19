@@ -620,7 +620,7 @@ void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector
         if (snapPoints.isEmpty())
             return;
 
-        m_scrollSnapState = std::make_unique<ScrollSnapAnimatorState>();
+        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
     }
 
     if (snapPoints.isEmpty() && m_scrollSnapState->snapOffsetsForAxis(otherScrollEventAxis(axis)).isEmpty())

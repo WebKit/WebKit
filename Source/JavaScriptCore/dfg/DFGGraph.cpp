@@ -74,7 +74,7 @@ Graph::Graph(VM& vm, Plan& plan)
     , m_plan(plan)
     , m_codeBlock(m_plan.codeBlock())
     , m_profiledBlock(m_codeBlock->alternative())
-    , m_ssaCFG(std::make_unique<SSACFG>(*this))
+    , m_ssaCFG(makeUnique<SSACFG>(*this))
     , m_nextMachineLocal(0)
     , m_fixpointState(BeforeFixpoint)
     , m_structureRegistrationState(HaveNotStartedRegistering)
@@ -86,8 +86,8 @@ Graph::Graph(VM& vm, Plan& plan)
     
     m_hasDebuggerEnabled = m_profiledBlock->wasCompiledWithDebuggingOpcodes() || Options::forceDebuggerBytecodeGeneration();
     
-    m_indexingCache = std::make_unique<FlowIndexing>(*this);
-    m_abstractValuesCache = std::make_unique<FlowMap<AbstractValue>>(*this);
+    m_indexingCache = makeUnique<FlowIndexing>(*this);
+    m_abstractValuesCache = makeUnique<FlowMap<AbstractValue>>(*this);
 
     registerStructure(vm.structureStructure.get());
     this->stringStructure = registerStructure(vm.stringStructure.get());
@@ -1097,7 +1097,7 @@ FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
     if (iter != m_bytecodeLiveness.end())
         return *iter->value;
     
-    std::unique_ptr<FullBytecodeLiveness> liveness = std::make_unique<FullBytecodeLiveness>();
+    std::unique_ptr<FullBytecodeLiveness> liveness = makeUnique<FullBytecodeLiveness>();
     codeBlock->livenessAnalysis().computeFullLiveness(codeBlock, *liveness);
     FullBytecodeLiveness& result = *liveness;
     m_bytecodeLiveness.add(codeBlock, WTFMove(liveness));
@@ -1115,7 +1115,7 @@ BytecodeKills& Graph::killsFor(CodeBlock* codeBlock)
     if (iter != m_bytecodeKills.end())
         return *iter->value;
     
-    std::unique_ptr<BytecodeKills> kills = std::make_unique<BytecodeKills>();
+    std::unique_ptr<BytecodeKills> kills = makeUnique<BytecodeKills>();
     codeBlock->livenessAnalysis().computeKills(codeBlock, *kills);
     BytecodeKills& result = *kills;
     m_bytecodeKills.add(codeBlock, WTFMove(kills));
@@ -1553,7 +1553,7 @@ CPSCFG& Graph::ensureCPSCFG()
 {
     RELEASE_ASSERT(m_form != SSA && !m_isInSSAConversion);
     if (!m_cpsCFG)
-        m_cpsCFG = std::make_unique<CPSCFG>(*this);
+        m_cpsCFG = makeUnique<CPSCFG>(*this);
     return *m_cpsCFG;
 }
 
@@ -1561,7 +1561,7 @@ CPSDominators& Graph::ensureCPSDominators()
 {
     RELEASE_ASSERT(m_form != SSA && !m_isInSSAConversion);
     if (!m_cpsDominators)
-        m_cpsDominators = std::make_unique<CPSDominators>(*this);
+        m_cpsDominators = makeUnique<CPSDominators>(*this);
     return *m_cpsDominators;
 }
 
@@ -1569,7 +1569,7 @@ SSADominators& Graph::ensureSSADominators()
 {
     RELEASE_ASSERT(m_form == SSA || m_isInSSAConversion);
     if (!m_ssaDominators)
-        m_ssaDominators = std::make_unique<SSADominators>(*this);
+        m_ssaDominators = makeUnique<SSADominators>(*this);
     return *m_ssaDominators;
 }
 
@@ -1578,7 +1578,7 @@ CPSNaturalLoops& Graph::ensureCPSNaturalLoops()
     RELEASE_ASSERT(m_form != SSA && !m_isInSSAConversion);
     ensureCPSDominators();
     if (!m_cpsNaturalLoops)
-        m_cpsNaturalLoops = std::make_unique<CPSNaturalLoops>(*this);
+        m_cpsNaturalLoops = makeUnique<CPSNaturalLoops>(*this);
     return *m_cpsNaturalLoops;
 }
 
@@ -1587,7 +1587,7 @@ SSANaturalLoops& Graph::ensureSSANaturalLoops()
     RELEASE_ASSERT(m_form == SSA);
     ensureSSADominators();
     if (!m_ssaNaturalLoops)
-        m_ssaNaturalLoops = std::make_unique<SSANaturalLoops>(*this);
+        m_ssaNaturalLoops = makeUnique<SSANaturalLoops>(*this);
     return *m_ssaNaturalLoops;
 }
 
@@ -1596,7 +1596,7 @@ BackwardsCFG& Graph::ensureBackwardsCFG()
     // We could easily relax this in the future to work over CPS, but today, it's only used in SSA.
     RELEASE_ASSERT(m_form == SSA); 
     if (!m_backwardsCFG)
-        m_backwardsCFG = std::make_unique<BackwardsCFG>(*this);
+        m_backwardsCFG = makeUnique<BackwardsCFG>(*this);
     return *m_backwardsCFG;
 }
 
@@ -1604,7 +1604,7 @@ BackwardsDominators& Graph::ensureBackwardsDominators()
 {
     RELEASE_ASSERT(m_form == SSA);
     if (!m_backwardsDominators)
-        m_backwardsDominators = std::make_unique<BackwardsDominators>(*this);
+        m_backwardsDominators = makeUnique<BackwardsDominators>(*this);
     return *m_backwardsDominators;
 }
 
@@ -1612,7 +1612,7 @@ ControlEquivalenceAnalysis& Graph::ensureControlEquivalenceAnalysis()
 {
     RELEASE_ASSERT(m_form == SSA);
     if (!m_controlEquivalenceAnalysis)
-        m_controlEquivalenceAnalysis = std::make_unique<ControlEquivalenceAnalysis>(*this);
+        m_controlEquivalenceAnalysis = makeUnique<ControlEquivalenceAnalysis>(*this);
     return *m_controlEquivalenceAnalysis;
 }
 

@@ -209,7 +209,7 @@ inline void HTMLToken::beginDOCTYPE()
 {
     ASSERT(m_type == Uninitialized);
     m_type = DOCTYPE;
-    m_doctypeData = std::make_unique<DoctypeData>();
+    m_doctypeData = makeUnique<DoctypeData>();
 }
 
 inline void HTMLToken::beginDOCTYPE(UChar character)

@@ -179,5 +179,5 @@ private:
 
 void attachInjectedBundleClientToContext(WebKitWebContext* webContext)
 {
-    webkitWebContextGetProcessPool(webContext).setInjectedBundleClient(std::make_unique<WebKitInjectedBundleClient>(webContext));
+    webkitWebContextGetProcessPool(webContext).setInjectedBundleClient(makeUnique<WebKitInjectedBundleClient>(webContext));
 }

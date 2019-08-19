@@ -119,7 +119,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 AffineTransform* SVGGraphicsElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform = std::make_unique<AffineTransform>();
+        m_supplementalTransform = makeUnique<AffineTransform>();
     return m_supplementalTransform.get();
 }
 

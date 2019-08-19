@@ -1315,7 +1315,7 @@ static NSTrackingAreaOptions trackingAreaOptions()
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
-    , m_pageClient(std::make_unique<PageClientImpl>(view, outerWebView))
+    , m_pageClient(makeUnique<PageClientImpl>(view, outerWebView))
     , m_page(processPool.createWebPage(*m_pageClient, WTFMove(configuration)))
     , m_needsViewFrameInWindowCoordinates(m_page->preferences().pluginsEnabled())
     , m_intrinsicContentSize(CGSizeMake(NSViewNoIntrinsicMetric, NSViewNoIntrinsicMetric))
@@ -1353,7 +1353,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     view.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
 
 #if ENABLE(FULLSCREEN_API)
-    m_page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>(view));
+    m_page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(view));
 #endif
 
     WebProcessPool::statistics().wkViewCount++;
@@ -1711,9 +1711,9 @@ CGSize WebViewImpl::fixedLayoutSize() const
 std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
-        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(m_page, process);
+        return makeUnique<RemoteLayerTreeDrawingAreaProxy>(m_page, process);
 
-    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(m_page, process);
+    return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page, process);
 }
 
 bool WebViewImpl::isUsingUISideCompositing() const
@@ -3356,7 +3356,7 @@ void WebViewImpl::preferencesDidChange()
 void WebViewImpl::setTextIndicator(WebCore::TextIndicator& textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)
 {
     if (!m_textIndicatorWindow)
-        m_textIndicatorWindow = std::make_unique<WebCore::TextIndicatorWindow>(m_view.getAutoreleased());
+        m_textIndicatorWindow = makeUnique<WebCore::TextIndicatorWindow>(m_view.getAutoreleased());
 
     NSRect textBoundingRectInScreenCoordinates = [[m_view window] convertRectToScreen:[m_view convertRect:textIndicator.textBoundingRectInRootViewCoordinates() toView:nil]];
     m_textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(textBoundingRectInScreenCoordinates), lifetime);
@@ -4358,7 +4358,7 @@ void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
 ViewGestureController& WebViewImpl::ensureGestureController()
 {
     if (!m_gestureController)
-        m_gestureController = std::make_unique<ViewGestureController>(m_page);
+        m_gestureController = makeUnique<ViewGestureController>(m_page);
     return *m_gestureController;
 }
 

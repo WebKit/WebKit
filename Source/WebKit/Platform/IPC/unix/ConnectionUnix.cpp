@@ -216,7 +216,7 @@ bool Connection::processMessage()
     if (messageInfo.isBodyOutOfLine())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
-    auto decoder = std::make_unique<Decoder>(messageBody, messageInfo.bodySize(), nullptr, WTFMove(attachments));
+    auto decoder = makeUnique<Decoder>(messageBody, messageInfo.bodySize(), nullptr, WTFMove(attachments));
 
     processIncomingMessage(WTFMove(decoder));
 
@@ -482,7 +482,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
 #if USE(GLIB)
-            m_pendingOutputMessage = std::make_unique<UnixMessage>(WTFMove(outputMessage));
+            m_pendingOutputMessage = makeUnique<UnixMessage>(WTFMove(outputMessage));
             m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), [this, protectedThis = makeRef(*this)] (GIOCondition condition) -> gboolean {
                 if (condition & G_IO_OUT) {
                     ASSERT(m_pendingOutputMessage);

@@ -347,7 +347,7 @@ void BitmapImage::clearTimer()
 void BitmapImage::startTimer(Seconds delay)
 {
     ASSERT(!m_frameTimer);
-    m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
+    m_frameTimer = makeUnique<Timer>(*this, &BitmapImage::advanceAnimation);
     m_frameTimer->startOneShot(delay);
 }
 
@@ -519,7 +519,7 @@ void BitmapImage::resetAnimation()
 void BitmapImage::decode(WTF::Function<void()>&& callback)
 {
     if (!m_decodingCallbacks)
-        m_decodingCallbacks = std::make_unique<Vector<Function<void()>, 1>>();
+        m_decodingCallbacks = makeUnique<Vector<Function<void()>, 1>>();
 
     m_decodingCallbacks->append(WTFMove(callback));
 

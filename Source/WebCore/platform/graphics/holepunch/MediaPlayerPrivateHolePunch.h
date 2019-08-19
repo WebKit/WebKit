@@ -79,7 +79,7 @@ public:
     MediaPlayer::NetworkState networkState() const final { return MediaPlayer::Empty; };
     MediaPlayer::ReadyState readyState() const final { return MediaPlayer::HaveMetadata; };
 
-    std::unique_ptr<PlatformTimeRanges> buffered() const final { return std::make_unique<PlatformTimeRanges>(); };
+    std::unique_ptr<PlatformTimeRanges> buffered() const final { return makeUnique<PlatformTimeRanges>(); };
 
     bool didLoadingProgress() const final { return false; };
 

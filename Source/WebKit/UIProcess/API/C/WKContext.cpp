@@ -95,7 +95,7 @@ void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkCl
 
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClientBase* wkClient)
 {
-    WebKit::toImpl(contextRef)->setInjectedBundleClient(std::make_unique<WebKit::WebContextInjectedBundleClient>(wkClient));
+    WebKit::toImpl(contextRef)->setInjectedBundleClient(makeUnique<WebKit::WebContextInjectedBundleClient>(wkClient));
 }
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)
@@ -156,7 +156,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
     };
 
     WebKit::WebProcessPool& processPool = *WebKit::toImpl(contextRef);
-    processPool.setHistoryClient(std::make_unique<HistoryClient>(wkClient));
+    processPool.setHistoryClient(makeUnique<HistoryClient>(wkClient));
 
     bool addsVisitedLinks = processPool.historyClient().addsVisitedLinks();
 
@@ -266,7 +266,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
         }
     };
 
-    WebKit::toImpl(contextRef)->setDownloadClient(std::make_unique<DownloadClient>(wkClient));
+    WebKit::toImpl(contextRef)->setDownloadClient(makeUnique<DownloadClient>(wkClient));
 }
 
 void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)

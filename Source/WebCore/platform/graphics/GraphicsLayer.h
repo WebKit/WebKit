@@ -111,7 +111,7 @@ public:
 
     std::unique_ptr<AnimationValue> clone() const override
     {
-        return std::make_unique<FloatAnimationValue>(*this);
+        return makeUnique<FloatAnimationValue>(*this);
     }
 
     float value() const { return m_value; }
@@ -132,7 +132,7 @@ public:
 
     std::unique_ptr<AnimationValue> clone() const override
     {
-        return std::make_unique<TransformAnimationValue>(*this);
+        return makeUnique<TransformAnimationValue>(*this);
     }
 
     TransformAnimationValue(const TransformAnimationValue& other)
@@ -163,7 +163,7 @@ public:
 
     std::unique_ptr<AnimationValue> clone() const override
     {
-        return std::make_unique<FilterAnimationValue>(*this);
+        return makeUnique<FilterAnimationValue>(*this);
     }
 
     FilterAnimationValue(const FilterAnimationValue& other)

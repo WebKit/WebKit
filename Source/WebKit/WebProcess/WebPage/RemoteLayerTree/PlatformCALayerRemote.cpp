@@ -220,7 +220,7 @@ void PlatformCALayerRemote::ensureBackingStore()
     ASSERT(m_properties.backingStoreAttached);
 
     if (!m_properties.backingStore)
-        m_properties.backingStore = std::make_unique<RemoteLayerBackingStore>(this);
+        m_properties.backingStore = makeUnique<RemoteLayerBackingStore>(this);
 
     updateBackingStore();
 }
@@ -521,7 +521,7 @@ TransformationMatrix PlatformCALayerRemote::transform() const
 
 void PlatformCALayerRemote::setTransform(const TransformationMatrix& value)
 {
-    m_properties.transform = std::make_unique<TransformationMatrix>(value);
+    m_properties.transform = makeUnique<TransformationMatrix>(value);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::TransformChanged);
 }
 
@@ -532,7 +532,7 @@ TransformationMatrix PlatformCALayerRemote::sublayerTransform() const
 
 void PlatformCALayerRemote::setSublayerTransform(const TransformationMatrix& value)
 {
-    m_properties.sublayerTransform = std::make_unique<TransformationMatrix>(value);
+    m_properties.sublayerTransform = makeUnique<TransformationMatrix>(value);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SublayerTransformChanged);
 }
 
@@ -738,7 +738,7 @@ void PlatformCALayerRemote::setOpacity(float value)
 
 void PlatformCALayerRemote::setFilters(const FilterOperations& filters)
 {
-    m_properties.filters = std::make_unique<FilterOperations>(filters);
+    m_properties.filters = makeUnique<FilterOperations>(filters);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::FiltersChanged);
 }
 
@@ -826,7 +826,7 @@ void PlatformCALayerRemote::setShapeRoundedRect(const FloatRoundedRect& roundedR
     if (m_properties.shapeRoundedRect && *m_properties.shapeRoundedRect == roundedRect)
         return;
 
-    m_properties.shapeRoundedRect = std::make_unique<FloatRoundedRect>(roundedRect);
+    m_properties.shapeRoundedRect = makeUnique<FloatRoundedRect>(roundedRect);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ShapeRoundedRectChanged);
 }
 

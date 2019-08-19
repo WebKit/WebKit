@@ -104,7 +104,7 @@ WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, 
     if (wkClient && wkClient->version)
         return 0;
 
-    auto clientImpl = std::make_unique<WebKit::PageBannerClientImpl>(wkClient);
+    auto clientImpl = makeUnique<WebKit::PageBannerClientImpl>(wkClient);
     return toAPI(&WebKit::PageBanner::create(layer, height, clientImpl.release()).leakRef());
 }
 

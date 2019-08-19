@@ -238,7 +238,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
 void ContentSecurityPolicy::updateSourceSelf(const SecurityOrigin& securityOrigin)
 {
     m_selfSourceProtocol = securityOrigin.protocol();
-    m_selfSource = std::make_unique<ContentSecurityPolicySource>(*this, m_selfSourceProtocol, securityOrigin.host(), securityOrigin.port(), emptyString(), false, false);
+    m_selfSource = makeUnique<ContentSecurityPolicySource>(*this, m_selfSourceProtocol, securityOrigin.host(), securityOrigin.port(), emptyString(), false, false);
 }
 
 void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()

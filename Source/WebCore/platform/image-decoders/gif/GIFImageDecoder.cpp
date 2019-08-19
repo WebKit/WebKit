@@ -334,7 +334,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query, bool allDataR
         return;
 
     if (!m_reader) {
-        m_reader = std::make_unique<GIFImageReader>(this);
+        m_reader = makeUnique<GIFImageReader>(this);
         m_reader->setData(m_data.get());
     }
 

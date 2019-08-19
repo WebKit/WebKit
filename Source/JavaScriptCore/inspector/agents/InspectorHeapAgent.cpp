@@ -42,7 +42,7 @@ namespace Inspector {
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase("Heap"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_frontendDispatcher(std::make_unique<HeapFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<HeapFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(HeapBackendDispatcher::create(context.backendDispatcher, this))
     , m_environment(context.environment)
 {

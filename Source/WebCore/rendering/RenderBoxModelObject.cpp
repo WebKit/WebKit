@@ -2538,7 +2538,7 @@ auto RenderBoxModelObject::ensureContinuationChainNode() -> ContinuationChainNod
 {
     setHasContinuationChainNode(true);
     return *continuationChainNodeMap().ensure(this, [&] {
-        return std::make_unique<ContinuationChainNode>(*this);
+        return makeUnique<ContinuationChainNode>(*this);
     }).iterator->value;
 }
 

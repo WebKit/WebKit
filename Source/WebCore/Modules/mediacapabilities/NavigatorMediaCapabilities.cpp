@@ -47,7 +47,7 @@ NavigatorMediaCapabilities& NavigatorMediaCapabilities::from(Navigator& navigato
 {
     NavigatorMediaCapabilities* supplement = static_cast<NavigatorMediaCapabilities*>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorMediaCapabilities>();
+        auto newSupplement = makeUnique<NavigatorMediaCapabilities>();
         supplement = newSupplement.get();
         provideTo(&navigator, supplementName(), WTFMove(newSupplement));
     }

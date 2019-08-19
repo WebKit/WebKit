@@ -290,8 +290,8 @@ void Storage::synchronize()
     LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
 
     backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        auto recordFilter = std::make_unique<ContentsFilter>();
-        auto blobFilter = std::make_unique<ContentsFilter>();
+        auto recordFilter = makeUnique<ContentsFilter>();
+        auto blobFilter = makeUnique<ContentsFilter>();
 
         // Most of the disk space usage is in blobs if we are using them. Approximate records file sizes to avoid expensive stat() calls.
         size_t recordsSize = 0;
@@ -489,7 +489,7 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
     }
 
     readOperation.expectedBodyHash = metaData.bodyHash;
-    readOperation.resultRecord = std::make_unique<Storage::Record>(Storage::Record {
+    readOperation.resultRecord = makeUnique<Storage::Record>(Storage::Record {
         metaData.key,
         metaData.timeStamp,
         headerData,
@@ -758,7 +758,7 @@ template <class T> bool retrieveFromMemory(const T& operations, const Key& key, 
         if (operation->record.key == key) {
             LOG(NetworkCacheStorage, "(NetworkProcess) found write operation in progress");
             RunLoop::main().dispatch([record = operation->record, completionHandler = WTFMove(completionHandler)] () mutable {
-                completionHandler(std::make_unique<Storage::Record>(record), { });
+                completionHandler(makeUnique<Storage::Record>(record), { });
             });
             return true;
         }
@@ -862,7 +862,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    auto readOperation = std::make_unique<ReadOperation>(*this, key, WTFMove(completionHandler));
+    auto readOperation = makeUnique<ReadOperation>(*this, key, WTFMove(completionHandler));
 
     readOperation->timings.startTime = MonotonicTime::now();
     readOperation->timings.dispatchCountAtStart = m_readOperationDispatchCount;
@@ -879,7 +879,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     if (!m_capacity)
         return;
 
-    auto writeOperation = std::make_unique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler), WTFMove(completionHandler));
+    auto writeOperation = makeUnique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler), WTFMove(completionHandler));
     m_pendingWriteOperations.prepend(WTFMove(writeOperation));
 
     // Add key to the filter already here as we do lookups from the pending operations too.
@@ -898,7 +898,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
     ASSERT(traverseHandler);
     // Avoid non-thread safe Function copies.
 
-    auto traverseOperationPtr = std::make_unique<TraverseOperation>(makeRef(*this), type, flags, WTFMove(traverseHandler));
+    auto traverseOperationPtr = makeUnique<TraverseOperation>(makeRef(*this), type, flags, WTFMove(traverseHandler));
     auto& traverseOperation = *traverseOperationPtr;
     m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 

@@ -313,7 +313,7 @@ void PlatformCALayerCocoa::commonInit()
         WebTiledBackingLayer* tiledBackingLayer = static_cast<WebTiledBackingLayer*>(m_layer.get());
         TileController* tileController = [tiledBackingLayer createTileController:this];
 
-        m_customSublayers = std::make_unique<PlatformCALayerList>(tileController->containerLayers());
+        m_customSublayers = makeUnique<PlatformCALayerList>(tileController->containerLayers());
     }
 
     END_BLOCK_OBJC_EXCEPTIONS
@@ -947,7 +947,7 @@ FloatRoundedRect PlatformCALayerCocoa::shapeRoundedRect() const
 void PlatformCALayerCocoa::setShapeRoundedRect(const FloatRoundedRect& roundedRect)
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
-    m_shapeRoundedRect = std::make_unique<FloatRoundedRect>(roundedRect);
+    m_shapeRoundedRect = makeUnique<FloatRoundedRect>(roundedRect);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     Path shapePath;

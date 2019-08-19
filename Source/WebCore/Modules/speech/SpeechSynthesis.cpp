@@ -73,7 +73,7 @@ void SpeechSynthesis::voicesDidChange()
 PlatformSpeechSynthesizer& SpeechSynthesis::ensurePlatformSpeechSynthesizer()
 {
     if (!m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer = std::make_unique<PlatformSpeechSynthesizer>(this);
+        m_platformSpeechSynthesizer = makeUnique<PlatformSpeechSynthesizer>(this);
     return *m_platformSpeechSynthesizer;
 }
 

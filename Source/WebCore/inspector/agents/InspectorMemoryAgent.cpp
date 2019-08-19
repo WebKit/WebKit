@@ -40,7 +40,7 @@ using namespace Inspector;
 
 InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
     : InspectorAgentBase("Memory"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::MemoryBackendDispatcher::create(context.backendDispatcher, this))
 {
 }

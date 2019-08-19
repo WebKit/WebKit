@@ -67,7 +67,7 @@ static const char* const webKitBlobResourceDomain = "WebKitBlobResource";
 
 NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, BlobRegistryImpl& blobRegistry, NetworkDataTaskClient& client, const ResourceRequest& request, ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false)
-    , m_stream(std::make_unique<AsyncFileStream>(*this))
+    , m_stream(makeUnique<AsyncFileStream>(*this))
     , m_fileReferences(fileReferences)
     , m_networkProcess(session.networkProcess())
 {
@@ -467,7 +467,7 @@ void NetworkDataTaskBlob::download()
     }
 
     auto& downloadManager = m_networkProcess->downloadManager();
-    auto download = std::make_unique<Download>(downloadManager, m_pendingDownloadID, *this, m_session->sessionID(), suggestedFilename());
+    auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, m_session->sessionID(), suggestedFilename());
     auto* downloadPtr = download.get();
     downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);

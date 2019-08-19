@@ -115,11 +115,11 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(contentSecurityPolicy);
 
     auto securityOriginCopy = securityOrigin->isolatedCopy();
-    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(globalScope.url().isolatedCopy());
+    auto contentSecurityPolicyCopy = makeUnique<ContentSecurityPolicy>(globalScope.url().isolatedCopy());
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
     contentSecurityPolicyCopy->copyUpgradeInsecureRequestStateFrom(*contentSecurityPolicy);
 
-    auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), WTFMove(securityOriginCopy));
+    auto optionsCopy = makeUnique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), WTFMove(securityOriginCopy));
 
     // All loads start out as Document. Inside WorkerThreadableLoader we upgrade this to a Worker load.
     ASSERT(optionsCopy->options.initiatorContext == InitiatorContext::Document);

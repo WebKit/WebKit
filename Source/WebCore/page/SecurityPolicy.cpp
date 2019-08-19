@@ -189,7 +189,7 @@ void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceO
     Locker<Lock> locker(originAccessMapLock);
     OriginAccessMap::AddResult result = originAccessMap().add(sourceString, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<OriginAccessWhiteList>();
+        result.iterator->value = makeUnique<OriginAccessWhiteList>();
 
     OriginAccessWhiteList* list = result.iterator->value.get();
     list->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains, OriginAccessEntry::TreatIPAddressAsIPAddress));

@@ -206,7 +206,7 @@ static bool moduleMixesGtkSymbols(Module* module)
 
 bool NetscapePluginModule::tryLoad()
 {
-    m_module = std::make_unique<Module>(m_pluginPath);
+    m_module = makeUnique<Module>(m_pluginPath);
     if (!m_module->load())
         return false;
 

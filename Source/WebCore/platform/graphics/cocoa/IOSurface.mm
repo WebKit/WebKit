@@ -326,7 +326,7 @@ GraphicsContext& IOSurface::ensureGraphicsContext()
     if (m_graphicsContext)
         return *m_graphicsContext;
 
-    m_graphicsContext = std::make_unique<GraphicsContext>(ensurePlatformContext());
+    m_graphicsContext = makeUnique<GraphicsContext>(ensurePlatformContext());
     m_graphicsContext->setIsAcceleratedContext(true);
 
     return *m_graphicsContext;

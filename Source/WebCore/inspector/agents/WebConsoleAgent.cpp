@@ -72,7 +72,7 @@ void WebConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, const 
 
     if (response.httpStatusCode() >= 400) {
         String message = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", response.httpStatusText(), ')');
-        addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier));
+        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier));
     }
 }
 
@@ -92,7 +92,7 @@ void WebConsoleAgent::didFailLoading(unsigned long requestIdentifier, const Reso
         message.append(error.localizedDescription());
     }
 
-    addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message.toString(), error.failingURL(), 0, 0, nullptr, requestIdentifier));
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message.toString(), error.failingURL(), 0, 0, nullptr, requestIdentifier));
 }
 
 } // namespace WebCore

@@ -79,7 +79,7 @@ ExecutionCounter* Compilation::executionCounterFor(const OriginStack& origin)
 {
     std::unique_ptr<ExecutionCounter>& counter = m_counters.add(origin, nullptr).iterator->value;
     if (!counter)
-        counter = std::make_unique<ExecutionCounter>();
+        counter = makeUnique<ExecutionCounter>();
 
     return counter.get();
 }

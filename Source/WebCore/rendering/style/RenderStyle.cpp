@@ -109,7 +109,7 @@ RenderStyle RenderStyle::clone(const RenderStyle& style)
 
 std::unique_ptr<RenderStyle> RenderStyle::clonePtr(const RenderStyle& style)
 {
-    return std::make_unique<RenderStyle>(style, Clone);
+    return makeUnique<RenderStyle>(style, Clone);
 }
 
 RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, DisplayType display)
@@ -409,7 +409,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseu
     RenderStyle* result = pseudo.get();
 
     if (!m_cachedPseudoStyles)
-        m_cachedPseudoStyles = std::make_unique<PseudoStyleCache>();
+        m_cachedPseudoStyles = makeUnique<PseudoStyleCache>();
 
     m_cachedPseudoStyles->append(WTFMove(pseudo));
 
@@ -1058,7 +1058,7 @@ void RenderStyle::addCustomPaintWatchProperty(const String& name)
 {
     auto& data = m_rareNonInheritedData.access();
     if (!data.customPaintWatchedProperties)
-        data.customPaintWatchedProperties = std::make_unique<HashSet<String>>();
+        data.customPaintWatchedProperties = makeUnique<HashSet<String>>();
     data.customPaintWatchedProperties->add(name);
 }
 
@@ -1301,7 +1301,7 @@ void RenderStyle::setContent(RefPtr<StyleImage>&& image, bool add)
 {
     if (!image)
         return;
-    setContent(std::make_unique<ImageContentData>(image.releaseNonNull()), add);
+    setContent(makeUnique<ImageContentData>(image.releaseNonNull()), add);
 }
 
 void RenderStyle::setContent(const String& string, bool add)
@@ -1310,13 +1310,13 @@ void RenderStyle::setContent(const String& string, bool add)
     if (add && data.content) {
         auto& last = lastContent(*data.content);
         if (!is<TextContentData>(last))
-            last.setNext(std::make_unique<TextContentData>(string));
+            last.setNext(makeUnique<TextContentData>(string));
         else {
             auto& textContent = downcast<TextContentData>(last);
             textContent.setText(textContent.text() + string);
         }
     } else {
-        data.content = std::make_unique<TextContentData>(string);
+        data.content = makeUnique<TextContentData>(string);
         auto& altText = data.altText;
         if (!altText.isNull())
             data.content->setAltText(altText);
@@ -1327,12 +1327,12 @@ void RenderStyle::setContent(std::unique_ptr<CounterContent> counter, bool add)
 {
     if (!counter)
         return;
-    setContent(std::make_unique<CounterContentData>(WTFMove(counter)), add);
+    setContent(makeUnique<CounterContentData>(WTFMove(counter)), add);
 }
 
 void RenderStyle::setContent(QuoteType quote, bool add)
 {
-    setContent(std::make_unique<QuoteContentData>(quote), add);
+    setContent(makeUnique<QuoteContentData>(quote), add);
 }
 
 void RenderStyle::setContentAltText(const String& string)
@@ -1551,7 +1551,7 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
 {
     auto& map = m_rareNonInheritedData.access().counterDirectives;
     if (!map)
-        map = std::make_unique<CounterDirectiveMap>();
+        map = makeUnique<CounterDirectiveMap>();
     return *map;
 }
 
@@ -1671,14 +1671,14 @@ void RenderStyle::adjustTransitions()
 AnimationList& RenderStyle::ensureAnimations()
 {
     if (!m_rareNonInheritedData.access().animations)
-        m_rareNonInheritedData.access().animations = std::make_unique<AnimationList>();
+        m_rareNonInheritedData.access().animations = makeUnique<AnimationList>();
     return *m_rareNonInheritedData->animations;
 }
 
 AnimationList& RenderStyle::ensureTransitions()
 {
     if (!m_rareNonInheritedData.access().transitions)
-        m_rareNonInheritedData.access().transitions = std::make_unique<AnimationList>();
+        m_rareNonInheritedData.access().transitions = makeUnique<AnimationList>();
     return *m_rareNonInheritedData->transitions;
 }
 

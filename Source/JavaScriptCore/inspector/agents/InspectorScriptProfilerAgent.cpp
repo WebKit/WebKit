@@ -39,7 +39,7 @@ namespace Inspector {
 
 InspectorScriptProfilerAgent::InspectorScriptProfilerAgent(AgentContext& context)
     : InspectorAgentBase("ScriptProfiler"_s)
-    , m_frontendDispatcher(std::make_unique<ScriptProfilerFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<ScriptProfilerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(ScriptProfilerBackendDispatcher::create(context.backendDispatcher, this))
     , m_environment(context.environment)
 {

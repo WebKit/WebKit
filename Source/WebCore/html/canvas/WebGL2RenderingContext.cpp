@@ -1359,7 +1359,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
     if (equalIgnoringASCIICase(name, nameLiteral)) { \
         if (!variable) { \
-            variable = (canEnable) ? std::make_unique<type>(*this) : nullptr; \
+            variable = (canEnable) ? makeUnique<type>(*this) : nullptr; \
             if (variable != nullptr) \
                 InspectorInstrumentation::didEnableExtension(*this, name); \
         } \

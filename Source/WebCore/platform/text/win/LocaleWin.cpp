@@ -78,7 +78,7 @@ static LCID LCIDFromLocale(const AtomString& locale)
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return std::make_unique<LocaleWin>(LCIDFromLocale(locale));
+    return makeUnique<LocaleWin>(LCIDFromLocale(locale));
 }
 
 inline LocaleWin::LocaleWin(LCID lcid)

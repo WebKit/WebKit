@@ -53,7 +53,7 @@ bool ISOProtectionSchemeInfoBox::parse(DataView& view, unsigned& offset)
         return false;
 
     if (optionalBoxType.value().first == ISOSchemeTypeBox::boxTypeName()) {
-        m_schemeTypeBox = std::make_unique<ISOSchemeTypeBox>();
+        m_schemeTypeBox = makeUnique<ISOSchemeTypeBox>();
         if (!m_schemeTypeBox->read(view, localOffset))
             return false;
 
@@ -68,7 +68,7 @@ bool ISOProtectionSchemeInfoBox::parse(DataView& view, unsigned& offset)
     }
 
     if (optionalBoxType.value().first == ISOSchemeInformationBox::boxTypeName()) {
-        m_schemeInformationBox = std::make_unique<ISOSchemeInformationBox>();
+        m_schemeInformationBox = makeUnique<ISOSchemeInformationBox>();
         if (!m_schemeInformationBox->read(view, localOffset))
             return false;
 

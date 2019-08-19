@@ -128,7 +128,7 @@ TEST(WTF_HashSet, UniquePtrKey)
 
     HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     set.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
@@ -144,7 +144,7 @@ TEST(WTF_HashSet, UniquePtrKey_FindUsingRawPointer)
 {
     HashSet<std::unique_ptr<int>> set;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     set.add(WTFMove(uniquePtr));
 
@@ -158,7 +158,7 @@ TEST(WTF_HashSet, UniquePtrKey_ContainsUsingRawPointer)
 {
     HashSet<std::unique_ptr<int>> set;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     set.add(WTFMove(uniquePtr));
 
@@ -171,7 +171,7 @@ TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     set.add(WTFMove(uniquePtr));
 
@@ -191,7 +191,7 @@ TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
 
     HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     set.add(WTFMove(uniquePtr));
 
@@ -298,7 +298,7 @@ struct DerefObserver {
 
 TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
 {
-    auto observer = std::make_unique<DerefObserver>();
+    auto observer = makeUnique<DerefObserver>();
 
     HashSet<RefPtr<DerefObserver>> set;
     set.add(adoptRef(observer.get()));

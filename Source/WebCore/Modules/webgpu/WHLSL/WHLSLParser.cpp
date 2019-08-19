@@ -740,19 +740,19 @@ auto Parser::parseSemantic() -> Expected<std::unique_ptr<AST::Semantic>, Error>
     switch (token->type) {
     case Token::Type::Attribute: {
         PARSE(result, StageInOutSemantic);
-        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
+        return { makeUnique<AST::Semantic>(WTFMove(*result)) };
     }
     case Token::Type::Specialized:  {
         PARSE(result, SpecializationConstantSemantic);
-        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
+        return { makeUnique<AST::Semantic>(WTFMove(*result)) };
     }
     case Token::Type::Register:  {
         PARSE(result, ResourceSemantic);
-        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
+        return { makeUnique<AST::Semantic>(WTFMove(*result)) };
     }
     default:  {
         PARSE(result, BuiltInSemantic);
-        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
+        return { makeUnique<AST::Semantic>(WTFMove(*result)) };
     }
     }
 }

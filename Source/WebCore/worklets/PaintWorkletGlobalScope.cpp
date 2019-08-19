@@ -135,7 +135,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
         RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(state, paintValue, globalObject);
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-        auto paintDefinition = std::make_unique<PaintDefinition>(name, paintConstructor.get(), paint.releaseNonNull(), WTFMove(inputProperties), WTFMove(inputArguments));
+        auto paintDefinition = makeUnique<PaintDefinition>(name, paintConstructor.get(), paint.releaseNonNull(), WTFMove(inputProperties), WTFMove(inputArguments));
         paintDefinitionMap().add(name, WTFMove(paintDefinition));
     }
 

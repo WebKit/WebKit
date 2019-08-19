@@ -62,5 +62,5 @@ private:
 
 void attachIconLoadingClientToView(WebKitWebView* webView)
 {
-    webkitWebViewGetPage(webView).setIconLoadingClient(std::make_unique<IconLoadingClient>(webView));
+    webkitWebViewGetPage(webView).setIconLoadingClient(makeUnique<IconLoadingClient>(webView));
 }

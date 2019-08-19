@@ -457,7 +457,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
     if (allDataReceived) {
         auto pageConfiguration = pageConfigurationWithEmptyClients();
-        m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
+        m_chromeClient = makeUnique<SVGImageChromeClient>(this);
         pageConfiguration.chromeClient = m_chromeClient.get();
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.
@@ -466,7 +466,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         // This will become an issue when SVGImage will be able to load other
         // SVGImage objects, but we're safe now, because SVGImage can only be
         // loaded by a top-level document.
-        m_page = std::make_unique<Page>(WTFMove(pageConfiguration));
+        m_page = makeUnique<Page>(WTFMove(pageConfiguration));
         m_page->settings().setMediaEnabled(false);
         m_page->settings().setScriptEnabled(false);
         m_page->settings().setPluginsEnabled(false);

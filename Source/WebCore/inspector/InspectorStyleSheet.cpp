@@ -117,7 +117,7 @@ void ParsedStyleSheet::setSourceData(std::unique_ptr<RuleSourceDataList> sourceD
         return;
     }
 
-    m_sourceData = std::make_unique<RuleSourceDataList>();
+    m_sourceData = makeUnique<RuleSourceDataList>();
 
     // FIXME: This is a temporary solution to retain the original flat sourceData structure
     // containing only style rules, even though CSSParser now provides the full rule source data tree.
@@ -1320,7 +1320,7 @@ bool InspectorStyleSheet::ensureSourceData()
         return false;
 
     auto newStyleSheet = StyleSheetContents::create();
-    auto ruleSourceDataResult = std::make_unique<RuleSourceDataList>();
+    auto ruleSourceDataResult = makeUnique<RuleSourceDataList>();
     
     CSSParserContext context(parserContextForDocument(m_pageStyleSheet->ownerDocument()));
     StyleSheetHandler handler(m_parsedStyleSheet->text(), m_pageStyleSheet->ownerDocument(), ruleSourceDataResult.get());

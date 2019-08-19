@@ -130,25 +130,25 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
     if (is<RenderText>(childRenderer)) {
         // FIXME: Clearly there must be a helper function for this.
         if (parentRenderer.style().display() == DisplayType::Inline)
-            childLayoutBox = std::make_unique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::clone(parentRenderer.style()));
+            childLayoutBox = makeUnique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::clone(parentRenderer.style()));
         else
-            childLayoutBox = std::make_unique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
+            childLayoutBox = makeUnique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
         return childLayoutBox;
     }
 
     auto& renderer = downcast<RenderElement>(childRenderer);
     auto displayType = renderer.style().display();
     if (is<RenderLineBreak>(renderer))
-        return std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        return makeUnique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
 
     if (is<RenderTable>(renderer)) {
         // Construct the principal table wrapper box (and not the table box itself).
-        childLayoutBox = std::make_unique<Container>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, RenderStyle::clone(renderer.style()));
+        childLayoutBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, RenderStyle::clone(renderer.style()));
     } else if (is<RenderReplaced>(renderer)) {
         if (displayType == DisplayType::Block)
-            childLayoutBox = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = makeUnique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         else
-            childLayoutBox = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = makeUnique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         // FIXME: We don't yet support all replaced elements and this is temporary anyway.
         if (childLayoutBox->replaced())
             childLayoutBox->replaced()->setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
@@ -163,18 +163,18 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
                 auto style = RenderStyle::clonePtr(renderer.style());
                 style->setTop({ offset->height(), Fixed });
                 style->setLeft({ offset->width(), Fixed });
-                childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), WTFMove(*style));
+                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(*style));
             } else
-                childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else if (displayType == DisplayType::Inline)
-            childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         else if (displayType == DisplayType::InlineBlock)
-            childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         else if (displayType == DisplayType::TableCaption || displayType == DisplayType::TableCell) {
-            childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else if (displayType == DisplayType::TableRowGroup || displayType == DisplayType::TableHeaderGroup || displayType == DisplayType::TableFooterGroup
             || displayType == DisplayType::TableRow || displayType == DisplayType::TableColumnGroup || displayType == DisplayType::TableColumn) {
-            childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else {
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };
@@ -210,7 +210,7 @@ void TreeBuilder::createTableStructure(const RenderTable& tableRenderer, Contain
         tableChild = tableChild->nextSibling();
     }
 
-    auto tableBox = std::make_unique<Container>(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
+    auto tableBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
     appendChild(tableWrapperBox, *tableBox);
     while (tableChild) {
         TreeBuilder::createSubTree(downcast<RenderElement>(*tableChild), *tableBox);
@@ -361,7 +361,7 @@ void printLayoutTreeForLiveDocuments()
         // FIXME: Need to find a way to output geometry without layout context.
         auto& renderView = *document->renderView();
         auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-        auto layoutState = std::make_unique<Layout::LayoutState>(*initialContainingBlock);
+        auto layoutState = makeUnique<Layout::LayoutState>(*initialContainingBlock);
         layoutState->setQuirksMode(renderView.document().inLimitedQuirksMode() ? LayoutState::QuirksMode::Limited : (renderView.document().inQuirksMode() ? LayoutState::QuirksMode::Yes : LayoutState::QuirksMode::No));
         layoutState->updateLayout();
         showLayoutTree(*initialContainingBlock, layoutState.get());

@@ -653,7 +653,7 @@ void JPEGImageDecoder::decode(bool onlySize, bool allDataReceived)
         return;
 
     if (!m_reader)
-        m_reader = std::make_unique<JPEGImageReader>(this);
+        m_reader = makeUnique<JPEGImageReader>(this);
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.

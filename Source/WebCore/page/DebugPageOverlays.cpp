@@ -88,7 +88,7 @@ private:
 
 bool MouseWheelRegionOverlay::updateRegion()
 {
-    auto region = std::make_unique<Region>();
+    auto region = makeUnique<Region>();
     
     for (const Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->view() || !frame->document())

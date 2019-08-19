@@ -36,7 +36,7 @@ public:
     template<typename PropertyType, typename AnimatedProperty = SVGAnimatedDecoratedProperty>
     static Ref<AnimatedProperty> create(SVGElement* contextElement)
     {
-        return adoptRef(*new AnimatedProperty(contextElement, std::make_unique<DecoratedProperty<DecorationType, PropertyType>>()));
+        return adoptRef(*new AnimatedProperty(contextElement, makeUnique<DecoratedProperty<DecorationType, PropertyType>>()));
     }
 
     template<typename PropertyType, typename AnimatedProperty = SVGAnimatedDecoratedProperty>

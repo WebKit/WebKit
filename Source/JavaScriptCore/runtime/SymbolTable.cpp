@@ -118,7 +118,7 @@ const SymbolTable::LocalToEntryVec& SymbolTable::localToEntry(const ConcurrentJS
                 size = std::max(size, offset.scopeOffset().offset() + 1);
         }
     
-        m_localToEntry = std::make_unique<LocalToEntryVec>(size, nullptr);
+        m_localToEntry = makeUnique<LocalToEntryVec>(size, nullptr);
         for (auto& entry : m_map) {
             VarOffset offset = entry.value.varOffset();
             if (offset.isScope())
@@ -159,7 +159,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
         result->m_arguments.set(vm, result, arguments);
     
     if (m_rareData) {
-        result->m_rareData = std::make_unique<SymbolTableRareData>();
+        result->m_rareData = makeUnique<SymbolTableRareData>();
 
         {
             auto iter = m_rareData->m_uniqueIDMap.begin();
@@ -191,7 +191,7 @@ void SymbolTable::prepareForTypeProfiling(const ConcurrentJSLocker&)
     if (m_rareData)
         return;
 
-    m_rareData = std::make_unique<SymbolTableRareData>();
+    m_rareData = makeUnique<SymbolTableRareData>();
 
     for (auto iter = m_map.begin(), end = m_map.end(); iter != end; ++iter) {
         m_rareData->m_uniqueIDMap.set(iter->key, TypeProfilerNeedsUniqueIDGeneration);
@@ -210,7 +210,7 @@ CodeBlock* SymbolTable::rareDataCodeBlock()
 void SymbolTable::setRareDataCodeBlock(CodeBlock* codeBlock)
 {
     if (!m_rareData)
-        m_rareData = std::make_unique<SymbolTableRareData>();
+        m_rareData = makeUnique<SymbolTableRareData>();
 
     ASSERT(!m_rareData->m_codeBlock);
     m_rareData->m_codeBlock.set(*codeBlock->vm(), this, codeBlock);

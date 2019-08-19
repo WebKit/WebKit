@@ -107,7 +107,7 @@ static void jscContextSetVirtualMachine(JSCContext* context, GRefPtr<JSCVirtualM
             priv->jsContext = JSRetainPtr<JSGlobalContextRef>(Adopt, JSGlobalContextCreateInGroup(jscVirtualMachineGetContextGroup(priv->vm.get()), nullptr));
         auto* globalObject = toJSGlobalObject(priv->jsContext.get());
         if (!globalObject->wrapperMap())
-            globalObject->setWrapperMap(std::make_unique<JSC::WrapperMap>(priv->jsContext.get()));
+            globalObject->setWrapperMap(makeUnique<JSC::WrapperMap>(priv->jsContext.get()));
         jscVirtualMachineAddContext(priv->vm.get(), context);
     } else if (priv->vm) {
         ASSERT(priv->jsContext);

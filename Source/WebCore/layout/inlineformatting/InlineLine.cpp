@@ -54,7 +54,7 @@ Line::Content::Run::Run(const InlineItem& inlineItem, const TextContext& textCon
 
 Line::Line(const LayoutState& layoutState, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_layoutState(layoutState)
-    , m_content(std::make_unique<Line::Content>())
+    , m_content(makeUnique<Line::Content>())
     , m_logicalTopLeft(initialConstraints.logicalTopLeft)
     , m_baseline({ initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset })
     , m_initialStrut(initialConstraints.heightAndBaseline.strut)
@@ -213,7 +213,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
-    m_content->runs().append(std::make_unique<Content::Run>(inlineItem, logicalRect));
+    m_content->runs().append(makeUnique<Content::Run>(inlineItem, logicalRect));
     m_contentLogicalWidth += logicalRect.width();
 }
 
@@ -282,7 +282,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     }
 
     auto textContext = Content::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length(), isCompletelyCollapsed, inlineItem.isWhitespace(), canBeExtended };
-    auto lineItem = std::make_unique<Content::Run>(inlineItem, textContext, logicalRect);
+    auto lineItem = makeUnique<Content::Run>(inlineItem, textContext, logicalRect);
     if (isTrimmable && !isCompletelyCollapsed)
         m_trimmableContent.add(lineItem.get());
 
@@ -303,7 +303,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
         logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
-    m_content->runs().append(std::make_unique<Content::Run>(inlineItem, logicalRect));
+    m_content->runs().append(makeUnique<Content::Run>(inlineItem, logicalRect));
     m_contentLogicalWidth += (logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
@@ -323,7 +323,7 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
         adjustBaselineAndLineHeight(inlineItem, { });
         logicalRect.setHeight(logicalHeight());
     }
-    m_content->runs().append(std::make_unique<Content::Run>(inlineItem, logicalRect));
+    m_content->runs().append(makeUnique<Content::Run>(inlineItem, logicalRect));
 }
 
 void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit runHeight)

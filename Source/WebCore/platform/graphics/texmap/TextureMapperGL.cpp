@@ -186,7 +186,7 @@ TextureMapperGL::TextureMapperGL()
 
     m_data = new TextureMapperGLData(platformContext);
 #if USE(TEXTURE_MAPPER_GL)
-    m_texturePool = std::make_unique<BitmapTexturePool>(m_contextAttributes);
+    m_texturePool = makeUnique<BitmapTexturePool>(m_contextAttributes);
 #endif
 }
 
@@ -790,7 +790,7 @@ Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)
 
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
 {
-    return std::make_unique<TextureMapperGL>();
+    return makeUnique<TextureMapperGL>();
 }
 
 };

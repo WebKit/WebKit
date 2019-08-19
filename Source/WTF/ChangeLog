@@ -1,3 +1,78 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoff Garen.
+
+        This patch is second part of bug 200620 patch. I split I split it into three pieces to make roll-out easy.
+        his part, we convert std::make_unique to WTF::makeUnique or WTF::makeUniqueWithoutFastMallocCheck.
+        In the third patch, we will add a static_assert to makeUnique, which ensures the given class T is FastMalloced or IsoHeaped.
+
+        This patch adds `WTF::makeUnique<T>` and `WTF::makeUniqueWithoutFastMallocCheck<T>` as drop-in replacement for `std::make_unique<T>`.
+        `WTF::makeUnique<T>` has one additional `static_assert` check which ensures `T` FastMalloc / IsoHeap annotated. If it is not, the
+        compile error happens.
+
+        In this patch, I tried using this everywhere in WebKit as much as possible. And we found that surprisingly many classes are missing
+        FastMalloc annotation and allocated from system-malloc. Using WTF::makeUnique enforces classes / structs to use FastMalloc.
+
+        WTF::makeUniqueWithoutFastMallocCheck is offered for the corner cases. This is identical to std::make_unique. We use this for classes
+        that are offered by non-WebKit code base, like, zlib. This clear name can make us easily find this allocation is intentionally done
+        by system-malloc.
+
+        We do not take the following direction, `WTF::makeUnique` automatically allocates FastMalloc even if FastMalloc annotation is not attached.
+        Since default deleter is performing `delete` and this is not what we want for FastMalloced ones, we need to return
+        std::unique_ptr<T, FastFreeDeleter> for T if T does not have FastMalloc-annotation. Automatically doing this sounds a bit dangerous.
+
+            auto pointer = WTF::makeUnique<T>();
+            // Super dangerous, but sometimes it is required...
+            auto* rawPointer = pointer.release();
+            // Passing rawPointer to somewhere, and
+            delete rawPointer;
+
+        The above one becomes invalid because pointer may start requiring non `delete` destroying function.
+        In the above case, the correct way becomes the following.
+
+            rawPointer->~T();
+            fastFree(rawPointer);
+
+        This looks non-intuitive. And having two ways to destroying objects (`delete` or the above one) can be error-prone.
+        If we have WTF_MAKE_FAST_ALLOCATED for T, we do not need to care about this. "new" and "delete" operators are defined, and C++ way works.
+        The simple invariant, "makeUnique just does `new` internally. And `delete` operator does `delete`. default deleter is just doing `delete`", is kept.
+
+        While we need to annotate many classes with WTF_MAKE_FAST_ALLOCATED, it is one time cost when we add a class.
+        And, by introducing `WTF::makeUnique<>`, we no longer forget adding this.
+
+            makeUnique(...)
+            static_assert(T is FastMalloced or IsoHeaped);
+            return make_unique<T>(...)
+
+        * benchmarks/LockFairnessTest.cpp:
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/ConcurrentVector.h:
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::taskRunLoop):
+        * wtf/FilePrintStream.cpp:
+        (WTF::FilePrintStream::open):
+        * wtf/Function.h:
+        (WTF::Function<Out):
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::HashTable):
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor):
+        * wtf/StdLibExtras.h:
+        (WTF::makeUnique):
+        (WTF::makeUniqueWithoutFastMallocCheck):
+        * wtf/StreamBuffer.h:
+        (WTF::StreamBuffer::append):
+        * wtf/UniqueRef.h:
+        (WTF::makeUniqueRefWithoutFastMallocCheck):
+        (WTF::makeUniqueRef):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::dispatchAfter):
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::GraphemeClusters::Iterator::Iterator):
+
 2019-08-18  Per Arne Vollan  <pvollan@apple.com>
 
         [Mac] Use the PID of the WebContent process when issuing local file read sandbox extensions

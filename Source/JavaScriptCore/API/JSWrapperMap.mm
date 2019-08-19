@@ -606,7 +606,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     m_cachedObjCWrappers = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
 
-    m_cachedJSWrappers = std::make_unique<JSC::WeakGCMap<__unsafe_unretained id, JSC::JSObject>>(toJS(context)->vm());
+    m_cachedJSWrappers = makeUnique<JSC::WeakGCMap<__unsafe_unretained id, JSC::JSObject>>(toJS(context)->vm());
 
     ASSERT(!toJSGlobalObject(context)->wrapperMap());
     toJSGlobalObject(context)->setWrapperMap(self);

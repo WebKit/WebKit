@@ -119,7 +119,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     if (hasNamedElementCache())
         return;
 
-    auto cache = std::make_unique<CollectionNamedElementCache>();
+    auto cache = makeUnique<CollectionNamedElementCache>();
 
     HashSet<AtomStringImpl*> foundInputElements;
 

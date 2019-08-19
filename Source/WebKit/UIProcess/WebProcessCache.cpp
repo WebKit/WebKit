@@ -84,7 +84,7 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
         return false;
 
     uint64_t requestIdentifier = generateAddRequestIdentifier();
-    m_pendingAddRequests.add(requestIdentifier, std::make_unique<CachedProcess>(process.copyRef()));
+    m_pendingAddRequests.add(requestIdentifier, makeUnique<CachedProcess>(process.copyRef()));
 
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Checking if process %i is responsive before caching it...", this, process->processIdentifier());
     process->isResponsive([this, processPool = makeRef(process->processPool()), requestIdentifier](bool isResponsive) {

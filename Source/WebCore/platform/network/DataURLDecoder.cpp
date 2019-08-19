@@ -145,7 +145,7 @@ private:
 
 static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
 {
-    return std::make_unique<DecodeTask>(
+    return makeUnique<DecodeTask>(
         url.string(),
         scheduleContext,
         WTFMove(completionHandler)

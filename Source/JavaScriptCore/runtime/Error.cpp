@@ -174,7 +174,7 @@ std::unique_ptr<Vector<StackFrame>> getStackTrace(ExecState* exec, VM& vm, JSObj
         return nullptr;
 
     size_t framesToSkip = useCurrentFrame ? 0 : 1;
-    std::unique_ptr<Vector<StackFrame>> stackTrace = std::make_unique<Vector<StackFrame>>();
+    std::unique_ptr<Vector<StackFrame>> stackTrace = makeUnique<Vector<StackFrame>>();
     vm.interpreter->getStackTrace(obj, *stackTrace, framesToSkip, globalObject->stackTraceLimit().value());
     if (!stackTrace->isEmpty())
         ASSERT_UNUSED(exec, exec == vm.topCallFrame || exec->isGlobalExec());

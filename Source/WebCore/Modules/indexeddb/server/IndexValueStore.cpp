@@ -92,7 +92,7 @@ IDBError IndexValueStore::addRecord(const IDBKeyData& indexKey, const IDBKeyData
         return IDBError(ConstraintError);
 
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<IndexValueEntry>(m_unique);
+        result.iterator->value = makeUnique<IndexValueEntry>(m_unique);
 
     result.iterator->value->addKey(valueKey);
     m_orderedKeys.insert(indexKey);

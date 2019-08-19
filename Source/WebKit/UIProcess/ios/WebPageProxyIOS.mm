@@ -912,7 +912,7 @@ void WebPageProxy::elementDidFocus(const FocusedElementInformation& information,
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     if (m_editorState.isMissingPostLayoutData) {
         // FIXME: We should try to eliminate m_deferredElementDidFocusArguments altogether, in favor of only deferring actions that are dependent on post-layout editor state information.
-        m_deferredElementDidFocusArguments = std::make_unique<ElementDidFocusArguments>(ElementDidFocusArguments { information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject });
+        m_deferredElementDidFocusArguments = makeUnique<ElementDidFocusArguments>(ElementDidFocusArguments { information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject });
         return;
     }
 
@@ -1258,7 +1258,7 @@ void WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared(Ref<W
 
 std::unique_ptr<PaymentAuthorizationPresenter> WebPageProxy::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& paymentCoordinatorProxy, PKPaymentRequest *paymentRequest)
 {
-    return std::make_unique<PaymentAuthorizationViewController>(paymentCoordinatorProxy, paymentRequest);
+    return makeUnique<PaymentAuthorizationViewController>(paymentCoordinatorProxy, paymentRequest);
 }
 
 UIViewController *WebPageProxy::paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&)

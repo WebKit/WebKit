@@ -334,7 +334,7 @@ CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::ensureBack
 {
     if (!s_processingBackupElementQueue) {
         s_processingBackupElementQueue = true;
-        MicrotaskQueue::mainThreadQueue().append(std::make_unique<BackupElementQueueMicrotask>());
+        MicrotaskQueue::mainThreadQueue().append(makeUnique<BackupElementQueueMicrotask>());
     }
     return backupElementQueue();
 }

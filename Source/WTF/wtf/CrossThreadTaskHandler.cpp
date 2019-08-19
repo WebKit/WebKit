@@ -73,7 +73,7 @@ void CrossThreadTaskHandler::taskRunLoop()
 
     while (!m_taskQueue.isKilled()) {
         {
-            std::unique_ptr<AutodrainedPool> autodrainedPool = (m_useAutodrainedPool == AutodrainedPoolForRunLoop::Use) ? std::make_unique<AutodrainedPool>() : nullptr;
+            std::unique_ptr<AutodrainedPool> autodrainedPool = (m_useAutodrainedPool == AutodrainedPoolForRunLoop::Use) ? makeUnique<AutodrainedPool>() : nullptr;
 
             m_taskQueue.waitForMessage().performTask();
         }

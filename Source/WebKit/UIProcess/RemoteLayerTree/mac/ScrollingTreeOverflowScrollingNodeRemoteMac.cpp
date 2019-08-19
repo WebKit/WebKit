@@ -41,7 +41,7 @@ Ref<ScrollingTreeOverflowScrollingNodeRemoteMac> ScrollingTreeOverflowScrollingN
 
 ScrollingTreeOverflowScrollingNodeRemoteMac::ScrollingTreeOverflowScrollingNodeRemoteMac(ScrollingTree& tree, ScrollingNodeID nodeID)
     : ScrollingTreeOverflowScrollingNodeMac(tree, nodeID)
-    , m_scrollerPair(std::make_unique<ScrollerPairMac>(*this))
+    , m_scrollerPair(makeUnique<ScrollerPairMac>(*this))
 {
 }
 

@@ -180,7 +180,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
     for (auto& layerAndConstraints : layerMap) {
         CALayer* layer = layerAndConstraints.key;
-        auto layerData = std::make_unique<ViewportConstrainedLayerData>();
+        auto layerData = makeUnique<ViewportConstrainedLayerData>();
 
         layerData->m_enclosingAcceleratedScrollLayer = stickyContainers.get(layer);
         layerData->m_viewportConstraints = WTFMove(layerAndConstraints.value);

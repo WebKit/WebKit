@@ -265,7 +265,7 @@ void Performance::resourceTimingBufferFullTimerFired()
 ExceptionOr<void> Performance::mark(const String& markName)
 {
     if (!m_userTiming)
-        m_userTiming = std::make_unique<UserTiming>(*this);
+        m_userTiming = makeUnique<UserTiming>(*this);
 
     auto result = m_userTiming->mark(markName);
     if (result.hasException())
@@ -279,14 +279,14 @@ ExceptionOr<void> Performance::mark(const String& markName)
 void Performance::clearMarks(const String& markName)
 {
     if (!m_userTiming)
-        m_userTiming = std::make_unique<UserTiming>(*this);
+        m_userTiming = makeUnique<UserTiming>(*this);
     m_userTiming->clearMarks(markName);
 }
 
 ExceptionOr<void> Performance::measure(const String& measureName, const String& startMark, const String& endMark)
 {
     if (!m_userTiming)
-        m_userTiming = std::make_unique<UserTiming>(*this);
+        m_userTiming = makeUnique<UserTiming>(*this);
 
     auto result = m_userTiming->measure(measureName, startMark, endMark);
     if (result.hasException())
@@ -300,7 +300,7 @@ ExceptionOr<void> Performance::measure(const String& measureName, const String& 
 void Performance::clearMeasures(const String& measureName)
 {
     if (!m_userTiming)
-        m_userTiming = std::make_unique<UserTiming>(*this);
+        m_userTiming = makeUnique<UserTiming>(*this);
     m_userTiming->clearMeasures(measureName);
 }
 

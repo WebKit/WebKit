@@ -297,7 +297,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule& rule)
 
 InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
-    , m_frontendDispatcher(std::make_unique<CSSFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
@@ -626,7 +626,7 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString& errorString, const String
         return;
     }
 
-    auto result = domAgent->history()->perform(std::make_unique<SetStyleSheetTextAction>(inspectorStyleSheet, text));
+    auto result = domAgent->history()->perform(makeUnique<SetStyleSheetTextAction>(inspectorStyleSheet, text));
     if (result.hasException())
         errorString = InspectorDOMAgent::toErrorString(result.releaseException());
 }
@@ -646,7 +646,7 @@ void InspectorCSSAgent::setStyleText(ErrorString& errorString, const JSON::Objec
         return;
     }
 
-    auto performResult = domAgent->history()->perform(std::make_unique<SetStyleTextAction>(inspectorStyleSheet, compoundId, text));
+    auto performResult = domAgent->history()->perform(makeUnique<SetStyleTextAction>(inspectorStyleSheet, compoundId, text));
     if (performResult.hasException()) {
         errorString = InspectorDOMAgent::toErrorString(performResult.releaseException());
         return;
@@ -670,7 +670,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
         return;
     }
 
-    auto performResult = domAgent->history()->perform(std::make_unique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector));
+    auto performResult = domAgent->history()->perform(makeUnique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector));
     if (performResult.hasException()) {
         errorString = InspectorDOMAgent::toErrorString(performResult.releaseException());
         return;
@@ -757,7 +757,7 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleShe
         return;
     }
 
-    auto action = std::make_unique<AddRuleAction>(inspectorStyleSheet, selector);
+    auto action = makeUnique<AddRuleAction>(inspectorStyleSheet, selector);
     auto& rawAction = *action;
     auto performResult = domAgent->history()->perform(WTFMove(action));
     if (performResult.hasException()) {

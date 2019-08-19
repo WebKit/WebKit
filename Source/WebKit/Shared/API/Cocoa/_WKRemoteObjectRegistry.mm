@@ -109,7 +109,7 @@ struct PendingReply {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = std::make_unique<WebKit::RemoteObjectRegistry>(self, page);
+    _remoteObjectRegistry = makeUnique<WebKit::RemoteObjectRegistry>(self, page);
 
     return self;
 }
@@ -119,7 +119,7 @@ struct PendingReply {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = std::make_unique<WebKit::RemoteObjectRegistry>(self, page);
+    _remoteObjectRegistry = makeUnique<WebKit::RemoteObjectRegistry>(self, page);
 
     return self;
 }
@@ -160,7 +160,7 @@ static uint64_t generateReplyIdentifier()
         if (strcmp([NSMethodSignature signatureWithObjCTypes:replyBlockSignature].methodReturnType, "v"))
             [NSException raise:NSInvalidArgumentException format:@"Return value of block argument must be 'void'. (%s)", sel_getName(invocation.selector)];
 
-        replyInfo = std::make_unique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), replyBlockSignature);
+        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), replyBlockSignature);
 
         // Replace the block object so we won't try to encode it.
         id null = nullptr;

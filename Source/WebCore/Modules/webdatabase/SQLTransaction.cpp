@@ -83,7 +83,7 @@ ExceptionOr<void> SQLTransaction::executeSql(const String& sqlStatement, Optiona
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    auto statement = std::make_unique<SQLStatement>(m_database, sqlStatement, arguments.valueOr(Vector<SQLValue> { }), WTFMove(callback), WTFMove(callbackError), permissions);
+    auto statement = makeUnique<SQLStatement>(m_database, sqlStatement, arguments.valueOr(Vector<SQLValue> { }), WTFMove(callback), WTFMove(callbackError), permissions);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();
@@ -234,7 +234,7 @@ void SQLTransaction::openTransactionAndPreflight()
     }
 
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(m_database->sqliteDatabase(), m_readOnly);
+    m_sqliteTransaction = makeUnique<SQLiteTransaction>(m_database->sqliteDatabase(), m_readOnly);
 
     m_database->resetDeletes();
     m_database->disableAuthorizer();

@@ -205,7 +205,7 @@ void WebProcessProxy::processWasUnexpectedlyUnsuspended(CompletionHandler<void()
     auto backgroundActivityTimeoutHandler = [activityToken = m_throttler.backgroundActivityToken(), weakThis = makeWeakPtr(this)] {
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasUnexpectedlyUnsuspended() - lambda, background activity timed out", weakThis.get());
     };
-    m_unexpectedActivityTimer = std::make_unique<WebCore::DeferrableOneShotTimer>(WTFMove(backgroundActivityTimeoutHandler), unexpectedActivityDuration);
+    m_unexpectedActivityTimer = makeUnique<WebCore::DeferrableOneShotTimer>(WTFMove(backgroundActivityTimeoutHandler), unexpectedActivityDuration);
     completion();
 }
 #endif

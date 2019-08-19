@@ -167,11 +167,11 @@ void CSSDefaultStyleSheets::loadFullDefaultStyle()
         simpleDefaultStyleSheet = nullptr;
     } else {
         ASSERT(!defaultStyle);
-        defaultQuirksStyle = std::make_unique<RuleSet>().release();
+        defaultQuirksStyle = makeUnique<RuleSet>().release();
     }
 
-    defaultStyle = std::make_unique<RuleSet>().release();
-    defaultPrintStyle = std::make_unique<RuleSet>().release();
+    defaultStyle = makeUnique<RuleSet>().release();
+    defaultPrintStyle = makeUnique<RuleSet>().release();
     mediaQueryStyleSheet = &StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef();
 
     // Strict-mode rules.
@@ -190,10 +190,10 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
     ASSERT(!defaultStyle);
     ASSERT(!simpleDefaultStyleSheet);
 
-    defaultStyle = std::make_unique<RuleSet>().release();
+    defaultStyle = makeUnique<RuleSet>().release();
     // There are no media-specific rules in the simple default style.
     defaultPrintStyle = defaultStyle;
-    defaultQuirksStyle = std::make_unique<RuleSet>().release();
+    defaultQuirksStyle = makeUnique<RuleSet>().release();
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
     defaultStyle->addRulesFromSheet(*simpleDefaultStyleSheet, screenEval());

@@ -117,7 +117,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
         return nullptr;
 
     // Build pattern.
-    auto patternData = std::make_unique<PatternData>();
+    auto patternData = makeUnique<PatternData>();
     patternData->pattern = Pattern::create(copiedImage.releaseNonNull(), true, true);
 
     // Compute pattern space transformation.

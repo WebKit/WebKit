@@ -1551,10 +1551,10 @@ auto B3IRGenerator::origin() -> Origin
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
-    auto result = std::make_unique<InternalFunction>();
+    auto result = makeUnique<InternalFunction>();
 
-    compilationContext.embedderEntrypointJIT = std::make_unique<CCallHelpers>();
-    compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>();
+    compilationContext.embedderEntrypointJIT = makeUnique<CCallHelpers>();
+    compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
     Procedure procedure;
 

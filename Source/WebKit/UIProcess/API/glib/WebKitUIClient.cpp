@@ -225,6 +225,6 @@ private:
 
 void attachUIClientToView(WebKitWebView* webView)
 {
-    webkitWebViewGetPage(webView).setUIClient(std::make_unique<UIClient>(webView));
+    webkitWebViewGetPage(webView).setUIClient(makeUnique<UIClient>(webView));
 }
 

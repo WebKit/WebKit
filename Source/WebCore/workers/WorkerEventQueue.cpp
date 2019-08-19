@@ -85,7 +85,7 @@ bool WorkerEventQueue::enqueueEvent(Ref<Event>&& event)
         return false;
 
     auto* eventPtr = event.ptr();
-    auto eventDispatcher = std::make_unique<EventDispatcher>(WTFMove(event), *this);
+    auto eventDispatcher = makeUnique<EventDispatcher>(WTFMove(event), *this);
     m_eventDispatcherMap.add(eventPtr, eventDispatcher.get());
     m_scriptExecutionContext.postTask([eventDispatcher = WTFMove(eventDispatcher)] (ScriptExecutionContext&) {
         eventDispatcher->dispatch();

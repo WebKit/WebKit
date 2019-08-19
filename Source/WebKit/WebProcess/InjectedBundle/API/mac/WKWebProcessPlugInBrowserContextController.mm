@@ -544,7 +544,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     };
 
     if (formDelegate)
-        _page->setInjectedBundleFormClient(std::make_unique<FormClient>(self));
+        _page->setInjectedBundleFormClient(makeUnique<FormClient>(self));
     else
         _page->setInjectedBundleFormClient(nullptr);
 }
@@ -673,7 +673,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
     };
 
     if (editingDelegate)
-        _page->setInjectedBundleEditorClient(std::make_unique<Client>(self));
+        _page->setInjectedBundleEditorClient(makeUnique<Client>(self));
     else
         _page->setInjectedBundleEditorClient(nullptr);
 }

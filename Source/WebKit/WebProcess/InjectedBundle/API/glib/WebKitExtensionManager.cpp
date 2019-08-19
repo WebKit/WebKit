@@ -103,7 +103,7 @@ void WebKitExtensionManager::initialize(InjectedBundle* bundle, API::Object* use
     scanModules(webExtensionsDirectory, modulePaths);
 
     for (size_t i = 0; i < modulePaths.size(); ++i) {
-        auto module = std::make_unique<Module>(modulePaths[i]);
+        auto module = makeUnique<Module>(modulePaths[i]);
         if (!module->load())
             continue;
         if (initializeWebExtension(module.get(), userData.get()))

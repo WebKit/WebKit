@@ -102,7 +102,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     std::unique_ptr<ShadowData> debugShadow = nullptr;
     if (flow.settings().simpleLineLayoutDebugBordersEnabled()) {
-        debugShadow = std::make_unique<ShadowData>(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color(0, 255, 0, 200));
+        debugShadow = makeUnique<ShadowData>(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color(0, 255, 0, 200));
         textPainter.setShadow(debugShadow.get());
     }
 
@@ -347,7 +347,7 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         BidiRunList<BidiRun> bidiRuns;
         for (auto it = range.begin(); it != range.end(); ++it) {
             auto run = *it;
-            bidiRuns.appendRun(std::make_unique<BidiRun>(run.localStart(), run.localEnd(), const_cast<RenderObject&>(run.renderer()), bidiContext.ptr(), U_LEFT_TO_RIGHT));
+            bidiRuns.appendRun(makeUnique<BidiRun>(run.localStart(), run.localEnd(), const_cast<RenderObject&>(run.renderer()), bidiContext.ptr(), U_LEFT_TO_RIGHT));
         }
 
         LineInfo lineInfo;

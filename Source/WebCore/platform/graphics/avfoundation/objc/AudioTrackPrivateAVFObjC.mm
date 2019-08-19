@@ -33,13 +33,13 @@
 namespace WebCore {
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
-    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
+    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
 {
     resetPropertiesFromTrack();
 }
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& option)
-    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(option))
+    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(option))
 {
     resetPropertiesFromTrack();
 }
@@ -59,7 +59,7 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
 
 void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
 {
-    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
+    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
     resetPropertiesFromTrack();
 }
 
@@ -69,14 +69,14 @@ AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
 }
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVAssetTrack* track)
-    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
+    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
 {
     resetPropertiesFromTrack();
 }
 
 void AudioTrackPrivateAVFObjC::setAssetTrack(AVAssetTrack *track)
 {
-    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
+    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(track);
     resetPropertiesFromTrack();
 }
 
@@ -87,7 +87,7 @@ AVAssetTrack* AudioTrackPrivateAVFObjC::assetTrack()
 
 void AudioTrackPrivateAVFObjC::setMediaSelectionOption(MediaSelectionOptionAVFObjC& option)
 {
-    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(option);
+    m_impl = makeUnique<AVTrackPrivateAVFObjCImpl>(option);
     resetPropertiesFromTrack();
 }
 

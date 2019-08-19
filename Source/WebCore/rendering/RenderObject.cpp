@@ -1893,7 +1893,7 @@ const RenderObject::RenderObjectRareData& RenderObject::rareData() const
 RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
 {
     setHasRareData(true);
-    return *rareDataMap().ensure(this, [] { return std::make_unique<RenderObjectRareData>(); }).iterator->value;
+    return *rareDataMap().ensure(this, [] { return makeUnique<RenderObjectRareData>(); }).iterator->value;
 }
 
 void RenderObject::removeRareData()

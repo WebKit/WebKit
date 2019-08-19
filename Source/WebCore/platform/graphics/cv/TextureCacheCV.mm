@@ -50,7 +50,7 @@ std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContext3D& contex
         return nullptr;
 
     RetainPtr<TextureCacheType> strongCache = adoptCF(cache);
-    return std::make_unique<TextureCacheCV>(context, WTFMove(strongCache));
+    return makeUnique<TextureCacheCV>(context, WTFMove(strongCache));
 }
 
 TextureCacheCV::TextureCacheCV(GraphicsContext3D& context, RetainPtr<TextureCacheType>&& cache)

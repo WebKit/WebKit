@@ -109,7 +109,7 @@ FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* insp
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() frontendWebView]);
-    m_frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, windowController.get(), inspectedPageController, m_frontendPage, createFrontendSettings());
+    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView, windowController.get(), inspectedPageController, m_frontendPage, createFrontendSettings());
 
     RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:m_frontendClient.get()]);
     [[m_inspectedWebView inspector] setFrontend:webInspectorFrontend.get()];

@@ -58,7 +58,7 @@ UserMediaController::~UserMediaController()
 
 void provideUserMediaTo(Page* page, UserMediaClient* client)
 {
-    UserMediaController::provideTo(page, UserMediaController::supplementName(), std::make_unique<UserMediaController>(client));
+    UserMediaController::provideTo(page, UserMediaController::supplementName(), makeUnique<UserMediaController>(client));
 }
 
 static inline bool isSecure(DocumentLoader& documentLoader)

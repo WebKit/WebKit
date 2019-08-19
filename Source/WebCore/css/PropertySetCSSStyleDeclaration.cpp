@@ -329,7 +329,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCS
     // The map is here to maintain the object identity of the CSSValues over multiple invocations.
     // FIXME: It is likely that the identity is not important for web compatibility and this code should be removed.
     if (!m_cssomValueWrappers)
-        m_cssomValueWrappers = std::make_unique<HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>>>();
+        m_cssomValueWrappers = makeUnique<HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>>>();
     
     auto& clonedValue = m_cssomValueWrappers->add(internalValue, WeakPtr<DeprecatedCSSOMValue>()).iterator->value;
     if (clonedValue)

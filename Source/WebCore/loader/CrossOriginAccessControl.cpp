@@ -205,7 +205,7 @@ bool validatePreflightResponse(const ResourceRequest& request, const ResourceRes
     if (!passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, errorDescription))
         return false;
 
-    auto result = std::make_unique<CrossOriginPreflightResultCacheItem>(storedCredentialsPolicy);
+    auto result = makeUnique<CrossOriginPreflightResultCacheItem>(storedCredentialsPolicy);
     if (!result->parse(response)
         || !result->allowsCrossOriginMethod(request.httpMethod(), storedCredentialsPolicy, errorDescription)
         || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), storedCredentialsPolicy, errorDescription)) {

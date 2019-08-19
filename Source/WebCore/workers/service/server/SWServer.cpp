@@ -144,7 +144,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
     // Pages should not have been able to make a new registration to this key while the import was still taking place.
     ASSERT(!m_registrations.contains(data.registration.key));
 
-    auto registration = std::make_unique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL);
+    auto registration = makeUnique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL);
     registration->setLastUpdateTime(data.registration.lastUpdateTime);
     auto registrationPtr = registration.get();
     addRegistration(WTFMove(registration));
@@ -304,7 +304,7 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registration
 {
     ASSERT(!registrationDatabaseDirectory.isEmpty() || m_sessionID.isEphemeral());
     if (!m_sessionID.isEphemeral())
-        m_registrationStore = std::make_unique<RegistrationStore>(*this, WTFMove(registrationDatabaseDirectory));
+        m_registrationStore = makeUnique<RegistrationStore>(*this, WTFMove(registrationDatabaseDirectory));
     else
         registrationStoreImportComplete();
 
@@ -321,7 +321,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
     // If it is, stack it along with that job.
 
     auto& jobQueue = *m_jobQueues.ensure(jobData.registrationKey(), [this, &jobData] {
-        return std::make_unique<SWServerJobQueue>(*this, jobData.registrationKey());
+        return makeUnique<SWServerJobQueue>(*this, jobData.registrationKey());
     }).iterator->value;
 
     jobQueue.enqueueJob(jobData);
@@ -820,7 +820,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
 
     if (clientIdentifiers.isEmpty()) {
         ASSERT(!iterator->value.terminateServiceWorkersTimer);
-        iterator->value.terminateServiceWorkersTimer = std::make_unique<Timer>([clientOrigin, clientRegistrableDomain, this] {
+        iterator->value.terminateServiceWorkersTimer = makeUnique<Timer>([clientOrigin, clientRegistrableDomain, this] {
             Vector<SWServerWorker*> workersToTerminate;
             for (auto& worker : m_runningOrTerminatingWorkers.values()) {
                 if (worker->isRunning() && worker->origin() == clientOrigin)

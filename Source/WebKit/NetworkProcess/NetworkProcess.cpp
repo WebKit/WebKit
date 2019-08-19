@@ -509,9 +509,9 @@ void NetworkProcess::switchToNewTestingSession()
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
     }
 
-    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
+    m_defaultNetworkStorageSession = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
 #elif USE(CURL) || USE(SOUP)
-    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+    m_defaultNetworkStorageSession = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
 #endif
 }
 
@@ -541,9 +541,9 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     }
 
-    addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
+    addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
 #elif USE(CURL) || USE(SOUP)
-    addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID);
+    addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID);
 #endif
 }
 
@@ -2464,7 +2464,7 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(sessionID.isEphemeral() || !path.isEmpty());
         
-        auto value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID);
+        auto value = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID);
         if (m_shouldDisableServiceWorkerProcessTerminationDelay)
             value->disableServiceWorkerProcessTerminationDelay();
         return value;
@@ -2611,7 +2611,7 @@ private:
 
 void NetworkProcess::initializeQuotaUsers(StorageQuotaManager& manager, PAL::SessionID sessionID, const ClientOrigin& origin)
 {
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(this), sessionID, origin, user = std::make_unique<QuotaUserInitializer>(manager)]() mutable {
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(this), sessionID, origin, user = makeUnique<QuotaUserInitializer>(manager)]() mutable {
         if (!weakThis)
             return;
         this->idbServer(sessionID).initializeQuotaUser(origin);
@@ -2625,7 +2625,7 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
         return StorageQuotaManagers { };
     }).iterator->value;
     return *storageQuotaManagers.managersPerOrigin().ensure(origin, [this, &storageQuotaManagers, sessionID, &origin] {
-        auto manager = std::make_unique<StorageQuotaManager>(storageQuotaManagers.defaultQuota(origin), [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+        auto manager = makeUnique<StorageQuotaManager>(storageQuotaManagers.defaultQuota(origin), [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             this->requestStorageSpace(sessionID, origin, quota, currentSpace, spaceIncrease, WTFMove(callback));
         });
         initializeQuotaUsers(*manager, sessionID, origin);

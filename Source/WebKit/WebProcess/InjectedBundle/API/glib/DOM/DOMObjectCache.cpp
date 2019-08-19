@@ -78,14 +78,6 @@ static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
     return map;
 }
 
-static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCore::Frame& frame)
-{
-    DOMObjectCacheFrameObserverMap::AddResult result = domObjectCacheFrameObservers().add(&frame, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = std::make_unique<DOMObjectCacheFrameObserver>(frame);
-    return *result.iterator->value;
-}
-
 class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -107,7 +99,7 @@ public:
         if (domWindow && (!m_domWindowObserver || m_domWindowObserver->window() != domWindow)) {
             // New DOMWindow, clear the cache and create a new DOMWindowObserver.
             clear();
-            m_domWindowObserver = std::make_unique<DOMWindowObserver>(*domWindow, *this);
+            m_domWindowObserver = makeUnique<DOMWindowObserver>(*domWindow, *this);
         }
 
         m_objects.append(&data);
@@ -193,6 +185,14 @@ private:
     std::unique_ptr<DOMWindowObserver> m_domWindowObserver;
 };
 
+static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCore::Frame& frame)
+{
+    DOMObjectCacheFrameObserverMap::AddResult result = domObjectCacheFrameObservers().add(&frame, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = makeUnique<DOMObjectCacheFrameObserver>(frame);
+    return *result.iterator->value;
+}
+
 typedef HashMap<void*, std::unique_ptr<DOMObjectCacheData>> DOMObjectMap;
 
 static DOMObjectMap& domObjects()
@@ -217,7 +217,7 @@ void DOMObjectCache::put(void* objectHandle, void* wrapper)
 {
     DOMObjectMap::AddResult result = domObjects().add(objectHandle, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<DOMObjectCacheData>(G_OBJECT(wrapper));
+        result.iterator->value = makeUnique<DOMObjectCacheData>(G_OBJECT(wrapper));
 }
 
 void DOMObjectCache::put(WebCore::Node* objectHandle, void* wrapper)
@@ -226,7 +226,7 @@ void DOMObjectCache::put(WebCore::Node* objectHandle, void* wrapper)
     if (!result.isNewEntry)
         return;
 
-    result.iterator->value = std::make_unique<DOMObjectCacheData>(G_OBJECT(wrapper));
+    result.iterator->value = makeUnique<DOMObjectCacheData>(G_OBJECT(wrapper));
     if (WebCore::Frame* frame = objectHandle->document().frame())
         getOrCreateDOMObjectCacheFrameObserver(*frame).addObjectCacheData(*result.iterator->value);
 }

@@ -564,7 +564,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         }
         case CSSSelector::PseudoClassLang: {
             // FIXME: CSS Selectors Level 4 allows :lang(*-foo)
-            auto argumentList = std::make_unique<Vector<AtomString>>();
+            auto argumentList = makeUnique<Vector<AtomString>>();
             if (!consumeLangArgumentList(argumentList, block))
                 return nullptr;
             selector->setLangArgumentList(WTFMove(argumentList));

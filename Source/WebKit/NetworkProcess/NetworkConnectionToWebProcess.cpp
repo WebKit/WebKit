@@ -902,7 +902,7 @@ void NetworkConnectionToWebProcess::unregisterSWConnections()
 void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID sessionID, CompletionHandler<void(WebCore::SWServerConnectionIdentifier&&)>&& completionHandler)
 {
     auto& server = m_networkProcess->swServerForSession(sessionID);
-    auto connection = std::make_unique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), sessionID);
+    auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), sessionID);
     
     SWServerConnectionIdentifier serverConnectionIdentifier = connection->identifier();
     LOG(ServiceWorker, "NetworkConnectionToWebProcess::establishSWServerConnection - %s", serverConnectionIdentifier.loggingString().utf8().data());

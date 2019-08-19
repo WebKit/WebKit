@@ -53,7 +53,7 @@ private:
 Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
     Ref<HTMLSummaryElement> summary = adoptRef(*new HTMLSummaryElement(tagName, document));
-    summary->addShadowRoot(ShadowRoot::create(document, std::make_unique<SummarySlotElement>()));
+    summary->addShadowRoot(ShadowRoot::create(document, makeUnique<SummarySlotElement>()));
     return summary;
 }
 

@@ -813,7 +813,7 @@ inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleRe
             color = styleResolver.colorFromPrimitiveValue(*shadowValue.color);
         else
             color = styleResolver.style()->color();
-        auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
+        auto shadowData = makeUnique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
         if (property == CSSPropertyTextShadow)
             styleResolver.style()->setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else
@@ -829,7 +829,7 @@ inline void StyleBuilderCustom::applyInitialTextShadow(StyleResolver& styleResol
 
 inline void StyleBuilderCustom::applyInheritTextShadow(StyleResolver& styleResolver)
 {
-    styleResolver.style()->setTextShadow(styleResolver.parentStyle()->textShadow() ? std::make_unique<ShadowData>(*styleResolver.parentStyle()->textShadow()) : nullptr);
+    styleResolver.style()->setTextShadow(styleResolver.parentStyle()->textShadow() ? makeUnique<ShadowData>(*styleResolver.parentStyle()->textShadow()) : nullptr);
 }
 
 inline void StyleBuilderCustom::applyValueTextShadow(StyleResolver& styleResolver, CSSValue& value)
@@ -844,7 +844,7 @@ inline void StyleBuilderCustom::applyInitialBoxShadow(StyleResolver& styleResolv
 
 inline void StyleBuilderCustom::applyInheritBoxShadow(StyleResolver& styleResolver)
 {
-    styleResolver.style()->setBoxShadow(styleResolver.parentStyle()->boxShadow() ? std::make_unique<ShadowData>(*styleResolver.parentStyle()->boxShadow()) : nullptr);
+    styleResolver.style()->setBoxShadow(styleResolver.parentStyle()->boxShadow() ? makeUnique<ShadowData>(*styleResolver.parentStyle()->boxShadow()) : nullptr);
 }
 
 inline void StyleBuilderCustom::applyValueBoxShadow(StyleResolver& styleResolver, CSSValue& value)
@@ -1359,7 +1359,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             CSSValueID listStyleIdent = counterValue->listStyleIdent();
             if (listStyleIdent != CSSValueNone)
                 listStyleType = static_cast<ListStyleType>(listStyleIdent - CSSValueDisc);
-            auto counter = std::make_unique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
+            auto counter = makeUnique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
             styleResolver.style()->setContent(WTFMove(counter), didSet);
             didSet = true;
         } else {

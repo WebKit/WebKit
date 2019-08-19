@@ -1559,7 +1559,7 @@ void WebProcess::markAllLayersVolatile(WTF::Function<void(bool)>&& completionHan
     ASSERT(!m_pageMarkingLayersAsVolatileCounter);
     m_countOfPagesFailingToMarkVolatile = 0;
 
-    m_pageMarkingLayersAsVolatileCounter = std::make_unique<PageMarkingLayersAsVolatileCounter>([this, completionHandler = WTFMove(completionHandler)] (RefCounterEvent) {
+    m_pageMarkingLayersAsVolatileCounter = makeUnique<PageMarkingLayersAsVolatileCounter>([this, completionHandler = WTFMove(completionHandler)] (RefCounterEvent) {
         if (m_pageMarkingLayersAsVolatileCounter->value())
             return;
 
@@ -1810,7 +1810,7 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
 
 void WebProcess::ensureAutomationSessionProxy(const String& sessionIdentifier)
 {
-    m_automationSessionProxy = std::make_unique<WebAutomationSessionProxy>(sessionIdentifier);
+    m_automationSessionProxy = makeUnique<WebAutomationSessionProxy>(sessionIdentifier);
 }
 
 void WebProcess::destroyAutomationSessionProxy()
@@ -1843,7 +1843,7 @@ bool WebProcess::hasVisibleWebPage() const
 LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 {
     if (!m_libWebRTCNetwork)
-        m_libWebRTCNetwork = std::make_unique<LibWebRTCNetwork>();
+        m_libWebRTCNetwork = makeUnique<LibWebRTCNetwork>();
     return *m_libWebRTCNetwork;
 }
 
@@ -1854,7 +1854,7 @@ void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageG
     // by calling ensureNetworkProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
     // NetworkProcessConnection for synchronization purposes.
     auto& ipcConnection = ensureNetworkProcessConnection().connection();
-    SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(ipcConnection, pageGroupID, pageID, store));
+    SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, pageGroupID, pageID, store));
 }
 
 void WebProcess::registerServiceWorkerClients()

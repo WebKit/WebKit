@@ -92,7 +92,7 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate)
         }
     }
 
-    m_fftFrame = std::make_unique<FFTFrame>(fftSize);
+    m_fftFrame = makeUnique<FFTFrame>(fftSize);
     m_fftFrame->doPaddedFFT(impulseResponse, truncatedResponseLength);
 }
 
@@ -103,7 +103,7 @@ size_t HRTFKernel::fftSize() const
 
 std::unique_ptr<AudioChannel> HRTFKernel::createImpulseResponse()
 {
-    auto channel = std::make_unique<AudioChannel>(fftSize());
+    auto channel = makeUnique<AudioChannel>(fftSize());
     FFTFrame fftFrame(*m_fftFrame);
 
     // Add leading delay back in.

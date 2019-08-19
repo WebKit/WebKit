@@ -28,6 +28,7 @@
 
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -38,7 +39,7 @@ std::string toSTD(NSString *string)
         return std::string();
 
     size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
     NSUInteger stringLength;
     [string getBytes:buffer.get() maxLength:bufferSize usedLength:&stringLength encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [string length]) remainingRange:0];
     return std::string(buffer.get(), stringLength);

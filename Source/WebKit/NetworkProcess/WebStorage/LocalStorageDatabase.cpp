@@ -242,7 +242,7 @@ void LocalStorageDatabase::scheduleDatabaseUpdate()
         return;
 
     if (!m_disableSuddenTerminationWhileWritingToLocalStorage)
-        m_disableSuddenTerminationWhileWritingToLocalStorage = std::make_unique<SuddenTerminationDisabler>();
+        m_disableSuddenTerminationWhileWritingToLocalStorage = makeUnique<SuddenTerminationDisabler>();
 
     m_didScheduleDatabaseUpdate = true;
 

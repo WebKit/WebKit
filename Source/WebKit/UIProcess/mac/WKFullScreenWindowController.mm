@@ -151,7 +151,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     _webView = webView;
     _page = &page;
 
-    _videoFullscreenClient = std::make_unique<WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient>();
+    _videoFullscreenClient = makeUnique<WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient>();
     _videoFullscreenClient->setParent(self);
 
     [self videoControlsManagerDidChange];

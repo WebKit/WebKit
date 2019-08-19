@@ -51,7 +51,7 @@ std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::cr
     if (observers.isEmpty())
         return nullptr;
 
-    return std::make_unique<MutationObserverInterestGroup>(WTFMove(observers), oldValueFlag);
+    return makeUnique<MutationObserverInterestGroup>(WTFMove(observers), oldValueFlag);
 }
 
 bool MutationObserverInterestGroup::isOldValueRequested() const

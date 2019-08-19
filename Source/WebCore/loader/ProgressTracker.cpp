@@ -201,7 +201,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const Resource
 
     auto& item = m_progressItems.add(identifier, nullptr).iterator->value;
     if (!item) {
-        item = std::make_unique<ProgressItem>(estimatedLength);
+        item = makeUnique<ProgressItem>(estimatedLength);
         return;
     }
 

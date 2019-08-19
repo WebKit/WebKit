@@ -40,7 +40,7 @@ namespace WebCore {
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return std::make_unique<ScrollAnimatorIOS>(scrollableArea);
+    return makeUnique<ScrollAnimatorIOS>(scrollableArea);
 }
 
 ScrollAnimatorIOS::ScrollAnimatorIOS(ScrollableArea& scrollableArea)

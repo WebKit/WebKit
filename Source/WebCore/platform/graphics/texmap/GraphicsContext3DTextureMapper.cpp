@@ -106,9 +106,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
-    m_nicosiaLayer = std::make_unique<Nicosia::GC3DLayer>(*this, renderStyle);
+    m_nicosiaLayer = makeUnique<Nicosia::GC3DLayer>(*this, renderStyle);
 #else
-    m_texmapLayer = std::make_unique<TextureMapperGC3DPlatformLayer>(*this, renderStyle);
+    m_texmapLayer = makeUnique<TextureMapperGC3DPlatformLayer>(*this, renderStyle);
 #endif
 
     makeContextCurrent();
@@ -325,10 +325,10 @@ Extensions3D& GraphicsContext3D::getExtensions()
     if (!m_extensions) {
 #if USE(OPENGL_ES)
         // glGetStringi is not available on GLES2.
-        m_extensions = std::make_unique<Extensions3DOpenGLES>(this,  false);
+        m_extensions = makeUnique<Extensions3DOpenGLES>(this,  false);
 #else
         // From OpenGL 3.2 on we use the Core profile, and there we must use glGetStringi.
-        m_extensions = std::make_unique<Extensions3DOpenGL>(this, GLContext::current()->version() >= 320);
+        m_extensions = makeUnique<Extensions3DOpenGL>(this, GLContext::current()->version() >= 320);
 #endif
     }
     return *m_extensions;

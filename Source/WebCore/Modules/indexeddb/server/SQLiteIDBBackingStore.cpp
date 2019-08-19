@@ -596,7 +596,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
     }
 
     // This initial database info matches the default values we just put into the metadata database.
-    return std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
+    return makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
 }
 
 std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseInfo()
@@ -631,7 +631,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
         }
     }
 
-    auto databaseInfo = std::make_unique<IDBDatabaseInfo>(databaseName, databaseVersion);
+    auto databaseInfo = makeUnique<IDBDatabaseInfo>(databaseName, databaseVersion);
 
     {
         SQLiteStatement sql(*m_sqliteDB, "SELECT id, name, keyPath, autoInc, maxIndexID FROM ObjectStoreInfo;"_s);
@@ -793,7 +793,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
 
     String dbFilename = fullDatabasePath();
 
-    m_sqliteDB = std::make_unique<SQLiteDatabase>();
+    m_sqliteDB = makeUnique<SQLiteDatabase>();
     if (!m_sqliteDB->open(dbFilename)) {
         LOG_ERROR("Failed to open SQLite database at path '%s'", dbFilename.utf8().data());
         closeSQLiteDB();
@@ -903,11 +903,11 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
         return IDBError { UnknownError, "Attempt to establish transaction identifier that already exists"_s };
     }
 
-    addResult.iterator->value = std::make_unique<SQLiteIDBTransaction>(*this, info);
+    addResult.iterator->value = makeUnique<SQLiteIDBTransaction>(*this, info);
 
     auto error = addResult.iterator->value->begin(*m_sqliteDB);
     if (error.isNull() && info.mode() == IDBTransactionMode::Versionchange) {
-        m_originalDatabaseInfoBeforeVersionChange = std::make_unique<IDBDatabaseInfo>(*m_databaseInfo);
+        m_originalDatabaseInfoBeforeVersionChange = makeUnique<IDBDatabaseInfo>(*m_databaseInfo);
 
         SQLiteStatement sql(*m_sqliteDB, "UPDATE IDBDatabaseInfo SET value = ? where key = 'DatabaseVersion';"_s);
         if (sql.prepare() != SQLITE_OK
@@ -2634,7 +2634,7 @@ SQLiteStatement* SQLiteIDBBackingStore::cachedStatement(SQLiteIDBBackingStore::S
     }
 
     if (m_sqliteDB) {
-        m_cachedStatements[static_cast<size_t>(sql)] = std::make_unique<SQLiteStatement>(*m_sqliteDB, statement);
+        m_cachedStatements[static_cast<size_t>(sql)] = makeUnique<SQLiteStatement>(*m_sqliteDB, statement);
         if (m_cachedStatements[static_cast<size_t>(sql)]->prepare() != SQLITE_OK)
             m_cachedStatements[static_cast<size_t>(sql)] = nullptr;
     }

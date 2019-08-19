@@ -59,7 +59,7 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(WorkerG
         if (!connectionProxy)
             return nullptr;
 
-        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(scope, *connectionProxy);
+        auto newSupplement = makeUnique<WorkerGlobalScopeIndexedDatabase>(scope, *connectionProxy);
         supplement = newSupplement.get();
         provideTo(&scope, supplementName(), WTFMove(newSupplement));
     }

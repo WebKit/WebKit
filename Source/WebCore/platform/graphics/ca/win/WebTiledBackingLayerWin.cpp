@@ -164,7 +164,7 @@ void WebTiledBackingLayerWin::setBorderColor(const Color& value)
 TileController* WebTiledBackingLayerWin::createTileController(PlatformCALayer* rootLayer)
 {
     ASSERT(!m_tileController);
-    m_tileController = std::make_unique<TileController>(rootLayer);
+    m_tileController = makeUnique<TileController>(rootLayer);
     return m_tileController.get();
 }
 

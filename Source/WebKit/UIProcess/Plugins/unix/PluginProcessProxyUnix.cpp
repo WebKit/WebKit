@@ -63,7 +63,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 #if PLATFORM(GTK)
 static bool pluginRequiresGtk2(const String& pluginPath)
 {
-    std::unique_ptr<Module> module = std::make_unique<Module>(pluginPath);
+    std::unique_ptr<Module> module = makeUnique<Module>(pluginPath);
     if (!module->load())
         return false;
     return module->functionPointer<gpointer>("gtk_object_get_type");

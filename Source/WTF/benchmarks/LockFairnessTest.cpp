@@ -61,8 +61,8 @@ struct Benchmark {
     static void run(const char* name)
     {
         LockType lock;
-        std::unique_ptr<unsigned[]> counts = std::make_unique<unsigned[]>(numThreads);
-        std::unique_ptr<RefPtr<Thread>[]> threads = std::make_unique<RefPtr<Thread>[]>(numThreads);
+        std::unique_ptr<unsigned[]> counts = makeUniqueWithoutFastMallocCheck<unsigned[]>(numThreads);
+        std::unique_ptr<RefPtr<Thread>[]> threads = makeUniqueWithoutFastMallocCheck<RefPtr<Thread>[]>(numThreads);
     
         volatile bool keepGoing = true;
     

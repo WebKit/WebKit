@@ -179,7 +179,7 @@ private:
 };
 
 StringView::GraphemeClusters::Iterator::Iterator(const StringView& stringView, unsigned index)
-    : m_impl(std::make_unique<Impl>(stringView, stringView.isNull() ? WTF::nullopt : Optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
+    : m_impl(makeUnique<Impl>(stringView, stringView.isNull() ? WTF::nullopt : Optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
 {
 }
 

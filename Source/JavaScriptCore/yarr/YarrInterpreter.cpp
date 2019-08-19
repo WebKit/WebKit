@@ -1706,7 +1706,7 @@ public:
             dumpDisjunction(m_bodyDisjunction.get());
 #endif
 
-        return std::make_unique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock);
+        return makeUnique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock);
     }
 
     void checkInput(unsigned count)
@@ -1926,7 +1926,7 @@ public:
         unsigned subpatternId = parenthesesBegin.atom.subpatternId;
 
         unsigned numSubpatterns = lastSubpatternId - subpatternId + 1;
-        auto parenthesesDisjunction = std::make_unique<ByteDisjunction>(numSubpatterns, callFrameSize);
+        auto parenthesesDisjunction = makeUnique<ByteDisjunction>(numSubpatterns, callFrameSize);
 
         unsigned firstTermInParentheses = beginTerm + 1;
         parenthesesDisjunction->terms.reserveInitialCapacity(endTerm - firstTermInParentheses + 2);
@@ -1997,7 +1997,7 @@ public:
 
     void regexBegin(unsigned numSubpatterns, unsigned callFrameSize, bool onceThrough)
     {
-        m_bodyDisjunction = std::make_unique<ByteDisjunction>(numSubpatterns, callFrameSize);
+        m_bodyDisjunction = makeUnique<ByteDisjunction>(numSubpatterns, callFrameSize);
         m_bodyDisjunction->terms.append(ByteTerm::BodyAlternativeBegin(onceThrough));
         m_bodyDisjunction->terms[0].frameLocation = 0;
         m_currentAlternativeIndex = 0;

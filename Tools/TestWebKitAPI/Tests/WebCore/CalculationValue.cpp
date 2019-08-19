@@ -53,7 +53,7 @@ private:
 
 static Ref<WebCore::CalculationValue> createTestValue()
 {
-    auto node = std::make_unique<CalculationDeletionTestNode>();
+    auto node = makeUnique<CalculationDeletionTestNode>();
     return WebCore::CalculationValue::create(WTFMove(node), WebCore::ValueRangeAll);
 }
 

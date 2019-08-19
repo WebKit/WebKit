@@ -40,7 +40,7 @@ IDBRequestData::IDBRequestData()
 
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionProxy, const IDBOpenDBRequest& request)
     : m_serverConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
-    , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connectionProxy, request))
+    , m_requestIdentifier(makeUnique<IDBResourceIdentifier>(connectionProxy, request))
     , m_databaseIdentifier(request.databaseIdentifier())
     , m_requestedVersion(request.version())
     , m_requestType(request.requestType())
@@ -49,8 +49,8 @@ IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionPr
 
 IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
     : m_serverConnectionIdentifier(operation.transaction().database().connectionProxy().serverConnectionIdentifier())
-    , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(operation.identifier()))
-    , m_transactionIdentifier(std::make_unique<IDBResourceIdentifier>(operation.transactionIdentifier()))
+    , m_requestIdentifier(makeUnique<IDBResourceIdentifier>(operation.identifier()))
+    , m_transactionIdentifier(makeUnique<IDBResourceIdentifier>(operation.transactionIdentifier()))
     , m_objectStoreIdentifier(operation.objectStoreIdentifier())
     , m_indexIdentifier(operation.indexIdentifier())
 {
@@ -58,7 +58,7 @@ IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
         m_indexRecordType = operation.indexRecordType();
 
     if (operation.cursorIdentifier())
-        m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*operation.cursorIdentifier());
+        m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*operation.cursorIdentifier());
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& other)
@@ -71,11 +71,11 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
     , m_requestType(other.m_requestType)
 {
     if (other.m_requestIdentifier)
-        m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_requestIdentifier);
+        m_requestIdentifier = makeUnique<IDBResourceIdentifier>(*other.m_requestIdentifier);
     if (other.m_transactionIdentifier)
-        m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_transactionIdentifier);
+        m_transactionIdentifier = makeUnique<IDBResourceIdentifier>(*other.m_transactionIdentifier);
     if (other.m_cursorIdentifier)
-        m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_cursorIdentifier);
+        m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*other.m_cursorIdentifier);
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& that, IsolatedCopyTag)
@@ -102,11 +102,11 @@ void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& 
         destination.m_databaseIdentifier = source.m_databaseIdentifier->isolatedCopy();
 
     if (source.m_requestIdentifier)
-        destination.m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_requestIdentifier);
+        destination.m_requestIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_requestIdentifier);
     if (source.m_transactionIdentifier)
-        destination.m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_transactionIdentifier);
+        destination.m_transactionIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_transactionIdentifier);
     if (source.m_cursorIdentifier)
-        destination.m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_cursorIdentifier);
+        destination.m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_cursorIdentifier);
 }
 
 uint64_t IDBRequestData::serverConnectionIdentifier() const

@@ -303,7 +303,7 @@ RenderBoxFragmentInfo* RenderFragmentContainer::setRenderBoxFragmentInfo(const R
 {
     ASSERT(isValid());
 
-    std::unique_ptr<RenderBoxFragmentInfo>& boxInfo = m_renderBoxFragmentInfo.add(box, std::make_unique<RenderBoxFragmentInfo>(logicalLeftInset, logicalRightInset, containingBlockChainIsInset)).iterator->value;
+    std::unique_ptr<RenderBoxFragmentInfo>& boxInfo = m_renderBoxFragmentInfo.add(box, makeUnique<RenderBoxFragmentInfo>(logicalLeftInset, logicalRightInset, containingBlockChainIsInset)).iterator->value;
     return boxInfo.get();
 }
 

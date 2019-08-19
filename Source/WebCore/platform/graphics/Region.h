@@ -149,7 +149,7 @@ private:
         friend bool operator==(const Shape&, const Shape&);
     };
 
-    std::unique_ptr<Shape> copyShape() const { return m_shape ? std::make_unique<Shape>(*m_shape) : nullptr; }
+    std::unique_ptr<Shape> copyShape() const { return m_shape ? makeUnique<Shape>(*m_shape) : nullptr; }
     void setShape(Shape&&);
 
     IntRect m_bounds;
@@ -290,7 +290,7 @@ Optional<Region> Region::decode(Decoder& decoder)
         decoder >> shape;
         if (!shape)
             return WTF::nullopt;
-        region.m_shape = std::make_unique<Shape>(WTFMove(*shape));
+        region.m_shape = makeUnique<Shape>(WTFMove(*shape));
     }
 
     return { region };

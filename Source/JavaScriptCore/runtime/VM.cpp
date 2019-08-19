@@ -252,18 +252,18 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_runLoop(CFRunLoopGetCurrent())
 #endif // USE(CF)
     , heap(this, heapType)
-    , fastMallocAllocator(std::make_unique<FastMallocAlignedMemoryAllocator>())
-    , primitiveGigacageAllocator(std::make_unique<GigacageAlignedMemoryAllocator>(Gigacage::Primitive))
-    , jsValueGigacageAllocator(std::make_unique<GigacageAlignedMemoryAllocator>(Gigacage::JSValue))
-    , auxiliaryHeapCellType(std::make_unique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary)))
-    , immutableButterflyHeapCellType(std::make_unique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
-    , cellHeapCellType(std::make_unique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
-    , destructibleCellHeapCellType(std::make_unique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
-    , stringHeapCellType(std::make_unique<JSStringHeapCellType>())
-    , destructibleObjectHeapCellType(std::make_unique<JSDestructibleObjectHeapCellType>())
+    , fastMallocAllocator(makeUnique<FastMallocAlignedMemoryAllocator>())
+    , primitiveGigacageAllocator(makeUnique<GigacageAlignedMemoryAllocator>(Gigacage::Primitive))
+    , jsValueGigacageAllocator(makeUnique<GigacageAlignedMemoryAllocator>(Gigacage::JSValue))
+    , auxiliaryHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary)))
+    , immutableButterflyHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
+    , cellHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
+    , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
+    , stringHeapCellType(makeUnique<JSStringHeapCellType>())
+    , destructibleObjectHeapCellType(makeUnique<JSDestructibleObjectHeapCellType>())
 #if ENABLE(WEBASSEMBLY)
-    , webAssemblyCodeBlockHeapCellType(std::make_unique<JSWebAssemblyCodeBlockHeapCellType>())
-    , webAssemblyFunctionHeapCellType(std::make_unique<WebAssemblyFunctionHeapCellType>())
+    , webAssemblyCodeBlockHeapCellType(makeUnique<JSWebAssemblyCodeBlockHeapCellType>())
+    , webAssemblyFunctionHeapCellType(makeUnique<WebAssemblyFunctionHeapCellType>())
 #endif
     , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
     , jsValueGigacageAuxiliarySpace("JSValue Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x241e946
@@ -296,7 +296,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_atomStringTable(vmType == Default ? Thread::current().atomStringTable() : new AtomStringTable)
     , propertyNames(nullptr)
     , emptyList(new ArgList)
-    , machineCodeBytesPerBytecodeWordForBaselineJIT(std::make_unique<SimpleStats>())
+    , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
     , customGetterSetterFunctionMap(*this)
     , stringCache(*this)
     , symbolImplToSymbolMap(*this)
@@ -312,8 +312,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_initializingObjectClass(0)
 #endif
     , m_stackPointerAtVMEntry(0)
-    , m_codeCache(std::make_unique<CodeCache>())
-    , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
+    , m_codeCache(makeUnique<CodeCache>())
+    , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
     , m_primitiveGigacageEnabled(IsWatched)
     , m_controlFlowProfilerEnabledCount(0)
@@ -407,7 +407,7 @@ VM::VM(VMType vmType, HeapType heapType)
     LLInt::Data::performAssertions(*this);
     
     if (UNLIKELY(Options::useProfiler())) {
-        m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*this);
+        m_perBytecodeProfiler = makeUnique<Profiler::Database>(*this);
 
         StringPrintStream pathOut;
         const char* profilerPath = getenv("JSC_PROFILER_PATH");
@@ -423,7 +423,7 @@ VM::VM(VMType vmType, HeapType heapType)
     // won't use this.
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 
-    m_bytecodeIntrinsicRegistry = std::make_unique<BytecodeIntrinsicRegistry>(*this);
+    m_bytecodeIntrinsicRegistry = makeUnique<BytecodeIntrinsicRegistry>(*this);
 
     if (Options::useTypeProfiler())
         enableTypeProfiler();
@@ -442,9 +442,9 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif // ENABLE(SAMPLING_PROFILER)
 
     if (Options::useRandomizingFuzzerAgent())
-        setFuzzerAgent(std::make_unique<RandomizingFuzzerAgent>(*this));
+        setFuzzerAgent(makeUnique<RandomizingFuzzerAgent>(*this));
     else if (Options::useDoublePredictionFuzzerAgent())
-        setFuzzerAgent(std::make_unique<DoublePredictionFuzzerAgent>(*this));
+        setFuzzerAgent(makeUnique<DoublePredictionFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())
         setShouldBuildPCToCodeOriginMapping();
@@ -457,9 +457,9 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(JIT)
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
     if (canUseJIT()) {
-        jitStubs = std::make_unique<JITThunks>();
+        jitStubs = makeUnique<JITThunks>();
 #if ENABLE(FTL_JIT)
-        ftlThunks = std::make_unique<FTL::Thunks>();
+        ftlThunks = makeUnique<FTL::Thunks>();
 #endif // ENABLE(FTL_JIT)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
@@ -619,7 +619,7 @@ Watchdog& VM::ensureWatchdog()
 HeapProfiler& VM::ensureHeapProfiler()
 {
     if (!m_heapProfiler)
-        m_heapProfiler = std::make_unique<HeapProfiler>(*this);
+        m_heapProfiler = makeUnique<HeapProfiler>(*this);
     return *m_heapProfiler;
 }
 
@@ -1041,8 +1041,8 @@ static bool disableProfilerWithRespectToCount(unsigned& counter, const Func& doD
 bool VM::enableTypeProfiler()
 {
     auto enableTypeProfiler = [this] () {
-        this->m_typeProfiler = std::make_unique<TypeProfiler>();
-        this->m_typeProfilerLog = std::make_unique<TypeProfilerLog>(*this);
+        this->m_typeProfiler = makeUnique<TypeProfiler>();
+        this->m_typeProfilerLog = makeUnique<TypeProfilerLog>(*this);
     };
 
     return enableProfilerWithRespectToCount(m_typeProfilerEnabledCount, enableTypeProfiler);
@@ -1061,7 +1061,7 @@ bool VM::disableTypeProfiler()
 bool VM::enableControlFlowProfiler()
 {
     auto enableControlFlowProfiler = [this] () {
-        this->m_controlFlowProfiler = std::make_unique<ControlFlowProfiler>();
+        this->m_controlFlowProfiler = makeUnique<ControlFlowProfiler>();
     };
 
     return enableProfilerWithRespectToCount(m_controlFlowProfilerEnabledCount, enableControlFlowProfiler);
@@ -1087,7 +1087,7 @@ void VM::dumpTypeProfilerData()
 
 void VM::queueMicrotask(JSGlobalObject& globalObject, Ref<Microtask>&& task)
 {
-    m_microtaskQueue.append(std::make_unique<QueuedTask>(*this, &globalObject, WTFMove(task)));
+    m_microtaskQueue.append(makeUnique<QueuedTask>(*this, &globalObject, WTFMove(task)));
 }
 
 void VM::drainMicrotasks()
@@ -1230,14 +1230,14 @@ void VM::ensureShadowChicken()
 {
     if (m_shadowChicken)
         return;
-    m_shadowChicken = std::make_unique<ShadowChicken>();
+    m_shadowChicken = makeUnique<ShadowChicken>();
 }
 
 #define DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(name, heapCellType, type) \
     IsoSubspace* VM::name##Slow() \
     { \
         ASSERT(!m_##name); \
-        auto space = std::make_unique<IsoSubspace> ISO_SUBSPACE_INIT(heap, heapCellType, type); \
+        auto space = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(heap, heapCellType, type); \
         WTF::storeStoreFence(); \
         m_##name = WTFMove(space); \
         return m_##name.get(); \
@@ -1268,7 +1268,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHea
     IsoSubspace* VM::name##Slow() \
     { \
         ASSERT(!m_##name); \
-        auto space = std::make_unique<SpaceAndSet> ISO_SUBSPACE_INIT(heap, heapCellType, type); \
+        auto space = makeUnique<SpaceAndSet> ISO_SUBSPACE_INIT(heap, heapCellType, type); \
         WTF::storeStoreFence(); \
         m_##name = WTFMove(space); \
         return &m_##name->space; \

@@ -174,7 +174,7 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
         return;
     }
 
-    auto data = std::make_unique<SecretServiceSearchData>(cancellable, WTFMove(completionHandler));
+    auto data = makeUnique<SecretServiceSearchData>(cancellable, WTFMove(completionHandler));
     secret_service_search(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(),
         static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS), cancellable,
         [](GObject* source, GAsyncResult* result, gpointer userData) {

@@ -73,7 +73,7 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
     RetainPtr<CALayer> layer = adoptNS([[WKPlainRemoteLayer alloc] init]);
-    return std::make_unique<RemoteLayerTreeNode>(layerID, WTFMove(layer));
+    return makeUnique<RemoteLayerTreeNode>(layerID, WTFMove(layer));
 }
 
 void RemoteLayerTreeNode::detachFromParent()

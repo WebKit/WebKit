@@ -943,7 +943,7 @@ private:
     void createRareDataIfNecessary()
     {
         if (!m_rareData) {
-            auto rareData = std::make_unique<RareData>();
+            auto rareData = makeUnique<RareData>();
             WTF::storeStoreFence(); // m_catchProfiles can be touched from compiler threads.
             m_rareData = WTFMove(rareData);
         }

@@ -129,7 +129,7 @@ float RootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool ltr, flo
         gEllipsisBoxMap = new EllipsisBoxMap();
 
     ASSERT(!hasEllipsisBox());
-    auto* ellipsisBox = gEllipsisBoxMap->set(this, std::make_unique<EllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox)).iterator->value.get();
+    auto* ellipsisBox = gEllipsisBoxMap->set(this, makeUnique<EllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox)).iterator->value.get();
     setHasEllipsisBox(true);
     // FIXME: Do we need an RTL version of this?
     if (ltr && (x() + logicalWidth() + ellipsisWidth) <= blockRightEdge) {

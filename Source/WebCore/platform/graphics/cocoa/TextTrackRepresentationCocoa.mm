@@ -108,7 +108,7 @@ using namespace WebCore;
 
 std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient& client)
 {
-    return std::make_unique<TextTrackRepresentationCocoa>(client);
+    return makeUnique<TextTrackRepresentationCocoa>(client);
 }
 
 TextTrackRepresentationCocoa::TextTrackRepresentationCocoa(TextTrackRepresentationClient& client)

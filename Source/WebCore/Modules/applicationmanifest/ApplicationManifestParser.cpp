@@ -91,7 +91,7 @@ void ApplicationManifestParser::logManifestPropertyInvalidURL(const String& prop
 void ApplicationManifestParser::logDeveloperWarning(const String& message)
 {
     if (m_consoleContext)
-        m_consoleContext->addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, makeString("Parsing application manifest "_s, m_manifestURL.string(), ": "_s, message)));
+        m_consoleContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, makeString("Parsing application manifest "_s, m_manifestURL.string(), ": "_s, message)));
 }
 
 URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const URL& documentURL)

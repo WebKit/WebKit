@@ -151,7 +151,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_websiteDataStore(websiteDataStore)
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    , m_userMediaCaptureManagerProxy(std::make_unique<UserMediaCaptureManagerProxy>(*this))
+    , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(*this))
 #endif
     , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
 {

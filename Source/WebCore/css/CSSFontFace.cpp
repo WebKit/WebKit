@@ -77,10 +77,10 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item.isSupportedFormat() && document) {
                 if (CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
-                    source = std::make_unique<CSSFontFaceSource>(fontFace, item.resource(), cachedFont);
+                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), cachedFont);
             }
         } else
-            source = std::make_unique<CSSFontFaceSource>(fontFace, item.resource(), nullptr, fontFaceElement);
+            source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), nullptr, fontFaceElement);
 
         if (source)
             fontFace.adoptSource(WTFMove(source));

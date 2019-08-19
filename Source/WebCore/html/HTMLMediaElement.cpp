@@ -481,7 +481,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 
 void HTMLMediaElement::finishInitialization()
 {
-    m_mediaSession = std::make_unique<MediaElementSession>(*this);
+    m_mediaSession = makeUnique<MediaElementSession>(*this);
 
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
@@ -3027,7 +3027,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
 
     // 5 - If the seek was in response to a DOM method call or setting of an IDL attribute, then continue
     // the script. The remainder of these steps must be run asynchronously.
-    m_pendingSeek = std::make_unique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
+    m_pendingSeek = makeUnique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
     if (fromDOM) {
         INFO_LOG(LOGIDENTIFIER, "enqueuing seek from ", now, " to ", time);
         m_seekTaskQueue.scheduleTask(std::bind(&HTMLMediaElement::seekTask, this));

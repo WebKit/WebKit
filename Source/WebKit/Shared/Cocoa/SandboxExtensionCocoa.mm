@@ -161,7 +161,7 @@ auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> Optional<Handle>
         return {{ }};
 
     Handle handle;
-    handle.m_sandboxExtension = std::make_unique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
+    handle.m_sandboxExtension = makeUnique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
     return WTFMove(handle);
 }
 

@@ -1636,12 +1636,12 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
         TraceScope tracingScope(DisplayListRecordStart, DisplayListRecordEnd);
 
-        m_displayList = std::make_unique<DisplayList::DisplayList>();
+        m_displayList = makeUnique<DisplayList::DisplayList>();
         
         FloatRect initialClip(boundsOrigin(), size());
 
         GraphicsContext context([&](GraphicsContext& context) {
-            return std::make_unique<DisplayList::Recorder>(context, *m_displayList, GraphicsContextState(), initialClip, AffineTransform());
+            return makeUnique<DisplayList::Recorder>(context, *m_displayList, GraphicsContextState(), initialClip, AffineTransform());
         });
         paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
     }
@@ -2867,7 +2867,7 @@ bool GraphicsLayerCA::isRunningTransformAnimation() const
 void GraphicsLayerCA::ensureLayerAnimations()
 {
     if (!m_animations)
-        m_animations = std::make_unique<LayerAnimations>();
+        m_animations = makeUnique<LayerAnimations>();
 }
 
 void GraphicsLayerCA::setAnimationOnLayer(PlatformCAAnimation& caAnim, AnimatedPropertyID property, const String& animationName, int index, int subIndex, Seconds timeOffset)
@@ -3903,7 +3903,7 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
     contentsLayer = nullptr;
 
     if (!m_layerClones)
-        m_layerClones = std::make_unique<LayerClones>();
+        m_layerClones = makeUnique<LayerClones>();
 
     primaryLayer = findOrMakeClone(cloneID, m_layer.get(), m_layerClones->primaryLayerClones, cloneLevel);
     structuralLayer = findOrMakeClone(cloneID, m_structuralLayer.get(), m_layerClones->structuralLayerClones, cloneLevel);

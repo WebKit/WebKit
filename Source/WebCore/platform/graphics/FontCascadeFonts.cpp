@@ -84,7 +84,7 @@ void FontCascadeFonts::GlyphPageCacheEntry::setGlyphDataForCharacter(UChar32 cha
 {
     ASSERT(!glyphDataForCharacter(character).glyph);
     if (!m_mixedFont) {
-        m_mixedFont = std::make_unique<MixedFontGlyphPage>(m_singleFont.get());
+        m_mixedFont = makeUnique<MixedFontGlyphPage>(m_singleFont.get());
         m_singleFont = nullptr;
     }
     m_mixedFont->setGlyphDataForCharacter(character, glyphData);

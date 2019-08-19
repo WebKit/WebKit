@@ -40,7 +40,7 @@ WKTypeID WKGeolocationManagerGetTypeID()
 
 void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProviderBase* wkProvider)
 {
-    toImpl(geolocationManagerRef)->setProvider(std::make_unique<WebGeolocationProvider>(wkProvider));
+    toImpl(geolocationManagerRef)->setProvider(makeUnique<WebGeolocationProvider>(wkProvider));
 }
 
 void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)

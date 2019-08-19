@@ -119,7 +119,7 @@ bool IDBTransactionInfo::decode(Decoder& decoder, IDBTransactionInfo& info)
         return false;
 
     if (hasObject) {
-        std::unique_ptr<IDBDatabaseInfo> object = std::make_unique<IDBDatabaseInfo>();
+        std::unique_ptr<IDBDatabaseInfo> object = makeUnique<IDBDatabaseInfo>();
         if (!decoder.decode(*object))
             return false;
         info.m_originalDatabaseInfo = WTFMove(object);

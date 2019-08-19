@@ -63,7 +63,7 @@ void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& ga
     if (m_mockGamepadVector[index])
         m_mockGamepadVector[index]->updateDetails(gamepadID, axisCount, buttonCount);
     else
-        m_mockGamepadVector[index] = std::make_unique<MockGamepad>(index, gamepadID, axisCount, buttonCount);
+        m_mockGamepadVector[index] = makeUnique<MockGamepad>(index, gamepadID, axisCount, buttonCount);
 }
 
 bool MockGamepadProvider::connectMockGamepad(unsigned index)

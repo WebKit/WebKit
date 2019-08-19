@@ -195,18 +195,18 @@ public:
     template<typename T>
     static ResultType typeInteger()
     {
-        return std::make_unique<CallbackArgumentInteger<T>>();
+        return makeUnique<CallbackArgumentInteger<T>>();
     }
 
     template<typename T>
     static ResultType typeDouble()
     {
-        return std::make_unique<CallbackArgumentDouble<T>>();
+        return makeUnique<CallbackArgumentDouble<T>>();
     }
 
     static ResultType typeBool()
     {
-        return std::make_unique<CallbackArgumentBoolean>();
+        return makeUnique<CallbackArgumentBoolean>();
     }
 
     static ResultType typeVoid()
@@ -217,7 +217,7 @@ public:
 
     static ResultType typeId()
     {
-        return std::make_unique<CallbackArgumentId>();
+        return makeUnique<CallbackArgumentId>();
     }
 
     static ResultType typeOfClass(const char* begin, const char* end)
@@ -228,19 +228,19 @@ public:
             return nullptr;
 
         if (cls == [JSValue class])
-            return std::make_unique<CallbackArgumentJSValue>();
+            return makeUnique<CallbackArgumentJSValue>();
         if (cls == [NSString class])
-            return std::make_unique<CallbackArgumentNSString>();
+            return makeUnique<CallbackArgumentNSString>();
         if (cls == [NSNumber class])
-            return std::make_unique<CallbackArgumentNSNumber>();
+            return makeUnique<CallbackArgumentNSNumber>();
         if (cls == [NSDate class])
-            return std::make_unique<CallbackArgumentNSDate>();
+            return makeUnique<CallbackArgumentNSDate>();
         if (cls == [NSArray class])
-            return std::make_unique<CallbackArgumentNSArray>();
+            return makeUnique<CallbackArgumentNSArray>();
         if (cls == [NSDictionary class])
-            return std::make_unique<CallbackArgumentNSDictionary>();
+            return makeUnique<CallbackArgumentNSDictionary>();
 
-        return std::make_unique<CallbackArgumentOfClass>(cls);
+        return makeUnique<CallbackArgumentOfClass>(cls);
     }
 
     static ResultType typeBlock(const char*, const char*)
@@ -252,7 +252,7 @@ public:
     {
         StringRange copy(begin, end);
         if (NSInvocation *invocation = valueToTypeInvocationFor(copy))
-            return std::make_unique<CallbackArgumentStruct>(invocation, copy);
+            return makeUnique<CallbackArgumentStruct>(invocation, copy);
         return nullptr;
     }
 };
@@ -335,45 +335,45 @@ public:
     template<typename T>
     static ResultType typeInteger()
     {
-        return std::make_unique<CallbackResultNumeric<T>>();
+        return makeUnique<CallbackResultNumeric<T>>();
     }
 
     template<typename T>
     static ResultType typeDouble()
     {
-        return std::make_unique<CallbackResultNumeric<T>>();
+        return makeUnique<CallbackResultNumeric<T>>();
     }
 
     static ResultType typeBool()
     {
-        return std::make_unique<CallbackResultBoolean>();
+        return makeUnique<CallbackResultBoolean>();
     }
 
     static ResultType typeVoid()
     {
-        return std::make_unique<CallbackResultVoid>();
+        return makeUnique<CallbackResultVoid>();
     }
 
     static ResultType typeId()
     {
-        return std::make_unique<CallbackResultId>();
+        return makeUnique<CallbackResultId>();
     }
 
     static ResultType typeOfClass(const char*, const char*)
     {
-        return std::make_unique<CallbackResultId>();
+        return makeUnique<CallbackResultId>();
     }
 
     static ResultType typeBlock(const char*, const char*)
     {
-        return std::make_unique<CallbackResultId>();
+        return makeUnique<CallbackResultId>();
     }
 
     static ResultType typeStruct(const char* begin, const char* end)
     {
         StringRange copy(begin, end);
         if (NSInvocation *invocation = typeToValueInvocationFor(copy))
-            return std::make_unique<CallbackResultStruct>(invocation, copy);
+            return makeUnique<CallbackResultStruct>(invocation, copy);
         return nullptr;
     }
 };
@@ -662,7 +662,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);
-    auto impl = std::make_unique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
+    auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
     const String& name = impl->name();
     return toRef(JSC::ObjCCallbackFunction::create(vm, exec->lexicalGlobalObject(), name, WTFMove(impl)));
 }

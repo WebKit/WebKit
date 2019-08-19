@@ -61,7 +61,7 @@ DownloadMap::DownloadMapType::AddResult DownloadMap::add(DownloadID downloadID, 
     auto result = m_downloads.add(downloadID, WTFMove(download));
     if (m_downloads.size() == 1) {
         ASSERT(!m_downloadAssertion);
-        m_downloadAssertion = std::make_unique<ProcessAssertion>(getpid(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
+        m_downloadAssertion = makeUnique<ProcessAssertion>(getpid(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
         RELEASE_LOG(ProcessSuspension, "Took 'WebKit downloads' assertion in NetworkProcess");
     }
 

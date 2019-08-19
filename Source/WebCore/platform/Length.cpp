@@ -288,9 +288,9 @@ Length convertTo100PercentMinusLength(const Length& length)
     // Turn this into a calc expression: calc(100% - length)
     Vector<std::unique_ptr<CalcExpressionNode>> lengths;
     lengths.reserveInitialCapacity(2);
-    lengths.uncheckedAppend(std::make_unique<CalcExpressionLength>(Length(100, Percent)));
-    lengths.uncheckedAppend(std::make_unique<CalcExpressionLength>(length));
-    auto op = std::make_unique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, Percent)));
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(length));
+    auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 
@@ -302,7 +302,7 @@ static Length blendMixedTypes(const Length& from, const Length& to, double progr
     if (progress >= 1.0)
         return to;
         
-    auto blend = std::make_unique<CalcExpressionBlendLength>(from, to, progress);
+    auto blend = makeUnique<CalcExpressionBlendLength>(from, to, progress);
     return Length(CalculationValue::create(WTFMove(blend), ValueRangeAll));
 }
 

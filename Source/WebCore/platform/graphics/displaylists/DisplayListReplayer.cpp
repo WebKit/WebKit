@@ -49,7 +49,7 @@ std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool
 
     std::unique_ptr<DisplayList> replayList;
     if (UNLIKELY(trackReplayList))
-        replayList = std::make_unique<DisplayList>();
+        replayList = makeUnique<DisplayList>();
 
     size_t numItems = m_displayList.itemCount();
     for (size_t i = 0; i < numItems; ++i) {

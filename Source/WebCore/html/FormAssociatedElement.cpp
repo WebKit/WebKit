@@ -279,7 +279,7 @@ void FormAssociatedElement::setCustomValidity(const String& error)
 void FormAssociatedElement::resetFormAttributeTargetObserver()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(asHTMLElement().isConnected());
-    m_formAttributeTargetObserver = std::make_unique<FormAttributeTargetObserver>(asHTMLElement().attributeWithoutSynchronization(formAttr), *this);
+    m_formAttributeTargetObserver = makeUnique<FormAttributeTargetObserver>(asHTMLElement().attributeWithoutSynchronization(formAttr), *this);
 }
 
 void FormAssociatedElement::formAttributeTargetChanged()

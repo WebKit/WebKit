@@ -39,7 +39,7 @@ auto ContentLayerTextureMapperImpl::createFactory(Client& client) -> Factory
 {
     return Factory(
         [&client](ContentLayer&) {
-            return std::make_unique<ContentLayerTextureMapperImpl>(client);
+            return makeUnique<ContentLayerTextureMapperImpl>(client);
         });
 }
 

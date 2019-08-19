@@ -1067,7 +1067,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
 static void addRedirectURL(WebHistoryItem *item, const String& url)
 {
     if (!item->_private->_redirectURLs)
-        item->_private->_redirectURLs = std::make_unique<Vector<String>>();
+        item->_private->_redirectURLs = makeUnique<Vector<String>>();
 
     // Our API allows us to store all the URLs in the redirect chain, but for
     // now we only have a use for the final URL.
@@ -1380,7 +1380,7 @@ IGNORE_WARNINGS_END
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
-    cachedFrame->setCachedFramePlatformData(std::make_unique<WebCachedFramePlatformData>(m_webFrame->_private->webFrameView.documentView));
+    cachedFrame->setCachedFramePlatformData(makeUnique<WebCachedFramePlatformData>(m_webFrame->_private->webFrameView.documentView));
 
 #if PLATFORM(IOS_FAMILY)
     // At this point we know this frame is going to be cached. Stop all plugins.

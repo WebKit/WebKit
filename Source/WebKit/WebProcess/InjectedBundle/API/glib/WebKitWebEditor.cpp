@@ -94,7 +94,7 @@ WebKitWebEditor* webkitWebEditorCreate(WebKitWebPage* webPage)
 {
     WebKitWebEditor* editor = WEBKIT_WEB_EDITOR(g_object_new(WEBKIT_TYPE_WEB_EDITOR, nullptr));
     editor->priv->webPage = webPage;
-    webkitWebPageGetPage(webPage)->setInjectedBundleEditorClient(std::make_unique<PageEditorClient>(editor));
+    webkitWebPageGetPage(webPage)->setInjectedBundleEditorClient(makeUnique<PageEditorClient>(editor));
     return editor;
 }
 

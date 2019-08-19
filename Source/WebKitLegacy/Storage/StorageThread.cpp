@@ -75,7 +75,7 @@ void StorageThread::dispatch(Function<void ()>&& function)
 {
     ASSERT(isMainThread());
     ASSERT(!m_queue.killed() && m_thread);
-    m_queue.append(std::make_unique<Function<void ()>>(WTFMove(function)));
+    m_queue.append(makeUnique<Function<void ()>>(WTFMove(function)));
 }
 
 void StorageThread::terminate()
@@ -87,7 +87,7 @@ void StorageThread::terminate()
     if (!m_thread)
         return;
 
-    m_queue.append(std::make_unique<Function<void ()>>([this] {
+    m_queue.append(makeUnique<Function<void ()>>([this] {
         performTerminate();
     }));
     m_thread->waitForCompletion();

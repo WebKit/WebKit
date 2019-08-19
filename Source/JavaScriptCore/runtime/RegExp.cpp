@@ -178,7 +178,7 @@ void RegExp::finishCreation(VM& vm)
 
     m_numSubpatterns = pattern.m_numSubpatterns;
     if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndex.isEmpty()) {
-        m_rareData = std::make_unique<RareData>();
+        m_rareData = makeUnique<RareData>();
         m_rareData->m_captureGroupNames.swap(pattern.m_captureGroupNames);
         m_rareData->m_namedGroupToParenIndex.swap(pattern.m_namedGroupToParenIndex);
     }

@@ -250,7 +250,7 @@ ExceptionOr<void> Database::openAndVerifyVersion(bool setVersionInNewDatabase)
         return Exception { InvalidStateError };
 
     ExceptionOr<void> result;
-    auto task = std::make_unique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, result);
+    auto task = makeUnique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, result);
     thread.scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
@@ -273,7 +273,7 @@ void Database::close()
         return;
     }
 
-    thread.scheduleImmediateTask(std::make_unique<DatabaseCloseTask>(*this, synchronizer));
+    thread.scheduleImmediateTask(makeUnique<DatabaseCloseTask>(*this, synchronizer));
 
     // FIXME: iOS depends on this function blocking until the database is closed as part
     // of closing all open databases from a process assertion expiration handler.
@@ -532,7 +532,7 @@ void Database::scheduleTransaction()
     m_transactionInProgress = true;
 
     auto transaction = m_transactionQueue.takeFirst();
-    auto task = std::make_unique<DatabaseTransactionTask>(WTFMove(transaction));
+    auto task = makeUnique<DatabaseTransactionTask>(WTFMove(transaction));
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
     databaseThread().scheduleTask(WTFMove(task));
 }
@@ -541,7 +541,7 @@ void Database::scheduleTransactionStep(SQLTransaction& transaction)
 {
     auto& thread = databaseThread();
 
-    auto task = std::make_unique<DatabaseTransactionTask>(&transaction);
+    auto task = makeUnique<DatabaseTransactionTask>(&transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
     thread.scheduleTask(WTFMove(task));
 }
@@ -763,7 +763,7 @@ Vector<String> Database::tableNames()
     if (thread.terminationRequested(&synchronizer))
         return result;
 
-    auto task = std::make_unique<DatabaseTableNamesTask>(*this, synchronizer, result);
+    auto task = makeUnique<DatabaseTableNamesTask>(*this, synchronizer, result);
     thread.scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 

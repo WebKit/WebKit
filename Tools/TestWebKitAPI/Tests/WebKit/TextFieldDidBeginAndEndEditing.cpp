@@ -97,7 +97,7 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
         WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("TextFieldDidBeginAndEndEditingEventsTest"));
         setInjectedBundleClient(context.get(), this);
 
-        webView = std::make_unique<PlatformWebView>(context.get());
+        webView = makeUnique<PlatformWebView>(context.get());
         setPageLoaderClient(webView->page(), this);
 
         didFinishLoad = false;

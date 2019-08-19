@@ -72,7 +72,7 @@ bool RenderingUpdateScheduler::isScheduled() const
 void RenderingUpdateScheduler::startTimer(Seconds delay)
 {
     ASSERT(!isScheduled());
-    m_refreshTimer = std::make_unique<Timer>(*this, &RenderingUpdateScheduler::displayRefreshFired);
+    m_refreshTimer = makeUnique<Timer>(*this, &RenderingUpdateScheduler::displayRefreshFired);
     m_refreshTimer->startOneShot(delay);
 }
 

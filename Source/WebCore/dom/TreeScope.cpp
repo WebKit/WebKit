@@ -64,7 +64,7 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
-    , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
+    , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -73,7 +73,7 @@ TreeScope::TreeScope(Document& document)
     : m_rootNode(document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
-    , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
+    , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
 {
     document.setTreeScope(*this);
 }
@@ -141,7 +141,7 @@ const Vector<Element*>* TreeScope::getAllElementsById(const AtomString& elementI
 void TreeScope::addElementById(const AtomStringImpl& elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
-        m_elementsById = std::make_unique<TreeScopeOrderedMap>();
+        m_elementsById = makeUnique<TreeScopeOrderedMap>();
     m_elementsById->add(elementId, element, *this);
     if (notifyObservers)
         m_idTargetObserverRegistry->notifyObservers(elementId);
@@ -168,7 +168,7 @@ Element* TreeScope::getElementByName(const AtomString& name) const
 void TreeScope::addElementByName(const AtomStringImpl& name, Element& element)
 {
     if (!m_elementsByName)
-        m_elementsByName = std::make_unique<TreeScopeOrderedMap>();
+        m_elementsByName = makeUnique<TreeScopeOrderedMap>();
     m_elementsByName->add(name, element, *this);
 }
 
@@ -239,7 +239,7 @@ void TreeScope::addImageMap(HTMLMapElement& imageMap)
     if (!name)
         return;
     if (!m_imageMapsByName)
-        m_imageMapsByName = std::make_unique<TreeScopeOrderedMap>();
+        m_imageMapsByName = makeUnique<TreeScopeOrderedMap>();
     m_imageMapsByName->add(*name, imageMap, *this);
 }
 
@@ -263,7 +263,7 @@ HTMLMapElement* TreeScope::getImageMap(const AtomString& name) const
 void TreeScope::addImageElementByUsemap(const AtomStringImpl& name, HTMLImageElement& element)
 {
     if (!m_imagesByUsemap)
-        m_imagesByUsemap = std::make_unique<TreeScopeOrderedMap>();
+        m_imagesByUsemap = makeUnique<TreeScopeOrderedMap>();
     return m_imagesByUsemap->add(name, element, *this);
 }
 
@@ -300,7 +300,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomString& forAttributeVal
 
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
-        m_labelsByForAttribute = std::make_unique<TreeScopeOrderedMap>();
+        m_labelsByForAttribute = makeUnique<TreeScopeOrderedMap>();
 
         for (auto& label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
             const AtomString& forValue = label.attributeWithoutSynchronization(forAttr);

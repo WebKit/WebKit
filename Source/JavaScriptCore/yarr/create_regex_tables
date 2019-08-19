@@ -95,11 +95,11 @@ for name, classes in types.items():
     function += ("{\n")
     if emitTables and classes["UseTable"]:
         if "Inverse" in classes:
-            function += ("    auto characterClass = std::make_unique<CharacterClass>(_%sData, true);\n" % (classes["Inverse"]))
+            function += ("    auto characterClass = makeUnique<CharacterClass>(_%sData, true);\n" % (classes["Inverse"]))
         else:
-            function += ("    auto characterClass = std::make_unique<CharacterClass>(_%sData, false);\n" % (name))
+            function += ("    auto characterClass = makeUnique<CharacterClass>(_%sData, false);\n" % (name))
     else:
-        function += ("    auto characterClass = std::make_unique<CharacterClass>();\n")
+        function += ("    auto characterClass = makeUnique<CharacterClass>();\n")
     hasBMPCharacters = False
     hasNonBMPCharacters = False
     for (min, max) in ranges:

@@ -69,7 +69,7 @@ void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
     }
 
     if (use) {
-        m_measurementTimer = std::make_unique<RunLoop::Timer<MemoryPressureHandler>>(RunLoop::main(), this, &MemoryPressureHandler::measurementTimerFired);
+        m_measurementTimer = makeUnique<RunLoop::Timer<MemoryPressureHandler>>(RunLoop::main(), this, &MemoryPressureHandler::measurementTimerFired);
         m_measurementTimer->startRepeating(30_s);
     } else
         m_measurementTimer = nullptr;

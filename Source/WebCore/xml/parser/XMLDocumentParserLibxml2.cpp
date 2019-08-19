@@ -92,7 +92,7 @@ class PendingCallbacks {
 public:
     void appendStartElementNSCallback(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int numNamespaces, const xmlChar** namespaces, int numAttributes, int numDefaulted, const xmlChar** attributes)
     {
-        auto callback = std::make_unique<PendingStartElementNSCallback>();
+        auto callback = makeUnique<PendingStartElementNSCallback>();
 
         callback->xmlLocalName = xmlStrdup(xmlLocalName);
         callback->xmlPrefix = xmlStrdup(xmlPrefix);
@@ -122,12 +122,12 @@ public:
 
     void appendEndElementNSCallback()
     {
-        m_callbacks.append(std::make_unique<PendingEndElementNSCallback>());
+        m_callbacks.append(makeUnique<PendingEndElementNSCallback>());
     }
 
     void appendCharactersCallback(const xmlChar* s, int len)
     {
-        auto callback = std::make_unique<PendingCharactersCallback>();
+        auto callback = makeUnique<PendingCharactersCallback>();
 
         callback->s = xmlStrndup(s, len);
         callback->len = len;
@@ -137,7 +137,7 @@ public:
 
     void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
     {
-        auto callback = std::make_unique<PendingProcessingInstructionCallback>();
+        auto callback = makeUnique<PendingProcessingInstructionCallback>();
 
         callback->target = xmlStrdup(target);
         callback->data = xmlStrdup(data);
@@ -147,7 +147,7 @@ public:
 
     void appendCDATABlockCallback(const xmlChar* s, int len)
     {
-        auto callback = std::make_unique<PendingCDATABlockCallback>();
+        auto callback = makeUnique<PendingCDATABlockCallback>();
 
         callback->s = xmlStrndup(s, len);
         callback->len = len;
@@ -157,7 +157,7 @@ public:
 
     void appendCommentCallback(const xmlChar* s)
     {
-        auto callback = std::make_unique<PendingCommentCallback>();
+        auto callback = makeUnique<PendingCommentCallback>();
 
         callback->s = xmlStrdup(s);
 
@@ -166,7 +166,7 @@ public:
 
     void appendInternalSubsetCallback(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
     {
-        auto callback = std::make_unique<PendingInternalSubsetCallback>();
+        auto callback = makeUnique<PendingInternalSubsetCallback>();
 
         callback->name = xmlStrdup(name);
         callback->externalID = xmlStrdup(externalID);
@@ -177,7 +177,7 @@ public:
 
     void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, OrdinalNumber lineNumber, OrdinalNumber columnNumber)
     {
-        auto callback = std::make_unique<PendingErrorCallback>();
+        auto callback = makeUnique<PendingErrorCallback>();
 
         callback->message = xmlStrdup(message);
         callback->type = type;
@@ -565,7 +565,7 @@ bool XMLDocumentParser::supportsXMLVersion(const String& version)
 XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
     : ScriptableDocumentParser(document)
     , m_view(frameView)
-    , m_pendingCallbacks(std::make_unique<PendingCallbacks>())
+    , m_pendingCallbacks(makeUnique<PendingCallbacks>())
     , m_currentNode(&document)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
 {
@@ -573,7 +573,7 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
 
 XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parentElement, ParserContentPolicy parserContentPolicy)
     : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
-    , m_pendingCallbacks(std::make_unique<PendingCallbacks>())
+    , m_pendingCallbacks(makeUnique<PendingCallbacks>())
     , m_currentNode(&fragment)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(true)
@@ -1329,7 +1329,7 @@ void XMLDocumentParser::doEnd()
         xmlTreeViewer.transformDocumentToTreeView();
     } else if (m_sawXSLTransform) {
         xmlDocPtr doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform.toString(), document()->url().string());
-        document()->setTransformSource(std::make_unique<TransformSource>(doc));
+        document()->setTransformSource(makeUnique<TransformSource>(doc));
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
         document()->applyPendingXSLTransformsNowIfScheduled();

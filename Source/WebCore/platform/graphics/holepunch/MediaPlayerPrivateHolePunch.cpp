@@ -76,7 +76,7 @@ void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
         [this](TextureMapperPlatformLayerProxy& proxy)
         {
             LockHolder holder(proxy.lock());
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
             proxy.pushNextBuffer(WTFMove(layerBuffer));
         };
 
@@ -141,7 +141,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateHolePunch::supportsType(const MediaE
 
 void MediaPlayerPrivateHolePunch::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateHolePunch>(player); },
+    registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateHolePunch>(player); },
         getSupportedTypes, supportsType, nullptr, nullptr, nullptr, nullptr);
 }
 

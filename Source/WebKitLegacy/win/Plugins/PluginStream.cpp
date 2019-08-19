@@ -433,7 +433,7 @@ void PluginStream::didReceiveData(NetscapePlugInStreamLoader* loader, const char
 
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
-            m_deliveryData = std::make_unique<Vector<char>>();
+            m_deliveryData = makeUnique<Vector<char>>();
 
         int oldSize = m_deliveryData->size();
         m_deliveryData->resize(oldSize + length);

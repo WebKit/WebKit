@@ -98,7 +98,7 @@ bool BMPImageDecoder::decodeHelper(bool onlySize)
         return false;
 
     if (!m_reader) {
-        m_reader = std::make_unique<BMPImageReader>(this, m_decodedOffset, imgDataOffset, false);
+        m_reader = makeUnique<BMPImageReader>(this, m_decodedOffset, imgDataOffset, false);
         m_reader->setData(m_data.get());
     }
 

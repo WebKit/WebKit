@@ -83,7 +83,7 @@ std::unique_ptr<StorageArea> StorageArea::clone() const
     ASSERT(!RunLoop::isMain());
     ASSERT(!m_localStorageNamespace);
 
-    auto storageArea = std::make_unique<StorageArea>(nullptr, m_securityOrigin, m_quotaInBytes, m_queue.copyRef());
+    auto storageArea = makeUnique<StorageArea>(nullptr, m_securityOrigin, m_quotaInBytes, m_queue.copyRef());
     storageArea->m_storageMap = m_storageMap;
 
     return storageArea;

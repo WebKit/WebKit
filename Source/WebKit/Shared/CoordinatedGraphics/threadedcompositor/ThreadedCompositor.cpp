@@ -53,7 +53,7 @@ Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDispl
 ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
     , m_paintFlags(paintFlags)
-    , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
+    , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient))
 #endif

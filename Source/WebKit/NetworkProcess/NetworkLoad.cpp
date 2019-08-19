@@ -215,7 +215,7 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, ResponseComple
     }
 
     if (m_loadThrottleLatency > 0_s) {
-        m_throttle = std::make_unique<Throttle>(*this, m_loadThrottleLatency, WTFMove(response), WTFMove(completionHandler));
+        m_throttle = makeUnique<Throttle>(*this, m_loadThrottleLatency, WTFMove(response), WTFMove(completionHandler));
         return;
     }
 

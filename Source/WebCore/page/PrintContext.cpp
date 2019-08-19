@@ -321,7 +321,7 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
         return;
 
     if (!m_linkedDestinations) {
-        m_linkedDestinations = std::make_unique<HashMap<String, Ref<Element>>>();
+        m_linkedDestinations = makeUnique<HashMap<String, Ref<Element>>>();
         collectLinkedDestinations(document);
     }
 

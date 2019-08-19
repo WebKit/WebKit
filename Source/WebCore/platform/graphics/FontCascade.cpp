@@ -254,7 +254,7 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescripti
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
-    newEntry = std::make_unique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));
+    newEntry = makeUnique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));
     Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
 
     static const unsigned unreferencedPruneInterval = 50;
@@ -326,9 +326,9 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     if (glyphBuffer.isEmpty())
         return nullptr;
     
-    std::unique_ptr<DisplayList::DisplayList> displayList = std::make_unique<DisplayList::DisplayList>();
+    std::unique_ptr<DisplayList::DisplayList> displayList = makeUnique<DisplayList::DisplayList>();
     GraphicsContext recordingContext([&](GraphicsContext& displayListContext) {
-        return std::make_unique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform());
+        return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform());
     });
     
     FloatPoint startPoint(startX, 0);

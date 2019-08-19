@@ -140,7 +140,7 @@ void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structur
     ASSERT(conditionSet.structuresEnsureValidity());
     for (ObjectPropertyCondition condition : conditionSet) {
         if (condition.condition().kind() == PropertyCondition::Presence) {
-            m_objectToStringAdaptiveInferredValueWatchpoint = std::make_unique<ObjectToStringAdaptiveInferredPropertyValueWatchpoint>(equivCondition, this);
+            m_objectToStringAdaptiveInferredValueWatchpoint = makeUnique<ObjectToStringAdaptiveInferredPropertyValueWatchpoint>(equivCondition, this);
             m_objectToStringAdaptiveInferredValueWatchpoint->install(vm);
         } else
             m_objectToStringAdaptiveWatchpointSet.add(condition, this)->install(vm);

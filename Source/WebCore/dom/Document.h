@@ -1284,7 +1284,7 @@ public:
 
     std::unique_ptr<DocumentParserYieldToken> createParserYieldToken()
     {
-        return std::make_unique<DocumentParserYieldToken>(*this);
+        return makeUnique<DocumentParserYieldToken>(*this);
     }
 
     bool hasActiveParserYieldToken() const { return m_parserYieldTokenCount; }

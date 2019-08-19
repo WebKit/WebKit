@@ -86,7 +86,7 @@ private:
 };
 
 WorkerRunLoop::WorkerRunLoop()
-    : m_sharedTimer(std::make_unique<WorkerSharedTimer>())
+    : m_sharedTimer(makeUnique<WorkerSharedTimer>())
 {
 }
 
@@ -250,12 +250,12 @@ void WorkerRunLoop::postTask(ScriptExecutionContext::Task&& task)
 
 void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task)
 {
-    m_messageQueue.appendAndKill(std::make_unique<Task>(WTFMove(task), defaultMode()));
+    m_messageQueue.appendAndKill(makeUnique<Task>(WTFMove(task), defaultMode()));
 }
 
 void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const String& mode)
 {
-    m_messageQueue.append(std::make_unique<Task>(WTFMove(task), mode));
+    m_messageQueue.append(makeUnique<Task>(WTFMove(task), mode));
 }
 
 void WorkerRunLoop::postDebuggerTask(ScriptExecutionContext::Task&& task)

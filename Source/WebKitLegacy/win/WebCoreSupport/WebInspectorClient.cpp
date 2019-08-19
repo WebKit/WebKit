@@ -169,7 +169,7 @@ Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorContr
         return 0;
 
     m_frontendPage = core(frontendWebView.get());
-    m_frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHandle, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
+    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHandle, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
     m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
     m_frontendHandle = frontendHwnd;
     return this;
@@ -185,7 +185,7 @@ void WebInspectorClient::highlight()
     bool creatingHighlight = !m_highlight;
 
     if (creatingHighlight)
-        m_highlight = std::make_unique<WebNodeHighlight>(m_inspectedWebView);
+        m_highlight = makeUnique<WebNodeHighlight>(m_inspectedWebView);
 
     if (m_highlight->isShowing())
         m_highlight->update();

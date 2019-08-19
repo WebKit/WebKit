@@ -65,7 +65,7 @@ public:
         , m_name(WTFMove(name))
     {
         if (semantic || !qualifiers.isEmpty())
-            m_rareData = std::make_unique<RareData>(WTFMove(qualifiers), WTFMove(semantic));
+            m_rareData = makeUnique<RareData>(WTFMove(qualifiers), WTFMove(semantic));
     }
 
     ~VariableDeclaration() = default;

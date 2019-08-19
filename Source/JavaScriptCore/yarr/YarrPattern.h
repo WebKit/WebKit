@@ -341,7 +341,7 @@ public:
     
     PatternAlternative* addNewAlternative()
     {
-        m_alternatives.append(std::make_unique<PatternAlternative>(this));
+        m_alternatives.append(makeUnique<PatternAlternative>(this));
         return static_cast<PatternAlternative*>(m_alternatives.last().get());
     }
 

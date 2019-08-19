@@ -116,9 +116,9 @@ CaptionUserPreferences& PageGroup::captionPreferences()
 {
     if (!m_captionPreferences) {
 #if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-        m_captionPreferences = std::make_unique<CaptionUserPreferencesMediaAF>(*this);
+        m_captionPreferences = makeUnique<CaptionUserPreferencesMediaAF>(*this);
 #else
-        m_captionPreferences = std::make_unique<CaptionUserPreferences>(*this);
+        m_captionPreferences = makeUnique<CaptionUserPreferences>(*this);
 #endif
     }
 

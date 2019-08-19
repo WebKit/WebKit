@@ -39,7 +39,7 @@ static const int32_t DefaultTimeScale = 1000;
 
 std::unique_ptr<Clock> Clock::create()
 {
-    return std::make_unique<ClockCM>();
+    return makeUnique<ClockCM>();
 }
 
 ClockCM::ClockCM()

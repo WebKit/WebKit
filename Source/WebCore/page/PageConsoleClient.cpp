@@ -161,9 +161,9 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     std::unique_ptr<Inspector::ConsoleMessage> message;
 
     if (callStack)
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
     else
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
 
     addMessage(WTFMove(message));
 }
@@ -174,7 +174,7 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
     String messageText;
     bool gotMessage = arguments->getFirstArgumentAsString(messageText);
 
-    auto message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
+    auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
 
     String url = message->url();
     unsigned lineNumber = message->line();
@@ -406,7 +406,7 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
         }
 
         if (dataURL.isEmpty()) {
-            addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_s, WTFMove(arguments)));
+            addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_s, WTFMove(arguments)));
             return;
         }
     }
@@ -416,7 +416,7 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
     for (size_t i = (!target ? 0 : 1); i < arguments->argumentCount(); ++i)
         adjustedArguments.append({ state->vm(), arguments->argumentAt(i) });
     arguments = ScriptArguments::create(*state, WTFMove(adjustedArguments));
-    addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, WTFMove(arguments)));
+    addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, WTFMove(arguments)));
 }
 
 } // namespace WebCore

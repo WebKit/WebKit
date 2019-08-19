@@ -89,7 +89,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 {
     auto text = inlineBox.textContent();
     if (!text.length())
-        return inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, 0, 0, false, false));
+        return inlineContent.append(makeUnique<InlineTextItem>(inlineBox, 0, 0, false, false));
 
     auto& style = inlineBox.style();
     auto preserveNewline = style.preserveNewline();
@@ -99,20 +99,20 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     while (currentPosition < text.length()) {
         // Soft linebreak?
         if (isSoftLineBreak(text[currentPosition], preserveNewline)) {
-            inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, currentPosition, 1, true, false));
+            inlineContent.append(makeUnique<InlineTextItem>(inlineBox, currentPosition, 1, true, false));
             ++currentPosition;
             continue;
         }
         if (isWhitespaceCharacter(text[currentPosition], preserveNewline)) {
             auto length = moveToNextNonWhitespacePosition(text, currentPosition, preserveNewline);
             auto isCollapsed = collapseWhiteSpace && length > 1;
-            inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, currentPosition, length, true, isCollapsed));
+            inlineContent.append(makeUnique<InlineTextItem>(inlineBox, currentPosition, length, true, isCollapsed));
             currentPosition += length;
             continue;
         }
 
         auto length = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-        inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, currentPosition, length, false, false));
+        inlineContent.append(makeUnique<InlineTextItem>(inlineBox, currentPosition, length, false, false));
         currentPosition += length;
     }
 }
@@ -130,7 +130,7 @@ std::unique_ptr<InlineTextItem> InlineTextItem::split(unsigned splitPosition, un
 {
     RELEASE_ASSERT(splitPosition >= this->start());
     RELEASE_ASSERT(splitPosition + length <= end());
-    return std::make_unique<InlineTextItem>(layoutBox(), splitPosition, length, isWhitespace(), isCollapsed());
+    return makeUnique<InlineTextItem>(layoutBox(), splitPosition, length, isWhitespace(), isCollapsed());
 }
 
 }

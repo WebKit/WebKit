@@ -68,7 +68,7 @@ OscillatorNode::OscillatorNode(AudioContext& context, float sampleRate)
     setType(m_type);
 
     // An oscillator is always mono.
-    addOutput(std::make_unique<AudioNodeOutput>(this, 1));
+    addOutput(makeUnique<AudioNodeOutput>(this, 1));
 
     initialize();
 }

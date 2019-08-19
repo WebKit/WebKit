@@ -1,3 +1,16 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::connectToBrowser):
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::launchBrowser):
+        (WebDriver::SessionHost::sendMessageToBackend):
+
 2019-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, WTF_MAKE_FAST_ALLOCATED annotation part

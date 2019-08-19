@@ -148,7 +148,7 @@ Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Doc
 HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 {
     if (!m_imageLoader)
-        m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+        m_imageLoader = makeUnique<HTMLImageLoader>(*this);
     return *m_imageLoader;
 }
 
@@ -1641,7 +1641,7 @@ RefPtr<HTMLDataListElement> HTMLInputElement::dataList() const
 void HTMLInputElement::resetListAttributeTargetObserver()
 {
     if (isConnected())
-        m_listAttributeTargetObserver = std::make_unique<ListAttributeTargetObserver>(attributeWithoutSynchronization(listAttr), this);
+        m_listAttributeTargetObserver = makeUnique<ListAttributeTargetObserver>(attributeWithoutSynchronization(listAttr), this);
     else
         m_listAttributeTargetObserver = nullptr;
 }

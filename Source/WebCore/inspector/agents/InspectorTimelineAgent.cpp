@@ -87,7 +87,7 @@ static CFRunLoopRef currentRunLoop()
 
 InspectorTimelineAgent::InspectorTimelineAgent(PageAgentContext& context)
     : InspectorAgentBase("Timeline"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
 {
@@ -193,7 +193,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     // FIXME: Abstract away platform-specific code once https://bugs.webkit.org/show_bug.cgi?id=142748 is fixed.
 
 #if PLATFORM(COCOA)
-    m_frameStartObserver = std::make_unique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameBegin), [this]() {
+    m_frameStartObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameBegin), [this]() {
         if (!m_tracking || m_environment.scriptDebugServer().isPaused())
             return;
 
@@ -202,7 +202,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
         m_runLoopNestingLevel++;
     });
 
-    m_frameStopObserver = std::make_unique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameEnd), [this]() {
+    m_frameStopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameEnd), [this]() {
         if (!m_tracking || m_environment.scriptDebugServer().isPaused())
             return;
 
@@ -280,7 +280,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
                 if (WebConsoleAgent* consoleAgent = m_instrumentingAgents.webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
                     String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \"", title, "\" already exists");
-                    consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
+                    consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
                 }
                 return;
             }
@@ -316,7 +316,7 @@ void InspectorTimelineAgent::stopFromConsole(JSC::ExecState*, const String& titl
     if (WebConsoleAgent* consoleAgent = m_instrumentingAgents.webConsoleAgent()) {
         // FIXME: Send an enum to the frontend for localization?
         String warning = title.isEmpty() ? "No profiles exist"_s : makeString("Profile \"", title, "\" does not exist");
-        consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
+        consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
     }
 }
 

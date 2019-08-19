@@ -31,6 +31,7 @@
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
 #include <wpe/wpe.h>
+#include <wtf/UniqueArray.h>
 
 namespace WTR {
 
@@ -279,7 +280,7 @@ static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint32
         return WPE_KEY_F12;
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueArray<char>(bufferSize);
     WKStringGetUTF8CString(keyRef, buffer.get(), bufferSize);
     char charCode = buffer.get()[0];
 

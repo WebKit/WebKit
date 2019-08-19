@@ -71,7 +71,7 @@ RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdates*
 
 RenderTreeUpdater::RenderTreeUpdater(Document& document)
     : m_document(document)
-    , m_generatedContent(std::make_unique<GeneratedContent>(*this))
+    , m_generatedContent(makeUnique<GeneratedContent>(*this))
     , m_builder(renderView())
 {
 }

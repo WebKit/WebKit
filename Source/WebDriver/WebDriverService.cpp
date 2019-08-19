@@ -657,7 +657,7 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
         return;
     }
 
-    auto sessionHost = std::make_unique<SessionHost>(capabilitiesList.takeLast());
+    auto sessionHost = makeUnique<SessionHost>(capabilitiesList.takeLast());
     auto* sessionHostPtr = sessionHost.get();
     sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](Optional<String> error) mutable {
         if (error) {

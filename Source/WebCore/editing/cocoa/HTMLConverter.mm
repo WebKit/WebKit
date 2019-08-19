@@ -380,7 +380,7 @@ HTMLConverter::HTMLConverter(const Position& start, const Position& end)
     _flags.reachedStart = false;
     _flags.reachedEnd = false;
     
-    _caches = std::make_unique<HTMLConverterCaches>();
+    _caches = makeUnique<HTMLConverterCaches>();
 }
 
 HTMLConverter::~HTMLConverter()
@@ -551,7 +551,7 @@ RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& e
 
     auto result = m_computedStyles.add(&element, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<ComputedStyleExtractor>(&element, true);
+        result.iterator->value = makeUnique<ComputedStyleExtractor>(&element, true);
     ComputedStyleExtractor& computedStyle = *result.iterator->value;
     return computedStyle.propertyValue(propertyId);
 }

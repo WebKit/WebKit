@@ -60,10 +60,10 @@ State::State(Graph& graph)
         break;
     }
 
-    graph.m_plan.setFinalizer(std::make_unique<JITFinalizer>(graph.m_plan));
+    graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(graph.m_plan));
     finalizer = static_cast<JITFinalizer*>(graph.m_plan.finalizer());
 
-    proc = std::make_unique<Procedure>();
+    proc = makeUnique<Procedure>();
 
     proc->setOriginPrinter(
         [] (PrintStream& out, B3::Origin origin) {

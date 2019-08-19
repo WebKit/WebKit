@@ -110,7 +110,7 @@ GeneratedImage* CSSImageGeneratorValue::cachedImageForSize(FloatSize size)
 void CSSImageGeneratorValue::saveCachedImageForSize(FloatSize size, GeneratedImage& image)
 {
     ASSERT(!m_images.contains(size));
-    m_images.add(size, std::make_unique<CachedGeneratedImage>(*this, size, image));
+    m_images.add(size, makeUnique<CachedGeneratedImage>(*this, size, image));
 }
 
 void CSSImageGeneratorValue::evictCachedGeneratedImage(FloatSize size)

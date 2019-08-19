@@ -853,7 +853,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             state.setSpillStateForJSGetterSetter(spillState);
 
             RELEASE_ASSERT(!access.callLinkInfo());
-            access.m_callLinkInfo = std::make_unique<CallLinkInfo>();
+            access.m_callLinkInfo = makeUnique<CallLinkInfo>();
 
             // FIXME: If we generated a polymorphic call stub that jumped back to the getter
             // stub, which then jumped back to the main code, then we'd have a reachability

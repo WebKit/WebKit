@@ -48,7 +48,7 @@ DocumentStorageAccess* DocumentStorageAccess::from(Document& document)
 {
     auto* supplement = static_cast<DocumentStorageAccess*>(Supplement<Document>::from(&document, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<DocumentStorageAccess>(document);
+        auto newSupplement = makeUnique<DocumentStorageAccess>(document);
         supplement = newSupplement.get();
         provideTo(&document, supplementName(), WTFMove(newSupplement));
     }
@@ -183,7 +183,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         bool shouldPreserveUserGesture = wasGranted == StorageAccessWasGranted::Yes || promptWasShown == StorageAccessPromptWasShown::No;
 
         if (shouldPreserveUserGesture) {
-            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = makeWeakPtr(*document)] () {
+            MicrotaskQueue::mainThreadQueue().append(makeUnique<VoidMicrotask>([documentReference = makeWeakPtr(*document)] () {
                 if (auto* document = documentReference.get())
                     document->enableTemporaryTimeUserGesture();
             }));
@@ -199,7 +199,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         }
 
         if (shouldPreserveUserGesture) {
-            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = WTFMove(documentReference)] () {
+            MicrotaskQueue::mainThreadQueue().append(makeUnique<VoidMicrotask>([documentReference = WTFMove(documentReference)] () {
                 if (auto* document = documentReference.get())
                     document->consumeTemporaryTimeUserGesture();
             }));
@@ -209,7 +209,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
 
 void DocumentStorageAccess::enableTemporaryTimeUserGesture()
 {
-    m_temporaryUserGesture = std::make_unique<UserGestureIndicator>(ProcessingUserGesture, &m_document);
+    m_temporaryUserGesture = makeUnique<UserGestureIndicator>(ProcessingUserGesture, &m_document);
 }
 
 void DocumentStorageAccess::consumeTemporaryTimeUserGesture()

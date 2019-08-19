@@ -297,7 +297,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     if (m_mode == FTLForOSREntryMode) {
         bool result = performOSREntrypointCreation(dfg);
         if (!result) {
-            m_finalizer = std::make_unique<FailedFinalizer>(*this);
+            m_finalizer = makeUnique<FailedFinalizer>(*this);
             return FailPath;
         }
         RUN_PHASE(performCPSRethreading);
@@ -398,7 +398,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     case FTLForOSREntryMode: {
 #if ENABLE(FTL_JIT)
         if (FTL::canCompile(dfg) == FTL::CannotCompile) {
-            m_finalizer = std::make_unique<FailedFinalizer>(*this);
+            m_finalizer = makeUnique<FailedFinalizer>(*this);
             return FailPath;
         }
         
@@ -478,7 +478,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performWatchpointCollection);
         
         if (FTL::canCompile(dfg) == FTL::CannotCompile) {
-            m_finalizer = std::make_unique<FailedFinalizer>(*this);
+            m_finalizer = makeUnique<FailedFinalizer>(*this);
             return FailPath;
         }
 

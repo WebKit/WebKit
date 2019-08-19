@@ -648,7 +648,7 @@ void EventSendingController::callAfterScrollingCompletes(JSValueRef functionCall
     
     JSValueProtect(context, functionCallbackObject);
 
-    auto scrollCompletionCallbackData = std::make_unique<ScrollCompletionCallbackData>(context, functionCallbackObject);
+    auto scrollCompletionCallbackData = makeUnique<ScrollCompletionCallbackData>(context, functionCallbackObject);
     auto scrollCompletionCallbackDataPtr = scrollCompletionCallbackData.release();
     bool callbackWillBeCalled = WKBundlePageRegisterScrollOperationCompletionCallback(page, executeCallback, scrollCompletionCallbackDataPtr);
     if (!callbackWillBeCalled) {

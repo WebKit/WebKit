@@ -64,7 +64,7 @@ void SMILTimeContainer::schedule(SVGSMILElement* animation, SVGElement* target, 
     ElementAttributePair key(target, attributeName);
     std::unique_ptr<AnimationsVector>& scheduled = m_scheduledAnimations.add(key, nullptr).iterator->value;
     if (!scheduled)
-        scheduled = std::make_unique<AnimationsVector>();
+        scheduled = makeUnique<AnimationsVector>();
     ASSERT(!scheduled->contains(animation));
     scheduled->append(animation);
 

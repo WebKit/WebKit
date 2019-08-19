@@ -118,13 +118,13 @@ void TableGrid::appendCell(const Box& tableCellBox)
             initialSlotPosition.move(1, 0);
         }
     }
-    auto cellInfo = std::make_unique<CellInfo>(tableCellBox, initialSlotPosition, CellSize { rowSpan, columnSpan });
+    auto cellInfo = makeUnique<CellInfo>(tableCellBox, initialSlotPosition, CellSize { rowSpan, columnSpan });
     // Row and column spanners create additional slots.
     for (int row = 1; row <= rowSpan; ++row) {
         for (int column = 1; column <= columnSpan; ++column) {
             auto position = SlotPosition { initialSlotPosition.x() + row - 1, initialSlotPosition.y() + column - 1 };
             ASSERT(!m_slotMap.contains(position));
-            m_slotMap.add(position, std::make_unique<SlotInfo>(*cellInfo));
+            m_slotMap.add(position, makeUnique<SlotInfo>(*cellInfo));
         }
     }
     // Initialize columns/rows if needed.

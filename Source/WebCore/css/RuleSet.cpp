@@ -182,7 +182,7 @@ void RuleSet::addToRuleSet(const AtomString& key, AtomRuleMap& map, const RuleDa
         return;
     auto& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
-        rules = std::make_unique<RuleDataVector>();
+        rules = makeUnique<RuleDataVector>();
     rules->append(ruleData);
 }
 

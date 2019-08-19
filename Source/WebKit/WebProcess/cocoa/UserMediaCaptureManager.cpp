@@ -64,7 +64,7 @@ public:
     {
         ASSERT(deviceType != CaptureDevice::DeviceType::Unknown);
         if (type == Type::Audio)
-            m_ringBuffer = std::make_unique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr));
+            m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr));
     }
 
     ~Source()

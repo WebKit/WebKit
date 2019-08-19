@@ -91,7 +91,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     if (!fontReference)
         return nullptr;
 
-    return std::make_unique<FontCustomPlatformData>(fontReference, fontName);
+    return makeUnique<FontCustomPlatformData>(fontReference, fontName);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

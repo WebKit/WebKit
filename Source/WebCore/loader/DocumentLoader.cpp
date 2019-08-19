@@ -189,7 +189,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& request, const SubstituteD
     , m_originalSubstituteDataWasValid(substituteData.isValid())
     , m_substituteResourceDeliveryTimer(*this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_dataLoadTimer(*this, &DocumentLoader::handleSubstituteDataLoadNow)
-    , m_applicationCacheHost(std::make_unique<ApplicationCacheHost>(*this))
+    , m_applicationCacheHost(makeUnique<ApplicationCacheHost>(*this))
 {
 }
 
@@ -1336,7 +1336,7 @@ uint64_t DocumentLoader::loadApplicationManifest()
     if (manifestURL.isEmpty() || !manifestURL.isValid())
         return 0;
 
-    auto manifestLoader = std::make_unique<ApplicationManifestLoader>(*this, manifestURL, useCredentials);
+    auto manifestLoader = makeUnique<ApplicationManifestLoader>(*this, manifestURL, useCredentials);
     auto* rawManifestLoader = manifestLoader.get();
     auto callbackID = nextCallbackID++;
     m_applicationManifestLoaders.set(WTFMove(manifestLoader), callbackID);
@@ -1427,7 +1427,7 @@ void DocumentLoader::setArchive(Ref<Archive>&& archive)
 void DocumentLoader::addAllArchiveResources(Archive& archive)
 {
     if (!m_archiveResourceCollection)
-        m_archiveResourceCollection = std::make_unique<ArchiveResourceCollection>();
+        m_archiveResourceCollection = makeUnique<ArchiveResourceCollection>();
     m_archiveResourceCollection->addAllResources(archive);
 }
 
@@ -1436,7 +1436,7 @@ void DocumentLoader::addAllArchiveResources(Archive& archive)
 void DocumentLoader::addArchiveResource(Ref<ArchiveResource>&& resource)
 {
     if (!m_archiveResourceCollection)
-        m_archiveResourceCollection = std::make_unique<ArchiveResourceCollection>();
+        m_archiveResourceCollection = makeUnique<ArchiveResourceCollection>();
     m_archiveResourceCollection->addResource(WTFMove(resource));
 }
 
@@ -1963,7 +1963,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
         // is now in a state where starting an empty load will be inconsistent. Replace it with
         // a new ApplicationCacheHost.
-        m_applicationCacheHost = std::make_unique<ApplicationCacheHost>(*this);
+        m_applicationCacheHost = makeUnique<ApplicationCacheHost>(*this);
         maybeLoadEmpty();
         return;
     }
@@ -2122,7 +2122,7 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
         return;
     }
 
-    auto iconLoader = std::make_unique<IconLoader>(*this, icon.url);
+    auto iconLoader = makeUnique<IconLoader>(*this, icon.url);
     auto* rawIconLoader = iconLoader.get();
     m_iconLoaders.set(WTFMove(iconLoader), newCallbackID);
 

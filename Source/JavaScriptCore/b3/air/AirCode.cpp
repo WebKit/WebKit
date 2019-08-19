@@ -179,7 +179,7 @@ CCallSpecial* Code::cCallSpecial()
 {
     if (!m_cCallSpecial) {
         m_cCallSpecial = static_cast<CCallSpecial*>(
-            addSpecial(std::make_unique<CCallSpecial>()));
+            addSpecial(makeUnique<CCallSpecial>()));
     }
 
     return m_cCallSpecial;

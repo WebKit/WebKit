@@ -164,7 +164,7 @@ void NetworkProcessProxy::synthesizeAppIsBackground(bool background)
 DownloadProxy& NetworkProcessProxy::createDownloadProxy(const ResourceRequest& resourceRequest)
 {
     if (!m_downloadProxyMap)
-        m_downloadProxyMap = std::make_unique<DownloadProxyMap>(*this);
+        m_downloadProxyMap = makeUnique<DownloadProxyMap>(*this);
 
     return m_downloadProxyMap->createDownloadProxy(m_processPool, resourceRequest);
 }
@@ -1211,7 +1211,7 @@ void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const We
 void NetworkProcessProxy::takeUploadAssertion()
 {
     ASSERT(!m_uploadAssertion);
-    m_uploadAssertion = std::make_unique<ProcessAssertion>(processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+    m_uploadAssertion = makeUnique<ProcessAssertion>(processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
 }
 
 void NetworkProcessProxy::clearUploadAssertion()

@@ -70,7 +70,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     m_bitmap = createDirect2DSurface();
     COMPtr<ID2D1RenderTarget> bitmapContext = Direct2D::createRenderTargetFromWICBitmap(m_bitmap.get());
-    return std::make_unique<GraphicsContext>(GraphicsContextImplDirect2D::createFactory(bitmapContext.get()));
+    return makeUnique<GraphicsContext>(GraphicsContextImplDirect2D::createFactory(bitmapContext.get()));
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

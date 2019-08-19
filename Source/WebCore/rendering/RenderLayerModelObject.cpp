@@ -95,7 +95,7 @@ void RenderLayerModelObject::destroyLayer()
 void RenderLayerModelObject::createLayer()
 {
     ASSERT(!m_layer);
-    m_layer = std::make_unique<RenderLayer>(*this);
+    m_layer = makeUnique<RenderLayer>(*this);
     setHasLayer(true);
     m_layer->insertOnlyThisLayer();
 }

@@ -134,7 +134,7 @@ Page* Stack::ensurePageFor(void* address)
     if (LIKELY(it != m_pages.end()))
         m_lastAccessedPage = it->value.get();
     else {
-        std::unique_ptr<Page> page = std::make_unique<Page>(baseAddress);
+        std::unique_ptr<Page> page = makeUnique<Page>(baseAddress);
         auto result = m_pages.add(baseAddress, WTFMove(page));
         m_lastAccessedPage = result.iterator->value.get();
     }

@@ -249,7 +249,7 @@ static void webkitGeolocationManagerStart(WebKitGeolocationManager* manager)
     }
 
     if (!manager->priv->geoclueProvider) {
-        manager->priv->geoclueProvider = std::make_unique<GeoclueGeolocationProvider>();
+        manager->priv->geoclueProvider = makeUnique<GeoclueGeolocationProvider>();
         manager->priv->geoclueProvider->setEnableHighAccuracy(manager->priv->highAccuracyEnabled);
     }
     manager->priv->geoclueProvider->start([manager](GeolocationPosition&& corePosition, Optional<CString> error) {
@@ -312,7 +312,7 @@ WebKitGeolocationManager* webkitGeolocationManagerCreate(WebGeolocationManagerPr
 {
     auto* manager = WEBKIT_GEOLOCATION_MANAGER(g_object_new(WEBKIT_TYPE_GEOLOCATION_MANAGER, nullptr));
     manager->priv->manager = proxy;
-    proxy->setProvider(std::make_unique<GeolocationProvider>(manager));
+    proxy->setProvider(makeUnique<GeolocationProvider>(manager));
     return manager;
 }
 

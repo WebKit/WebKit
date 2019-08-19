@@ -113,7 +113,7 @@ public:
         InfoMap& infoMap = ShapeOutsideInfo::infoMap();
         if (ShapeOutsideInfo* info = infoMap.get(&key))
             return *info;
-        auto result = infoMap.add(&key, std::make_unique<ShapeOutsideInfo>(key));
+        auto result = infoMap.add(&key, makeUnique<ShapeOutsideInfo>(key));
         return *result.iterator->value;
     }
     static void removeInfo(const RenderBox& key) { infoMap().remove(&key); }

@@ -132,7 +132,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
 std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
 {
-    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+    return makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
@@ -276,7 +276,7 @@ void NetworkProcess::platformProcessDidTransitionToForeground()
 NetworkHTTPSUpgradeChecker& NetworkProcess::networkHTTPSUpgradeChecker()
 {
     if (!m_networkHTTPSUpgradeChecker)
-        m_networkHTTPSUpgradeChecker = std::make_unique<NetworkHTTPSUpgradeChecker>();
+        m_networkHTTPSUpgradeChecker = makeUnique<NetworkHTTPSUpgradeChecker>();
     return *m_networkHTTPSUpgradeChecker;
 }
 

@@ -678,7 +678,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
     m_simpleLineLayout = nullptr;
 
     if (!m_complexLineLayout)
-        m_complexLineLayout = std::make_unique<ComplexLineLayout>(*this);
+        m_complexLineLayout = makeUnique<ComplexLineLayout>(*this);
 
     m_complexLineLayout->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
@@ -2019,7 +2019,7 @@ void RenderBlockFlow::layoutLineGridBox()
     
     setLineGridBox(0);
 
-    auto lineGridBox = std::make_unique<RootInlineBox>(*this);
+    auto lineGridBox = makeUnique<RootInlineBox>(*this);
     lineGridBox->setHasTextChildren(); // Needed to make the line ascent/descent actually be honored in quirks mode.
     lineGridBox->setConstructed();
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
@@ -2260,7 +2260,7 @@ void RenderBlockFlow::clipOutFloatingObjects(RenderBlock& rootBlock, const Paint
 
 void RenderBlockFlow::createFloatingObjects()
 {
-    m_floatingObjects = std::make_unique<FloatingObjects>(*this);
+    m_floatingObjects = makeUnique<FloatingObjects>(*this);
 }
 
 void RenderBlockFlow::removeFloatingObjects()
@@ -3677,7 +3677,7 @@ void RenderBlockFlow::ensureLineBoxes()
         return;
 
     ASSERT(!m_complexLineLayout);
-    m_complexLineLayout = std::make_unique<ComplexLineLayout>(*this);
+    m_complexLineLayout = makeUnique<ComplexLineLayout>(*this);
 
     if (SimpleLineLayout::canUseForLineBoxTree(*this, *m_simpleLineLayout)) {
         SimpleLineLayout::generateLineBoxTree(*this, *m_simpleLineLayout);
@@ -3735,7 +3735,7 @@ RenderBlockFlow::RenderBlockFlowRareData& RenderBlockFlow::ensureRareBlockFlowDa
 void RenderBlockFlow::materializeRareBlockFlowData()
 {
     ASSERT(!hasRareBlockFlowData());
-    m_rareBlockFlowData = std::make_unique<RenderBlockFlow::RenderBlockFlowRareData>(*this);
+    m_rareBlockFlowData = makeUnique<RenderBlockFlow::RenderBlockFlowRareData>(*this);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

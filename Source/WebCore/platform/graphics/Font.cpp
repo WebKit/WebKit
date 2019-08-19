@@ -390,7 +390,7 @@ GlyphData Font::glyphDataForCharacter(UChar32 character) const
 auto Font::ensureDerivedFontData() const -> DerivedFonts&
 {
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>();
+        m_derivedFontData = makeUnique<DerivedFonts>();
     return *m_derivedFontData;
 }
 

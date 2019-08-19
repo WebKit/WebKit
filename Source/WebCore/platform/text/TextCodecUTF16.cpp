@@ -54,10 +54,10 @@ void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
 void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("UTF-16LE", [] {
-        return std::make_unique<TextCodecUTF16>(true);
+        return makeUnique<TextCodecUTF16>(true);
     });
     registrar("UTF-16BE", [] {
-        return std::make_unique<TextCodecUTF16>(false);
+        return makeUnique<TextCodecUTF16>(false);
     });
 }
 

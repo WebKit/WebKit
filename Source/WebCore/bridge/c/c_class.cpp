@@ -81,7 +81,7 @@ Method* CClass::methodNamed(PropertyName propertyName, Instance* instance) const
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (m_isa->hasMethod && m_isa->hasMethod(obj, ident)) {
-        auto method = std::make_unique<CMethod>(ident);
+        auto method = makeUnique<CMethod>(ident);
         CMethod* ret = method.get();
         m_methods.set(name.impl(), WTFMove(method));
         return ret;
@@ -103,7 +103,7 @@ Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (m_isa->hasProperty && m_isa->hasProperty(obj, ident)) {
-        auto field = std::make_unique<CField>(ident);
+        auto field = makeUnique<CField>(ident);
         CField* ret = field.get();
         m_fields.set(name.impl(), WTFMove(field));
         return ret;

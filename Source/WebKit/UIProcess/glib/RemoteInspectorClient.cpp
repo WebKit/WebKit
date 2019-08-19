@@ -249,7 +249,7 @@ void RemoteInspectorClient::connectionClosed()
 void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID)
 {
     auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID] {
-        return std::make_unique<RemoteInspectorProxy>(*this, connectionID, targetID);
+        return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID);
     });
     if (!addResult.isNewEntry) {
         addResult.iterator->value->show();

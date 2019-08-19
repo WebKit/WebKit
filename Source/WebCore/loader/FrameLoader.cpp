@@ -270,10 +270,10 @@ private:
 FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     : m_frame(frame)
     , m_client(client)
-    , m_policyChecker(std::make_unique<PolicyChecker>(frame))
-    , m_history(std::make_unique<HistoryController>(frame))
+    , m_policyChecker(makeUnique<PolicyChecker>(frame))
+    , m_history(makeUnique<HistoryController>(frame))
     , m_notifier(frame)
-    , m_subframeLoader(std::make_unique<SubframeLoader>(frame))
+    , m_subframeLoader(makeUnique<SubframeLoader>(frame))
     , m_mixedContentChecker(frame)
     , m_state(FrameStateProvisional)
     , m_loadType(FrameLoadType::Standard)
@@ -321,7 +321,7 @@ void FrameLoader::init()
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
 
     m_networkingContext = m_client.createNetworkingContext();
-    m_progressTracker = std::make_unique<FrameProgressTracker>(m_frame);
+    m_progressTracker = makeUnique<FrameProgressTracker>(m_frame);
 }
 
 void FrameLoader::initForSynthesizedDocument(const URL&)
@@ -346,7 +346,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     m_needsClear = true;
 
     m_networkingContext = m_client.createNetworkingContext();
-    m_progressTracker = std::make_unique<FrameProgressTracker>(m_frame);
+    m_progressTracker = makeUnique<FrameProgressTracker>(m_frame);
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -2678,7 +2678,7 @@ void FrameLoader::detachChildren()
     // https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate
     std::unique_ptr<NavigationDisabler> navigationDisabler;
     if (m_frame.isMainFrame())
-        navigationDisabler = std::make_unique<NavigationDisabler>(&m_frame);
+        navigationDisabler = makeUnique<NavigationDisabler>(&m_frame);
 
     // Any subframe inserted by unload event handlers executed in the loop below will not get unloaded
     // because we create a copy of the subframes list before looping. Therefore, it would be unsafe to

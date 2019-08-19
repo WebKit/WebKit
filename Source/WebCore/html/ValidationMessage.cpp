@@ -115,9 +115,9 @@ void ValidationMessage::setMessage(const String& message)
     ASSERT(!message.isEmpty());
     m_message = message;
     if (!m_bubble)
-        m_timer = std::make_unique<Timer>(*this, &ValidationMessage::buildBubbleTree);
+        m_timer = makeUnique<Timer>(*this, &ValidationMessage::buildBubbleTree);
     else
-        m_timer = std::make_unique<Timer>(*this, &ValidationMessage::setMessageDOMAndStartTimer);
+        m_timer = makeUnique<Timer>(*this, &ValidationMessage::setMessageDOMAndStartTimer);
     m_timer->startOneShot(0_s);
 }
 
@@ -143,7 +143,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
     if (magnification <= 0)
         m_timer = nullptr;
     else {
-        m_timer = std::make_unique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
+        m_timer = makeUnique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
         m_timer->startOneShot(std::max(5_s, 1_ms * static_cast<double>(m_message.length()) * magnification));
     }
 }
@@ -234,7 +234,7 @@ void ValidationMessage::requestToHideMessage()
     }
 
     // We must not modify the DOM tree in this context by the same reason as setMessage().
-    m_timer = std::make_unique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
+    m_timer = makeUnique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
     m_timer->startOneShot(0_s);
 }
 

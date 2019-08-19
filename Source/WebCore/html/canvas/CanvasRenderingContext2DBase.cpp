@@ -99,7 +99,7 @@ public:
 
     DisplayListDrawingContext(const GraphicsContextState& state, const FloatRect& clip)
         : context([&](GraphicsContext& displayListContext) {
-            return std::make_unique<DisplayList::Recorder>(displayListContext, displayList, state, clip, AffineTransform());
+            return makeUnique<DisplayList::Recorder>(displayListContext, displayList, state, clip, AffineTransform());
         })
     {
     }
@@ -2118,7 +2118,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
     if (UNLIKELY(m_usesDisplayListDrawing)) {
         if (!m_recordingContext)
-            m_recordingContext = std::make_unique<DisplayListDrawingContext>(GraphicsContextState(), FloatRect(FloatPoint::zero(), canvasBase().size()));
+            m_recordingContext = makeUnique<DisplayListDrawingContext>(GraphicsContextState(), FloatRect(FloatPoint::zero(), canvasBase().size()));
         return &m_recordingContext->context;
     }
 

@@ -96,7 +96,7 @@ StyleResolver& Scope::resolver()
     if (!m_resolver) {
         SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
-        m_resolver = std::make_unique<StyleResolver>(m_document);
+        m_resolver = makeUnique<StyleResolver>(m_document);
 
         if (!m_shadowRoot) {
             m_document.fontSelector().buildStarted();
@@ -563,7 +563,7 @@ const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
 bool Scope::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
 {
     if (!m_weakCopyOfActiveStyleSheetListForFastLookup) {
-        m_weakCopyOfActiveStyleSheetListForFastLookup = std::make_unique<HashSet<const CSSStyleSheet*>>();
+        m_weakCopyOfActiveStyleSheetListForFastLookup = makeUnique<HashSet<const CSSStyleSheet*>>();
         for (auto& activeStyleSheet : m_activeStyleSheets)
             m_weakCopyOfActiveStyleSheetListForFastLookup->add(activeStyleSheet.get());
     }

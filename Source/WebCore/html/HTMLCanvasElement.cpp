@@ -952,7 +952,7 @@ void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) co
     m_imageBuffer->context().setShadowsIgnoreTransforms(true);
     m_imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
     m_imageBuffer->context().setStrokeThickness(1);
-    m_contextStateSaver = std::make_unique<GraphicsContextStateSaver>(m_imageBuffer->context());
+    m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
 
     JSC::JSLockHolder lock(HTMLElement::scriptExecutionContext()->vm());
     HTMLElement::scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(memoryCost());

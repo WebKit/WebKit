@@ -39,7 +39,7 @@ BiquadFilterNode::BiquadFilterNode(AudioContext& context, float sampleRate)
     setNodeType(NodeTypeBiquadFilter);
 
     // Initially setup as lowpass filter.
-    m_processor = std::make_unique<BiquadProcessor>(context, sampleRate, 1, false);
+    m_processor = makeUnique<BiquadProcessor>(context, sampleRate, 1, false);
 }
 
 BiquadFilterType BiquadFilterNode::type() const

@@ -75,7 +75,7 @@ WebKitNotificationProvider::WebKitNotificationProvider(WebNotificationManagerPro
     , m_notificationManager(notificationManager)
 {
     ASSERT(m_notificationManager);
-    m_notificationManager->setProvider(std::make_unique<NotificationProvider>(*this));
+    m_notificationManager->setProvider(makeUnique<NotificationProvider>(*this));
 }
 
 WebKitNotificationProvider::~WebKitNotificationProvider()

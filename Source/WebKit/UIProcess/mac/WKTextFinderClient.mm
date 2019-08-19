@@ -169,8 +169,8 @@ private:
     _view = view;
     _usePlatformFindUI = usePlatformFindUI;
     
-    _page->setFindMatchesClient(std::make_unique<WebKit::TextFinderFindClient>(self));
-    _page->setFindClient(std::make_unique<WebKit::TextFinderFindClient>(self));
+    _page->setFindMatchesClient(makeUnique<WebKit::TextFinderFindClient>(self));
+    _page->setFindClient(makeUnique<WebKit::TextFinderFindClient>(self));
 
     return self;
 }

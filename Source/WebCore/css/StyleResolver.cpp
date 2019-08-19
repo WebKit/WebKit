@@ -1715,7 +1715,7 @@ StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(
         if (authorRollback)
             return authorRollback;
 
-        auto newAuthorRollback(std::make_unique<CascadedProperties>(direction, writingMode));
+        auto newAuthorRollback(makeUnique<CascadedProperties>(direction, writingMode));
 
         // This special rollback cascade contains UA rules and user rules but no author rules.
         newAuthorRollback->addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
@@ -1732,7 +1732,7 @@ StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(
         if (userRollback)
             return userRollback;
 
-        auto newUserRollback(std::make_unique<CascadedProperties>(direction, writingMode));
+        auto newUserRollback(makeUnique<CascadedProperties>(direction, writingMode));
 
         // This special rollback cascade contains only UA rules.
         newUserRollback->addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);

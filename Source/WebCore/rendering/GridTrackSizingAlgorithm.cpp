@@ -681,7 +681,7 @@ double GridTrackSizingAlgorithm::computeFlexFactorUnitSize(const Vector<GridTrac
             leftOverSpace -= baseSize;
             flexFactorSum -= flexFactor;
             if (!tracksToTreatAsInflexible)
-                tracksToTreatAsInflexible = std::make_unique<TrackIndexSet>();
+                tracksToTreatAsInflexible = makeUnique<TrackIndexSet>();
             tracksToTreatAsInflexible->add(index);
             validFlexFactorUnit = false;
         }
@@ -1260,10 +1260,10 @@ void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigne
     m_sizingOperation = sizingOperation;
     switch (m_sizingOperation) {
     case IntrinsicSizeComputation:
-        m_strategy = std::make_unique<IndefiniteSizeStrategy>(*this);
+        m_strategy = makeUnique<IndefiniteSizeStrategy>(*this);
         break;
     case TrackSizing:
-        m_strategy = std::make_unique<DefiniteSizeStrategy>(*this);
+        m_strategy = makeUnique<DefiniteSizeStrategy>(*this);
         break;
     }
 

@@ -364,7 +364,7 @@ void DocumentMarkerController::addMarker(Node& node, const DocumentMarker& newMa
     std::unique_ptr<MarkerList>& list = m_markers.add(&node, nullptr).iterator->value;
 
     if (!list) {
-        list = std::make_unique<MarkerList>();
+        list = makeUnique<MarkerList>();
         list->append(RenderedDocumentMarker(newMarker));
     } else if (shouldInsertAsSeparateMarker(newMarker)) {
         // We don't merge dictation markers.

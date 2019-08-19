@@ -338,7 +338,7 @@ ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const
 
     bounds = platformBoundsForGlyph(glyph);
     if (!m_glyphToBoundsMap)
-        m_glyphToBoundsMap = std::make_unique<GlyphMetricsMap<FloatRect>>();
+        m_glyphToBoundsMap = makeUnique<GlyphMetricsMap<FloatRect>>();
     m_glyphToBoundsMap->setMetricsForGlyph(glyph, bounds);
     return bounds;
 }

@@ -134,7 +134,7 @@ using namespace HTMLNames;
 
 RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(element, WTFMove(style), IntSize())
-    , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
+    , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
@@ -144,7 +144,7 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
 
 RenderImage::RenderImage(Document& document, RenderStyle&& style, StyleImage* styleImage)
     : RenderReplaced(document, WTFMove(style), IntSize())
-    , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
+    , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
 {
 }
 

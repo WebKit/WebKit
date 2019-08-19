@@ -616,7 +616,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);
     if (!state.weakReferences.isEmpty())
-        m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
+        m_weakReferences = makeUnique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
     if (PolymorphicAccessInternal::verbose)
         dataLog("Returning: ", code.code(), "\n");
     

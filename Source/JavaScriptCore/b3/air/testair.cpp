@@ -90,7 +90,7 @@ std::unique_ptr<B3::Compilation> compile(B3::Procedure& proc)
     generate(proc.code(), jit);
     LinkBuffer linkBuffer(jit, nullptr);
 
-    return std::make_unique<B3::Compilation>(
+    return makeUnique<B3::Compilation>(
         FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "testair compilation"), proc.releaseByproducts());
 }
 
@@ -1855,7 +1855,7 @@ void testInvalidateCachedTempRegisters()
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
 
     B3::BasicBlock* patchPoint1Root = proc.addBlock();
-    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+    B3::Air::Special* patchpointSpecial = code.addSpecial(makeUnique<B3::PatchpointSpecial>());
 
     // In Patchpoint, Load things[0] -> tmp. This will materialize the address in x17 (dataMemoryRegister).
     B3::PatchpointValue* patchpoint1 = patchPoint1Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
@@ -1930,7 +1930,7 @@ void testArgumentRegPinned()
     GPRReg pinned = GPRInfo::argumentGPR0;
     proc.pinRegister(pinned);
 
-    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+    B3::Air::Special* patchpointSpecial = code.addSpecial(makeUnique<B3::PatchpointSpecial>());
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
@@ -1962,7 +1962,7 @@ void testArgumentRegPinned2()
     GPRReg pinned = GPRInfo::argumentGPR0;
     proc.pinRegister(pinned);
 
-    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+    B3::Air::Special* patchpointSpecial = code.addSpecial(makeUnique<B3::PatchpointSpecial>());
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
@@ -2000,7 +2000,7 @@ void testArgumentRegPinned3()
     GPRReg pinned = GPRInfo::argumentGPR0;
     proc.pinRegister(pinned);
 
-    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+    B3::Air::Special* patchpointSpecial = code.addSpecial(makeUnique<B3::PatchpointSpecial>());
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());

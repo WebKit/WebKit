@@ -62,7 +62,7 @@ void SceneIntegration::requestUpdate()
 
 std::unique_ptr<SceneIntegration::UpdateScope> SceneIntegration::createUpdateScope()
 {
-    return std::make_unique<UpdateScope>(makeRef(*this));
+    return makeUnique<UpdateScope>(makeRef(*this));
 }
 
 SceneIntegration::Client::~Client() = default;

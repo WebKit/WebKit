@@ -111,7 +111,7 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
 
     RefPtr<FilterEffect> effect;
 
-    auto builder = std::make_unique<SVGFilterBuilder>(&previousEffect);
+    auto builder = makeUnique<SVGFilterBuilder>(&previousEffect);
     m_sourceAlpha = builder->getEffectById(SourceAlpha::effectName());
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filter)) {

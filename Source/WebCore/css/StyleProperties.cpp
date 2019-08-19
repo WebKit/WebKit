@@ -1530,7 +1530,7 @@ CSSStyleDeclaration& MutableStyleProperties::ensureCSSStyleDeclaration()
         ASSERT(!m_cssomWrapper->parentElement());
         return *m_cssomWrapper;
     }
-    m_cssomWrapper = std::make_unique<PropertySetCSSStyleDeclaration>(*this);
+    m_cssomWrapper = makeUnique<PropertySetCSSStyleDeclaration>(*this);
     return *m_cssomWrapper;
 }
 
@@ -1540,7 +1540,7 @@ CSSStyleDeclaration& MutableStyleProperties::ensureInlineCSSStyleDeclaration(Sty
         ASSERT(m_cssomWrapper->parentElement() == &parentElement);
         return *m_cssomWrapper;
     }
-    m_cssomWrapper = std::make_unique<InlineCSSStyleDeclaration>(*this, parentElement);
+    m_cssomWrapper = makeUnique<InlineCSSStyleDeclaration>(*this, parentElement);
     return *m_cssomWrapper;
 }
 

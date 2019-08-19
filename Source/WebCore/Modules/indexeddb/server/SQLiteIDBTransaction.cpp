@@ -58,7 +58,7 @@ IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
 {
     ASSERT(!m_sqliteTransaction);
 
-    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(database, m_info.mode() == IDBTransactionMode::Readonly);
+    m_sqliteTransaction = makeUnique<SQLiteTransaction>(database, m_info.mode() == IDBTransactionMode::Readonly);
     m_sqliteTransaction->begin();
 
     if (m_sqliteTransaction->inProgress())

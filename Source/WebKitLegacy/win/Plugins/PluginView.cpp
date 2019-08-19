@@ -510,7 +510,7 @@ NPError PluginView::load(FrameLoadRequest&& frameLoadRequest, bool sendNotificat
     } else if (!m_parentFrame->document()->securityOrigin().canDisplay(url))
         return NPERR_GENERIC_ERROR;
 
-    scheduleRequest(std::make_unique<PluginRequest>(WTFMove(frameLoadRequest), sendNotification, notifyData, arePopupsAllowed()));
+    scheduleRequest(makeUnique<PluginRequest>(WTFMove(frameLoadRequest), sendNotification, notifyData, arePopupsAllowed()));
 
     return NPERR_NO_ERROR;
 }

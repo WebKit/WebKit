@@ -244,7 +244,7 @@ void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
     }
 
     m_blobLoader.emplace(*this);
-    m_blobLoader->loader = std::make_unique<FetchLoader>(*m_blobLoader, consumer);
+    m_blobLoader->loader = makeUnique<FetchLoader>(*m_blobLoader, consumer);
 
     m_blobLoader->loader->start(*scriptExecutionContext(), blob);
     if (!m_blobLoader->loader->isStarted()) {

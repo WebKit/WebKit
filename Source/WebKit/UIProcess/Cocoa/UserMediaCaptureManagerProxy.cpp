@@ -169,7 +169,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         source->setIsRemote(true);
         settings = source->settings();
         ASSERT(!m_proxies.contains(id));
-        m_proxies.add(id, std::make_unique<SourceProxy>(id, *m_process.connection(), WTFMove(source)));
+        m_proxies.add(id, makeUnique<SourceProxy>(id, *m_process.connection(), WTFMove(source)));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
     completionHandler(succeeded, invalidConstraints, WTFMove(settings));

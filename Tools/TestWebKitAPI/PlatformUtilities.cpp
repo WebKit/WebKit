@@ -28,6 +28,7 @@
 
 #include <WebKit/WKContextConfigurationRef.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -69,7 +70,7 @@ WKContextRef createContextForInjectedBundleTest(const std::string& testName, WKT
 std::string toSTD(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
     return std::string(buffer.get(), stringLength - 1);
 }

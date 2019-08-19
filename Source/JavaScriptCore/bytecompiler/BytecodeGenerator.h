@@ -401,7 +401,7 @@ namespace JSC {
                 before = MonotonicTime::now();
 
             DeferGC deferGC(vm.heap);
-            auto bytecodeGenerator = std::make_unique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, environment);
+            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, environment);
             auto result = bytecodeGenerator->generate();
 
             if (UNLIKELY(Options::reportBytecodeCompileTimes())) {

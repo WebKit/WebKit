@@ -3899,7 +3899,7 @@ public:
         }
 
         if (UNLIKELY(Options::dumpDisassembly() || Options::dumpRegExpDisassembly()))
-            m_disassembler = std::make_unique<YarrDisassembler>(this);
+            m_disassembler = makeUnique<YarrDisassembler>(this);
 
         if (m_disassembler)
             m_disassembler->setStartOfCode(label());

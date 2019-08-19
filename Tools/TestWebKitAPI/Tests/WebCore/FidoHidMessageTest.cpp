@@ -48,10 +48,10 @@ TEST(FidoHidMessageTest, TestPacketSize)
     uint32_t channelId = 0x05060708;
     Vector<uint8_t> data;
 
-    auto initPacket = std::make_unique<FidoHidInitPacket>(channelId, FidoHidDeviceCommand::kInit, Vector<uint8_t>(data), data.size());
+    auto initPacket = makeUnique<FidoHidInitPacket>(channelId, FidoHidDeviceCommand::kInit, Vector<uint8_t>(data), data.size());
     EXPECT_EQ(64u, initPacket->getSerializedData().size());
 
-    auto continuationPacket = std::make_unique<FidoHidContinuationPacket>(channelId, 0, WTFMove(data));
+    auto continuationPacket = makeUnique<FidoHidContinuationPacket>(channelId, 0, WTFMove(data));
     EXPECT_EQ(64u, continuationPacket->getSerializedData().size());
 }
 
@@ -70,7 +70,7 @@ TEST(FidoHidMessageTest, TestPacketData)
     uint32_t channelId = 0xF5060708;
     Vector<uint8_t> data {10, 11};
     FidoHidDeviceCommand cmd = FidoHidDeviceCommand::kWink;
-    auto initPacket = std::make_unique<FidoHidInitPacket>(channelId, cmd, Vector<uint8_t>(data), data.size());
+    auto initPacket = makeUnique<FidoHidInitPacket>(channelId, cmd, Vector<uint8_t>(data), data.size());
     size_t index = 0;
 
     Vector<uint8_t> serialized = initPacket->getSerializedData();
@@ -94,7 +94,7 @@ TEST(FidoHidMessageTest, TestPacketConstructors)
     Vector<uint8_t> data {10, 11};
     FidoHidDeviceCommand cmd = FidoHidDeviceCommand::kWink;
     size_t length = data.size();
-    auto origPacket = std::make_unique<FidoHidInitPacket>(channelId, cmd, WTFMove(data), length);
+    auto origPacket = makeUnique<FidoHidInitPacket>(channelId, cmd, WTFMove(data), length);
 
     size_t payloadLength = static_cast<size_t>(origPacket->payloadLength());
     Vector<uint8_t> origData = origPacket->getSerializedData();

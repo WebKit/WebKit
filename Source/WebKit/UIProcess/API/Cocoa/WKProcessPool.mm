@@ -373,7 +373,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (void)_setDownloadDelegate:(id <_WKDownloadDelegate>)downloadDelegate
 {
     _downloadDelegate = downloadDelegate;
-    _processPool->setDownloadClient(std::make_unique<WebKit::DownloadClient>(downloadDelegate));
+    _processPool->setDownloadClient(makeUnique<WebKit::DownloadClient>(downloadDelegate));
 }
 
 - (id <_WKAutomationDelegate>)_automationDelegate
@@ -384,7 +384,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (void)_setAutomationDelegate:(id <_WKAutomationDelegate>)automationDelegate
 {
     _automationDelegate = automationDelegate;
-    _processPool->setAutomationClient(std::make_unique<WebKit::AutomationClient>(self, automationDelegate));
+    _processPool->setAutomationClient(makeUnique<WebKit::AutomationClient>(self, automationDelegate));
 }
 
 - (void)_warmInitialProcess

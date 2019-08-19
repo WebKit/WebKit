@@ -44,7 +44,7 @@ IconLoadingDelegate::~IconLoadingDelegate()
 
 std::unique_ptr<API::IconLoadingClient> IconLoadingDelegate::createIconLoadingClient()
 {
-    return std::make_unique<IconLoadingClient>(*this);
+    return makeUnique<IconLoadingClient>(*this);
 }
 
 RetainPtr<id <_WKIconLoadingDelegate> > IconLoadingDelegate::delegate()

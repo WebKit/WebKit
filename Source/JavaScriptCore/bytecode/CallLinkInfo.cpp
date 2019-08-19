@@ -265,7 +265,7 @@ void CallLinkInfo::visitWeak(VM& vm)
 
 void CallLinkInfo::setFrameShuffleData(const CallFrameShuffleData& shuffleData)
 {
-    m_frameShuffleData = std::make_unique<CallFrameShuffleData>(shuffleData);
+    m_frameShuffleData = makeUnique<CallFrameShuffleData>(shuffleData);
 }
 
 } // namespace JSC

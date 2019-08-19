@@ -40,7 +40,7 @@ TransformState& TransformState::operator=(const TransformState& other)
     if (m_mapQuad) {
         m_lastPlanarQuad = other.m_lastPlanarQuad;
         if (other.m_lastPlanarSecondaryQuad)
-            m_lastPlanarSecondaryQuad = std::make_unique<FloatQuad>(*other.m_lastPlanarSecondaryQuad);
+            m_lastPlanarSecondaryQuad = makeUnique<FloatQuad>(*other.m_lastPlanarSecondaryQuad);
         else
             m_lastPlanarSecondaryQuad = nullptr;
     }
@@ -50,7 +50,7 @@ TransformState& TransformState::operator=(const TransformState& other)
     m_accumulatedTransform = nullptr;
 
     if (other.m_accumulatedTransform)
-        m_accumulatedTransform = std::make_unique<TransformationMatrix>(*other.m_accumulatedTransform);
+        m_accumulatedTransform = makeUnique<TransformationMatrix>(*other.m_accumulatedTransform);
         
     return *this;
 }
@@ -129,12 +129,12 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
     // If we have an accumulated transform from last time, multiply in this transform
     if (m_accumulatedTransform) {
         if (m_direction == ApplyTransformDirection)
-            m_accumulatedTransform = std::make_unique<TransformationMatrix>(transformFromContainer * *m_accumulatedTransform);
+            m_accumulatedTransform = makeUnique<TransformationMatrix>(transformFromContainer * *m_accumulatedTransform);
         else
             m_accumulatedTransform->multiply(transformFromContainer);
     } else if (accumulate == AccumulateTransform) {
         // Make one if we started to accumulate
-        m_accumulatedTransform = std::make_unique<TransformationMatrix>(transformFromContainer);
+        m_accumulatedTransform = makeUnique<TransformationMatrix>(transformFromContainer);
     }
     
     if (accumulate == FlattenTransform) {
@@ -208,7 +208,7 @@ void TransformState::setLastPlanarSecondaryQuad(const FloatQuad* quad)
     // Map the quad back through any transform or offset back into the last flattening coordinate space.
     FloatQuad backMappedQuad(*quad);
     mapQuad(backMappedQuad, inverseDirection());
-    m_lastPlanarSecondaryQuad = std::make_unique<FloatQuad>(backMappedQuad);
+    m_lastPlanarSecondaryQuad = makeUnique<FloatQuad>(backMappedQuad);
 }
 
 void TransformState::mapQuad(FloatQuad& quad, TransformDirection direction, bool* wasClamped) const

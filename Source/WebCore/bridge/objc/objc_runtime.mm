@@ -267,7 +267,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
-        std::unique_ptr<ObjcMethod> fallbackMethod(std::make_unique<ObjcMethod>(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
+        std::unique_ptr<ObjcMethod> fallbackMethod(makeUnique<ObjcMethod>(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
         const String& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->jsCallee())->propertyName();
         fallbackMethod->setJavaScriptName(nameIdentifier.createCFString().get());
         result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get());

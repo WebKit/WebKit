@@ -134,7 +134,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
                 mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
 
             if ((mappedName && [mappedName isEqual:(__bridge NSString*)methodName.get()]) || !strcmp(objcMethodSelectorName, buffer.data())) {
-                auto method = std::make_unique<ObjcMethod>(thisClass, objcMethodSelector);
+                auto method = makeUnique<ObjcMethod>(thisClass, objcMethodSelector);
                 methodPtr = method.get();
                 m_methodCache.add(name.impl(), WTFMove(method));
                 break;
@@ -189,7 +189,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
                 mappedName = [thisClass webScriptNameForKey:UTF8KeyName];
 
             if ((mappedName && [mappedName isEqual:(__bridge NSString *)fieldName.get()]) || [keyName isEqual:(__bridge NSString *)fieldName.get()]) {
-                auto newField = std::make_unique<ObjcField>((__bridge CFStringRef)keyName);
+                auto newField = makeUnique<ObjcField>((__bridge CFStringRef)keyName);
                 field = newField.get();
                 m_fieldCache.add(name.impl(), WTFMove(newField));
                 break;
@@ -220,7 +220,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
                     mappedName = [thisClass webScriptNameForKey:objcIvarName];
 
                 if ((mappedName && [mappedName isEqual:(__bridge NSString *)fieldName.get()]) || !strcmp(objcIvarName, jsName.data())) {
-                    auto newField = std::make_unique<ObjcField>(objcIVar);
+                    auto newField = makeUnique<ObjcField>(objcIVar);
                     field = newField.get();
                     m_fieldCache.add(name.impl(), WTFMove(newField));
                     break;

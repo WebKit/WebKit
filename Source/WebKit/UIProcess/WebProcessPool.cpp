@@ -233,15 +233,15 @@ static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProt
 WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     : m_configuration(configuration.copy())
     , m_defaultPageGroup(WebPageGroup::create())
-    , m_injectedBundleClient(std::make_unique<API::InjectedBundleClient>())
-    , m_automationClient(std::make_unique<API::AutomationClient>())
-    , m_downloadClient(std::make_unique<API::DownloadClient>())
-    , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
-    , m_customProtocolManagerClient(std::make_unique<API::CustomProtocolManagerClient>())
+    , m_injectedBundleClient(makeUnique<API::InjectedBundleClient>())
+    , m_automationClient(makeUnique<API::AutomationClient>())
+    , m_downloadClient(makeUnique<API::DownloadClient>())
+    , m_historyClient(makeUnique<API::LegacyContextHistoryClient>())
+    , m_customProtocolManagerClient(makeUnique<API::CustomProtocolManagerClient>())
     , m_visitedLinkStore(VisitedLinkStore::create())
 #if PLATFORM(MAC)
-    , m_highPerformanceGraphicsUsageSampler(std::make_unique<HighPerformanceGraphicsUsageSampler>(*this))
-    , m_perActivityStateCPUUsageSampler(std::make_unique<PerActivityStateCPUUsageSampler>(*this))
+    , m_highPerformanceGraphicsUsageSampler(makeUnique<HighPerformanceGraphicsUsageSampler>(*this))
+    , m_perActivityStateCPUUsageSampler(makeUnique<PerActivityStateCPUUsageSampler>(*this))
 #endif
     , m_alwaysRunsAtBackgroundPriority(m_configuration->alwaysRunsAtBackgroundPriority())
     , m_shouldTakeUIBackgroundAssertion(m_configuration->shouldTakeUIBackgroundAssertion())
@@ -364,7 +364,7 @@ void WebProcessPool::initializeClient(const WKContextClientBase* client)
 void WebProcessPool::setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&& client)
 {
     if (!client)
-        m_injectedBundleClient = std::make_unique<API::InjectedBundleClient>();
+        m_injectedBundleClient = makeUnique<API::InjectedBundleClient>();
     else
         m_injectedBundleClient = WTFMove(client);
 }
@@ -377,7 +377,7 @@ void WebProcessPool::initializeConnectionClient(const WKContextConnectionClientB
 void WebProcessPool::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&& historyClient)
 {
     if (!historyClient)
-        m_historyClient = std::make_unique<API::LegacyContextHistoryClient>();
+        m_historyClient = makeUnique<API::LegacyContextHistoryClient>();
     else
         m_historyClient = WTFMove(historyClient);
 }
@@ -385,7 +385,7 @@ void WebProcessPool::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryC
 void WebProcessPool::setDownloadClient(std::unique_ptr<API::DownloadClient>&& downloadClient)
 {
     if (!downloadClient)
-        m_downloadClient = std::make_unique<API::DownloadClient>();
+        m_downloadClient = makeUnique<API::DownloadClient>();
     else
         m_downloadClient = WTFMove(downloadClient);
 }
@@ -393,7 +393,7 @@ void WebProcessPool::setDownloadClient(std::unique_ptr<API::DownloadClient>&& do
 void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient>&& automationClient)
 {
     if (!automationClient)
-        m_automationClient = std::make_unique<API::AutomationClient>();
+        m_automationClient = makeUnique<API::AutomationClient>();
     else
         m_automationClient = WTFMove(automationClient);
 }
@@ -402,7 +402,7 @@ void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::C
 {
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     if (!customProtocolManagerClient)
-        m_customProtocolManagerClient = std::make_unique<API::CustomProtocolManagerClient>();
+        m_customProtocolManagerClient = makeUnique<API::CustomProtocolManagerClient>();
     else
         m_customProtocolManagerClient = WTFMove(customProtocolManagerClient);
 #endif
@@ -492,7 +492,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         return *m_networkProcess;
     }
 
-    auto networkProcess = std::make_unique<NetworkProcessProxy>(*this);
+    auto networkProcess = makeUnique<NetworkProcessProxy>(*this);
 
     NetworkProcessCreationParameters parameters;
 
@@ -2528,7 +2528,7 @@ void WebProcessPool::didCollectPrewarmInformation(const WebCore::RegistrableDoma
         m_prewarmInformationPerRegistrableDomain.remove(m_prewarmInformationPerRegistrableDomain.random());
 
     auto& value = m_prewarmInformationPerRegistrableDomain.ensure(registrableDomain, [] {
-        return std::make_unique<WebCore::PrewarmInformation>();
+        return makeUnique<WebCore::PrewarmInformation>();
     }).iterator->value;
 
     *value = prewarmInformation;
@@ -2575,12 +2575,12 @@ void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
         m_networkProcess->takeUploadAssertion();
         
         ASSERT(!m_uiProcessUploadAssertion);
-        m_uiProcessUploadAssertion = std::make_unique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+        m_uiProcessUploadAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
     }
     
     auto result = m_processesWithUploads.add(processID, nullptr);
     ASSERT(result.isNewEntry);
-    result.iterator->value = std::make_unique<ProcessAssertion>(process->processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
 }
 
 void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
@@ -2617,12 +2617,12 @@ void WebProcessPool::setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifi
         RELEASE_LOG(ProcessSuspension, "The number of processes playing audible media is now one. Taking UI process assertion.");
 
         ASSERT(!m_uiProcessMediaPlaybackAssertion);
-        m_uiProcessMediaPlaybackAssertion = std::make_unique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+        m_uiProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
     }
 
     auto result = m_processesPlayingAudibleMedia.add(processID, nullptr);
     ASSERT(result.isNewEntry);
-    result.iterator->value = std::make_unique<ProcessAssertion>(process->processIdentifier(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
 }
 
 void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier processID)

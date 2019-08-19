@@ -252,7 +252,7 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithLayer = [&] (RetainPtr<CALayer> layer) {
-        return std::make_unique<RemoteLayerTreeNode>(properties.layerID, WTFMove(layer));
+        return makeUnique<RemoteLayerTreeNode>(properties.layerID, WTFMove(layer));
     };
     auto makeAdoptingLayer = [&] (CALayer* layer) {
         return makeWithLayer(adoptNS(layer));

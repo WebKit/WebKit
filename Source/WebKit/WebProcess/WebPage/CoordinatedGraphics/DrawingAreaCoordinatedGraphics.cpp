@@ -550,7 +550,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
             m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
     } else {
 #if USE(COORDINATED_GRAPHICS)
-        m_layerTreeHost = std::make_unique<LayerTreeHost>(m_webPage);
+        m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage);
 #else
         m_layerTreeHost = nullptr;
         return;

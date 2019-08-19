@@ -115,17 +115,17 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
 {
     using MakeEventContext = std::unique_ptr<EventContext> (*)(Node&, EventTarget*, EventTarget*, int closedShadowDepth);
     MakeEventContext makeEventContext = [] (Node& node, EventTarget* currentTarget, EventTarget* target, int closedShadowDepth) {
-        return std::make_unique<EventContext>(&node, currentTarget, target, closedShadowDepth);
+        return makeUnique<EventContext>(&node, currentTarget, target, closedShadowDepth);
     };
     if (is<MouseEvent>(event) || event.isFocusEvent()) {
         makeEventContext = [] (Node& node, EventTarget* currentTarget, EventTarget* target, int closedShadowDepth) -> std::unique_ptr<EventContext> {
-            return std::make_unique<MouseOrFocusEventContext>(node, currentTarget, target, closedShadowDepth);
+            return makeUnique<MouseOrFocusEventContext>(node, currentTarget, target, closedShadowDepth);
         };
     }
 #if ENABLE(TOUCH_EVENTS)
     if (is<TouchEvent>(event)) {
         makeEventContext = [] (Node& node, EventTarget* currentTarget, EventTarget* target, int closedShadowDepth) -> std::unique_ptr<EventContext> {
-            return std::make_unique<TouchEventContext>(node, currentTarget, target, closedShadowDepth);
+            return makeUnique<TouchEventContext>(node, currentTarget, target, closedShadowDepth);
         };
     }
 #endif
@@ -149,7 +149,7 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
                     ASSERT(target);
                     if (target) {
                         if (auto* window = downcast<Document>(*node).domWindow())
-                            m_path.append(std::make_unique<WindowEventContext>(*node, *window, *target, closedShadowDepth));
+                            m_path.append(makeUnique<WindowEventContext>(*node, *window, *target, closedShadowDepth));
                     }
                 }
                 return;
@@ -308,7 +308,7 @@ EventPath::EventPath(const Vector<Element*>& targets)
         ASSERT(target);
         Node* origin = *targets.begin();
         if (!target->isClosedShadowHidden(*origin))
-            m_path.append(std::make_unique<EventContext>(target, target, origin, 0));
+            m_path.append(makeUnique<EventContext>(target, target, origin, 0));
     }
 }
 
@@ -317,7 +317,7 @@ EventPath::EventPath(const Vector<EventTarget*>& targets)
     for (auto* target : targets) {
         ASSERT(target);
         ASSERT(!is<Node>(target));
-        m_path.append(std::make_unique<EventContext>(nullptr, target, *targets.begin(), 0));
+        m_path.append(makeUnique<EventContext>(nullptr, target, *targets.begin(), 0));
     }
 }
 

@@ -62,7 +62,7 @@
 - (WebCore::TileController*)createTileController:(WebCore::PlatformCALayer*)rootLayer
 {
     ASSERT(!_tileController);
-    _tileController = std::make_unique<WebCore::TileController>(rootLayer);
+    _tileController = makeUnique<WebCore::TileController>(rootLayer);
     return _tileController.get();
 }
 

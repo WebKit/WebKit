@@ -529,7 +529,7 @@ class PropertyData:
     def dump(self, file, commaAfter):
         file.write("static std::unique_ptr<CharacterClass> {}()\n{{\n".format(self.getCreateFuncName()))
         file.write("    // Name = {}, number of codePoints: {}\n".format(self.name, self.codePointCount))
-        file.write("    auto characterClass = std::make_unique<CharacterClass>(\n")
+        file.write("    auto characterClass = makeUnique<CharacterClass>(\n")
         file.write("        std::initializer_list<UChar32>(")
         self.dumpMatchData(file, 8, self.matches, lambda file, match: (file.write("{0:0=#4x}".format(match))))
         file.write("),\n")

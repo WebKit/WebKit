@@ -132,38 +132,11 @@ template<typename T> void WebSocketChannel::sendMessage(T&& message, size_t byte
     sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler));
 }
 
-WebSocketChannel::SendResult WebSocketChannel::send(const String& message)
-{
-    auto byteLength = message.sizeInBytes();
-    if (!increaseBufferedAmount(byteLength))
-        return SendFail;
-
-    if (m_pendingMessages.isEmpty())
-        sendMessage(Messages::NetworkSocketChannel::SendString { message }, byteLength);
-    else
-        m_pendingMessages.append(std::make_unique<PendingMessage>(message));
-
-    return SendSuccess;
-}
-
-WebSocketChannel::SendResult WebSocketChannel::send(const JSC::ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
-{
-    if (!increaseBufferedAmount(byteLength))
-        return SendFail;
-
-    if (m_pendingMessages.isEmpty())
-        sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength } }, byteLength);
-    else
-        m_pendingMessages.append(std::make_unique<PendingMessage>(binaryData, byteOffset, byteLength));
-
-    return SendSuccess;
-}
-
 class BlobLoader final : public WebCore::FileReaderLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BlobLoader(WebCore::Document* document, WebCore::Blob& blob, CompletionHandler<void()>&& completionHandler)
-        : m_loader(std::make_unique<WebCore::FileReaderLoader>(WebCore::FileReaderLoader::ReadAsArrayBuffer, this))
+        : m_loader(makeUnique<WebCore::FileReaderLoader>(WebCore::FileReaderLoader::ReadAsArrayBuffer, this))
         , m_completionHandler(WTFMove(completionHandler))
     {
         m_loader->start(document, blob);
@@ -226,7 +199,7 @@ public:
 
     PendingMessage(WebCore::Document* document, WebCore::Blob& blob, CompletionHandler<void()>&& completionHandler)
         : m_type(Type::Blob)
-        , m_blobLoader(std::make_unique<BlobLoader>(document, blob, WTFMove(completionHandler)))
+        , m_blobLoader(makeUnique<BlobLoader>(document, blob, WTFMove(completionHandler)))
     {
     }
 
@@ -244,13 +217,40 @@ private:
     std::unique_ptr<BlobLoader> m_blobLoader;
 };
 
+WebSocketChannel::SendResult WebSocketChannel::send(const String& message)
+{
+    auto byteLength = message.sizeInBytes();
+    if (!increaseBufferedAmount(byteLength))
+        return SendFail;
+
+    if (m_pendingMessages.isEmpty())
+        sendMessage(Messages::NetworkSocketChannel::SendString { message }, byteLength);
+    else
+        m_pendingMessages.append(makeUnique<PendingMessage>(message));
+
+    return SendSuccess;
+}
+
+WebSocketChannel::SendResult WebSocketChannel::send(const JSC::ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+{
+    if (!increaseBufferedAmount(byteLength))
+        return SendFail;
+
+    if (m_pendingMessages.isEmpty())
+        sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength } }, byteLength);
+    else
+        m_pendingMessages.append(makeUnique<PendingMessage>(binaryData, byteOffset, byteLength));
+
+    return SendSuccess;
+}
+
 WebSocketChannel::SendResult WebSocketChannel::send(WebCore::Blob& blob)
 {
     // Avoid the Blob queue and loading for empty blobs.
     if (!blob.size())
         return send(JSC::ArrayBuffer::create(blob.size(), 1), 0, 0);
 
-    m_pendingMessages.append(std::make_unique<PendingMessage>(m_document.get(), blob, [this] {
+    m_pendingMessages.append(makeUnique<PendingMessage>(m_document.get(), blob, [this] {
         while (!m_pendingMessages.isEmpty()) {
             auto& message = m_pendingMessages.first();
 

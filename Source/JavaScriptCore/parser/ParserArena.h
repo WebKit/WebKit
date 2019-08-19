@@ -180,7 +180,7 @@ namespace JSC {
         IdentifierArena& identifierArena()
         {
             if (UNLIKELY (!m_identifierArena))
-                m_identifierArena = std::make_unique<IdentifierArena>();
+                m_identifierArena = makeUnique<IdentifierArena>();
             return *m_identifierArena;
         }
 

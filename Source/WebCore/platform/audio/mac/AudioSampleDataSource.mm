@@ -108,7 +108,7 @@ OSStatus AudioSampleDataSource::setInputFormat(const CAAudioStreamDescription& f
 {
     ASSERT(format.sampleRate() >= 0);
 
-    m_inputDescription = std::make_unique<CAAudioStreamDescription>(format);
+    m_inputDescription = makeUnique<CAAudioStreamDescription>(format);
     if (m_outputDescription)
         return setupConverter();
 
@@ -120,9 +120,9 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
     ASSERT(m_inputDescription);
     ASSERT(format.sampleRate() >= 0);
 
-    m_outputDescription = std::make_unique<CAAudioStreamDescription>(format);
+    m_outputDescription = makeUnique<CAAudioStreamDescription>(format);
     if (!m_ringBuffer)
-        m_ringBuffer = std::make_unique<CARingBuffer>();
+        m_ringBuffer = makeUnique<CARingBuffer>();
 
     m_ringBuffer->allocate(format, static_cast<size_t>(m_maximumSampleCount));
     m_scratchBuffer = AudioSampleBufferList::create(m_outputDescription->streamDescription(), m_maximumSampleCount);

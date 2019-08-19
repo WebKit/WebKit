@@ -74,7 +74,7 @@ void ResourceHandle::registerBuiltinSynchronousLoader(const AtomString& protocol
 }
 
 ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff)
-    : d(std::make_unique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), shouldContentEncodingSniff))
+    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), shouldContentEncodingSniff))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);

@@ -43,24 +43,24 @@ enum ClipboardDataType {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return std::make_unique<Pasteboard>("CLIPBOARD");
+    return makeUnique<Pasteboard>("CLIPBOARD");
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection()
 {
-    return std::make_unique<Pasteboard>("PRIMARY");
+    return makeUnique<Pasteboard>("PRIMARY");
 }
 
 #if ENABLE(DRAG_SUPPORT)
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
-    return std::make_unique<Pasteboard>(SelectionData::create());
+    return makeUnique<Pasteboard>(SelectionData::create());
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
     ASSERT(dragData.platformData());
-    return std::make_unique<Pasteboard>(*dragData.platformData());
+    return makeUnique<Pasteboard>(*dragData.platformData());
 }
 #endif
 

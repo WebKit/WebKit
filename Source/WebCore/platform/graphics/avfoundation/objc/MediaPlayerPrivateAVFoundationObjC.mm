@@ -276,7 +276,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
     if (!isAvailable())
         return;
 
-    registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateAVFoundationObjC>(player); },
+    registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateAVFoundationObjC>(player); },
             getSupportedTypes, supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, supportsKeySystem);
     ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
 }
@@ -366,7 +366,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
-    , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
+    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
@@ -1337,7 +1337,7 @@ void MediaPlayerPrivateAVFoundationObjC::setPreservesPitch(bool preservesPitch)
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
 {
-    auto timeRanges = std::make_unique<PlatformTimeRanges>();
+    auto timeRanges = makeUnique<PlatformTimeRanges>();
 
     if (!m_avPlayerItem)
         return timeRanges;
@@ -1892,7 +1892,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateRotationSession()
         && m_imageRotationSession->size() == naturalSize)
         return;
 
-    m_imageRotationSession = std::make_unique<ImageRotationSessionVT>(WTFMove(finalTransform), naturalSize, kCVPixelFormatType_32BGRA, ImageRotationSessionVT::IsCGImageCompatible::Yes);
+    m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(finalTransform), naturalSize, kCVPixelFormatType_32BGRA, ImageRotationSessionVT::IsCGImageCompatible::Yes);
 }
 
 #if ENABLE(VIDEO_TRACK)
@@ -2216,7 +2216,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 #else
         NSDictionary *attributes = nil;
 #endif
-        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
+        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
 
 #if !RELEASE_LOG_DISABLED
@@ -2265,7 +2265,7 @@ bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(Graph
     size_t height = CVPixelBufferGetHeight(m_lastPixelBuffer.get());
 
     if (!m_videoTextureCopier)
-        m_videoTextureCopier = std::make_unique<VideoTextureCopierCV>(*context);
+        m_videoTextureCopier = makeUnique<VideoTextureCopierCV>(*context);
 
     return m_videoTextureCopier->copyImageToPlatformTexture(m_lastPixelBuffer.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
@@ -2330,7 +2330,7 @@ std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSess
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
-    auto session = std::make_unique<CDMSessionAVFoundationObjC>(this, client);
+    auto session = makeUnique<CDMSessionAVFoundationObjC>(this, client);
     m_session = makeWeakPtr(*session);
     return WTFMove(session);
 }

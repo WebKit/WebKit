@@ -160,7 +160,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
                 return result;
             }
         } else {
-            std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
+            std::unique_ptr<PolymorphicAccess> access = makeUnique<PolymorphicAccess>();
             
             Vector<std::unique_ptr<AccessCase>, 2> accessCases;
             

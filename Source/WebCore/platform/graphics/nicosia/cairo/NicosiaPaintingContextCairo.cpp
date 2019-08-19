@@ -70,8 +70,8 @@ PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
         });
 
     m_cairo.context = adoptRef(cairo_create(m_cairo.surface.get()));
-    m_platformContext = std::make_unique<WebCore::PlatformContextCairo>(m_cairo.context.get());
-    m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(WebCore::GraphicsContextImplCairo::createFactory(*m_platformContext));
+    m_platformContext = makeUnique<WebCore::PlatformContextCairo>(m_cairo.context.get());
+    m_graphicsContext = makeUnique<WebCore::GraphicsContext>(WebCore::GraphicsContextImplCairo::createFactory(*m_platformContext));
 }
 
 PaintingContextCairo::ForPainting::~ForPainting()
@@ -104,10 +104,10 @@ void PaintingContextCairo::ForPainting::replay(const PaintingOperations& paintin
 
 PaintingContextCairo::ForRecording::ForRecording(PaintingOperations& paintingOperations)
 {
-    m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(
+    m_graphicsContext = makeUnique<WebCore::GraphicsContext>(
         [&paintingOperations](WebCore::GraphicsContext& context)
         {
-            return std::make_unique<CairoOperationRecorder>(context, paintingOperations);
+            return makeUnique<CairoOperationRecorder>(context, paintingOperations);
         });
 }
 

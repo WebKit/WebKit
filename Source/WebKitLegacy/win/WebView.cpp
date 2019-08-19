@@ -1880,7 +1880,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         mouseEvent.setClickCount(globalClickCount);
         handled = m_page->mainFrame().eventHandler().mouseMoved(mouseEvent);
         if (!m_mouseOutTracker) {
-            m_mouseOutTracker = std::make_unique<TRACKMOUSEEVENT>();
+            m_mouseOutTracker = makeUniqueWithoutFastMallocCheck<TRACKMOUSEEVENT>();
             m_mouseOutTracker->cbSize = sizeof(TRACKMOUSEEVENT);
             m_mouseOutTracker->dwFlags = TME_LEAVE;
             m_mouseOutTracker->hwndTrack = m_viewWindow;
@@ -6794,7 +6794,7 @@ HRESULT WebView::registerEmbeddedViewMIMEType(_In_ BSTR mimeType)
         return E_POINTER;
 
     if (!m_embeddedViewMIMETypes)
-        m_embeddedViewMIMETypes = std::make_unique<HashSet<String>>();
+        m_embeddedViewMIMETypes = makeUnique<HashSet<String>>();
 
     m_embeddedViewMIMETypes->add(toString(mimeType));
     return S_OK;
@@ -6894,7 +6894,7 @@ void WebView::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement
         ASSERT(!m_fullScreenVideoController);
     }
 
-    m_fullScreenVideoController = std::make_unique<FullscreenVideoController>();
+    m_fullScreenVideoController = makeUnique<FullscreenVideoController>();
     m_fullScreenVideoController->setVideoElement(&videoElement);
     m_fullScreenVideoController->enterFullscreen();
 #endif
@@ -6946,7 +6946,7 @@ HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWo
         return E_POINTER;
 
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
-    auto userScript = std::make_unique<UserScript>(source, toURL(url), toStringVector(whitelist, whitelistCount),
+    auto userScript = makeUnique<UserScript>(source, toURL(url), toStringVector(whitelist, whitelistCount),
         toStringVector(blacklist, blacklistCount), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
         injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
     viewGroup->userContentController().addUserScript(world->world(), WTFMove(userScript));
@@ -6973,7 +6973,7 @@ HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScri
         return E_POINTER;
 
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
-    auto styleSheet = std::make_unique<UserStyleSheet>(source, toURL(url), toStringVector(whitelist, whitelistCount), toStringVector(blacklist, blacklistCount),
+    auto styleSheet = makeUnique<UserStyleSheet>(source, toURL(url), toStringVector(whitelist, whitelistCount), toStringVector(blacklist, blacklistCount),
         injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
     viewGroup->userContentController().addUserStyleSheet(world->world(), WTFMove(styleSheet), InjectInExistingDocuments);
     return S_OK;
@@ -7237,7 +7237,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
     }
 #elif USE(TEXTURE_MAPPER_GL)
     if (accelerated && !m_acceleratedCompositingContext)
-        m_acceleratedCompositingContext = std::make_unique<AcceleratedCompositingContext>(*this);
+        m_acceleratedCompositingContext = makeUnique<AcceleratedCompositingContext>(*this);
     m_isAcceleratedCompositing = accelerated;
 #endif
 }

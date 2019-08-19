@@ -83,7 +83,7 @@ bool RemoteObjectInvocation::decode(IPC::Decoder& decoder, RemoteObjectInvocatio
         if (!decoder.decode(blockSignature))
             return false;
 
-        result.m_replyInfo = std::make_unique<ReplyInfo>(replyID, WTFMove(blockSignature));
+        result.m_replyInfo = makeUnique<ReplyInfo>(replyID, WTFMove(blockSignature));
     }
 
     return true;

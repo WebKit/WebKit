@@ -633,7 +633,7 @@ static gboolean webKitWebSrcMakeRequest(GstBaseSrc* baseSrc, bool notifyAsyncCom
             loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
         priv->resource = priv->loader->requestResource(ResourceRequest(request), loadOptions);
         if (priv->resource) {
-            priv->resource->setClient(std::make_unique<CachedResourceStreamingClient>(protector.get(), ResourceRequest(request)));
+            priv->resource->setClient(makeUnique<CachedResourceStreamingClient>(protector.get(), ResourceRequest(request)));
             GST_DEBUG_OBJECT(protector.get(), "Started request");
             if (notifyAsyncCompletion)
                 gst_base_src_start_complete(GST_BASE_SRC(src), GST_FLOW_OK);

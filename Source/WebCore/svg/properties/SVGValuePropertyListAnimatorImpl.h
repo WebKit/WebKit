@@ -39,7 +39,7 @@ class SVGLengthListAnimator final : public SVGValuePropertyListAnimator<SVGLengt
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::make_unique<SVGLengthListAnimator>(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, LengthModeOther);
+        return makeUnique<SVGLengthListAnimator>(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, LengthModeOther);
     }
 
     void start(SVGElement* targetElement) override

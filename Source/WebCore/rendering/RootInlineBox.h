@@ -145,7 +145,7 @@ public:
         if (m_floats)
             m_floats->append(makeWeakPtr(floatingBox));
         else
-            m_floats = std::make_unique<CleanLineFloatList>(1, makeWeakPtr(floatingBox));
+            m_floats = makeUnique<CleanLineFloatList>(1, makeWeakPtr(floatingBox));
     }
 
     void removeFloat(RenderBox& floatingBox)

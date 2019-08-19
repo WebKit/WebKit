@@ -493,7 +493,7 @@ kern_return_t WKPCGetScriptableNPObjectReply(mach_port_t clientPort, uint32_t pl
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    instanceProxy->setCurrentReply(requestID, std::make_unique<NetscapePluginInstanceProxy::GetScriptableNPObjectReply>(objectID));
+    instanceProxy->setCurrentReply(requestID, makeUnique<NetscapePluginInstanceProxy::GetScriptableNPObjectReply>(objectID));
     return KERN_SUCCESS;
 }
 
@@ -509,7 +509,7 @@ kern_return_t WKPCBooleanReply(mach_port_t clientPort, uint32_t pluginID, uint32
     if (!instanceProxy)
         return KERN_FAILURE;
     
-    instanceProxy->setCurrentReply(requestID, std::make_unique<NetscapePluginInstanceProxy::BooleanReply>(result));
+    instanceProxy->setCurrentReply(requestID, makeUnique<NetscapePluginInstanceProxy::BooleanReply>(result));
     return KERN_SUCCESS;
 }
 
@@ -528,7 +528,7 @@ kern_return_t WKPCBooleanAndDataReply(mach_port_t clientPort, uint32_t pluginID,
         return KERN_FAILURE;
 
     RetainPtr<CFDataRef> result = adoptCF(CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength));
-    instanceProxy->setCurrentReply(requestID, std::make_unique<NetscapePluginInstanceProxy::BooleanAndDataReply>(returnValue, result));
+    instanceProxy->setCurrentReply(requestID, makeUnique<NetscapePluginInstanceProxy::BooleanAndDataReply>(returnValue, result));
     
     return KERN_SUCCESS;
 }
@@ -545,7 +545,7 @@ kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t plugin
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    instanceProxy->setCurrentReply(requestID, std::make_unique<NetscapePluginInstanceProxy::InstantiatePluginReply>(result, renderContextID, static_cast<RendererType>(rendererType)));
+    instanceProxy->setCurrentReply(requestID, makeUnique<NetscapePluginInstanceProxy::InstantiatePluginReply>(result, renderContextID, static_cast<RendererType>(rendererType)));
     return KERN_SUCCESS;
 }
 

@@ -435,8 +435,8 @@ static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
 
 static void webkit_media_stream_src_init(WebKitMediaStreamSrc* self)
 {
-    self->mediaStreamTrackObserver = std::make_unique<WebKitMediaStreamTrackObserver>(self);
-    self->mediaStreamObserver = std::make_unique<WebKitMediaStreamObserver>(self);
+    self->mediaStreamTrackObserver = makeUnique<WebKitMediaStreamTrackObserver>(self);
+    self->mediaStreamObserver = makeUnique<WebKitMediaStreamObserver>(self);
     self->flowCombiner = gst_flow_combiner_new();
     self->videoSrc.reset(true);
     self->audioSrc.reset(false);

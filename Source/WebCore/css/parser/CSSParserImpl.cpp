@@ -77,7 +77,7 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& stri
     , m_styleSheet(styleSheet)
     , m_observerWrapper(wrapper)
 {
-    m_tokenizer = wrapper ? std::make_unique<CSSTokenizer>(string, *wrapper) : std::make_unique<CSSTokenizer>(string);
+    m_tokenizer = wrapper ? makeUnique<CSSTokenizer>(string, *wrapper) : makeUnique<CSSTokenizer>(string);
     if (context.deferredCSSParserEnabled && !wrapper && styleSheet && ruleParsing == CSSParser::RuleParsing::Deferred)
         m_deferredParser = CSSDeferredParser::create(context, string, *styleSheet);
 }
@@ -282,9 +282,9 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
 
     std::unique_ptr<CSSParserSelector> selector;
     if (!typeSelector.isNull() && pseudo.isNull())
-        selector = std::make_unique<CSSParserSelector>(QualifiedName(nullAtom(), typeSelector, styleSheet->defaultNamespace()));
+        selector = makeUnique<CSSParserSelector>(QualifiedName(nullAtom(), typeSelector, styleSheet->defaultNamespace()));
     else {
-        selector = std::make_unique<CSSParserSelector>();
+        selector = makeUnique<CSSParserSelector>();
         if (!pseudo.isNull()) {
             selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePagePseudoSelector(pseudo));
             if (!selector || selector->match() != CSSSelector::PagePseudoClass)
@@ -535,7 +535,7 @@ RefPtr<StyleRuleNamespace> CSSParserImpl::consumeNamespaceRule(CSSParserTokenRan
 RefPtr<StyleRuleMedia> CSSParserImpl::consumeMediaRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     if (m_deferredParser)
-        return StyleRuleMedia::create(MediaQueryParser::parseMediaQuerySet(prelude, MediaQueryParserContext(m_context)).releaseNonNull(),  std::make_unique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
+        return StyleRuleMedia::create(MediaQueryParser::parseMediaQuerySet(prelude, MediaQueryParserContext(m_context)).releaseNonNull(),  makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
 
     Vector<RefPtr<StyleRuleBase>> rules;
 
@@ -563,7 +563,7 @@ RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange
         return nullptr; // Parse error, invalid @supports condition
 
     if (m_deferredParser)
-        return StyleRuleSupports::create(prelude.serialize().stripWhiteSpace(), supported, std::make_unique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
+        return StyleRuleSupports::create(prelude.serialize().stripWhiteSpace(), supported, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
 
     if (m_observerWrapper) {
         m_observerWrapper->observer().startRuleHeader(StyleRule::Supports, m_observerWrapper->startOffset(prelude));
@@ -635,7 +635,7 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
         return nullptr; // Parse error; expected ident token in @keyframes header
 
     if (m_deferredParser)
-        return StyleRuleKeyframes::create(name, std::make_unique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
+        return StyleRuleKeyframes::create(name, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
 
     if (m_observerWrapper) {
         m_observerWrapper->observer().startRuleHeader(StyleRule::Keyframes, m_observerWrapper->startOffset(rangeCopy));

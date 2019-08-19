@@ -57,7 +57,7 @@ using namespace Inspector;
 
 PageRuntimeAgent::PageRuntimeAgent(PageAgentContext& context)
     : InspectorRuntimeAgent(context)
-    , m_frontendDispatcher(std::make_unique<Inspector::RuntimeFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::RuntimeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::RuntimeBackendDispatcher::create(context.backendDispatcher, this))
     , m_instrumentingAgents(context.instrumentingAgents)
     , m_inspectedPage(context.inspectedPage)

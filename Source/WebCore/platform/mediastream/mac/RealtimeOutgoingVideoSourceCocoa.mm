@@ -46,7 +46,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::convertToYUV(CVPix
         return nullptr;
 
     if (!m_pixelBufferConformer)
-        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat()) });
+        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat()) });
 
     return m_pixelBufferConformer->convert(pixelBuffer);
 }
@@ -75,7 +75,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
         IntSize size = { (int)CVPixelBufferGetWidth(pixelBuffer) , (int)CVPixelBufferGetHeight(pixelBuffer) };
         AffineTransform transform;
         transform.rotate(rotationToAngle(rotation));
-        m_rotationSession = std::make_unique<ImageRotationSessionVT>(WTFMove(transform), size, CVPixelBufferGetPixelFormatType(pixelBuffer), ImageRotationSessionVT::IsCGImageCompatible::No);
+        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), size, CVPixelBufferGetPixelFormatType(pixelBuffer), ImageRotationSessionVT::IsCGImageCompatible::No);
     }
 
     return m_rotationSession->rotate(pixelBuffer);

@@ -341,7 +341,7 @@ private:
 };
 
 InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow)
-    : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), std::make_unique<InspectorFrontendClientLocal::Settings>())
+    : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), makeUnique<InspectorFrontendClientLocal::Settings>())
     , m_frontendWindow(frontendWindow.copyRef())
 {
     ASSERT_ARG(frontendWindow, frontendWindow);
@@ -567,7 +567,7 @@ Internals::Internals(Document& document)
     auto* frame = document.frame();
     if (frame && frame->page() && frame->isMainFrame()) {
         auto mockPaymentCoordinator = new MockPaymentCoordinator(*frame->page());
-        frame->page()->setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*mockPaymentCoordinator));
+        frame->page()->setPaymentCoordinator(makeUnique<PaymentCoordinator>(*mockPaymentCoordinator));
     }
 #endif
 }
@@ -1417,7 +1417,7 @@ void Internals::enableMockSpeechSynthesizer()
     if (!synthesis)
         return;
 
-    synthesis->setPlatformSynthesizer(std::make_unique<PlatformSpeechSynthesizerMock>(synthesis));
+    synthesis->setPlatformSynthesizer(makeUnique<PlatformSpeechSynthesizerMock>(synthesis));
 }
 
 #endif
@@ -2487,7 +2487,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
     auto* inspectedPage = contextDocument()->frame()->page();
     auto* window = inspectedPage->mainFrame().document()->domWindow();
     auto frontendWindowProxy = window->open(*window, *window, url, "", "").releaseReturnValue();
-    m_inspectorFrontend = std::make_unique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
+    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;
 }
 
@@ -3007,7 +3007,7 @@ ExceptionOr<void> Internals::setViewExposedRect(float x, float y, float width, f
 
 void Internals::setPrinting(int width, int height)
 {
-    printContextForTesting() = std::make_unique<PrintContext>(frame());
+    printContextForTesting() = makeUnique<PrintContext>(frame());
     printContextForTesting()->begin(width, height);
 }
 
@@ -3446,7 +3446,7 @@ void Internals::enableAutoSizeMode(bool enabled, int width, int height)
 
 void Internals::initializeMockCDM()
 {
-    LegacyCDM::registerCDMFactory([] (LegacyCDM* cdm) { return std::make_unique<LegacyMockCDM>(cdm); },
+    LegacyCDM::registerCDMFactory([] (LegacyCDM* cdm) { return makeUnique<LegacyMockCDM>(cdm); },
         LegacyMockCDM::supportsKeySystem, LegacyMockCDM::supportsKeySystemAndMimeType);
 }
 
@@ -4239,7 +4239,7 @@ void Internals::queueMicroTask(int testNumber)
     if (!document)
         return;
 
-    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *document, [document, testNumber]() {
+    auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *document, [document, testNumber]() {
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", testNumber, " has run."));
     });
 

@@ -2969,7 +2969,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         JSLockHolder locker(vm);
 
         if (options.m_profile && !vm.m_perBytecodeProfiler)
-            vm.m_perBytecodeProfiler = std::make_unique<Profiler::Database>(vm);
+            vm.m_perBytecodeProfiler = makeUnique<Profiler::Database>(vm);
 
         globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
         globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);

@@ -36,7 +36,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    m_core = std::make_unique<DeviceOrientationClientMock>();
+    m_core = makeUnique<DeviceOrientationClientMock>();
     return self;
 }
 

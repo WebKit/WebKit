@@ -48,5 +48,5 @@ private:
 
 void attachFormClientToView(WebKitWebView* webView)
 {
-    webkitWebViewGetPage(webView).setFormClient(std::make_unique<FormClient>(webView));
+    webkitWebViewGetPage(webView).setFormClient(makeUnique<FormClient>(webView));
 }

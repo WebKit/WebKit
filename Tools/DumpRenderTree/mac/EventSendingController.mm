@@ -568,7 +568,7 @@ static std::unique_ptr<ClassMethodSwizzler> eventPressedMouseButtonsSwizzlerForV
 {
     if ([view isKindOfClass:[WebHTMLView class]])
         view = [(WebHTMLView *)view _hitViewForEvent:event];
-    return ![view isKindOfClass:[NSScroller class]] ? std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
+    return ![view isKindOfClass:[NSScroller class]] ? makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
 }
 
 static NSUInteger swizzledEventPressedMouseButtons()

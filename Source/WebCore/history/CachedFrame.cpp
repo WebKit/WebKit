@@ -163,7 +163,7 @@ CachedFrame::CachedFrame(Frame& frame)
 
     // Create the CachedFrames for all Frames in the FrameTree.
     for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        m_childFrames.append(std::make_unique<CachedFrame>(*child));
+        m_childFrames.append(makeUnique<CachedFrame>(*child));
 
     RELEASE_ASSERT(m_document->domWindow());
     RELEASE_ASSERT(m_document->frame());
@@ -172,7 +172,7 @@ CachedFrame::CachedFrame(Frame& frame)
     // Active DOM objects must be suspended before we cache the frame script data.
     m_document->suspend(ReasonForSuspension::PageCache);
 
-    m_cachedFrameScriptData = std::make_unique<ScriptCachedFrameData>(frame);
+    m_cachedFrameScriptData = makeUnique<ScriptCachedFrameData>(frame);
 
     m_document->domWindow()->suspendForPageCache();
 

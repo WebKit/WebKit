@@ -55,7 +55,7 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
 {
     NavigatorGamepad* supplement = static_cast<NavigatorGamepad*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorGamepad>();
+        auto newSupplement = makeUnique<NavigatorGamepad>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

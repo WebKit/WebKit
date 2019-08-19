@@ -42,49 +42,49 @@ RenderThemeWidget& RenderThemeWidget::getOrCreate(Type widgetType)
     auto addResult = widgetMap().ensure(static_cast<unsigned>(widgetType), [widgetType]() -> std::unique_ptr<RenderThemeWidget> {
         switch (widgetType) {
         case RenderThemeWidget::Type::VerticalScrollbarRight:
-            return std::make_unique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Full);
+            return makeUnique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Full);
         case RenderThemeWidget::Type::VerticalScrollbarLeft:
-            return std::make_unique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Full, RenderThemeScrollbar::VerticalPosition::Left);
+            return makeUnique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Full, RenderThemeScrollbar::VerticalPosition::Left);
         case RenderThemeWidget::Type::HorizontalScrollbar:
-            return std::make_unique<RenderThemeScrollbar>(GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbar::Mode::Full);
+            return makeUnique<RenderThemeScrollbar>(GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbar::Mode::Full);
         case RenderThemeWidget::Type::VerticalScrollIndicatorRight:
-            return std::make_unique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Indicator);
+            return makeUnique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Indicator);
         case RenderThemeWidget::Type::VerticalScrollIndicatorLeft:
-            return std::make_unique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Indicator, RenderThemeScrollbar::VerticalPosition::Left);
+            return makeUnique<RenderThemeScrollbar>(GTK_ORIENTATION_VERTICAL, RenderThemeScrollbar::Mode::Indicator, RenderThemeScrollbar::VerticalPosition::Left);
         case RenderThemeWidget::Type::HorizontalScrollIndicator:
-            return std::make_unique<RenderThemeScrollbar>(GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbar::Mode::Indicator);
+            return makeUnique<RenderThemeScrollbar>(GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbar::Mode::Indicator);
         case RenderThemeWidget::Type::CheckButton:
-            return std::make_unique<RenderThemeToggleButton>(RenderThemeToggleButton::Type::Check);
+            return makeUnique<RenderThemeToggleButton>(RenderThemeToggleButton::Type::Check);
         case RenderThemeWidget::Type::RadioButton:
-            return std::make_unique<RenderThemeToggleButton>(RenderThemeToggleButton::Type::Radio);
+            return makeUnique<RenderThemeToggleButton>(RenderThemeToggleButton::Type::Radio);
         case RenderThemeWidget::Type::Button:
-            return std::make_unique<RenderThemeButton>(RenderThemeButton::Default::No);
+            return makeUnique<RenderThemeButton>(RenderThemeButton::Default::No);
         case RenderThemeWidget::Type::ButtonDefault:
-            return std::make_unique<RenderThemeButton>(RenderThemeButton::Default::Yes);
+            return makeUnique<RenderThemeButton>(RenderThemeButton::Default::Yes);
         case RenderThemeWidget::Type::ComboBox:
-            return std::make_unique<RenderThemeComboBox>();
+            return makeUnique<RenderThemeComboBox>();
         case RenderThemeWidget::Type::Entry:
-            return std::make_unique<RenderThemeEntry>();
+            return makeUnique<RenderThemeEntry>();
         case RenderThemeWidget::Type::SelectedEntry:
-            return std::make_unique<RenderThemeEntry>(RenderThemeEntry::Selected::Yes);
+            return makeUnique<RenderThemeEntry>(RenderThemeEntry::Selected::Yes);
         case RenderThemeWidget::Type::SearchEntry:
-            return std::make_unique<RenderThemeSearchEntry>();
+            return makeUnique<RenderThemeSearchEntry>();
         case RenderThemeWidget::Type::SpinButton:
-            return std::make_unique<RenderThemeSpinButton>();
+            return makeUnique<RenderThemeSpinButton>();
         case RenderThemeWidget::Type::VerticalSlider:
-            return std::make_unique<RenderThemeSlider>(GTK_ORIENTATION_VERTICAL);
+            return makeUnique<RenderThemeSlider>(GTK_ORIENTATION_VERTICAL);
         case RenderThemeWidget::Type::HorizontalSlider:
-            return std::make_unique<RenderThemeSlider>(GTK_ORIENTATION_HORIZONTAL);
+            return makeUnique<RenderThemeSlider>(GTK_ORIENTATION_HORIZONTAL);
         case RenderThemeWidget::Type::ProgressBar:
-            return std::make_unique<RenderThemeProgressBar>(RenderThemeProgressBar::Mode::Determinate);
+            return makeUnique<RenderThemeProgressBar>(RenderThemeProgressBar::Mode::Determinate);
         case RenderThemeWidget::Type::IndeterminateProgressBar:
-            return std::make_unique<RenderThemeProgressBar>(RenderThemeProgressBar::Mode::Indeterminate);
+            return makeUnique<RenderThemeProgressBar>(RenderThemeProgressBar::Mode::Indeterminate);
         case RenderThemeWidget::Type::ListView:
-            return std::make_unique<RenderThemeListView>();
+            return makeUnique<RenderThemeListView>();
         case RenderThemeWidget::Type::Icon:
-            return std::make_unique<RenderThemeIcon>();
+            return makeUnique<RenderThemeIcon>();
         case RenderThemeWidget::Type::Window:
-            return std::make_unique<RenderThemeWindow>();
+            return makeUnique<RenderThemeWindow>();
         }
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -139,7 +139,7 @@ RenderThemeScrollbar::RenderThemeScrollbar(GtkOrientation orientation, Mode mode
     info.type = RenderThemeGadget::Type::Generic;
     info.name = "contents";
     info.classList.clear();
-    m_contents = std::make_unique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_VERTICAL, children, m_scrollbar.get());
+    m_contents = makeUnique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_VERTICAL, children, m_scrollbar.get());
     info.name = "slider";
     m_slider = RenderThemeGadget::create(info, m_contents->child(m_troughPosition));
 }
@@ -197,7 +197,7 @@ RenderThemeComboBox::RenderThemeComboBox()
     };
     info.name = "box";
     info.classList = { "horizontal", "linked" };
-    m_box = std::make_unique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_HORIZONTAL, children, m_comboBox.get());
+    m_box = makeUnique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_HORIZONTAL, children, m_comboBox.get());
     RenderThemeGadget* button = m_box->child(0);
     info.classList.removeLast();
     m_buttonBox = RenderThemeGadget::create(info, button);

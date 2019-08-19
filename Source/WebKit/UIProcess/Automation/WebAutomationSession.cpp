@@ -73,11 +73,11 @@ static const Seconds defaultPageLoadTimeout = 300_s;
 static const Inspector::Protocol::Automation::PageLoadStrategy defaultPageLoadStrategy = Inspector::Protocol::Automation::PageLoadStrategy::Normal;
 
 WebAutomationSession::WebAutomationSession()
-    : m_client(std::make_unique<API::AutomationSessionClient>())
+    : m_client(makeUnique<API::AutomationSessionClient>())
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
-    , m_domainNotifier(std::make_unique<AutomationFrontendDispatcher>(m_frontendRouter))
+    , m_domainNotifier(makeUnique<AutomationFrontendDispatcher>(m_frontendRouter))
     , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
 #if ENABLE(WEBDRIVER_ACTIONS_API)

@@ -36,6 +36,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 
 namespace TestWebKitAPI {
 
@@ -75,7 +76,7 @@ static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScript
     Util::run(&context.didFinish);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(context.actualString.get());
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueArray<char>(bufferSize);
     JSStringGetUTF8CString(context.actualString.get(), buffer.get(), bufferSize);
     
     return compareJSResult(script, buffer.get(), expectedResult);

@@ -45,7 +45,7 @@ GraphicsContext::GraphicsContextImplFactory GraphicsContextImplCairo::createFact
     return GraphicsContext::GraphicsContextImplFactory(
         [&platformContext](GraphicsContext& context)
         {
-            return std::make_unique<GraphicsContextImplCairo>(context, platformContext);
+            return makeUnique<GraphicsContextImplCairo>(context, platformContext);
         });
 }
 
@@ -54,14 +54,14 @@ GraphicsContext::GraphicsContextImplFactory GraphicsContextImplCairo::createFact
     return GraphicsContext::GraphicsContextImplFactory(
         [cairoContext](GraphicsContext& context)
         {
-            return std::make_unique<GraphicsContextImplCairo>(context, cairoContext);
+            return makeUnique<GraphicsContextImplCairo>(context, cairoContext);
         });
 }
 
 GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, PlatformContextCairo& platformContext)
     : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
     , m_platformContext(platformContext)
-    , m_private(std::make_unique<GraphicsContextPlatformPrivate>(m_platformContext))
+    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
     m_private->syncContext(m_platformContext.cr());
@@ -69,9 +69,9 @@ GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, Pla
 
 GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, cairo_t* cairoContext)
     : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
-    , m_ownedPlatformContext(std::make_unique<PlatformContextCairo>(cairoContext))
+    , m_ownedPlatformContext(makeUnique<PlatformContextCairo>(cairoContext))
     , m_platformContext(*m_ownedPlatformContext)
-    , m_private(std::make_unique<GraphicsContextPlatformPrivate>(m_platformContext))
+    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
     m_private->syncContext(m_platformContext.cr());

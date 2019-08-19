@@ -47,7 +47,7 @@ private:
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), *socketFactory, WTFMove(configuration), std::make_unique<AsyncResolverFactory>());
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
 }
 
 void LibWebRTCProvider::disableNonLocalhostConnections()
@@ -104,7 +104,7 @@ private:
 
 std::unique_ptr<rtc::PacketSocketFactory> LibWebRTCProvider::createSocketFactory(PAL::SessionID sessionID, String&& userAgent)
 {
-    return std::make_unique<RTCSocketFactory>(sessionID, WTFMove(userAgent));
+    return makeUnique<RTCSocketFactory>(sessionID, WTFMove(userAgent));
 }
 
 } // namespace WebKit

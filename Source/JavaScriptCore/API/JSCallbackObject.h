@@ -58,7 +58,7 @@ public:
     void setPrivateProperty(VM& vm, JSCell* owner, const Identifier& propertyName, JSValue value)
     {
         if (!m_privateProperties)
-            m_privateProperties = std::make_unique<JSPrivatePropertyMap>();
+            m_privateProperties = makeUnique<JSPrivatePropertyMap>();
         m_privateProperties->setPrivateProperty(vm, owner, propertyName, value);
     }
     

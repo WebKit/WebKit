@@ -152,7 +152,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
 
     SQLiteFileSystem::ensureDatabaseDirectoryExists(m_databaseDirectory);
 
-    m_database = std::make_unique<SQLiteDatabase>();
+    m_database = makeUnique<SQLiteDatabase>();
     if (!m_database->open(fullFilename)) {
         errorMessage = "Failed to open registration database";
         return;

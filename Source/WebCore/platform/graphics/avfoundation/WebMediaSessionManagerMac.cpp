@@ -49,7 +49,7 @@ WebMediaSessionManagerMac::~WebMediaSessionManagerMac() = default;
 WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::platformPicker()
 {
     if (!m_targetPicker)
-        m_targetPicker = std::make_unique<MediaPlaybackTargetPickerMac>(*this);
+        m_targetPicker = makeUnique<MediaPlaybackTargetPickerMac>(*this);
 
     return *m_targetPicker.get();
 }

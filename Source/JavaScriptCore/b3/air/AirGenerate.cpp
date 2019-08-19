@@ -100,7 +100,7 @@ void prepareForGeneration(Code& code)
             dataLog(code);
         }
 
-        code.m_generateAndAllocateRegisters = std::make_unique<GenerateAndAllocateRegisters>(code);
+        code.m_generateAndAllocateRegisters = makeUnique<GenerateAndAllocateRegisters>(code);
         code.m_generateAndAllocateRegisters->prepareForGeneration();
 
         return;

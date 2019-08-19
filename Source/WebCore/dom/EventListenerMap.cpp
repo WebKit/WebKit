@@ -142,7 +142,7 @@ bool EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& lis
         return true;
     }
 
-    auto listeners = std::make_unique<EventListenerVector>();
+    auto listeners = makeUnique<EventListenerVector>();
     listeners->uncheckedAppend(RegisteredEventListener::create(WTFMove(listener), options));
     m_entries.append({ eventType, WTFMove(listeners) });
     return true;

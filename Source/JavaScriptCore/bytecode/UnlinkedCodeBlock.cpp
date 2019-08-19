@@ -414,7 +414,7 @@ BytecodeLivenessAnalysis& UnlinkedCodeBlock::livenessAnalysisSlow(CodeBlock* cod
         if (!m_liveness) {
             // There is a chance two compiler threads raced to the slow path.
             // Grabbing the lock above defends against computing liveness twice.
-            m_liveness = std::make_unique<BytecodeLivenessAnalysis>(codeBlock);
+            m_liveness = makeUnique<BytecodeLivenessAnalysis>(codeBlock);
         }
     }
     

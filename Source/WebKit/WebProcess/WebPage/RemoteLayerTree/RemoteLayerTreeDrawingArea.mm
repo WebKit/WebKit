@@ -58,7 +58,7 @@ using namespace WebCore;
 
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
-    , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
+    , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
 {
@@ -423,7 +423,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
-    auto commitEncoder = std::make_unique<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
+    auto commitEncoder = makeUnique<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
     commitEncoder->encode(message.arguments());
 
     // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.

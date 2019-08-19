@@ -312,7 +312,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
     if (place.parent)
         place.parent->insertAfter(newNode, place.previousSibling.get(), identifier);
 
-    maps.add(&renderer, std::make_unique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
+    maps.add(&renderer, makeUnique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
     renderer.setHasCounterNodeMap(true);
 
     if (newNode->parent())

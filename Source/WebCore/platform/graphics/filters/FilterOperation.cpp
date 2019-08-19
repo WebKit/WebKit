@@ -67,7 +67,7 @@ void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader
         return;
     if (!SVGURIReference::isExternalURIReference(m_url, *cachedResourceLoader.document()))
         return;
-    m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
+    m_cachedSVGDocumentReference = makeUnique<CachedSVGDocumentReference>(m_url);
     m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 

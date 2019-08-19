@@ -261,8 +261,8 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
 
     if (!m_keyValueStore) {
         ASSERT(!m_orderedKeys);
-        m_keyValueStore = std::make_unique<KeyValueMap>();
-        m_orderedKeys = std::make_unique<IDBKeyDataSet>();
+        m_keyValueStore = makeUnique<KeyValueMap>();
+        m_orderedKeys = makeUniqueWithoutFastMallocCheck<IDBKeyDataSet>();
     }
 
     auto mapResult = m_keyValueStore->set(keyData, value.data());
@@ -499,7 +499,7 @@ MemoryObjectStoreCursor* MemoryObjectStore::maybeOpenCursor(const IDBCursorInfo&
     if (!result.isNewEntry)
         return nullptr;
 
-    result.iterator->value = std::make_unique<MemoryObjectStoreCursor>(*this, info);
+    result.iterator->value = makeUnique<MemoryObjectStoreCursor>(*this, info);
     return result.iterator->value.get();
 }
 

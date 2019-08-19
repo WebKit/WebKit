@@ -143,7 +143,7 @@ void RemoteInspectorClient::didClose(ConnectionID)
 void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID, const String& type)
 {
     auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID, &type] {
-        return std::make_unique<RemoteInspectorProxy>(*this, connectionID, targetID, type);
+        return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID, type);
     });
 
     if (!addResult.isNewEntry) {

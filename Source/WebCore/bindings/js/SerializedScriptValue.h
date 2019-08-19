@@ -164,7 +164,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
         return nullptr;
     ASSERT(arrayLength);
 
-    auto arrayBufferContentsArray = std::make_unique<ArrayBufferContentsArray>();
+    auto arrayBufferContentsArray = makeUnique<ArrayBufferContentsArray>();
     while (arrayLength--) {
         unsigned bufferSize;
         if (!decoder.decode(bufferSize))

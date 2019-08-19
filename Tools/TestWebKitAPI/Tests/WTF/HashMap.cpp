@@ -191,7 +191,7 @@ TEST(WTF_HashMap, UniquePtrKey)
 
     HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     map.add(WTFMove(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
@@ -230,7 +230,7 @@ TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
 {
     HashMap<std::unique_ptr<int>, int> map;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     map.add(WTFMove(uniquePtr), 2);
 
@@ -244,7 +244,7 @@ TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
 {
     HashMap<std::unique_ptr<int>, int> map;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     map.add(WTFMove(uniquePtr), 2);
 
@@ -255,7 +255,7 @@ TEST(WTF_HashMap, UniquePtrKey_GetUsingRawPointer)
 {
     HashMap<std::unique_ptr<int>, int> map;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     map.add(WTFMove(uniquePtr), 2);
 
@@ -269,7 +269,7 @@ TEST(WTF_HashMap, UniquePtrKey_RemoveUsingRawPointer)
 
     HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     map.add(WTFMove(uniquePtr), 2);
 
@@ -289,7 +289,7 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
     HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     map.add(WTFMove(uniquePtr), 2);
 
@@ -563,12 +563,12 @@ TEST(WTF_HashMap, Ensure_UniquePointer)
 {
     HashMap<unsigned, std::unique_ptr<unsigned>> map;
     {
-        auto addResult = map.ensure(1, [] { return std::make_unique<unsigned>(1); });
+        auto addResult = map.ensure(1, [] { return makeUniqueWithoutFastMallocCheck<unsigned>(1); });
         EXPECT_EQ(1u, *map.get(1));
         EXPECT_EQ(1u, *addResult.iterator->value.get());
         EXPECT_EQ(1u, addResult.iterator->key);
         EXPECT_TRUE(addResult.isNewEntry);
-        auto addResult2 = map.ensure(1, [] { return std::make_unique<unsigned>(2); });
+        auto addResult2 = map.ensure(1, [] { return makeUniqueWithoutFastMallocCheck<unsigned>(2); });
         EXPECT_EQ(1u, *map.get(1));
         EXPECT_EQ(1u, *addResult2.iterator->value.get());
         EXPECT_EQ(1u, addResult2.iterator->key);
@@ -605,7 +605,7 @@ void testMovingUsingEnsure(Ref<RefLogger>&& logger)
 {
     HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
     
-    map.ensure(1, [&] { return std::make_unique<ObjectWithRefLogger>(WTFMove(logger)); });
+    map.ensure(1, [&] { return makeUnique<ObjectWithRefLogger>(WTFMove(logger)); });
 }
 
 void testMovingUsingAdd(Ref<RefLogger>&& logger)
@@ -613,7 +613,7 @@ void testMovingUsingAdd(Ref<RefLogger>&& logger)
     HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
 
     auto& slot = map.add(1, nullptr).iterator->value;
-    slot = std::make_unique<ObjectWithRefLogger>(WTFMove(logger));
+    slot = makeUnique<ObjectWithRefLogger>(WTFMove(logger));
 }
 
 TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
@@ -699,7 +699,7 @@ struct DerefObserver {
 
 TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
 {
-    auto observer = std::make_unique<DerefObserver>();
+    auto observer = makeUnique<DerefObserver>();
 
     HashMap<RefPtr<DerefObserver>, int> map;
     map.add(adoptRef(observer.get()), 5);

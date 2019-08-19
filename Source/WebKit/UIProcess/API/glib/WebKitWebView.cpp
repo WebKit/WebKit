@@ -729,7 +729,7 @@ static void webkitWebViewConstructed(GObject* object)
 
     webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView);
 
-    priv->loadObserver = std::make_unique<PageLoadStateObserver>(webView);
+    priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
 
     // The related view is only valid during the construction.
@@ -745,7 +745,7 @@ static void webkitWebViewConstructed(GObject* object)
 #endif
 
 #if PLATFORM(WPE)
-    priv->view->setClient(std::make_unique<WebViewClient>(webView));
+    priv->view->setClient(makeUnique<WebViewClient>(webView));
 #endif
 
     // This needs to be after attachUIClientToView() because WebPageProxy::setUIClient() calls setCanRunModal() with true.

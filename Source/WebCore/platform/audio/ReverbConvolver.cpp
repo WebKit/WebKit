@@ -94,7 +94,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
 
         bool useDirectConvolver = !stageOffset;
 
-        auto stage = std::make_unique<ReverbConvolverStage>(response, totalResponseLength, reverbTotalLatency, stageOffset, stageSize, fftSize, renderPhase, renderSliceSize, &m_accumulationBuffer, useDirectConvolver);
+        auto stage = makeUnique<ReverbConvolverStage>(response, totalResponseLength, reverbTotalLatency, stageOffset, stageSize, fftSize, renderPhase, renderSliceSize, &m_accumulationBuffer, useDirectConvolver);
 
         bool isBackgroundStage = false;
 

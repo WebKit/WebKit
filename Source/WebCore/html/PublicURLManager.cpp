@@ -35,7 +35,7 @@ namespace WebCore {
 
 std::unique_ptr<PublicURLManager> PublicURLManager::create(ScriptExecutionContext* context)
 {
-    auto publicURLManager = std::make_unique<PublicURLManager>(context);
+    auto publicURLManager = makeUnique<PublicURLManager>(context);
     publicURLManager->suspendIfNeeded();
     return publicURLManager;
 }

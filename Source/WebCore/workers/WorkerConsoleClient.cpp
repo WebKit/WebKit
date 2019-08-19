@@ -46,7 +46,7 @@ void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel
 {
     String messageText;
     arguments->getFirstArgumentAsString(messageText);
-    auto message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, WTFMove(arguments), exec);
+    auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, WTFMove(arguments), exec);
     m_workerGlobalScope.addConsoleMessage(WTFMove(message));
 }
 

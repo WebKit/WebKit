@@ -172,7 +172,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
     , caretColor(o.caretColor)
     , visitedLinkCaretColor(o.visitedLinkCaretColor)
-    , textShadow(o.textShadow ? std::make_unique<ShadowData>(*o.textShadow) : nullptr)
+    , textShadow(o.textShadow ? makeUnique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
     , effectiveZoom(o.effectiveZoom)

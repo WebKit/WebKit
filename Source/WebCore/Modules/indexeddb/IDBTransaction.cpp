@@ -179,7 +179,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     if (!info || (!found && !isVersionChange()))
         return Exception { NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_s };
 
-    auto objectStore = std::make_unique<IDBObjectStore>(*scriptExecutionContext(), *info, *this);
+    auto objectStore = makeUnique<IDBObjectStore>(*scriptExecutionContext(), *info, *this);
     auto* rawObjectStore = objectStore.get();
     m_referencedObjectStores.set(objectStoreName, WTFMove(objectStore));
 
@@ -667,7 +667,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
 
     Locker<Lock> locker(m_referencedObjectStoreLock);
 
-    auto objectStore = std::make_unique<IDBObjectStore>(*scriptExecutionContext(), info, *this);
+    auto objectStore = makeUnique<IDBObjectStore>(*scriptExecutionContext(), info, *this);
     auto* rawObjectStore = objectStore.get();
     m_referencedObjectStores.set(info.name(), WTFMove(objectStore));
 
@@ -755,7 +755,7 @@ std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStor
         protectedThis->createIndexOnServer(operation, info);
     }));
 
-    return std::make_unique<IDBIndex>(*scriptExecutionContext(), info, objectStore);
+    return makeUnique<IDBIndex>(*scriptExecutionContext(), info, objectStore);
 }
 
 void IDBTransaction::createIndexOnServer(IDBClient::TransactionOperation& operation, const IDBIndexInfo& info)

@@ -72,7 +72,7 @@
 - (void)setDelegate:(id <_WKAutomationSessionDelegate>)delegate
 {
     _delegate = delegate;
-    _session->setClient(delegate ? std::make_unique<WebKit::AutomationSessionClient>(delegate) : nullptr);
+    _session->setClient(delegate ? makeUnique<WebKit::AutomationSessionClient>(delegate) : nullptr);
 }
 
 - (NSString *)sessionIdentifier

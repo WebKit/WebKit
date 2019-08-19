@@ -71,7 +71,7 @@ FloatSize ScrollingMomentumCalculator::predictedDestinationOffset()
 
 std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
 {
-    return std::make_unique<BasicScrollingMomentumCalculator>(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
+    return makeUnique<BasicScrollingMomentumCalculator>(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
 }
 
 void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(bool)

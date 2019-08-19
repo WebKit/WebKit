@@ -396,7 +396,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
             displayBox.setTopLeft(logicalRect.topLeft());
             displayBox.setContentBoxWidth(logicalRect.width());
             displayBox.setContentBoxHeight(logicalRect.height());
-            formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
+            formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
             continue;
         }
 
@@ -407,7 +407,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
                 topLeft += Geometry::inFlowPositionedPositionOffset(layoutState(), layoutBox);
             displayBox.setTopLeft(topLeft);
             lineBoxRect.expandHorizontally(logicalRect.width());
-            formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
+            formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
             continue;
         }
 
@@ -442,7 +442,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
             auto previousRunCanBeExtended = previousLineRun && previousLineRun->textContext() ? previousLineRun->textContext()->canBeExtended : false;
             auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineRun->layoutBox();
             if (requiresNewRun)
-                formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
+                formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
             else {
                 auto& lastDisplayRun = formattingState.inlineRuns().last();
                 lastDisplayRun->expandHorizontally(logicalRect.width());

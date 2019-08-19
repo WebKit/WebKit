@@ -115,7 +115,7 @@ HRESULT WebHistoryItem::initFromDictionaryRepresentation(_In_opt_ void* dictiona
     std::unique_ptr<Vector<String>> redirectURLsVector;
     if (CFArrayRef redirectURLsRef = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, redirectURLsKey))) {
         CFIndex size = CFArrayGetCount(redirectURLsRef);
-        redirectURLsVector = std::make_unique<Vector<String>>(size);
+        redirectURLsVector = makeUnique<Vector<String>>(size);
         for (CFIndex i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String(static_cast<CFStringRef>(CFArrayGetValueAtIndex(redirectURLsRef, i)));
     }

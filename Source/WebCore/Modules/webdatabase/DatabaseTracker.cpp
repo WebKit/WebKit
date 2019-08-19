@@ -549,7 +549,7 @@ void DatabaseTracker::addOpenDatabase(Database& database)
     LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
 
     if (!m_openDatabaseMap)
-        m_openDatabaseMap = std::make_unique<DatabaseOriginMap>();
+        m_openDatabaseMap = makeUnique<DatabaseOriginMap>();
 
     auto origin = database.securityOrigin();
 
@@ -956,7 +956,7 @@ void DatabaseTracker::recordCreatingDatabase(const SecurityOriginData& origin, c
     // We don't use HashMap::ensure here to avoid making an isolated copy of the origin every time.
     auto* nameSet = m_beingCreated.get(origin);
     if (!nameSet) {
-        auto ownedSet = std::make_unique<HashCountedSet<String>>();
+        auto ownedSet = makeUnique<HashCountedSet<String>>();
         nameSet = ownedSet.get();
         m_beingCreated.add(origin.isolatedCopy(), WTFMove(ownedSet));
     }
@@ -1002,7 +1002,7 @@ void DatabaseTracker::recordDeletingDatabase(const SecurityOriginData& origin, c
     // We don't use HashMap::ensure here to avoid making an isolated copy of the origin every time.
     auto* nameSet = m_beingDeleted.get(origin);
     if (!nameSet) {
-        auto ownedSet = std::make_unique<HashSet<String>>();
+        auto ownedSet = makeUnique<HashSet<String>>();
         nameSet = ownedSet.get();
         m_beingDeleted.add(origin.isolatedCopy(), WTFMove(ownedSet));
     }

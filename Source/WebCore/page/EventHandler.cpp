@@ -385,7 +385,7 @@ EventHandler::EventHandler(Frame& frame)
 #if PLATFORM(MAC)
     , m_pendingMomentumWheelEventsTimer(*this, &EventHandler::clearLatchedState)
 #endif
-    , m_autoscrollController(std::make_unique<AutoscrollController>())
+    , m_autoscrollController(makeUnique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
     , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
 #endif

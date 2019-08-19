@@ -1357,7 +1357,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
 CodeBlock::JITData& CodeBlock::ensureJITDataSlow(const ConcurrentJSLocker&)
 {
     ASSERT(!m_jitData);
-    m_jitData = std::make_unique<JITData>();
+    m_jitData = makeUnique<JITData>();
     return *m_jitData;
 }
 
@@ -1570,7 +1570,7 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(const ConcurrentJSLock
 void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
 {
     ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_calleeSaveRegisters = std::make_unique<RegisterAtOffsetList>(calleeSaveRegisters);
+    ensureJITData(locker).m_calleeSaveRegisters = makeUnique<RegisterAtOffsetList>(calleeSaveRegisters);
 }
 
 void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
@@ -1810,7 +1810,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow(const OpCatch
     for (int i = 0; i < numParameters(); ++i)
         liveOperands.append(virtualRegisterForArgument(i));
 
-    auto profiles = std::make_unique<ValueProfileAndOperandBuffer>(liveOperands.size());
+    auto profiles = makeUnique<ValueProfileAndOperandBuffer>(liveOperands.size());
     RELEASE_ASSERT(profiles->m_size == liveOperands.size());
     for (unsigned i = 0; i < profiles->m_size; ++i)
         profiles->m_buffer.get()[i].m_operand = liveOperands[i].offset();

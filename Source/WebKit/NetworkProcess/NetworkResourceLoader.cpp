@@ -111,7 +111,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (synchronousReply || parameters.shouldRestrictHTTPResponseAccess || parameters.options.keepAlive) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = std::make_unique<NetworkLoadChecker>(connection.networkProcess(), FetchOptions { m_parameters.options }, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.isHTTPSUpgradeEnabled, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), FetchOptions { m_parameters.options }, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.isHTTPSUpgradeEnabled, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -119,7 +119,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 #endif
     }
     if (synchronousReply)
-        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTFMove(synchronousReply));
+        m_synchronousLoadData = makeUnique<SynchronousLoadData>(WTFMove(synchronousReply));
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
@@ -318,7 +318,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url());
 
     parameters.request = WTFMove(request);
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
+    m_networkLoad = makeUnique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
 
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", description = %{public}s)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.toUInt64(), m_parameters.identifier, m_networkLoad->description().utf8().data());
 }

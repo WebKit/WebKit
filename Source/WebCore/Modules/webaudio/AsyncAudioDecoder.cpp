@@ -56,7 +56,7 @@ void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRa
 {
     ASSERT(isMainThread());
 
-    auto decodingTask = std::make_unique<DecodingTask>(WTFMove(audioData), sampleRate, WTFMove(successCallback), WTFMove(errorCallback));
+    auto decodingTask = makeUnique<DecodingTask>(WTFMove(audioData), sampleRate, WTFMove(successCallback), WTFMove(errorCallback));
     m_queue.append(WTFMove(decodingTask)); // note that ownership of the task is effectively taken by the queue.
 }
 

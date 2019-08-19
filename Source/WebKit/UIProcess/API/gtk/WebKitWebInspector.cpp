@@ -361,7 +361,7 @@ WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
 {
     WebKitWebInspector* inspector = WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL));
     inspector->priv->webInspector = webInspector;
-    webInspector->setClient(std::make_unique<WebKitInspectorClient>(inspector));
+    webInspector->setClient(makeUnique<WebKitInspectorClient>(inspector));
     return inspector;
 }
 

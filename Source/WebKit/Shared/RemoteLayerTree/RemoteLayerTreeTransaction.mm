@@ -152,13 +152,13 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     // FIXME: LayerProperties shouldn't be copyable; PlatformCALayerRemote::clone should copy the relevant properties.
 
     if (other.transform)
-        transform = std::make_unique<WebCore::TransformationMatrix>(*other.transform);
+        transform = makeUnique<WebCore::TransformationMatrix>(*other.transform);
 
     if (other.sublayerTransform)
-        sublayerTransform = std::make_unique<WebCore::TransformationMatrix>(*other.sublayerTransform);
+        sublayerTransform = makeUnique<WebCore::TransformationMatrix>(*other.sublayerTransform);
 
     if (other.filters)
-        filters = std::make_unique<WebCore::FilterOperations>(*other.filters);
+        filters = makeUnique<WebCore::FilterOperations>(*other.filters);
 }
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) const
@@ -354,7 +354,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(transform))
             return false;
         
-        result.transform = std::make_unique<WebCore::TransformationMatrix>(transform);
+        result.transform = makeUnique<WebCore::TransformationMatrix>(transform);
     }
 
     if (result.changedProperties & SublayerTransformChanged) {
@@ -362,7 +362,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(transform))
             return false;
 
-        result.sublayerTransform = std::make_unique<WebCore::TransformationMatrix>(transform);
+        result.sublayerTransform = makeUnique<WebCore::TransformationMatrix>(transform);
     }
 
     if (result.changedProperties & HiddenChanged) {
@@ -425,7 +425,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(roundedRect))
             return false;
         
-        result.shapeRoundedRect = std::make_unique<WebCore::FloatRoundedRect>(roundedRect);
+        result.shapeRoundedRect = makeUnique<WebCore::FloatRoundedRect>(roundedRect);
     }
 
     if (result.changedProperties & ShapePathChanged) {
@@ -471,7 +471,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(hasFrontBuffer))
             return false;
         if (hasFrontBuffer) {
-            auto backingStore = std::make_unique<RemoteLayerBackingStore>(nullptr);
+            auto backingStore = makeUnique<RemoteLayerBackingStore>(nullptr);
             if (!decoder.decode(*backingStore))
                 return false;
             
@@ -486,7 +486,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & FiltersChanged) {
-        auto filters = std::make_unique<WebCore::FilterOperations>();
+        auto filters = makeUnique<WebCore::FilterOperations>();
         if (!decoder.decode(*filters))
             return false;
         result.filters = WTFMove(filters);
@@ -602,7 +602,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         if (!decoder.decode(layerID))
             return false;
 
-        std::unique_ptr<LayerProperties> layerProperties = std::make_unique<LayerProperties>();
+        std::unique_ptr<LayerProperties> layerProperties = makeUnique<LayerProperties>();
         if (!decoder.decode(*layerProperties))
             return false;
 

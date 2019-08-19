@@ -806,7 +806,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
-    _smartMagnificationController = std::make_unique<WebKit::SmartMagnificationController>(self);
+    _smartMagnificationController = makeUnique<WebKit::SmartMagnificationController>(self);
     _isExpectingFastSingleTapCommit = NO;
     _potentialTapInProgress = NO;
     _isDoubleTapPending = NO;
@@ -821,7 +821,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-    _textCheckingController = std::make_unique<WebKit::TextCheckingController>(*_page);
+    _textCheckingController = makeUnique<WebKit::TextCheckingController>(*_page);
 #endif
 
     _hasSetUpInteractions = YES;
@@ -1196,7 +1196,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
         return NO;
 
     if (!_inputViewUpdateDeferrer)
-        _inputViewUpdateDeferrer = std::make_unique<WebKit::InputViewUpdateDeferrer>(self);
+        _inputViewUpdateDeferrer = makeUnique<WebKit::InputViewUpdateDeferrer>(self);
 
     BOOL didBecomeFirstResponder;
     {
@@ -5337,7 +5337,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         // Defer view updates until the end of this function to avoid a noticeable flash when switching focus
         // between elements that require the keyboard.
         if (!inputViewUpdateDeferrer)
-            inputViewUpdateDeferrer = std::make_unique<WebKit::InputViewUpdateDeferrer>(self);
+            inputViewUpdateDeferrer = makeUnique<WebKit::InputViewUpdateDeferrer>(self);
         [self _elementDidBlur];
     }
 

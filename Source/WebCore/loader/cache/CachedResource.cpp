@@ -546,7 +546,7 @@ bool CachedResource::addClientToSet(CachedResourceClient& client)
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
         // we schedule the callbacks and ensure we never finish synchronously.
         ASSERT(!m_clientsAwaitingCallback.contains(&client));
-        m_clientsAwaitingCallback.add(&client, std::make_unique<Callback>(*this, client));
+        m_clientsAwaitingCallback.add(&client, makeUnique<Callback>(*this, client));
         return false;
     }
 

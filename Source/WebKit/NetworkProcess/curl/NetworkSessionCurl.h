@@ -35,7 +35,7 @@ class NetworkSessionCurl final : public NetworkSession {
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     {
-        return std::make_unique<NetworkSessionCurl>(networkProcess, WTFMove(parameters));
+        return makeUnique<NetworkSessionCurl>(networkProcess, WTFMove(parameters));
     }
     NetworkSessionCurl(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionCurl();

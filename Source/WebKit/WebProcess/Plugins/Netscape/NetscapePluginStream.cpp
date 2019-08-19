@@ -193,7 +193,7 @@ void NetscapePluginStream::deliverData(const char* bytes, int length)
 
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
-            m_deliveryData = std::make_unique<Vector<uint8_t>>();
+            m_deliveryData = makeUnique<Vector<uint8_t>>();
 
         m_deliveryData->reserveCapacity(m_deliveryData->size() + length);
         m_deliveryData->append(bytes, length);

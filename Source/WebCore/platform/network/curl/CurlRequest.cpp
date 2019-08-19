@@ -185,7 +185,7 @@ void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& 
 void CurlRequest::runOnMainThread(Function<void()>&& task)
 {
     if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(task)));
+        m_messageQueue->append(makeUnique<Function<void()>>(WTFMove(task)));
     else if (isMainThread())
         task();
     else
@@ -205,7 +205,7 @@ CURL* CurlRequest::setupTransfer()
     auto httpHeaderFields = m_request.httpHeaderFields();
     appendAcceptLanguageHeader(httpHeaderFields);
 
-    m_curlHandle = std::make_unique<CurlHandle>();
+    m_curlHandle = makeUnique<CurlHandle>();
 
     m_curlHandle->setUrl(m_request.url());
 

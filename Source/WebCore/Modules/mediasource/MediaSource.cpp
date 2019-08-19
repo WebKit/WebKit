@@ -178,9 +178,9 @@ MediaTime MediaSource::currentTime() const
 std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
     if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
-        return std::make_unique<PlatformTimeRanges>(*m_buffered);
+        return makeUnique<PlatformTimeRanges>(*m_buffered);
 
-    m_buffered = std::make_unique<PlatformTimeRanges>();
+    m_buffered = makeUnique<PlatformTimeRanges>();
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(false);
 
@@ -190,7 +190,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 
     // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
     if (activeRanges.isEmpty())
-        return std::make_unique<PlatformTimeRanges>(*m_buffered);
+        return makeUnique<PlatformTimeRanges>(*m_buffered);
 
     // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
     // 3. Let highest end time be the largest range end time in the active ranges.
@@ -203,7 +203,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 
     // Return an empty range if all ranges are empty.
     if (!highestEndTime)
-        return std::make_unique<PlatformTimeRanges>(*m_buffered);
+        return makeUnique<PlatformTimeRanges>(*m_buffered);
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
     m_buffered->add(MediaTime::zeroTime(), highestEndTime);
@@ -221,7 +221,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
         m_buffered->intersectWith(sourceRanges);
     }
 
-    return std::make_unique<PlatformTimeRanges>(*m_buffered);
+    return makeUnique<PlatformTimeRanges>(*m_buffered);
 }
 
 void MediaSource::seekToTime(const MediaTime& time)
@@ -344,7 +344,7 @@ ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
 
     // Set live seekable range to be a new normalized TimeRanges object containing a single range
     // whose start position is start and end position is end.
-    m_liveSeekable = std::make_unique<PlatformTimeRanges>(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
+    m_liveSeekable = makeUnique<PlatformTimeRanges>(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
 
     return { };
 }

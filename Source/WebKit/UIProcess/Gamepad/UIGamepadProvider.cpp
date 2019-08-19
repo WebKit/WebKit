@@ -91,7 +91,7 @@ void UIGamepadProvider::setInitialConnectedGamepads(const Vector<PlatformGamepad
     for (auto* gamepad : initialGamepads) {
         if (!gamepad)
             continue;
-        m_gamepads[gamepad->index()] = std::make_unique<UIGamepad>(*gamepad);
+        m_gamepads[gamepad->index()] = makeUnique<UIGamepad>(*gamepad);
     }
 
     for (auto& pool : m_processPoolsUsingGamepads)
@@ -106,7 +106,7 @@ void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad)
         m_gamepads.grow(gamepad.index() + 1);
 
     ASSERT(!m_gamepads[gamepad.index()]);
-    m_gamepads[gamepad.index()] = std::make_unique<UIGamepad>(gamepad);
+    m_gamepads[gamepad.index()] = makeUnique<UIGamepad>(gamepad);
 
     scheduleGamepadStateSync();
 

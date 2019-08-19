@@ -65,7 +65,7 @@ PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
-    return std::make_unique<DrawingAreaProxyCoordinatedGraphics>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), process);
+    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), process);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)

@@ -118,5 +118,5 @@ private:
 
 void attachDownloadClientToContext(WebKitWebContext* webContext)
 {
-    webkitWebContextGetProcessPool(webContext).setDownloadClient(std::make_unique<DownloadClient>(webContext));
+    webkitWebContextGetProcessPool(webContext).setDownloadClient(makeUnique<DownloadClient>(webContext));
 }

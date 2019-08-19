@@ -155,7 +155,7 @@ const char* GeolocationController::supplementName()
 void provideGeolocationTo(Page* page, GeolocationClient& client)
 {
     ASSERT(page);
-    Supplement<Page>::provideTo(page, GeolocationController::supplementName(), std::make_unique<GeolocationController>(*page, client));
+    Supplement<Page>::provideTo(page, GeolocationController::supplementName(), makeUnique<GeolocationController>(*page, client));
 }
     
 } // namespace WebCore

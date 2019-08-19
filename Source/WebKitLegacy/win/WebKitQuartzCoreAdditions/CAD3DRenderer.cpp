@@ -224,7 +224,7 @@ std::unique_ptr<D3DPostProcessingContext> CAD3DRenderer::createD3DPostProcessing
     memcpy(overlayQuadBuffer, overlayQuadVertices, sizeof(overlayQuadVertices));
     overlayQuad->Unlock();
 
-    return std::make_unique<D3DPostProcessingContext>(sceneTexture, overlayQuad);
+    return makeUnique<D3DPostProcessingContext>(sceneTexture, overlayQuad);
 }
 
 // FIXME: <rdar://6507851> Share this code with CoreAnimation's

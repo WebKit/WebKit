@@ -136,10 +136,10 @@ std::unique_ptr<NetscapePluginX11> NetscapePluginX11::create(NetscapePlugin& plu
 
 #if PLATFORM(GTK)
     if (plugin.isWindowed())
-        return std::make_unique<NetscapePluginX11>(plugin, display, windowID);
+        return makeUnique<NetscapePluginX11>(plugin, display, windowID);
 #endif
 
-    return std::make_unique<NetscapePluginX11>(plugin, display);
+    return makeUnique<NetscapePluginX11>(plugin, display);
 }
 
 NetscapePluginX11::NetscapePluginX11(NetscapePlugin& plugin, Display* display)

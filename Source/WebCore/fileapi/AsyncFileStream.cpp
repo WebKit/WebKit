@@ -94,11 +94,11 @@ static void callOnFileThread(Function<void ()>&& function)
         });
     });
 
-    queue.get().append(std::make_unique<Function<void ()>>(WTFMove(function)));
+    queue.get().append(makeUnique<Function<void ()>>(WTFMove(function)));
 }
 
 AsyncFileStream::AsyncFileStream(FileStreamClient& client)
-    : m_internals(std::make_unique<Internals>(client))
+    : m_internals(makeUnique<Internals>(client))
 {
     ASSERT(isMainThread());
 }

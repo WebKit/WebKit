@@ -339,7 +339,7 @@ void HTMLElementStack::insertAbove(Ref<HTMLStackItem>&& item, ElementRecord& rec
             continue;
 
         ++m_stackDepth;
-        recordAbove->setNext(std::make_unique<ElementRecord>(WTFMove(item), recordAbove->releaseNext()));
+        recordAbove->setNext(makeUnique<ElementRecord>(WTFMove(item), recordAbove->releaseNext()));
         recordAbove->next()->element().beginParsingChildren();
         return;
     }
@@ -533,7 +533,7 @@ void HTMLElementStack::pushCommon(Ref<HTMLStackItem>&& item)
     ASSERT(m_rootNode);
 
     ++m_stackDepth;
-    m_top = std::make_unique<ElementRecord>(WTFMove(item), WTFMove(m_top));
+    m_top = makeUnique<ElementRecord>(WTFMove(item), WTFMove(m_top));
 }
 
 void HTMLElementStack::popCommon()

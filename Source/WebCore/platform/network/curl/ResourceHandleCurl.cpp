@@ -163,7 +163,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
 CurlResourceHandleDelegate* ResourceHandle::delegate()
 {
     if (!d->m_delegate)
-        d->m_delegate = std::make_unique<CurlResourceHandleDelegate>(*this);
+        d->m_delegate = makeUnique<CurlResourceHandleDelegate>(*this);
 
     return d->m_delegate.get();
 }

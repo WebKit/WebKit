@@ -130,7 +130,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
-    return std::make_unique<FontCustomPlatformData>(freeTypeFace, buffer);
+    return makeUnique<FontCustomPlatformData>(freeTypeFace, buffer);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

@@ -156,7 +156,7 @@ private:
 inline Watchpoint* FunctionRareData::createAllocationProfileClearingWatchpoint()
 {
     RELEASE_ASSERT(!hasAllocationProfileClearingWatchpoint());
-    m_allocationProfileClearingWatchpoint = std::make_unique<AllocationProfileClearingWatchpoint>(this);
+    m_allocationProfileClearingWatchpoint = makeUnique<AllocationProfileClearingWatchpoint>(this);
     return m_allocationProfileClearingWatchpoint.get();
 }
 

@@ -1575,7 +1575,7 @@ void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
 void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates()
 {
     if (!m_computedObjectAttributeCache)
-        m_computedObjectAttributeCache = std::make_unique<AXComputedObjectAttributeCache>();
+        m_computedObjectAttributeCache = makeUnique<AXComputedObjectAttributeCache>();
 }
 
 void AXObjectCache::stopCachingComputedObjectAttributes()

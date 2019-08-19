@@ -196,7 +196,7 @@ private:
 WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
 {
     WebKitWebExtension* extension = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, NULL));
-    bundle->setClient(std::make_unique<WebExtensionInjectedBundleClient>(extension));
+    bundle->setClient(makeUnique<WebExtensionInjectedBundleClient>(extension));
     return extension;
 }
 

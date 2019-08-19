@@ -40,7 +40,7 @@ namespace WebCore {
 // MediaPlayer Enigne Support
 void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    registrar([] (MediaPlayer* player) { return std::make_unique<MockMediaPlayerMediaSource>(player); }, getSupportedTypes,
+    registrar([] (MediaPlayer* player) { return makeUnique<MockMediaPlayerMediaSource>(player); }, getSupportedTypes,
         supportsType, 0, 0, 0, 0);
 }
 
@@ -166,7 +166,7 @@ std::unique_ptr<PlatformTimeRanges> MockMediaPlayerMediaSource::buffered() const
     if (m_mediaSourcePrivate)
         return m_mediaSourcePrivate->buffered();
 
-    return std::make_unique<PlatformTimeRanges>();
+    return makeUnique<PlatformTimeRanges>();
 }
 
 bool MockMediaPlayerMediaSource::didLoadingProgress() const

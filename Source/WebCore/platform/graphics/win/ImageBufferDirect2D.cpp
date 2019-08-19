@@ -112,8 +112,8 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         return;
 
     // Note: This places the bitmapcontext into a locked state because of the BeginDraw call in the constructor.
-    m_data.platformContext = std::make_unique<PlatformContextDirect2D>(bitmapContext.get());
-    m_data.context = std::make_unique<GraphicsContext>(m_data.platformContext.get(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    m_data.platformContext = makeUnique<PlatformContextDirect2D>(bitmapContext.get());
+    m_data.context = makeUnique<GraphicsContext>(m_data.platformContext.get(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     success = true;
 }

@@ -95,7 +95,7 @@ RefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, int w
         numTiles = 0;
     }
 
-    auto textureIds = std::make_unique<Vector<unsigned>>(numTiles);
+    auto textureIds = makeUnique<Vector<unsigned>>(numTiles);
     textureIds->fill(0, numTiles);
 
     for (int i = 0; i < numTiles; i++) {

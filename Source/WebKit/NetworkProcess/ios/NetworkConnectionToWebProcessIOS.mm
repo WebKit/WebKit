@@ -38,7 +38,7 @@ namespace WebKit {
 WebPaymentCoordinatorProxy& NetworkConnectionToWebProcess::paymentCoordinator()
 {
     if (!m_paymentCoordinator)
-        m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
+        m_paymentCoordinator = makeUnique<WebPaymentCoordinatorProxy>(*this);
     return *m_paymentCoordinator;
 }
 
@@ -82,7 +82,7 @@ const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplication
 
 std::unique_ptr<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& coordinator, PKPaymentRequest *request)
 {
-    return std::make_unique<PaymentAuthorizationController>(coordinator, request);
+    return makeUnique<PaymentAuthorizationController>(coordinator, request);
 }
 
 void NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference&, IPC::MessageReceiver&)

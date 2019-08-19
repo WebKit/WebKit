@@ -201,7 +201,7 @@ void CSSPreloadScanner::emitRule()
         if (!url.isEmpty()) {
             URL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScanner via scan(): without it we will get relative URLs wrong.
             // FIXME: Should this be including the charset in the preload request?
-            m_requests->append(std::make_unique<PreloadRequest>("css", url, baseElementURL, CachedResource::Type::CSSStyleSheet, String(), PreloadRequest::ModuleScript::No, ReferrerPolicy::EmptyString));
+            m_requests->append(makeUnique<PreloadRequest>("css", url, baseElementURL, CachedResource::Type::CSSStyleSheet, String(), PreloadRequest::ModuleScript::No, ReferrerPolicy::EmptyString));
         }
         m_state = Initial;
     } else if (equalLettersIgnoringASCIICase(rule, "charset"))

@@ -65,7 +65,7 @@ void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, 
     ASSERT(!RunLoop::isMain());
 
     m_sessionStorageNamespaces.ensure(storageNamespaceID, [quotaInBytes] {
-        return std::make_unique<SessionStorageNamespace>(quotaInBytes);
+        return makeUnique<SessionStorageNamespace>(quotaInBytes);
     });
 }
 
@@ -232,7 +232,7 @@ LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t
         return nullptr;
 
     return m_localStorageNamespaces.ensure(storageNamespaceID, [this, storageNamespaceID]() {
-        return std::make_unique<LocalStorageNamespace>(*this, storageNamespaceID);
+        return makeUnique<LocalStorageNamespace>(*this, storageNamespaceID);
     }).iterator->value.get();
 }
 
@@ -244,7 +244,7 @@ TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorage
         return nullptr;
 
     return m_transientLocalStorageNamespaces.ensure({ storageNamespaceID, WTFMove(topLevelOrigin) }, [] {
-        return std::make_unique<TransientLocalStorageNamespace>();
+        return makeUnique<TransientLocalStorageNamespace>();
     }).iterator->value.get();
 }
 
@@ -257,7 +257,7 @@ SessionStorageNamespace* StorageManager::getOrCreateSessionStorageNamespace(uint
 
     return m_sessionStorageNamespaces.ensure(storageNamespaceID, [] {
         // We currently have no limit on session storage.
-        return std::make_unique<SessionStorageNamespace>(std::numeric_limits<unsigned>::max());
+        return makeUnique<SessionStorageNamespace>(std::numeric_limits<unsigned>::max());
     }).iterator->value.get();
 }
 

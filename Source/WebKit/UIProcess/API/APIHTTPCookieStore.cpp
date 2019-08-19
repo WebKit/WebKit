@@ -148,7 +148,7 @@ void HTTPCookieStore::registerObserver(Observer& observer)
 
     ASSERT(!m_observedCookieManagerProxy);
 
-    m_cookieManagerProxyObserver = std::make_unique<APIWebCookieManagerProxyObserver>(*this);
+    m_cookieManagerProxyObserver = makeUnique<APIWebCookieManagerProxyObserver>(*this);
 
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
 

@@ -61,7 +61,7 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
     LOG(Gamepad, "GameControllerGamepadProvider controller %p added", controller);
 
     unsigned index = indexForNewlyConnectedDevice();
-    auto gamepad = std::make_unique<GameControllerGamepad>(controller, index);
+    auto gamepad = makeUnique<GameControllerGamepad>(controller, index);
 
     if (m_gamepadVector.size() <= index)
         m_gamepadVector.grow(index + 1);

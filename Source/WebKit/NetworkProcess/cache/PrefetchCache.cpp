@@ -73,8 +73,8 @@ static const Seconds expirationTimeout { 5_s };
 void PrefetchCache::store(const URL& requestUrl, WebCore::ResourceResponse&& response, RefPtr<WebCore::SharedBuffer>&& buffer)
 {
     if (!m_sessionPrefetches)
-        m_sessionPrefetches = std::make_unique<PrefetchEntriesMap>();
-    auto addResult = m_sessionPrefetches->add(requestUrl, std::make_unique<PrefetchCache::Entry>(WTFMove(response), WTFMove(buffer)));
+        m_sessionPrefetches = makeUnique<PrefetchEntriesMap>();
+    auto addResult = m_sessionPrefetches->add(requestUrl, makeUnique<PrefetchCache::Entry>(WTFMove(response), WTFMove(buffer)));
     // Limit prefetches for same url to 1.
     if (!addResult.isNewEntry)
         return;
@@ -86,9 +86,9 @@ void PrefetchCache::store(const URL& requestUrl, WebCore::ResourceResponse&& res
 void PrefetchCache::storeRedirect(const URL& requestUrl, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& redirectRequest)
 {
     if (!m_sessionPrefetches)
-        m_sessionPrefetches = std::make_unique<PrefetchEntriesMap>();
+        m_sessionPrefetches = makeUnique<PrefetchEntriesMap>();
     redirectRequest.clearPurpose();
-    m_sessionPrefetches->set(requestUrl, std::make_unique<PrefetchCache::Entry>(WTFMove(redirectResponse), WTFMove(redirectRequest)));
+    m_sessionPrefetches->set(requestUrl, makeUnique<PrefetchCache::Entry>(WTFMove(redirectResponse), WTFMove(redirectRequest)));
     m_sessionExpirationList.append(std::make_tuple(requestUrl, WallTime::now()));
     if (!m_expirationTimer.isActive())
         m_expirationTimer.startOneShot(expirationTimeout);

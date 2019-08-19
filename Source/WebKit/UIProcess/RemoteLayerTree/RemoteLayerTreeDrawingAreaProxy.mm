@@ -107,7 +107,7 @@ using namespace WebCore;
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& process)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy, process)
-    , m_remoteLayerTreeHost(std::make_unique<RemoteLayerTreeHost>(*this))
+    , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
 {
 #if HAVE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.
@@ -376,7 +376,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
 void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 {
-    m_debugIndicatorLayerTreeHost = std::make_unique<RemoteLayerTreeHost>(*this);
+    m_debugIndicatorLayerTreeHost = makeUnique<RemoteLayerTreeHost>(*this);
     m_debugIndicatorLayerTreeHost->setIsDebugLayerTreeHost(true);
 
     m_tileMapHostLayer = adoptNS([[CALayer alloc] init]);

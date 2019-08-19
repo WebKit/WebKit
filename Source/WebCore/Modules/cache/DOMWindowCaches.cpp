@@ -49,7 +49,7 @@ DOMWindowCaches* DOMWindowCaches::from(DOMWindow* window)
 {
     auto* supplement = static_cast<DOMWindowCaches*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<DOMWindowCaches>(window);
+        auto newSupplement = makeUnique<DOMWindowCaches>(window);
         supplement = newSupplement.get();
         provideTo(window, supplementName(), WTFMove(newSupplement));
     }

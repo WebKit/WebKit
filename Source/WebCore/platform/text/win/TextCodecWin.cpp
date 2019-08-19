@@ -131,7 +131,7 @@ static UINT getCodePage(const char* name)
 
 static std::unique_ptr<TextCodec> newTextCodecWin(const TextEncoding& encoding, const void*)
 {
-    return std::make_unique<TextCodecWin>(getCodePage(encoding.name()));
+    return makeUnique<TextCodecWin>(getCodePage(encoding.name()));
 }
 
 TextCodecWin::TextCodecWin(UINT codePage)

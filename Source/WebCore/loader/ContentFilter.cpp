@@ -78,7 +78,7 @@ std::unique_ptr<ContentFilter> ContentFilter::create(DocumentLoader& documentLoa
     if (filters.isEmpty())
         return nullptr;
 
-    return std::make_unique<ContentFilter>(WTFMove(filters), documentLoader);
+    return makeUnique<ContentFilter>(WTFMove(filters), documentLoader);
 }
 
 ContentFilter::ContentFilter(Container&& contentFilters, DocumentLoader& documentLoader)

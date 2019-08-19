@@ -1241,7 +1241,7 @@ private:
     void print(Value* origin, Arguments&&... arguments)
     {
         auto printList = Printer::makePrintRecordList(arguments...);
-        auto printSpecial = static_cast<Air::PrintSpecial*>(m_code.addSpecial(std::make_unique<Air::PrintSpecial>(printList)));
+        auto printSpecial = static_cast<Air::PrintSpecial*>(m_code.addSpecial(makeUnique<Air::PrintSpecial>(printList)));
         Inst inst(Air::Patch, origin, Arg::special(printSpecial));
         Printer::appendAirArgs(inst, std::forward<Arguments>(arguments)...);
         append(WTFMove(inst));
@@ -1308,7 +1308,7 @@ private:
     {
         if (!field) {
             field = static_cast<T*>(
-                m_code.addSpecial(std::make_unique<T>(std::forward<Arguments>(arguments)...)));
+                m_code.addSpecial(makeUnique<T>(std::forward<Arguments>(arguments)...)));
         }
         return field;
     }

@@ -69,7 +69,7 @@
         return self;
     
     _private = [[WebTextIteratorPrivate alloc] init];
-    _private->_textIterator = std::make_unique<WebCore::TextIterator>(core(range));
+    _private->_textIterator = makeUnique<WebCore::TextIterator>(core(range));
     return self;
 }
 

@@ -757,7 +757,7 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if PLATFORM(MAC)
-    _impl = std::make_unique<WebKit::WebViewImpl>(self, self, processPool, pageConfiguration.copyRef());
+    _impl = makeUnique<WebKit::WebViewImpl>(self, self, processPool, pageConfiguration.copyRef());
     _page = &_impl->page();
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
@@ -769,14 +769,14 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _page->setApplicationNameForDesktopUserAgent(configuration._applicationNameForDesktopUserAgent);
 
-    _navigationState = std::make_unique<WebKit::NavigationState>(self);
+    _navigationState = makeUnique<WebKit::NavigationState>(self);
     _page->setNavigationClient(_navigationState->createNavigationClient());
 
-    _uiDelegate = std::make_unique<WebKit::UIDelegate>(self);
-    _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
-    _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
+    _uiDelegate = makeUnique<WebKit::UIDelegate>(self);
+    _page->setFindClient(makeUnique<WebKit::FindClient>(self));
+    _page->setDiagnosticLoggingClient(makeUnique<WebKit::DiagnosticLoggingClient>(self));
 
-    _iconLoadingDelegate = std::make_unique<WebKit::IconLoadingDelegate>(self);
+    _iconLoadingDelegate = makeUnique<WebKit::IconLoadingDelegate>(self);
 
     _usePlatformFindUI = YES;
 
@@ -3430,7 +3430,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
 
     if (allowsBackForwardNavigationGestures && !_gestureController) {
-        _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
+        _gestureController = makeUnique<WebKit::ViewGestureController>(*_page);
         _gestureController->installSwipeHandler(self, [self scrollView]);
         if (WKWebView *alternateWebView = [_configuration _alternateWebViewForNavigationGestures])
             _gestureController->setAlternateBackForwardListSourcePage(alternateWebView->_page.get());
@@ -5683,7 +5683,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     };
 
     if (inputDelegate)
-        _page->setFormClient(std::make_unique<FormClient>(self));
+        _page->setFormClient(makeUnique<FormClient>(self));
     else
         _page->setFormClient(nullptr);
 }

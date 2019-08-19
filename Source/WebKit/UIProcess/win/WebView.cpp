@@ -218,7 +218,7 @@ bool WebView::registerWebViewWindowClass()
 }
 
 WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND parentWindow)
-    : m_pageClient(std::make_unique<PageClientImpl>(*this))
+    : m_pageClient(makeUnique<PageClientImpl>(*this))
 {
     registerWebViewWindowClass();
 

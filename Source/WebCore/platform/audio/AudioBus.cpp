@@ -64,7 +64,7 @@ AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     m_channels.reserveInitialCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channel = allocate ? std::make_unique<AudioChannel>(length) : std::make_unique<AudioChannel>(nullptr, length);
+        auto channel = allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>(nullptr, length);
         m_channels.uncheckedAppend(WTFMove(channel));
     }
 
@@ -489,7 +489,7 @@ void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, f
 
     if (framesToDezipper) {
         if (!m_dezipperGainValues.get() || m_dezipperGainValues->size() < framesToDezipper)
-            m_dezipperGainValues = std::make_unique<AudioFloatArray>(framesToDezipper);
+            m_dezipperGainValues = makeUnique<AudioFloatArray>(framesToDezipper);
 
         float* gainValues = m_dezipperGainValues->data();
         for (unsigned i = 0; i < framesToDezipper; ++i) {

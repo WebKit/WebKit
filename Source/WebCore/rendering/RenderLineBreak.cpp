@@ -89,7 +89,7 @@ int RenderLineBreak::baselinePosition(FontBaseline baselineType, bool firstLine,
 
 std::unique_ptr<InlineElementBox> RenderLineBreak::createInlineBox()
 {
-    return std::make_unique<InlineElementBox>(*this);
+    return makeUnique<InlineElementBox>(*this);
 }
 
 void RenderLineBreak::setInlineBoxWrapper(InlineElementBox* inlineBox)

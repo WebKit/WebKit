@@ -56,7 +56,7 @@ MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(AudioContext& context, Me
     audioSourceProvider->setClient(this);
     
     // Default to stereo. This could change depending on the format of the MediaStream's audio track.
-    addOutput(std::make_unique<AudioNodeOutput>(this, 2));
+    addOutput(makeUnique<AudioNodeOutput>(this, 2));
 
     initialize();
 }
@@ -93,7 +93,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         m_multiChannelResampler = nullptr;
     else {
         double scaleFactor = sourceSampleRate / sampleRate;
-        m_multiChannelResampler = std::make_unique<MultiChannelResampler>(scaleFactor, numberOfChannels);
+        m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels);
     }
 
     m_sourceNumberOfChannels = numberOfChannels;

@@ -114,7 +114,7 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     allServiceWorkerThreadProxies().add(this);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_remoteDebuggable = std::make_unique<ServiceWorkerDebuggable>(*this, data);
+    m_remoteDebuggable = makeUnique<ServiceWorkerDebuggable>(*this, data);
     m_remoteDebuggable->setRemoteDebuggingAllowed(true);
     m_remoteDebuggable->init();
 #endif
@@ -168,7 +168,7 @@ Ref<CacheStorageConnection> ServiceWorkerThreadProxy::createCacheStorageConnecti
 
 std::unique_ptr<FetchLoader> ServiceWorkerThreadProxy::createBlobLoader(FetchLoaderClient& client, const URL& blobURL)
 {
-    auto loader = std::make_unique<FetchLoader>(client, nullptr);
+    auto loader = makeUnique<FetchLoader>(client, nullptr);
     loader->startLoadingBlobURL(m_document, blobURL);
     if (!loader->isStarted())
         return nullptr;

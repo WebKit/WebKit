@@ -98,7 +98,7 @@ class DidModifyOriginData {
 public:
     static void dispatchToMainThread(WebDatabaseManagerClient& client, const SecurityOriginData& origin)
     {
-        auto context = std::make_unique<DidModifyOriginData>(client, origin);
+        auto context = makeUnique<DidModifyOriginData>(client, origin);
         callOnMainThread([context = WTFMove(context)] {
             context->client.dispatchDidModifyOrigin(context->origin);
         });

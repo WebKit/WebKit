@@ -240,7 +240,7 @@ public:
     {
         coalesceTables();
 
-        auto characterClass = std::make_unique<CharacterClass>();
+        auto characterClass = makeUnique<CharacterClass>();
 
         characterClass->m_matches.swap(m_matches);
         characterClass->m_ranges.swap(m_ranges);
@@ -441,7 +441,7 @@ public:
         , m_characterClassConstructor(pattern.ignoreCase(), pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
         , m_stackLimit(stackLimit)
     {
-        auto body = std::make_unique<PatternDisjunction>();
+        auto body = makeUnique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
         m_pattern.m_disjunctions.append(WTFMove(body));
@@ -456,7 +456,7 @@ public:
         m_pattern.resetForReparsing();
         m_characterClassConstructor.reset();
 
-        auto body = std::make_unique<PatternDisjunction>();
+        auto body = makeUnique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
         m_pattern.m_disjunctions.append(WTFMove(body));
@@ -608,7 +608,7 @@ public:
         } else
             ASSERT(!optGroupName);
 
-        auto parenthesesDisjunction = std::make_unique<PatternDisjunction>(m_alternative);
+        auto parenthesesDisjunction = makeUnique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, false));
         m_alternative = parenthesesDisjunction->addNewAlternative();
         m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
@@ -616,7 +616,7 @@ public:
 
     void atomParentheticalAssertionBegin(bool invert = false)
     {
-        auto parenthesesDisjunction = std::make_unique<PatternDisjunction>(m_alternative);
+        auto parenthesesDisjunction = makeUnique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction.get(), false, invert));
         m_alternative = parenthesesDisjunction->addNewAlternative();
         m_invertParentheticalAssertion = invert;
@@ -707,7 +707,7 @@ public:
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
             if (!filterStartsWithBOL || !alternative->m_startsWithBOL) {
                 if (!newDisjunction) {
-                    newDisjunction = std::make_unique<PatternDisjunction>();
+                    newDisjunction = makeUnique<PatternDisjunction>();
                     newDisjunction->m_parent = disjunction->m_parent;
                 }
                 PatternAlternative* newAlternative = newDisjunction->addNewAlternative();
@@ -1473,7 +1473,7 @@ void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
 
 std::unique_ptr<CharacterClass> anycharCreate()
 {
-    auto characterClass = std::make_unique<CharacterClass>();
+    auto characterClass = makeUnique<CharacterClass>();
     characterClass->m_ranges.append(CharacterRange(0x00, 0x7f));
     characterClass->m_rangesUnicode.append(CharacterRange(0x0080, 0x10ffff));
     characterClass->m_characterWidths = CharacterClassWidths::HasBothBMPAndNonBMP;

@@ -791,7 +791,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     // Entry point to https://fetch.spec.whatwg.org/#main-fetch.
     std::unique_ptr<ResourceRequest> originalRequest;
     if (CachedResource::shouldUsePingLoad(type) || request.options().destination == FetchOptions::Destination::EmptyString) {
-        originalRequest = std::make_unique<ResourceRequest>(request.resourceRequest());
+        originalRequest = makeUnique<ResourceRequest>(request.resourceRequest());
         originalRequest->clearHTTPReferrer();
         originalRequest->clearHTTPOrigin();
     }
@@ -1391,7 +1391,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::prel
         resourceValue->increasePreloadCount();
 
         if (!m_preloads)
-            m_preloads = std::make_unique<ListHashSet<CachedResource*>>();
+            m_preloads = makeUnique<ListHashSet<CachedResource*>>();
         m_preloads->add(resourceValue.get());
     }
     return resource;
@@ -1433,7 +1433,7 @@ void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
         ASSERT(resource);
         if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource->isLinkPreload()) {
             if (!remainingLinkPreloads)
-                remainingLinkPreloads = std::make_unique<ListHashSet<CachedResource*>>();
+                remainingLinkPreloads = makeUnique<ListHashSet<CachedResource*>>();
             remainingLinkPreloads->add(resource);
             continue;
         }

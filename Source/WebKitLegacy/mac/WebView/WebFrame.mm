@@ -378,7 +378,7 @@ static NSURL *createUniqueWebDataURL();
         return;
     }
 
-    _private->scriptDebugger = std::make_unique<WebScriptDebugger>(globalObject);
+    _private->scriptDebugger = makeUnique<WebScriptDebugger>(globalObject);
 }
 
 - (void)_detachScriptDebugger

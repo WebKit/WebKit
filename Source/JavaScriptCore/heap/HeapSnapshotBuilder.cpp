@@ -65,7 +65,7 @@ void HeapSnapshotBuilder::buildSnapshot()
 
     PreventCollectionScope preventCollectionScope(m_profiler.vm().heap);
 
-    m_snapshot = std::make_unique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
+    m_snapshot = makeUnique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
     {
         m_profiler.setActiveSnapshotBuilder(this);
         m_profiler.vm().heap.collectNow(Sync, CollectionScope::Full);

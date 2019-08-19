@@ -82,6 +82,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
 #include <wtf/UUID.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -479,7 +480,7 @@ void TestController::initialize(int argc, const char* argv[])
     WKRetainPtr<WKStringRef> pageGroupIdentifier = adoptWK(WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 
-    m_eventSenderProxy = std::make_unique<EventSenderProxy>(this);
+    m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 }
 
 WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions::ContextOptions& options) const
@@ -521,7 +522,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get())).get(), contextConfiguration.get());
         m_contextOptions = options.contextOptions;
 
-        m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
+        m_geolocationProvider = makeUnique<GeolocationProviderMock>(m_context.get());
 
         if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
             String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
@@ -954,7 +955,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.
-    m_eventSenderProxy = std::make_unique<EventSenderProxy>(this);
+    m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 
     // FIXME: Is this needed? Nothing in TestController changes preferences during tests, and if there is
     // some other code doing this, it should probably be responsible for cleanup too.
@@ -1235,13 +1236,13 @@ static WKURLRef createTestURL(const char* pathOrURL)
     const char* filePrefix = "file://";
     static const size_t prefixLength = strlen(filePrefix);
 
-    std::unique_ptr<char[]> buffer;
+    UniqueArray<char> buffer;
     if (isAbsolutePath) {
-        buffer = std::make_unique<char[]>(prefixLength + length + 1);
+        buffer = makeUniqueArray<char>(prefixLength + length + 1);
         strcpy(buffer.get(), filePrefix);
         strcpy(buffer.get() + prefixLength, pathOrURL);
     } else {
-        buffer = std::make_unique<char[]>(prefixLength + PATH_MAX + length + 2); // 1 for the pathSeparator
+        buffer = makeUniqueArray<char>(prefixLength + PATH_MAX + length + 2); // 1 for the pathSeparator
         strcpy(buffer.get(), filePrefix);
         if (!getcwd(buffer.get() + prefixLength, PATH_MAX))
             return 0;
@@ -1651,7 +1652,7 @@ bool TestController::runTest(const char* inputLine)
     TestOptions options = testOptionsForTest(command);
 
     WKRetainPtr<WKURLRef> wkURL = adoptWK(createTestURL(command.pathOrURL.c_str()));
-    m_currentInvocation = std::make_unique<TestInvocation>(wkURL.get(), options);
+    m_currentInvocation = makeUnique<TestInvocation>(wkURL.get(), options);
 
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
@@ -2963,7 +2964,7 @@ void TestController::platformWillRunTest(const TestInvocation&)
 
 void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const TestOptions& options)
 {
-    m_mainWebView = std::make_unique<PlatformWebView>(configuration, options);
+    m_mainWebView = makeUnique<PlatformWebView>(configuration, options);
 }
 
 PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const TestOptions& options)

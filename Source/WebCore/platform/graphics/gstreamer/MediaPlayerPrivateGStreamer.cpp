@@ -116,7 +116,7 @@ void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar regis
 {
     MediaPlayerPrivateGStreamerBase::initializeDebugCategory();
     if (isAvailable()) {
-        registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateGStreamer>(player); },
+        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateGStreamer>(player); },
             getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
     }
 }
@@ -1140,7 +1140,7 @@ void MediaPlayerPrivateGStreamer::setPreservesPitch(bool preservesPitch)
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 {
-    auto timeRanges = std::make_unique<PlatformTimeRanges>();
+    auto timeRanges = makeUnique<PlatformTimeRanges>();
     if (m_errorOccured || isLiveStream())
         return timeRanges;
 
@@ -2376,7 +2376,7 @@ GstElement* MediaPlayerPrivateGStreamer::audioSink() const
 void MediaPlayerPrivateGStreamer::ensureAudioSourceProvider()
 {
     if (!m_audioSourceProvider)
-        m_audioSourceProvider = std::make_unique<AudioSourceProviderGStreamer>();
+        m_audioSourceProvider = makeUnique<AudioSourceProviderGStreamer>();
 }
 
 AudioSourceProvider* MediaPlayerPrivateGStreamer::audioSourceProvider()

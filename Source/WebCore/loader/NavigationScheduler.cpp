@@ -397,7 +397,7 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
     // We want a new back/forward list item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay()) {
         auto lockBackForwardList = delay <= 1 ? LockBackForwardList::Yes : LockBackForwardList::No;
-        schedule(std::make_unique<ScheduledRedirect>(initiatingDocument, delay, &m_frame.document()->securityOrigin(), url, LockHistory::Yes, lockBackForwardList));
+        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, &m_frame.document()->securityOrigin(), url, LockHistory::Yes, lockBackForwardList));
     }
 }
 
@@ -445,7 +445,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = !loader.stateMachine().committedFirstRealDocumentLoad();
 
-    schedule(std::make_unique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, WTFMove(completionHandler)));
+    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, WTFMove(completionHandler)));
 }
 
 void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submission)
@@ -468,7 +468,7 @@ void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submissio
         lockBackForwardList = LockBackForwardList::Yes;
     }
     
-    schedule(std::make_unique<ScheduledFormSubmission>(WTFMove(submission), lockBackForwardList, duringLoad));
+    schedule(makeUnique<ScheduledFormSubmission>(WTFMove(submission), lockBackForwardList, duringLoad));
 }
 
 void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)
@@ -479,7 +479,7 @@ void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)
     if (url.isEmpty())
         return;
 
-    schedule(std::make_unique<ScheduledRefresh>(initiatingDocument, &m_frame.document()->securityOrigin(), url, m_frame.loader().outgoingReferrer()));
+    schedule(makeUnique<ScheduledRefresh>(initiatingDocument, &m_frame.document()->securityOrigin(), url, m_frame.loader().outgoingReferrer()));
 }
 
 void NavigationScheduler::scheduleHistoryNavigation(int steps)
@@ -498,13 +498,13 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     }
 
     // In all other cases, schedule the history traversal to occur asynchronously.
-    schedule(std::make_unique<ScheduledHistoryNavigation>(steps));
+    schedule(makeUnique<ScheduledHistoryNavigation>(steps));
 }
 
 void NavigationScheduler::schedulePageBlock(Document& originDocument)
 {
     if (shouldScheduleNavigation())
-        schedule(std::make_unique<ScheduledPageBlock>(originDocument));
+        schedule(makeUnique<ScheduledPageBlock>(originDocument));
 }
 
 void NavigationScheduler::timerFired()

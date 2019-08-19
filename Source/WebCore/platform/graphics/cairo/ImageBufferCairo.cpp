@@ -165,7 +165,7 @@ void ImageBufferData::swapBuffersIfNeeded()
             [this](TextureMapperPlatformLayerProxy& proxy)
             {
                 LockHolder holder(proxy.lock());
-                proxy.pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_compositorTexture, m_size, TextureMapperGL::ShouldBlend, GL_RGBA));
+                proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_compositorTexture, m_size, TextureMapperGL::ShouldBlend, GL_RGBA));
             };
 #if USE(NICOSIA)
         proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
@@ -308,7 +308,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(m_data.m_surface.get()));
     m_data.m_platformContext.setCr(cr.get());
-    m_data.m_context = std::make_unique<GraphicsContext>(GraphicsContextImplCairo::createFactory(m_data.m_platformContext));
+    m_data.m_context = makeUnique<GraphicsContext>(GraphicsContextImplCairo::createFactory(m_data.m_platformContext));
     success = true;
 }
 

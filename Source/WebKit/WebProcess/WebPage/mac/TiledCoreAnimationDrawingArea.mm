@@ -87,7 +87,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     [m_hostingLayer setOpaque:YES];
     [m_hostingLayer setGeometryFlipped:YES];
 
-    m_layerFlushRunLoopObserver = std::make_unique<WebCore::RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
+    m_layerFlushRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
         this->layerFlushRunLoopCallback();
     });
 

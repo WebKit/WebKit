@@ -80,7 +80,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
         dataLog("Creating BlockDirectory/LocalAllocator for ", m_name, ", ", attributes(), ", ", sizeClass, ".\n");
     
     std::unique_ptr<BlockDirectory> uniqueDirectory =
-        std::make_unique<BlockDirectory>(m_space.heap(), sizeClass);
+        makeUnique<BlockDirectory>(m_space.heap(), sizeClass);
     BlockDirectory* directory = uniqueDirectory.get();
     m_directories.append(WTFMove(uniqueDirectory));
     
@@ -88,7 +88,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     m_space.addBlockDirectory(locker, directory);
     
     std::unique_ptr<LocalAllocator> uniqueLocalAllocator =
-        std::make_unique<LocalAllocator>(directory);
+        makeUnique<LocalAllocator>(directory);
     LocalAllocator* localAllocator = uniqueLocalAllocator.get();
     m_localAllocators.append(WTFMove(uniqueLocalAllocator));
     

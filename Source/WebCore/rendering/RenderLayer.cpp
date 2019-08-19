@@ -700,7 +700,7 @@ void RenderLayer::updateNormalFlowList()
         // Ignore non-overflow layers and reflections.
         if (child->isNormalFlowOnly() && !isReflectionLayer(*child)) {
             if (!m_normalFlowList)
-                m_normalFlowList = std::make_unique<Vector<RenderLayer*>>();
+                m_normalFlowList = makeUnique<Vector<RenderLayer*>>();
             m_normalFlowList->append(child);
         }
     }
@@ -756,7 +756,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector
     if (includeHiddenLayer && !isNormalFlowOnly()) {
         auto& layerList = (zIndex() >= 0) ? positiveZOrderList : negativeZOrderList;
         if (!layerList)
-            layerList = std::make_unique<Vector<RenderLayer*>>();
+            layerList = makeUnique<Vector<RenderLayer*>>();
         layerList->append(this);
     }
 
@@ -1206,7 +1206,7 @@ void RenderLayer::updateTransform()
     bool hadTransform = !!m_transform;
     if (hasTransform != hadTransform) {
         if (hasTransform)
-            m_transform = std::make_unique<TransformationMatrix>();
+            m_transform = makeUnique<TransformationMatrix>();
         else
             m_transform = nullptr;
         
@@ -5527,7 +5527,7 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
     }
     
     if (!m_clipRectsCache)
-        m_clipRectsCache = std::make_unique<ClipRectsCache>();
+        m_clipRectsCache = makeUnique<ClipRectsCache>();
 #ifndef NDEBUG
     m_clipRectsCache->m_clipRectsRoot[clipRectsType] = clipRectsContext.rootLayer;
     m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] = clipRectsContext.overlayScrollbarSizeRelevancy;
@@ -6105,7 +6105,7 @@ void RenderLayer::clearClipRects(ClipRectsType typeToClear)
 RenderLayerBacking* RenderLayer::ensureBacking()
 {
     if (!m_backing) {
-        m_backing = std::make_unique<RenderLayerBacking>(*this);
+        m_backing = makeUnique<RenderLayerBacking>(*this);
         compositor().layerBecameComposited(*this);
 
         updateFilterPaintingStrategy();
@@ -6523,7 +6523,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
     if (renderer().isHTMLMarquee() && renderer().style().marqueeBehavior() != MarqueeBehavior::None && renderer().isBox()) {
         if (!m_marquee)
-            m_marquee = std::make_unique<RenderMarquee>(this);
+            m_marquee = makeUnique<RenderMarquee>(this);
         m_marquee->updateMarqueeStyle();
     } else if (m_marquee)
         m_marquee = nullptr;
@@ -6735,7 +6735,7 @@ void RenderLayer::ensureLayerFilters()
     if (m_filters)
         return;
     
-    m_filters = std::make_unique<RenderLayerFilters>(*this);
+    m_filters = makeUnique<RenderLayerFilters>(*this);
 }
 
 void RenderLayer::clearLayerFilters()

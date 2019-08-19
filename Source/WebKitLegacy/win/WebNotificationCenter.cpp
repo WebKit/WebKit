@@ -54,7 +54,7 @@ struct WebNotificationCenterPrivate {
 IWebNotificationCenter* WebNotificationCenter::m_defaultCenter = 0;
 
 WebNotificationCenter::WebNotificationCenter()
-    : d(std::make_unique<WebNotificationCenterPrivate>())
+    : d(makeUnique<WebNotificationCenterPrivate>())
 {
     gClassCount++;
     gClassNameCount().add("WebNotificationCenter");

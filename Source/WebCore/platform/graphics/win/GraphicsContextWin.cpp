@@ -95,7 +95,7 @@ GraphicsContext::WindowsBitmap::~WindowsBitmap()
 
 std::unique_ptr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(const IntSize& size)
 {
-    return std::make_unique<WindowsBitmap>(m_data->m_hdc, size);
+    return makeUnique<WindowsBitmap>(m_data->m_hdc, size);
 }
 #endif
 

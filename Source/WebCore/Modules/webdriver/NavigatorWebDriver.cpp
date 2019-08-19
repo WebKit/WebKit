@@ -56,7 +56,7 @@ NavigatorWebDriver* NavigatorWebDriver::from(Navigator* navigator)
 {
     NavigatorWebDriver* supplement = static_cast<NavigatorWebDriver*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorWebDriver>();
+        auto newSupplement = makeUnique<NavigatorWebDriver>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

@@ -61,7 +61,7 @@ ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action)
 
 void InspectorHistory::markUndoableState()
 {
-    perform(std::make_unique<UndoableStateMark>());
+    perform(makeUnique<UndoableStateMark>());
 }
 
 ExceptionOr<void> InspectorHistory::undo()

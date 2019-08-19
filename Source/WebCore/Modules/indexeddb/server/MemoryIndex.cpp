@@ -194,7 +194,7 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
     LOG(IndexedDB, "MemoryIndex::provisionalPutIndexKey");
 
     if (!m_records) {
-        m_records = std::make_unique<IndexValueStore>(m_info.unique());
+        m_records = makeUnique<IndexValueStore>(m_info.unique());
         notifyCursorsOfAllRecordsChanged();
     }
 
@@ -259,7 +259,7 @@ MemoryIndexCursor* MemoryIndex::maybeOpenCursor(const IDBCursorInfo& info)
     if (!result.isNewEntry)
         return nullptr;
 
-    result.iterator->value = std::make_unique<MemoryIndexCursor>(*this, info);
+    result.iterator->value = makeUnique<MemoryIndexCursor>(*this, info);
     return result.iterator->value.get();
 }
 

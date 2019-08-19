@@ -119,7 +119,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
         familyList->append(CSSValuePool::singleton().createFontFamilyValue(familyName));
         face->setFamilies(familyList.get());
         face->setFontSelectionCapabilities(item);
-        face->adoptSource(std::make_unique<CSSFontFaceSource>(face.get(), familyName));
+        face->adoptSource(makeUnique<CSSFontFaceSource>(face.get(), familyName));
         ASSERT(!face->computeFailureState());
         faces.append(WTFMove(face));
     }

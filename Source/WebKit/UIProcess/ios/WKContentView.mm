@@ -167,7 +167,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     _page->setDelegatesScrolling(true);
 
 #if ENABLE(FULLSCREEN_API)
-    _page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>(_webView));
+    _page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(_webView));
 #endif
 
     WebKit::WebProcessPool::statistics().wkViewCount++;
@@ -239,7 +239,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     WebKit::InitializeWebKit2();
 
-    _pageClient = std::make_unique<WebKit::PageClientImpl>(self, webView);
+    _pageClient = makeUnique<WebKit::PageClientImpl>(self, webView);
     _webView = webView;
 
     return [self _commonInitializationWithProcessPool:processPool configuration:WTFMove(configuration)];
@@ -541,7 +541,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process
 {
-    return std::make_unique<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page, process);
+    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page, process);
 }
 
 - (void)_processDidExit

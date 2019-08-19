@@ -362,7 +362,7 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     auto mapAddResult = m_methods.add(name.impl(), nullptr);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->value = std::make_unique<ProxyMethod>(methodName);
+        mapAddResult.iterator->value = makeUnique<ProxyMethod>(methodName);
 
     return mapAddResult.iterator->value.get();
 }
@@ -397,7 +397,7 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     auto mapAddResult = m_fields.add(name.impl(), nullptr);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->value = std::make_unique<ProxyField>(identifier);
+        mapAddResult.iterator->value = makeUnique<ProxyField>(identifier);
     return mapAddResult.iterator->value.get();
 }
 

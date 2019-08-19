@@ -136,7 +136,7 @@ void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::Sess
         return;
     }
 
-    auto pendingRequest = std::make_unique<PendingRegistrationRequest>(makeRef(m_connection.connection()), requestIdentifier, WTFMove(name), sessionID);
+    auto pendingRequest = makeUnique<PendingRegistrationRequest>(makeRef(m_connection.connection()), requestIdentifier, WTFMove(name), sessionID);
     auto* record = &pendingRequest->record;
     auto error = DNSServiceRegisterRecord(service,
         record,

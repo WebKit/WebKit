@@ -650,7 +650,7 @@ bool TextIterator::handleTextNode()
         unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
         if (!m_flowRunResolverCache || &m_flowRunResolverCache->flow() != &blockFlow) {
             m_accumulatedSimpleTextLengthInFlow = m_flowRunResolverCache ? 0 : textNodeOffsetInFlow(textNode);
-            m_flowRunResolverCache = std::make_unique<SimpleLineLayout::RunResolver>(blockFlow, *layout);
+            m_flowRunResolverCache = makeUnique<SimpleLineLayout::RunResolver>(blockFlow, *layout);
         }
         // Skip to m_offset position.
         auto range = m_flowRunResolverCache->rangeForRenderer(renderer);

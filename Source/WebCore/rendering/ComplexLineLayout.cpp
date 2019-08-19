@@ -82,7 +82,7 @@ static void determineDirectionality(TextDirection& dir, InlineIterator iter)
 
 inline std::unique_ptr<BidiRun> createRun(int start, int end, RenderObject& obj, InlineBidiResolver& resolver)
 {
-    return std::make_unique<BidiRun>(start, end, obj, resolver.context(), resolver.dir());
+    return makeUnique<BidiRun>(start, end, obj, resolver.context(), resolver.dir());
 }
 
 void ComplexLineLayout::appendRunsForObject(BidiRunList<BidiRun>* runs, int start, int end, RenderObject& obj, InlineBidiResolver& resolver)
@@ -130,12 +130,12 @@ void ComplexLineLayout::appendRunsForObject(BidiRunList<BidiRun>* runs, int star
 std::unique_ptr<RootInlineBox> ComplexLineLayout::createRootInlineBox()
 {
     if (is<RenderSVGText>(m_flow)) {
-        auto box = std::make_unique<SVGRootInlineBox>(downcast<RenderSVGText>(m_flow));
+        auto box = makeUnique<SVGRootInlineBox>(downcast<RenderSVGText>(m_flow));
         box->setHasVirtualLogicalHeight();
         return box;
     }
         
-    return std::make_unique<RootInlineBox>(m_flow);
+    return makeUnique<RootInlineBox>(m_flow);
 }
 
 RootInlineBox* ComplexLineLayout::createAndAppendRootInlineBox()
@@ -1085,7 +1085,7 @@ inline BidiRun* ComplexLineLayout::handleTrailingSpaces(BidiRunList<BidiRun>& bi
         while (BidiContext* parent = baseContext->parent())
             baseContext = parent;
 
-        std::unique_ptr<BidiRun> newTrailingRun = std::make_unique<BidiRun>(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->renderer(), baseContext, U_OTHER_NEUTRAL);
+        std::unique_ptr<BidiRun> newTrailingRun = makeUnique<BidiRun>(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->renderer(), baseContext, U_OTHER_NEUTRAL);
         trailingSpaceRun->m_stop = firstSpace;
         trailingSpaceRun = newTrailingRun.get();
         if (direction == TextDirection::LTR)
@@ -1617,7 +1617,7 @@ void ComplexLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         if (layoutState.checkForFloatsFromLastLine()) {
             LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
-            auto newLineBox = std::make_unique<TrailingFloatsRootInlineBox>(m_flow);
+            auto newLineBox = makeUnique<TrailingFloatsRootInlineBox>(m_flow);
             auto trailingFloatsLineBox = newLineBox.get();
             m_lineBoxes.appendLineBox(WTFMove(newLineBox));
             trailingFloatsLineBox->setConstructed();

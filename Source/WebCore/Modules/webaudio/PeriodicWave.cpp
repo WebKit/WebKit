@@ -192,7 +192,7 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
         realP[0] = 0;
 
         // Create the band-limited table.
-        m_bandLimitedTables.append(std::make_unique<AudioFloatArray>(m_periodicWaveSize));
+        m_bandLimitedTables.append(makeUnique<AudioFloatArray>(m_periodicWaveSize));
 
         // Apply an inverse FFT to generate the time-domain table data.
         float* data = m_bandLimitedTables[rangeIndex]->data();

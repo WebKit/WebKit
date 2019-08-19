@@ -45,7 +45,7 @@ DOMCSSPaintWorklet* DOMCSSPaintWorklet::from(DOMCSSNamespace& css)
 {
     auto* supplement = static_cast<DOMCSSPaintWorklet*>(Supplement<DOMCSSNamespace>::from(&css, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<DOMCSSPaintWorklet>(css);
+        auto newSupplement = makeUnique<DOMCSSPaintWorklet>(css);
         supplement = newSupplement.get();
         provideTo(&css, supplementName(), WTFMove(newSupplement));
     }

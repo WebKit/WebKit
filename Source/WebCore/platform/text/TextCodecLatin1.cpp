@@ -93,7 +93,7 @@ void TextCodecLatin1::registerEncodingNames(EncodingNameRegistrar registrar)
 void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("windows-1252", [] {
-        return std::make_unique<TextCodecLatin1>();
+        return makeUnique<TextCodecLatin1>();
     });
 }
 

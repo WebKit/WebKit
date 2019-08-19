@@ -174,7 +174,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
     for (auto& nameAndMatch : selectorFeatures.classes) {
         classRules.ensure(nameAndMatch.first, [] {
-            return std::make_unique<Vector<RuleFeature>>();
+            return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex(), nameAndMatch.second));
         if (nameAndMatch.second == MatchElement::Host)
             classesAffectingHost.add(nameAndMatch.first);
@@ -183,7 +183,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
         auto* selector = selectorAndMatch.first;
         auto matchElement = selectorAndMatch.second;
         attributeRules.ensure(selector->attribute().localName().convertToASCIILowercase(), [] {
-            return std::make_unique<Vector<RuleFeature>>();
+            return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex(), matchElement, selector));
         if (matchElement == MatchElement::Host)
             attributesAffectingHost.add(selector->attribute().localName().convertToASCIILowercase());
@@ -201,14 +201,14 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     for (auto& keyValuePair : other.classRules) {
         classRules.ensure(keyValuePair.key, [] {
-            return std::make_unique<Vector<RuleFeature>>();
+            return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->appendVector(*keyValuePair.value);
     }
     classesAffectingHost.add(other.classesAffectingHost.begin(), other.classesAffectingHost.end());
 
     for (auto& keyValuePair : other.attributeRules) {
         attributeRules.ensure(keyValuePair.key, [] {
-            return std::make_unique<Vector<RuleFeature>>();
+            return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->appendVector(*keyValuePair.value);
     }
     attributesAffectingHost.add(other.attributesAffectingHost.begin(), other.attributesAffectingHost.end());

@@ -148,7 +148,7 @@ public:
 
     float maxTimeSeekable() const final { return 0; }
     double minTimeSeekable() const final { return 0; }
-    std::unique_ptr<PlatformTimeRanges> buffered() const final { return std::make_unique<PlatformTimeRanges>(); }
+    std::unique_ptr<PlatformTimeRanges> buffered() const final { return makeUnique<PlatformTimeRanges>(); }
 
     double seekableTimeRangesLastModifiedTime() const final { return 0; }
     double liveUpdateInterval() const final { return 0; }
@@ -355,7 +355,7 @@ Ref<MediaPlayer> MediaPlayer::create(MediaPlayerClient& client)
 MediaPlayer::MediaPlayer(MediaPlayerClient& client)
     : m_client(&client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
-    , m_private(std::make_unique<NullMediaPlayerPrivate>(this))
+    , m_private(makeUnique<NullMediaPlayerPrivate>(this))
 {
 }
 
@@ -511,7 +511,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 #endif
         m_private->load(m_url.string());
     } else {
-        m_private = std::make_unique<NullMediaPlayerPrivate>(this);
+        m_private = makeUnique<NullMediaPlayerPrivate>(this);
         client().mediaPlayerEngineUpdated(this);
         client().mediaPlayerResourceNotSupported(this);
     }

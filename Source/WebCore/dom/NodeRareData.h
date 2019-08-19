@@ -278,7 +278,7 @@ public:
     NodeListsNodeData& ensureNodeLists()
     {
         if (!m_nodeLists)
-            m_nodeLists = std::make_unique<NodeListsNodeData>();
+            m_nodeLists = makeUnique<NodeListsNodeData>();
         return *m_nodeLists;
     }
 
@@ -286,7 +286,7 @@ public:
     NodeMutationObserverData& ensureMutationObserverData()
     {
         if (!m_mutationObserverData)
-            m_mutationObserverData = std::make_unique<NodeMutationObserverData>();
+            m_mutationObserverData = makeUnique<NodeMutationObserverData>();
         return *m_mutationObserverData;
     }
 

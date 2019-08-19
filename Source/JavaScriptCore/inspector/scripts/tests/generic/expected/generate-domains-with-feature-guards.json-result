@@ -799,8 +799,8 @@ using namespace Inspector;
     [_network1Handler release];
     _network1Handler = [handler retain];
 
-    auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>("Network1"_s, *_controller, WTFMove(alternateDispatcher));
+    auto alternateDispatcher = makeUnique<ObjCInspectorNetwork1BackendDispatcher>(handler);
+    auto alternateAgent = makeUnique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>("Network1"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 

@@ -66,7 +66,7 @@ String TileController::zoomedOutTileGridContainerLayerName()
 TileController::TileController(PlatformCALayer* rootPlatformLayer)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_deviceScaleFactor(owningGraphicsLayer()->platformCALayerDeviceScaleFactor())
-    , m_tileGrid(std::make_unique<TileGrid>(*this))
+    , m_tileGrid(makeUnique<TileGrid>(*this))
     , m_tileRevalidationTimer(*this, &TileController::tileRevalidationTimerFired)
     , m_tileSizeChangeTimer(*this, &TileController::tileSizeChangeTimerFired, tileSizeUpdateDelay)
     , m_marginEdges(false, false, false, false)
@@ -132,7 +132,7 @@ void TileController::setContentsScale(float scale)
     if (m_zoomedOutContentsScale && m_zoomedOutContentsScale == tileGrid().scale() && tileGrid().scale() != scale && !m_hasTilesWithTemporaryScaleFactor) {
         m_zoomedOutTileGrid = WTFMove(m_tileGrid);
         m_zoomedOutTileGrid->setIsZoomedOutTileGrid(true);
-        m_tileGrid = std::make_unique<TileGrid>(*this);
+        m_tileGrid = makeUnique<TileGrid>(*this);
         tileGridsChanged();
     }
 
@@ -500,7 +500,7 @@ FloatRect TileController::adjustTileCoverageRectForScrolling(const FloatRect& co
             return;
 
         if (!m_historicalVelocityData)
-            m_historicalVelocityData = std::make_unique<HistoricalVelocityData>();
+            m_historicalVelocityData = makeUnique<HistoricalVelocityData>();
 
         m_velocity = m_historicalVelocityData->velocityForNewData(scrollOffset, contentsScale, MonotonicTime::now());
     };
@@ -685,7 +685,7 @@ IntRect TileController::tileCoverageRect() const
 PlatformCALayer* TileController::tiledScrollingIndicatorLayer()
 {
     if (!m_coverageMap)
-        m_coverageMap = std::make_unique<TileCoverageMap>(*this);
+        m_coverageMap = makeUnique<TileCoverageMap>(*this);
 
     return &m_coverageMap->layer();
 }

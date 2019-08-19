@@ -47,7 +47,7 @@ class JS_EXPORT_PRIVATE RemoteInspectorSocketEndpoint {
 public:
     static std::unique_ptr<RemoteInspectorSocketEndpoint> create(RemoteInspectorConnectionClient* inspectorClient, const char* name)
     {
-        return std::make_unique<RemoteInspectorSocketEndpoint>(inspectorClient, name);
+        return makeUnique<RemoteInspectorSocketEndpoint>(inspectorClient, name);
     }
 
     RemoteInspectorSocketEndpoint(RemoteInspectorConnectionClient*, const char*);

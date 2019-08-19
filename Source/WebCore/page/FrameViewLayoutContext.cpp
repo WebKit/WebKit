@@ -596,14 +596,14 @@ void FrameViewLayoutContext::pushLayoutState(RenderElement& root)
     ASSERT(!m_paintOffsetCacheDisableCount);
     ASSERT(!layoutState());
 
-    m_layoutStateStack.append(std::make_unique<RenderLayoutState>(root));
+    m_layoutStateStack.append(makeUnique<RenderLayoutState>(root));
 }
 
 bool FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
 {
     if (layoutState())
         return false;
-    m_layoutStateStack.append(std::make_unique<RenderLayoutState>(layoutRoot, RenderLayoutState::IsPaginated::Yes));
+    m_layoutStateStack.append(makeUnique<RenderLayoutState>(layoutRoot, RenderLayoutState::IsPaginated::Yes));
     return true;
 }
     
@@ -613,7 +613,7 @@ bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSi
     auto* layoutState = this->layoutState();
     if (!layoutState || !needsFullRepaint() || layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
         || layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
-        m_layoutStateStack.append(std::make_unique<RenderLayoutState>(m_layoutStateStack, renderer, offset, pageHeight, pageHeightChanged));
+        m_layoutStateStack.append(makeUnique<RenderLayoutState>(m_layoutStateStack, renderer, offset, pageHeight, pageHeightChanged));
         return true;
     }
     return false;

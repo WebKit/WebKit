@@ -36,7 +36,7 @@ namespace WebCore {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return std::make_unique<Pasteboard>();
+    return makeUnique<Pasteboard>();
 }
 
 Pasteboard::Pasteboard()

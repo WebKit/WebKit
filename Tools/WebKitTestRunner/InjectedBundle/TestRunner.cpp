@@ -53,6 +53,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -2398,7 +2399,7 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
 
         auto file = adopt(JSValueToStringCopy(context, fileValue, nullptr));
         size_t fileBufferSize = JSStringGetMaximumUTF8CStringSize(file.get()) + 1;
-        auto fileBuffer = std::make_unique<char[]>(fileBufferSize);
+        auto fileBuffer = makeUniqueArray<char>(fileBufferSize);
         JSStringGetUTF8CString(file.get(), fileBuffer.get(), fileBufferSize);
 
         WKArrayAppendItem(fileURLs.get(), adoptWK(WKURLCreateWithBaseURL(m_testURL.get(), fileBuffer.get())).get());

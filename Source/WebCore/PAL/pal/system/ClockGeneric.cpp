@@ -32,7 +32,7 @@ namespace PAL {
 
 std::unique_ptr<Clock> Clock::create()
 {
-    return std::make_unique<ClockGeneric>();
+    return makeUnique<ClockGeneric>();
 }
 
 ClockGeneric::ClockGeneric()

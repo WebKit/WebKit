@@ -578,7 +578,7 @@ PageConfiguration pageConfigurationWithEmptyClients()
     static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
     pageConfiguration.progressTrackerClient = &dummyProgressTrackerClient.get();
 
-    pageConfiguration.diagnosticLoggingClient = std::make_unique<EmptyDiagnosticLoggingClient>();
+    pageConfiguration.diagnosticLoggingClient = makeUnique<EmptyDiagnosticLoggingClient>();
 
     pageConfiguration.applicationCacheStorage = ApplicationCacheStorage::create({ }, { });
     pageConfiguration.databaseProvider = adoptRef(*new EmptyDatabaseProvider);

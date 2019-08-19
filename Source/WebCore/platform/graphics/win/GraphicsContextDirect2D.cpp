@@ -63,7 +63,7 @@ GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RE
 
     (*renderTarget)->BindDC(hdc, &rect);
 
-    auto ownedPlatformContext = std::make_unique<PlatformContextDirect2D>(*renderTarget);
+    auto ownedPlatformContext = makeUnique<PlatformContextDirect2D>(*renderTarget);
     m_data = new GraphicsContextPlatformPrivate(WTFMove(ownedPlatformContext), BitmapRenderingContextType::GPUMemory);
     m_data->m_hdc = hdc;
 }
@@ -126,7 +126,7 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
     if (!SUCCEEDED(hr))
         return;
 
-    auto ownedPlatformContext = std::make_unique<PlatformContextDirect2D>(renderTarget.get());
+    auto ownedPlatformContext = makeUnique<PlatformContextDirect2D>(renderTarget.get());
     m_data = new GraphicsContextPlatformPrivate(WTFMove(ownedPlatformContext), BitmapRenderingContextType::GPUMemory);
     m_data->m_hdc = hdc;
 

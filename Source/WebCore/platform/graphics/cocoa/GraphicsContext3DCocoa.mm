@@ -182,7 +182,7 @@ static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFor
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attrs)
-    , m_private(std::make_unique<GraphicsContext3DPrivate>(this))
+    , m_private(makeUnique<GraphicsContext3DPrivate>(this))
 {
 #if !USE(ANGLE)
 #if USE(OPENGL_ES)

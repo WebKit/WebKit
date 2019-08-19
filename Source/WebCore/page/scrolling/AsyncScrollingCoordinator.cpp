@@ -59,7 +59,7 @@ namespace WebCore {
 AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
     : ScrollingCoordinator(page)
     , m_updateNodeScrollPositionTimer(*this, &AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired)
-    , m_scrollingStateTree(std::make_unique<ScrollingStateTree>(this))
+    , m_scrollingStateTree(makeUnique<ScrollingStateTree>(this))
 {
 }
 

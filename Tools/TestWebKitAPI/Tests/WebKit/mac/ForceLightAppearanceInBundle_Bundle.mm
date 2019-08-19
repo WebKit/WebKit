@@ -34,6 +34,7 @@
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
+#include <wtf/UniqueArray.h>
 
 namespace TestWebKitAPI {
 
@@ -70,7 +71,7 @@ public:
         auto resultString = adopt(JSValueToStringCopy(scriptContext, result, nullptr));
 
         auto bufferSize = JSStringGetMaximumUTF8CStringSize(resultString.get());
-        auto buffer = std::make_unique<char[]>(bufferSize);
+        auto buffer = makeUniqueArray<char>(bufferSize);
         JSStringGetUTF8CString(resultString.get(), buffer.get(), bufferSize);
 
         WKBundlePageSetUseDarkAppearance(m_page, true);

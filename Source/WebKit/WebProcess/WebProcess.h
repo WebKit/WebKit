@@ -149,7 +149,7 @@ public:
     template <typename T>
     void addSupplement()
     {
-        m_supplements.add(T::supplementName(), std::make_unique<T>(*this));
+        m_supplements.add(T::supplementName(), makeUnique<T>(*this));
     }
 
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }

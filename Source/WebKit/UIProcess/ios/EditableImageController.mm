@@ -58,7 +58,7 @@ EditableImageController::~EditableImageController()
 EditableImage& EditableImageController::ensureEditableImage(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)
 {
     auto result = m_editableImages.ensure(embeddedViewID, [&] {
-        std::unique_ptr<EditableImage> image = std::make_unique<EditableImage>();
+        std::unique_ptr<EditableImage> image = makeUnique<EditableImage>();
         image->drawingView = m_webPageProxy->pageClient().createDrawingView(embeddedViewID);
         return image;
     });

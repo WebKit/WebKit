@@ -544,7 +544,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
 
     if (!grid.hasGridItems()) {
-        emptyTrackIndexes = std::make_unique<OrderedTrackIndexSet>();
+        emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);
     } else {
@@ -552,7 +552,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
             GridIterator iterator(grid, direction, trackIndex);
             if (!iterator.nextGridItem()) {
                 if (!emptyTrackIndexes)
-                    emptyTrackIndexes = std::make_unique<OrderedTrackIndexSet>();
+                    emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
                 emptyTrackIndexes->add(trackIndex);
             }
         }
@@ -732,7 +732,7 @@ std::unique_ptr<GridArea> RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOut
     const unsigned endOfCrossDirection = grid.numTracks(crossDirection);
     unsigned crossDirectionSpanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(gridItem, crossDirection);
     GridSpan crossDirectionPositions = GridSpan::translatedDefiniteGridSpan(endOfCrossDirection, endOfCrossDirection + crossDirectionSpanSize);
-    return std::make_unique<GridArea>(specifiedDirection == ForColumns ? crossDirectionPositions : specifiedPositions, specifiedDirection == ForColumns ? specifiedPositions : crossDirectionPositions);
+    return makeUnique<GridArea>(specifiedDirection == ForColumns ? crossDirectionPositions : specifiedPositions, specifiedDirection == ForColumns ? specifiedPositions : crossDirectionPositions);
 }
 
 void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(Grid& grid, const Vector<RenderBox*>& autoGridItems) const

@@ -67,7 +67,7 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return std::make_unique<LocaleMac>(determineLocale(locale.string()).get());
+    return makeUnique<LocaleMac>(determineLocale(locale.string()).get());
 }
 
 static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCalendar* calendar, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)

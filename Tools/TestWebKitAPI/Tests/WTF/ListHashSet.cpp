@@ -380,7 +380,7 @@ TEST(WTF_ListHashSet, UniquePtrKey)
 
     ListHashSet<std::unique_ptr<ConstructorDestructorCounter>> list;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     list.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
@@ -396,7 +396,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_FindUsingRawPointer)
 {
     ListHashSet<std::unique_ptr<int>> list;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     auto ptr = uniquePtr.get();
     list.add(WTFMove(uniquePtr));
 
@@ -410,7 +410,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_ContainsUsingRawPointer)
 {
     ListHashSet<std::unique_ptr<int>> list;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     auto ptr = uniquePtr.get();
     list.add(WTFMove(uniquePtr));
 
@@ -421,9 +421,9 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
 {
     ListHashSet<std::unique_ptr<int>> list;
 
-    auto uniquePtrWith2 = std::make_unique<int>(2);
+    auto uniquePtrWith2 = makeUniqueWithoutFastMallocCheck<int>(2);
     auto ptrWith2 = uniquePtrWith2.get();
-    auto uniquePtrWith4 = std::make_unique<int>(4);
+    auto uniquePtrWith4 = makeUniqueWithoutFastMallocCheck<int>(4);
     auto ptrWith4 = uniquePtrWith4.get();
 
     list.add(WTFMove(uniquePtrWith2));
@@ -435,7 +435,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
     ASSERT_EQ(ptrWith4, list.last().get());
     ASSERT_EQ(4, *list.last().get());
 
-    auto uniquePtrWith3 = std::make_unique<int>(3);
+    auto uniquePtrWith3 = makeUniqueWithoutFastMallocCheck<int>(3);
     auto ptrWith3 = uniquePtrWith3.get();
 
     list.insertBefore(ptrWith4, WTFMove(uniquePtrWith3));
@@ -462,7 +462,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     ListHashSet<std::unique_ptr<ConstructorDestructorCounter>> list;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     auto* ptr = uniquePtr.get();
     list.add(WTFMove(uniquePtr));
 

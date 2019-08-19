@@ -47,7 +47,7 @@ StorageArea& SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
-        return std::make_unique<StorageArea>(nullptr, WTFMove(securityOrigin), m_quotaInBytes, WTFMove(workQueue));
+        return makeUnique<StorageArea>(nullptr, WTFMove(securityOrigin), m_quotaInBytes, WTFMove(workQueue));
     }).iterator->value.get();
 }
 

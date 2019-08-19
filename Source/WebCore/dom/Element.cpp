@@ -489,7 +489,7 @@ NamedNodeMap& Element::attributes() const
     if (NamedNodeMap* attributeMap = rareData.attributeMap())
         return *attributeMap;
 
-    rareData.setAttributeMap(std::make_unique<NamedNodeMap>(const_cast<Element&>(*this)));
+    rareData.setAttributeMap(makeUnique<NamedNodeMap>(const_cast<Element&>(*this)));
     return *rareData.attributeMap();
 }
 
@@ -2319,7 +2319,7 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     setFlag(IsCustomElement);
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
-        data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
+        data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
     invalidateStyleForSubtree();
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
@@ -2356,7 +2356,7 @@ void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
     auto& data = ensureElementRareData();
     bool alreadyScheduledToUpgrade = data.customElementReactionQueue();
     if (!alreadyScheduledToUpgrade)
-        data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
+        data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
     data.customElementReactionQueue()->enqueueElementUpgrade(*this, alreadyScheduledToUpgrade);
 }
 
@@ -3391,7 +3391,7 @@ DOMTokenList& Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.classList())
-        data.setClassList(std::make_unique<DOMTokenList>(*this, HTMLNames::classAttr));
+        data.setClassList(makeUnique<DOMTokenList>(*this, HTMLNames::classAttr));
     return *data.classList();
 }
 
@@ -3399,7 +3399,7 @@ DatasetDOMStringMap& Element::dataset()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.dataset())
-        data.setDataset(std::make_unique<DatasetDOMStringMap>(*this));
+        data.setDataset(makeUnique<DatasetDOMStringMap>(*this));
     return *data.dataset();
 }
 
@@ -3543,7 +3543,7 @@ IntersectionObserverData& Element::ensureIntersectionObserverData()
 {
     auto& rareData = ensureElementRareData();
     if (!rareData.intersectionObserverData())
-        rareData.setIntersectionObserverData(std::make_unique<IntersectionObserverData>());
+        rareData.setIntersectionObserverData(makeUnique<IntersectionObserverData>());
     return *rareData.intersectionObserverData();
 }
 
@@ -3569,7 +3569,7 @@ ResizeObserverData& Element::ensureResizeObserverData()
 {
     auto& rareData = ensureElementRareData();
     if (!rareData.resizeObserverData())
-        rareData.setResizeObserverData(std::make_unique<ResizeObserverData>());
+        rareData.setResizeObserverData(makeUnique<ResizeObserverData>());
     return *rareData.resizeObserverData();
 }
 

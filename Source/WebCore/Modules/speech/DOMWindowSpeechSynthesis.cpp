@@ -55,7 +55,7 @@ DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
 {
     DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<DOMWindowSpeechSynthesis>(window);
+        auto newSupplement = makeUnique<DOMWindowSpeechSynthesis>(window);
         supplement = newSupplement.get();
         provideTo(window, supplementName(), WTFMove(newSupplement));
     }

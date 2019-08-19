@@ -152,7 +152,7 @@ PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer
     if (usesTiledBackingLayer()) {
         intern = new WebTiledBackingLayerWin(this);
         TileController* tileController = reinterpret_cast<WebTiledBackingLayerWin*>(intern)->createTileController(this);
-        m_customSublayers = std::make_unique<PlatformCALayerList>(tileController->containerLayers());
+        m_customSublayers = makeUnique<PlatformCALayerList>(tileController->containerLayers());
     } else
         intern = new PlatformCALayerWinInternal(this);
 

@@ -654,7 +654,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     }
 
     if (UNLIKELY(Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler())))
-        m_disassembler = std::make_unique<JITDisassembler>(m_codeBlock);
+        m_disassembler = makeUnique<JITDisassembler>(m_codeBlock);
     if (UNLIKELY(m_vm->m_perBytecodeProfiler)) {
         m_compilation = adoptRef(
             new Profiler::Compilation(
@@ -901,7 +901,7 @@ CompilationResult JIT::link()
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
+        m_codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
     
     CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
         patchBuffer, JSEntryPtrTag,

@@ -74,9 +74,9 @@ struct Benchmark {
     template<typename LockType>
     static void run(const char* name)
     {
-        std::unique_ptr<WithPadding<LockType>[]> locks = std::make_unique<WithPadding<LockType>[]>(numThreadGroups);
-        std::unique_ptr<WithPadding<double>[]> words = std::make_unique<WithPadding<double>[]>(numThreadGroups);
-        std::unique_ptr<RefPtr<Thread>[]> threads = std::make_unique<RefPtr<Thread>[]>(numThreadGroups * numThreadsPerGroup);
+        std::unique_ptr<WithPadding<LockType>[]> locks = makeUniqueWithoutFastMallocCheck<WithPadding<LockType>[]>(numThreadGroups);
+        std::unique_ptr<WithPadding<double>[]> words = makeUniqueWithoutFastMallocCheck<WithPadding<double>[]>(numThreadGroups);
+        std::unique_ptr<RefPtr<Thread>[]> threads = makeUniqueWithoutFastMallocCheck<RefPtr<Thread>[]>(numThreadGroups * numThreadsPerGroup);
 
         volatile bool keepGoing = true;
 

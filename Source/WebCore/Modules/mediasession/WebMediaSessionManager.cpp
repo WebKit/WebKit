@@ -115,7 +115,7 @@ void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String&
 MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
 {
     if (!m_pickerOverride)
-        m_pickerOverride = std::make_unique<MediaPlaybackTargetPickerMock>(*this);
+        m_pickerOverride = makeUnique<MediaPlaybackTargetPickerMock>(*this);
 
     return *m_pickerOverride.get();
 }
@@ -145,7 +145,7 @@ uint64_t WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionMa
 
     LOG(Media, "WebMediaSessionManager::addPlaybackTargetPickerClient(%p + %llu)", &client, contextId);
 
-    m_clientState.append(std::make_unique<ClientState>(client, contextId));
+    m_clientState.append(makeUnique<ClientState>(client, contextId));
 
     if (m_externalOutputDeviceAvailable || m_playbackTarget)
         scheduleDelayedTask(InitialConfigurationTask | TargetClientsConfigurationTask);

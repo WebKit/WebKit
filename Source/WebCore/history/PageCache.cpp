@@ -478,7 +478,7 @@ bool PageCache::addIfCacheable(HistoryItem& item, Page* page)
         // Make sure we don't fire any JS events in this scope.
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        item.m_cachedPage = std::make_unique<CachedPage>(*page);
+        item.m_cachedPage = makeUnique<CachedPage>(*page);
         item.m_pruningReason = PruningReason::None;
         m_items.add(&item);
     }

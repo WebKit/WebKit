@@ -479,7 +479,7 @@ void HTMLFormControlElement::updateVisibleValidationMessage()
     if (renderer() && willValidate())
         message = validationMessage().stripWhiteSpace();
     if (!m_validationMessage)
-        m_validationMessage = std::make_unique<ValidationMessage>(this);
+        m_validationMessage = makeUnique<ValidationMessage>(this);
     m_validationMessage->updateValidationMessage(message);
 }
 

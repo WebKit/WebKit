@@ -41,7 +41,7 @@ RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, RenderStyle&& styl
 
 std::unique_ptr<InlineFlowBox> RenderSVGInline::createInlineFlowBox()
 {
-    auto box = std::make_unique<SVGInlineFlowBox>(*this);
+    auto box = makeUnique<SVGInlineFlowBox>(*this);
     box->setHasVirtualLogicalHeight();
     return box;
 }

@@ -1190,8 +1190,8 @@ using namespace Inspector;
     [_databaseHandler release];
     _databaseHandler = [handler retain];
 
-    auto alternateDispatcher = std::make_unique<ObjCInspectorDatabaseBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>("Database"_s, *_controller, WTFMove(alternateDispatcher));
+    auto alternateDispatcher = makeUnique<ObjCInspectorDatabaseBackendDispatcher>(handler);
+    auto alternateAgent = makeUnique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>("Database"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 

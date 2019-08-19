@@ -556,7 +556,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
         return;
 
     if (!m_reader)
-        m_reader = std::make_unique<PNGImageReader>(this);
+        m_reader = makeUnique<PNGImageReader>(this);
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.

@@ -88,7 +88,7 @@ void GC3DLayer::swapBuffersIfNeeded()
         auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
 
         LockHolder holder(proxy.lock());
-        proxy.pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+        proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
     }
 
     m_context.markLayerComposited();

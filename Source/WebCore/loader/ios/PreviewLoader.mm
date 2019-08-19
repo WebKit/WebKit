@@ -86,7 +86,7 @@ static PreviewLoaderClient& emptyClient()
 
     _resourceLoader = makeWeakPtr(resourceLoader);
     _response = resourceResponse;
-    _converter = std::make_unique<PreviewConverter>(self, _response);
+    _converter = makeUnique<PreviewConverter>(self, _response);
     _bufferedDataArray = adoptNS([[NSMutableArray alloc] init]);
     _shouldDecidePolicyBeforeLoading = resourceLoader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview();
 
@@ -246,7 +246,7 @@ static inline bool isQuickLookPasswordError(NSError *error)
     }
 
     _client->didRequestPassword([self, retainedSelf = retainPtr(self)] (const String& password) {
-        _converter = std::make_unique<PreviewConverter>(self, _response, password);
+        _converter = makeUnique<PreviewConverter>(self, _response, password);
         [_converter->platformConverter() appendDataArray:_bufferedDataArray.get()];
         [_converter->platformConverter() finishedAppendingData];
     });
@@ -268,7 +268,7 @@ PreviewLoader::~PreviewLoader()
 std::unique_ptr<PreviewLoader> PreviewLoader::create(ResourceLoader& loader, const ResourceResponse& response)
 {
     ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
-    return std::make_unique<PreviewLoader>(loader, response);
+    return makeUnique<PreviewLoader>(loader, response);
 }
 
 bool PreviewLoader::didReceiveResponse(const ResourceResponse&)

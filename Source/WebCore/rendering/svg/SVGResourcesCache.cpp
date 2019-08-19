@@ -35,7 +35,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     ASSERT(!m_cache.contains(&renderer));
 
     // Build a list of all resources associated with the passed RenderObject
-    auto newResources = std::make_unique<SVGResources>();
+    auto newResources = makeUnique<SVGResources>();
     if (!newResources->buildCachedResources(renderer, style))
         return;
 

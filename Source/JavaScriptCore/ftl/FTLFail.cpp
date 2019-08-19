@@ -37,7 +37,7 @@ using namespace DFG;
 
 void fail(State& state)
 {
-    state.graph.m_plan.setFinalizer(std::make_unique<FailedFinalizer>(state.graph.m_plan));
+    state.graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(state.graph.m_plan));
 }
 
 } } // namespace JSC::FTL

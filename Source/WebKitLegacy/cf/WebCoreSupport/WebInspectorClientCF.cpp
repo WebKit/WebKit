@@ -159,5 +159,5 @@ std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorCli
             deleteSetting(name);
         }
     };
-    return std::make_unique<InspectorFrontendSettingsCF>();
+    return makeUnique<InspectorFrontendSettingsCF>();
 }

@@ -291,7 +291,7 @@ std::unique_ptr<RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPse
     if (m_matchedRules.isEmpty())
         return { };
 
-    auto ruleDataVector = std::make_unique<RuleSet::RuleDataVector>();
+    auto ruleDataVector = makeUnique<RuleSet::RuleDataVector>();
     ruleDataVector->reserveInitialCapacity(m_matchedRules.size());
     for (auto& matchedRule : m_matchedRules)
         ruleDataVector->uncheckedAppend(*matchedRule.ruleData);

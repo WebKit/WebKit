@@ -141,7 +141,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_playing(0)
     , m_seeking(false)
     , m_loadingProgressed(false)
-    , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
+    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
     , m_effectiveRateChangedListener(EffectiveRateChangedListener::create(*this, [m_synchronizer timebase]))
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
@@ -205,7 +205,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
     if (!isAvailable())
         return;
 
-    registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaSourceAVFObjC>(player); },
+    registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player); },
         getSupportedTypes, supportsType, 0, 0, 0, 0);
     ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
 }
@@ -441,7 +441,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& ti
     INFO_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
 
     m_seeking = true;
-    m_pendingSeek = std::make_unique<PendingSeek>(time, negativeThreshold, positiveThreshold);
+    m_pendingSeek = makeUnique<PendingSeek>(time, negativeThreshold, positiveThreshold);
 
     if (m_seekTimer.isActive())
         m_seekTimer.stop();
@@ -547,7 +547,7 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
 {
-    return std::make_unique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
+    return makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::maxMediaTimeSeekable() const
@@ -562,7 +562,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minMediaTimeSeekable() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : std::make_unique<PlatformTimeRanges>();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : makeUnique<PlatformTimeRanges>();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
@@ -606,7 +606,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
 
     if (!m_rgbConformer) {
         auto attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-        m_rgbConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
+        m_rgbConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
 
     m_lastImage = m_rgbConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
@@ -653,7 +653,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(Gra
     size_t height = CVPixelBufferGetHeight(m_lastPixelBuffer.get());
 
     if (!m_videoTextureCopier)
-        m_videoTextureCopier = std::make_unique<VideoTextureCopierCV>(*context);
+        m_videoTextureCopier = makeUnique<VideoTextureCopierCV>(*context);
 
     return m_videoTextureCopier->copyImageToPlatformTexture(m_lastPixelBuffer.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }

@@ -82,7 +82,7 @@ class BasicPacketSocketFactory : public rtc::BasicPacketSocketFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit BasicPacketSocketFactory(rtc::Thread& networkThread)
-        : m_socketFactory(makeUniqueRef<rtc::BasicPacketSocketFactory>(&networkThread))
+        : m_socketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(&networkThread))
     {
     }
 
@@ -180,7 +180,7 @@ static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndTh
     result = factoryAndThreads.signalingThread->Start();
     ASSERT(result);
 
-    factoryAndThreads.audioDeviceModule = std::make_unique<LibWebRTCAudioModule>();
+    factoryAndThreads.audioDeviceModule = makeUnique<LibWebRTCAudioModule>();
 }
 
 static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
@@ -289,10 +289,10 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
     if (!factoryAndThreads.networkManager)
-        factoryAndThreads.networkManager = std::make_unique<rtc::BasicNetworkManager>();
+        factoryAndThreads.networkManager = makeUniqueWithoutFastMallocCheck<rtc::BasicNetworkManager>();
 
     if (!factoryAndThreads.packetSocketFactory)
-        factoryAndThreads.packetSocketFactory = std::make_unique<BasicPacketSocketFactory>(*factoryAndThreads.networkThread);
+        factoryAndThreads.packetSocketFactory = makeUnique<BasicPacketSocketFactory>(*factoryAndThreads.networkThread);
     factoryAndThreads.packetSocketFactory->setDisableNonLocalhostConnections(m_disableNonLocalhostConnections);
 
     return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTFMove(configuration), nullptr);
@@ -315,7 +315,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 
     std::unique_ptr<cricket::BasicPortAllocator> portAllocator;
     factoryAndThreads.signalingThread->Invoke<void>(RTC_FROM_HERE, [&]() {
-        auto basicPortAllocator = std::make_unique<cricket::BasicPortAllocator>(&networkManager, &packetSocketFactory);
+        auto basicPortAllocator = makeUniqueWithoutFastMallocCheck<cricket::BasicPortAllocator>(&networkManager, &packetSocketFactory);
         if (!m_enableEnumeratingAllNetworkInterfaces)
             basicPortAllocator->set_flags(basicPortAllocator->flags() | cricket::PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION);
         portAllocator = WTFMove(basicPortAllocator);
@@ -336,7 +336,7 @@ rtc::RTCCertificateGenerator& LibWebRTCProvider::certificateGenerator()
 {
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
     if (!factoryAndThreads.certificateGenerator)
-        factoryAndThreads.certificateGenerator = std::make_unique<rtc::RTCCertificateGenerator>(factoryAndThreads.signalingThread.get(), factoryAndThreads.networkThread.get());
+        factoryAndThreads.certificateGenerator = makeUniqueWithoutFastMallocCheck<rtc::RTCCertificateGenerator>(factoryAndThreads.signalingThread.get(), factoryAndThreads.networkThread.get());
 
     return *factoryAndThreads.certificateGenerator;
 }

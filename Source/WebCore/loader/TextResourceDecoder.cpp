@@ -535,7 +535,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     if (m_contentType == XML)
         return true;
 
-    m_charsetParser = std::make_unique<HTMLMetaCharsetParser>();
+    m_charsetParser = makeUnique<HTMLMetaCharsetParser>();
     return checkForMetaCharset(data, len);
 }
 

@@ -45,7 +45,7 @@ std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteComma
     if (!MediaPlayerLibrary())
         return nullptr;
 
-    return std::make_unique<RemoteCommandListenerIOS>(client);
+    return makeUnique<RemoteCommandListenerIOS>(client);
 }
 
 RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& client)

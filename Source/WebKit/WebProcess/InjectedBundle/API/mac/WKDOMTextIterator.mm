@@ -45,7 +45,7 @@
     if (!self)
         return nil;
 
-    _textIterator = std::make_unique<WebCore::TextIterator>(WebKit::toWebCoreRange(range));
+    _textIterator = makeUnique<WebCore::TextIterator>(WebKit::toWebCoreRange(range));
     return self;
 }
 

@@ -503,7 +503,7 @@ std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLE
     JSCustomElementInterface* elementInterface = nullptr;
     RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, &elementInterface);
     if (UNLIKELY(elementInterface))
-        return std::make_unique<CustomElementConstructionData>(*elementInterface, token.name(), WTFMove(token.attributes()));
+        return makeUnique<CustomElementConstructionData>(*elementInterface, token.name(), WTFMove(token.attributes()));
     attachLater(currentNode(), *element);
     m_openElements.push(HTMLStackItem::create(element.releaseNonNull(), WTFMove(token)));
     return nullptr;

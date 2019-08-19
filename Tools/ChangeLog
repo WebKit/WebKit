@@ -1,3 +1,121 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (addURLToRedirectCallback):
+        (setWillSendRequestClearHeaderCallback):
+        (TestRunner::setAccummulateLogsForChannel):
+        (TestRunner::runUIScript):
+        (TestRunner::setOpenPanelFiles):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFramesAsText):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (eventPressedMouseButtonsSwizzlerForViewAndEvent):
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        (DRTDataObject::SetData):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::FrameLoadDelegate):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (DRTUndoManager::DRTUndoManager):
+        (UIDelegate::UIDelegate):
+        (UIDelegate::resetUndoManager):
+        * TestWebKitAPI/JavaScriptTest.cpp:
+        (TestWebKitAPI::runJSTest):
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::toSTD):
+        * TestWebKitAPI/Tests/WTF/Expected.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashCountedSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::testMovingUsingEnsure):
+        (TestWebKitAPI::testMovingUsingAdd):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::runLockTest):
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        * TestWebKitAPI/Tests/WTF/RefCounter.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/ThreadGroup.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Variant.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CARingBuffer.cpp:
+        (TestWebKitAPI::CARingBufferTest::SetUp):
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        (TestWebKitAPI::createTestValue):
+        * TestWebKitAPI/Tests/WebCore/FidoHidMessageTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FileMonitor.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/curl/Cookies.cpp:
+        * TestWebKitAPI/Tests/WebKit/CloseFromWithinCreatePage.cpp:
+        (TestWebKitAPI::createNewPage):
+        * TestWebKitAPI/Tests/WebKit/ModalAlertsSPI.cpp:
+        (TestWebKitAPI::createNewPage):
+        * TestWebKitAPI/Tests/WebKit/TextFieldDidBeginAndEndEditing.cpp:
+        * TestWebKitAPI/Tests/WebKit/UserMessage.cpp:
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::SetUp):
+        * TestWebKitAPI/Tests/WebKit/WillLoad.cpp:
+        (TestWebKitAPI::WebKit2WillLoadTest::SetUp):
+        * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm:
+        (TestWebKitAPI::ForceLightAppearanceInBundleTest::didReceiveMessage):
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (serverCallback):
+        (testWebViewAuthenticationProxyHTTPS):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMDOMWindowTest.cpp:
+        (WebKitDOMDOMWindowTest::create):
+        * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm:
+        (TestWebKitAPI::Util::toSTD):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (applyWorkaroundToAllowWritingAttributedStringsToItemProviders):
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+        * TestWebKitAPI/mac/TestFontOptions.mm:
+        (-[TestFontOptions initWithFontOptions:]):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::callAfterScrollingCompletes):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setOpenPanelFiles):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toSTD):
+        (WTR::toWTFString):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::createTestURL):
+        (WTR::TestController::runTest):
+        (WTR::TestController::platformCreateWebView):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::runUISideScript):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::setDefaultCalendarType):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::getGDKKeySymForKeyRef):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::TestController::setKeyboardInputModeIdentifier):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::wpeKeySymForKeyRef):
+
 2019-08-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ESNext] Implement optional chaining

@@ -58,7 +58,7 @@ inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(Enco
 template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure, JSClassRef jsClass, void* data)
     : Parent(exec->vm(), structure)
-    , m_callbackObjectData(std::make_unique<JSCallbackObjectData>(data, jsClass))
+    , m_callbackObjectData(makeUnique<JSCallbackObjectData>(data, jsClass))
 {
 }
 
@@ -67,7 +67,7 @@ JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure
 template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(VM& vm, JSClassRef jsClass, Structure* structure)
     : Parent(vm, structure)
-    , m_callbackObjectData(std::make_unique<JSCallbackObjectData>(nullptr, jsClass))
+    , m_callbackObjectData(makeUnique<JSCallbackObjectData>(nullptr, jsClass))
 {
 }
 

@@ -30,7 +30,7 @@ static gboolean clickedCallback(WebKitDOMDOMWindow*, WebKitDOMEvent*, WebKitDOMD
 
 class WebKitDOMDOMWindowTest : public WebProcessTest {
 public:
-    static std::unique_ptr<WebProcessTest> create() { return std::make_unique<WebKitDOMDOMWindowTest>(); }
+    static std::unique_ptr<WebProcessTest> create() { return makeUnique<WebKitDOMDOMWindowTest>(); }
 
 private:
     guint64 webPageFromArgs(GVariant* args)

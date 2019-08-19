@@ -45,7 +45,7 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
     , m_hasRareData(false)
 {
     if (isReplaced())
-        ensureRareData().replaced = std::make_unique<Replaced>(*this);
+        ensureRareData().replaced = makeUnique<Replaced>(*this);
 }
 
 Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
@@ -447,7 +447,7 @@ const Box::BoxRareData& Box::rareData() const
 Box::BoxRareData& Box::ensureRareData()
 {
     setHasRareData(true);
-    return *rareDataMap().ensure(this, [] { return std::make_unique<BoxRareData>(); }).iterator->value;
+    return *rareDataMap().ensure(this, [] { return makeUnique<BoxRareData>(); }).iterator->value;
 }
 
 void Box::removeRareData()

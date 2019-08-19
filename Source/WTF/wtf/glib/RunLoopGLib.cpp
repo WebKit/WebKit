@@ -147,7 +147,7 @@ void RunLoop::dispatchAfter(Seconds duration, Function<void()>&& function)
     g_source_set_name(source.get(), "[WebKit] RunLoop dispatchAfter");
     g_source_set_ready_time(source.get(), g_get_monotonic_time() + duration.microsecondsAs<gint64>());
 
-    std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(WTFMove(function));
+    std::unique_ptr<DispatchAfterContext> context = makeUnique<DispatchAfterContext>(WTFMove(function));
     g_source_set_callback(source.get(), [](gpointer userData) -> gboolean {
         std::unique_ptr<DispatchAfterContext> context(static_cast<DispatchAfterContext*>(userData));
         context->dispatch();

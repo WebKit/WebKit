@@ -44,7 +44,7 @@ class NetworkSessionSoup final : public NetworkSession {
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     {
-        return std::make_unique<NetworkSessionSoup>(networkProcess, WTFMove(parameters));
+        return makeUnique<NetworkSessionSoup>(networkProcess, WTFMove(parameters));
     }
     NetworkSessionSoup(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionSoup();

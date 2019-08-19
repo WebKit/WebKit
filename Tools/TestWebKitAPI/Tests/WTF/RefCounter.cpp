@@ -170,7 +170,7 @@ TEST(WTF, RefCounter)
 TEST(WTF, RefCounterDeleteCounterWithOutstandingTokens)
 {
     {
-        std::unique_ptr<TestCounter> counter = std::make_unique<TestCounter>([&](RefCounterEvent event) {
+        std::unique_ptr<TestCounter> counter = makeUnique<TestCounter>([&](RefCounterEvent event) {
             if (!counter->value())
                 counter = nullptr;
         });

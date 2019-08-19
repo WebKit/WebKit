@@ -45,7 +45,7 @@ static inline bool isWhitespace(UChar c)
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
 
-#define DEFINE_FUNCTION_CREATOR(Suffix) static std::unique_ptr<Function> createFunction##Suffix() { return std::make_unique<Fun##Suffix>(); }
+#define DEFINE_FUNCTION_CREATOR(Suffix) static std::unique_ptr<Function> createFunction##Suffix() { return makeUnique<Fun##Suffix>(); }
 
 class Interval {
 public:

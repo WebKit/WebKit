@@ -39,7 +39,7 @@ public:
     static auto create(const EnumType& value)
     {
         static_assert(std::is_integral<DecorationType>::value, "DecorationType form enum should be integral.");
-        return std::make_unique<SVGDecoratedEnumeration>(value);
+        return makeUnique<SVGDecoratedEnumeration>(value);
     }
 
 private:

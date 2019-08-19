@@ -656,7 +656,7 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     ANGLEResources.HashFunction = nameHashForShader;
 
     if (!nameHashMapForShaders)
-        nameHashMapForShaders = std::make_unique<ShaderNameHash>();
+        nameHashMapForShaders = makeUnique<ShaderNameHash>();
     setCurrentNameHashMapForShader(nameHashMapForShaders.get());
     m_compiler.setResources(ANGLEResources);
 
@@ -1023,7 +1023,7 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
         // Attributes are a special case: they may be requested before any shaders have been compiled,
         // and aren't even required to be used in any shader program.
         if (!nameHashMapForShaders)
-            nameHashMapForShaders = std::make_unique<ShaderNameHash>();
+            nameHashMapForShaders = makeUnique<ShaderNameHash>();
         setCurrentNameHashMapForShader(nameHashMapForShaders.get());
 
         auto generatedName = generateHashedName(name);

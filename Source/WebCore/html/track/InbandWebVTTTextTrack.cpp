@@ -54,7 +54,7 @@ InbandWebVTTTextTrack::~InbandWebVTTTextTrack() = default;
 WebVTTParser& InbandWebVTTTextTrack::parser()
 {
     if (!m_webVTTParser)
-        m_webVTTParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
+        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
     return *m_webVTTParser;
 }
 

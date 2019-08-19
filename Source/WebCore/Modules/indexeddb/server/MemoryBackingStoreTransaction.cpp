@@ -41,7 +41,7 @@ namespace IDBServer {
 
 std::unique_ptr<MemoryBackingStoreTransaction> MemoryBackingStoreTransaction::create(MemoryIDBBackingStore& backingStore, const IDBTransactionInfo& info)
 {
-    return std::make_unique<MemoryBackingStoreTransaction>(backingStore, info);
+    return makeUnique<MemoryBackingStoreTransaction>(backingStore, info);
 }
 
 MemoryBackingStoreTransaction::MemoryBackingStoreTransaction(MemoryIDBBackingStore& backingStore, const IDBTransactionInfo& info)
@@ -52,7 +52,7 @@ MemoryBackingStoreTransaction::MemoryBackingStoreTransaction(MemoryIDBBackingSto
         IDBDatabaseInfo info;
         auto error = m_backingStore.getOrEstablishDatabaseInfo(info);
         if (error.isNull())
-            m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(info);
+            m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(info);
     }
 }
 
@@ -195,7 +195,7 @@ void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& object
 
     auto originalAddResult = m_originalValues.add(&objectStore, nullptr);
     if (originalAddResult.isNewEntry)
-        originalAddResult.iterator->value = std::make_unique<KeyValueMap>();
+        originalAddResult.iterator->value = makeUnique<KeyValueMap>();
 
     auto* map = originalAddResult.iterator->value.get();
 

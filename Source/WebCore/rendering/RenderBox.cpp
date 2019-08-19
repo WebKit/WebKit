@@ -118,7 +118,7 @@ static ControlStatesRendererMap& controlStatesRendererMap()
 static ControlStates* controlStatesForRenderer(const RenderBox& renderer)
 {
     return controlStatesRendererMap().ensure(&renderer, [] {
-        return std::make_unique<ControlStates>();
+        return makeUnique<ControlStates>();
     }).iterator->value.get();
 }
 
@@ -2122,7 +2122,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& container, const Layout
 
 std::unique_ptr<InlineElementBox> RenderBox::createInlineBox()
 {
-    return std::make_unique<InlineElementBox>(*this);
+    return makeUnique<InlineElementBox>(*this);
 }
 
 void RenderBox::dirtyLineBoxes(bool fullLayout)

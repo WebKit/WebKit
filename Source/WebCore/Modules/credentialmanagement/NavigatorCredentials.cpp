@@ -63,7 +63,7 @@ NavigatorCredentials* NavigatorCredentials::from(Navigator* navigator)
 {
     NavigatorCredentials* supplement = static_cast<NavigatorCredentials*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorCredentials>();
+        auto newSupplement = makeUnique<NavigatorCredentials>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

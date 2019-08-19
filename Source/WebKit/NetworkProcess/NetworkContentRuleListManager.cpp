@@ -69,7 +69,7 @@ void NetworkContentRuleListManager::contentExtensionsBackend(UserContentControll
 void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIdentifier identifier, Vector<std::pair<String, WebCompiledContentRuleListData>>&& contentRuleLists)
 {
     auto& backend = *m_contentExtensionBackends.ensure(identifier, [] {
-        return std::make_unique<WebCore::ContentExtensions::ContentExtensionsBackend>();
+        return makeUnique<WebCore::ContentExtensions::ContentExtensionsBackend>();
     }).iterator->value;
 
     for (auto&& contentRuleList : contentRuleLists) {

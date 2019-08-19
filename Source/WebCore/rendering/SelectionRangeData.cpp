@@ -131,13 +131,13 @@ static SelectionData collect(const SelectionRangeData::Context& selection, bool 
     while (start && start != stop) {
         if (isValidRendererForSelection(*start, selection)) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            oldSelectionData.renderers.set(start, std::make_unique<RenderSelectionInfo>(*start, true));
+            oldSelectionData.renderers.set(start, makeUnique<RenderSelectionInfo>(*start, true));
             if (repaintDifference) {
                 for (auto* block = containingBlockBelowView(*start); block; block = containingBlockBelowView(*block)) {
                     auto& blockInfo = oldSelectionData.blocks.add(block, nullptr).iterator->value;
                     if (blockInfo)
                         break;
-                    blockInfo = std::make_unique<RenderBlockSelectionInfo>(*block);
+                    blockInfo = makeUnique<RenderBlockSelectionInfo>(*block);
                 }
             }
         }
@@ -213,13 +213,13 @@ IntRect SelectionRangeData::collectBounds(ClipToVisibleContent clipToVisibleCont
         if ((start->canBeSelectionLeaf() || start == m_selectionContext.start() || start == m_selectionContext.end())
             && start->selectionState() != RenderObject::SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            renderers.set(start, std::make_unique<RenderSelectionInfo>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
+            renderers.set(start, makeUnique<RenderSelectionInfo>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
             auto* block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
                 std::unique_ptr<RenderSelectionInfo>& blockInfo = renderers.add(block, nullptr).iterator->value;
                 if (blockInfo)
                     break;
-                blockInfo = std::make_unique<RenderSelectionInfo>(*block, clipToVisibleContent == ClipToVisibleContent::Yes);
+                blockInfo = makeUnique<RenderSelectionInfo>(*block, clipToVisibleContent == ClipToVisibleContent::Yes);
                 block = block->containingBlock();
             }
         }
@@ -281,7 +281,7 @@ void SelectionRangeData::apply(const Context& newSelection, RepaintMode blockRep
     selectionIterator = SelectionIterator(selectionStart);
     for (auto* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
         if (isValidRendererForSelection(*currentRenderer, m_selectionContext)) {
-            std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(*currentRenderer, true);
+            std::unique_ptr<RenderSelectionInfo> selectionInfo = makeUnique<RenderSelectionInfo>(*currentRenderer, true);
 #if ENABLE(SERVICE_CONTROLS)
             for (auto& rect : selectionInfo->collectedSelectionRects())
                 m_selectionRectGatherer.addRect(selectionInfo->repaintContainer(), rect);
@@ -294,7 +294,7 @@ void SelectionRangeData::apply(const Context& newSelection, RepaintMode blockRep
                 std::unique_ptr<RenderBlockSelectionInfo>& blockInfo = newSelectedBlocks.add(containingBlock, nullptr).iterator->value;
                 if (blockInfo)
                     break;
-                blockInfo = std::make_unique<RenderBlockSelectionInfo>(*containingBlock);
+                blockInfo = makeUnique<RenderBlockSelectionInfo>(*containingBlock);
                 containingBlock = containingBlock->containingBlock();
 #if ENABLE(SERVICE_CONTROLS)
                 m_selectionRectGatherer.addGapRects(blockInfo->repaintContainer(), blockInfo->rects());

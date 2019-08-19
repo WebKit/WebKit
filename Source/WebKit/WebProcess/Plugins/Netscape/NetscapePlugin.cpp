@@ -350,7 +350,7 @@ uint32_t NetscapePlugin::scheduleTimer(unsigned interval, bool repeat, void (*ti
     // FIXME: Handle wrapping around.
     unsigned timerID = ++m_nextTimerID;
 
-    auto timer = std::make_unique<Timer>(this, timerID, interval, repeat, timerFunc);
+    auto timer = makeUnique<Timer>(this, timerID, interval, repeat, timerFunc);
     
     // FIXME: Based on the plug-in visibility, figure out if we should throttle the timer, or if we should start it at all.
     timer->start();

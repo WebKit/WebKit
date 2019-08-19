@@ -243,7 +243,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     break;
                 }
                 case AccessCase::Getter: {
-                    callLinkStatus = std::make_unique<CallLinkStatus>();
+                    callLinkStatus = makeUnique<CallLinkStatus>();
                     if (CallLinkInfo* callLinkInfo = access.as<GetterSetterAccessCase>().callLinkInfo()) {
                         *callLinkStatus = CallLinkStatus::computeFor(
                             locker, profiledBlock, *callLinkInfo, callExitSiteData);

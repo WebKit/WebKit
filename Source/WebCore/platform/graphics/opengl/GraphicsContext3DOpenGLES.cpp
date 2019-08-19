@@ -242,7 +242,7 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 Extensions3D& GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = std::make_unique<Extensions3DOpenGLES>(this, isGLES2Compliant());
+        m_extensions = makeUnique<Extensions3DOpenGLES>(this, isGLES2Compliant());
     return *m_extensions;
 }
 #endif
@@ -271,7 +271,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attributes)
     , m_compiler(isGLES2Compliant() ? SH_ESSL_OUTPUT : SH_GLSL_COMPATIBILITY_OUTPUT)
-    , m_private(std::make_unique<GraphicsContext3DPrivate>(this, renderStyle))
+    , m_private(makeUnique<GraphicsContext3DPrivate>(this, renderStyle))
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
     makeContextCurrent();

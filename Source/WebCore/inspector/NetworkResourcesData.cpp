@@ -136,7 +136,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
 {
     ensureNoDataForRequestId(requestId);
 
-    auto resourceData = std::make_unique<ResourceData>(requestId, loaderId);
+    auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setType(type);
     m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
 }
@@ -145,7 +145,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
 {
     ensureNoDataForRequestId(requestId);
 
-    auto resourceData = std::make_unique<ResourceData>(requestId, loaderId);
+    auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setCachedResource(&cachedResource);
     m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
 }

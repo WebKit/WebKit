@@ -54,7 +54,7 @@ void FFTFrame::doPaddedFFT(const float* data, size_t dataSize)
 
 std::unique_ptr<FFTFrame> FFTFrame::createInterpolatedFrame(const FFTFrame& frame1, const FFTFrame& frame2, double x)
 {
-    auto newFrame = std::make_unique<FFTFrame>(frame1.fftSize());
+    auto newFrame = makeUnique<FFTFrame>(frame1.fftSize());
 
     newFrame->interpolateFrequencyComponents(frame1, frame2, x);
 

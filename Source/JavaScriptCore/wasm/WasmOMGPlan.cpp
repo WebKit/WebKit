@@ -95,7 +95,7 @@ void OMGPlan::work(CompilationEffort)
         return;
     }
 
-    omgEntrypoint.compilation = std::make_unique<B3::Compilation>(
+    omgEntrypoint.compilation = makeUnique<B3::Compilation>(
         FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly OMG function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 

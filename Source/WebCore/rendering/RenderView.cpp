@@ -492,7 +492,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
     // FIXME: Maybe there should be a region type that does this automatically.
     static const unsigned maximumRepaintRegionGridSize = 16 * 16;
     if (m_accumulatedRepaintRegion->gridSize() > maximumRepaintRegionGridSize)
-        m_accumulatedRepaintRegion = std::make_unique<Region>(m_accumulatedRepaintRegion->bounds());
+        m_accumulatedRepaintRegion = makeUnique<Region>(m_accumulatedRepaintRegion->bounds());
 }
 
 void RenderView::flushAccumulatedRepaintRegion() const
@@ -724,7 +724,7 @@ bool RenderView::usesCompositing() const
 RenderLayerCompositor& RenderView::compositor()
 {
     if (!m_compositor)
-        m_compositor = std::make_unique<RenderLayerCompositor>(*this);
+        m_compositor = makeUnique<RenderLayerCompositor>(*this);
 
     return *m_compositor;
 }
@@ -745,7 +745,7 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 ImageQualityController& RenderView::imageQualityController()
 {
     if (!m_imageQualityController)
-        m_imageQualityController = std::make_unique<ImageQualityController>(*this);
+        m_imageQualityController = makeUnique<ImageQualityController>(*this);
     return *m_imageQualityController;
 }
 
@@ -834,7 +834,7 @@ RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
 
     m_wasAccumulatingRepaintRegion = !!rootRenderView->m_accumulatedRepaintRegion;
     if (!m_wasAccumulatingRepaintRegion)
-        rootRenderView->m_accumulatedRepaintRegion = std::make_unique<Region>();
+        rootRenderView->m_accumulatedRepaintRegion = makeUnique<Region>();
     m_rootView = makeWeakPtr(*rootRenderView);
 }
 

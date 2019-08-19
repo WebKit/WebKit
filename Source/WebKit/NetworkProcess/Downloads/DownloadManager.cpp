@@ -56,7 +56,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
         parameters.blobFileReferences = client().networkSession(sessionID)->blobRegistry().filesInBlob(request.url());
     parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
 
-    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, &client().networkSession(sessionID)->blobRegistry(), suggestedName));
+    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, &client().networkSession(sessionID)->blobRegistry(), suggestedName));
 }
 
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
@@ -90,7 +90,7 @@ void DownloadManager::willDecidePendingDownloadDestination(NetworkDataTask& netw
 void DownloadManager::convertNetworkLoadToDownload(DownloadID downloadID, std::unique_ptr<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& completionHandler, Vector<RefPtr<WebCore::BlobDataFileReference>>&& blobFileReferences, const ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT(!m_pendingDownloads.contains(downloadID));
-    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(networkLoad), WTFMove(completionHandler), downloadID, request, response));
+    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(networkLoad), WTFMove(completionHandler), downloadID, request, response));
 }
 
 void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
@@ -123,7 +123,7 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
 #if !PLATFORM(COCOA)
     notImplemented();
 #else
-    auto download = std::make_unique<Download>(*this, downloadID, nullptr, sessionID);
+    auto download = makeUnique<Download>(*this, downloadID, nullptr, sessionID);
 
     download->resume(resumeData, path, WTFMove(sandboxExtensionHandle));
     ASSERT(!m_downloads.contains(downloadID));

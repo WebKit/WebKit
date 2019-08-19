@@ -129,7 +129,7 @@ public:
     virtual MediaPlayer::NetworkState networkState() const = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
 
-    virtual std::unique_ptr<PlatformTimeRanges> seekable() const { return maxMediaTimeSeekable() == MediaTime::zeroTime() ? std::make_unique<PlatformTimeRanges>() : std::make_unique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable()); }
+    virtual std::unique_ptr<PlatformTimeRanges> seekable() const { return maxMediaTimeSeekable() == MediaTime::zeroTime() ? makeUnique<PlatformTimeRanges>() : makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable()); }
     virtual float maxTimeSeekable() const { return 0; }
     virtual MediaTime maxMediaTimeSeekable() const { return MediaTime::createWithDouble(maxTimeSeekable()); }
     virtual double minTimeSeekable() const { return 0; }

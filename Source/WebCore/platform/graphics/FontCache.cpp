@@ -240,7 +240,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
                 it = fontPlatformDataCache().find(key);
                 ASSERT(it != fontPlatformDataCache().end());
                 if (fontPlatformDataForAlternateName)
-                    it->value = std::make_unique<FontPlatformData>(*fontPlatformDataForAlternateName);
+                    it->value = makeUnique<FontPlatformData>(*fontPlatformDataForAlternateName);
             }
         }
     }

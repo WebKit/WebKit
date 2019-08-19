@@ -44,7 +44,7 @@ void NetworkRTCMonitor::startUpdating()
 {
     m_isStarted = true;
     m_rtcProvider.callOnRTCNetworkThread([this]() {
-        m_manager = std::make_unique<rtc::BasicNetworkManager>();
+        m_manager = makeUniqueWithoutFastMallocCheck<rtc::BasicNetworkManager>();
         m_manager->SignalNetworksChanged.connect(this, &NetworkRTCMonitor::onNetworksChanged);
         m_manager->StartUpdating();
     });

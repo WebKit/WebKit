@@ -294,7 +294,7 @@ static void applyWorkaroundToAllowWritingAttributedStringsToItemProviders()
     static std::unique_ptr<ClassMethodSwizzler> swizzler;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        swizzler = std::make_unique<ClassMethodSwizzler>(NSAttributedString.class, @selector(writableTypeIdentifiersForItemProvider), reinterpret_cast<IMP>(writableTypeIdentifiersForItemProviderWithoutPublicRTFD));
+        swizzler = makeUnique<ClassMethodSwizzler>(NSAttributedString.class, @selector(writableTypeIdentifiersForItemProvider), reinterpret_cast<IMP>(writableTypeIdentifiersForItemProviderWithoutPublicRTFD));
     });
 }
 
@@ -347,7 +347,7 @@ static UICalloutBar *suppressUICalloutBar()
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
-    _sharedCalloutBarSwizzler = std::make_unique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
+    _sharedCalloutBarSwizzler = makeUnique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
     _inputSessionChangeCount = 0;
     applyWorkaroundToAllowWritingAttributedStringsToItemProviders();
 #endif

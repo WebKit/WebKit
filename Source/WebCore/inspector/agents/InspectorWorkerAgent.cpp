@@ -36,7 +36,7 @@ using namespace Inspector;
 
 InspectorWorkerAgent::InspectorWorkerAgent(PageAgentContext& context)
     : InspectorAgentBase("Worker"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::WorkerFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::WorkerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::WorkerBackendDispatcher::create(context.backendDispatcher, this))
     , m_page(context.inspectedPage)
 {

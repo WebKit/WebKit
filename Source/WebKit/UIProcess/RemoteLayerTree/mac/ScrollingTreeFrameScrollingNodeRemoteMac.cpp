@@ -36,7 +36,7 @@ using namespace WebCore;
 
 ScrollingTreeFrameScrollingNodeRemoteMac::ScrollingTreeFrameScrollingNodeRemoteMac(ScrollingTree& tree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNodeMac(tree, nodeType, nodeID)
-    , m_scrollerPair(std::make_unique<ScrollerPairMac>(*this))
+    , m_scrollerPair(makeUnique<ScrollerPairMac>(*this))
 {
 }
 

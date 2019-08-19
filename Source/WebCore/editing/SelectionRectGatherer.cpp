@@ -81,7 +81,7 @@ std::unique_ptr<SelectionRectGatherer::Notifier> SelectionRectGatherer::clearAnd
     m_gapRects.clear();
     m_isTextOnly = true;
 
-    return std::make_unique<Notifier>(*this);
+    return makeUnique<Notifier>(*this);
 }
 
 } // namespace WebCore

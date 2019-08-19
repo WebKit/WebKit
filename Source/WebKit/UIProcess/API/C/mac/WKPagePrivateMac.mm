@@ -52,7 +52,7 @@
         return nil;
 
     _page = WTFMove(page);
-    _observer = std::make_unique<WebKit::PageLoadStateObserver>(self, @"URL");
+    _observer = makeUnique<WebKit::PageLoadStateObserver>(self, @"URL");
     _page->pageLoadState().addObserver(*_observer);
 
     return self;

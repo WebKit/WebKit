@@ -45,7 +45,7 @@ void WebPasteboardOverrides::addOverride(const String& pasteboardName, const Str
     auto addResult = m_overridesMap.add(pasteboardName, nullptr);
 
     if (addResult.isNewEntry) {
-        std::unique_ptr<HashMap<String, Vector<uint8_t>>> typeMap = std::make_unique<HashMap<String, Vector<uint8_t>>>();
+        std::unique_ptr<HashMap<String, Vector<uint8_t>>> typeMap = makeUnique<HashMap<String, Vector<uint8_t>>>();
         addResult.iterator->value = WTFMove(typeMap);
     }
 

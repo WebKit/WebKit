@@ -47,7 +47,7 @@ DelayProcessor::~DelayProcessor()
 
 std::unique_ptr<AudioDSPKernel> DelayProcessor::createKernel()
 {
-    return std::make_unique<DelayDSPKernel>(this);
+    return makeUnique<DelayDSPKernel>(this);
 }
 
 } // namespace WebCore

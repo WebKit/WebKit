@@ -37,7 +37,7 @@ auto ImageBackingTextureMapperImpl::createFactory() -> Factory
 {
     return Factory(
         [](ImageBacking&) {
-            return std::make_unique<ImageBackingTextureMapperImpl>();
+            return makeUnique<ImageBackingTextureMapperImpl>();
         });
 }
 

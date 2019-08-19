@@ -71,7 +71,7 @@ using namespace Inspector;
 
 InspectorCanvasAgent::InspectorCanvasAgent(PageAgentContext& context)
     : InspectorAgentBase("Canvas"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::CanvasFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::CanvasFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CanvasBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
@@ -436,7 +436,7 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
     if (!inspectorCanvas->currentFrameHasData()) {
         if (auto* scriptExecutionContext = inspectorCanvas->context().canvasBase().scriptExecutionContext()) {
             auto& queue = MicrotaskQueue::mainThreadQueue();
-            queue.append(std::make_unique<ActiveDOMCallbackMicrotask>(queue, *scriptExecutionContext, [&, protectedInspectorCanvas = inspectorCanvas.copyRef()] {
+            queue.append(makeUnique<ActiveDOMCallbackMicrotask>(queue, *scriptExecutionContext, [&, protectedInspectorCanvas = inspectorCanvas.copyRef()] {
                 if (auto* canvasElement = protectedInspectorCanvas->canvasElement()) {
                     if (canvasElement->isDescendantOf(canvasElement->document()))
                         return;

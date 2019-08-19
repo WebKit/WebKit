@@ -111,7 +111,7 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
     bool isMainPage = m_pages.isEmpty();
-    m_pages.append(std::make_unique<InjectedBundlePage>(page));
+    m_pages.append(makeUnique<InjectedBundlePage>(page));
 
     setUpInjectedBundleClients(page);
 

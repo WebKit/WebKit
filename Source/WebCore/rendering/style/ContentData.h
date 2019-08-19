@@ -95,7 +95,7 @@ private:
     RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const final;
     std::unique_ptr<ContentData> cloneInternal() const final
     {
-        auto image = std::make_unique<ImageContentData>(m_image.copyRef());
+        auto image = makeUnique<ImageContentData>(m_image.copyRef());
         image->setAltText(altText());
         return image;
     }
@@ -126,7 +126,7 @@ public:
 
 private:
     RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const final;
-    std::unique_ptr<ContentData> cloneInternal() const final { return std::make_unique<TextContentData>(m_text); }
+    std::unique_ptr<ContentData> cloneInternal() const final { return makeUnique<TextContentData>(m_text); }
 
     String m_text;
 };
@@ -161,7 +161,7 @@ private:
     RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const final;
     std::unique_ptr<ContentData> cloneInternal() const final
     {
-        return std::make_unique<CounterContentData>(std::make_unique<CounterContent>(counter()));
+        return makeUnique<CounterContentData>(makeUnique<CounterContent>(counter()));
     }
 
     std::unique_ptr<CounterContent> m_counter;
@@ -190,7 +190,7 @@ public:
 
 private:
     RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const final;
-    std::unique_ptr<ContentData> cloneInternal() const final { return std::make_unique<QuoteContentData>(quote()); }
+    std::unique_ptr<ContentData> cloneInternal() const final { return makeUnique<QuoteContentData>(quote()); }
 
     QuoteType m_quote;
 };

@@ -123,7 +123,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    return std::make_unique<Decoder>(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
+    return makeUnique<Decoder>(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
 }
 
 static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, unsigned alignment)

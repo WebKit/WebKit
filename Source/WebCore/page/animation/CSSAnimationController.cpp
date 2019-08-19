@@ -596,7 +596,7 @@ void CSSAnimationControllerPrivate::animationWillBeRemoved(AnimationBase& animat
 }
 
 CSSAnimationController::CSSAnimationController(Frame& frame)
-    : m_data(std::make_unique<CSSAnimationControllerPrivate>(frame))
+    : m_data(makeUnique<CSSAnimationControllerPrivate>(frame))
 {
 }
 

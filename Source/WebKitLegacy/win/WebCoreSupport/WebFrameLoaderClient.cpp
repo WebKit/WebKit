@@ -108,7 +108,7 @@ public:
 };
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
-    : m_policyListenerPrivate(std::make_unique<WebFramePolicyListenerPrivate>())
+    : m_policyListenerPrivate(makeUnique<WebFramePolicyListenerPrivate>())
     , m_webFrame(webFrame)
     , m_manualLoader(0)
     , m_hasSentResponseToPlugin(false) 
@@ -974,7 +974,7 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
 
     ASSERT(coreFrame->loader().documentLoader() == cachedFrame->documentLoader());
 
-    cachedFrame->setCachedFramePlatformData(std::make_unique<WebCachedFramePlatformData>(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader().documentLoader()))));
+    cachedFrame->setCachedFramePlatformData(makeUnique<WebCachedFramePlatformData>(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader().documentLoader()))));
 #else
     notImplemented();
 #endif

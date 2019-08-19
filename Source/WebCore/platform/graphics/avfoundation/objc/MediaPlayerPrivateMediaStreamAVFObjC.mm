@@ -183,7 +183,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     : m_player(player)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_clock(PAL::Clock::create())
-    , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
+    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -220,7 +220,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 void MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaStreamAVFObjC>(player); }, getSupportedTypes,
+        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateMediaStreamAVFObjC>(player); }, getSupportedTypes,
             supportsType, 0, 0, 0, 0);
 }
 
@@ -1054,12 +1054,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
 {
-    return std::make_unique<PlatformTimeRanges>();
+    return makeUnique<PlatformTimeRanges>();
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::buffered() const
 {
-    return std::make_unique<PlatformTimeRanges>();
+    return makeUnique<PlatformTimeRanges>();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)
@@ -1073,7 +1073,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
         return;
 
     if (!m_imagePainter.pixelBufferConformer)
-        m_imagePainter.pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+        m_imagePainter.pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
 
     ASSERT(m_imagePainter.pixelBufferConformer);
     if (!m_imagePainter.pixelBufferConformer)

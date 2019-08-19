@@ -811,7 +811,7 @@ sub generateFillLayerPropertyInheritValueSetter {
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
   $setterContent .= $indent . "for (auto* parent = &styleResolver.parentStyle()->" . getLayersFunction($name) . "(); parent && parent->" . $testFunction . "(); parent = parent->next()) {\n";
   $setterContent .= $indent . "    if (!child) {\n";
-  $setterContent .= $indent . "        previousChild->setNext(std::make_unique<FillLayer>(" . getFillLayerType($name) . "));\n";
+  $setterContent .= $indent . "        previousChild->setNext(makeUnique<FillLayer>(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "        child = previousChild->next();\n";
   $setterContent .= $indent . "    }\n";
   $setterContent .= $indent . "    child->" . $setter . "(parent->" . $getter . "());\n";
@@ -837,7 +837,7 @@ sub generateFillLayerPropertyValueSetter {
   $setterContent .= $indent . "    // Walk each value and put it into a layer, creating new layers as needed.\n";
   $setterContent .= $indent . "    for (auto& item : downcast<CSSValueList>(value)) {\n";
   $setterContent .= $indent . "        if (!child) {\n";
-  $setterContent .= $indent . "            previousChild->setNext(std::make_unique<FillLayer>(" . getFillLayerType($name) . "));\n";
+  $setterContent .= $indent . "            previousChild->setNext(makeUnique<FillLayer>(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "            child = previousChild->next();\n";
   $setterContent .= $indent . "        }\n";
   $setterContent .= $indent . "        styleResolver.styleMap()->" . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, item);\n";

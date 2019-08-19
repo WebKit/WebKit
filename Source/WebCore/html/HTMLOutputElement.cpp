@@ -132,7 +132,7 @@ void HTMLOutputElement::setDefaultValue(const String& value)
 DOMTokenList& HTMLOutputElement::htmlFor()
 {
     if (!m_tokens)
-        m_tokens = std::make_unique<DOMTokenList>(*this, forAttr);
+        m_tokens = makeUnique<DOMTokenList>(*this, forAttr);
     return *m_tokens;
 }
 

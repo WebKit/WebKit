@@ -140,7 +140,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     , m_immediateParentAllowsFunctionDeclarationInStatement(false)
     , m_debuggerParseData(debuggerParseData)
 {
-    m_lexer = std::make_unique<LexerType>(vm, builtinMode, scriptMode);
+    m_lexer = makeUnique<LexerType>(vm, builtinMode, scriptMode);
     m_lexer->setCode(source, &m_parserArena);
     m_token.m_location.line = source.firstLine().oneBasedInt();
     m_token.m_location.startOffset = source.startOffset();

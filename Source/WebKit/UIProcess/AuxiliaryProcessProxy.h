@@ -137,7 +137,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = std::make_unique<IPC::Encoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = makeUnique<IPC::Encoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
 
     return sendMessage(WTFMove(encoder), sendOptions);

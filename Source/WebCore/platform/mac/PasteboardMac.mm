@@ -100,7 +100,7 @@ Pasteboard::Pasteboard(const String& pasteboardName, const Vector<String>& promi
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return std::make_unique<Pasteboard>(NSGeneralPboard);
+    return makeUnique<Pasteboard>(NSGeneralPboard);
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
@@ -108,13 +108,13 @@ std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return std::make_unique<Pasteboard>(NSDragPboard);
+    return makeUnique<Pasteboard>(NSDragPboard);
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
-    return std::make_unique<Pasteboard>(dragData.pasteboardName(), dragData.fileNames());
+    return makeUnique<Pasteboard>(dragData.pasteboardName(), dragData.fileNames());
 }
 #endif
 

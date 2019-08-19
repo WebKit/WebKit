@@ -1690,7 +1690,7 @@ void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallback
     m_pendingUIScriptInvocationData = nullptr;
 
     if (!m_UIScriptContext)
-        m_UIScriptContext = std::make_unique<UIScriptContext>(*this);
+        m_UIScriptContext = makeUnique<UIScriptContext>(*this);
     
     m_UIScriptContext->runUIScript(toWTFString(script), scriptCallbackID);
 }

@@ -217,7 +217,7 @@ inline void Heap::decrementDeferralDepthAndGCIfNeeded()
 inline HashSet<MarkedArgumentBuffer*>& Heap::markListSet()
 {
     if (!m_markListSet)
-        m_markListSet = std::make_unique<HashSet<MarkedArgumentBuffer*>>();
+        m_markListSet = makeUnique<HashSet<MarkedArgumentBuffer*>>();
     return *m_markListSet;
 }
 

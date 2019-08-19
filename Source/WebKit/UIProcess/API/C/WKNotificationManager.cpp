@@ -41,7 +41,7 @@ WKTypeID WKNotificationManagerGetTypeID()
 
 void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProviderBase* wkProvider)
 {
-    toImpl(managerRef)->setProvider(std::make_unique<WebNotificationProvider>(wkProvider));
+    toImpl(managerRef)->setProvider(makeUnique<WebNotificationProvider>(wkProvider));
 }
 
 void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)

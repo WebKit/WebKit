@@ -1,3 +1,565 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::startMonitoringDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::convertNetworkLoadToDownload):
+        (WebKit::DownloadManager::resumeDownload):
+        * NetworkProcess/Downloads/DownloadMap.cpp:
+        (WebKit::DownloadMap::add):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        * NetworkProcess/NetworkContentRuleListManager.cpp:
+        (WebKit::NetworkContentRuleListManager::addContentRuleLists):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::download):
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        (WebKit::NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveResponse):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::switchToNewTestingSession):
+        (WebKit::NetworkProcess::ensureSession):
+        (WebKit::NetworkProcess::swServerForSession):
+        (WebKit::NetworkProcess::initializeQuotaUsers):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::addSupplement):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::create):
+        * NetworkProcess/PreconnectTask.cpp:
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::scheduleDatabaseUpdate):
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/SessionStorageNamespace.cpp:
+        (WebKit::SessionStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::clone const):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateTransientLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateSessionStorageNamespace):
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::add):
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp:
+        (WebKit::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::Cache):
+        (WebKit::NetworkCache::Cache::makeEntry):
+        (WebKit::NetworkCache::Cache::makeRedirectEntry):
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::registerSubresourceLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve):
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::satisfyPendingRequests):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::readRecord):
+        (WebKit::NetworkCache::retrieveFromMemory):
+        (WebKit::NetworkCache::Storage::retrieve):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::traverse):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourcesEntry::decodeStorageRecord):
+        * NetworkProcess/cache/PrefetchCache.cpp:
+        (WebKit::PrefetchCache::store):
+        (WebKit::PrefetchCache::storeRedirect):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const):
+        (WebKit::NetworkProcess::networkHTTPSUpgradeChecker):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        (WebKit::NetworkSessionCocoa::create):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const):
+        * NetworkProcess/curl/NetworkSessionCurl.h:
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm:
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinator):
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::download):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup):
+        (WebKit::NetworkSessionSoup::createWebSocketTask):
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * NetworkProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamReadAsync):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkRTCMonitor::startUpdating):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::createSyncMessageEncoder):
+        (IPC::Connection::enableIncomingMessagesThrottling):
+        (IPC::Connection::dispatchSyncMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithAsyncReply):
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::unwrapForTesting):
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsync):
+        * Platform/IPC/MessageSender.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+        (IPC::Connection::open):
+        (IPC::createMessageDecoder):
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        (IPC::Connection::sendOutputMessage):
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::readEventHandler):
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort):
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        (WebKit::LayerHostingContext::createForExternalPluginHostingProcess):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPluginInternal):
+        * Shared/API/APIURL.h:
+        (API::URL::create):
+        (API::URL::parseURLIfNecessary const):
+        * Shared/API/Cocoa/RemoteObjectInvocation.mm:
+        (WebKit::RemoteObjectInvocation::decode):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _initWithWebPage:]):
+        (-[_WKRemoteObjectRegistry _initWithWebPageProxy:]):
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        * Shared/API/glib/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemCreate):
+        (webkit_context_menu_item_new):
+        (webkit_context_menu_item_new_from_gaction):
+        (webkit_context_menu_item_new_from_stock_action):
+        (webkit_context_menu_item_new_from_stock_action_with_label):
+        (webkit_context_menu_item_new_with_submenu):
+        (webkit_context_menu_item_new_separator):
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtension::Handle::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::texmapLayer):
+        (WebKit::CoordinatedGraphicsScene::ensureRootLayer):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::ThreadedCompositor):
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::registerNPObject):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::registerObserver):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInjectedBundleClient):
+        (WKContextSetHistoryClient):
+        (WKContextSetDownloadClient):
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        (WKGeolocationManagerSetProvider):
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerSetProvider):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        (WKPageSetPageDiagnosticLoggingClient):
+        (WKPageSetPageFindClient):
+        (WKPageSetPageFindMatchesClient):
+        (WKPageSetPageFormClient):
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageUIClient):
+        (WKPageSetPageStateClient):
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState initWithPage:]):
+        * UIProcess/API/C/wpe/WKView.cpp:
+        (WKViewSetViewClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _initWithPageRef:]):
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (-[WKHTTPCookieStore addObserver:]):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setDownloadDelegate:]):
+        (-[WKProcessPool _setAutomationDelegate:]):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addScriptMessageHandler:name:]):
+        (-[WKUserContentController _addScriptMessageHandler:name:userContentWorld:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        (-[WKWebView _setInputDelegate:]):
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession setDelegate:]):
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController init]):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::readySQLiteStatement):
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionConstructed):
+        * UIProcess/API/glib/WebKitContextMenuClient.cpp:
+        (attachContextMenuClientToView):
+        * UIProcess/API/glib/WebKitCustomProtocolManagerClient.cpp:
+        (attachCustomProtocolManagerClientToContext):
+        * UIProcess/API/glib/WebKitDownloadClient.cpp:
+        (attachDownloadClientToContext):
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseOpen):
+        * UIProcess/API/glib/WebKitFindController.cpp:
+        (webkitFindControllerConstructed):
+        * UIProcess/API/glib/WebKitFormClient.cpp:
+        (attachFormClientToView):
+        * UIProcess/API/glib/WebKitGeolocationManager.cpp:
+        (webkitGeolocationManagerCreate):
+        * UIProcess/API/glib/WebKitIconLoadingClient.cpp:
+        (attachIconLoadingClientToView):
+        * UIProcess/API/glib/WebKitInjectedBundleClient.cpp:
+        (attachInjectedBundleClientToContext):
+        * UIProcess/API/glib/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::WebKitNotificationProvider):
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (attachUIClientToView):
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        (webkit_user_content_manager_register_script_message_handler):
+        (webkit_user_content_manager_register_script_message_handler_in_world):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_automation_allowed):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp:
+        (webkitEmojiChooserSetupEmojiSections):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest):
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkitWebInspectorCreate):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+        (webkitWebViewBaseGestureController):
+        (webkitWebViewBaseDragAndDropHandler):
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView maybeInstallIconLoadingClient]):
+        (-[WKView initWithFrame:processPool:configuration:]):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::View):
+        (WKWPE::View::setClient):
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::notifyLoadChangedCallback):
+        (WPEQtView::notifyLoadFailedCallback):
+        (WPEQtView::runJavaScript):
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp:
+        (WPEQtViewBackend::create):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::send):
+        * UIProcess/Cocoa/IconLoadingDelegate.mm:
+        (WebKit::IconLoadingDelegate::createIconLoadingClient):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::createContextMenuClient):
+        (WebKit::UIDelegate::createUIClient):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::startDisplayLink):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasUnexpectedlyUnsuspended):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::createDrawingAreaProxy):
+        (WebKit::WebViewImpl::setTextIndicator):
+        (WebKit::WebViewImpl::ensureGestureController):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::incorporateUpdate):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::getDataFromDecoder const):
+        (WebKit::DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::setInitialConnectedGamepads):
+        (WebKit::UIGamepadProvider::platformGamepadConnected):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        (WebKit::NetworkProcessProxy::takeUploadAssertion):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        (WebKit::WebNotificationManagerProxy::setProvider):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::pluginRequiresGtk2):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm:
+        (WebKit::RemoteLayerTreeNode::createWithPlainLayer):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::ScrollingTreeFrameScrollingNodeRemoteMac):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::ScrollingTreeOverflowScrollingNodeRemoteMac):
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::deviceAdded):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::setProvider):
+        * UIProcess/WebMediaSessionFocusManager.cpp:
+        (WebKit::WebMediaSessionFocusManager::setFocusedMediaElement):
+        * UIProcess/WebPageInspectorController.cpp:
+        (WebKit::WebPageInspectorController::WebPageInspectorController):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::setFormClient):
+        (WebKit::WebPageProxy::setUIClient):
+        (WebKit::WebPageProxy::setIconLoadingClient):
+        (WebKit::WebPageProxy::setFindClient):
+        (WebKit::WebPageProxy::setFindMatchesClient):
+        (WebKit::WebPageProxy::setContextMenuClient):
+        (WebKit::WebPageProxy::setInjectedBundleClient):
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::setDrawingArea):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::processNextQueuedWheelEvent):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::setFullscreenClient):
+        (WebKit::WebPageProxy::userMediaPermissionRequestManager):
+        (WebKit::WebPageProxy::setScrollPerformanceDataCollectionEnabled):
+        (WebKit::WebPageProxy::speechSynthesisData):
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::setInjectedBundleClient):
+        (WebKit::WebProcessPool::setHistoryClient):
+        (WebKit::WebProcessPool::setDownloadClient):
+        (WebKit::WebProcessPool::setAutomationClient):
+        (WebKit::WebProcessPool::setLegacyCustomProtocolManagerClient):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::didCollectPrewarmInformation):
+        (WebKit::WebProcessPool::setWebProcessHasUploads):
+        (WebKit::WebProcessPool::setWebProcessIsPlayingAudibleMedia):
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createBackend):
+        * UIProcess/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::inspect):
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::checkRequirements):
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::dragDataSelection):
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::initializeEGL):
+        * UIProcess/ios/EditableImageController.mm:
+        (WebKit::EditableImageController::ensureEditableImage):
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView initWithFrame:processPool:configuration:webView:]):
+        (-[WKContentView _createDrawingAreaProxy:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::elementDidFocus):
+        (WebKit::WebPageProxy::paymentCoordinatorAuthorizationPresenter):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient initWithPage:view:usePlatformFindUI:]):
+        * UIProcess/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::inspect):
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::platformStartTask):
+        * UIProcess/win/BackingStoreDirect2D.cpp:
+        (WebKit::BackingStore::createBackend):
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * WebProcess/Gamepad/WebGamepadProvider.cpp:
+        (WebKit::WebGamepadProvider::setInitialGamepads):
+        (WebKit::WebGamepadProvider::gamepadConnected):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetContextMenuClient):
+        (WKBundlePageSetEditorClient):
+        (WKBundlePageSetFormClient):
+        (WKBundlePageSetPageLoaderClient):
+        (WKBundlePageSetResourceLoadClient):
+        (WKBundlePageSetUIClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlayCreate):
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+        (WKBundlePageBannerCreateBannerWithCALayer):
+        * WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp:
+        (WebKit::getOrCreateDOMObjectCacheFrameObserver):
+        (WebKit::DOMObjectCache::put):
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp:
+        (WebKit::WebKitExtensionManager::initialize):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp:
+        (webkitWebEditorCreate):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:
+        (webkitWebExtensionCreate):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkitFrameGetOrCreate):
+        (webkitWebPageCreate):
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+        (-[WKDOMTextIterator initWithRange:]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]):
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::InjectedBundle):
+        (WebKit::InjectedBundle::setClient):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::PendingMessage::PendingMessage):
+        (WebKit::WebSocketChannel::send):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        (WebKit::LibWebRTCSocketFactory::createAsyncResolver):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::PluginDestructionProtector::PluginDestructionProtector):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::scheduleTimer):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverData):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePluginX11::create):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createWebEvent const):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createColorChooser):
+        (WebKit::WebChromeClient::createDataListSuggestionPicker):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp:
+        (WebKit::WebPasteboardOverrides::addOverride):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::ensureBackingStore):
+        (WebKit::PlatformCALayerRemote::setTransform):
+        (WebKit::PlatformCALayerRemote::setSublayerTransform):
+        (WebKit::PlatformCALayerRemote::setFilters):
+        (WebKit::PlatformCALayerRemote::setShapeRoundedRect):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp:
+        (WebKit::PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSubframe):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        (WebKit::WebPage::setInjectedBundleContextMenuClient):
+        (WebKit::WebPage::setInjectedBundleEditorClient):
+        (WebKit::WebPage::setInjectedBundleFormClient):
+        (WebKit::WebPage::setInjectedBundlePageLoaderClient):
+        (WebKit::WebPage::setInjectedBundleResourceLoadClient):
+        (WebKit::WebPage::setInjectedBundleUIClient):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::beginPrinting):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::print):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator):
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::requestRefreshCallback):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::markAllLayersVolatile):
+        (WebKit::WebProcess::ensureAutomationSessionProxy):
+        (WebKit::WebProcess::libWebRTCNetwork):
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::addSupplement):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::Source):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+        (WebKit::WebProcess::updateCPUMonitorState):
+
 2019-08-18  Per Arne Vollan  <pvollan@apple.com>
 
         [Mac] Use the PID of the WebContent process when issuing local file read sandbox extensions

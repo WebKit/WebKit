@@ -523,7 +523,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
     _resource = self.session.loader.requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (_resource)
-        _resource->setClient(std::make_unique<WebCoreNSURLSessionDataTaskClient>(self));
+        _resource->setClient(makeUnique<WebCoreNSURLSessionDataTaskClient>(self));
 }
 
 - (void)_cancel

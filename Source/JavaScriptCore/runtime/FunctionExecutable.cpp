@@ -110,7 +110,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(
 FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
 {
     ASSERT(!m_rareData);
-    auto rareData = std::make_unique<RareData>();
+    auto rareData = makeUnique<RareData>();
     rareData->m_lineCount = lineCount();
     rareData->m_endColumn = endColumn();
     rareData->m_parametersStartOffset = parametersStartOffset();

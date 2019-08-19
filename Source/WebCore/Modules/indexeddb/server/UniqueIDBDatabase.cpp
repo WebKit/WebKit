@@ -433,7 +433,7 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     // we won't have a m_mostRecentDeletedDatabaseInfo. In that case, we'll manufacture one using the
     // passed in deletedVersion argument.
     if (!m_mostRecentDeletedDatabaseInfo)
-        m_mostRecentDeletedDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), deletedVersion);
+        m_mostRecentDeletedDatabaseInfo = makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), deletedVersion);
 
     if (m_currentOpenDBRequest) {
         m_currentOpenDBRequest->notifyDidDeleteDatabase(*m_mostRecentDeletedDatabaseInfo);
@@ -784,7 +784,7 @@ void UniqueIDBDatabase::didOpenBackingStore(const IDBDatabaseInfo& info, const I
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didOpenBackingStore");
     
-    m_databaseInfo = std::make_unique<IDBDatabaseInfo>(info);
+    m_databaseInfo = makeUnique<IDBDatabaseInfo>(info);
     m_backingStoreOpenError = error;
 
     ASSERT(m_isOpeningBackingStore);
@@ -1731,7 +1731,7 @@ void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, 
         ASSERT(m_versionChangeTransaction == transaction);
         ASSERT(!m_versionChangeDatabaseConnection || &m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_versionChangeTransaction->originalDatabaseInfo());
-        m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
+        m_databaseInfo = makeUnique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
     }
 
     IDBError result = transaction->state() == UniqueIDBDatabaseTransaction::State::Aborted ? transaction->result() : error;

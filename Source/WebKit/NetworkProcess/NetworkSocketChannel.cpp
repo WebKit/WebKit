@@ -38,7 +38,7 @@ using namespace WebCore;
 
 std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, uint64_t identifier)
 {
-    auto result = std::make_unique<NetworkSocketChannel>(connection, connection.networkProcess().networkSession(sessionID), request, protocol, identifier);
+    auto result = makeUnique<NetworkSocketChannel>(connection, connection.networkProcess().networkSession(sessionID), request, protocol, identifier);
     if (!result->m_socket) {
         result->didClose(0, "Cannot create a web socket task"_s);
         return nullptr;

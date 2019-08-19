@@ -339,13 +339,13 @@ public:
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
 #undef DOM_EVENT_NAMES_DECLARE
 
-    // FIXME: The friend declaration to std::make_unique below does not work in windows port.
+    // FIXME: The friend declaration to makeUnique below does not work in windows port.
     //
     // template<class T, class... Args>
-    // friend typename std::_Unique_if<T>::_Single_object std::make_unique(Args&&...);
+    // friend typename std::_Unique_if<T>::_Single_object makeUnique(Args&&...);
     //
     // This create function should be deleted later and is only for keeping EventNames as private.
-    // std::make_unique should be used instead.
+    // makeUnique should be used instead.
     //
     template<class... Args>
     static std::unique_ptr<EventNames> create(Args&&... args)

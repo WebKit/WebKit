@@ -802,7 +802,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         Ref<NetworkDataTaskCocoa> protectedNetworkDataTask(*networkDataTask);
         auto downloadID = networkDataTask->pendingDownloadID();
         auto& downloadManager = _session->networkProcess().downloadManager();
-        auto download = std::make_unique<WebKit::Download>(downloadManager, downloadID, downloadTask, _session->sessionID(), networkDataTask->suggestedFilename());
+        auto download = makeUnique<WebKit::Download>(downloadManager, downloadID, downloadTask, _session->sessionID(), networkDataTask->suggestedFilename());
         networkDataTask->transferSandboxExtensionToDownload(*download);
         ASSERT(FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
         download->didCreateDestination(networkDataTask->pendingDownloadLocation());
@@ -897,7 +897,7 @@ void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 
 std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
-    return std::make_unique<NetworkSessionCocoa>(networkProcess, WTFMove(parameters));
+    return makeUnique<NetworkSessionCocoa>(networkProcess, WTFMove(parameters));
 }
 
 static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
@@ -1321,7 +1321,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(NetworkS
 {
     // FIXME: Use protocol.
     RetainPtr<NSURLSessionWebSocketTask> task = [m_sessionWithCredentialStorage.get() webSocketTaskWithRequest: request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
-    return std::make_unique<WebSocketTask>(channel, WTFMove(task));
+    return makeUnique<WebSocketTask>(channel, WTFMove(task));
 }
 
 void NetworkSessionCocoa::addWebSocketTask(WebSocketTask& task)

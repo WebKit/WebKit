@@ -33,7 +33,7 @@ namespace WebCore {
 
 std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
 {
-    return std::make_unique<KeyedEncoderGlib>();
+    return makeUnique<KeyedEncoderGlib>();
 }
 
 KeyedEncoderGlib::KeyedEncoderGlib()

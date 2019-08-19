@@ -40,7 +40,7 @@ WorkerGlobalScopeCaches* WorkerGlobalScopeCaches::from(WorkerGlobalScope& scope)
 {
     auto* supplement = static_cast<WorkerGlobalScopeCaches*>(Supplement<WorkerGlobalScope>::from(&scope, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<WorkerGlobalScopeCaches>(scope);
+        auto newSupplement = makeUnique<WorkerGlobalScopeCaches>(scope);
         supplement = newSupplement.get();
         provideTo(&scope, supplementName(), WTFMove(newSupplement));
     }

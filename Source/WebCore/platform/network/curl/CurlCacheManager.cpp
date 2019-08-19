@@ -141,7 +141,7 @@ void CurlCacheManager::loadIndex()
         --end; // Last line is empty
     while (it != end) {
         String url = it->stripWhiteSpace();
-        auto cacheEntry = std::make_unique<CurlCacheEntry>(url, nullptr, m_cacheDir);
+        auto cacheEntry = makeUnique<CurlCacheEntry>(url, nullptr, m_cacheDir);
 
         if (cacheEntry->isCached() && cacheEntry->entrySize() < m_storageSizeLimit) {
             m_currentStorageSize += cacheEntry->entrySize();
@@ -213,7 +213,7 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
 
         invalidateCacheEntry(url); // Invalidate existing entry on 200
 
-        auto cacheEntry = std::make_unique<CurlCacheEntry>(url, &job, m_cacheDir);
+        auto cacheEntry = makeUnique<CurlCacheEntry>(url, &job, m_cacheDir);
         bool cacheable = cacheEntry->parseResponseHeaders(response);
         if (cacheable) {
             cacheEntry->setIsLoading(true);

@@ -343,7 +343,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         return;
     }
 
-    auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = makeUnique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the work queue message receiver.
     workQueueMessageReceiver.didReceiveSyncMessage(*this, decoder, replyEncoder);
@@ -388,7 +388,7 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
 
 std::unique_ptr<Encoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
-    auto encoder = std::make_unique<Encoder>(messageReceiverName, messageName, destinationID);
+    auto encoder = makeUnique<Encoder>(messageReceiverName, messageName, destinationID);
     encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
@@ -756,7 +756,7 @@ void Connection::enableIncomingMessagesThrottling()
     if (m_incomingMessagesThrottler)
         return;
 
-    m_incomingMessagesThrottler = std::make_unique<MessagesThrottler>(*this, &Connection::dispatchIncomingMessages);
+    m_incomingMessagesThrottler = makeUnique<MessagesThrottler>(*this, &Connection::dispatchIncomingMessages);
 }
 
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()
@@ -843,7 +843,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         return;
     }
 
-    auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = makeUnique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
 
     if (decoder.messageReceiverName() == "IPC" && decoder.messageName() == "WrappedAsyncMessageForTesting") {
         if (!m_fullySynchronousModeIsAllowedForTesting) {

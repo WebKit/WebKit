@@ -241,7 +241,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey)
 
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     hashCountedSet.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
@@ -259,7 +259,7 @@ TEST(WTF_HashCountedSet, UniquePtrKeyInitialCount)
 
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     hashCountedSet.add(WTFMove(uniquePtr), 12);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
@@ -298,7 +298,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_FindUsingRawPointer)
 {
     HashCountedSet<std::unique_ptr<int>> hashCountedSet;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
 
@@ -312,7 +312,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_ContainsUsingRawPointer)
 {
     HashCountedSet<std::unique_ptr<int>> hashCountedSet;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
 
@@ -323,7 +323,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_GetUsingRawPointer)
 {
     HashCountedSet<std::unique_ptr<int>> hashCountedSet;
 
-    auto uniquePtr = std::make_unique<int>(5);
+    auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
 
@@ -337,7 +337,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_RemoveUsingRawPointer)
 
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
 
-    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
 

@@ -267,8 +267,8 @@ void webkitFaviconDatabaseOpen(WebKitFaviconDatabase* database, const String& pa
         return;
 
     WebKitFaviconDatabasePrivate* priv = database->priv;
-    priv->iconDatabase = std::make_unique<IconDatabase>();
-    priv->iconDatabase->setClient(std::make_unique<WebKitIconDatabaseClient>(database));
+    priv->iconDatabase = makeUnique<IconDatabase>();
+    priv->iconDatabase->setClient(makeUnique<WebKitIconDatabaseClient>(database));
     IconDatabase::delayDatabaseCleanup();
     priv->iconDatabase->setEnabled(true);
     priv->iconDatabase->setPrivateBrowsingEnabled(WebPreferences::anyPagesAreUsingPrivateBrowsing());

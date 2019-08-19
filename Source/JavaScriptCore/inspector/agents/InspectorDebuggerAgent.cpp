@@ -62,7 +62,7 @@ static String objectGroupForBreakpointAction(const ScriptBreakpointAction& actio
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
     : InspectorAgentBase("Debugger"_s)
-    , m_frontendDispatcher(std::make_unique<DebuggerFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<DebuggerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(DebuggerBackendDispatcher::create(context.backendDispatcher, this))
     , m_scriptDebugServer(context.environment.scriptDebugServer())
     , m_injectedScriptManager(context.injectedScriptManager)

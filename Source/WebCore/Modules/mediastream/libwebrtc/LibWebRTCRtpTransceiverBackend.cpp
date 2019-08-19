@@ -35,12 +35,12 @@ namespace WebCore {
 
 std::unique_ptr<LibWebRTCRtpReceiverBackend> LibWebRTCRtpTransceiverBackend::createReceiverBackend()
 {
-    return std::make_unique<LibWebRTCRtpReceiverBackend>(m_rtcTransceiver->receiver());
+    return makeUnique<LibWebRTCRtpReceiverBackend>(m_rtcTransceiver->receiver());
 }
 
 std::unique_ptr<LibWebRTCRtpSenderBackend> LibWebRTCRtpTransceiverBackend::createSenderBackend(LibWebRTCPeerConnectionBackend& backend, LibWebRTCRtpSenderBackend::Source&& source)
 {
-    return std::make_unique<LibWebRTCRtpSenderBackend>(backend, m_rtcTransceiver->sender(), WTFMove(source));
+    return makeUnique<LibWebRTCRtpSenderBackend>(backend, m_rtcTransceiver->sender(), WTFMove(source));
 }
 
 RTCRtpTransceiverDirection LibWebRTCRtpTransceiverBackend::direction() const

@@ -79,7 +79,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
 
         ASSERT(viewController);
 
-        paymentCoordinatorProxy->m_authorizationPresenter = std::make_unique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
+        paymentCoordinatorProxy->m_authorizationPresenter = makeUnique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
 
         ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
         paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];

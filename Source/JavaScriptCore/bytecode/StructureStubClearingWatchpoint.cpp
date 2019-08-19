@@ -72,7 +72,7 @@ StructureStubClearingWatchpoint* WatchpointsOnStructureStubInfo::ensureReference
     StructureStubInfo* stubInfo, const ObjectPropertyCondition& key)
 {
     if (!holderRef)
-        holderRef = std::make_unique<WatchpointsOnStructureStubInfo>(codeBlock, stubInfo);
+        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(codeBlock, stubInfo);
     else {
         ASSERT(holderRef->m_codeBlock == codeBlock);
         ASSERT(holderRef->m_stubInfo == stubInfo);

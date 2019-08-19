@@ -68,7 +68,7 @@ static const Seconds layoutScheduleThreshold = 250_ms;
 
 SettingsBase::SettingsBase(Page* page)
     : m_page(nullptr)
-    , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
+    , m_fontGenericFamilies(makeUnique<FontGenericFamilies>())
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
     , m_setImageLoadingSettingsTimer(*this, &SettingsBase::imageLoadingSettingsTimerFired)

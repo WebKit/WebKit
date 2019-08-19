@@ -253,7 +253,7 @@ const char* InternalSettings::supplementName()
 InternalSettings* InternalSettings::from(Page* page)
 {
     if (!Supplement<Page>::from(page, supplementName()))
-        Supplement<Page>::provideTo(page, supplementName(), std::make_unique<InternalSettingsWrapper>(page));
+        Supplement<Page>::provideTo(page, supplementName(), makeUnique<InternalSettingsWrapper>(page));
     return static_cast<InternalSettingsWrapper*>(Supplement<Page>::from(page, supplementName()))->internalSettings();
 }
 

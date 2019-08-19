@@ -420,9 +420,9 @@ bool WaylandCompositor::initializeEGL()
         return false;
 
 #if USE(OPENGL_ES)
-    std::unique_ptr<Extensions3DOpenGLES> glExtensions = std::make_unique<Extensions3DOpenGLES>(nullptr,  false);
+    std::unique_ptr<Extensions3DOpenGLES> glExtensions = makeUnique<Extensions3DOpenGLES>(nullptr,  false);
 #else
-    std::unique_ptr<Extensions3DOpenGL> glExtensions = std::make_unique<Extensions3DOpenGL>(nullptr, GLContext::current()->version() >= 320);
+    std::unique_ptr<Extensions3DOpenGL> glExtensions = makeUnique<Extensions3DOpenGL>(nullptr, GLContext::current()->version() >= 320);
 #endif
     if (glExtensions->supports("GL_OES_EGL_image") || glExtensions->supports("GL_OES_EGL_image_external"))
         glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));

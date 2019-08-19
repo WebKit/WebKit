@@ -174,7 +174,7 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
 Optional<ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
 {
     auto style = downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
-    return ElementStyle(std::make_unique<RenderStyle>(WTFMove(style)));
+    return ElementStyle(makeUnique<RenderStyle>(WTFMove(style)));
 }
 
 // MARK: TextControlPlaceholderElement

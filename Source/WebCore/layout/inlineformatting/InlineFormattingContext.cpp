@@ -281,7 +281,7 @@ void InlineFormattingContext::collectInlineContent() const
             if (!treatAsInlineContainer(layoutBox))
                 break;
             // This is the start of an inline container (e.g. <span>).
-            formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::ContainerStart));
+            formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::ContainerStart));
             auto& container = downcast<Container>(layoutBox);
             if (!container.hasInFlowOrFloatingChild())
                 break;
@@ -292,17 +292,17 @@ void InlineFormattingContext::collectInlineContent() const
             auto& layoutBox = *layoutQueue.takeLast();
             // This is the end of an inline container (e.g. </span>).
             if (treatAsInlineContainer(layoutBox))
-                formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::ContainerEnd));
+                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::ContainerEnd));
             else if (layoutBox.isLineBreakBox())
-                formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::HardLineBreak));
+                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::HardLineBreak));
             else if (layoutBox.isFloatingPositioned())
-                formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::Float));
+                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::Float));
             else {
                 ASSERT(layoutBox.isInlineLevelBox());
                 if (layoutBox.hasTextContent())
                     InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), layoutBox);
                 else
-                    formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::Box));
+                    formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::Box));
             }
 
             if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {

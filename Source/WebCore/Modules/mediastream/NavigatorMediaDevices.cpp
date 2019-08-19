@@ -51,7 +51,7 @@ NavigatorMediaDevices* NavigatorMediaDevices::from(Navigator* navigator)
 {
     NavigatorMediaDevices* supplement = static_cast<NavigatorMediaDevices*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorMediaDevices>(navigator->window());
+        auto newSupplement = makeUnique<NavigatorMediaDevices>(navigator->window());
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

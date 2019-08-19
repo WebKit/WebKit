@@ -58,7 +58,7 @@ ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_type(type)
-    , m_styleScope(std::make_unique<Style::Scope>(*this))
+    , m_styleScope(makeUnique<Style::Scope>(*this))
 {
 }
 
@@ -67,7 +67,7 @@ ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slo
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_type(ShadowRootMode::UserAgent)
-    , m_styleScope(std::make_unique<Style::Scope>(*this))
+    , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_slotAssignment(WTFMove(slotAssignment))
 {
 }
@@ -147,7 +147,7 @@ void ShadowRoot::moveShadowRootToNewDocument(Document& newDocument)
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!parentTreeScope() || &parentTreeScope()->documentScope() == &newDocument);
 
     // Style scopes are document specific.
-    m_styleScope = std::make_unique<Style::Scope>(*this);
+    m_styleScope = makeUnique<Style::Scope>(*this);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&m_styleScope->document() == &newDocument);
 }
 
@@ -228,7 +228,7 @@ void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& s
 {
     ASSERT(&slot.rootNode() == this);
     if (!m_slotAssignment)
-        m_slotAssignment = std::make_unique<SlotAssignment>();
+        m_slotAssignment = makeUnique<SlotAssignment>();
 
     return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }

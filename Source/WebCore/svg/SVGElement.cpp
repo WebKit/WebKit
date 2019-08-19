@@ -161,7 +161,7 @@ static NEVER_INLINE HashMap<AtomStringImpl*, CSSPropertyID> createAttributeNameT
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
     : StyledElement(tagName, document, CreateSVGElement)
     , SVGLangSpace(this)
-    , m_propertyAnimatorFactory(std::make_unique<SVGPropertyAnimatorFactory>())
+    , m_propertyAnimatorFactory(makeUnique<SVGPropertyAnimatorFactory>())
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -196,7 +196,7 @@ void SVGElement::willRecalcStyle(Style::Change change)
 SVGElementRareData& SVGElement::ensureSVGRareData()
 {
     if (!m_svgRareData)
-        m_svgRareData = std::make_unique<SVGElementRareData>();
+        m_svgRareData = makeUnique<SVGElementRareData>();
     return *m_svgRareData;
 }
 

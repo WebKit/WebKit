@@ -137,7 +137,7 @@ static void webkitFindControllerConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_find_controller_parent_class)->constructed(object);
 
     WebKitFindController* findController = WEBKIT_FIND_CONTROLLER(object);
-    getPage(findController).setFindClient(std::make_unique<FindClient>(findController));
+    getPage(findController).setFindClient(makeUnique<FindClient>(findController));
 }
 
 static void webkitFindControllerGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)

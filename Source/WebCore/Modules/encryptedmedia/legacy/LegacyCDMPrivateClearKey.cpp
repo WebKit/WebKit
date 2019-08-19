@@ -60,7 +60,7 @@ bool LegacyCDMPrivateClearKey::supportsMIMEType(const String& mimeType)
 
 std::unique_ptr<LegacyCDMSession> LegacyCDMPrivateClearKey::createSession(LegacyCDMSessionClient* client)
 {
-    return std::make_unique<CDMSessionClearKey>(client);
+    return makeUnique<CDMSessionClearKey>(client);
 }
 
 }

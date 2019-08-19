@@ -710,19 +710,19 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
             if (!proxy.isActive())
                 return;
 
-            std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, !m_usingFallbackVideoSink);
+            std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, !m_usingFallbackVideoSink);
 
             GLuint textureID = frameHolder->textureID();
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
             if (textureID) {
-                layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
+                layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
                 layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
             } else {
                 layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
                 if (UNLIKELY(!layerBuffer)) {
                     auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
                     texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
-                    layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
+                    layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
                 }
                 frameHolder->updateTexture(layerBuffer->textureGL());
                 layerBuffer->setExtraFlags(m_textureMapperFlags | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
@@ -912,7 +912,7 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
     if (!GST_IS_SAMPLE(m_sample.get()))
         return false;
 
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
+    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
 
     auto textureID = frameHolder->textureID();
     if (!textureID)
@@ -923,7 +923,7 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
         size = size.transposedSize();
 
     if (!m_videoTextureCopier)
-        m_videoTextureCopier = std::make_unique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
+        m_videoTextureCopier = makeUnique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
 
     return m_videoTextureCopier->copyVideoTextureToPlatformTexture(textureID, size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation);
 }
@@ -939,7 +939,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     if (!GST_IS_SAMPLE(m_sample.get()))
         return nullptr;
 
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
+    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
 
     auto textureID = frameHolder->textureID();
     if (!textureID)
@@ -953,7 +953,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     context->makeContextCurrent();
 
     if (!m_videoTextureCopier)
-        m_videoTextureCopier = std::make_unique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
+        m_videoTextureCopier = makeUnique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
 
     if (!m_videoTextureCopier->copyVideoTextureToPlatformTexture(textureID, size, 0, GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, false, m_videoSourceOrientation))
         return nullptr;
@@ -1148,8 +1148,8 @@ void MediaPlayerPrivateGStreamerBase::pushNextHolePunchBuffer()
         [this](TextureMapperPlatformLayerProxy& proxy)
         {
             LockHolder holder(proxy.lock());
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
-            std::unique_ptr<GStreamerHolePunchClient> holePunchClient = std::make_unique<GStreamerHolePunchClient>(m_videoSink.get());
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
+            std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get());
             layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
             proxy.pushNextBuffer(WTFMove(layerBuffer));
         };

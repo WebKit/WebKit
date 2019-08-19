@@ -61,7 +61,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
 
     bool missingMaskerData = !m_masker.contains(&renderer);
     if (missingMaskerData)
-        m_masker.set(&renderer, std::make_unique<MaskerData>());
+        m_masker.set(&renderer, makeUnique<MaskerData>());
 
     MaskerData* maskerData = m_masker.get(&renderer);
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);

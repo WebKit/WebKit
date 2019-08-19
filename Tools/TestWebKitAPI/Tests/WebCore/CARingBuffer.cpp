@@ -41,7 +41,7 @@ public:
     virtual void SetUp()
     {
         WTF::initializeMainThread();
-        m_ringBuffer = std::make_unique<CARingBuffer>();
+        m_ringBuffer = makeUniqueWithoutFastMallocCheck<CARingBuffer>();
     }
 
     // CAAudioStreamDescription(double sampleRate, UInt32 numChannels, PCMFormat format, bool isInterleaved, size_t capacity)

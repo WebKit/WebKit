@@ -46,7 +46,7 @@ LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(
     const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key)
 {
     if (!m_data)
-        m_data = std::make_unique<LazyOperandValueProfile::List>();
+        m_data = makeUnique<LazyOperandValueProfile::List>();
     else {
         for (unsigned i = 0; i < m_data->size(); ++i) {
             if (m_data->at(i).key() == key)

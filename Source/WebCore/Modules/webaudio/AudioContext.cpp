@@ -140,7 +140,7 @@ AudioContext::AudioContext(Document& document)
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_mediaSession(PlatformMediaSession::create(*this))
-    , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
+    , m_eventQueue(makeUnique<GenericEventQueue>(*this))
 {
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
@@ -166,7 +166,7 @@ AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t
 #endif
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(*this))
-    , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
+    , m_eventQueue(makeUnique<GenericEventQueue>(*this))
 {
     constructCommon();
 
@@ -432,7 +432,7 @@ ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(ArrayBuffer& arrayBuffe
 void AudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
 {
     if (!m_audioDecoder)
-        m_audioDecoder = std::make_unique<AsyncAudioDecoder>();
+        m_audioDecoder = makeUnique<AsyncAudioDecoder>();
     m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), WTFMove(successCallback), WTFMove(errorCallback));
 }
 

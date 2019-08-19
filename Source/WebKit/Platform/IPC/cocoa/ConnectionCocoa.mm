@@ -92,7 +92,7 @@ private:
         : m_xpcConnection(xpcConnection)
         , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
 #if PLATFORM(IOS_FAMILY)
-        , m_assertion(std::make_unique<WebKit::ProcessAndUIAssertion>(xpc_connection_get_pid(m_xpcConnection.get()), "ConnectionTerminationWatchdog"_s, WebKit::AssertionState::Background))
+        , m_assertion(makeUnique<WebKit::ProcessAndUIAssertion>(xpc_connection_get_pid(m_xpcConnection.get()), "ConnectionTerminationWatchdog"_s, WebKit::AssertionState::Background))
 #endif
     {
         m_watchdogTimer.startOneShot(interval);
@@ -220,7 +220,7 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = std::make_unique<Encoder>("IPC", "InitializeConnection", 0);
+        auto encoder = makeUnique<Encoder>("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
         initializeSendSource();
@@ -412,7 +412,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
         size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
 
-        return std::make_unique<Decoder>(body, bodySize, nullptr, Vector<Attachment> { });
+        return makeUnique<Decoder>(body, bodySize, nullptr, Vector<Attachment> { });
     }
 
     bool messageBodyIsOOL = header->msgh_id == outOfLineBodyMessageID;
@@ -450,7 +450,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
         size_t messageBodySize = descriptor->out_of_line.size;
 
-        return std::make_unique<Decoder>(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
+        return makeUnique<Decoder>(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer), length);
         }, WTFMove(attachments));
     }
@@ -458,7 +458,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return std::make_unique<Decoder>(messageBody, messageBodySize, nullptr, WTFMove(attachments));
+    return makeUnique<Decoder>(messageBody, messageBodySize, nullptr, WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.
@@ -526,7 +526,7 @@ void Connection::receiveSourceEventHandler()
         return;
 
 #if PLATFORM(MAC)
-    decoder->setImportanceAssertion(std::make_unique<ImportanceAssertion>(header));
+    decoder->setImportanceAssertion(makeUnique<ImportanceAssertion>(header));
 #endif
 
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "InitializeConnection") {

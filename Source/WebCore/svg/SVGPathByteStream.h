@@ -86,7 +86,7 @@ public:
 
     std::unique_ptr<SVGPathByteStream> copy() const
     {
-        return std::make_unique<SVGPathByteStream>(*this);
+        return makeUnique<SVGPathByteStream>(*this);
     }
 
     DataIterator begin() const { return m_data.begin(); }

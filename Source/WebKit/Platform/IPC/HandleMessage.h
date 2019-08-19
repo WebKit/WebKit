@@ -182,7 +182,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
     }
 
     typename T::AsyncReply completionHandler = [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
-        auto encoder = std::make_unique<Encoder>("AsyncReply", T::asyncMessageReplyName(), 0);
+        auto encoder = makeUnique<Encoder>("AsyncReply", T::asyncMessageReplyName(), 0);
         *encoder << listenerID;
         T::send(WTFMove(encoder), WTFMove(connection), args...);
     };

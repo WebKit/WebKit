@@ -56,7 +56,7 @@ using namespace Inspector;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
     : InspectorAgentBase("DOMStorage"_s, context)
-    , m_frontendDispatcher(std::make_unique<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUnique<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
 {

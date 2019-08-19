@@ -212,7 +212,7 @@ TEST(WTF_Variant, ConstructorDestructor)
     ConstructorDestructorCounter::TestingScope scope;
 
     {
-        auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+        auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
         Variant<std::unique_ptr<ConstructorDestructorCounter>, int> v = WTFMove(uniquePtr);
 
         EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);

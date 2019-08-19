@@ -58,7 +58,7 @@ bool ExitProfile::add(CodeBlock* owner, const FrequentExitSite& site)
     // If we've never seen any frequent exits then create the list and put this site
     // into it.
     if (!profile.m_frequentExitSites) {
-        profile.m_frequentExitSites = std::make_unique<Vector<FrequentExitSite>>();
+        profile.m_frequentExitSites = makeUnique<Vector<FrequentExitSite>>();
         profile.m_frequentExitSites->append(site);
         return true;
     }

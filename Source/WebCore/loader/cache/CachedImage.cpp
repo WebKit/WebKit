@@ -105,7 +105,7 @@ void CachedImage::setBodyDataFrom(const CachedResource& resource)
         m_imageObserver->cachedImages().add(this);
 
     if (m_image && is<SVGImage>(*m_image))
-        m_svgImageCache = std::make_unique<SVGImageCache>(&downcast<SVGImage>(*m_image));
+        m_svgImageCache = makeUnique<SVGImageCache>(&downcast<SVGImage>(*m_image));
 }
 
 void CachedImage::didAddClient(CachedResourceClient& client)
@@ -357,7 +357,7 @@ inline void CachedImage::createImage()
 
     if (m_image) {
         if (is<SVGImage>(*m_image))
-            m_svgImageCache = std::make_unique<SVGImageCache>(&downcast<SVGImage>(*m_image));
+            m_svgImageCache = makeUnique<SVGImageCache>(&downcast<SVGImage>(*m_image));
 
         // Send queued container size requests.
         if (m_image->usesContainerSize()) {

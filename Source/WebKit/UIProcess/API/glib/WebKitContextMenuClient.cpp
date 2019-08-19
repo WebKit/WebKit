@@ -56,6 +56,6 @@ private:
 
 void attachContextMenuClientToView(WebKitWebView* webView)
 {
-    webkitWebViewGetPage(webView).setContextMenuClient(std::make_unique<ContextMenuClient>(webView));
+    webkitWebViewGetPage(webView).setContextMenuClient(makeUnique<ContextMenuClient>(webView));
 }
 

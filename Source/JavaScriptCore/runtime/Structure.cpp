@@ -856,7 +856,7 @@ WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, Propert
     StructureRareData* rareData = this->rareData();
     if (!rareData->m_replacementWatchpointSets) {
         rareData->m_replacementWatchpointSets =
-            std::make_unique<StructureRareData::PropertyWatchpointMap>();
+            makeUnique<StructureRareData::PropertyWatchpointMap>();
         WTF::storeStoreFence();
     }
     auto result = rareData->m_replacementWatchpointSets->add(offset, nullptr);

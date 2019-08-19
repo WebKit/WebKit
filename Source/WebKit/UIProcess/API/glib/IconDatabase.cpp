@@ -1691,7 +1691,7 @@ inline void readySQLiteStatement(std::unique_ptr<SQLiteStatement>& statement, SQ
         statement = nullptr;
     }
     if (!statement) {
-        statement = std::make_unique<SQLiteStatement>(db, str);
+        statement = makeUnique<SQLiteStatement>(db, str);
         if (statement->prepare() != SQLITE_OK)
             LOG_ERROR("Preparing statement %s failed", str.ascii().data());
     }

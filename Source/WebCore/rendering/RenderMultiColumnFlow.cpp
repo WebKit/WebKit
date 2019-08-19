@@ -42,7 +42,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnFlow);
 
 RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& style)
     : RenderFragmentedFlow(document, WTFMove(style))
-    , m_spannerMap(std::make_unique<SpannerMap>())
+    , m_spannerMap(makeUnique<SpannerMap>())
     , m_lastSetWorkedOn(nullptr)
     , m_columnCount(1)
     , m_columnWidth(0)

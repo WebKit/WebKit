@@ -68,7 +68,7 @@ auto createCommand(Args&&... arguments) -> std::enable_if_t<std::is_base_of<Oper
 template<typename T>
 auto createCommand() -> std::enable_if_t<std::is_base_of<OperationData<>, T>::value, std::unique_ptr<PaintingOperation>>
 {
-    return std::make_unique<T>();
+    return makeUnique<T>();
 }
 
 CairoOperationRecorder::CairoOperationRecorder(GraphicsContext& context, PaintingOperations& commandList)

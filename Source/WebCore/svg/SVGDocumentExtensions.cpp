@@ -41,7 +41,7 @@ namespace WebCore {
 
 SVGDocumentExtensions::SVGDocumentExtensions(Document& document)
     : m_document(document)
-    , m_resourcesCache(std::make_unique<SVGResourcesCache>())
+    , m_resourcesCache(makeUnique<SVGResourcesCache>())
     , m_areAnimationsPaused(!document.page() || !document.page()->isVisible())
 {
 }
@@ -146,7 +146,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomString& id, Element& el
 
     auto result = m_pendingResources.add(id, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<PendingElements>();
+        result.iterator->value = makeUnique<PendingElements>();
     result.iterator->value->add(&element);
 
     element.setHasPendingResources();
@@ -279,7 +279,7 @@ HashSet<SVGElement*>* SVGDocumentExtensions::setOfElementsReferencingTarget(SVGE
 void SVGDocumentExtensions::addElementReferencingTarget(SVGElement& referencingElement, SVGElement& referencedElement)
 {
     auto result = m_elementDependencies.ensure(&referencedElement, [&referencingElement] {
-        return std::make_unique<HashSet<SVGElement*>>(std::initializer_list<SVGElement*> { &referencingElement });
+        return makeUnique<HashSet<SVGElement*>>(std::initializer_list<SVGElement*> { &referencingElement });
     });
     if (!result.isNewEntry)
         result.iterator->value->add(&referencingElement);

@@ -84,7 +84,7 @@ static TestFontOptions *sharedFontOptionsForTesting()
 
     _shadowOffset = CGSizeZero;
     _shadowBlurRadius = 0;
-    _replaceFontOptionsSwizzler = std::make_unique<ClassMethodSwizzler>(NSClassFromString(@"NSFontOptions"), @selector(sharedFontOptions), reinterpret_cast<IMP>(sharedFontOptionsForTesting));
+    _replaceFontOptionsSwizzler = makeUnique<ClassMethodSwizzler>(NSClassFromString(@"NSFontOptions"), @selector(sharedFontOptions), reinterpret_cast<IMP>(sharedFontOptionsForTesting));
     _hasPendingShadowChanges = NO;
     _hasMultipleFonts = NO;
 

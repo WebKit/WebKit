@@ -397,15 +397,15 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Pag
     , m_configuration(WTFMove(configuration))
     , m_navigationClient(makeUniqueRef<API::NavigationClient>())
     , m_historyClient(makeUniqueRef<API::HistoryClient>())
-    , m_iconLoadingClient(std::make_unique<API::IconLoadingClient>())
-    , m_formClient(std::make_unique<API::FormClient>())
-    , m_uiClient(std::make_unique<API::UIClient>())
-    , m_findClient(std::make_unique<API::FindClient>())
-    , m_findMatchesClient(std::make_unique<API::FindMatchesClient>())
+    , m_iconLoadingClient(makeUnique<API::IconLoadingClient>())
+    , m_formClient(makeUnique<API::FormClient>())
+    , m_uiClient(makeUnique<API::UIClient>())
+    , m_findClient(makeUnique<API::FindClient>())
+    , m_findMatchesClient(makeUnique<API::FindMatchesClient>())
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuClient(std::make_unique<API::ContextMenuClient>())
+    , m_contextMenuClient(makeUnique<API::ContextMenuClient>())
 #endif
-    , m_navigationState(std::make_unique<WebNavigationState>())
+    , m_navigationState(makeUnique<WebNavigationState>())
     , m_process(process)
     , m_pageGroup(*m_configuration->pageGroup())
     , m_preferences(*m_configuration->preferences())
@@ -416,7 +416,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Pag
     , m_overrideContentSecurityPolicy { m_configuration->overrideContentSecurityPolicy() }
     , m_treatsSHA1CertificatesAsInsecure(m_configuration->treatsSHA1SignedCertificatesAsInsecure())
 #if ENABLE(FULLSCREEN_API)
-    , m_fullscreenClient(std::make_unique<API::FullscreenClient>())
+    , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
@@ -435,9 +435,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Pag
 #endif
     , m_pageLoadState(*this)
     , m_configurationPreferenceValues(m_configuration->preferenceValues())
-    , m_inspectorController(std::make_unique<WebPageInspectorController>(*this))
+    , m_inspectorController(makeUnique<WebPageInspectorController>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
-    , m_inspectorDebuggable(std::make_unique<WebPageDebuggable>(*this))
+    , m_inspectorDebuggable(makeUnique<WebPageDebuggable>(*this))
 #endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
 {
@@ -477,7 +477,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Pag
 #endif
 
 #if PLATFORM(COCOA)
-    m_activityStateChangeDispatcher = std::make_unique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::ActivityStateChange), [this] {
+    m_activityStateChangeDispatcher = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::ActivityStateChange), [this] {
         this->dispatchActivityStateChange();
     });
 #endif
@@ -601,7 +601,7 @@ void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient>&& policyCl
 void WebPageProxy::setFormClient(std::unique_ptr<API::FormClient>&& formClient)
 {
     if (!formClient) {
-        m_formClient = std::make_unique<API::FormClient>();
+        m_formClient = makeUnique<API::FormClient>();
         return;
     }
 
@@ -611,7 +611,7 @@ void WebPageProxy::setFormClient(std::unique_ptr<API::FormClient>&& formClient)
 void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient>&& uiClient)
 {
     if (!uiClient) {
-        m_uiClient = std::make_unique<API::UIClient>();
+        m_uiClient = makeUnique<API::UIClient>();
         return;
     }
 
@@ -628,7 +628,7 @@ void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&
 {
     bool hasClient = iconLoadingClient.get();
     if (!iconLoadingClient)
-        m_iconLoadingClient = std::make_unique<API::IconLoadingClient>();
+        m_iconLoadingClient = makeUnique<API::IconLoadingClient>();
     else
         m_iconLoadingClient = WTFMove(iconLoadingClient);
 
@@ -650,7 +650,7 @@ void WebPageProxy::setPageLoadStateObserver(std::unique_ptr<PageLoadState::Obser
 void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient>&& findClient)
 {
     if (!findClient) {
-        m_findClient = std::make_unique<API::FindClient>();
+        m_findClient = makeUnique<API::FindClient>();
         return;
     }
     
@@ -660,7 +660,7 @@ void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient>&& findClient)
 void WebPageProxy::setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>&& findMatchesClient)
 {
     if (!findMatchesClient) {
-        m_findMatchesClient = std::make_unique<API::FindMatchesClient>();
+        m_findMatchesClient = makeUnique<API::FindMatchesClient>();
         return;
     }
 
@@ -676,7 +676,7 @@ void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLog
 void WebPageProxy::setContextMenuClient(std::unique_ptr<API::ContextMenuClient>&& contextMenuClient)
 {
     if (!contextMenuClient) {
-        m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
+        m_contextMenuClient = makeUnique<API::ContextMenuClient>();
         return;
     }
 
@@ -691,7 +691,7 @@ void WebPageProxy::setInjectedBundleClient(const WKPageInjectedBundleClientBase*
         return;
     }
 
-    m_injectedBundleClient = std::make_unique<WebPageInjectedBundleClient>();
+    m_injectedBundleClient = makeUnique<WebPageInjectedBundleClient>();
     m_injectedBundleClient->initialize(client);
 }
 
@@ -776,7 +776,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     }
 
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_process->processIdentifier());
-    auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID, shouldDelayClosingUntilEnteringAcceleratedCompositingMode);
+    auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID, shouldDelayClosingUntilEnteringAcceleratedCompositingMode);
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID().toUInt64(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
 
@@ -849,7 +849,7 @@ void WebPageProxy::didAttachToRunningProcess()
 
 #if ENABLE(FULLSCREEN_API)
     ASSERT(!m_fullScreenManager);
-    m_fullScreenManager = std::make_unique<WebFullScreenManagerProxy>(*this, pageClient().fullScreenManagerProxyClient());
+    m_fullScreenManager = makeUnique<WebFullScreenManagerProxy>(*this, pageClient().fullScreenManagerProxyClient());
 #endif
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     ASSERT(!m_playbackSessionManager);
@@ -860,22 +860,22 @@ void WebPageProxy::didAttachToRunningProcess()
 
 #if ENABLE(APPLE_PAY)
     ASSERT(!m_paymentCoordinator);
-    m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
+    m_paymentCoordinator = makeUnique<WebPaymentCoordinatorProxy>(*this);
 #endif
 
 #if USE(SYSTEM_PREVIEW)
     ASSERT(!m_systemPreviewController);
-    m_systemPreviewController = std::make_unique<SystemPreviewController>(*this);
+    m_systemPreviewController = makeUnique<SystemPreviewController>(*this);
 #endif
 
 #if ENABLE(WEB_AUTHN)
     ASSERT(!m_credentialsMessenger);
-    m_credentialsMessenger = std::make_unique<WebAuthenticatorCoordinatorProxy>(*this);
+    m_credentialsMessenger = makeUnique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
 #if HAVE(PENCILKIT)
     ASSERT(!m_editableImageController);
-    m_editableImageController = std::make_unique<EditableImageController>(*this);
+    m_editableImageController = makeUnique<EditableImageController>(*this);
 #endif
 }
 
@@ -943,7 +943,7 @@ void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingAre
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree) {
-        m_scrollingCoordinatorProxy = std::make_unique<RemoteScrollingCoordinatorProxy>(*this);
+        m_scrollingCoordinatorProxy = makeUnique<RemoteScrollingCoordinatorProxy>(*this);
 #if PLATFORM(IOS_FAMILY)
         // On iOS, main frame scrolls are sent in terms of visible rect updates.
         m_scrollingCoordinatorProxy->setPropagatesMainFrameScrolls(false);
@@ -1006,17 +1006,17 @@ void WebPageProxy::close()
     m_loaderClient = nullptr;
     m_navigationClient = makeUniqueRef<API::NavigationClient>();
     m_policyClient = nullptr;
-    m_iconLoadingClient = std::make_unique<API::IconLoadingClient>();
-    m_formClient = std::make_unique<API::FormClient>();
-    m_uiClient = std::make_unique<API::UIClient>();
-    m_findClient = std::make_unique<API::FindClient>();
-    m_findMatchesClient = std::make_unique<API::FindMatchesClient>();
+    m_iconLoadingClient = makeUnique<API::IconLoadingClient>();
+    m_formClient = makeUnique<API::FormClient>();
+    m_uiClient = makeUnique<API::UIClient>();
+    m_findClient = makeUnique<API::FindClient>();
+    m_findMatchesClient = makeUnique<API::FindMatchesClient>();
     m_diagnosticLoggingClient = nullptr;
 #if ENABLE(CONTEXT_MENUS)
-    m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
+    m_contextMenuClient = makeUnique<API::ContextMenuClient>();
 #endif
 #if ENABLE(FULLSCREEN_API)
-    m_fullscreenClient = std::make_unique<API::FullscreenClient>();
+    m_fullscreenClient = makeUnique<API::FullscreenClient>();
 #endif
 
     m_process->processPool().removeAllSuspendedPagesForPage(*this);
@@ -1225,7 +1225,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     if (!hasRunningProcess())
         launchProcess({ });
 
-    auto navigation = m_navigationState->createLoadDataNavigation(std::make_unique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
+    auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
     loadDataWithNavigationShared(m_process.copyRef(), navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, WTF::nullopt, shouldOpenExternalURLsPolicy);
     return navigation;
 }
@@ -2414,7 +2414,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
         return;
     }
 
-    auto coalescedWheelEvent = std::make_unique<Vector<NativeWebWheelEvent>>();
+    auto coalescedWheelEvent = makeUnique<Vector<NativeWebWheelEvent>>();
     coalescedWheelEvent->append(event);
     m_currentlyProcessedWheelEvents.append(WTFMove(coalescedWheelEvent));
     sendWheelEvent(event);
@@ -2422,7 +2422,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 
 void WebPageProxy::processNextQueuedWheelEvent()
 {
-    auto nextCoalescedEvent = std::make_unique<Vector<NativeWebWheelEvent>>();
+    auto nextCoalescedEvent = makeUnique<Vector<NativeWebWheelEvent>>();
     WebWheelEvent nextWheelEvent = coalescedWheelEvent(m_wheelEventQueue, *nextCoalescedEvent.get());
     m_currentlyProcessedWheelEvents.append(WTFMove(nextCoalescedEvent));
     sendWheelEvent(nextWheelEvent);
@@ -2983,7 +2983,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         m_provisionalPage = nullptr;
     }
 
-    m_provisionalPage = std::make_unique<ProvisionalPageProxy>(*this, newProcess.copyRef(), WTFMove(suspendedPageProxy), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
+    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, newProcess.copyRef(), WTFMove(suspendedPageProxy), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
 
     if (auto* item = navigation.targetItem()) {
         LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
@@ -5703,7 +5703,7 @@ WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 void WebPageProxy::setFullscreenClient(std::unique_ptr<API::FullscreenClient>&& client)
 {
     if (!client) {
-        m_fullscreenClient = std::make_unique<API::FullscreenClient>();
+        m_fullscreenClient = makeUnique<API::FullscreenClient>();
         return;
     }
 
@@ -7437,7 +7437,7 @@ UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequest
     if (m_userMediaPermissionRequestManager)
         return *m_userMediaPermissionRequestManager;
 
-    m_userMediaPermissionRequestManager = std::make_unique<UserMediaPermissionRequestManagerProxy>(*this);
+    m_userMediaPermissionRequestManager = makeUnique<UserMediaPermissionRequestManagerProxy>(*this);
     return *m_userMediaPermissionRequestManager;
 }
 
@@ -8143,7 +8143,7 @@ void WebPageProxy::setScrollPerformanceDataCollectionEnabled(bool enabled)
     m_scrollPerformanceDataCollectionEnabled = enabled;
 
     if (m_scrollPerformanceDataCollectionEnabled && !m_scrollingPerformanceData)
-        m_scrollingPerformanceData = std::make_unique<RemoteLayerTreeScrollingPerformanceData>(downcast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea));
+        m_scrollingPerformanceData = makeUnique<RemoteLayerTreeScrollingPerformanceData>(downcast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea));
     else if (!m_scrollPerformanceDataCollectionEnabled)
         m_scrollingPerformanceData = nullptr;
 }
@@ -9190,7 +9190,7 @@ void WebPageProxy::resetSpeechSynthesizer()
 WebPageProxy::SpeechSynthesisData& WebPageProxy::speechSynthesisData()
 {
     if (!m_speechSynthesisData)
-        m_speechSynthesisData = SpeechSynthesisData { std::make_unique<PlatformSpeechSynthesizer>(this), nullptr, nullptr, nullptr, nullptr, nullptr };
+        m_speechSynthesisData = SpeechSynthesisData { makeUnique<PlatformSpeechSynthesizer>(this), nullptr, nullptr, nullptr, nullptr, nullptr };
     return *m_speechSynthesisData;
 }
 

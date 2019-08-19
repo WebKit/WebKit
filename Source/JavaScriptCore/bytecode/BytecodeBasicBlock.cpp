@@ -65,15 +65,15 @@ void BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
     // Create the entry and exit basic blocks.
     basicBlocks.reserveCapacity(jumpTargets.size() + 2);
 
-    auto entry = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::EntryBlock);
-    auto firstBlock = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::EntryBlock);
+    auto entry = makeUnique<BytecodeBasicBlock>(BytecodeBasicBlock::EntryBlock);
+    auto firstBlock = makeUnique<BytecodeBasicBlock>(BytecodeBasicBlock::EntryBlock);
     linkBlocks(entry.get(), firstBlock.get());
 
     appendBlock(WTFMove(entry));
     BytecodeBasicBlock* current = firstBlock.get();
     appendBlock(WTFMove(firstBlock));
 
-    auto exit = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::ExitBlock);
+    auto exit = makeUnique<BytecodeBasicBlock>(BytecodeBasicBlock::ExitBlock);
 
     bool nextInstructionIsLeader = false;
 
@@ -84,7 +84,7 @@ void BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
         bool createdBlock = false;
         // If the current bytecode is a jump target, then it's the leader of its own basic block.
         if (isJumpTarget(opcodeID, jumpTargets, bytecodeOffset) || nextInstructionIsLeader) {
-            auto newBlock = std::make_unique<BytecodeBasicBlock>(instruction);
+            auto newBlock = makeUnique<BytecodeBasicBlock>(instruction);
             current = newBlock.get();
             appendBlock(WTFMove(newBlock));
             createdBlock = true;

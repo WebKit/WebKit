@@ -65,7 +65,7 @@ std::unique_ptr<WPEQtViewBackend> WPEQtViewBackend::create(const QSizeF& size, Q
     if (!eglContext)
         return nullptr;
 
-    return std::make_unique<WPEQtViewBackend>(size, eglDisplay, eglContext, context, view);
+    return makeUnique<WPEQtViewBackend>(size, eglDisplay, eglContext, context, view);
 }
 
 WPEQtViewBackend::WPEQtViewBackend(const QSizeF& size, EGLDisplay display, EGLContext eglContext, QPointer<QOpenGLContext> context, QPointer<WPEQtView> view)

@@ -95,7 +95,7 @@ bool PluginProxy::initialize(const Parameters& parameters)
     m_connection->addPluginProxy(this);
 
     // Ask the plug-in process to create a plug-in.
-    m_pendingPluginCreationParameters = std::make_unique<PluginCreationParameters>();
+    m_pendingPluginCreationParameters = makeUnique<PluginCreationParameters>();
 
     m_pendingPluginCreationParameters->pluginInstanceID = m_pluginInstanceID;
     m_pendingPluginCreationParameters->windowNPObjectID = windowNPObjectID();

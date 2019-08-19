@@ -384,7 +384,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         "AND ((domain = ?) OR (domain GLOB ?)) "\
         "ORDER BY length(path) DESC, lastupdated";
 
-    auto pstmt = std::make_unique<SQLiteStatement>(m_database, sql);
+    auto pstmt = makeUnique<SQLiteStatement>(m_database, sql);
     if (!pstmt)
         return WTF::nullopt;
 
@@ -566,7 +566,7 @@ bool CookieJarDB::deleteAllCookies()
 
 void CookieJarDB::createPrepareStatement(const String& sql)
 {
-    auto statement = std::make_unique<SQLiteStatement>(m_database, sql);
+    auto statement = makeUnique<SQLiteStatement>(m_database, sql);
     int ret = statement->prepare();
     ASSERT(ret == SQLITE_OK);
     m_statements.add(sql, WTFMove(statement));

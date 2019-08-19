@@ -433,7 +433,7 @@ bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption>
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = std::make_unique<Encoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = makeUnique<Encoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
     
     return sendMessage(WTFMove(encoder), sendOptions);
@@ -448,7 +448,7 @@ void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = std::make_unique<Encoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = makeUnique<Encoder>(T::receiverName(), T::name(), destinationID);
     uint64_t listenerID = nextAsyncReplyHandlerID();
     encoder->encode(listenerID);
     encoder->encode(message.arguments());

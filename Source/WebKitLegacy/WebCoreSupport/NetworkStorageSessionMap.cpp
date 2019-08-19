@@ -55,7 +55,7 @@ WebCore::NetworkStorageSession* NetworkStorageSessionMap::storageSession(const P
 WebCore::NetworkStorageSession& NetworkStorageSessionMap::defaultStorageSession()
 {
     if (!defaultNetworkStorageSession())
-        defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+        defaultNetworkStorageSession() = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
     return *defaultNetworkStorageSession();
 }
 
@@ -74,7 +74,7 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
     }
 
-    defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
+    defaultNetworkStorageSession() = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
 #endif
 }
 
@@ -100,11 +100,11 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     }
 
-    addResult.iterator->value = std::make_unique<WebCore::NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
+    addResult.iterator->value = makeUnique<WebCore::NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
 
 #elif USE(CURL)
     globalSessionMap().ensure(sessionID, [sessionID] {
-        return std::make_unique<WebCore::NetworkStorageSession>(sessionID);
+        return makeUnique<WebCore::NetworkStorageSession>(sessionID);
     });
 #endif
 }

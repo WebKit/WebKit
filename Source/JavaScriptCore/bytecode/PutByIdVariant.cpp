@@ -46,7 +46,7 @@ PutByIdVariant& PutByIdVariant::operator=(const PutByIdVariant& other)
     m_conditionSet = other.m_conditionSet;
     m_offset = other.m_offset;
     if (other.m_callLinkStatus)
-        m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
+        m_callLinkStatus = makeUnique<CallLinkStatus>(*other.m_callLinkStatus);
     else
         m_callLinkStatus = nullptr;
     return *this;

@@ -33,7 +33,7 @@
 namespace JSC {
 
 WrapperMap::WrapperMap(JSGlobalContextRef jsContext)
-    : m_cachedJSWrappers(std::make_unique<JSC::WeakGCMap<gpointer, JSC::JSObject>>(toJS(jsContext)->vm()))
+    : m_cachedJSWrappers(makeUnique<JSC::WeakGCMap<gpointer, JSC::JSObject>>(toJS(jsContext)->vm()))
 {
 }
 

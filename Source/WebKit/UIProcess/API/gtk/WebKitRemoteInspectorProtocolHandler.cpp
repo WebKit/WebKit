@@ -106,13 +106,13 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     auto* userContentManager = webkit_web_view_get_user_content_manager(webView);
     auto userContentManagerResult = m_userContentManagers.add(userContentManager);
     if (userContentManagerResult.isNewEntry) {
-        auto handler = WebScriptMessageHandler::create(std::make_unique<ScriptMessageClient>(*this), "inspector", API::UserContentWorld::normalWorld());
+        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector", API::UserContentWorld::normalWorld());
         webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->addUserScriptMessageHandler(handler.get());
         g_object_weak_ref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
 
     auto* client = m_inspectorClients.ensure(requestURL.hostAndPort(), [this, &requestURL] {
-        return std::make_unique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
+        return makeUnique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
     }).iterator->value.get();
 
     GString* html = g_string_new(

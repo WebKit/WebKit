@@ -41,7 +41,7 @@ public:
     using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
     template <typename T>
-    void add(const String& key, T&& value) { m_map.add(key, std::make_unique<Node>(std::forward<T>(value))); }
+    void add(const String& key, T&& value) { m_map.add(key, makeUnique<Node>(std::forward<T>(value))); }
     Node& get(const String& key) { return *m_map.get(key); }
 
 private:
@@ -77,7 +77,7 @@ static bool readSimpleValue(WTF::Persistence::Decoder& decoder, KeyedDecoderGene
 
 std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
 {
-    return std::make_unique<KeyedDecoderGeneric>(data, size);
+    return makeUnique<KeyedDecoderGeneric>(data, size);
 }
 
 KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
@@ -86,7 +86,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
     KeyedEncoderGeneric::Type type;
     String key;
 
-    m_rootDictionary = std::make_unique<Dictionary>();
+    m_rootDictionary = makeUnique<Dictionary>();
     m_dictionaryStack.append(m_rootDictionary.get());
 
     bool ok = true;
@@ -144,7 +144,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
             if (!ok)
                 break;
             auto* currentDictinary = m_dictionaryStack.last();
-            auto newDictionary = std::make_unique<Dictionary>();
+            auto newDictionary = makeUnique<Dictionary>();
             m_dictionaryStack.append(newDictionary.get());
             currentDictinary->add(key, WTFMove(newDictionary));
             break;
@@ -156,13 +156,13 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
             ok = readString(decoder, key);
             if (!ok)
                 break;
-            auto newArray = std::make_unique<Array>();
+            auto newArray = makeUnique<Array>();
             m_arrayStack.append(newArray.get());
             m_dictionaryStack.last()->add(key, WTFMove(newArray));
             break;
         }
         case KeyedEncoderGeneric::Type::BeginArrayElement: {
-            auto newDictionary = std::make_unique<Dictionary>();
+            auto newDictionary = makeUnique<Dictionary>();
             m_dictionaryStack.append(newDictionary.get());
             m_arrayStack.last()->append(WTFMove(newDictionary));
             break;

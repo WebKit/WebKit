@@ -61,7 +61,7 @@ public:
         , m_liveAtTail(m_graph)
     {
         m_graph.m_indexingCache->recompute();
-        m_workset = std::make_unique<Workset>(m_graph.m_indexingCache->numIndices());
+        m_workset = makeUnique<Workset>(m_graph.m_indexingCache->numIndices());
     }
 
     bool run()

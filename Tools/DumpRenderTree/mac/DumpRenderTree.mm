@@ -97,6 +97,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
+#import <wtf/UniqueArray.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -1535,7 +1536,7 @@ static NSString *dumpFramesAsText(WebFrame *frame)
     // the result without any conversion.
     WKRetainPtr<WKStringRef> stringRef = adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)innerText));
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(stringRef.get());
-    auto buffer = std::make_unique<char[]>(bufferSize);
+    auto buffer = makeUniqueArray<char>(bufferSize);
     size_t stringLength = WKStringGetUTF8CStringNonStrict(stringRef.get(), buffer.get(), bufferSize);
     [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(buffer.get(), stringLength - 1).createCFString().get()];
 

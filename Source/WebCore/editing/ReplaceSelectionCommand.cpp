@@ -1631,7 +1631,7 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
 ReplacementFragment* ReplaceSelectionCommand::ensureReplacementFragment()
 {
     if (!m_replacementFragment)
-        m_replacementFragment = std::make_unique<ReplacementFragment>(m_documentFragment.get(), endingSelection());
+        m_replacementFragment = makeUnique<ReplacementFragment>(m_documentFragment.get(), endingSelection());
     return m_replacementFragment.get();
 }
 

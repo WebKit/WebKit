@@ -103,7 +103,7 @@ protected:
     void AccessCaseSnippetParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
     { \
         CCallHelpers::Label to = jit.label(); \
-        m_generators.append(std::make_unique<SlowPathCallGeneratorWithArguments<CCallHelpers::JumpList, OperationType, ResultType, __VA_ARGS__>>(from, to, operation, result, args)); \
+        m_generators.append(makeUnique<SlowPathCallGeneratorWithArguments<CCallHelpers::JumpList, OperationType, ResultType, __VA_ARGS__>>(from, to, operation, result, args)); \
     } \
 
 SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)

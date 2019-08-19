@@ -133,7 +133,7 @@ private:
         return nil;
     
     _entriesByURL = [[NSMutableDictionary alloc] init];
-    _entriesByDate = std::make_unique<DateToEntriesMap>();
+    _entriesByDate = makeUnique<DateToEntriesMap>();
 
     return self;
 }

@@ -62,7 +62,7 @@ public:
 };
 
 AudioSession::AudioSession()
-    : m_private(std::make_unique<AudioSessionPrivate>(isMuted()))
+    : m_private(makeUnique<AudioSessionPrivate>(isMuted()))
 {
 }
 

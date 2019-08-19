@@ -51,13 +51,13 @@ static void WKCAImageQueueRelease(CAImageQueueRef iq)
 }
 
 WKCAImageQueue::WKCAImageQueue(uint32_t width, uint32_t height, uint32_t capacity)
-    : m_private(std::make_unique<WKCAImageQueuePrivate>())
+    : m_private(makeUnique<WKCAImageQueuePrivate>())
 {
     m_private->m_imageQueue = adoptCF(wkCAImageQueueCreate(width, height, capacity));
 }
 
 WKCAImageQueue::WKCAImageQueue(const WKCAImageQueue& o)
-    : m_private(std::make_unique<WKCAImageQueuePrivate>())
+    : m_private(makeUnique<WKCAImageQueuePrivate>())
 {
     m_private->m_imageQueue = o.m_private->m_imageQueue;
 }

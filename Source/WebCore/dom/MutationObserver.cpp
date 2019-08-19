@@ -175,7 +175,7 @@ static void queueMutationObserverCompoundMicrotask()
     if (mutationObserverCompoundMicrotaskQueuedFlag)
         return;
     mutationObserverCompoundMicrotaskQueuedFlag = true;
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<MutationObserverMicrotask>());
+    MicrotaskQueue::mainThreadQueue().append(makeUnique<MutationObserverMicrotask>());
 }
 
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)

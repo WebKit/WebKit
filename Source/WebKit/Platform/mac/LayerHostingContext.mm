@@ -34,7 +34,7 @@ namespace WebKit {
 
 std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(const MachSendRight& serverPort)
 {
-    auto layerHostingContext = std::make_unique<LayerHostingContext>();
+    auto layerHostingContext = makeUnique<LayerHostingContext>();
 
     NSDictionary *options = @{
         kCAContextPortNumber : @(serverPort.sendRight()),
@@ -52,7 +52,7 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(const Ma
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHostingProcess(const LayerHostingContextOptions& options)
 {
-    auto layerHostingContext = std::make_unique<LayerHostingContext>();
+    auto layerHostingContext = makeUnique<LayerHostingContext>();
     layerHostingContext->m_layerHostingMode = LayerHostingMode::OutOfProcess;
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -82,7 +82,7 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
 #if PLATFORM(MAC)
 std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalPluginHostingProcess()
 {
-    auto layerHostingContext = std::make_unique<LayerHostingContext>();
+    auto layerHostingContext = makeUnique<LayerHostingContext>();
     layerHostingContext->m_layerHostingMode = LayerHostingMode::OutOfProcess;
     layerHostingContext->m_context = [CAContext contextWithCGSConnection:CGSMainConnectionID() options:@{ kCAContextCIFilterBehavior : @"ignore" }];
     return layerHostingContext;

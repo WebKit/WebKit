@@ -39,7 +39,7 @@ WaveShaperNode::WaveShaperNode(AudioContext& context)
     : AudioBasicProcessorNode(context, context.sampleRate())
 {
     setNodeType(NodeTypeWaveShaper);
-    m_processor = std::make_unique<WaveShaperProcessor>(context.sampleRate(), 1);
+    m_processor = makeUnique<WaveShaperProcessor>(context.sampleRate(), 1);
 
     initialize();
 }

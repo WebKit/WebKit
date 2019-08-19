@@ -46,7 +46,7 @@ GraphicsContext::GraphicsContextImplFactory GraphicsContextImplDirect2D::createF
     return GraphicsContext::GraphicsContextImplFactory(
         [&platformContext](GraphicsContext& context)
         {
-            return std::make_unique<GraphicsContextImplDirect2D>(context, platformContext);
+            return makeUnique<GraphicsContextImplDirect2D>(context, platformContext);
         });
 }
 
@@ -55,14 +55,14 @@ GraphicsContext::GraphicsContextImplFactory GraphicsContextImplDirect2D::createF
     return GraphicsContext::GraphicsContextImplFactory(
         [renderTarget](GraphicsContext& context)
         {
-            return std::make_unique<GraphicsContextImplDirect2D>(context, renderTarget);
+            return makeUnique<GraphicsContextImplDirect2D>(context, renderTarget);
         });
 }
 
 GraphicsContextImplDirect2D::GraphicsContextImplDirect2D(GraphicsContext& context, PlatformContextDirect2D& platformContext)
     : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
     , m_platformContext(platformContext)
-    , m_private(std::make_unique<GraphicsContextPlatformPrivate>(m_platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory))
+    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
     m_private->syncContext(m_platformContext);
@@ -70,9 +70,9 @@ GraphicsContextImplDirect2D::GraphicsContextImplDirect2D(GraphicsContext& contex
 
 GraphicsContextImplDirect2D::GraphicsContextImplDirect2D(GraphicsContext& context, ID2D1RenderTarget* renderTarget)
     : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
-    , m_ownedPlatformContext(std::make_unique<PlatformContextDirect2D>(renderTarget))
+    , m_ownedPlatformContext(makeUnique<PlatformContextDirect2D>(renderTarget))
     , m_platformContext(*m_ownedPlatformContext)
-    , m_private(std::make_unique<GraphicsContextPlatformPrivate>(m_platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory))
+    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
     m_private->syncContext(m_platformContext);

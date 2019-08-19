@@ -134,7 +134,7 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
 
     // Looking for a compatible baseline-sharing group.
     if (addResult.isNewEntry)
-        addResult.iterator->value = std::make_unique<BaselineContext>(child, preference, ascent, descent);
+        addResult.iterator->value = makeUnique<BaselineContext>(child, preference, ascent, descent);
     else {
         auto* context = addResult.iterator->value.get();
         context->updateSharedGroup(child, preference, ascent, descent);

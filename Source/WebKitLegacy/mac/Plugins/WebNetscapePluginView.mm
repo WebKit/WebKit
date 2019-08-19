@@ -1655,7 +1655,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return 0;
     
     if (!timers)
-        timers = std::make_unique<HashMap<uint32_t, std::unique_ptr<PluginTimer>>>();
+        timers = makeUnique<HashMap<uint32_t, std::unique_ptr<PluginTimer>>>();
 
     std::unique_ptr<PluginTimer>* slot;
     uint32_t timerID;
@@ -1663,7 +1663,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         timerID = ++currentTimerID;
     while (!timers->isValidKey(timerID) || *(slot = &timers->add(timerID, nullptr).iterator->value));
 
-    auto timer = std::make_unique<PluginTimer>(plugin, timerID, interval, repeat, timerFunc);
+    auto timer = makeUnique<PluginTimer>(plugin, timerID, interval, repeat, timerFunc);
 
     if (_shouldFireTimers)
         timer->start(_isCompletelyObscured);

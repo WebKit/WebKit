@@ -130,7 +130,7 @@ AsynchronousDisassembler& asynchronousDisassembler()
 void disassembleAsynchronously(
     const CString& header, const MacroAssemblerCodeRef<DisassemblyPtrTag>& codeRef, size_t size, const char* prefix)
 {
-    std::unique_ptr<DisassemblyTask> task = std::make_unique<DisassemblyTask>();
+    std::unique_ptr<DisassemblyTask> task = makeUnique<DisassemblyTask>();
     task->header = strdup(header.data()); // Yuck! We need this because CString does racy refcounting.
     task->codeRef = codeRef;
     task->size = size;

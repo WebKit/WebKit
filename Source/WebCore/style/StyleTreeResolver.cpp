@@ -548,7 +548,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
     m_didSeePendingStylesheet = m_document.styleScope().hasPendingSheetsBeforeBody();
 
-    m_update = std::make_unique<Update>(m_document);
+    m_update = makeUnique<Update>(m_document);
     m_scopeStack.append(adoptRef(*new Scope(m_document)));
     m_parentStack.append(Parent(m_document));
 

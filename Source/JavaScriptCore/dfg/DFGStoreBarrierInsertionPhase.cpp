@@ -95,8 +95,8 @@ public:
         case PhaseMode::Global: {
             DFG_ASSERT(m_graph, nullptr, m_graph.m_form == SSA);
 
-            m_state = std::make_unique<InPlaceAbstractState>(m_graph);
-            m_interpreter = std::make_unique<AbstractInterpreter<InPlaceAbstractState>>(m_graph, *m_state);
+            m_state = makeUnique<InPlaceAbstractState>(m_graph);
+            m_interpreter = makeUnique<AbstractInterpreter<InPlaceAbstractState>>(m_graph, *m_state);
             
             m_isConverged = false;
             
@@ -107,8 +107,8 @@ public:
             // towards believing that all nodes need barriers. "Needing a barrier" is like
             // saying that the node is in a past epoch. "Not needing a barrier" is like saying
             // that the node is in the current epoch.
-            m_stateAtHead = std::make_unique<BlockMap<HashSet<Node*>>>(m_graph);
-            m_stateAtTail = std::make_unique<BlockMap<HashSet<Node*>>>(m_graph);
+            m_stateAtHead = makeUnique<BlockMap<HashSet<Node*>>>(m_graph);
+            m_stateAtTail = makeUnique<BlockMap<HashSet<Node*>>>(m_graph);
             
             BlockList postOrder = m_graph.blocksInPostOrder();
             

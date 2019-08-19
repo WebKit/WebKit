@@ -33,7 +33,7 @@ namespace WebCore {
 
 std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
 {
-    return std::make_unique<KeyedDecoderCF>(data, size);
+    return makeUnique<KeyedDecoderCF>(data, size);
 }
 
 KeyedDecoderCF::KeyedDecoderCF(const uint8_t* data, size_t size)

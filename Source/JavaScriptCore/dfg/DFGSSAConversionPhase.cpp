@@ -448,7 +448,7 @@ public:
             block->variablesAtTail.clear();
             block->valuesAtHead.clear();
             block->valuesAtHead.clear();
-            block->ssa = std::make_unique<BasicBlock::SSAData>(block);
+            block->ssa = makeUnique<BasicBlock::SSAData>(block);
         }
 
         for (auto& pair : entrypointIndexToArgumentsBlock) {

@@ -321,7 +321,7 @@ void BidiResolverBase<Iterator, Run, DerivedClass>::appendRunInternal()
         }
 
         if (endOffset >= startOffset)
-            m_runs.appendRun(std::make_unique<Run>(startOffset, endOffset + 1, context(), m_direction));
+            m_runs.appendRun(makeUnique<Run>(startOffset, endOffset + 1, context(), m_direction));
 
         m_eor.increment();
         m_sor = m_eor;

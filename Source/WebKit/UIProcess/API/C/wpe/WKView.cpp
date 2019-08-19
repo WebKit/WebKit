@@ -68,5 +68,5 @@ void WKViewSetViewClient(WKViewRef view, const WKViewClientBase* client)
         }
     };
 
-    toImpl(view)->setClient(std::make_unique<ViewClient>(client));
+    toImpl(view)->setClient(makeUnique<ViewClient>(client));
 }

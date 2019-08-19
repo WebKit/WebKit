@@ -61,7 +61,7 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
 
     page->libWebRTCProvider().setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
 
-    return std::make_unique<LibWebRTCPeerConnectionBackend>(peerConnection, page->libWebRTCProvider());
+    return makeUnique<LibWebRTCPeerConnectionBackend>(peerConnection, page->libWebRTCProvider());
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
@@ -311,7 +311,7 @@ LibWebRTCPeerConnectionBackend::VideoReceiver LibWebRTCPeerConnectionBackend::vi
     auto source = RealtimeIncomingVideoSource::create(nullptr, WTFMove(trackId));
     auto receiver = createReceiverForSource(source.copyRef(), nullptr);
 
-    auto senderBackend = std::make_unique<LibWebRTCRtpSenderBackend>(*this, nullptr);
+    auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
     auto transceiver = RTCRtpTransceiver::create(RTCRtpSender::create(*this, "video"_s, { }, WTFMove(senderBackend)), receiver.copyRef(), nullptr);
     transceiver->disableSendingDirection();
     m_peerConnection.addTransceiver(WTFMove(transceiver));
@@ -334,7 +334,7 @@ LibWebRTCPeerConnectionBackend::AudioReceiver LibWebRTCPeerConnectionBackend::au
     auto source = RealtimeIncomingAudioSource::create(nullptr, WTFMove(trackId));
     auto receiver = createReceiverForSource(source.copyRef(), nullptr);
 
-    auto senderBackend = std::make_unique<LibWebRTCRtpSenderBackend>(*this, nullptr);
+    auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
     auto transceiver = RTCRtpTransceiver::create(RTCRtpSender::create(*this, "audio"_s, { }, WTFMove(senderBackend)), receiver.copyRef(), nullptr);
     transceiver->disableSendingDirection();
     m_peerConnection.addTransceiver(WTFMove(transceiver));
@@ -400,7 +400,7 @@ static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtp
 ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStreamTrack& track, Vector<String>&& mediaStreamIds)
 {
     if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
-        auto senderBackend = std::make_unique<LibWebRTCRtpSenderBackend>(*this, nullptr);
+        auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
         if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
             return Exception { TypeError, "Unable to add track"_s };
 
@@ -438,7 +438,7 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
         const String& trackKind = track.kind();
         String trackId = createCanonicalUUIDString();
 
-        auto senderBackend = std::make_unique<LibWebRTCRtpSenderBackend>(*this, nullptr);
+        auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
         auto newSender = RTCRtpSender::create(*this, makeRef(track), Vector<String> { mediaStreamIds }, WTFMove(senderBackend));
         auto receiver = createReceiver(trackKind, trackId);
         auto transceiver = RTCRtpTransceiver::create(WTFMove(newSender), WTFMove(receiver), nullptr);
@@ -472,7 +472,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addTransceiv
     if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
         return addUnifiedPlanTransceiver(String { trackKind }, init);
 
-    auto senderBackend = std::make_unique<LibWebRTCRtpSenderBackend>(*this, nullptr);
+    auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
     auto newSender = RTCRtpSender::create(*this, String(trackKind), Vector<String>(), WTFMove(senderBackend));
     return completeAddTransceiver(WTFMove(newSender), init, createCanonicalUUIDString(), trackKind);
 }
@@ -482,7 +482,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addTransceiv
     if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
         return addUnifiedPlanTransceiver(WTFMove(track), init);
 
-    auto senderBackend = std::make_unique<LibWebRTCRtpSenderBackend>(*this, nullptr);
+    auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
     auto& backend = *senderBackend;
     auto sender = RTCRtpSender::create(*this, track.copyRef(), Vector<String>(), WTFMove(senderBackend));
     if (!m_endpoint->addTrack(backend, track, Vector<String> { }))

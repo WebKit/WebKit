@@ -210,7 +210,7 @@ Worklist::Worklist()
     m_threads.reserveCapacity(numberOfCompilationThreads);
     LockHolder locker(*m_lock);
     for (unsigned i = 0; i < numberOfCompilationThreads; i++)
-        m_threads.uncheckedAppend(std::make_unique<Worklist::Thread>(locker, *this));
+        m_threads.uncheckedAppend(makeUnique<Worklist::Thread>(locker, *this));
 }
 
 Worklist::~Worklist()

@@ -74,7 +74,7 @@ bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
 
 std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient* client)
 {
-    return std::make_unique<MockCDMSession>(client);
+    return makeUnique<MockCDMSession>(client);
 }
 
 static Uint8Array* initDataPrefix()

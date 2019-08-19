@@ -159,9 +159,9 @@ BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest
     , m_async { async }
 {
     if (m_async)
-        m_asyncStream = std::make_unique<AsyncFileStream>(*this);
+        m_asyncStream = makeUnique<AsyncFileStream>(*this);
     else
-        m_stream = std::make_unique<FileStream>();
+        m_stream = makeUnique<FileStream>();
 }
 
 BlobResourceHandle::~BlobResourceHandle() = default;

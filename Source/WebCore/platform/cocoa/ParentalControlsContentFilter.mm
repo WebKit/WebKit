@@ -50,7 +50,7 @@ bool ParentalControlsContentFilter::enabled()
 
 std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::create()
 {
-    return std::make_unique<ParentalControlsContentFilter>();
+    return makeUnique<ParentalControlsContentFilter>();
 }
 
 static inline bool canHandleResponse(const ResourceResponse& response)

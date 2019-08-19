@@ -153,7 +153,7 @@ static unsigned countThreadGroups(Vector<Ref<Thread>>& threads)
 
 TEST(WTF, ThreadGroupRemove)
 {
-    const unsigned NumberOfThreads = 64;
+    const unsigned NumberOfThreads = 16;
 
     Lock lock;
     Condition condition;

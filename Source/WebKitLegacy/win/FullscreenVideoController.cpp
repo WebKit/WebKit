@@ -247,11 +247,11 @@ FullscreenVideoController::FullscreenVideoController()
     , m_movingWindow(false)
     , m_timer(*this, &FullscreenVideoController::timerFired)
 #if USE(CA)
-    , m_layerClient(std::make_unique<LayerClient>(this))
+    , m_layerClient(makeUnique<LayerClient>(this))
     , m_rootChild(PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
 #endif
 #if ENABLE(FULLSCREEN_API)
-    , m_fullscreenWindow(std::make_unique<MediaPlayerPrivateFullscreenWindow>(static_cast<MediaPlayerPrivateFullscreenClient*>(this)))
+    , m_fullscreenWindow(makeUnique<MediaPlayerPrivateFullscreenWindow>(static_cast<MediaPlayerPrivateFullscreenClient*>(this)))
 #endif
 {
 }

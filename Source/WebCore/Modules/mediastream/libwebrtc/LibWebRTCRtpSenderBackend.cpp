@@ -148,7 +148,7 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 
 std::unique_ptr<RTCDTMFSenderBackend> LibWebRTCRtpSenderBackend::createDTMFBackend()
 {
-    return std::make_unique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
+    return makeUnique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
 }
 
 } // namespace WebCore

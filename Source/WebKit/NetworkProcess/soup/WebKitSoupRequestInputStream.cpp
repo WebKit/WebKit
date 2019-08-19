@@ -101,7 +101,7 @@ static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, voi
         return;
     }
 
-    stream->priv->pendingAsyncRead = std::make_unique<AsyncReadData>(WTFMove(task), buffer, count);
+    stream->priv->pendingAsyncRead = makeUnique<AsyncReadData>(WTFMove(task), buffer, count);
 }
 
 static gssize webkitSoupRequestInputStreamReadFinish(GInputStream* inputStream, GAsyncResult* result, GError** error)

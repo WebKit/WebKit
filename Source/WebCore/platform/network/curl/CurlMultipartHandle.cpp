@@ -46,7 +46,7 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
     if (!boundary)
         return nullptr;
 
-    return std::make_unique<CurlMultipartHandle>(client, *boundary);
+    return makeUnique<CurlMultipartHandle>(client, *boundary);
 }
 
 Optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)

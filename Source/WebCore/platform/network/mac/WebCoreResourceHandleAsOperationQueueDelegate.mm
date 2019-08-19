@@ -61,7 +61,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
 {
     // Sync xhr uses the message queue.
     if (m_messageQueue)
-        return m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(function)));
+        return m_messageQueue->append(makeUnique<Function<void()>>(WTFMove(function)));
 
     // This is the common case.
     if (!scheduledWithCustomRunLoopMode(m_scheduledPairs))

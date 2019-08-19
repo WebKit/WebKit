@@ -15080,7 +15080,7 @@ private:
                                 linkBuffer.link(generatorJump,
                                     CodeLocationLabel<JITThunkPtrTag>(vm->getCTIStub(lazySlowPathGenerationThunkGenerator).code()));
                                 
-                                std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>();
+                                std::unique_ptr<LazySlowPath> lazySlowPath = makeUnique<LazySlowPath>();
 
                                 auto linkedPatchableJump = CodeLocationJump<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(patchableJump));
 

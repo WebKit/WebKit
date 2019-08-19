@@ -44,7 +44,7 @@ public:
     {
         m_cookieDirectory = FileSystem::createTemporaryDirectory();
 
-        m_cookieJar = std::make_unique<WebCore::CookieJarDB>(FileSystem::pathByAppendingComponent(m_cookieDirectory, "cookiedb.sql"));
+        m_cookieJar = makeUnique<WebCore::CookieJarDB>(FileSystem::pathByAppendingComponent(m_cookieDirectory, "cookiedb.sql"));
         m_cookieJar->open();
         m_cookieJar->setAcceptPolicy(CookieAcceptPolicy::Always);
     }

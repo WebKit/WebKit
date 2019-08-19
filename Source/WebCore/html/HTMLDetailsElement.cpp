@@ -88,7 +88,7 @@ const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child)
 Ref<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document& document)
 {
     auto details = adoptRef(*new HTMLDetailsElement(tagName, document));
-    details->addShadowRoot(ShadowRoot::create(document, std::make_unique<DetailsSlotAssignment>()));
+    details->addShadowRoot(ShadowRoot::create(document, makeUnique<DetailsSlotAssignment>()));
     return details;
 }
 

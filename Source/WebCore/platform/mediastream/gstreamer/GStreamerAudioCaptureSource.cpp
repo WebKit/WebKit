@@ -91,14 +91,14 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
 
 GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
-    , m_capturer(std::make_unique<GStreamerAudioCapturer>(device))
+    , m_capturer(makeUnique<GStreamerAudioCapturer>(device))
 {
     initializeGStreamerDebug();
 }
 
 GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
-    , m_capturer(std::make_unique<GStreamerAudioCapturer>())
+    , m_capturer(makeUnique<GStreamerAudioCapturer>())
 {
     initializeGStreamerDebug();
 }

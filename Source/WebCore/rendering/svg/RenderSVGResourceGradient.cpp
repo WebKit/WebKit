@@ -119,7 +119,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 
     auto& gradientData = m_gradientMap.add(&renderer, nullptr).iterator->value;
     if (!gradientData)
-        gradientData = std::make_unique<GradientData>();
+        gradientData = makeUnique<GradientData>();
 
     bool isPaintingText = resourceMode.contains(RenderSVGResourceMode::ApplyToText);
 

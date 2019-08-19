@@ -72,7 +72,7 @@ AudioSessionPrivate::AudioSessionPrivate(AudioSession*)
 }
 
 AudioSession::AudioSession()
-    : m_private(std::make_unique<AudioSessionPrivate>(this))
+    : m_private(makeUnique<AudioSessionPrivate>(this))
 {
 }
 

@@ -47,7 +47,7 @@ bool ISOSchemeInformationBox::parse(DataView& view, unsigned& offset)
         if (localOffset + schemeSpecificBoxType.value().second > offset + m_size)
             return false;
 
-        m_schemeSpecificData = std::make_unique<ISOTrackEncryptionBox>();
+        m_schemeSpecificData = makeUnique<ISOTrackEncryptionBox>();
         if (!m_schemeSpecificData->read(view, localOffset))
             return false;
     }

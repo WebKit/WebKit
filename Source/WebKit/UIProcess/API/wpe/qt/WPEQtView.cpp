@@ -150,7 +150,7 @@ void WPEQtView::notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent event,
 
     if (statusSet) {
         WPEQtViewLoadRequestPrivate loadRequestPrivate(view->url(), loadStatus, "");
-        std::unique_ptr<WPEQtViewLoadRequest> loadRequest = std::make_unique<WPEQtViewLoadRequest>(loadRequestPrivate);
+        std::unique_ptr<WPEQtViewLoadRequest> loadRequest = makeUnique<WPEQtViewLoadRequest>(loadRequestPrivate);
         Q_EMIT view->loadingChanged(loadRequest.get());
     }
 }
@@ -166,7 +166,7 @@ void WPEQtView::notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const 
         loadStatus = WPEQtView::LoadStatus::LoadFailedStatus;
 
     WPEQtViewLoadRequestPrivate loadRequestPrivate(QUrl(QString(failingURI)), loadStatus, error->message);
-    std::unique_ptr<WPEQtViewLoadRequest> loadRequest = std::make_unique<WPEQtViewLoadRequest>(loadRequestPrivate);
+    std::unique_ptr<WPEQtViewLoadRequest> loadRequest = makeUnique<WPEQtViewLoadRequest>(loadRequestPrivate);
     Q_EMIT view->loadingChanged(loadRequest.get());
 }
 
@@ -439,7 +439,7 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
 */
 void WPEQtView::runJavaScript(const QString& script, const QJSValue& callback)
 {
-    std::unique_ptr<JavascriptCallbackData> data = std::make_unique<JavascriptCallbackData>(callback, QPointer<WPEQtView>(this));
+    std::unique_ptr<JavascriptCallbackData> data = makeUnique<JavascriptCallbackData>(callback, QPointer<WPEQtView>(this));
     webkit_web_view_run_javascript(m_webView.get(), script.toUtf8().constData(), nullptr, jsAsyncReadyCallback, data.release());
 }
 

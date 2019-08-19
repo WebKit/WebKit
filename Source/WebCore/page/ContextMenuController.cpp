@@ -180,7 +180,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
     }
 #endif
 
-    return std::make_unique<ContextMenu>();
+    return makeUnique<ContextMenu>();
 }
 
 void ContextMenuController::showContextMenu(Event& event)

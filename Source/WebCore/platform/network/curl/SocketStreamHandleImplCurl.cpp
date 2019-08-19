@@ -202,7 +202,7 @@ void SocketStreamHandleImpl::stopThread()
 void SocketStreamHandleImpl::callOnWorkerThread(Function<void()>&& task)
 {
     ASSERT(isMainThread());
-    m_taskQueue.append(std::make_unique<Function<void()>>(WTFMove(task)));
+    m_taskQueue.append(makeUnique<Function<void()>>(WTFMove(task)));
 }
 
 void SocketStreamHandleImpl::executeTasks()

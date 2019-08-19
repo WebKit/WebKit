@@ -395,9 +395,9 @@ void Node::willBeDeletedFrom(Document& document)
 void Node::materializeRareData()
 {
     if (is<Element>(*this))
-        m_rareData = std::make_unique<ElementRareData>();
+        m_rareData = makeUnique<ElementRareData>();
     else
-        m_rareData = std::make_unique<NodeRareData>();
+        m_rareData = makeUnique<NodeRareData>();
 }
 
 void Node::clearRareData()
@@ -2202,7 +2202,7 @@ EventTargetData& Node::ensureEventTargetData()
 
     auto locker = holdLock(s_eventTargetDataMapLock);
     setHasEventTargetData(true);
-    return *eventTargetDataMap().add(this, std::make_unique<EventTargetData>()).iterator->value;
+    return *eventTargetDataMap().add(this, makeUnique<EventTargetData>()).iterator->value;
 }
 
 void Node::clearEventTargetData()
@@ -2274,7 +2274,7 @@ void Node::registerMutationObserver(MutationObserver& observer, MutationObserver
     }
 
     if (!registration) {
-        registry.append(std::make_unique<MutationObserverRegistration>(observer, *this, options, attributeFilter));
+        registry.append(makeUnique<MutationObserverRegistration>(observer, *this, options, attributeFilter));
         registration = registry.last().get();
     }
 

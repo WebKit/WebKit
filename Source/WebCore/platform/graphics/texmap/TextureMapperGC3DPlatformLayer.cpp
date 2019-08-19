@@ -84,7 +84,7 @@ void TextureMapperGC3DPlatformLayer::swapBuffersIfNeeded()
 
     {
         LockHolder holder(m_platformLayerProxy->lock());
-        m_platformLayerProxy->pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+        m_platformLayerProxy->pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
     }
 
     m_context.markLayerComposited();

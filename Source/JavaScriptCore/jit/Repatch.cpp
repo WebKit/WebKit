@@ -1092,7 +1092,7 @@ void linkPolymorphicCall(
     std::unique_ptr<CallFrameShuffler> frameShuffler;
     if (callLinkInfo.frameShuffleData()) {
         ASSERT(callLinkInfo.isTailCall());
-        frameShuffler = std::make_unique<CallFrameShuffler>(stubJit, *callLinkInfo.frameShuffleData());
+        frameShuffler = makeUnique<CallFrameShuffler>(stubJit, *callLinkInfo.frameShuffleData());
 #if USE(JSVALUE32_64)
         // We would have already checked that the callee is a cell, and we can
         // use the additional register this buys us.

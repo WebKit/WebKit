@@ -455,7 +455,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
             FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
 #endif
-    auto platformData = std::make_unique<FontPlatformData>(fontFace.get(), resultPattern.get(), fontDescription.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+    auto platformData = makeUnique<FontPlatformData>(fontFace.get(), resultPattern.get(), fontDescription.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently
     // supports three encodings in FcFreeTypeCharIndex: Unicode, Symbol and AppleRoman.
     // If this font doesn't have one of these three encodings, don't select it.

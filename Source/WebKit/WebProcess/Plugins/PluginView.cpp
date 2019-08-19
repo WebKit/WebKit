@@ -898,7 +898,7 @@ std::unique_ptr<WebEvent> PluginView::createWebEvent(MouseEvent& event) const
     if (event.metaKey())
         modifiers.add(WebEvent::Modifier::MetaKey);
 
-    return std::make_unique<WebMouseEvent>(type, button, event.buttons(), m_plugin->convertToRootView(IntPoint(event.offsetX(), event.offsetY())), event.screenLocation(), 0, 0, 0, clickCount, modifiers, WallTime { }, 0);
+    return makeUnique<WebMouseEvent>(type, button, event.buttons(), m_plugin->convertToRootView(IntPoint(event.offsetX(), event.offsetY())), event.screenLocation(), 0, 0, 0, clickCount, modifiers, WallTime { }, 0);
 }
 
 void PluginView::handleEvent(Event& event)

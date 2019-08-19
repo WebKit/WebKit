@@ -220,7 +220,7 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
         Tile::Coordinate coordinate = tilesToCreate[n];
-        m_tiles.add(coordinate, std::make_unique<Tile>(*this, coordinate));
+        m_tiles.add(coordinate, makeUnique<Tile>(*this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
 

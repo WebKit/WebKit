@@ -289,15 +289,15 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_maxEdenSize(m_minBytesPerCycle)
     , m_maxHeapSize(m_minBytesPerCycle)
     , m_objectSpace(this)
-    , m_machineThreads(std::make_unique<MachineThreads>())
-    , m_collectorSlotVisitor(std::make_unique<SlotVisitor>(*this, "C"))
-    , m_mutatorSlotVisitor(std::make_unique<SlotVisitor>(*this, "M"))
-    , m_mutatorMarkStack(std::make_unique<MarkStackArray>())
-    , m_raceMarkStack(std::make_unique<MarkStackArray>())
-    , m_constraintSet(std::make_unique<MarkingConstraintSet>(*this))
+    , m_machineThreads(makeUnique<MachineThreads>())
+    , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"))
+    , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*this, "M"))
+    , m_mutatorMarkStack(makeUnique<MarkStackArray>())
+    , m_raceMarkStack(makeUnique<MarkStackArray>())
+    , m_constraintSet(makeUnique<MarkingConstraintSet>(*this))
     , m_handleSet(vm)
-    , m_codeBlocks(std::make_unique<CodeBlockSet>())
-    , m_jitStubRoutines(std::make_unique<JITStubRoutineSet>())
+    , m_codeBlocks(makeUnique<CodeBlockSet>())
+    , m_jitStubRoutines(makeUnique<JITStubRoutineSet>())
     , m_vm(vm)
     // We seed with 10ms so that GCActivityCallback::didAllocate doesn't continuously 
     // schedule the timer if we've never done a collection.
@@ -305,8 +305,8 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_edenActivityCallback(GCActivityCallback::tryCreateEdenTimer(this))
     , m_sweeper(adoptRef(*new IncrementalSweeper(this)))
     , m_stopIfNecessaryTimer(adoptRef(*new StopIfNecessaryTimer(vm)))
-    , m_sharedCollectorMarkStack(std::make_unique<MarkStackArray>())
-    , m_sharedMutatorMarkStack(std::make_unique<MarkStackArray>())
+    , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
+    , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
     , m_helperClient(&heapHelperPool())
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
@@ -314,7 +314,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     m_worldState.store(0);
 
     for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
-        std::unique_ptr<SlotVisitor> visitor = std::make_unique<SlotVisitor>(*this, toCString("P", i + 1));
+        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toCString("P", i + 1));
         if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
             visitor->optimizeForStoppedMutator();
         m_availableParallelSlotVisitors.append(visitor.get());
@@ -323,17 +323,17 @@ Heap::Heap(VM* vm, HeapType heapType)
     
     if (Options::useConcurrentGC()) {
         if (Options::useStochasticMutatorScheduler())
-            m_scheduler = std::make_unique<StochasticSpaceTimeMutatorScheduler>(*this);
+            m_scheduler = makeUnique<StochasticSpaceTimeMutatorScheduler>(*this);
         else
-            m_scheduler = std::make_unique<SpaceTimeMutatorScheduler>(*this);
+            m_scheduler = makeUnique<SpaceTimeMutatorScheduler>(*this);
     } else {
         // We simulate turning off concurrent GC by making the scheduler say that the world
         // should always be stopped when the collector is running.
-        m_scheduler = std::make_unique<SynchronousStopTheWorldMutatorScheduler>();
+        m_scheduler = makeUnique<SynchronousStopTheWorldMutatorScheduler>();
     }
     
     if (Options::verifyHeap())
-        m_verifier = std::make_unique<HeapVerifier>(this, Options::numberOfGCCyclesToRecordForVerification());
+        m_verifier = makeUnique<HeapVerifier>(this, Options::numberOfGCCyclesToRecordForVerification());
     
     m_collectorSlotVisitor->optimizeForStoppedMutator();
 
@@ -899,7 +899,7 @@ size_t Heap::protectedObjectCount()
 
 std::unique_ptr<TypeCountSet> Heap::protectedObjectTypeCounts()
 {
-    std::unique_ptr<TypeCountSet> result = std::make_unique<TypeCountSet>();
+    std::unique_ptr<TypeCountSet> result = makeUnique<TypeCountSet>();
     forEachProtectedCell(
         [&] (JSCell* cell) {
             recordType(*vm(), *result, cell);
@@ -909,7 +909,7 @@ std::unique_ptr<TypeCountSet> Heap::protectedObjectTypeCounts()
 
 std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
 {
-    std::unique_ptr<TypeCountSet> result = std::make_unique<TypeCountSet>();
+    std::unique_ptr<TypeCountSet> result = makeUnique<TypeCountSet>();
     HeapIterationScope iterationScope(*this);
     m_objectSpace.forEachLiveCell(
         iterationScope,
@@ -2856,7 +2856,7 @@ void Heap::addCoreConstraints()
         },
         ConstraintVolatility::SeldomGreyed);
     
-    m_constraintSet->add(std::make_unique<MarkStackMergingConstraint>(*this));
+    m_constraintSet->add(makeUnique<MarkStackMergingConstraint>(*this));
 }
 
 void Heap::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
