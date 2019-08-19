@@ -1,3 +1,13 @@
+2019-08-19  Jonathan Bedard  <jbedard@apple.com>
+
+        results-webkit.org: Add timeout to Redis locks
+        https://bugs.webkit.org/show_bug.cgi?id=200890
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext._find_job_with_attempts): Add timeout to Redis lock.
+
 2019-08-19  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDB-specific quota

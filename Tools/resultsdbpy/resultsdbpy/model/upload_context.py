@@ -127,7 +127,7 @@ class UploadContext(object):
         are_jobs_left = False
         will_attempt = 0
 
-        with self.redis.lock(name=f'lock_{self.QUEUE_NAME}'):
+        with self.redis.lock(name=f'lock_{self.QUEUE_NAME}', timeout=60):
             for key in self.redis.scan_iter(match=f'{self.QUEUE_NAME}*', count=self.MAX_TASKS_IN_SCAN):
                 are_jobs_left = True
                 key = key.decode('utf-8')
