@@ -325,7 +325,7 @@ template<typename CharacterType> CharacterType* StringBuilder::appendUninitializ
 
 void StringBuilder::appendCharacters(const UChar* characters, unsigned length)
 {
-    if (!length)
+    if (!length || hasOverflowed())
         return;
 
     ASSERT(characters);
@@ -347,7 +347,7 @@ void StringBuilder::appendCharacters(const UChar* characters, unsigned length)
 
 void StringBuilder::appendCharacters(const LChar* characters, unsigned length)
 {
-    if (!length)
+    if (!length || hasOverflowed())
         return;
 
     ASSERT(characters);
