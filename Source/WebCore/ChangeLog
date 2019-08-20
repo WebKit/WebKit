@@ -1,5 +1,28 @@
 2019-08-20  Chris Dumez  <cdumez@apple.com>
 
+        Unsafe usage of CookieStorageObserver from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=200920
+
+        Reviewed by Alex Christensen.
+
+        Unsafe usage of CookieStorageObserver from a background thread. CookieStorageObserver gets
+        constructed / destructed on the main thread. However, CookieStorageObserver::cookiesDidChange()
+        gets called on a background thread and tries to ref |this|. Even though CookieStorageObserver
+        is ThreadSafeRefCounted, this is still unsafe because the CookieStorageObserver destructor may
+        already be running on the main thread when CookieStorageObserver::cookiesDidChange() gets called
+        on the background thread.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cocoa/CookieStorageObserver.h:
+        * platform/network/cocoa/CookieStorageObserver.mm:
+        (WebCore::CookieStorageObserver::CookieStorageObserver):
+        (WebCore::CookieStorageObserver::cookiesDidChange):
+        (WebCore::CookieStorageObserver::create): Deleted.
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::cookieStorageObserver const):
+
+2019-08-20  Chris Dumez  <cdumez@apple.com>
+
         Use a strongly typed identifier for StorageNamespace's identifier
         https://bugs.webkit.org/show_bug.cgi?id=200895
 

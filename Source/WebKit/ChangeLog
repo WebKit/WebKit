@@ -1,5 +1,16 @@
 2019-08-20  Chris Dumez  <cdumez@apple.com>
 
+        Unsafe usage of CookieStorageObserver from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=200920
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        (API::HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore):
+
+2019-08-20  Chris Dumez  <cdumez@apple.com>
+
         Use a strongly typed identifier for StorageNamespace's identifier
         https://bugs.webkit.org/show_bug.cgi?id=200895
 
