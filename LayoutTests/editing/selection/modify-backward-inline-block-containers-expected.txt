@@ -1,0 +1,156 @@
+This test verifies that the selection can be moved forwards and backwards through empty inline-block containers that span the full width of the document. To manually test, use arrow keys or click before each exclamation mark to verify that the selection can be moved into each inline-block span element.
+
+Initial caret position:
+| "
+            "
+| <a>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+            "
+| "
+            "
+| <div>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     id="start"
+|     <#selection-caret>
+|     " "
+|   "
+            "
+| "
+        "
+
+Move backward:
+| "
+            "
+| <a>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+                "
+|   <span>
+|     class="empty"
+|     <#selection-caret>
+|     " "
+|   "
+            "
+| "
+            "
+| <div>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     id="start"
+|     " "
+|   "
+            "
+| "
+        "
+
+Move backward again:
+| "
+            "
+| <a>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     <#selection-caret>
+|     " "
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+            "
+| "
+            "
+| <div>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     id="start"
+|     " "
+|   "
+            "
+| "
+        "
+
+Move forward:
+| "
+            "
+| <a>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+                "
+|   <span>
+|     class="empty"
+|     <#selection-caret>
+|     " "
+|   "
+            "
+| "
+            "
+| <div>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     id="start"
+|     " "
+|   "
+            "
+| "
+        "
+
+Move forward again:
+| "
+            "
+| <a>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+                "
+|   <span>
+|     class="empty"
+|     " "
+|   "
+            "
+| "
+            "
+| <div>
+|   "
+                "
+|   <span>
+|     class="empty"
+|     id="start"
+|     <#selection-caret>
+|     " "
+|   "
+            "
+| "
+        "

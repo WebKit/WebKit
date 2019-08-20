@@ -1,3 +1,66 @@
+2019-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clicking the search icon on ae.com hangs the web content process
+        https://bugs.webkit.org/show_bug.cgi?id=200889
+        <rdar://problem/54359330>
+
+        Reviewed by Ryosuke Niwa.
+
+        The hang occurs under FrameSelection::selectionAtSentenceStart, while computing an EditorState to send to the UI
+        process. This act of determining whether the given positon is at the start of sentence entails moving backwards
+        from the start of the current visible selection until the start of a paragraph or sentence is found, using
+        VisiblePosition::previous to iterate backwards through VisiblePositions.
+
+        However, on this website, VisiblePosition::previous ends up just returning the current position, and we loop
+        infinitely as a result because we never actually move backwards. This happens because VisiblePosition::previous
+        first uses previousVisuallyDistinctCandidate to find a candidate Position before the current position, but when
+        the position is canonicalized to create a VisiblePosition, it is moved back to its original Position as the deep
+        equivalent.
+
+        In the attached test case (which is representative of the relevant part of the DOM on ae.com), we try to find
+        the previous VisiblePosition from (#c, 0). The previous visually distinct candidate we initially find is
+        (#b, 0), since:
+
+        1. The enclosing renderer is a RenderBlock with a non-zero height.
+        2. The enclosing renderer has no rendered children.
+        3. The position is at the first editing position in the node (i.e. the span element).
+
+        However, when canonicalizing the position, we find that neither the upstream nor the downstream position is a
+        candidate because both the upstream and downstream nodes end up well outside of the span (the upstream node ends
+        up being at the start of the body element, and the downstream position ends up right before the start of #c's
+        container). The downstream position is at the end of a text node with a leading newline, it's not a candidate
+        because its last caret offset is less than the length of the text node.
+
+        As a result, even though the given position (#b, 0) is a candidate itself, its downstream and upstream positions
+        are not. Thus, VisiblePosition::canonicalPosition expands the scope of its candidate positions to the next
+        closest candidate positions; the next candidate position is (#c, 0). Both of these candidates are outside of the
+        containing block, so we (somewhat arbitrarily) break the tie by choosing the next visible position, bringing us
+        back to (#c, 0).
+
+        There are several ways to fix this, one of which involves fixing the downstream/upstream positions of (#b, 0) so
+        that they no longer jump out of the containing block of #b and cause (#b, 0) to be an invalid visible position
+        despite being a candidate position. This can be achieved by adjusting the heuristic in
+        endsOfNodeAreVisuallyDistinctPositions (used when moving upstream or downstream). Currently, this helper
+        function returns false for #b because they contain a single (non-rendered) whitespace character. Removing this
+        extraneous whitespace character actually causes the problem to stop reproducing, since #b and #c no longer
+        contain any child nodes. This is important because the heuristic in Position::downstream attempts to keep the
+        downstream position within the confines of the enclosing visual boundary, which (currently) ends up being the
+        entire body element because endsOfNodeAreVisuallyDistinctPositions returns false for #b.
+
+        To avoid this scenario, we teach endsOfNodeAreVisuallyDistinctPositions to treat inline-block containers that
+        are empty (that is, contain no rendered content) but may have children for editing in the same way as inline-
+        block containers that don't have any children; in both scenarios, they may contain a candidate position, so we
+        should treat the ends of the container node as being visually distinct.
+
+        Doing so causes the downstream position of (#b, 0) to be kept within the immediate containing span element,
+        which then allows (#b, 0) to be a canonical VisiblePosition.
+
+        Tests:  fast/events/focus-anchor-with-tabindex-hang.html
+                editing/selection/modify-backward-inline-block-containers.html
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::previous const):
+
 2019-08-20  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Fix scrolling in modern WebKit views
