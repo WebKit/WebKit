@@ -282,7 +282,7 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         auto fieldName = nativeFunctionDeclaration.name().substring("operator&."_str.length());
 
         stringBuilder.append(
-            indent, returnName, " = &(", args[0], "->");
+            indent, returnName, " = ", args[0], " ? &(", args[0], "->");
 
         auto& unnamedType = *nativeFunctionDeclaration.parameters()[0]->type();
         auto& unifyNode = downcast<AST::PointerType>(unnamedType).elementType().unifyNode();
@@ -295,7 +295,7 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         } else
             stringBuilder.append(fieldName);
 
-        stringBuilder.append(");\n");
+        stringBuilder.append(") : nullptr;\n");
 
         return;
     }

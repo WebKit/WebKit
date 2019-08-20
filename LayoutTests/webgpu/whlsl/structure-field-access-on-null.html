@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>field ander on nullptr should return null.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.fieldShouldBeNull = async () => {
+    const program = `
+        struct Foo {
+            int x;
+            int y;
+            int z;
+        }
+        bool foo(uint i) {
+            Foo[10] foos;
+            thread Foo* foo = &foos[i];
+            thread int* ptr = &(foo->z);
+            return ptr == null && foo == null;
+        }
+    `;
+
+    for (let i = 0; i < 10; ++i)
+        assert_equals(await callBoolFunction(program,  "foo", [makeUint(i)]), false);
+    assert_equals(await callBoolFunction(program,  "foo", [makeUint(10)]), true);
+    assert_equals(await callBoolFunction(program,  "foo", [makeUint(1000000)]), true);
+    assert_equals(await callBoolFunction(program,  "foo", [makeUint(0xffffffff)]), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>
