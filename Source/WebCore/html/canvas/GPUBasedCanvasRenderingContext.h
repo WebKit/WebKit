@@ -53,7 +53,7 @@ public:
     virtual void markLayerComposited() = 0;
 
 protected:
-    GPUBasedCanvasRenderingContext(CanvasBase&);
+    explicit GPUBasedCanvasRenderingContext(CanvasBase&);
 
     HTMLCanvasElement* htmlCanvas() const;
     void notifyCanvasContentChanged();
