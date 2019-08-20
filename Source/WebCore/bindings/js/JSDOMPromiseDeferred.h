@@ -28,10 +28,8 @@
 #include "ExceptionOr.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
-#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSPromiseDeferred.h>
-#include <pal/SessionID.h>
 
 namespace WebCore {
 
@@ -93,6 +91,18 @@ public:
     }
 
     template<class IDLType>
+    void resolveCallbackValueWithNewlyCreated(const Function<typename IDLType::InnerParameterType(ScriptExecutionContext&)>& createValue)
+    {
+        if (isSuspended())
+            return;
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        auto* exec = globalObject()->globalExec();
+        JSC::JSLockHolder locker(exec);
+        resolve(*exec, toJSNewlyCreated<IDLType>(*exec, *globalObject(), createValue(*globalObject()->scriptExecutionContext())));
+    }
+
+    template<class IDLType>
     void reject(typename IDLType::ParameterType value)
     {
         if (isSuspended())
@@ -137,8 +147,6 @@ public:
     JSC::JSValue promise() const;
 
     void whenSettled(std::function<void()>&&);
-
-    PAL::SessionID sessionID() const { return globalObject()->scriptExecutionContext()->sessionID(); }
 
 private:
     DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred, Mode mode)

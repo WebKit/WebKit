@@ -1,5 +1,29 @@
 2019-08-20  Youenn Fablet  <youenn@apple.com>
 
+        Remove DeferredPromise::sessionID()
+        https://bugs.webkit.org/show_bug.cgi?id=200616
+
+        Reviewed by Alex Christensen.
+
+        Calling sessionID() on DeferredPromise is valid if the DeferredPromise is not suspended.
+        Since this might not always be true in call sites, add a resolve promise that is passed a function that returns
+        the value to resolve.
+        This function is taking a ScriptExecutionContext from which the session ID can be retrieved.
+        This is safe since the function will only be called if the DeferredPromise is not suspended.
+        Update call sites accordingly.
+        No change of behavior.
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::resolveWithTypeAndData):
+        (WebCore::FetchBodyConsumer::resolve):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::blob):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::resolveCallbackValueWithNewlyCreated):
+        (WebCore::DeferredPromise::sessionID const): Deleted.
+
+2019-08-20  Youenn Fablet  <youenn@apple.com>
+
         PendingActivationMediaStream does not need to be refcounted
         https://bugs.webkit.org/show_bug.cgi?id=200879
 
