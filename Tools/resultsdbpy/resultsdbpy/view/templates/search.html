@@ -28,15 +28,17 @@
 <link rel="stylesheet" type="text/css" href="assets/css/drawer.css">
 <link rel="stylesheet" type="text/css" href="assets/css/search.css">
 <link rel="stylesheet" type="text/css" href="assets/css/timeline.css">
+<link rel="stylesheet" type="text/css" href="assets/css/tooltip.css">
 
 <script type="module">
 import {CommitBank} from '/assets/js/commit.js';
 import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/assets/js/drawer.js';
-import {DOM, REF} from '/library/js/Ref.js';
 import {SearchBar} from '/assets/js/search.js';
 import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
+import {ToolTip} from '/assets/js/tooltip.js';
+import {DOM, REF} from '/library/js/Ref.js';
 
 const DEFAULT_LIMIT = 100;
 const SUITES = JSON.parse('{{ suites|safe }}');    
@@ -215,7 +217,8 @@ window.onpushstate = event => {view.reload();};
 
 DOM.inject(
     document.getElementById('app'),
-    `${Drawer([
+    `${ToolTip}
+    ${Drawer([
         LimitSlider(() => {view.reload()}),
         BranchSelector(() => {
             CommitBank.reload();

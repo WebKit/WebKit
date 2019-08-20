@@ -1,3 +1,36 @@
+2019-08-20  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Add ToolTips
+        https://bugs.webkit.org/show_bug.cgi?id=200801
+
+        Rubber-stamped by Aakash Jain.
+
+        When dots or scale labels are hovered over, we should display a tool tip with additional information about
+        The specific element.
+
+        * resultsdbpy/resultsdbpy/view/static/css/tooltip.css: Added.
+        (.tooltip): Add class for ToolTip text box.
+        (.tooltip-arrow-up): Add class for ToolTip arrow pointing up.
+        (.tooltip-arrow-down): Add class for ToolTip arrow pointing down.
+        * resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (_CommitBank.prototype.commitsDuringUuid): Return a list of commits which were the trunk of their respective
+        repositories at a given time.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale): Add callbacks triggered when the mouse enters or leaves elements in the scale canvas.
+        (TimelineFromEndpoint.render): Add callbacks triggered when the mouse enters or leaves dot elements.
+        * resultsdbpy/resultsdbpy/view/static/js/tooltip.js: Added.
+        (isPointInElement): Given an element and a point, return true if that point is within the bounds of the element.
+        (_ToolTip):
+        (_ToolTip.prototype.set): Set the content and location of the ToolTip.
+        (_ToolTip.prototype.toString): Return the html needed to render the ToolTip.
+        (_ToolTip.prototype.unset): Clear and hide the ToolTip.
+        (_ToolTip.prototype.isIn): Check if a given point is contained within the ToolTip.
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (Timeline.CanvasSeriesComponent): Convert onHover events to onEnter/onLeave events. Add toolTips points to both
+        dot and scale elements.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Add ToolTip.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Ditto.
+
 2019-08-20  Justin Michaud  <justin_michaud@apple.com>
 
         Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value

@@ -223,7 +223,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     const getScale = typeof option.getScaleFunc === "function" ? option.getScaleFunc : (a) => a;
     const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => a - b;
     const onDotClick = typeof option.onDotClick === "function" ? option.onDotClick : null;
-    const onDotHover = typeof option.onDotHover === "function" ? option.onDotHover : null;
+    const onDotEnter = typeof option.onDotEnter === "function" ? option.onDotEnter : null;
+    const onDotLeave = typeof option.onDotLeave === "function" ? option.onDotLeave : null;
     const tagHeight = defaultFontSize;
     const height = option.height ? option.height : 2 * radius + tagHeight;
     const colorBatchRender = new ColorBatchRender();
@@ -360,8 +361,26 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     };
 
     return ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+        const mouseMove = (e) => {
+            let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, canvasRef.element);
+            if (dots.length) {
+                if (onDotEnter) {
+                    dots[0].tipPoints = [
+                        {x: dots[0]._dotCenter.x, y: dots[0]._dotCenter.y - 3 * radius / 2},
+                        {x: dots[0]._dotCenter.x, y: dots[0]._dotCenter.y + radius / 2},
+                    ];
+                    onDotEnter(dots[0], e, canvasRef.element.getBoundingClientRect());
+                }
+                canvasRef.element.style.cursor = "pointer";
+            } else {
+                if (onDotLeave)
+                    onDotLeave(e, canvasRef.element.getBoundingClientRect());
+                canvasRef.element.style.cursor = "default";
+            }
+        }
         const onScrollAction = (e) => {
             canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
+            mouseMove(e);
         };
         const onResizeAction = (width) => {
             canvasRef.setState({width: width});
@@ -386,17 +405,10 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                     });
                 }
 
-                if (onDotClick || onDotHover) {
-                    element.addEventListener('mousemove', (e) => {
-                        let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
-                        if (dots.length) {
-                            if (onDotHover)
-                                onDotHover(dots[0], e);
-                            element.style.cursor = "pointer";
-                        } else
-                            element.style.cursor = "default";
-                    });
-                }
+                if (onDotClick || onDotEnter || onDotLeave)
+                    element.addEventListener('mousemove', mouseMove);
+                if (onDotLeave)
+                    element.addEventListener('mouseleave', (e) => onDotLeave(e, element.getBoundingClientRect()));
 
                 createInsertionObservers(element, (entries) => {
                     canvasRef.setState({onScreen: entries[0].isIntersecting});
@@ -533,7 +545,8 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     const getScaleKey = typeof option.getScaleFunc === "function" ? option.getScaleFunc : (a) => a;
     const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => a - b;
     const onScaleClick = typeof option.onScaleClick === "function" ? option.onScaleClick : null;
-    const onScaleHover = typeof option.onScaleHover === "function" ? option.onScaleHover : null;
+    const onScaleEnter = typeof option.onScaleEnter === "function" ? option.onScaleEnter : null;
+    const onScaleLeave = typeof option.onScaleLeave === "function" ? option.onScaleLeave : null;
     const sortData = option.sortData === true ? option.sortData : false;
     const getLabel = typeof option.getLabelFunc === "function" ? option.getLabelFunc : (a) => a;
     const isTop = typeof option.isTop === "boolean" ? option.isTop : false;
@@ -626,8 +639,9 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     const getMouseEventTirggerScales = (e, scrollLeft, element) => {
         const {x, y} = getMousePosInCanvas(e, element);
         return onScreenScales.filter(scale => {
-            const width = scale.label.toString().length * fontSizeNumber / 2;
-            const height = scale.label.toString().length * fontSizeNumber / 2 * sqrt3;
+            const labelLength = getLabel(scale.label).length;
+            const width = labelLength * fontSizeNumber / 2;
+            const height = labelLength * fontSizeNumber / 2 * sqrt3;
             const point1 = {
                 x: scale._tagTop.x - scrollLeft - (isTop ? fontSizeNumber / 2 * sqrt3 : 0),
                 y: scale._tagTop.y + (fontSizeNumber / 2 + scaleTagLineHeight) * (isTop ? -1 : 1),
@@ -725,8 +739,30 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
 
     return {
         series: ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+            const mouseMove = (e) => {
+                let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, canvasRef.element);
+                if (scales.length) {
+                    if (onScaleEnter) {
+                        const labelLength = getLabel(scales[0].label).length;
+                        scales[0].tipPoints = [{
+                            x: scales[0]._tagTop.x - canvasRef.state.scrollLeft,
+                            y: scales[0]._tagTop.y + scaleTagLineHeight * (isTop ? -1 : 0),
+                        }, {
+                            x: scales[0]._tagTop.x - canvasRef.state.scrollLeft + labelLength * fontSizeNumber / 3 - scaleTagLineHeight * (isTop ? 1 : .25),
+                            y: scales[0]._tagTop.y + (labelLength * fontSizeNumber / 2 * sqrt3) * (isTop ? -1 : 1) + scaleTagLineHeight * (isTop ? 1 : 0),
+                        }];
+                        onScaleEnter(scales[0], e, canvasRef.element.getBoundingClientRect());
+                    }
+                    canvasRef.element.style.cursor = "pointer";
+                } else {
+                    if (onScaleEnter)
+                        onScaleLeave(e, canvasRef.element.getBoundingClientRect());
+                    canvasRef.element.style.cursor = "default";
+                }
+            }
             const onScrollAction = (e) => {
                 canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
+                mouseMove(e);
             };
             const onResizeAction = (width) => {
                 canvasRef.setState({width: width});
@@ -750,18 +786,10 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                         });
                     }
 
-                    if (onScaleClick || onScaleHover) {
-                        element.addEventListener('mousemove', (e) => {
-                            let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, element);
-                            if (scales.length) {
-                                if (onScaleHover)
-                                    onScaleHover(scales[0], e);
-                                element.style.cursor = "pointer";
-                            } else {
-                                element.style.cursor = "default";
-                            }
-                        });
-                    }
+                    if (onScaleClick || onScaleEnter || onScaleLeave)
+                        element.addEventListener('mousemove', mouseMove);
+                    if (onScaleLeave)
+                        element.addEventListener('mouseleave', (e) => onScaleLeave(e, element.getBoundingClientRect()));
                 },
                 onElementUnmount: (element) => {
                     onContainerScroll.stopAction(onScrollAction);

@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+.tooltip {
+    z-index: 50;
+    position: absolute;
+    opacity: 80%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+}
+
+.tooltip.arrow-up {
+     border-color: transparent transparent #cccd transparent;
+}
+
+.tooltip.arrow-down {
+    border-color: #cccd transparent transparent transparent;
+}
+
+.tooltip-content {
+    z-index: 50;
+    position: absolute;
+    -webkit-backdrop-filter: blur(10px) brightness(88%);
+    backdrop-filter: blur(10px) brightness(88%);
+    color: var(--boldInverseColor);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: var(--smallSize);
+    list-style: none;
+    max-width: 600px;
+}

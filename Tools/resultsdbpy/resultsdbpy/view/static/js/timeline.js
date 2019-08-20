@@ -23,9 +23,10 @@
 
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
-import {deepCompare, ErrorDisplay, paramsToQuery, queryToParams} from '/assets/js/common.js';
-import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
+import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams} from '/assets/js/common.js';
+import {ToolTip} from '/assets/js/tooltip.js';
 import {Timeline} from '/library/js/components/TimelineComponents.js';
+import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
 
 
 const DEFAULT_LIMIT = 100;
@@ -218,6 +219,25 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
                 delete params.branch;
             const query = paramsToQuery(params);
             window.open(`/commit?${query}`, '_blank');
+        },
+        onScaleEnter: (node, event, canvas) => {
+            const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
+            ToolTip.set(
+                `<div class="content">
+                    Time: ${new Date(node.label.timestamp * 1000).toLocaleString()}<br>
+                    Repository: ${node.label.repository_id}<br>
+                    Branch: ${node.label.branch}<br>
+                    Committer: ${node.label.committer}
+                    ${node.label.message ? `<br><div>${escapeHTML(node.label.message.split('\n')[0])}</div>` : ''}
+                </div>`,
+                node.tipPoints.map((point) => {
+                    return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
+                })
+            );
+        },
+        onScaleLeave: (event, canvas) => {
+            if (!ToolTip.isIn({x: event.x, y: event.y}))
+                ToolTip.unset();
         },
         // Per the birthday paradox, 10% change of collision with 7.7 million commits with 12 character commits
         getLabelFunc: (commit) => {return commit ? commit.id.substring(0,12) : '?';},
@@ -570,6 +590,48 @@ class TimelineFromEndpoint {
             }
         }
 
+        function onDotEnterFactory(configuration) {
+            return (data, event, canvas) => {
+                const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
+                ToolTip.set(
+                    `<div class="content">
+                        ${data.start_time ? `<a href="/urls/build?${paramsToQuery(function () {
+                            let buildParams = configuration.toParams();
+                            buildParams['suite'] = [self.suite];
+                            buildParams['uuid'] = [data.uuid];
+                            buildParams['after_time'] = [data.start_time];
+                            buildParams['before_time'] = [data.start_time];
+                            if (branch)
+                                buildParams['branch'] = branch;
+                            return buildParams;
+                        } ())}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}<br>` : ''}
+                        Commits: ${CommitBank.commitsDuringUuid(data.uuid).map((commit) => {
+                            let params = {
+                                branch: commit.branch ? [commit.branch] : branch,
+                                uuid: [commit.uuid],
+                            }
+                            if (!params.branch)
+                                delete params.branch;
+                            const query = paramsToQuery(params);
+                            return `<a href="/commit/info?${query}" target="_blank">${commit.id.substring(0,12)}</a>`;
+                        }).join(', ')}
+                        <br>
+
+                        ${data.expected ? `Expected: ${data.expected}<br>` : ''}
+                        ${data.actual ? `Actual: ${data.actual}<br>` : ''}
+                    </div>`,
+                    data.tipPoints.map((point) => {
+                        return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
+                    })
+                );
+            }
+        }
+
+        function onDotLeave(event, canvas) {
+            if (!ToolTip.isIn({x: event.pageX, y: event.pageY}))
+                ToolTip.unset();
+        }
+
         function exporterFactory(data) {
             return (updateFunction) => {
                 self.updates.push((scale) => {updateFunction(data, scale);});
@@ -624,6 +686,8 @@ class TimelineFromEndpoint {
                         renderFactory: options.renderFactory,
                         exporter: options.exporter,
                         onDotClick: onDotClickFactory(config),
+                        onDotEnter: onDotEnterFactory(config),
+                        onDotLeave: onDotLeave,
                         exporter: exporterFactory(resultsForConfig),
                     }));
 
@@ -638,6 +702,8 @@ class TimelineFromEndpoint {
                                     renderFactory: options.renderFactory,
                                     exporter: options.exporter,
                                     onDotClick: onDotClickFactory(sdkConfig),
+                                    onDotEnter: onDotEnterFactory(sdkConfig),
+                                    onDotLeave: onDotLeave,
                                     exporter: exporterFactory(resultsByKey[sdkConfig.toKey()]),
                                 })));
                     });
@@ -663,6 +729,8 @@ class TimelineFromEndpoint {
                         compareFunc: options.compareFunc,
                         renderFactory: options.renderFactory,
                         onDotClick: onDotClickFactory(configuration),
+                        onDotEnter: onDotEnterFactory(configuration),
+                        onDotLeave: onDotLeave,
                         exporter: exporterFactory(allResults),
                     })),
                 ...collapsedTimelines

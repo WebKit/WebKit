@@ -162,6 +162,48 @@ class _CommitBank {
         }
         return null;
     }
+    commitsDuringUuid(uuid) {
+        let commits = [];
+        let begin = 0;
+        let end = this.commits.length - 1;
+        let index = this.commits.length - 1;
+        while (begin <= end) {
+            const mid = Math.ceil((begin + end) / 2);
+            const candidate = this.commits[mid];
+            if (candidate.uuid === uuid) {
+                commits.push(candidate);
+                index = mid - 1;
+                break;
+            }
+            if (candidate.uuid < uuid)
+                begin = mid + 1;
+            else
+                end = mid - 1;
+        }
+
+        let repositories = new Set();
+        if (commits.length)
+            repositories.add(commits[0].repository_id);
+
+        while (index >= 0) {
+            if (repositories.has(this.commits[index].repository_id)) {
+                --index;
+                continue;
+            }
+            if (this._repositories.length && !this._repositories.has(this.commits[index].repository_id)) {
+                --index;
+                continue;
+            }
+
+            commits.push(this.commits[index]);
+            repositories.add(this.commits[index].repository_id);
+            if (repositories.length == this._repositories.length)
+                break;
+
+            --index;
+        }
+        return commits.sort(function(a, b) {return a.repository_id.localeCompare(b.repository_id)});
+    }
     _loadSiblings(commit) {
         const query = paramsToQuery({
             branch: [commit.branch],
