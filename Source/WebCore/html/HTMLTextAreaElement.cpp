@@ -245,6 +245,11 @@ bool HTMLTextAreaElement::hasCustomFocusLogic() const
     return true;
 }
 
+int HTMLTextAreaElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 bool HTMLTextAreaElement::isKeyboardFocusable(KeyboardEvent*) const
 {
     // If a given text area can be focused at all, then it will always be keyboard focusable.

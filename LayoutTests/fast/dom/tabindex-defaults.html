@@ -11,10 +11,13 @@
 <input id="input">
 <select id="select"></select>
 <textarea id="textarea"></textarea>
+<keygen id="keygen"></keygen>
 <div id="editableDiv" contenteditable="true"></div>
 
 <!-- Unfocusable element -->
 <div id="normalDiv"></div>
+<output id="output"></output>
+<fieldset id="fieldset"></fieldset>
 </div>
 
 <script>
@@ -26,6 +29,9 @@ var input = document.getElementById('input');
 var select = document.getElementById('select');
 var textarea = document.getElementById('textarea');
 var editableDiv = document.getElementById('editableDiv');
+var output = document.getElementById('output');
+var fieldset = document.getElementById('fieldset');
+var keygen = document.getElementById('keygen');
 var normalDiv = document.getElementById('normalDiv');
 
 shouldBe('anchor.tabIndex', '0');
@@ -33,24 +39,33 @@ shouldBe('button.tabIndex', '0');
 shouldBe('input.tabIndex', '0');
 shouldBe('select.tabIndex', '0');
 shouldBe('textarea.tabIndex', '0');
+shouldBe('keygen.tabIndex', '0');
 shouldBe('editableDiv.tabIndex', '0');
 shouldBe('normalDiv.tabIndex', '-1');
+shouldBe('output.tabIndex', '-1');
+shouldBe('fieldset.tabIndex', '-1');
 
 shouldBe('anchor.setAttribute("tabindex", "invalid"); anchor.tabIndex', '0');
 shouldBe('button.setAttribute("tabindex", "invalid"); button.tabIndex', '0');
 shouldBe('input.setAttribute("tabindex", "invalid"); input.tabIndex', '0');
 shouldBe('select.setAttribute("tabindex", "invalid"); select.tabIndex', '0');
 shouldBe('textarea.setAttribute("tabindex", "invalid"); textarea.tabIndex', '0');
+shouldBe('keygen.setAttribute("tabindex", "invalid"); keygen.tabIndex', '0');
 shouldBe('editableDiv.setAttribute("tabindex", "invalid"); editableDiv.tabIndex', '0');
 shouldBe('normalDiv.setAttribute("tabindex", "invalid"); normalDiv.tabIndex', '-1');
+shouldBe('output.setAttribute("tabindex", "invalid"); output.tabIndex', '-1');
+shouldBe('fieldset.setAttribute("tabindex", "invalid"); fieldset.tabIndex', '-1');
 
 shouldBe('anchor.setAttribute("tabindex", "9999999999"); anchor.tabIndex', '0');
 shouldBe('button.setAttribute("tabindex", "9999999999"); button.tabIndex', '0');
 shouldBe('input.setAttribute("tabindex", "9999999999"); input.tabIndex', '0');
 shouldBe('select.setAttribute("tabindex", "9999999999"); select.tabIndex', '0');
 shouldBe('textarea.setAttribute("tabindex", "9999999999"); textarea.tabIndex', '0');
+shouldBe('keygen.setAttribute("tabindex", "9999999999"); keygen.tabIndex', '0');
 shouldBe('editableDiv.setAttribute("tabindex", "9999999999"); editableDiv.tabIndex', '0');
 shouldBe('normalDiv.setAttribute("tabindex", "9999999999"); normalDiv.tabIndex', '-1');
+shouldBe('output.setAttribute("tabindex", "9999999999"); output.tabIndex', '-1');
+shouldBe('fieldset.setAttribute("tabindex", "9999999999"); fieldset.tabIndex', '-1');
 
 document.getElementById('container').innerHTML = '';
 </script>

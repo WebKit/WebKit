@@ -311,6 +311,11 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomStri
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
+int HTMLSelectElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (renderer())

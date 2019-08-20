@@ -1,3 +1,58 @@
+2019-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The default tab index of output and fieldset should be -1
+        https://bugs.webkit.org/show_bug.cgi?id=200834
+
+        Reviewed by Alex Christensen.
+
+        This patch updates the default tab index of output and fieldset to -1 to match the behavior of
+        Chrome and Firefox as well as the latest HTML specification:
+        https://html.spec.whatwg.org/multipage/interaction.html#the-tabindex-attribute
+
+        To do that, this patch replaces HTMLFormControlElement::defaultTabIndex with defaultTabIndex
+        implementation in each one of its concrete subclass such as HTMLButtonElement to mirror
+        the language of the specification as follows:
+
+        HTMLFormControlElement
+            HTMLButtonElement -> 0
+            HTMLFieldSetElement -> -1
+            HTMLFormControlElementWithState
+                HTMLKeygenElement -> 0 - Not specified anywhere but preserving the existing behavior.
+                HTMLSelectElement -> 0
+                HTMLTextFormControlElement
+                    HTMLInputElement -> 0
+                    HTMLTextAreaElement -> 0
+            HTMLOutputElement -> -1 
+
+        Even though Element::shouldBeIgnoredInSequentialFocusNavigation() checks the value of
+        defaultTabIndex, this patch does not affect the actual sequential (tab) focus navigation:
+        Beacuse HTMLOutputElement and HTMLFieldSetElement have supportsFocus overrides to call
+        HTMLElement::supportsFocus instead of HTMLFormControlElement::supportsFocus, these two
+        elements are focusable only when tabindex is set or it's a root content editable element.
+        But all root editable elements are focusable anyway and the default tab index does not
+        matter when tabindex is set.
+
+        Test: fast/dom/tabindex-defaults.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultTabIndex const): Added.
+        * html/HTMLButtonElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::defaultTabIndex const): Deleted.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultTabIndex const): Added.
+        * html/HTMLKeygenElement.h:
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::defaultTabIndex const): Added.
+        * html/HTMLKeygenElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultTabIndex const): Added.
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultTabIndex const): Added.
+        * html/HTMLTextAreaElement.h:
+
 2019-08-20  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] isConsideredClickable should be able to process elements with no renderers

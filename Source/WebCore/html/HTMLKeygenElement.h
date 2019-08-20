@@ -52,6 +52,8 @@ private:
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }
 
+    int defaultTabIndex() const final;
+
     void reset() final;
     bool shouldSaveAndRestoreFormControlState() const final;
 

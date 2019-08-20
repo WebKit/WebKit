@@ -409,11 +409,6 @@ bool HTMLFormControlElement::matchesInvalidPseudoClass() const
     return willValidate() && !isValidFormControlElement();
 }
 
-int HTMLFormControlElement::defaultTabIndex() const
-{
-    return 0;
-}
-
 bool HTMLFormControlElement::computeWillValidate() const
 {
     if (m_dataListAncestorState == Unknown) {

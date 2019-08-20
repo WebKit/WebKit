@@ -135,6 +135,11 @@ const AtomString& HTMLKeygenElement::formControlType() const
     return keygen;
 }
 
+int HTMLKeygenElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 void HTMLKeygenElement::reset()
 {
     static_cast<HTMLFormControlElement*>(shadowSelect())->reset();

@@ -111,7 +111,8 @@ protected:
 
 private:
     const AtomString& formControlType() const final;
-    
+
+    int defaultTabIndex() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
 

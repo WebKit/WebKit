@@ -366,6 +366,7 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
+    int defaultTabIndex() const final;
     bool hasCustomFocusLogic() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;

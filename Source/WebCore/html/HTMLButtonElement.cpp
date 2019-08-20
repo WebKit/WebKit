@@ -65,6 +65,11 @@ RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderButton>(*this, WTFMove(style));
 }
 
+int HTMLButtonElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 const AtomString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {

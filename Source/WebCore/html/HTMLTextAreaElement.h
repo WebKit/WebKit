@@ -113,6 +113,7 @@ private:
     bool appendFormData(DOMFormData&, bool) final;
     void reset() final;
     bool hasCustomFocusLogic() const final;
+    int defaultTabIndex() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;

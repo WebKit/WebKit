@@ -435,6 +435,11 @@ bool HTMLInputElement::hasCustomFocusLogic() const
     return m_inputType->hasCustomFocusLogic();
 }
 
+int HTMLInputElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return m_inputType->isKeyboardFocusable(event);

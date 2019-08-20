@@ -167,8 +167,6 @@ private:
 
     bool isFormControlElement() const final { return true; }
 
-    int defaultTabIndex() const final;
-
     bool isValidFormControlElement() const;
 
     bool computeIsDisabledByFieldsetAncestor() const;
