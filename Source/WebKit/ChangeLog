@@ -1,3 +1,32 @@
+2019-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Fix scrolling in modern WebKit views
+        https://bugs.webkit.org/show_bug.cgi?id=200923
+
+        Reviewed by Don Olmstead.
+
+        The initial implementation of scrolling in Direct2D had errors that
+        caused hilarious rendering glitches. This patch corrects the logic
+        so that page scroll is correct.
+
+        This patch also fixes a bug that would trigger when resizing windows.
+
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::paint):
+        * UIProcess/BackingStore.h:
+        (WebKit::BackingStore::renderTarget): Deleted.
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::sizeDidChange):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h:
+        * UIProcess/win/BackingStoreDirect2D.cpp:
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::incorporateUpdate):
+        (WebKit::BackingStore::scroll):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint):
+        (WebKit::WebView::onSizeEvent):
+
 2019-08-20  Chris Dumez  <cdumez@apple.com>
 
         Unsafe usage of CookieStorageObserver from a background thread

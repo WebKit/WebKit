@@ -58,15 +58,15 @@ public:
 #if USE(CAIRO)
     typedef cairo_t* PlatformGraphicsContext;
 #elif USE(DIRECT2D)
-    typedef ID2D1RenderTarget* PlatformGraphicsContext;
+    struct GdiConnections {
+        HWND hwnd;
+        HDC hdc;
+    };
+    typedef GdiConnections PlatformGraphicsContext;
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);
     void incorporateUpdate(const UpdateInfo&);
-
-#if USE(DIRECT2D)
-    ID2D1DCRenderTarget* renderTarget() { return m_backend->renderTarget(); }
-#endif
 
 private:
     void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);

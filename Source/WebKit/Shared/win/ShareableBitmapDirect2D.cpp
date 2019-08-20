@@ -82,6 +82,13 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
 {
     auto surface = createDirect2DSurface();
 
+#ifndef _NDEBUG
+    unsigned width, height;
+    HRESULT hr = surface->GetSize(&width, &height);
+    ASSERT(width == m_size.width());
+    ASSERT(height == m_size.height());
+#endif
+
     FloatRect destRect(dstPoint, srcRect.size());
     FloatRect srcRectScaled(srcRect);
     srcRectScaled.scale(scaleFactor);

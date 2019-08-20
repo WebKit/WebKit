@@ -60,25 +60,53 @@ BackingStoreBackendDirect2DImpl::~BackingStoreBackendDirect2DImpl()
 
 void BackingStoreBackendDirect2DImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    IntRect targetRect = scrollRect;
-    targetRect.move(scrollOffset);
-    targetRect.shiftMaxXEdgeTo(targetRect.maxX() - scrollOffset.width());
-    targetRect.shiftMaxYEdgeTo(targetRect.maxY() - scrollOffset.height());
-    if (targetRect.isEmpty())
-        return;
+    IntRect sourceRect = scrollRect;
+    sourceRect.move(-scrollOffset);
+    sourceRect.intersect(scrollRect);
 
-    if (!m_scrollSurface) {
-        auto floatSize = Direct2D::bitmapSize(m_surface.get());
-        IntSize size(floatSize.width(), floatSize.height());
-        auto scale = Direct2D::bitmapResolution(m_surface.get());
-        ASSERT(scale.x() == scale.y());
-        m_scrollSurface = Direct2D::createBitmap(m_renderTarget.get(), size);
+    if (!m_scrollSurface || scrollRect.size() != m_scrollSurfaceSize) {
+#ifndef _NDEBUG
+        ASSERT(m_size.width() >= scrollRect.size().width());
+        ASSERT(m_size.height() >= scrollRect.size().height());
+#endif
+        m_scrollSurfaceSize = sourceRect.size();
+        m_scrollSurface = Direct2D::createBitmap(m_renderTarget.get(), m_scrollSurfaceSize);
     }
 
-    Direct2D::copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(), scrollOffset, targetRect);
-    Direct2D::copyRectFromOneSurfaceToAnother(m_scrollSurface.get(), m_surface.get(), IntSize(), targetRect);
+    auto sourceRectLocation = IntSize(sourceRect.x(), sourceRect.y());
+    auto destRectLocation = IntSize(); // Top left corner of scroll surface
+    Direct2D::copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(), sourceRectLocation, sourceRect, destRectLocation);
+
+    IntRect destRect = scrollRect;
+    destRect.setHeight(sourceRect.height());
+    destRect.setWidth(sourceRect.width());
+
+    IntSize destPosition;
+    if (scrollOffset.width() > 0 || scrollOffset.height() > 0) {
+        destPosition.setWidth(std::min(scrollRect.width(), scrollOffset.width()));
+        destPosition.setHeight(std::min(scrollRect.height(), scrollOffset.height()));
+    }
+
+    auto sourceScrollSurfaceLocation = IntSize(); // Top left corner of scroll surface
+    Direct2D::copyRectFromOneSurfaceToAnother(m_scrollSurface.get(), m_surface.get(), sourceScrollSurfaceLocation, destRect, destPosition);
 
     m_scrolledHysteresis.impulse();
+}
+
+ID2D1BitmapBrush* BackingStoreBackendDirect2DImpl::bitmapBrush()
+{
+    if (!m_renderTarget || !m_surface)
+        return nullptr;
+
+    if (!m_bitmapBrush) {
+        auto bitmapBrushProperties = D2D1::BitmapBrushProperties();
+        auto brushProperties = D2D1::BrushProperties();
+
+        HRESULT hr = m_renderTarget->CreateBitmapBrush(m_surface.get(), &bitmapBrushProperties, &brushProperties, &m_bitmapBrush);
+        ASSERT(SUCCEEDED(hr));
+    }
+
+    return m_bitmapBrush.get();
 }
 
 } // namespace WebCore

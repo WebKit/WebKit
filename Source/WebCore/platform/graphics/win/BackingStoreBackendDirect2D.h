@@ -33,6 +33,7 @@
 #include <wtf/Noncopyable.h>
 
 interface ID2D1Bitmap;
+interface ID2D1BitmapBrush;
 interface ID2D1DCRenderTarget;
 
 namespace WebCore {
@@ -48,6 +49,7 @@ public:
     const IntSize& size() const { return m_size; }
 
     virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
+    virtual ID2D1BitmapBrush* bitmapBrush() = 0;
 
 protected:
     BackingStoreBackendDirect2D(const IntSize& size)

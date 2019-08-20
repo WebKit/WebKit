@@ -46,11 +46,11 @@ ImageDecoderDirect2D::ImageDecoderDirect2D()
 {
 }
 
-IWICImagingFactory* ImageDecoderDirect2D::systemImagingFactory()
+IWICImagingFactory2* ImageDecoderDirect2D::systemImagingFactory()
 {
-    static IWICImagingFactory* wicImagingFactory = nullptr;
+    static IWICImagingFactory2* wicImagingFactory = nullptr;
     if (!wicImagingFactory) {
-        HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&wicImagingFactory);
+        HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory2, (LPVOID*)&wicImagingFactory);
         RELEASE_ASSERT(SUCCEEDED(hr));
     }
 

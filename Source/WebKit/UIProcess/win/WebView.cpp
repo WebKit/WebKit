@@ -491,11 +491,8 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
         cairo_destroy(context);
         cairo_surface_destroy(surface);
 #else
-        RECT d2DirtyRect = dirtyRect;
-        if (COMPtr<ID2D1DCRenderTarget> renderTarget = drawingArea->renderTarget()) {
-            renderTarget->BindDC(hdc, &d2DirtyRect);
-            drawingArea->paint(renderTarget.get(), dirtyRect, unpaintedRegion);
-        }
+        BackingStore::GdiConnections context { ::WindowFromDC(hdc), hdc };
+        drawingArea->paint(context, dirtyRect, unpaintedRegion);
 #endif
 
         auto unpaintedRects = unpaintedRegion.rects();
@@ -532,7 +529,7 @@ LRESULT WebView::onPrintClientEvent(HWND hWnd, UINT, WPARAM wParam, LPARAM, bool
     return 0;
 }
 
-LRESULT WebView::onSizeEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
+LRESULT WebView::onSizeEvent(HWND hwnd, UINT, WPARAM, LPARAM lParam, bool& handled)
 {
     int width = LOWORD(lParam);
     int height = HIWORD(lParam);

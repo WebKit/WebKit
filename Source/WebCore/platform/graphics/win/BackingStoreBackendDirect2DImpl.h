@@ -30,6 +30,7 @@
 #include "BackingStoreBackendDirect2D.h"
 #include <pal/HysteresisActivity.h>
 
+interface ID2D1BitmapBrush;
 interface IWICBitmap;
 
 namespace WebCore {
@@ -43,8 +44,11 @@ public:
 
 private:
     void scroll(const IntRect&, const IntSize&) override;
+    ID2D1BitmapBrush* bitmapBrush() override;
 
+    IntSize m_scrollSurfaceSize;
     COMPtr<ID2D1Bitmap> m_scrollSurface;
+    COMPtr<ID2D1BitmapBrush> m_bitmapBrush;
 
     PAL::HysteresisActivity m_scrolledHysteresis;
 };

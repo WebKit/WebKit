@@ -118,11 +118,17 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
 
 void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
 {
+#if USE(DIRECT2D)
+    m_backingStore = nullptr;
+#endif
     backingStoreStateDidChange(RespondImmediately);
 }
 
 void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
 {
+#if USE(DIRECT2D)
+    m_backingStore = nullptr;
+#endif
     backingStoreStateDidChange(RespondImmediately);
 }
 

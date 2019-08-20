@@ -44,65 +44,67 @@ std::unique_ptr<BackingStoreBackendDirect2D> BackingStore::createBackend()
     return makeUnique<BackingStoreBackendDirect2DImpl>(m_size, m_deviceScaleFactor);
 }
 
-void BackingStore::paint(ID2D1RenderTarget* renderTarget, const IntRect& rect)
+void BackingStore::paint(GdiConnections gdiConnections, const IntRect& rect)
 {
-    renderTarget->BeginDraw();
-
     ASSERT(m_backend);
+    ASSERT(m_backend->size() == m_size);
 
-    auto bitmapBrushProperties = D2D1::BitmapBrushProperties();
-    auto brushProperties = D2D1::BrushProperties();
+    auto* renderTarget = m_backend->renderTarget();
 
-    COMPtr<ID2D1BitmapBrush> patternBrush;
-    HRESULT hr = renderTarget->CreateBitmapBrush(m_backend->surface(), &bitmapBrushProperties, &brushProperties, &patternBrush);
-    ASSERT(SUCCEEDED(hr));
-    if (!SUCCEEDED(hr))
-        return;
+    RECT viewRect;
+    ::GetClientRect(gdiConnections.hwnd, &viewRect);
+    renderTarget->BindDC(gdiConnections.hdc, &viewRect);
 
-    D2D1_RECT_F destRect(rect);
-    renderTarget->FillRectangle(&destRect, patternBrush.get());
-    renderTarget->EndDraw();
+    D2D1_RECT_F destRect = rect;
+
+    if (auto* patternBrush = m_backend->bitmapBrush()) {
+        renderTarget->BeginDraw();
+        renderTarget->FillRectangle(&destRect, patternBrush);
+        renderTarget->EndDraw();
+    }
 }
 
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
-    WTFLogAlways("BackingStore::incorporateUpdate");
     if (!m_backend)
         m_backend = createBackend();
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 
-    // Paint all update rects.
-    IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
+    IntPoint updateRectBoundsLocation = updateInfo.updateRectBounds.location();
 
-    COMPtr<ID2D1BitmapRenderTarget> bitmapRenderTarget;
-    HRESULT hr = m_backend->renderTarget()->CreateCompatibleRenderTarget(&bitmapRenderTarget);
-    GraphicsContext graphicsContext(GraphicsContextImplDirect2D::createFactory(bitmapRenderTarget.get()));
+    auto updateWICBitmap = bitmap->createDirect2DSurface();
 
-    // When m_webPageProxy.drawsBackground() is false, bitmap contains transparent parts as a background of the webpage.
-    // For such case, bitmap must be drawn using CompositeCopy to overwrite the existing surface.
-    graphicsContext.setCompositeOperation(WebCore::CompositeCopy);
+    HRESULT hr = S_OK;
+#ifndef _NDEBUG
+    unsigned width, height;
+    hr = updateWICBitmap->GetSize(&width, &height);
+    ASSERT(width == updateInfo.updateRectBounds.width());
+    ASSERT(height == updateInfo.updateRectBounds.height());
+#endif
+
+    COMPtr<ID2D1Bitmap> deviceUpdateBitmap;
+    hr = m_backend->renderTarget()->CreateBitmapFromWicBitmap(updateWICBitmap.get(), &deviceUpdateBitmap);
+    if (!SUCCEEDED(hr))
+        return;
+
+#ifndef _NDEBUG
+    auto deviceBitmapSize = deviceUpdateBitmap->GetPixelSize();
+    ASSERT(deviceBitmapSize.width == updateInfo.updateRectBounds.width());
+    ASSERT(deviceBitmapSize.height == updateInfo.updateRectBounds.height());
+#endif
 
     for (const auto& updateRect : updateInfo.updateRects) {
-        IntRect srcRect = updateRect;
-        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
-        bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
+        auto currentRectLocation = IntSize(updateRect.x() - updateRectBoundsLocation.x(), updateRect.y() - updateRectBoundsLocation.y());
+        auto destRectLocation = IntSize(updateRect.x(), updateRect.y());
+        Direct2D::copyRectFromOneSurfaceToAnother(deviceUpdateBitmap.get(), m_backend->surface(), currentRectLocation, updateRect, destRectLocation);
     }
-
-    COMPtr<ID2D1Bitmap> output;
-    hr = bitmapRenderTarget->GetBitmap(&output);
-    D2D1_POINT_2U destPoint = D2D1::Point2U();
-    auto size = Direct2D::bitmapSize(output.get());
-    D2D1_RECT_U destRect = D2D1::RectU(0, 0, size.width(), size.height());
-    hr = m_backend->surface()->CopyFromBitmap(&destPoint, output.get(), &destRect);
 }
 
 void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     if (scrollOffset.isZero())
         return;
-
-    WTFLogAlways("BackingStore::scroll");
 
     ASSERT(m_backend);
     m_backend->scroll(scrollRect, scrollOffset);

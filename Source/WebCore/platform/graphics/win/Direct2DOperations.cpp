@@ -42,6 +42,7 @@
 #include "GraphicsContextPlatformPrivateDirect2D.h"
 #include "Image.h"
 #include "ImageBuffer.h"
+#include "ImageDecoderDirect2D.h"
 #include "NotImplemented.h"
 #include "Path.h"
 #include "PlatformContextDirect2D.h"
@@ -764,13 +765,15 @@ void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fill
 }
 
 
-void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState)
+void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& originalImageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState)
 {
+    auto nativeImageSize = bitmapSize(image);
     COMPtr<ID2D1Bitmap> deviceBitmap;
     HRESULT hr = platformContext.renderTarget()->CreateBitmapFromWicBitmap(image, &deviceBitmap);
     if (!SUCCEEDED(hr))
         return;
 
+    auto imageSize = bitmapSize(deviceBitmap.get());
     drawNativeImage(platformContext, deviceBitmap.get(), imageSize, destRect, srcRect, compositeOperator, blendMode, orientation, imageInterpolationQuality, globalAlpha, shadowState);
 }
 
@@ -824,8 +827,8 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* imag
 
     context->SetTags(1, __LINE__);
 
-    Function<void(ID2D1RenderTarget*)> drawFunction = [image, adjustedDestRect, srcRect](ID2D1RenderTarget* renderTarget) {
-        renderTarget->DrawBitmap(image, adjustedDestRect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, static_cast<D2D1_RECT_F>(srcRect));
+    Function<void(ID2D1RenderTarget*)> drawFunction = [image, adjustedDestRect, globalAlpha, srcRect](ID2D1RenderTarget* renderTarget) {
+        renderTarget->DrawBitmap(image, adjustedDestRect, globalAlpha, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, srcRect);
     };
 
     if (shadowState.isVisible())

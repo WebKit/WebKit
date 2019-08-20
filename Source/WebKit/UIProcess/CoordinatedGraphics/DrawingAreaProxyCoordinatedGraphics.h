@@ -47,10 +47,6 @@ public:
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
-#if USE(DIRECT2D)
-    ID2D1DCRenderTarget* renderTarget() { return m_backingStore ? m_backingStore->renderTarget() : nullptr; }
-#endif
-
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 

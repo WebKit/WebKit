@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  * Copyright (C) 2010 Igalia S.L.
  * Copyright (C) 2011 ProFUSION embedded systems
  *
@@ -36,7 +37,8 @@
 #include "ImageDecoderDirect2D.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include <d2d1.h>
+#include <d2d1_1.h>
+#include <shlwapi.h>
 #include <wincodec.h>
 
 
@@ -173,9 +175,72 @@ COMPtr<ID2D1DCRenderTarget> createGDIRenderTarget()
 
 void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset)
 {
-    auto offset = D2D1::Point2U();
-    auto sourceRect = D2D1::RectU(sourceOffset.width(), -sourceOffset.height(), rect.width(), rect.height());
-    HRESULT hr = to->CopyFromBitmap(&offset, from, &sourceRect);
+    IntSize sourceBitmapSize = from->GetPixelSize();
+    if (sourceBitmapSize.isZero())
+        return;
+
+    IntSize targetBitmapSize = to->GetPixelSize();
+    if (targetBitmapSize.isZero())
+        return;
+
+    IntRect sourceRect(sourceOffset.width(), sourceOffset.height(), rect.width(), rect.height());
+    IntRect targetRect(destOffset.width(), destOffset.height(), rect.width(), rect.height());
+
+    IntRect sourceBitmapRect(IntPoint(), sourceBitmapSize);
+    IntRect targetBitmapRect(IntPoint(), targetBitmapSize);
+
+    sourceRect.intersect(sourceBitmapRect);
+    targetRect.intersect(targetBitmapRect);
+
+    D2D1_RECT_U d2dSourceRect = D2D1::RectU(sourceRect.x(), sourceRect.y(), sourceRect.x() + targetRect.width(), sourceRect.y() + targetRect.height());
+    auto offset = D2D1::Point2U(destOffset.width(), destOffset.height());
+
+    HRESULT hr = to->CopyFromBitmap(&offset, from, &d2dSourceRect);
+    ASSERT(SUCCEEDED(hr));
+}
+
+void writeImageToDiskAsPNG(ID2D1RenderTarget* renderTarget, ID2D1Bitmap* bitmap, LPCWSTR fileName)
+{
+    COMPtr<IWICBitmapEncoder> wicBitmapEncoder;
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateEncoder(GUID_ContainerFormatPng, nullptr, &wicBitmapEncoder);
+    ASSERT(SUCCEEDED(hr));
+
+    DWORD mode = STGM_CREATE | STGM_READWRITE | STGM_SHARE_DENY_WRITE;
+    COMPtr<IStream> stream;
+    hr = ::SHCreateStreamOnFileEx(fileName, mode, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream);
+    ASSERT(SUCCEEDED(hr));
+
+    hr = wicBitmapEncoder->Initialize(stream.get(), WICBitmapEncoderNoCache);
+    ASSERT(SUCCEEDED(hr));
+
+    COMPtr<IWICBitmapFrameEncode> wicFrameEncode;
+    hr = wicBitmapEncoder->CreateNewFrame(&wicFrameEncode, nullptr);
+    ASSERT(SUCCEEDED(hr));
+
+    hr = wicFrameEncode->Initialize(nullptr);
+    ASSERT(SUCCEEDED(hr));
+
+    COMPtr<ID2D1DeviceContext> d2dDeviceContext;
+    hr = renderTarget->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&d2dDeviceContext));
+    ASSERT(SUCCEEDED(hr));
+
+    COMPtr<ID2D1Device> d2dDevice;
+    d2dDeviceContext->GetDevice(&d2dDevice);
+
+    COMPtr<IWICImageEncoder> imageEncoder;
+    hr = ImageDecoderDirect2D::systemImagingFactory()->CreateImageEncoder(d2dDevice.get(), &imageEncoder);
+    ASSERT(SUCCEEDED(hr));
+
+    hr = imageEncoder->WriteFrame(bitmap, wicFrameEncode.get(), nullptr);
+    ASSERT(SUCCEEDED(hr));
+
+    hr = wicFrameEncode->Commit();
+    ASSERT(SUCCEEDED(hr));
+
+    hr = wicBitmapEncoder->Commit();
+    ASSERT(SUCCEEDED(hr));
+
+    hr = stream->Commit(STGC_DEFAULT);
     ASSERT(SUCCEEDED(hr));
 }
 

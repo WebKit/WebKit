@@ -61,6 +61,8 @@ COMPtr<ID2D1DCRenderTarget> createGDIRenderTarget();
 
 void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const IntSize& sourceOffset, const IntRect&, const IntSize& destOffset = IntSize());
 
+void writeImageToDiskAsPNG(ID2D1RenderTarget*, ID2D1Bitmap*, LPCWSTR fileName);
+
 } // namespace Direct2D
 
 } // namespace WebCore
