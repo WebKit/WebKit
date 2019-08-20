@@ -7719,8 +7719,9 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 static bool needsDeprecatedPreviewAPI(id<WKUIDelegate> delegate)
 {
     // FIXME: Replace these with booleans in UIDelegate.h.
-    // Note that we explicitly do not test for @selector(_webView:contextMenuDidEndForElement:) since
-    // that's used by MobileSafari to clean up state even though they haven't moved to the new API.
+    // Note that we explicitly do not test for @selector(_webView:contextMenuDidEndForElement:)
+    // and @selector(webView:contextMenuWillPresentForElement) since the methods are used by MobileSafari
+    // to manage state despite the app not moving to the new API.
 
     return delegate
     && ![delegate respondsToSelector:@selector(_webView:contextMenuConfigurationForElement:completionHandler:)]
@@ -7728,7 +7729,6 @@ static bool needsDeprecatedPreviewAPI(id<WKUIDelegate> delegate)
     && ![delegate respondsToSelector:@selector(_webView:contextMenuForElement:willCommitWithAnimator:)]
     && ![delegate respondsToSelector:@selector(webView:contextMenuForElement:willCommitWithAnimator:)]
     && ![delegate respondsToSelector:@selector(_webView:contextMenuWillPresentForElement:)]
-    && ![delegate respondsToSelector:@selector(webView:contextMenuWillPresentForElement:)]
     && ![delegate respondsToSelector:@selector(webView:contextMenuDidEndForElement:)]
     && ([delegate respondsToSelector:@selector(webView:shouldPreviewElement:)]
         || [delegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]

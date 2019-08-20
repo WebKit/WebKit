@@ -1,3 +1,17 @@
+2019-08-20  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: Open in New Tab is missing from context menu
+        https://bugs.webkit.org/show_bug.cgi?id=200909
+        <rdar://problem/54476169>
+
+        Reviewed by Simon Fraser.
+
+        Don't assume the new API if webView:contextMenuWillPresentForElement:
+        is implemented.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (needsDeprecatedPreviewAPI):
+
 2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Support for JavaScript BigInt

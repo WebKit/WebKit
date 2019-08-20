@@ -30,15 +30,18 @@
 #if PLATFORM(IOS) && USE(UICONTEXTMENU)
 
 @protocol _UIClickInteractionDriverDelegate;
-@protocol _UIClickInteractionDriving;
+@protocol _UIClickInteractionDriving <NSObject>
+@property (nonatomic, weak) id<_UIClickInteractionDriverDelegate> delegate;
+@end
 
-@interface TestContextMenuDriver : NSObject {
+@interface TestContextMenuDriver : NSObject <_UIClickInteractionDriving> {
     WeakObjCPtr<id<_UIClickInteractionDriverDelegate>> _delegate;
     WeakObjCPtr<UIView> _view;
     CGFloat _allowableMovement;
     RetainPtr<UIGestureRecognizer> _primaryGestureRecognizer;
     NSTimeInterval _touchDuration;
 }
+
 - (void)begin:(void(^)(BOOL))completionHandler;
 - (void)clickDown;
 - (void)clickUp;

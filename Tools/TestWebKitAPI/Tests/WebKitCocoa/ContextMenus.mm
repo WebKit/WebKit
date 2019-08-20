@@ -37,8 +37,26 @@
 static bool contextMenuRequested;
 static bool willPresentCalled;
 static bool willCommitCalled;
+static bool previewingViewControllerCalled;
+static bool previewActionItemsCalled;
 static bool didEndCalled;
-static RetainPtr<NSURL> simpleURL;
+static RetainPtr<NSURL> linkURL;
+
+static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver(Class delegateClass)
+{
+    static auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    static auto driver = adoptNS([TestContextMenuDriver new]);
+    static auto uiDelegate = adoptNS((NSObject<WKUIDelegate> *)[delegateClass new]);
+    static auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setClickInteractionDriverForTesting:driver.get()];
+    static auto webViewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
+    TestWKWebView *webView = [webViewController webView];
+    [window addSubview:webView];
+    [webView setUIDelegate:uiDelegate.get()];
+    linkURL = [NSURL URLWithString:@"http://127.0.0.1/"];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<a href='%@'>This is a link</a>", linkURL.get()]];
+    return driver;
+}
 
 @interface TestContextMenuUIDelegate : NSObject <WKUIDelegate>
 @end
@@ -47,7 +65,7 @@ static RetainPtr<NSURL> simpleURL;
 
 - (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
 {
-    EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[simpleURL absoluteString]]);
+    EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[linkURL absoluteString]]);
     contextMenuRequested = true;
     UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
     {
@@ -77,25 +95,9 @@ static RetainPtr<NSURL> simpleURL;
 
 @end
 
-static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver()
-{
-    static auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    static auto driver = adoptNS([TestContextMenuDriver new]);
-    static auto uiDelegate = adoptNS([TestContextMenuUIDelegate new]);
-    static auto configuration = adoptNS([WKWebViewConfiguration new]);
-    [configuration _setClickInteractionDriverForTesting:(id<_UIClickInteractionDriving>)driver.get()];
-    static auto webViewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
-    TestWKWebView *webView = [webViewController webView];
-    [window addSubview:webView];
-    [webView setUIDelegate:uiDelegate.get()];
-    simpleURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<a href='%@'>This is a link</a>", simpleURL.get()]];
-    return driver;
-}
-
 TEST(WebKit, ContextMenuClick)
 {
-    auto driver = contextMenuWebViewDriver();
+    auto driver = contextMenuWebViewDriver([TestContextMenuUIDelegate class]);
     [driver begin:^(BOOL result) {
         EXPECT_TRUE(result);
         [driver clickDown];
@@ -110,7 +112,7 @@ TEST(WebKit, ContextMenuClick)
 
 TEST(WebKit, ContextMenuEnd)
 {
-    auto driver = contextMenuWebViewDriver();
+    auto driver = contextMenuWebViewDriver([TestContextMenuUIDelegate class]);
     [driver begin:^(BOOL result) {
         EXPECT_TRUE(result);
         [driver end];
@@ -121,4 +123,73 @@ TEST(WebKit, ContextMenuEnd)
     EXPECT_FALSE(willCommitCalled);
     EXPECT_TRUE(didEndCalled);
 }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
+@interface LegacyPreviewViewController : UIViewController
+@end
+
+@implementation LegacyPreviewViewController
+
+- (NSArray<UIPreviewAction *> *)previewActionItems
+{
+    previewActionItemsCalled = true;
+    return @[
+        [UIPreviewAction actionWithTitle:@"Action" style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *, UIViewController *) { }]
+    ];
+}
+
+@end
+
+@interface LegacyContextMenuUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation LegacyContextMenuUIDelegate
+
+- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo
+{
+    EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[linkURL absoluteString]]);
+    contextMenuRequested = true;
+    return YES;
+}
+
+- (UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions
+{
+    EXPECT_TRUE(previewActions.count);
+    previewingViewControllerCalled = true;
+    return [LegacyPreviewViewController new];
+}
+
+/* Even though this is non-legacy API, it should not be enough to trigger the non-legacy flow. */
+- (void)webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo
+{
+    willPresentCalled = true;
+}
+
+/* Even though this is non-legacy API, it should not be enough to trigger the non-legacy flow. */
+- (void)_webView:(WKWebView *)webView contextMenuDidEndForElement:(WKContextMenuElementInfo *)elementInfo
+{
+}
+
+@end
+
+TEST(WebKit, ContextMenuLegacy)
+{
+    auto driver = contextMenuWebViewDriver([LegacyContextMenuUIDelegate class]);
+    [driver begin:^(BOOL result) {
+        EXPECT_TRUE(result);
+        [driver clickDown];
+        [driver clickUp];
+    }];
+    TestWebKitAPI::Util::run(&previewActionItemsCalled);
+    EXPECT_TRUE(contextMenuRequested);
+    EXPECT_TRUE(previewingViewControllerCalled);
+    EXPECT_TRUE(willPresentCalled);
+}
+
+#pragma clang diagnostic pop
+
+
 #endif // PLATFORM(IOS) && USE(UICONTEXTMENU)
