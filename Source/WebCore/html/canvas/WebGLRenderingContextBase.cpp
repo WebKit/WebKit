@@ -676,14 +676,6 @@ WebGLCanvas WebGLRenderingContextBase::canvas()
     return &downcast<HTMLCanvasElement>(base);
 }
 
-HTMLCanvasElement* WebGLRenderingContextBase::htmlCanvas()
-{
-    auto& base = canvasBase();
-    if (!is<HTMLCanvasElement>(base))
-        return nullptr;
-    return &downcast<HTMLCanvasElement>(base);
-}
-
 OffscreenCanvas* WebGLRenderingContextBase::offscreenCanvas()
 {
     auto& base = canvasBase();
@@ -1089,12 +1081,7 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     height = clamp(height, 1, maxHeight);
 
     if (m_needsUpdate) {
-        auto* canvas = htmlCanvas();
-        if (canvas) {
-            RenderBox* renderBox = htmlCanvas()->renderBox();
-            if (renderBox && renderBox->hasAcceleratedCompositing())
-                renderBox->contentChanged(CanvasChanged);
-        }
+        notifyCanvasContentChanged();
         m_needsUpdate = false;
     }
 

@@ -69,6 +69,7 @@ Ref<WebGPUSwapChain> GPUCanvasContext::configureSwapChain(const WebGPUSwapChainD
             m_swapChain->destroy();
         
         m_swapChain = newSwapChain.copyRef();
+        notifyCanvasContentChanged();
     }
     
     return newSwapChain;
@@ -85,6 +86,8 @@ void GPUCanvasContext::reshape(int width, int height)
 {
     if (m_swapChain && m_swapChain->swapChain())
         m_swapChain->swapChain()->reshape(width, height);
+
+    notifyCanvasContentChanged();
 }
 
 void GPUCanvasContext::markLayerComposited()

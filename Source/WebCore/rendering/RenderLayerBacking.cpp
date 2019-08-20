@@ -926,7 +926,7 @@ bool RenderLayerBacking::updateConfiguration()
         resetContentsRect();
     }
 #endif
-#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(WEBGPU)
     else if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
         const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())
@@ -2512,8 +2512,11 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     if ((changeType == MaskImageChanged) && m_maskLayer)
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
-#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(WEBGPU)
     if ((changeType == CanvasChanged || changeType == CanvasPixelsChanged) && renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
+        if (changeType == CanvasChanged)
+            compositor().scheduleCompositingLayerUpdate();
+
         m_graphicsLayer->setContentsNeedsDisplay();
         return;
     }

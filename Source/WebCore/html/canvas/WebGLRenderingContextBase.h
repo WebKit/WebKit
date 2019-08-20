@@ -836,7 +836,6 @@ protected:
     // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.
     bool supportsDrawBuffers();
 
-    HTMLCanvasElement* htmlCanvas();
     OffscreenCanvas* offscreenCanvas();
 
     template <typename T> inline Optional<T> checkedAddAndMultiply(T value, T add, T multiply);

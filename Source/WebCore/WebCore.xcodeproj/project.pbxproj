@@ -5581,6 +5581,7 @@
 		0F15DA890F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAnimationControllerPrivate.h; sourceTree = "<group>"; };
 		0F15ED591B7EC7C500EDDFEB /* WillChangeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillChangeData.cpp; sourceTree = "<group>"; };
 		0F15ED5A1B7EC7C500EDDFEB /* WillChangeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WillChangeData.h; sourceTree = "<group>"; };
+		0F16BED92304F05300B4A167 /* GPUBasedCanvasRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBasedCanvasRenderingContext.cpp; sourceTree = "<group>"; };
 		0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorIOS.h; sourceTree = "<group>"; };
 		0F17747F1378B772009DA76A /* ScrollAnimatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollAnimatorIOS.mm; sourceTree = "<group>"; };
 		0F1A0C36229A481800D37ADB /* VelocityData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VelocityData.h; sourceTree = "<group>"; };
@@ -18106,6 +18107,7 @@
 				7728694B14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp */,
 				7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */,
 				7728694D14F8882500F484DC /* EXTTextureFilterAnisotropic.idl */,
+				0F16BED92304F05300B4A167 /* GPUBasedCanvasRenderingContext.cpp */,
 				311518FB1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h */,
 				7C7903B11F86F95C00463A70 /* ImageBitmapRenderingContext.cpp */,
 				7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */,
@@ -18548,14 +18550,14 @@
 		510A58EE1BAB71E000C19282 /* server */ = {
 			isa = PBXGroup;
 			children = (
-				9323B06D23061E9B00901C8B /* IDBSerializationContext.cpp */,
-				9323B06F23061E9C00901C8B /* IDBSerializationContext.h */,
 				51BA4AC71BBC5AD600DF3D6D /* IDBBackingStore.h */,
 				516D7D6D1BB5F06500AF7C77 /* IDBConnectionToClient.cpp */,
 				510A58FE1BB07AA500C19282 /* IDBConnectionToClient.h */,
 				516D7D6E1BB5F06500AF7C77 /* IDBConnectionToClientDelegate.h */,
 				511EC1251C50AA570032F983 /* IDBSerialization.cpp */,
 				511EC1261C50AA570032F983 /* IDBSerialization.h */,
+				9323B06D23061E9B00901C8B /* IDBSerializationContext.cpp */,
+				9323B06F23061E9C00901C8B /* IDBSerializationContext.h */,
 				510A58EF1BAB720F00C19282 /* IDBServer.cpp */,
 				510A58F01BAB720F00C19282 /* IDBServer.h */,
 				51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */,
@@ -29526,6 +29528,7 @@
 				5145B10A1BC48E2E00E86219 /* IDBResourceIdentifier.h in Headers */,
 				51D7236D1BB6174900478CA3 /* IDBResultData.h in Headers */,
 				511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */,
+				9323B07023061F9700901C8B /* IDBSerializationContext.h in Headers */,
 				5185FCBB1BB4CBF80012898F /* IDBServer.h in Headers */,
 				5185FCAD1BB4C4E80012898F /* IDBTransaction.h in Headers */,
 				5198F7AD1BBDD3EB00E2CC5F /* IDBTransactionInfo.h in Headers */,
@@ -29999,7 +30002,6 @@
 				BC4918C90BFEA050009D6316 /* JSHTMLIFrameElement.h in Headers */,
 				1AE2AA980A1CDD2D00B42B25 /* JSHTMLImageElement.h in Headers */,
 				A80E7E970A1A83E3007FB8C5 /* JSHTMLInputElement.h in Headers */,
-				9323B07023061F9700901C8B /* IDBSerializationContext.h in Headers */,
 				836B09561F5F34D9003C3702 /* JSHTMLInputElementEntriesAPI.h in Headers */,
 				A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */,
 				1AE2AB220A1CE63B00B42B25 /* JSHTMLLabelElement.h in Headers */,

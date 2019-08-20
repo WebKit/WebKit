@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
 
-#include "ActiveDOMObject.h"
-#include "CanvasRenderingContext.h"
-#include <wtf/IsoMalloc.h>
+#include "config.h"
+#include "GPUBasedCanvasRenderingContext.h"
+
+#include "HTMLCanvasElement.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
-class HTMLCanvasElement;
+GPUBasedCanvasRenderingContext::GPUBasedCanvasRenderingContext(CanvasBase& canvas)
+    : CanvasRenderingContext(canvas)
+    , ActiveDOMObject(canvas.scriptExecutionContext())
+{
+}
 
-class GPUBasedCanvasRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
-    WTF_MAKE_ISO_NONALLOCATABLE(GPUBasedCanvasRenderingContext);
-public:
+HTMLCanvasElement* GPUBasedCanvasRenderingContext::htmlCanvas() const
+{
+    auto& base = canvasBase();
+    if (!is<HTMLCanvasElement>(base))
+        return nullptr;
+    return &downcast<HTMLCanvasElement>(base);
+}
 
-    bool isGPUBased() const override { return true; }
-
-    bool isAccelerated() const override
-    {
-#if PLATFORM(WIN)
-        // FIXME: Implement accelerated canvas on Windows.
-        return false;
-#else
-        return true;
-#endif
+void GPUBasedCanvasRenderingContext::notifyCanvasContentChanged()
+{
+    if (auto* canvas = htmlCanvas()) {
+        RenderBox* renderBox = htmlCanvas()->renderBox();
+        if (renderBox && renderBox->hasAcceleratedCompositing())
+            renderBox->contentChanged(CanvasChanged);
     }
+}
 
-    virtual void reshape(int width, int height) = 0;
-    virtual void markLayerComposited() = 0;
-
-protected:
-    GPUBasedCanvasRenderingContext(CanvasBase&);
-
-    HTMLCanvasElement* htmlCanvas() const;
-    void notifyCanvasContentChanged();
-};
-    
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::GPUBasedCanvasRenderingContext, isGPUBased())
