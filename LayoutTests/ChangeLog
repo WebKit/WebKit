@@ -1,3 +1,13 @@
+2019-08-20  Russell Epstein  <repstein@apple.com>
+
+        Updating Expectations for Multiple Newly Passing Tests.
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         The default tab index of output and fieldset should be -1

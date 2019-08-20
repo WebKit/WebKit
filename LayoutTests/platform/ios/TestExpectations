@@ -3358,9 +3358,6 @@ http/tests/local/fileapi/file-last-modified-using-open-panel.html [ Pass Timeout
 http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html [ Pass Timeout ]
 http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass Timeout ]
 
-# rdar://54049321 (REGRESSION: editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html Failing)
-editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html [ Failure ]
-
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]
 
