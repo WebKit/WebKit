@@ -3784,6 +3784,9 @@ return /******/ (function(modules) { // webpackBootstrap
                 }
                 else {
                     const initStartToken = this.lookahead;
+                    const previousIsBindingElement = this.context.isBindingElement;
+                    const previousIsAssignmentTarget = this.context.isAssignmentTarget;
+                    const previousFirstCoverInitializedNameError = this.context.firstCoverInitializedNameError;
                     const previousAllowIn = this.context.allowIn;
                     this.context.allowIn = false;
                     init = this.inheritCoverGrammar(this.parseAssignmentExpression);
@@ -3813,6 +3816,10 @@ return /******/ (function(modules) { // webpackBootstrap
                         forIn = false;
                     }
                     else {
+                        // The `init` node was not parsed isolated, but we would have wanted it to.
+                        this.context.isBindingElement = previousIsBindingElement;
+                        this.context.isAssignmentTarget = previousIsAssignmentTarget;
+                        this.context.firstCoverInitializedNameError = previousFirstCoverInitializedNameError;
                         if (this.match(',')) {
                             const initSeq = [init];
                             while (this.match(',')) {
@@ -3827,11 +3834,11 @@ return /******/ (function(modules) { // webpackBootstrap
             }
             if (typeof left === 'undefined') {
                 if (!this.match(';')) {
-                    test = this.parseExpression();
+                    test = this.isolateCoverGrammar(this.parseExpression);
                 }
                 this.expect(';');
                 if (!this.match(')')) {
-                    update = this.parseExpression();
+                    update = this.isolateCoverGrammar(this.parseExpression);
                 }
             }
             let body;
@@ -5148,13 +5155,15 @@ return /******/ (function(modules) { // webpackBootstrap
             return {
                 index: this.index,
                 lineNumber: this.lineNumber,
-                lineStart: this.lineStart
+                lineStart: this.lineStart,
+                curlyStack: this.curlyStack.slice()
             };
         }
         restoreState(state) {
             this.index = state.index;
             this.lineNumber = state.lineNumber;
             this.lineStart = state.lineStart;
+            this.curlyStack = state.curlyStack;
         }
         eof() {
             return this.index >= this.length;

@@ -1,5 +1,22 @@
 2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Address a few Esprima issues preventing pretty printing of resources
+        https://bugs.webkit.org/show_bug.cgi?id=200935
+
+        Reviewed by Timothy Hatcher.
+
+        Address a few Esprima issues:
+
+            Issue #1991 - Failure to parse template literal with destructuring assignment expression
+            https://github.com/jquery/esprima/issues/1991
+
+            Issue #1920 - Invalid Left Hand Side in for-in
+            https://github.com/jquery/esprima/issues/1920
+
+        * UserInterface/External/Esprima/esprima.js:
+
+2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update CodeMirror to support numeric separators in JavaScript numbers
         https://bugs.webkit.org/show_bug.cgi?id=200942
 
