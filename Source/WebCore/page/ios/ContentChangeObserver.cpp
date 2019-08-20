@@ -134,9 +134,9 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
 }
 
 enum class ElementHadRenderer { No, Yes };
-static bool isConsideredClickable(const Element& newlyVisibleElement, ElementHadRenderer hadRenderer)
+static bool isConsideredClickable(const Element& candidateElement, ElementHadRenderer hadRenderer)
 {
-    auto& element = const_cast<Element&>(newlyVisibleElement);
+    auto& element = const_cast<Element&>(candidateElement);
     if (element.isInUserAgentShadowTree())
         return false;
 
@@ -148,10 +148,12 @@ static bool isConsideredClickable(const Element& newlyVisibleElement, ElementHad
         return element.Element::willRespondToMouseClickEvents();
     }
 
+    bool hasRenderer = element.renderer();
     auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
-    if (hadRenderer == ElementHadRenderer::No || willRespondToMouseClickEvents)
+    if (willRespondToMouseClickEvents || !hasRenderer || hadRenderer == ElementHadRenderer::No)
         return willRespondToMouseClickEvents;
-    // In case when the visible content already had renderers it's not sufficient to check the "newly visible" element only since it might just be the container for the clickable content.  
+
+    // In case when the content already had renderers it's not sufficient to check the candidate element only since it might just be the container for the clickable content.  
     for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
         if (!descendant.element())
             continue;
@@ -160,6 +162,7 @@ static bool isConsideredClickable(const Element& newlyVisibleElement, ElementHad
     }
     return false;
 }
+
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
     , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
