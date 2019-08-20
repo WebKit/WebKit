@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -360,10 +360,9 @@ private:
     template<typename CharacterType> ALWAYS_INLINE CharacterType* appendUninitialized(unsigned additionalLength);
     template<typename CharacterType> ALWAYS_INLINE CharacterType* appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength);
     template<typename CharacterType> CharacterType* appendUninitializedSlow(unsigned requiredLength);
-    
-    WTF_EXPORT_PRIVATE UChar* appendUninitializedWithoutOverflowCheckForUChar(CheckedInt32 requiredLength);
-    WTF_EXPORT_PRIVATE LChar* appendUninitializedWithoutOverflowCheckForLChar(CheckedInt32 requiredLength);
-    
+    WTF_EXPORT_PRIVATE LChar* appendUninitialized8(CheckedInt32 requiredLength);
+    WTF_EXPORT_PRIVATE UChar* appendUninitialized16(CheckedInt32 requiredLength);
+
     template<typename CharacterType> ALWAYS_INLINE CharacterType* getBufferCharacters();
     WTF_EXPORT_PRIVATE void reifyString() const;
 
@@ -401,25 +400,20 @@ template<typename... StringTypeAdapters>
 void StringBuilder::appendFromAdapters(StringTypeAdapters... adapters)
 {
     auto requiredLength = checkedSum<int32_t>(m_length, adapters.length()...);
-    if (requiredLength.hasOverflowed()) {
-        didOverflow();
-        return;
-    }
-
     if (m_is8Bit && are8Bit(adapters...)) {
-        LChar* dest = appendUninitializedWithoutOverflowCheckForLChar(requiredLength);
-        if (!dest) {
+        LChar* destination = appendUninitialized8(requiredLength);
+        if (!destination) {
             ASSERT(hasOverflowed());
             return;
         }
-        stringTypeAdapterAccumulator(dest, adapters...);
+        stringTypeAdapterAccumulator(destination, adapters...);
     } else {
-        UChar* dest = appendUninitializedWithoutOverflowCheckForUChar(requiredLength);
-        if (!dest) {
+        UChar* destination = appendUninitialized16(requiredLength);
+        if (!destination) {
             ASSERT(hasOverflowed());
             return;
         }
-        stringTypeAdapterAccumulator(dest, adapters...);
+        stringTypeAdapterAccumulator(destination, adapters...);
     }
 }
 

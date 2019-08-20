@@ -1,3 +1,29 @@
+2019-08-20  Darin Adler  <darin@apple.com>
+
+        Variadic StringBuilder::append does not handle upconverting from 8-bit to 16-bit correctly
+        https://bugs.webkit.org/show_bug.cgi?id=200921
+
+        Reviewed by Saam Barati.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendUninitialized8): Renamed from
+        appendUninitializedWithoutOverflowCheckForLChar and moved the length overflow
+        check in here to cut down on unnecessary inlining and code size.
+        (WTF::StringBuilder::appendUninitialized16): Renamed from
+        appendUninitializedWithoutOverflowCheckForUChar, moved the length overflow check
+        in here, and moved the necessary upconversion code from the const UChar* overload of
+        the appendCharacters function.
+        (WTF::StringBuilder::appendCharacters): Removed unneeded "length has already overflowed"
+        check at the start of the function since the code in the function already handles that
+        case correctly. Refactored the const UChar* overload to use the new appendCharacters16
+        function so it can share more code with StringBuilder::appendFromAdapters.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendFromAdapters): Updated the function names for the
+        two appendUninitialized functions, which now do a bit more than before. Removed the
+        overflow check since the appendUninitialized8/16 functions now handle that; better to
+        not make the inlined code larger to handle a failure case.
+
 2019-08-19  Sam Weinig  <weinig@apple.com>
 
         [WHLSL] Make generated Metal code should be indented properly to ease reading while debugging

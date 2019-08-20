@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,6 +31,8 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
+
+#include <wtf/unicode/CharacterNames.h>
 
 namespace TestWebKitAPI {
 
@@ -85,18 +87,18 @@ TEST(StringBuilderTest, Append)
     builder2.append("xyz");
     const LChar* characters = builder2.characters8();
     builder2.append("0123456789");
-    ASSERT_EQ(characters, builder2.characters8());
+    EXPECT_EQ(characters, builder2.characters8());
     builder2.toStringPreserveCapacity(); // Test after reifyString with buffer preserved.
     builder2.append("abcd");
-    ASSERT_EQ(characters, builder2.characters8());
+    EXPECT_EQ(characters, builder2.characters8());
 
     // Test appending UChar32 characters to StringBuilder.
     StringBuilder builderForUChar32Append;
     UChar32 frakturAChar = 0x1D504;
     builderForUChar32Append.appendCharacter(frakturAChar); // The fraktur A is not in the BMP, so it's two UTF-16 code units long.
-    ASSERT_EQ(2U, builderForUChar32Append.length());
+    EXPECT_EQ(2U, builderForUChar32Append.length());
     builderForUChar32Append.appendCharacter(static_cast<UChar32>('A'));
-    ASSERT_EQ(3U, builderForUChar32Append.length());
+    EXPECT_EQ(3U, builderForUChar32Append.length());
     const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
     expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builderForUChar32Append);
     {
@@ -105,12 +107,12 @@ TEST(StringBuilderTest, Append)
         UChar32 frakturAChar = 0x1D504;
         const UChar data[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         builder2.appendCharacters(data, 2);
-        ASSERT_EQ(2U, builder2.length());
+        EXPECT_EQ(2U, builder2.length());
         String result2 = builder2.toString();
-        ASSERT_EQ(2U, result2.length());
+        EXPECT_EQ(2U, result2.length());
         builder.append(builder2);
         builder.appendCharacters(data, 2);
-        ASSERT_EQ(4U, builder.length());
+        EXPECT_EQ(4U, builder.length());
         const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builder);
     }
@@ -137,6 +139,37 @@ TEST(StringBuilderTest, VariadicAppend)
         builder.append(String("A"), "B", 'C', "");
         expectBuilderContent("0123456789abcdeABC", builder);
     }
+
+    {
+        StringBuilder builder;
+        builder.append(String("0123456789"), "abcd", bullseye, "");
+        expectBuilderContent("0123456789abcd" + String(&bullseye, 1), builder);
+        builder.append(String("A"), "B", 'C', "");
+        expectBuilderContent("0123456789abcd" + String(&bullseye, 1) + "ABC", builder);
+    }
+
+    {
+        // Test where we upconvert the StringBuilder from 8-bit to 16-bit, and don't fit in the existing capacity.
+        StringBuilder builder;
+        builder.append(String("0123456789"), "abcd", 'e', "");
+        expectBuilderContent("0123456789abcde", builder);
+        EXPECT_TRUE(builder.is8Bit());
+        EXPECT_LT(builder.capacity(), builder.length() + 3);
+        builder.append(String("A"), "B", bullseye, "");
+        expectBuilderContent("0123456789abcdeAB" + String(&bullseye, 1), builder);
+    }
+
+    {
+        // Test where we upconvert the StringBuilder from 8-bit to 16-bit, but would have fit in the capacity if the upconvert wasn't necessary.
+        StringBuilder builder;
+        builder.append(String("0123456789"), "abcd", 'e', "");
+        expectBuilderContent("0123456789abcde", builder);
+        builder.reserveCapacity(32);
+        EXPECT_TRUE(builder.is8Bit());
+        EXPECT_GE(builder.capacity(), builder.length() + 3);
+        builder.append(String("A"), "B", bullseye, "");
+        expectBuilderContent("0123456789abcdeAB" + String(&bullseye, 1), builder);
+    }
 }
 
 TEST(StringBuilderTest, ToString)
@@ -144,32 +177,32 @@ TEST(StringBuilderTest, ToString)
     StringBuilder builder;
     builder.append("0123456789");
     String string = builder.toString();
-    ASSERT_EQ(String("0123456789"), string);
-    ASSERT_EQ(string.impl(), builder.toString().impl());
+    EXPECT_EQ(String("0123456789"), string);
+    EXPECT_EQ(string.impl(), builder.toString().impl());
 
     // Changing the StringBuilder should not affect the original result of toString().
     builder.append("abcdefghijklmnopqrstuvwxyz");
-    ASSERT_EQ(String("0123456789"), string);
+    EXPECT_EQ(String("0123456789"), string);
 
     // Changing the StringBuilder should not affect the original result of toString() in case the capacity is not changed.
     builder.reserveCapacity(200);
     string = builder.toString();
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
     builder.append("ABC");
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
 
     // Changing the original result of toString() should not affect the content of the StringBuilder.
     String string1 = builder.toString();
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
     string1.append("DEF");
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), builder.toString());
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), builder.toString());
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
 
     // Resizing the StringBuilder should not affect the original result of toString().
     string1 = builder.toString();
     builder.resize(10);
     builder.append("###");
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
 }
 
 TEST(StringBuilderTest, ToStringPreserveCapacity)
@@ -178,43 +211,43 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     builder.append("0123456789");
     unsigned capacity = builder.capacity();
     String string = builder.toStringPreserveCapacity();
-    ASSERT_EQ(capacity, builder.capacity());
-    ASSERT_EQ(String("0123456789"), string);
-    ASSERT_EQ(string.impl(), builder.toStringPreserveCapacity().impl());
-    ASSERT_EQ(string.characters8(), builder.characters8());
+    EXPECT_EQ(capacity, builder.capacity());
+    EXPECT_EQ(String("0123456789"), string);
+    EXPECT_EQ(string.impl(), builder.toStringPreserveCapacity().impl());
+    EXPECT_EQ(string.characters8(), builder.characters8());
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity().
     builder.append("abcdefghijklmnopqrstuvwxyz");
-    ASSERT_EQ(String("0123456789"), string);
+    EXPECT_EQ(String("0123456789"), string);
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity() in case the capacity is not changed.
     builder.reserveCapacity(200);
     capacity = builder.capacity();
     string = builder.toStringPreserveCapacity();
-    ASSERT_EQ(capacity, builder.capacity());
-    ASSERT_EQ(string.characters8(), builder.characters8());
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
+    EXPECT_EQ(capacity, builder.capacity());
+    EXPECT_EQ(string.characters8(), builder.characters8());
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
     builder.append("ABC");
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
 
     // Changing the original result of toStringPreserveCapacity() should not affect the content of the StringBuilder.
     capacity = builder.capacity();
     String string1 = builder.toStringPreserveCapacity();
-    ASSERT_EQ(capacity, builder.capacity());
-    ASSERT_EQ(string1.characters8(), builder.characters8());
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
+    EXPECT_EQ(capacity, builder.capacity());
+    EXPECT_EQ(string1.characters8(), builder.characters8());
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
     string1.append("DEF");
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), builder.toStringPreserveCapacity());
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), builder.toStringPreserveCapacity());
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
 
     // Resizing the StringBuilder should not affect the original result of toStringPreserveCapacity().
     capacity = builder.capacity();
     string1 = builder.toStringPreserveCapacity();
-    ASSERT_EQ(capacity, builder.capacity());
-    ASSERT_EQ(string.characters8(), builder.characters8());
+    EXPECT_EQ(capacity, builder.capacity());
+    EXPECT_EQ(string.characters8(), builder.characters8());
     builder.resize(10);
     builder.append("###");
-    ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
 }
 
 TEST(StringBuilderTest, Clear)
@@ -259,44 +292,44 @@ TEST(StringBuilderTest, Equal)
 {
     StringBuilder builder1;
     StringBuilder builder2;
-    ASSERT_TRUE(builder1 == builder2);
-    ASSERT_TRUE(equal(builder1, static_cast<LChar*>(0), 0));
-    ASSERT_TRUE(builder1 == String());
-    ASSERT_TRUE(String() == builder1);
-    ASSERT_TRUE(builder1 != String("abc"));
+    EXPECT_TRUE(builder1 == builder2);
+    EXPECT_TRUE(equal(builder1, static_cast<LChar*>(0), 0));
+    EXPECT_TRUE(builder1 == String());
+    EXPECT_TRUE(String() == builder1);
+    EXPECT_TRUE(builder1 != String("abc"));
 
     builder1.append("123");
     builder1.reserveCapacity(32);
     builder2.append("123");
     builder1.reserveCapacity(64);
-    ASSERT_TRUE(builder1 == builder2);
-    ASSERT_TRUE(builder1 == String("123"));
-    ASSERT_TRUE(String("123") == builder1);
+    EXPECT_TRUE(builder1 == builder2);
+    EXPECT_TRUE(builder1 == String("123"));
+    EXPECT_TRUE(String("123") == builder1);
 
     builder2.append("456");
-    ASSERT_TRUE(builder1 != builder2);
-    ASSERT_TRUE(builder2 != builder1);
-    ASSERT_TRUE(String("123") != builder2);
-    ASSERT_TRUE(builder2 != String("123"));
+    EXPECT_TRUE(builder1 != builder2);
+    EXPECT_TRUE(builder2 != builder1);
+    EXPECT_TRUE(String("123") != builder2);
+    EXPECT_TRUE(builder2 != String("123"));
     builder2.toString(); // Test after reifyString().
-    ASSERT_TRUE(builder1 != builder2);
+    EXPECT_TRUE(builder1 != builder2);
 
     builder2.resize(3);
-    ASSERT_TRUE(builder1 == builder2);
+    EXPECT_TRUE(builder1 == builder2);
 
     builder1.toString(); // Test after reifyString().
-    ASSERT_TRUE(builder1 == builder2);
+    EXPECT_TRUE(builder1 == builder2);
 }
 
 TEST(StringBuilderTest, CanShrink)
 {
     StringBuilder builder;
     builder.reserveCapacity(256);
-    ASSERT_TRUE(builder.canShrink());
+    EXPECT_TRUE(builder.canShrink());
     for (int i = 0; i < 256; i++)
         builder.append('x');
-    ASSERT_EQ(builder.length(), builder.capacity());
-    ASSERT_FALSE(builder.canShrink());
+    EXPECT_EQ(builder.length(), builder.capacity());
+    EXPECT_FALSE(builder.canShrink());
 }
 
 TEST(StringBuilderTest, ToAtomString)
@@ -304,26 +337,26 @@ TEST(StringBuilderTest, ToAtomString)
     StringBuilder builder;
     builder.append("123");
     AtomString atomString = builder.toAtomString();
-    ASSERT_EQ(String("123"), atomString);
+    EXPECT_EQ(String("123"), atomString);
 
     builder.reserveCapacity(256);
-    ASSERT_TRUE(builder.canShrink());
+    EXPECT_TRUE(builder.canShrink());
     for (int i = builder.length(); i < 128; i++)
         builder.append('x');
     AtomString atomString1 = builder.toAtomString();
-    ASSERT_EQ(128u, atomString1.length());
-    ASSERT_EQ('x', atomString1[127]);
+    EXPECT_EQ(128u, atomString1.length());
+    EXPECT_EQ('x', atomString1[127]);
 
     // Later change of builder should not affect the atomic string.
     for (int i = builder.length(); i < 256; i++)
         builder.append('x');
-    ASSERT_EQ(128u, atomString1.length());
+    EXPECT_EQ(128u, atomString1.length());
 
-    ASSERT_FALSE(builder.canShrink());
+    EXPECT_FALSE(builder.canShrink());
     String string = builder.toString();
     AtomString atomString2 = builder.toAtomString();
     // They should share the same StringImpl.
-    ASSERT_EQ(atomString2.impl(), string.impl());
+    EXPECT_EQ(atomString2.impl(), string.impl());
 }
 
 TEST(StringBuilderTest, ToAtomStringOnEmpty)
@@ -331,45 +364,45 @@ TEST(StringBuilderTest, ToAtomStringOnEmpty)
     { // Default constructed.
         StringBuilder builder;
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
     { // With capacity.
         StringBuilder builder;
         builder.reserveCapacity(64);
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
     { // AtomString constructed from a null string.
         StringBuilder builder;
         builder.append(String());
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
     { // AtomString constructed from an empty string.
         StringBuilder builder;
         builder.append(emptyString());
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
     { // AtomString constructed from an empty StringBuilder.
         StringBuilder builder;
         StringBuilder emptyBuilder;
         builder.append(emptyBuilder);
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
     { // AtomString constructed from an empty char* string.
         StringBuilder builder;
         builder.appendCharacters("", 0);
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
     { // Cleared StringBuilder.
         StringBuilder builder;
         builder.appendLiteral("WebKit");
         builder.clear();
         AtomString atomString = builder.toAtomString();
-        ASSERT_EQ(emptyAtom(), atomString);
+        EXPECT_EQ(emptyAtom(), atomString);
     }
 }
 
