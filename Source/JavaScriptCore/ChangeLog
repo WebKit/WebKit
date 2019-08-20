@@ -1,3 +1,12 @@
+2019-08-20  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Enable by default
+        https://bugs.webkit.org/show_bug.cgi?id=200931
+
+        Reviewed by Saam Barati.
+
+        * runtime/Options.h:
+
 2019-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Array.prototype.toString should not get "join" function each time
