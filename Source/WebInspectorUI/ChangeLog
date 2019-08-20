@@ -1,5 +1,33 @@
 2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Sources: Give Origins their own icon in the Sources sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=200683
+        <rdar://problem/54269044>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Images/Origin.svg: Added.
+        * UserInterface/Main.html:
+        New resources.
+
+        * UserInterface/Views/FolderIcon.css:
+        (.origin-icon .icon):
+        Light and Dark appearances for Origin icons.
+
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/OriginTreeElement.js:
+        (WI.OriginTreeElement):
+        Very much like a folder with different classes.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WI.SourcesNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceGroupingModeChanged):
+        Use OriginTreeElement in a few places.
+
+2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Support for JavaScript BigInt
         https://bugs.webkit.org/show_bug.cgi?id=180731
         <rdar://problem/36298748>

@@ -574,7 +574,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return true;
 
         // Folders are hidden on the first pass, but visible childen under the folder will force the folder visible again.
-        if (treeElement instanceof WI.FolderTreeElement)
+        if (treeElement instanceof WI.FolderTreeElement || treeElement instanceof WI.OriginTreeElement)
             return false;
 
         if (treeElement instanceof WI.IssueTreeElement)
@@ -643,6 +643,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             (treeElement) => treeElement instanceof WI.CSSStyleSheetTreeElement && treeElement.representedObject.isInspectorStyleSheet(),
             (treeElement) => treeElement === this._mainFrameTreeElement,
             (treeElement) => treeElement instanceof WI.FrameTreeElement,
+            (treeElement) => treeElement instanceof WI.OriginTreeElement,
             (treeElement) => {
                 return treeElement !== this._extensionScriptsFolderTreeElement
                     && treeElement !== this._extraScriptsFolderTreeElement
@@ -686,7 +687,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._originTreeElementMap.clear();
 
             let origin = mainFrame.urlComponents.origin;
-            this._mainFrameTreeElement = new WI.FolderTreeElement(origin);
+            this._mainFrameTreeElement = new WI.OriginTreeElement(origin, mainFrame, {hasChildren: true});
             this._originTreeElementMap.set(origin, this._mainFrameTreeElement);
             break;
         }
@@ -759,20 +760,20 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!parentTreeElement) {
                 let origin = resource.urlComponents.origin;
                 if (origin) {
-                    let frameTreeElement = this._originTreeElementMap.get(origin);
-                    if (!frameTreeElement) {
-                        frameTreeElement = new WI.FolderTreeElement(origin);
-                        this._originTreeElementMap.set(origin, frameTreeElement);
+                    let originTreeElement = this._originTreeElementMap.get(origin);
+                    if (!originTreeElement) {
+                        originTreeElement = new WI.OriginTreeElement(origin, resource.parentFrame, {hasChildren: true});
+                        this._originTreeElementMap.set(origin, originTreeElement);
 
-                        let index = insertionIndexForObjectInListSortedByFunction(frameTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
-                        this._resourcesTreeOutline.insertChild(frameTreeElement, index);
+                        let index = insertionIndexForObjectInListSortedByFunction(originTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                        this._resourcesTreeOutline.insertChild(originTreeElement, index);
                     }
 
                     let subpath = resource.urlComponents.path;
                     if (subpath && subpath[0] === "/")
                         subpath = subpath.substring(1);
 
-                    parentTreeElement = frameTreeElement.createFoldersAsNeededForSubpath(subpath, this._boundCompareTreeElements);
+                    parentTreeElement = originTreeElement.createFoldersAsNeededForSubpath(subpath, this._boundCompareTreeElements);
                 } else
                     parentTreeElement = this._resourcesTreeOutline;
             }
@@ -1548,6 +1549,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
 
         if (treeElement instanceof WI.FolderTreeElement
+            || treeElement instanceof WI.OriginTreeElement
             || treeElement instanceof WI.ResourceTreeElement
             || treeElement instanceof WI.ScriptTreeElement
             || treeElement instanceof WI.CSSStyleSheetTreeElement) {
@@ -1843,7 +1845,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let parentTreeElement = scriptTreeElement.parent;
         parentTreeElement.removeChild(scriptTreeElement);
 
-        if (parentTreeElement instanceof WI.FolderTreeElement) {
+        if (parentTreeElement instanceof WI.FolderTreeElement || parentTreeElement instanceof WI.OriginTreeElement) {
             parentTreeElement.representedObject.remove(script);
 
             if (!parentTreeElement.children.length)

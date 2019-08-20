@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.folder-icon .icon {
-    content: image-set(url(../Images/FolderGeneric.png) 1x, url(../Images/FolderGeneric@2x.png) 2x);
-}
-
-.origin-icon .icon {
-    content: url(../Images/Origin.svg);
-}
-
-@media (prefers-color-scheme: dark) {
-    .origin-icon .icon {
-        filter: brightness(0.9);
+WI.OriginTreeElement = class OriginTreeElement extends WI.GeneralTreeElement
+{
+    constructor(title, representedObject, options)
+    {
+        const classNames = ["origin-icon"];
+        const subtitle = null;
+        super(classNames, title, subtitle, representedObject, options);
     }
-}
+};
