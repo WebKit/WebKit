@@ -45,14 +45,12 @@ public:
     void work(CompilationEffort) override;
     bool multiThreaded() const override { return false; }
 
-    static void runForIndex(Instance*, uint32_t functionIndex);
+    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
+    OMGPlan(Context*, Ref<Module>&&, uint32_t functionIndex, MemoryMode, CompletionTask&&);
 
 private:
     // For some reason friendship doesn't extend to parent classes...
     using Base::m_lock;
-
-    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGPlan(Context*, Ref<Module>&&, uint32_t functionIndex, MemoryMode, CompletionTask&&);
 
     bool isComplete() const override { return m_completed; }
     void complete(const AbstractLocker& locker) override

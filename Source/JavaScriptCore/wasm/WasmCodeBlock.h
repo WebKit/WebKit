@@ -96,16 +96,19 @@ public:
         return *m_callees[calleeIndex].get();
     }
 
+    Callee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        ASSERT(runnable());
+        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        return *m_callees[calleeIndex].get();
+    }
+
     MacroAssemblerCodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         return &m_wasmIndirectCallEntryPoints[calleeIndex];
-    }
-
-    TierUpCount& tierUpCount(uint32_t functionIndex)
-    {
-        return m_tierUpCounts[functionIndex];
     }
 
     bool isSafeToRun(MemoryMode);
@@ -115,6 +118,7 @@ public:
     ~CodeBlock();
 private:
     friend class OMGPlan;
+    friend class OMGForOSREntryPlan;
 
     CodeBlock(Context*, MemoryMode, ModuleInformation&, CreateEmbedderWrapper&&, ThrowWasmException);
     void setCompilationFinished();
@@ -124,7 +128,6 @@ private:
     Vector<RefPtr<Callee>> m_optimizedCallees;
     HashMap<uint32_t, RefPtr<Callee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
     Vector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
-    Vector<TierUpCount> m_tierUpCounts;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<BBQPlan> m_plan;

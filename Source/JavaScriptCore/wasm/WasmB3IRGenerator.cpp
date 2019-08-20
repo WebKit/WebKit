@@ -59,7 +59,9 @@
 #include "WasmInstance.h"
 #include "WasmMemory.h"
 #include "WasmOMGPlan.h"
+#include "WasmOSREntryData.h"
 #include "WasmOpcodeOrigin.h"
+#include "WasmOperations.h"
 #include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
 #include <limits>
@@ -157,10 +159,113 @@ public:
     };
 
     typedef Value* ExpressionType;
-    typedef ControlData ControlType;
     typedef Vector<ExpressionType, 1> ExpressionList;
-    typedef ControlData::ResultList ResultList;
-    typedef FunctionParser<B3IRGenerator>::ControlEntry ControlEntry;
+
+    friend class Stack;
+    class Stack {
+    public:
+        Stack(B3IRGenerator* generator)
+            : m_generator(generator)
+        {
+        }
+
+        void append(ExpressionType expression)
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode) {
+                Variable* variable = m_generator->m_proc.addVariable(expression->type());
+                m_generator->m_currentBlock->appendNew<VariableValue>(m_generator->m_proc, Set, m_generator->origin(), variable, expression);
+                m_stack.append(variable);
+                return;
+            }
+            m_data.append(expression);
+        }
+
+        ExpressionType takeLast()
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode)
+                return m_generator->m_currentBlock->appendNew<VariableValue>(m_generator->m_proc, B3::Get, m_generator->origin(), m_stack.takeLast());
+            return m_data.takeLast();
+        }
+
+        ExpressionType last()
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode)
+                return m_generator->m_currentBlock->appendNew<VariableValue>(m_generator->m_proc, B3::Get, m_generator->origin(), m_stack.last());
+            return m_data.last();
+        }
+
+        unsigned size() const
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode)
+                return m_stack.size();
+            return m_data.size();
+        }
+        bool isEmpty() const { return size() == 0; }
+
+        ExpressionList convertToExpressionList()
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode) {
+                ExpressionList results;
+                for (unsigned i = 0; i < m_stack.size(); ++i)
+                    results.append(at(i));
+                return results;
+            }
+            return m_data;
+        }
+
+        ExpressionType at(unsigned i) const
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode)
+                return m_generator->m_currentBlock->appendNew<VariableValue>(m_generator->m_proc, B3::Get, m_generator->origin(), m_stack.at(i));
+            return m_data.at(i);
+        }
+
+        Variable* variableAt(unsigned i) const
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode)
+                return m_stack.at(i);
+            return nullptr;
+        }
+
+        void shrink(unsigned i)
+        {
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode) {
+                m_stack.shrink(i);
+                return;
+            }
+            m_data.shrink(i);
+        }
+
+        void swap(Stack& stack)
+        {
+            std::swap(m_generator, stack.m_generator);
+            m_data.swap(stack.m_data);
+            m_stack.swap(stack.m_stack);
+        }
+
+        void dump() const
+        {
+            CommaPrinter comma(", ", "");
+            dataLog(comma, "ExpressionStack:");
+            if (m_generator->m_compilationMode == CompilationMode::OMGForOSREntryMode) {
+                for (const auto& variable : m_stack)
+                    dataLog(comma, *variable);
+                return;
+            }
+            for (const auto& expression : m_data)
+                dataLog(comma, *expression);
+        }
+
+    private:
+        B3IRGenerator* m_generator { nullptr };
+        ExpressionList m_data;
+        Vector<Variable*> m_stack;
+    };
+    Stack createStack() { return Stack(this); }
+
+    using ControlType = ControlData;
+    using ResultList = ControlData::ResultList;
+    using ControlEntry = FunctionParser<B3IRGenerator>::ControlEntry;
 
     static constexpr ExpressionType emptyExpression() { return nullptr; }
 
@@ -179,7 +284,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, CompilationMode, unsigned functionIndex, TierUpCount*, ThrowWasmException);
+    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, unsigned loopIndexForOSREntry, TierUpCount*, ThrowWasmException);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -219,15 +324,15 @@ public:
     // Control flow
     ControlData WARN_UNUSED_RETURN addTopLevel(Type signature);
     ControlData WARN_UNUSED_RETURN addBlock(Type signature);
-    ControlData WARN_UNUSED_RETURN addLoop(Type signature);
+    ControlData WARN_UNUSED_RETURN addLoop(Type signature, const Stack&, uint32_t);
     PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
-    PartialResult WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
+    PartialResult WARN_UNUSED_RETURN addElse(ControlData&, const Stack&);
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const ExpressionList& returnValues);
-    PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
-    PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const ExpressionList& expressionStack);
-    PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
+    PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const Stack& returnValues);
+    PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const Stack& expressionStack);
+    PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
     // Calls
@@ -235,7 +340,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 
-    void dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack);
+    void dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
 
     Value* constant(B3::Type, uint64_t bits, Optional<Origin> = WTF::nullopt);
@@ -246,7 +351,8 @@ public:
 private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
-    void emitTierUpCheck(uint32_t decrementCount, Origin);
+    void emitEntryTierUpCheck(int32_t incrementCount, B3::Origin);
+    void emitLoopTierUpCheck(int32_t incrementCount, const Stack&, uint32_t, uint32_t, B3::Origin);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -255,7 +361,7 @@ private:
     void emitStoreOp(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
 
     void unify(const ExpressionType phi, const ExpressionType source);
-    void unifyValuesWithBlock(const ExpressionList& resultStack, const ResultList& stack);
+    void unifyValuesWithBlock(const Stack& resultStack, const ResultList& stack);
 
     void emitChecksForModOrDiv(B3::Opcode, ExpressionType left, ExpressionType right);
 
@@ -267,17 +373,28 @@ private:
 
     Origin origin();
 
+    uint32_t outerLoopIndex() const
+    {
+        if (m_outerLoops.isEmpty())
+            return UINT32_MAX;
+        return m_outerLoops.last();
+    }
+
     FunctionParser<B3IRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
     const CompilationMode m_compilationMode { CompilationMode::BBQMode };
     const unsigned m_functionIndex { UINT_MAX };
-    const TierUpCount* m_tierUp { nullptr };
+    const unsigned m_loopIndexForOSREntry { UINT_MAX };
+    TierUpCount* m_tierUp { nullptr };
 
     Procedure& m_proc;
+    BasicBlock* m_rootBlock { nullptr };
     BasicBlock* m_currentBlock { nullptr };
+    Vector<uint32_t> m_outerLoops;
     Vector<Variable*> m_locals;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
+    unsigned& m_osrEntryScratchBufferSize;
     HashMap<ValueKey, Value*> m_constantPool;
     InsertionSet m_constantInsertionValues;
     GPRReg m_memoryBaseGPR { InvalidGPRReg };
@@ -337,18 +454,21 @@ void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* bloc
     });
 }
 
-B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
+B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, unsigned loopIndexForOSREntry, TierUpCount* tierUp, ThrowWasmException throwWasmException)
     : m_info(info)
     , m_mode(mode)
     , m_compilationMode(compilationMode)
     , m_functionIndex(functionIndex)
+    , m_loopIndexForOSREntry(loopIndexForOSREntry)
     , m_tierUp(tierUp)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
+    , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
     , m_constantInsertionValues(m_proc)
     , m_numImportFunctions(info.importFunctionCount())
 {
-    m_currentBlock = m_proc.addBlock();
+    m_rootBlock = m_proc.addBlock();
+    m_currentBlock = m_rootBlock;
 
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
@@ -464,7 +584,10 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         });
     }
 
-    emitTierUpCheck(TierUpCount::functionEntryDecrement(), Origin());
+    emitEntryTierUpCheck(TierUpCount::functionEntryIncrement(), Origin());
+
+    if (m_compilationMode == CompilationMode::OMGForOSREntryMode)
+        m_currentBlock = m_proc.addBlock();
 }
 
 void B3IRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restoreCachedStackLimit, const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block)
@@ -1067,16 +1190,13 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
     return constant(toB3Type(type), value);
 }
 
-void B3IRGenerator::emitTierUpCheck(uint32_t decrementCount, Origin origin)
+void B3IRGenerator::emitEntryTierUpCheck(int32_t incrementCount, Origin origin)
 {
     if (!m_tierUp)
         return;
 
     ASSERT(m_tierUp);
-    Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(m_tierUp), origin);
-    Value* oldCountDown = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, countDownLocation);
-    Value* newCountDown = m_currentBlock->appendNew<Value>(m_proc, Sub, origin, oldCountDown, constant(Int32, decrementCount, origin));
-    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin, newCountDown, countDownLocation);
+    Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(&m_tierUp->m_counter), origin);
 
     PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, origin);
     Effects effects = Effects::none();
@@ -1084,12 +1204,13 @@ void B3IRGenerator::emitTierUpCheck(uint32_t decrementCount, Origin origin)
     effects.reads = B3::HeapRange::top();
     effects.writes = B3::HeapRange::top();
     patch->effects = effects;
+    patch->clobber(RegisterSet::macroScratchRegisters());
 
-    patch->append(newCountDown, ValueRep::SomeRegister);
-    patch->append(oldCountDown, ValueRep::SomeRegister);
+    patch->append(countDownLocation, ValueRep::SomeRegister);
     patch->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        MacroAssembler::Jump tierUp = jit.branch32(MacroAssembler::Above, params[0].gpr(), params[1].gpr());
-        MacroAssembler::Label tierUpResume = jit.label();
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(incrementCount), CCallHelpers::Address(params[0].gpr()));
+        CCallHelpers::Label tierUpResume = jit.label();
 
         params.addLatePath([=] (CCallHelpers& jit) {
             tierUp.link(&jit);
@@ -1106,22 +1227,123 @@ void B3IRGenerator::emitTierUpCheck(uint32_t decrementCount, Origin origin)
             jit.jump(tierUpResume);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGTierUpThunkGenerator).code()));
-
+                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator).code()));
             });
         });
     });
 }
 
-B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
+void B3IRGenerator::emitLoopTierUpCheck(int32_t incrementCount, const Stack& expressionStack, uint32_t loopIndex, uint32_t outerLoopIndex, B3::Origin origin)
+{
+    if (!m_tierUp)
+        return;
+
+    ASSERT(m_tierUp);
+
+    ASSERT(m_tierUp->osrEntryTriggers().size() == loopIndex);
+    m_tierUp->osrEntryTriggers().append(TierUpCount::TriggerReason::DontTrigger);
+    m_tierUp->outerLoops().append(outerLoopIndex);
+
+    Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(&m_tierUp->m_counter), origin);
+
+    Vector<ExpressionType> stackmap;
+    Vector<B3::Type> types;
+    for (auto& local : m_locals) {
+        ExpressionType result = m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin, local);
+        stackmap.append(result);
+        types.append(result->type());
+    }
+    for (unsigned i = 0; i < expressionStack.size(); ++i) {
+        ExpressionType result = expressionStack.at(i);
+        stackmap.append(result);
+        types.append(result->type());
+    }
+
+    PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, origin);
+    Effects effects = Effects::none();
+    // FIXME: we should have a more precise heap range for the tier up count.
+    effects.reads = B3::HeapRange::top();
+    effects.writes = B3::HeapRange::top();
+    effects.exitsSideways = true;
+    patch->effects = effects;
+
+    patch->clobber(RegisterSet::macroScratchRegisters());
+    RegisterSet clobberLate;
+    clobberLate.add(GPRInfo::argumentGPR0);
+    patch->clobberLate(clobberLate);
+
+    patch->append(countDownLocation, ValueRep::SomeRegister);
+    patch->appendVectorWithRep(stackmap, ValueRep::ColdAny);
+
+    TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
+    static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
+    static_assert(sizeof(TierUpCount::TriggerReason) == 1, "branchTest8 assumes this size");
+    patch->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        CCallHelpers::Jump forceOSREntry = jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::AbsoluteAddress(forceEntryTrigger));
+        CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(incrementCount), CCallHelpers::Address(params[0].gpr()));
+        MacroAssembler::Label tierUpResume = jit.label();
+
+        OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex);
+        for (unsigned index = 0; index < types.size(); ++index)
+            osrEntryData.values().constructAndAppend(params[index + 1], types[index]);
+        OSREntryData* osrEntryDataPtr = &osrEntryData;
+
+        params.addLatePath([=] (CCallHelpers& jit) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            forceOSREntry.link(&jit);
+            tierUp.link(&jit);
+
+            jit.probe(triggerOSREntryNow, osrEntryDataPtr);
+            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
+            jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
+        });
+    });
+}
+
+B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature, const Stack& stack, uint32_t loopIndex)
 {
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
 
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
+    if (loopIndex == m_loopIndexForOSREntry) {
+        m_currentBlock = m_rootBlock;
+        m_osrEntryScratchBufferSize = m_locals.size() + stack.size();
+        Value* pointer = m_rootBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
 
+        auto loadFromScratchBuffer = [&] (B3::Type type, unsigned index) {
+            size_t offset = sizeof(uint64_t) * index;
+            switch (type.kind()) {
+            case B3::Int32:
+                return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), pointer, offset);
+            case B3::Int64:
+                return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), pointer, offset);
+            case B3::Float:
+                return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Float, origin(), pointer, offset);
+            case B3::Double:
+                return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Double, origin(), pointer, offset);
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        };
+
+        unsigned indexInBuffer = 0;
+        for (auto& local : m_locals)
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(local->type(), indexInBuffer++));
+        for (unsigned i = 0; i < stack.size(); ++i) {
+            auto* variable = stack.variableAt(i);
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), variable, loadFromScratchBuffer(variable->type(), indexInBuffer++));
+        }
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
+        body->addPredecessor(m_currentBlock);
+    }
+
+    uint32_t outerLoopIndex = this->outerLoopIndex();
+    m_outerLoops.append(loopIndex);
     m_currentBlock = body;
-    emitTierUpCheck(TierUpCount::loopDecrement(), origin());
+    emitLoopTierUpCheck(TierUpCount::loopIncrement(), stack, loopIndex, outerLoopIndex, origin());
 
     return ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, body);
 }
@@ -1154,7 +1376,7 @@ auto B3IRGenerator::addIf(ExpressionType condition, Type signature, ControlType&
     return { };
 }
 
-auto B3IRGenerator::addElse(ControlData& data, const ExpressionList& currentStack) -> PartialResult
+auto B3IRGenerator::addElse(ControlData& data, const Stack& currentStack) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data.result);
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
@@ -1179,7 +1401,7 @@ auto B3IRGenerator::addReturn(const ControlData&, const ExpressionList& returnVa
     return { };
 }
 
-auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const ExpressionList& returnValues) -> PartialResult
+auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const Stack& returnValues) -> PartialResult
 {
     unifyValuesWithBlock(returnValues, data.resultForBranch());
 
@@ -1199,7 +1421,7 @@ auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
     return { };
 }
 
-auto B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack) -> PartialResult
+auto B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const Stack& expressionStack) -> PartialResult
 {
     for (size_t i = 0; i < targets.size(); ++i)
         unifyValuesWithBlock(expressionStack, targets[i]->resultForBranch());
@@ -1213,13 +1435,16 @@ auto B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData
     return { };
 }
 
-auto B3IRGenerator::endBlock(ControlEntry& entry, ExpressionList& expressionStack) -> PartialResult
+auto B3IRGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> PartialResult
 {
     ControlData& data = entry.controlData;
 
     unifyValuesWithBlock(expressionStack, data.result);
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
     data.continuation->addPredecessor(m_currentBlock);
+
+    if (data.type() == BlockType::Loop)
+        m_outerLoops.removeLast();
 
     return addEndToUnreachable(entry);
 }
@@ -1242,7 +1467,7 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry) -> PartialResult
 
     // TopLevel does not have any code after this so we need to make sure we emit a return here.
     if (data.type() == BlockType::TopLevel)
-        return addReturn(entry.controlData, entry.enclosedExpressionStack);
+        return addReturn(entry.controlData, entry.enclosedExpressionStack.convertToExpressionList());
 
     return { };
 }
@@ -1506,22 +1731,15 @@ void B3IRGenerator::unify(const ExpressionType phi, const ExpressionType source)
     m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), source, phi);
 }
 
-void B3IRGenerator::unifyValuesWithBlock(const ExpressionList& resultStack, const ResultList& result)
+void B3IRGenerator::unifyValuesWithBlock(const Stack& resultStack, const ResultList& result)
 {
     ASSERT(result.size() <= resultStack.size());
 
     for (size_t i = 0; i < result.size(); ++i)
-        unify(result[result.size() - 1 - i], resultStack[resultStack.size() - 1 - i]);
+        unify(result[result.size() - 1 - i], resultStack.at(resultStack.size() - 1 - i));
 }
 
-static void dumpExpressionStack(const CommaPrinter& comma, const B3IRGenerator::ExpressionList& expressionStack)
-{
-    dataLog(comma, "ExpressionStack:");
-    for (const auto& expression : expressionStack)
-        dataLog(comma, *expression);
-}
-
-void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack)
+void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack)
 {
     dataLogLn("Constants:");
     for (const auto& constant : m_constantPool)
@@ -1534,8 +1752,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     ASSERT(controlStack.size());
     for (size_t i = controlStack.size(); i--;) {
         dataLog("  ", controlStack[i].controlData, ": ");
-        CommaPrinter comma(", ", "");
-        dumpExpressionStack(comma, *expressionStack);
+        expressionStack->dump();
         expressionStack = &controlStack[i].enclosedExpressionStack;
         dataLogLn();
     }
@@ -1549,7 +1766,7 @@ auto B3IRGenerator::origin() -> Origin
     return bitwise_cast<Origin>(origin);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -1573,7 +1790,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
         ? Options::webAssemblyBBQB3OptimizationLevel()
         : Options::webAssemblyOMGOptimizationLevel());
 
-    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, compilationMode, functionIndex, tierUp, throwWasmException);
+    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, osrEntryScratchBufferSize, mode, compilationMode, functionIndex, loopIndexForOSREntry, tierUp, throwWasmException);
     FunctionParser<B3IRGenerator> parser(irGenerator, functionStart, functionLength, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 

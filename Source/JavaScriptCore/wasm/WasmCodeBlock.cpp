@@ -71,7 +71,6 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
         m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
-        m_tierUpCounts = m_plan->takeTierUpCounts();
 
         setCompilationFinished();
     }), WTFMove(createEmbedderWrapper), throwWasmException));

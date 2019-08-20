@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmContext.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmCompilationMode.h"
-#include "WasmEmbedder.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
-
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+uint64_t* Context::scratchBufferForSize(size_t size)
+{
+    if (!size)
+        return nullptr;
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-};
+    auto locker = holdLock(m_scratchBufferLock);
+    if (size > m_sizeOfLastScratchBuffer) {
+        m_sizeOfLastScratchBuffer = size * 2;
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
+        auto newBuffer = makeUniqueArray<uint64_t>(m_sizeOfLastScratchBuffer);
+        RELEASE_ASSERT(newBuffer);
+        m_scratchBuffers.append(WTFMove(newBuffer));
+    }
+    // Scanning scratch buffers for GC is not necessary since while performing OSR entry, we do not perform GC.
+    return m_scratchBuffers.last().get();
+}
 
 } } // namespace JSC::Wasm
 

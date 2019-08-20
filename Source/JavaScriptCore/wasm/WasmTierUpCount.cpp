@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmTierUpCount.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmCompilationMode.h"
-#include "WasmEmbedder.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
+#include "WasmOSREntryData.h"
 
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+TierUpCount::TierUpCount()
+{
+    setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp(), nullptr);
+}
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-};
+TierUpCount::~TierUpCount() = default;
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
+OSREntryData& TierUpCount::addOSREntryData(uint32_t functionIndex, uint32_t loopIndex)
+{
+    m_osrEntryData.append(makeUnique<OSREntryData>(functionIndex, loopIndex));
+    return *m_osrEntryData.last().get();
+}
 
-} } // namespace JSC::Wasm
+} } // namespace JSC::Table
 
 #endif // ENABLE(WEBASSEMBLY)

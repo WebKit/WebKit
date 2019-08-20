@@ -34,7 +34,7 @@ namespace JSC { namespace Wasm {
 
 MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const AbstractLocker&);
 MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(const AbstractLocker&);
-MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGTierUpThunkGenerator(const AbstractLocker&);
+MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const AbstractLocker&);
 
 typedef MacroAssemblerCodeRef<JITThunkPtrTag> (*ThunkGenerator)(const AbstractLocker&);
 

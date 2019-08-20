@@ -103,12 +103,6 @@ public:
         return WTFMove(m_unlinkedWasmToWasmCalls);
     }
 
-    Vector<TierUpCount> takeTierUpCounts()
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_tierUpCounts);
-    }
-
     enum class State : uint8_t {
         Initial,
         Validated,
@@ -146,7 +140,7 @@ private:
     HashSet<uint32_t, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_exportedFunctionIndices;
     HashMap<uint32_t, std::unique_ptr<InternalFunction>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
-    Vector<TierUpCount> m_tierUpCounts;
+    Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
 
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     State m_state;

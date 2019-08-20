@@ -267,8 +267,13 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
         ASSERT(validateFunction(function.data.data(), function.data.size(), signature, m_moduleInformation.get()));
 
         m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-        TierUpCount* tierUp = Options::useBBQTierUpChecks() ? &m_tierUpCounts[functionIndex] : nullptr;
+        if (Options::useBBQTierUpChecks())
+            m_tierUpCounts[functionIndex] = makeUnique<TierUpCount>();
+        else
+            m_tierUpCounts[functionIndex] = nullptr;
+        TierUpCount* tierUp = m_tierUpCounts[functionIndex].get();
         Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
+        unsigned osrEntryScratchBufferSize = 0;
 
         // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
         // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
@@ -280,7 +285,7 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
         if (!forceUsingB3 && Options::wasmBBQUsesAir())
             parseAndCompileResult = parseAndCompileAir(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex, tierUp, m_throwWasmException);
         else
-            parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp, m_throwWasmException);
+            parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, UINT32_MAX, tierUp, m_throwWasmException);
 
         if (UNLIKELY(!parseAndCompileResult)) {
             auto locker = holdLock(m_lock);

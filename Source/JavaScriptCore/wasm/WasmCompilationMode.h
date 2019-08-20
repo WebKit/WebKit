@@ -30,6 +30,8 @@ namespace JSC { namespace Wasm {
 enum class CompilationMode : uint8_t {
     BBQMode,
     OMGMode,
+    OMGForOSREntryMode,
+    EmbedderEntrypointMode,
 };
 
 const char* makeString(CompilationMode);

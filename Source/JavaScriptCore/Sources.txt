@@ -1000,6 +1000,7 @@ wasm/WasmCalleeRegistry.cpp
 wasm/WasmCallingConvention.cpp
 wasm/WasmCodeBlock.cpp
 wasm/WasmCompilationMode.cpp
+wasm/WasmContext.cpp
 wasm/WasmEmbedder.h
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
@@ -1014,8 +1015,10 @@ wasm/WasmModule.cpp
 wasm/WasmModuleInformation.cpp
 wasm/WasmModuleParser.cpp
 wasm/WasmNameSectionParser.cpp
+wasm/WasmOMGForOSREntryPlan.cpp
 wasm/WasmOMGPlan.cpp
 wasm/WasmOpcodeOrigin.cpp
+wasm/WasmOperations.cpp
 wasm/WasmPageCount.cpp
 wasm/WasmPlan.cpp
 wasm/WasmSectionParser.cpp
@@ -1024,6 +1027,7 @@ wasm/WasmStreamingParser.cpp
 wasm/WasmTable.cpp
 wasm/WasmTable.h
 wasm/WasmThunks.cpp
+wasm/WasmTierUpCount.cpp
 wasm/WasmValidate.cpp
 wasm/WasmWorklist.cpp
 

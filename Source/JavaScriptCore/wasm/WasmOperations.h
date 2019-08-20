@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +27,18 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmCompilationMode.h"
-#include "WasmEmbedder.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
+#include "SlowPathReturnType.h"
 
-extern "C" void dumpProcedure(void*);
+namespace JSC {
+namespace Probe {
+class Context;
+} // namespace JSC::Probe
+namespace Wasm {
 
-namespace JSC { namespace Wasm {
+class Instance;
 
-class MemoryInformation;
-
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-};
-
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
+void JIT_OPERATION triggerOSREntryNow(Probe::Context&) WTF_INTERNAL;
+void JIT_OPERATION triggerTierUpNow(Instance*, uint32_t functionIndex) WTF_INTERNAL;
 
 } } // namespace JSC::Wasm
 

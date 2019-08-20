@@ -27,6 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <wtf/Lock.h>
+#include <wtf/UniqueArray.h>
+#include <wtf/Vector.h>
+
 namespace JSC { namespace Wasm {
 
 class Instance;
@@ -43,8 +47,15 @@ struct Context {
         return &instance;
     }
 
+    static Instance* tryLoadInstanceFromTLS();
+
+    uint64_t* scratchBufferForSize(size_t numberOfSlots);
+
 private:
     Instance* instance { nullptr };
+    Vector<UniqueArray<uint64_t>> m_scratchBuffers;
+    size_t m_sizeOfLastScratchBuffer { 0 };
+    Lock m_scratchBufferLock;
 };
 
 } } // namespace JSC::Wasm

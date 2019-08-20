@@ -481,9 +481,11 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, webAssemblyOMGOptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for OMG Web Assembly module compilations.") \
     \
     v(bool, useBBQTierUpChecks, true, Normal, "Enables tier up checks for our BBQ code.") \
-    v(unsigned, webAssemblyOMGTierUpCount, 5000, Normal, "The countdown before we tier up a function to OMG.") \
-    v(unsigned, webAssemblyLoopDecrement, 15, Normal, "The amount the tier up countdown is decremented on each loop backedge.") \
-    v(unsigned, webAssemblyFunctionEntryDecrement, 1, Normal, "The amount the tier up countdown is decremented on each function entry.") \
+    v(bool, useWebAssemblyOSR, true, Normal, nullptr) \
+    v(int32, thresholdForOMGOptimizeAfterWarmUp, 50000, Normal, "The count before we tier up a function to OMG.") \
+    v(int32, thresholdForOMGOptimizeSoon, 500, Normal, nullptr) \
+    v(int32, omgTierUpCounterIncrementForLoop, 1, Normal, "The amount the tier up counter is incremented on each loop backedge.") \
+    v(int32, omgTierUpCounterIncrementForEntry, 15, Normal, "The amount the tier up counter is incremented on each function entry.") \
     /* FIXME: enable fast memories on iOS and pre-allocate them. https://bugs.webkit.org/show_bug.cgi?id=170774 */ \
     v(bool, useWebAssemblyFastMemory, !isIOS(), Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
     v(bool, logWebAssemblyMemory, false, Normal, nullptr) \

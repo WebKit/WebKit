@@ -2971,6 +2971,23 @@ public:
         return Jump(makeBranch(cond));
     }
 
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, Address address)
+    {
+        load32(address, getCachedDataTempRegisterIDAndInvalidate());
+
+        if (isUInt12(imm.m_value))
+            m_assembler.add<32, S>(dataTempRegister, dataTempRegister, UInt12(imm.m_value));
+        else if (isUInt12(-imm.m_value))
+            m_assembler.sub<32, S>(dataTempRegister, dataTempRegister, UInt12(-imm.m_value));
+        else {
+            move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
+            m_assembler.add<32, S>(dataTempRegister, dataTempRegister, memoryTempRegister);
+        }
+
+        store32(dataTempRegister, address);
+        return Jump(makeBranch(cond));
+    }
+
     Jump branchAdd64(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
     {
         m_assembler.add<64, S>(dest, op1, op2);

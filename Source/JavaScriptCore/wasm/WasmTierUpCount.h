@@ -27,45 +27,112 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CompilationResult.h"
+#include "ExecutionCounter.h"
 #include "Options.h"
 #include <wtf/Atomics.h>
+#include <wtf/SegmentedVector.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace Wasm {
+
+class OSREntryData;
 
 // This class manages the tier up counts for Wasm binaries. The main interesting thing about
 // wasm tiering up counts is that the least significant bit indicates if the tier up has already
 // started. Also, wasm code does not atomically update this count. This is because we
 // don't care too much if the countdown is slightly off. The tier up trigger is atomic, however,
 // so tier up will be triggered exactly once.
-class TierUpCount {
+class TierUpCount : public UpperTierExecutionCounter {
     WTF_MAKE_NONCOPYABLE(TierUpCount);
 public:
-    TierUpCount()
-        : m_count(Options::webAssemblyOMGTierUpCount())
-        , m_tierUpStarted(false)
+    enum class TriggerReason : uint8_t {
+        DontTrigger,
+        CompilationDone,
+        StartCompilation,
+    };
+
+    enum class CompilationStatus : uint8_t {
+        NotCompiled,
+        StartCompilation,
+        Compiled,
+        Failed,
+    };
+
+    TierUpCount();
+    ~TierUpCount();
+
+    static int32_t loopIncrement() { return Options::omgTierUpCounterIncrementForLoop(); }
+    static int32_t functionEntryIncrement() { return Options::omgTierUpCounterIncrementForEntry(); }
+
+    SegmentedVector<TriggerReason, 16>& osrEntryTriggers() { return m_osrEntryTriggers; }
+    Vector<uint32_t>& outerLoops() { return m_outerLoops; }
+    Lock& getLock() { return m_lock; }
+
+    OSREntryData& addOSREntryData(uint32_t functionIndex, uint32_t loopIndex);
+
+    void optimizeAfterWarmUp(uint32_t functionIndex)
     {
+        dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing after warm-up.");
+        setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp(), nullptr);
     }
 
-    TierUpCount(TierUpCount&& other)
+    bool checkIfOptimizationThresholdReached()
     {
-        ASSERT(other.m_count == Options::webAssemblyOMGTierUpCount());
-        m_count = other.m_count;
+        return checkIfThresholdCrossedAndSet(nullptr);
     }
 
-    static uint32_t loopDecrement() { return Options::webAssemblyLoopDecrement(); }
-    static uint32_t functionEntryDecrement() { return Options::webAssemblyFunctionEntryDecrement(); }
-
-    bool shouldStartTierUp()
+    void dontOptimizeAnytimeSoon(uint32_t functionIndex)
     {
-        return !m_tierUpStarted.exchange(true);
+        dataLogLnIf(Options::verboseOSR(), functionIndex, ": Not OMG-optimizing anytime soon.");
+        deferIndefinitely();
     }
 
-    int32_t count() { return bitwise_cast<int32_t>(m_count); }
+    void optimizeNextInvocation(uint32_t functionIndex)
+    {
+        dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing next invocation.");
+        setNewThreshold(0, nullptr);
+    }
 
-private:
-    uint32_t m_count;
-    Atomic<bool> m_tierUpStarted;
+    void optimizeSoon(uint32_t functionIndex)
+    {
+        dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing soon.");
+        // FIXME: Need adjustment once we get more information about wasm functions.
+        setNewThreshold(Options::thresholdForOMGOptimizeSoon(), nullptr);
+    }
+
+    void setOptimizationThresholdBasedOnCompilationResult(uint32_t functionIndex, CompilationResult result)
+    {
+        switch (result) {
+        case CompilationSuccessful:
+            optimizeNextInvocation(functionIndex);
+            return;
+        case CompilationFailed:
+            dontOptimizeAnytimeSoon(functionIndex);
+            return;
+        case CompilationDeferred:
+            optimizeAfterWarmUp(functionIndex);
+            return;
+        case CompilationInvalidated:
+            // This is weird - it will only happen in cases when the DFG code block (i.e.
+            // the code block that this JITCode belongs to) is also invalidated. So it
+            // doesn't really matter what we do. But, we do the right thing anyway. Note
+            // that us counting the reoptimization actually means that we might count it
+            // twice. But that's generally OK. It's better to overcount reoptimizations
+            // than it is to undercount them.
+            optimizeAfterWarmUp(functionIndex);
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Atomic<bool> m_tierUpStarted { false };
+    Lock m_lock;
+    CompilationStatus m_compilationStatusForOMG { CompilationStatus::NotCompiled };
+    CompilationStatus m_compilationStatusForOMGForOSREntry { CompilationStatus::NotCompiled };
+    SegmentedVector<TriggerReason, 16> m_osrEntryTriggers;
+    Vector<uint32_t> m_outerLoops;
+    Vector<std::unique_ptr<OSREntryData>> m_osrEntryData;
 };
     
 } } // namespace JSC::Wasm

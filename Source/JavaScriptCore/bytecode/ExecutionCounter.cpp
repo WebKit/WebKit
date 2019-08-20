@@ -75,15 +75,14 @@ void ExecutionCounter<countingVariant>::deferIndefinitely()
 
 double applyMemoryUsageHeuristics(int32_t value, CodeBlock* codeBlock)
 {
-#if ENABLE(JIT)
-    double multiplier =
-        ExecutableAllocator::memoryPressureMultiplier(
-            codeBlock->baselineAlternative()->predictedMachineCodeSize());
-#else
-    // This code path will probably not be taken, but if it is, we fake it.
     double multiplier = 1.0;
-    UNUSED_PARAM(codeBlock);
+    if (codeBlock) {
+#if ENABLE(JIT)
+        multiplier =
+            ExecutableAllocator::memoryPressureMultiplier(
+                codeBlock->baselineAlternative()->predictedMachineCodeSize());
 #endif
+    }
     ASSERT(multiplier >= 1.0);
     return multiplier * value;
 }
@@ -161,7 +160,7 @@ bool ExecutionCounter<countingVariant>::setThreshold(CodeBlock* codeBlock)
         return true;
     }
 
-    threshold = clippedThreshold(codeBlock->globalObject(), threshold);
+    threshold = clippedThreshold(codeBlock ? codeBlock->globalObject() : nullptr, threshold);
     
     m_counter = static_cast<int32_t>(-threshold);
         

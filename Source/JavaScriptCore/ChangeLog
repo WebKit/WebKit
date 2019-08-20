@@ -1,3 +1,229 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] OSR entry to Wasm OMG
+        https://bugs.webkit.org/show_bug.cgi?id=200362
+
+        Reviewed by Michael Saboff.
+
+        This patch implements Wasm OSR entry mechanism from BBQ tier to OMG tier.
+        We found that one of JetStream2 test heavily relies on OSR entry feature. gcc-loops-wasm consumes
+        most of time in BBQ tier since one of the function takes significantly long time. And since we did
+        not have OSR entry feature, we cannot use OMG function until that BBQ function finishes.
+
+        To implement Wasm OSR feature, we first capture all locals and stacks in the patchpoint to generate
+        the stackmap. Once the threshold is crossed, the patchpoint calls `MacroAssembler::probe` feature to
+        capture whole register context, and C++ runtime function reads stackmap and Probe::Context to perform
+        OSR entry. This patch intentionally makes OSR entry written in C++ runtime side as much as possible
+        to make it easily reusable for the other tiers. For example, we are planning to introduce Wasm interpreter,
+        and it can easily use this tier-up function. Because of this simplicity, this generic implementation can
+        cover both BBQ Air and BBQ B3 tier-up features. So, in the feature, it is possible that we revive BBQ B3,
+        and construct the wasm pipeline like, interpreter->BBQ B3->OMG B3.
+
+        To generate OMG code for OSR entry, we add a new mode OMGForOSREntry, which mimics the FTLForOSREntry.
+        In FTLForOSREntry, we cut unrelated blocks including the usual entry point in DFG tier and later convert
+        graph to SSA. This is possible because DFG is not SSA. On the other hand, B3 is SSA and we cannot take the
+        same thing without a hack.
+
+        This patch introduce a hack: making all wasm locals and stack values B3::Variable for OMGForOSREntry mode.
+        Then, we can cut blocks easily and we can generate the B3 graph without doing reachability analysis from the
+        OSR entry point. B3 will remove unreachable blocks later.
+
+        Tier-up function mimics DFG->FTL OSR entry heuristics and threshold as much as possible. And this patch adjusts
+        the tier-up count threshold to make it close to DFG->FTL ones. Wasm tier-up is now using ExecutionCounter, which
+        is inherited from Wasm::TierUpCount. Since wasm can execute concurrently, the tier-up counter can be racily updated.
+        But this is OK in practice. Even if we see some more tier-up function calls or tier-up function calls are delayed,
+        the critical part is guarded by a lock in tier-up function.
+
+        In iMac Pro, it shows ~4x runtime improvement for gcc-loops-wasm. On iOS device (iPhone XR), we saw ~2x improvement.
+
+            ToT:
+                HashSet-wasm:Score: 24.6pt stdev=4.6%
+                            :Time:Geometric: 204ms stdev=4.4%
+                            Runtime:Time: 689ms stdev=1.0%
+                            Startup:Time: 60.3ms stdev=8.4%
+                gcc-loops-wasm:Score: 8.41pt stdev=6.7%
+                              :Time:Geometric: 597ms stdev=6.5%
+                              Runtime:Time: 8.509s stdev=0.7%
+                              Startup:Time: 42ms stdev=12.4%
+                quicksort-wasm:Score: 347pt stdev=20.9%
+                              :Time:Geometric: 15ms stdev=18.6%
+                              Runtime:Time: 28.2ms stdev=7.9%
+                              Startup:Time: 8.2ms stdev=35.0%
+                richards-wasm:Score: 77.6pt stdev=4.5%
+                             :Time:Geometric: 64.6ms stdev=4.4%
+                             Runtime:Time: 544ms stdev=3.3%
+                             Startup:Time: 7.67ms stdev=6.7%
+                tsf-wasm:Score: 47.9pt stdev=4.5%
+                        :Time:Geometric: 104ms stdev=4.8%
+                        Runtime:Time: 259ms stdev=4.4%
+                        Startup:Time: 42.2ms stdev=8.5%
+
+            Patched:
+                HashSet-wasm:Score: 24.1pt stdev=4.1%
+                            :Time:Geometric: 208ms stdev=4.1%
+                            Runtime:Time: 684ms stdev=1.1%
+                            Startup:Time: 63.2ms stdev=8.1%
+                gcc-loops-wasm:Score: 15.7pt stdev=5.1%
+                              :Time:Geometric: 319ms stdev=5.3%
+                              Runtime:Time: 2.491s stdev=0.7%
+                              Startup:Time: 41ms stdev=11.0%
+                quicksort-wasm:Score: 353pt stdev=13.7%
+                              :Time:Geometric: 14ms stdev=12.7%
+                              Runtime:Time: 26.2ms stdev=2.9%
+                              Startup:Time: 8.0ms stdev=23.7%
+                richards-wasm:Score: 77.4pt stdev=5.3%
+                             :Time:Geometric: 64.7ms stdev=5.3%
+                             Runtime:Time: 536ms stdev=1.5%
+                             Startup:Time: 7.83ms stdev=9.6%
+                tsf-wasm:Score: 47.3pt stdev=5.7%
+                        :Time:Geometric: 106ms stdev=6.1%
+                        Runtime:Time: 250ms stdev=3.5%
+                        Startup:Time: 45ms stdev=13.8%
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchAdd32):
+        * b3/B3ValueRep.h:
+        * bytecode/CodeBlock.h:
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::applyMemoryUsageHeuristics):
+        (JSC::ExecutionCounter<countingVariant>::setThreshold):
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::clippedThreshold):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGOperations.cpp:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::prologueStackPointerDelta):
+        * runtime/Options.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::createStack):
+        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
+        (JSC::Wasm::AirIRGenerator::outerLoopIndex const):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        (JSC::Wasm::AirIRGenerator::addElse):
+        (JSC::Wasm::AirIRGenerator::addBranch):
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+        (JSC::Wasm::AirIRGenerator::endBlock):
+        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
+        (JSC::Wasm::AirIRGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::AirIRGenerator::dump):
+        (JSC::Wasm::AirIRGenerator::emitTierUpCheck): Deleted.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::Stack::Stack):
+        (JSC::Wasm::B3IRGenerator::Stack::append):
+        (JSC::Wasm::B3IRGenerator::Stack::takeLast):
+        (JSC::Wasm::B3IRGenerator::Stack::last):
+        (JSC::Wasm::B3IRGenerator::Stack::size const):
+        (JSC::Wasm::B3IRGenerator::Stack::isEmpty const):
+        (JSC::Wasm::B3IRGenerator::Stack::convertToExpressionList):
+        (JSC::Wasm::B3IRGenerator::Stack::at const):
+        (JSC::Wasm::B3IRGenerator::Stack::variableAt const):
+        (JSC::Wasm::B3IRGenerator::Stack::shrink):
+        (JSC::Wasm::B3IRGenerator::Stack::swap):
+        (JSC::Wasm::B3IRGenerator::Stack::dump const):
+        (JSC::Wasm::B3IRGenerator::createStack):
+        (JSC::Wasm::B3IRGenerator::outerLoopIndex const):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addElse):
+        (JSC::Wasm::B3IRGenerator::addBranch):
+        (JSC::Wasm::B3IRGenerator::addSwitch):
+        (JSC::Wasm::B3IRGenerator::endBlock):
+        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+        (JSC::Wasm::B3IRGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::B3IRGenerator::dump):
+        (JSC::Wasm::parseAndCompile):
+        (JSC::Wasm::B3IRGenerator::emitTierUpCheck): Deleted.
+        (JSC::Wasm::dumpExpressionStack): Deleted.
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCallee.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmBBQCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::entrypointLoadLocationFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::tierUpCount): Deleted.
+        * wasm/WasmCompilationMode.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmCompilationMode.h:
+        * wasm/WasmContext.cpp: Copied from Source/JavaScriptCore/wasm/WasmCompilationMode.cpp.
+        (JSC::Wasm::Context::scratchBufferForSize):
+        * wasm/WasmContext.h:
+        * wasm/WasmContextInlines.h:
+        (JSC::Wasm::Context::tryLoadInstanceFromTLS):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmOMGForOSREntryPlan.cpp: Copied from Source/JavaScriptCore/wasm/WasmOMGPlan.cpp.
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan):
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGForOSREntryPlan.h: Copied from Source/JavaScriptCore/wasm/WasmOMGPlan.h.
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        (JSC::Wasm::OMGPlan::runForIndex): Deleted.
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmOSREntryData.h: Copied from Source/JavaScriptCore/wasm/WasmContext.h.
+        (JSC::Wasm::OSREntryValue::OSREntryValue):
+        (JSC::Wasm::OSREntryValue::type const):
+        (JSC::Wasm::OSREntryData::OSREntryData):
+        (JSC::Wasm::OSREntryData::functionIndex const):
+        (JSC::Wasm::OSREntryData::loopIndex const):
+        (JSC::Wasm::OSREntryData::values):
+        * wasm/WasmOperations.cpp: Added.
+        (JSC::Wasm::shouldTriggerOMGCompile):
+        (JSC::Wasm::triggerOMGReplacementCompile):
+        (JSC::Wasm::doOSREntry):
+        (JSC::Wasm::triggerOSREntryNow):
+        (JSC::Wasm::triggerTierUpNow):
+        * wasm/WasmOperations.h: Copied from Source/JavaScriptCore/wasm/WasmCompilationMode.h.
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator): Deleted.
+        * wasm/WasmThunks.h:
+        * wasm/WasmTierUpCount.cpp: Copied from Source/JavaScriptCore/wasm/WasmCompilationMode.cpp.
+        (JSC::Wasm::TierUpCount::TierUpCount):
+        (JSC::Wasm::TierUpCount::addOSREntryData):
+        * wasm/WasmTierUpCount.h:
+        (JSC::Wasm::TierUpCount::loopIncrement):
+        (JSC::Wasm::TierUpCount::functionEntryIncrement):
+        (JSC::Wasm::TierUpCount::osrEntryTriggers):
+        (JSC::Wasm::TierUpCount::outerLoops):
+        (JSC::Wasm::TierUpCount::getLock):
+        (JSC::Wasm::TierUpCount::optimizeAfterWarmUp):
+        (JSC::Wasm::TierUpCount::checkIfOptimizationThresholdReached):
+        (JSC::Wasm::TierUpCount::dontOptimizeAnytimeSoon):
+        (JSC::Wasm::TierUpCount::optimizeNextInvocation):
+        (JSC::Wasm::TierUpCount::optimizeSoon):
+        (JSC::Wasm::TierUpCount::setOptimizationThresholdBasedOnCompilationResult):
+        (JSC::Wasm::TierUpCount::TierUpCount): Deleted.
+        (JSC::Wasm::TierUpCount::loopDecrement): Deleted.
+        (JSC::Wasm::TierUpCount::functionEntryDecrement): Deleted.
+        (JSC::Wasm::TierUpCount::shouldStartTierUp): Deleted.
+        (JSC::Wasm::TierUpCount::count): Deleted.
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::createStack):
+        (JSC::Wasm::Validate::addLoop):
+        (JSC::Wasm::Validate::addElse):
+        (JSC::Wasm::Validate::checkBranchTarget):
+        (JSC::Wasm::Validate::addBranch):
+        (JSC::Wasm::Validate::addSwitch):
+        (JSC::Wasm::Validate::endBlock):
+        (JSC::Wasm::Validate::unify):
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::Validate::dump):
+
 2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Date.prototype.toJSON throws if toISOString returns an object

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +27,47 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmCompilationMode.h"
-#include "WasmEmbedder.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
+#include "WasmContext.h"
+#include "WasmModule.h"
+#include "WasmOperations.h"
+#include "WasmPlan.h"
 
-extern "C" void dumpProcedure(void*);
+namespace JSC {
 
-namespace JSC { namespace Wasm {
+class BBQCallee;
+class CallLinkInfo;
 
-class MemoryInformation;
+namespace Wasm {
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
+class OMGForOSREntryPlan final : public Plan {
+public:
+    using Base = Plan;
+
+    bool hasWork() const override { return !m_completed; }
+    void work(CompilationEffort) override;
+    bool multiThreaded() const override { return false; }
+
+    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
+    OMGForOSREntryPlan(Context*, Ref<Module>&&, Ref<BBQCallee>&&, uint32_t functionIndex, uint32_t loopIndex, MemoryMode, CompletionTask&&);
+
+private:
+    // For some reason friendship doesn't extend to parent classes...
+    using Base::m_lock;
+
+    bool isComplete() const override { return m_completed; }
+    void complete(const AbstractLocker& locker) override
+    {
+        m_completed = true;
+        runCompletionTasks(locker);
+    }
+
+    Ref<Module> m_module;
+    Ref<CodeBlock> m_codeBlock;
+    Ref<BBQCallee> m_callee;
+    bool m_completed { false };
+    uint32_t m_functionIndex;
+    uint32_t m_loopIndex;
 };
-
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
 
 } } // namespace JSC::Wasm
 

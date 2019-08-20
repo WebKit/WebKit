@@ -1059,7 +1059,10 @@ Exception* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, J
 }
 
 #define CODEBLOCK_LOG_EVENT(codeBlock, summary, details) \
-    (codeBlock->vm()->logEvent(codeBlock, summary, [&] () { return toCString details; }))
+    do { \
+        if (codeBlock) \
+            (codeBlock->vm()->logEvent(codeBlock, summary, [&] () { return toCString details; })); \
+    } while (0)
 
 
 void setPrinter(Printer::PrintRecord&, CodeBlock*);

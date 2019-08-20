@@ -1,3 +1,21 @@
+2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] OSR entry to Wasm OMG
+        https://bugs.webkit.org/show_bug.cgi?id=200362
+
+        Reviewed by Michael Saboff.
+
+        * wasm/stress/osr-entry-basic.js: Added.
+        (instance.exports.loop):
+        * wasm/stress/osr-entry-many-locals-f32.js: Added.
+        * wasm/stress/osr-entry-many-locals-f64.js: Added.
+        * wasm/stress/osr-entry-many-locals-i32.js: Added.
+        * wasm/stress/osr-entry-many-locals-i64.js: Added.
+        * wasm/stress/osr-entry-many-stacks-f32.js: Added.
+        * wasm/stress/osr-entry-many-stacks-f64.js: Added.
+        * wasm/stress/osr-entry-many-stacks-i32.js: Added.
+        * wasm/stress/osr-entry-many-stacks-i64.js: Added.
+
 2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Date.prototype.toJSON throws if toISOString returns an object

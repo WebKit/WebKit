@@ -3540,7 +3540,6 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
     }
 
     JITCode* jitCode = codeBlock->jitCode()->dfg();
-    jitCode->tierUpEntrySeen.add(bytecodeIndex);
 
     if (Options::verboseOSR()) {
         dataLog(

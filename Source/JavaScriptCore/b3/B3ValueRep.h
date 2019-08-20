@@ -47,8 +47,9 @@ namespace B3 {
 // output.
 
 class ValueRep {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Kind {
+    enum Kind : uint8_t {
         // As an input representation, this means that B3 can pick any representation. As an output
         // representation, this means that we don't know. This will only arise as an output
         // representation for the active arguments of Check/CheckAdd/CheckSub/CheckMul.
@@ -281,7 +282,6 @@ public:
     ValueRecovery recoveryForJSValue() const;
 
 private:
-    Kind m_kind;
     union U {
         Reg reg;
         intptr_t offsetFromFP;
@@ -293,6 +293,7 @@ private:
             memset(static_cast<void*>(this), 0, sizeof(*this));
         }
     } u;
+    Kind m_kind;
 };
 
 } } // namespace JSC::B3

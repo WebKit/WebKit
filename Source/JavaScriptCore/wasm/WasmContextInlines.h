@@ -66,6 +66,15 @@ inline void Context::store(Instance* inst, void* softStackLimit)
         instance = inst;
 }
 
+inline Instance* Context::tryLoadInstanceFromTLS()
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (useFastTLS())
+        return bitwise_cast<Instance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
+#endif
+    return nullptr;
+}
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

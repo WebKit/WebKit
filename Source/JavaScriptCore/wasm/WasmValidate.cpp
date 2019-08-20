@@ -79,12 +79,14 @@ public:
     typedef String ErrorType;
     typedef Unexpected<ErrorType> UnexpectedResult;
     typedef Expected<void, ErrorType> Result;
-    typedef Type ExpressionType;
+    using ExpressionType = Type;
+    using ExpressionList = Vector<ExpressionType, 1>;
+    using Stack = ExpressionList;
     typedef ControlData ControlType;
-    typedef Vector<ExpressionType, 1> ExpressionList;
     typedef FunctionParser<Validate>::ControlEntry ControlEntry;
 
     static constexpr ExpressionType emptyExpression() { return Void; }
+    Stack createStack() { return Stack(); }
 
     template <typename ...Args>
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
@@ -133,15 +135,15 @@ public:
     // Control flow
     ControlData WARN_UNUSED_RETURN addTopLevel(Type signature);
     ControlData WARN_UNUSED_RETURN addBlock(Type signature);
-    ControlData WARN_UNUSED_RETURN addLoop(Type signature);
+    ControlData WARN_UNUSED_RETURN addLoop(Type signature, const Stack&, uint32_t);
     Result WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
-    Result WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
+    Result WARN_UNUSED_RETURN addElse(ControlData&, const Stack&);
     Result WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
-    Result WARN_UNUSED_RETURN addReturn(ControlData& topLevel, const ExpressionList& returnValues);
-    Result WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& expressionStack);
-    Result WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack);
-    Result WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
+    Result WARN_UNUSED_RETURN addReturn(ControlData& topLevel, const Stack& returnValues);
+    Result WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const Stack& expressionStack);
+    Result WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const Stack& expressionStack);
+    Result WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     Result WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
     Result WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
     Result WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
@@ -161,13 +163,13 @@ public:
     {
     }
 
-    void dump(const Vector<ControlEntry>&, const ExpressionList*);
+    void dump(const Vector<ControlEntry>&, const Stack*);
     void setParser(FunctionParser<Validate>*) { }
 
 private:
-    Result WARN_UNUSED_RETURN unify(const ExpressionList&, const ControlData&);
+    Result WARN_UNUSED_RETURN unify(const Stack&, const ControlData&);
 
-    Result WARN_UNUSED_RETURN checkBranchTarget(ControlData& target, const ExpressionList& expressionStack);
+    Result WARN_UNUSED_RETURN checkBranchTarget(ControlData& target, const Stack& expressionStack);
 
     Vector<Type> m_locals;
     const ModuleInformation& m_module;
@@ -299,7 +301,7 @@ Validate::ControlType Validate::addBlock(Type signature)
     return ControlData(BlockType::Block, signature);
 }
 
-Validate::ControlType Validate::addLoop(Type signature)
+Validate::ControlType Validate::addLoop(Type signature, const Stack&, uint32_t)
 {
     return ControlData(BlockType::Loop, signature);
 }
@@ -319,7 +321,7 @@ auto Validate::addIf(ExpressionType condition, Type signature, ControlType& resu
     return { };
 }
 
-auto Validate::addElse(ControlType& current, const ExpressionList& values) -> Result
+auto Validate::addElse(ControlType& current, const Stack& values) -> Result
 {
     WASM_FAIL_IF_HELPER_FAILS(unify(values, current));
     return addElseToUnreachable(current);
@@ -342,7 +344,7 @@ auto Validate::addReturn(ControlType& topLevel, const ExpressionList& returnValu
     return { };
 }
 
-auto Validate::checkBranchTarget(ControlType& target, const ExpressionList& expressionStack) -> Result
+auto Validate::checkBranchTarget(ControlType& target, const Stack& expressionStack) -> Result
 {
     if (target.branchTargetSignature() == Void)
         return { };
@@ -353,14 +355,14 @@ auto Validate::checkBranchTarget(ControlType& target, const ExpressionList& expr
     return { };
 }
 
-auto Validate::addBranch(ControlType& target, ExpressionType condition, const ExpressionList& stack) -> Result
+auto Validate::addBranch(ControlType& target, ExpressionType condition, const Stack& stack) -> Result
 {
     // Void means this is an unconditional branch.
     WASM_VALIDATOR_FAIL_IF(condition != Void && condition != I32, "conditional branch with non-i32 condition ", condition);
     return checkBranchTarget(target, stack);
 }
 
-auto Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack) -> Result
+auto Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const Stack& expressionStack) -> Result
 {
     WASM_VALIDATOR_FAIL_IF(condition != I32, "br_table with non-i32 condition ", condition);
 
@@ -383,7 +385,7 @@ auto Validate::addCurrentMemory(ExpressionType& result) -> Result
     return { };
 }
 
-auto Validate::endBlock(ControlEntry& entry, ExpressionList& stack) -> Result
+auto Validate::endBlock(ControlEntry& entry, Stack& stack) -> Result
 {
     WASM_FAIL_IF_HELPER_FAILS(unify(stack, entry.controlData));
     return addEndToUnreachable(entry);
@@ -426,7 +428,7 @@ auto Validate::addCallIndirect(unsigned tableIndex, const Signature& signature, 
     return { };
 }
 
-auto Validate::unify(const ExpressionList& values, const ControlType& block) -> Result
+auto Validate::unify(const Stack& values, const ControlType& block) -> Result
 {
     if (block.signature() == Void) {
         WASM_VALIDATOR_FAIL_IF(!values.isEmpty(), "void block should end with an empty stack");
@@ -438,14 +440,14 @@ auto Validate::unify(const ExpressionList& values, const ControlType& block) -> 
     return { };
 }
 
-static void dumpExpressionStack(const CommaPrinter& comma, const Validate::ExpressionList& expressionStack)
+static void dumpExpressionStack(const CommaPrinter& comma, const Validate::Stack& expressionStack)
 {
     dataLog(comma, " ExpressionStack:");
     for (const auto& expression : expressionStack)
         dataLog(comma, makeString(expression));
 }
 
-void Validate::dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack)
+void Validate::dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack)
 {
     for (size_t i = controlStack.size(); i--;) {
         dataLog("  ", controlStack[i].controlData);

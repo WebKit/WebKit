@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +27,45 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmCompilationMode.h"
-#include "WasmEmbedder.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
+#include "B3ValueRep.h"
+#include "WasmFormat.h"
+#include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+class OSREntryValue : public B3::ValueRep {
+public:
+    OSREntryValue(const B3::ValueRep& valueRep, B3::Type type)
+        : B3::ValueRep(valueRep)
+        , m_type(type)
+    {
+    }
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
+    B3::Type type() const { return m_type; }
+
+private:
+    B3::Type m_type;
 };
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
+class OSREntryData {
+    WTF_MAKE_NONCOPYABLE(OSREntryData);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    OSREntryData(uint32_t functionIndex, uint32_t loopIndex)
+        : m_functionIndex(functionIndex)
+        , m_loopIndex(loopIndex)
+    {
+    }
+
+    uint32_t functionIndex() const { return m_functionIndex; }
+    uint32_t loopIndex() const { return m_loopIndex; }
+    Vector<OSREntryValue>& values() { return m_values; }
+
+private:
+    uint32_t m_functionIndex;
+    uint32_t m_loopIndex;
+    Vector<OSREntryValue> m_values;
+};
 
 } } // namespace JSC::Wasm
 

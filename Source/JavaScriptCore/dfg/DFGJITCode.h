@@ -167,9 +167,6 @@ public:
     // are used by the JIT.
     HashMap<unsigned, TriggerReason> tierUpEntryTriggers;
 
-    // Set of bytecode that were the target of a TierUp operation.
-    HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> tierUpEntrySeen;
-
     WriteBarrier<CodeBlock> m_osrEntryBlock;
     unsigned osrEntryRetry;
     bool abandonOSREntry;

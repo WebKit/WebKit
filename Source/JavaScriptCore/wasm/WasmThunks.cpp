@@ -36,7 +36,7 @@
 #include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include "WasmInstance.h"
-#include "WasmOMGPlan.h"
+#include "WasmOperations.h"
 
 namespace JSC { namespace Wasm {
 
@@ -77,7 +77,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     return FINALIZE_CODE(linkBuffer, JITThunkPtrTag, "Throw stack overflow from Wasm");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGTierUpThunkGenerator(const AbstractLocker&)
+MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const AbstractLocker&)
 {
     // We expect that the user has already put the function index into GPRInfo::argumentGPR1
     CCallHelpers jit;
@@ -90,9 +90,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGTierUpThunkGenerator(const Abstr
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
-    typedef void (*Run)(Instance*, uint32_t);
-    Run run = OMGPlan::runForIndex;
-    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(run)), GPRInfo::argumentGPR2);
+    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(triggerTierUpNow)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
 
     ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
@@ -100,7 +98,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGTierUpThunkGenerator(const Abstr
     jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG tier up");
+    return FINALIZE_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG entry tier up");
 }
 
 static Thunks* thunks;
