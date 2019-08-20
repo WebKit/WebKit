@@ -1,3 +1,18 @@
+2019-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK1] A browser window starts as an inactive window because AcceleratedCompositingContext::acceleratedCompositingAvailable creates temporary window
+        https://bugs.webkit.org/show_bug.cgi?id=200493
+
+        Reviewed by Ross Kirsling.
+
+        Reverted r179962.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::acceleratedCompositingAvailable): Deleted.
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2019-08-19  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDB-specific quota

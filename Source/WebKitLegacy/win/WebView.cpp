@@ -5477,10 +5477,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->acceleratedCompositingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-#if USE(TEXTURE_MAPPER_GL)
-    static bool acceleratedCompositingAvailable = AcceleratedCompositingContext::acceleratedCompositingAvailable();
-    enabled = enabled && acceleratedCompositingAvailable;
-#elif USE(DIRECT2D)
+#if USE(DIRECT2D)
     // Disable accelerated compositing for now.
     enabled = false;
 #endif

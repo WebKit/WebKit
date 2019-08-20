@@ -66,8 +66,6 @@ public:
     bool flushPendingLayerChangesSoon();
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
-    static bool acceleratedCompositingAvailable();
-
 private:
     WebView& m_webView;
     std::unique_ptr<WebCore::GLContext> m_context;
