@@ -235,6 +235,58 @@ private:
     StringTypeAdapter<UnderlyingElementType> m_underlyingAdapter;
 };
 
+template<unsigned N>
+struct Indentation {
+    unsigned operator++() { return ++value; }
+    unsigned operator++(int) { return value++; }
+    unsigned operator--() { return --value; }
+    unsigned operator--(int) { return value--; }
+
+    unsigned value { 0 };
+};
+
+
+template<unsigned N>
+struct IndentationScope {
+    IndentationScope(Indentation<N>& indentation)
+        : m_indentation(indentation)
+    {
+        ++m_indentation;
+    }
+    ~IndentationScope()
+    {
+        --m_indentation;
+    }
+
+    Indentation<N>& m_indentation;
+};
+
+template<unsigned N> class StringTypeAdapter<Indentation<N>, void> {
+public:
+    StringTypeAdapter(Indentation<N> indentation)
+        : m_indentation { indentation }
+    {
+    }
+
+    unsigned length()
+    {
+        return m_indentation.value * N;
+    }
+
+    bool is8Bit()
+    {
+        return true;
+    }
+
+    template<typename CharacterType> void writeTo(CharacterType* destination)
+    {
+        std::fill_n(destination, m_indentation.value * N, ' ');
+    }
+
+private:
+    Indentation<N> m_indentation;
+};
+
 template<typename Adapter>
 inline bool are8Bit(Adapter adapter)
 {
@@ -308,6 +360,8 @@ String makeString(StringTypes... strings)
 
 } // namespace WTF
 
+using WTF::Indentation;
+using WTF::IndentationScope;
 using WTF::makeString;
 using WTF::pad;
 using WTF::tryMakeString;

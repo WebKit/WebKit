@@ -1,3 +1,39 @@
+2019-08-19  Sam Weinig  <weinig@apple.com>
+
+        [WHLSL] Make generated Metal code should be indented properly to ease reading while debugging
+        https://bugs.webkit.org/show_bug.cgi?id=200870
+
+        Reviewed by Saam Barati.
+
+        Adds indentation of generated Metal code using the new WTF::Indentation and WTF::IndentationScope
+        classes. This makes reading the generated Metal code much easier while debugging it, and does not
+        seem to introduce any performance regression (I measured no difference on compute_boids.html test).
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitResourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitSignature):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitUnpack):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitPack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitSignature):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitUnpack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitPack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitSignature):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitUnpack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitPack):
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitLoop):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+
 2019-08-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: have more aggressive checks for dataURLs provided to `console.screenshot`

@@ -375,7 +375,7 @@ void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, BaseType
         auto& arrayReferenceType = downcast<ArrayReferenceTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.append(
-            "struct ", arrayReferenceType.mangledName(), "{ \n"
+            "struct ", arrayReferenceType.mangledName(), " {\n"
             "    ", toString(arrayReferenceType.addressSpace()), ' ', arrayReferenceType.parent()->mangledName(), "* pointer;\n"
             "    uint32_t length;\n"
             "};\n"

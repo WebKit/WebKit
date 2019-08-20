@@ -45,7 +45,7 @@ namespace Metal {
 
 class TypeNamer;
 
-void inlineNativeFunction(StringBuilder&, AST::NativeFunctionDeclaration&, MangledVariableName returnName, const Vector<MangledVariableName>& argumentNames, Intrinsics&, TypeNamer&);
+void inlineNativeFunction(StringBuilder&, AST::NativeFunctionDeclaration&, MangledVariableName returnName, const Vector<MangledVariableName>& argumentNames, Intrinsics&, TypeNamer&, std::function<MangledVariableName()>&&, Indentation<4>);
 
 }
 

@@ -205,6 +205,7 @@ protected:
     Layout& m_layout;
     unsigned m_variableCount { 0 };
     Optional<MangledVariableName> m_breakOutOfCurrentLoopEarlyVariable;
+    Indentation<4> m_indent { 0 };
 };
 
 void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration&)
@@ -221,23 +222,28 @@ void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition
         if (!entryPointScaffolding)
             return;
         m_entryPointScaffolding = WTFMove(entryPointScaffolding);
-        m_entryPointScaffolding->emitHelperTypes(m_stringBuilder);
-        m_stringBuilder.append('\n');
-        m_entryPointScaffolding->emitSignature(m_stringBuilder, iterator->value);
-        m_stringBuilder.append(" {\n");
-        m_entryPointScaffolding->emitUnpack(m_stringBuilder);
-    
-        for (size_t i = 0; i < functionDefinition.parameters().size(); ++i) {
-            auto addResult = m_variableMapping.add(&functionDefinition.parameters()[i], m_entryPointScaffolding->parameterVariables()[i]);
-            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        
+        m_entryPointScaffolding->emitHelperTypes(m_stringBuilder, m_indent);
+        m_entryPointScaffolding->emitSignature(m_stringBuilder, iterator->value, m_indent);
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+
+            m_entryPointScaffolding->emitUnpack(m_stringBuilder, m_indent);
+        
+            for (size_t i = 0; i < functionDefinition.parameters().size(); ++i) {
+                auto addResult = m_variableMapping.add(&functionDefinition.parameters()[i], m_entryPointScaffolding->parameterVariables()[i]);
+                ASSERT_UNUSED(addResult, addResult.isNewEntry);
+            }
+            checkErrorAndVisit(functionDefinition.block());
+            ASSERT(m_stack.isEmpty());
         }
-        checkErrorAndVisit(functionDefinition.block());
-        ASSERT(m_stack.isEmpty());
-        m_stringBuilder.append("}\n");
+        m_stringBuilder.append("}\n\n");
+
         m_entryPointScaffolding = nullptr;
     } else {
         ASSERT(m_entryPointScaffolding == nullptr);
-        m_stringBuilder.append(m_typeNamer.mangledNameForType(functionDefinition.type()), ' ', iterator->value, '(');
+        m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(functionDefinition.type()), ' ', iterator->value, '(');
         for (size_t i = 0; i < functionDefinition.parameters().size(); ++i) {
             auto& parameter = functionDefinition.parameters()[i];
             if (i)
@@ -266,10 +272,13 @@ void FunctionDefinitionWriter::visit(AST::Statement& statement)
 
 void FunctionDefinitionWriter::visit(AST::Block& block)
 {
-    m_stringBuilder.append("{\n");
-    for (auto& statement : block.statements())
-        checkErrorAndVisit(statement);
-    m_stringBuilder.append("}\n");
+    m_stringBuilder.append(m_indent, "{\n");
+    {
+        IndentationScope scope(m_indent);
+        for (auto& statement : block.statements())
+            checkErrorAndVisit(statement);
+    }
+    m_stringBuilder.append(m_indent, "}\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Break&)
@@ -277,13 +286,13 @@ void FunctionDefinitionWriter::visit(AST::Break&)
     ASSERT(m_currentBreakContext);
     switch (*m_currentBreakContext) {
     case BreakContext::Switch:
-        m_stringBuilder.append("break;\n");
+        m_stringBuilder.append(m_indent, "break;\n");
         break;
     case BreakContext::Loop:
         ASSERT(m_breakOutOfCurrentLoopEarlyVariable);
         m_stringBuilder.append(
-            *m_breakOutOfCurrentLoopEarlyVariable, " = true;\n"
-            "break;\n"
+            m_indent, *m_breakOutOfCurrentLoopEarlyVariable, " = true;\n",
+            m_indent, "break;\n"
         );
         break;
     }
@@ -292,7 +301,7 @@ void FunctionDefinitionWriter::visit(AST::Break&)
 void FunctionDefinitionWriter::visit(AST::Continue&)
 {
     ASSERT(m_breakOutOfCurrentLoopEarlyVariable);
-    m_stringBuilder.append("break;\n");
+    m_stringBuilder.append(m_indent, "break;\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::EffectfulExpressionStatement& effectfulExpressionStatement)
@@ -303,7 +312,7 @@ void FunctionDefinitionWriter::visit(AST::EffectfulExpressionStatement& effectfu
 
 void FunctionDefinitionWriter::visit(AST::Fallthrough&)
 {
-    m_stringBuilder.append("[[clang::fallthrough]];\n"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195808 Make sure this is okay. Alternatively, we could do nothing and just return here instead.
+    m_stringBuilder.append(m_indent, "[[clang::fallthrough]];\n"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195808 Make sure this is okay. Alternatively, we could do nothing and just return here instead.
 }
 
 void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocation, AST::Expression* conditionExpression, AST::Expression* increment, AST::Statement& body)
@@ -311,36 +320,48 @@ void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocat
     SetForScope<Optional<MangledVariableName>> loopVariableScope(m_breakOutOfCurrentLoopEarlyVariable, generateNextVariableName());
 
     m_stringBuilder.append(
-        "bool ", *m_breakOutOfCurrentLoopEarlyVariable, " = false;\n",
-        "while (true) {\n"
+        m_indent, "bool ", *m_breakOutOfCurrentLoopEarlyVariable, " = false;\n",
+        m_indent, "while (true) {\n"
     );
+    {
+        IndentationScope whileScope(m_indent);
 
-    if (loopConditionLocation == LoopConditionLocation::BeforeBody && conditionExpression) {
-        checkErrorAndVisit(*conditionExpression);
-        m_stringBuilder.append("if (!", takeLastValue(), ") break;\n");
+        if (loopConditionLocation == LoopConditionLocation::BeforeBody && conditionExpression) {
+            checkErrorAndVisit(*conditionExpression);
+            m_stringBuilder.append(
+                m_indent, "if (!", takeLastValue(), ")\n",
+                m_indent, "    break;\n");
+        }
+
+        m_stringBuilder.append(m_indent, "do {\n");
+        SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Loop);
+
+        {
+            IndentationScope doScope(m_indent);
+            checkErrorAndVisit(body);
+        }
+        m_stringBuilder.append(m_indent, "} while(false); \n");
+
+        m_stringBuilder.append(
+            m_indent, "if (", *m_breakOutOfCurrentLoopEarlyVariable, ")\n",
+            m_indent, "    break;\n");
+
+        if (increment) {
+            checkErrorAndVisit(*increment);
+            // Expression results get pushed to m_stack. We don't use the result
+            // of increment, so we dispense of that now.
+            takeLastValue();
+        }
+
+        if (loopConditionLocation == LoopConditionLocation::AfterBody && conditionExpression) {
+            checkErrorAndVisit(*conditionExpression);
+            m_stringBuilder.append(
+                m_indent, "if (!", takeLastValue(), ")\n",
+                m_indent, "    break;\n");
+        }
     }
 
-    m_stringBuilder.append("do {\n");
-    SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Loop);
-    checkErrorAndVisit(body);
-    m_stringBuilder.append(
-        "} while(false); \n"
-        "if (", *m_breakOutOfCurrentLoopEarlyVariable, ") break;\n"
-    );
-
-    if (increment) {
-        checkErrorAndVisit(*increment);
-        // Expression results get pushed to m_stack. We don't use the result
-        // of increment, so we dispense of that now.
-        takeLastValue();
-    }
-
-    if (loopConditionLocation == LoopConditionLocation::AfterBody && conditionExpression) {
-        checkErrorAndVisit(*conditionExpression);
-        m_stringBuilder.append("if (!", takeLastValue(), ") break;\n");
-    }
-
-    m_stringBuilder.append("} \n");
+    m_stringBuilder.append(m_indent, "} \n");
 }
 
 void FunctionDefinitionWriter::visit(AST::DoWhileLoop& doWhileLoop)
@@ -355,56 +376,69 @@ void FunctionDefinitionWriter::visit(AST::WhileLoop& whileLoop)
 
 void FunctionDefinitionWriter::visit(AST::ForLoop& forLoop)
 {
-    m_stringBuilder.append("{\n");
-    checkErrorAndVisit(forLoop.initialization());
-    emitLoop(LoopConditionLocation::BeforeBody, forLoop.condition(), forLoop.increment(), forLoop.body());
-    m_stringBuilder.append("}\n");
+    m_stringBuilder.append(m_indent, "{\n");
+    {
+        IndentationScope scope(m_indent);
+        checkErrorAndVisit(forLoop.initialization());
+        emitLoop(LoopConditionLocation::BeforeBody, forLoop.condition(), forLoop.increment(), forLoop.body());
+    }
+    m_stringBuilder.append(m_indent, "}\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& ifStatement)
 {
     checkErrorAndVisit(ifStatement.conditional());
-    m_stringBuilder.append("if (", takeLastValue(), ") {\n");
-    checkErrorAndVisit(ifStatement.body());
-    if (ifStatement.elseBody()) {
-        m_stringBuilder.append("} else {\n");
-        checkErrorAndVisit(*ifStatement.elseBody());
+    m_stringBuilder.append(m_indent, "if (", takeLastValue(), ") {\n");
+    {
+        IndentationScope ifScope(m_indent);
+        checkErrorAndVisit(ifStatement.body());
     }
-    m_stringBuilder.append("}\n");
+    if (ifStatement.elseBody()) {
+        m_stringBuilder.append(m_indent, "} else {\n");
+        {
+            IndentationScope elseScope(m_indent);
+            checkErrorAndVisit(*ifStatement.elseBody());
+        }
+    }
+    m_stringBuilder.append(m_indent, "}\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Return& returnStatement)
 {
     if (returnStatement.value()) {
         checkErrorAndVisit(*returnStatement.value());
+
         if (m_entryPointScaffolding) {
             auto variableName = generateNextVariableName();
-            m_entryPointScaffolding->emitPack(m_stringBuilder, takeLastValue(), variableName);
-            m_stringBuilder.append("return ", variableName, ";\n");
+            m_entryPointScaffolding->emitPack(m_stringBuilder, takeLastValue(), variableName, m_indent);
+            m_stringBuilder.append(m_indent, "return ", variableName, ";\n");
         } else
-            m_stringBuilder.append("return ", takeLastValue(), ";\n");
+            m_stringBuilder.append(m_indent, "return ", takeLastValue(), ";\n");
     } else
-        m_stringBuilder.append("return;\n");
+        m_stringBuilder.append(m_indent, "return;\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::SwitchStatement& switchStatement)
 {
     checkErrorAndVisit(switchStatement.value());
 
-    m_stringBuilder.append("switch (", takeLastValue(), ") {");
-    for (auto& switchCase : switchStatement.switchCases())
-        checkErrorAndVisit(switchCase);
-    m_stringBuilder.append("}\n");
+    m_stringBuilder.append(m_indent, "switch (", takeLastValue(), ") {");
+    {
+        IndentationScope switchScope(m_indent);
+        for (auto& switchCase : switchStatement.switchCases())
+            checkErrorAndVisit(switchCase);
+    }
+    m_stringBuilder.append(m_indent, "}\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::SwitchCase& switchCase)
 {
     if (switchCase.value()) {
-        m_stringBuilder.append("case ");
+        m_stringBuilder.append(m_indent, "case ");
         emitConstantExpressionString(*switchCase.value());
         m_stringBuilder.append(":\n");
     } else
-        m_stringBuilder.append("default:\n");
+        m_stringBuilder.append(m_indent, "default:\n");
     SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Switch);
     checkErrorAndVisit(switchCase.block());
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195812 Figure out whether we need to break or fallthrough.
@@ -419,7 +453,7 @@ void FunctionDefinitionWriter::visit(AST::IntegerLiteral& integerLiteral)
 {
     auto variableName = generateNextVariableName();
     auto mangledTypeName = m_typeNamer.mangledNameForType(integerLiteral.resolvedType());
-    m_stringBuilder.append(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", integerLiteral.value(), ");\n");
+    m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", integerLiteral.value(), ");\n");
     appendRightValue(integerLiteral, variableName);
 }
 
@@ -427,7 +461,7 @@ void FunctionDefinitionWriter::visit(AST::UnsignedIntegerLiteral& unsignedIntege
 {
     auto variableName = generateNextVariableName();
     auto mangledTypeName = m_typeNamer.mangledNameForType(unsignedIntegerLiteral.resolvedType());
-    m_stringBuilder.append(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", unsignedIntegerLiteral.value(), ");\n");
+    m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", unsignedIntegerLiteral.value(), ");\n");
     appendRightValue(unsignedIntegerLiteral, variableName);
 }
 
@@ -435,7 +469,7 @@ void FunctionDefinitionWriter::visit(AST::FloatLiteral& floatLiteral)
 {
     auto variableName = generateNextVariableName();
     auto mangledTypeName = m_typeNamer.mangledNameForType(floatLiteral.resolvedType());
-    m_stringBuilder.append(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", floatLiteral.value(), ");\n");
+    m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", floatLiteral.value(), ");\n");
     appendRightValue(floatLiteral, variableName);
 }
 
@@ -446,7 +480,7 @@ void FunctionDefinitionWriter::visit(AST::NullLiteral& nullLiteral)
     bool isArrayReferenceType = is<AST::ArrayReferenceType>(unnamedType);
 
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(m_typeNamer.mangledNameForType(nullLiteral.resolvedType()), ' ', variableName, " = ");
+    m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(nullLiteral.resolvedType()), ' ', variableName, " = ");
     if (isArrayReferenceType)
         m_stringBuilder.append("{ nullptr, 0 };\n");
     else
@@ -458,7 +492,7 @@ void FunctionDefinitionWriter::visit(AST::BooleanLiteral& booleanLiteral)
 {
     auto variableName = generateNextVariableName();
     auto mangledTypeName = m_typeNamer.mangledNameForType(booleanLiteral.resolvedType());
-    m_stringBuilder.append(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", booleanLiteral.value() ? "true" : "false", ");\n");
+    m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", booleanLiteral.value() ? "true" : "false", ");\n");
     appendRightValue(booleanLiteral, variableName);
 }
 
@@ -468,7 +502,7 @@ void FunctionDefinitionWriter::visit(AST::EnumerationMemberLiteral& enumerationM
     ASSERT(enumerationMemberLiteral.enumerationDefinition());
     auto variableName = generateNextVariableName();
     auto mangledTypeName = m_typeNamer.mangledNameForType(enumerationMemberLiteral.resolvedType());
-    m_stringBuilder.append(mangledTypeName, ' ', variableName, " = ", mangledTypeName, "::", m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()), ";\n");
+    m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = ", mangledTypeName, "::", m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()), ";\n");
     appendRightValue(enumerationMemberLiteral, variableName);
 }
 
@@ -492,8 +526,8 @@ void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariabl
     auto mangledTypeName = m_typeNamer.mangledNameForType(globalVariableReference.resolvedType());
     checkErrorAndVisit(globalVariableReference.base());
     m_stringBuilder.append(
-        "thread ", mangledTypeName, "* ", pointerName, " = &", takeLastValue(), "->", m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField()), ";\n",
-        mangledTypeName, ' ', valueName, " = ", "*", pointerName, ";\n"
+        m_indent, "thread ", mangledTypeName, "* ", pointerName, " = &", takeLastValue(), "->", m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField()), ";\n",
+        m_indent, mangledTypeName, ' ', valueName, " = ", "*", pointerName, ";\n"
     );
     appendLeftValue(globalVariableReference, valueName, pointerName, Nullability::NotNull);
 }
@@ -523,9 +557,9 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198160 Implement qualifiers.
     if (variableDeclaration.initializer()) {
         checkErrorAndVisit(*variableDeclaration.initializer());
-        m_stringBuilder.append(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", takeLastValue(), ";\n");
+        m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", takeLastValue(), ";\n");
     } else
-        m_stringBuilder.append(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = { };\n");
+        m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = { };\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)
@@ -534,10 +568,13 @@ void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpres
     auto [pointerName, nullability] = takeLastLeftValue();
     checkErrorAndVisit(assignmentExpression.right());
     auto [rightName, rightNullability] = takeLastValueAndNullability();
+
     if (nullability == Nullability::CanBeNull)
-        m_stringBuilder.append("if (", pointerName, ") *", pointerName, " = ", rightName, ";\n");
+        m_stringBuilder.append(
+            m_indent, "if (", pointerName, ")\n",
+            m_indent, "    *", pointerName, " = ", rightName, ";\n");
     else
-        m_stringBuilder.append("*", pointerName, " = ", rightName, ";\n");
+        m_stringBuilder.append(m_indent, "*", pointerName, " = ", rightName, ";\n");
     appendRightValueWithNullability(assignmentExpression, rightName, rightNullability);
 }
 
@@ -553,12 +590,20 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
     MangledVariableName returnName;
     if (!isVoid) {
         returnName = generateNextVariableName();
-        m_stringBuilder.append(m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', returnName, ";\n");
+        m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', returnName, ";\n");
     }
 
-    if (is<AST::NativeFunctionDeclaration>(callExpression.function()))
-        inlineNativeFunction(m_stringBuilder, downcast<AST::NativeFunctionDeclaration>(callExpression.function()), returnName, argumentNames, m_intrinsics, m_typeNamer);
-    else {
+    if (is<AST::NativeFunctionDeclaration>(callExpression.function())) {
+        auto generateNextVariableName = [this]() -> MangledVariableName {
+            return this->generateNextVariableName();
+        };
+
+        m_stringBuilder.append('\n');
+        inlineNativeFunction(m_stringBuilder, downcast<AST::NativeFunctionDeclaration>(callExpression.function()), returnName, argumentNames, m_intrinsics, m_typeNamer, WTFMove(generateNextVariableName), m_indent);
+        m_stringBuilder.append('\n');
+    } else {
+        m_stringBuilder.append(m_indent);
+
         auto iterator = m_functionMapping.find(&callExpression.function());
         ASSERT(iterator != m_functionMapping.end());
         if (!isVoid)
@@ -592,15 +637,19 @@ void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpr
     auto [inputPointer, nullability] = takeLastValueAndNullability();
     auto resultValue = generateNextVariableName();
     auto resultPointer = generateNextVariableName();
+
     m_stringBuilder.append(
-        m_typeNamer.mangledNameForType(dereferenceExpression.pointer().resolvedType()), ' ', resultPointer, " = ", inputPointer, ";\n",
-        m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', resultValue, ";\n");
+        m_indent, m_typeNamer.mangledNameForType(dereferenceExpression.pointer().resolvedType()), ' ', resultPointer, " = ", inputPointer, ";\n",
+        m_indent, m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', resultValue, ";\n");
     if (nullability == Nullability::CanBeNull) {
         m_stringBuilder.append(
-            "if (", resultPointer, ") ", resultValue, " = *", inputPointer, ";\n",
-            "else ", resultValue, " = { };\n");
+            m_indent, "if (", resultPointer, ")\n",
+            m_indent, "    ", resultValue, " = *", inputPointer, ";\n",
+            m_indent, "else\n",
+            m_indent, "    ", resultValue, " = { };\n"
+        );
     } else
-        m_stringBuilder.append(resultValue, " = *", inputPointer, ";\n");
+        m_stringBuilder.append(m_indent, resultValue, " = *", inputPointer, ";\n");
     appendLeftValue(dereferenceExpression, resultValue, resultPointer, nullability);
 }
 
@@ -611,7 +660,9 @@ void FunctionDefinitionWriter::visit(AST::LogicalExpression& logicalExpression)
     checkErrorAndVisit(logicalExpression.right());
     auto right = takeLastValue();
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(m_typeNamer.mangledNameForType(logicalExpression.resolvedType()), ' ', variableName, " = ", left);
+
+    m_stringBuilder.append(
+        m_indent, m_typeNamer.mangledNameForType(logicalExpression.resolvedType()), ' ', variableName, " = ", left);
     switch (logicalExpression.type()) {
     case AST::LogicalExpression::Type::And:
         m_stringBuilder.append(" && ");
@@ -630,7 +681,9 @@ void FunctionDefinitionWriter::visit(AST::LogicalNotExpression& logicalNotExpres
     checkErrorAndVisit(logicalNotExpression.operand());
     auto operand = takeLastValue();
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(m_typeNamer.mangledNameForType(logicalNotExpression.resolvedType()), ' ', variableName, " = !", operand, ";\n");
+
+    m_stringBuilder.append(
+        m_indent, m_typeNamer.mangledNameForType(logicalNotExpression.resolvedType()), ' ', variableName, " = !", operand, ";\n");
     appendRightValue(logicalNotExpression, variableName);
 }
 
@@ -645,17 +698,19 @@ void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArra
     if (is<AST::PointerType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
         auto ptrValue = takeLastValue();
         m_stringBuilder.append(
-            mangledTypeName, ' ', variableName, ";\n",
-            "if (", ptrValue, ") ", variableName, " = { ", ptrValue, ", 1};\n",
-            "else ", variableName, " = { nullptr, 0 };\n"
+            m_indent, mangledTypeName, ' ', variableName, ";\n",
+            m_indent, "if (", ptrValue, ")\n",
+            m_indent, "    ", variableName, " = { ", ptrValue, ", 1};\n",
+            m_indent, "else\n",
+            m_indent, "    ", variableName, " = { nullptr, 0 };\n"
         );
     } else if (is<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
         auto lValue = takeLastLeftValue().value;
         auto& arrayType = downcast<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType());
-        m_stringBuilder.append(mangledTypeName, ' ', variableName, " = { ", lValue, "->data(), ", arrayType.numElements(), " };\n");
+        m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = { ", lValue, "->data(), ", arrayType.numElements(), " };\n");
     } else {
         auto lValue = takeLastLeftValue().value;
-        m_stringBuilder.append(mangledTypeName, ' ', variableName, " = { ", lValue, ", 1 };\n");
+        m_stringBuilder.append(m_indent, mangledTypeName, ' ', variableName, " = { ", lValue, ", 1 };\n");
     }
     appendRightValue(makeArrayReferenceExpression, variableName);
 }
@@ -665,7 +720,7 @@ void FunctionDefinitionWriter::visit(AST::MakePointerExpression& makePointerExpr
     checkErrorAndVisit(makePointerExpression.leftValue());
     auto [pointer, nullability] = takeLastLeftValue();
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(m_typeNamer.mangledNameForType(makePointerExpression.resolvedType()), ' ', variableName, " = ", pointer, ";\n");
+    m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(makePointerExpression.resolvedType()), ' ', variableName, " = ", pointer, ";\n");
     appendRightValueWithNullability(makePointerExpression, variableName, nullability);
 }
 
@@ -685,7 +740,7 @@ void FunctionDefinitionWriter::visit(AST::TernaryExpression& ternaryExpression)
     auto elseBody = takeLastValue();
 
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(m_typeNamer.mangledNameForType(ternaryExpression.resolvedType()), ' ', variableName, " = ", check, " ? ", body, " : ", elseBody, ";\n");
+    m_stringBuilder.append(m_indent, m_typeNamer.mangledNameForType(ternaryExpression.resolvedType()), ' ', variableName, " = ", check, " ? ", body, " : ", elseBody, ";\n");
     appendRightValue(ternaryExpression, variableName);
 }
 
@@ -694,8 +749,9 @@ void FunctionDefinitionWriter::visit(AST::VariableReference& variableReference)
     ASSERT(variableReference.variable());
     auto iterator = m_variableMapping.find(variableReference.variable());
     ASSERT(iterator != m_variableMapping.end());
+
     auto pointerName = generateNextVariableName();
-    m_stringBuilder.append("thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", iterator->value, ";\n");
+    m_stringBuilder.append(m_indent, "thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", iterator->value, ";\n");
     appendLeftValue(variableReference, iterator->value, pointerName, Nullability::NotNull);
 }
 

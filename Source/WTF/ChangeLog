@@ -1,3 +1,22 @@
+2019-08-19  Sam Weinig  <weinig@apple.com>
+
+        [WHLSL] Make generated Metal code should be indented properly to ease reading while debugging
+        https://bugs.webkit.org/show_bug.cgi?id=200870
+
+        Reviewed by Saam Barati.
+
+        Adds simple Indentation class to allow programatic indenting compatible with StringTypeAdapter
+        aware functions/class (e.g. makeString and StringBuilder). Templatized on the number of spaces
+        to indent.
+        
+        Also adds IndentationScope, which uses RAII to increment/decrement the indentation value.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::Indentation::operator++):
+        (WTF::Indentation::operator--):
+        (WTF::IndentationScope::IndentationScope):
+        (WTF::IndentationScope::~IndentationScope):
+
 2019-08-19  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed build fix for macOS 10.14 after r248832.

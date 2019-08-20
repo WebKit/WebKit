@@ -54,17 +54,17 @@ class EntryPointScaffolding {
 public:
     virtual ~EntryPointScaffolding() = default;
 
-    virtual void emitHelperTypes(StringBuilder&) = 0;
-    virtual void emitSignature(StringBuilder&, MangledFunctionName) = 0;
-    virtual void emitUnpack(StringBuilder&) = 0;
-    virtual void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName) = 0;
+    virtual void emitHelperTypes(StringBuilder&, Indentation<4>) = 0;
+    virtual void emitSignature(StringBuilder&, MangledFunctionName, Indentation<4>) = 0;
+    virtual void emitUnpack(StringBuilder&, Indentation<4>) = 0;
+    virtual void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName, Indentation<4>) = 0;
 
     Vector<MangledVariableName>& parameterVariables() { return m_parameterVariables; }
 
 protected:
     EntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&, TypeNamer&, EntryPointItems&, HashMap<Binding*, size_t>& resourceMap, Layout&, std::function<MangledVariableName()>&& generateNextVariableName);
 
-    void emitResourceHelperTypes(StringBuilder&);
+    void emitResourceHelperTypes(StringBuilder&, Indentation<4>);
 
     enum class IncludePrecedingComma {
         Yes,
@@ -75,7 +75,7 @@ protected:
 
     void emitMangledInputPath(StringBuilder&, Vector<String>& path);
     void emitMangledOutputPath(StringBuilder&, Vector<String>& path);
-    void emitUnpackResourcesAndNamedBuiltIns(StringBuilder&);
+    void emitUnpackResourcesAndNamedBuiltIns(StringBuilder&, Indentation<4>);
 
     AST::FunctionDefinition& m_functionDefinition;
     Intrinsics& m_intrinsics;
@@ -118,10 +118,10 @@ public:
     virtual ~VertexEntryPointScaffolding() = default;
 
 private:
-    void emitHelperTypes(StringBuilder&) override;
-    void emitSignature(StringBuilder&, MangledFunctionName) override;
-    void emitUnpack(StringBuilder&) override;
-    void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName) override;
+    void emitHelperTypes(StringBuilder&, Indentation<4>) override;
+    void emitSignature(StringBuilder&, MangledFunctionName, Indentation<4>) override;
+    void emitUnpack(StringBuilder&, Indentation<4>) override;
+    void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName, Indentation<4>) override;
 
     HashMap<VertexAttribute*, size_t>& m_matchedVertexAttributes;
     MangledTypeName m_stageInStructName;
@@ -148,10 +148,10 @@ public:
     virtual ~FragmentEntryPointScaffolding() = default;
 
 private:
-    void emitHelperTypes(StringBuilder&) override;
-    void emitSignature(StringBuilder&, MangledFunctionName) override;
-    void emitUnpack(StringBuilder&) override;
-    void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName) override;
+    void emitHelperTypes(StringBuilder&, Indentation<4>) override;
+    void emitSignature(StringBuilder&, MangledFunctionName, Indentation<4>) override;
+    void emitUnpack(StringBuilder&, Indentation<4>) override;
+    void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName, Indentation<4>) override;
 
     MangledTypeName m_stageInStructName;
     MangledTypeName m_returnStructName;
@@ -177,10 +177,10 @@ public:
     virtual ~ComputeEntryPointScaffolding() = default;
 
 private:
-    void emitHelperTypes(StringBuilder&) override;
-    void emitSignature(StringBuilder&, MangledFunctionName) override;
-    void emitUnpack(StringBuilder&) override;
-    void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName) override;
+    void emitHelperTypes(StringBuilder&, Indentation<4>) override;
+    void emitSignature(StringBuilder&, MangledFunctionName, Indentation<4>) override;
+    void emitUnpack(StringBuilder&, Indentation<4>) override;
+    void emitPack(StringBuilder&, MangledVariableName existingVariableName, MangledVariableName, Indentation<4>) override;
 };
 
 }

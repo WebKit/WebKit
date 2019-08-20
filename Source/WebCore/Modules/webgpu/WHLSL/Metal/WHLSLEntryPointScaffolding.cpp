@@ -139,39 +139,42 @@ EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDe
         m_parameterVariables.uncheckedAppend(m_generateNextVariableName());
 }
 
-void EntryPointScaffolding::emitResourceHelperTypes(StringBuilder& stringBuilder)
+void EntryPointScaffolding::emitResourceHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent)
 {
     for (size_t i = 0; i < m_layout.size(); ++i) {
-        stringBuilder.append("struct ", m_namedBindGroups[i].structName, " {\n");
-        Vector<std::pair<unsigned, String>> structItems;
-        for (size_t j = 0; j < m_layout[i].bindings.size(); ++j) {
-            auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
-            if (iterator == m_resourceMap.end())
-                continue;
-            auto& type = m_entryPointItems.inputs[iterator->value].unnamedType->unifyNode();
-            if (is<AST::UnnamedType>(type) && is<AST::ReferenceType>(downcast<AST::UnnamedType>(type))) {
-                auto& referenceType = downcast<AST::ReferenceType>(downcast<AST::UnnamedType>(type));
-                auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
-                auto addressSpace = toString(referenceType.addressSpace());
-                auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
-                auto index = m_namedBindGroups[i].namedBindings[j].index;
-                structItems.append(std::make_pair(index, makeString(addressSpace, " ", mangledTypeName, "* ", elementName, " [[id(", index, ")]];")));
-                if (auto lengthInformation = m_namedBindGroups[i].namedBindings[j].lengthInformation)
-                    structItems.append(std::make_pair(lengthInformation->index, makeString("uint2 ", lengthInformation->elementName, " [[id(", lengthInformation->index, ")]];")));
-            } else if (is<AST::NamedType>(type) && is<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type))) {
-                auto& namedType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type));
-                auto mangledTypeName = m_typeNamer.mangledNameForType(namedType);
-                auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
-                auto index = m_namedBindGroups[i].namedBindings[j].index;
-                structItems.append(std::make_pair(index, makeString(mangledTypeName, ' ', elementName, " [[id(", index, ")]];")));
+        stringBuilder.append(indent, "struct ", m_namedBindGroups[i].structName, " {\n");
+        {
+            IndentationScope scope(indent);
+            Vector<std::pair<unsigned, String>> structItems;
+            for (size_t j = 0; j < m_layout[i].bindings.size(); ++j) {
+                auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
+                if (iterator == m_resourceMap.end())
+                    continue;
+                auto& type = m_entryPointItems.inputs[iterator->value].unnamedType->unifyNode();
+                if (is<AST::UnnamedType>(type) && is<AST::ReferenceType>(downcast<AST::UnnamedType>(type))) {
+                    auto& referenceType = downcast<AST::ReferenceType>(downcast<AST::UnnamedType>(type));
+                    auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
+                    auto addressSpace = toString(referenceType.addressSpace());
+                    auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
+                    auto index = m_namedBindGroups[i].namedBindings[j].index;
+                    structItems.append(std::make_pair(index, makeString(addressSpace, " ", mangledTypeName, "* ", elementName, " [[id(", index, ")]];")));
+                    if (auto lengthInformation = m_namedBindGroups[i].namedBindings[j].lengthInformation)
+                        structItems.append(std::make_pair(lengthInformation->index, makeString("uint2 ", lengthInformation->elementName, " [[id(", lengthInformation->index, ")]];")));
+                } else if (is<AST::NamedType>(type) && is<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type))) {
+                    auto& namedType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type));
+                    auto mangledTypeName = m_typeNamer.mangledNameForType(namedType);
+                    auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
+                    auto index = m_namedBindGroups[i].namedBindings[j].index;
+                    structItems.append(std::make_pair(index, makeString(mangledTypeName, ' ', elementName, " [[id(", index, ")]];")));
+                }
             }
+            std::sort(structItems.begin(), structItems.end(), [](const std::pair<unsigned, String>& left, const std::pair<unsigned, String>& right) {
+                return left.first < right.first;
+            });
+            for (const auto& structItem : structItems)
+                stringBuilder.append(indent, structItem.second, '\n');
         }
-        std::sort(structItems.begin(), structItems.end(), [](const std::pair<unsigned, String>& left, const std::pair<unsigned, String>& right) {
-            return left.first < right.first;
-        });
-        for (const auto& structItem : structItems)
-            stringBuilder.append("    ", structItem.second, '\n');
-        stringBuilder.append("};\n\n");
+        stringBuilder.append(indent, "};\n\n");
     }
 }
 
@@ -305,10 +308,10 @@ void EntryPointScaffolding::emitMangledOutputPath(StringBuilder& stringBuilder, 
     }
 }
 
-void EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns(StringBuilder& stringBuilder)
+void EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns(StringBuilder& stringBuilder, Indentation<4> indent)
 {
     for (size_t i = 0; i < m_functionDefinition.parameters().size(); ++i)
-        stringBuilder.append(m_typeNamer.mangledNameForType(*m_functionDefinition.parameters()[i]->type()), ' ', m_parameterVariables[i], ";\n");
+        stringBuilder.append(indent, m_typeNamer.mangledNameForType(*m_functionDefinition.parameters()[i]->type()), ' ', m_parameterVariables[i], ";\n");
 
     for (size_t i = 0; i < m_layout.size(); ++i) {
         auto variableName = m_namedBindGroups[i].variableName;
@@ -326,13 +329,15 @@ void EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns(StringBuilder& s
                 auto mangledTypeName = m_typeNamer.mangledNameForType(downcast<AST::ReferenceType>(unnamedType).elementType());
 
                 stringBuilder.append(
-                    "size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".y;\n",
-                    lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n",
-                    lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".x;\n",
-                    lengthTemporaryName, " = ", lengthTemporaryName, " / sizeof(", mangledTypeName, ");\n",
-                    "if (", lengthTemporaryName, " > 0xFFFFFFFF) ", lengthTemporaryName, " = 0xFFFFFFFF;\n"
+                    indent, "size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".y;\n",
+                    indent, lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n",
+                    indent, lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".x;\n",
+                    indent, lengthTemporaryName, " = ", lengthTemporaryName, " / sizeof(", mangledTypeName, ");\n",
+                    indent, "if (", lengthTemporaryName, " > 0xFFFFFFFF)\n",
+                    indent, "    ", lengthTemporaryName, " = 0xFFFFFFFF;\n"
                 );
-                    
+
+                stringBuilder.append(indent);
                 emitMangledInputPath(stringBuilder, path);
                 stringBuilder.append(
                     " = { ", variableName, '.', elementName, ", static_cast<uint32_t>(", lengthTemporaryName, ") };\n"
@@ -341,6 +346,7 @@ void EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns(StringBuilder& s
                 auto& path = m_entryPointItems.inputs[iterator->value].path;
                 auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
                 
+                stringBuilder.append(indent);
                 emitMangledInputPath(stringBuilder, path);
                 stringBuilder.append(" = ", variableName, '.', elementName, ";\n");
             }
@@ -353,6 +359,7 @@ void EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns(StringBuilder& s
         auto& variableName = namedBuiltIn.variableName;
         auto mangledTypeName = m_typeNamer.mangledNameForType(*item.unnamedType);
 
+        stringBuilder.append(indent);
         emitMangledInputPath(stringBuilder, path);
         stringBuilder.append(" = ", mangledTypeName, '(', variableName, ");\n");
     }
@@ -390,66 +397,72 @@ VertexEntryPointScaffolding::VertexEntryPointScaffolding(AST::FunctionDefinition
     }
 }
 
-void VertexEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder)
+void VertexEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    stringBuilder.append("struct ", m_stageInStructName, " {\n");
-    for (auto& namedStageIn : m_namedStageIns) {
-        auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
-        auto elementName = namedStageIn.elementName;
-        auto attributeIndex = namedStageIn.attributeIndex;
-        stringBuilder.append("    ", mangledTypeName, ' ', elementName, " [[attribute(", attributeIndex, ")]];\n");
+    stringBuilder.append(indent, "struct ", m_stageInStructName, " {\n");
+    {
+        IndentationScope scope(indent);
+        for (auto& namedStageIn : m_namedStageIns) {
+            auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
+            auto elementName = namedStageIn.elementName;
+            auto attributeIndex = namedStageIn.attributeIndex;
+            stringBuilder.append(indent, mangledTypeName, ' ', elementName, " [[attribute(", attributeIndex, ")]];\n");
+        }
     }
     stringBuilder.append(
-        "};\n\n"
-        "struct ", m_returnStructName, " {\n"
+        indent, "};\n\n",
+        indent, "struct ", m_returnStructName, " {\n"
     );
-    for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
-        auto& outputItem = m_entryPointItems.outputs[i];
-        auto& internalTypeName = m_namedOutputs[i].internalTypeName;
-        auto elementName = m_namedOutputs[i].elementName;
-        auto attribute = attributeForSemantic(*outputItem.semantic);
-        stringBuilder.append("    ", internalTypeName, ' ', elementName, ' ', attribute, ";\n");
+    {
+        IndentationScope scope(indent);
+        for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
+            auto& outputItem = m_entryPointItems.outputs[i];
+            auto& internalTypeName = m_namedOutputs[i].internalTypeName;
+            auto elementName = m_namedOutputs[i].elementName;
+            auto attribute = attributeForSemantic(*outputItem.semantic);
+            stringBuilder.append(indent, internalTypeName, ' ', elementName, ' ', attribute, ";\n");
+        }
     }
-    stringBuilder.append(
-        "};\n\n"
-    );
+    stringBuilder.append(indent, "};\n\n");
     
-    emitResourceHelperTypes(stringBuilder);
+    emitResourceHelperTypes(stringBuilder, indent);
 }
 
-void VertexEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName)
+void VertexEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName, Indentation<4> indent)
 {
-    stringBuilder.append("vertex ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]");
+    stringBuilder.append(indent, "vertex ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]");
     emitResourceSignature(stringBuilder, IncludePrecedingComma::Yes);
     emitBuiltInsSignature(stringBuilder, IncludePrecedingComma::Yes);
-    stringBuilder.append(')');
+    stringBuilder.append(")\n");
 }
 
-void VertexEntryPointScaffolding::emitUnpack(StringBuilder& stringBuilder)
+void VertexEntryPointScaffolding::emitUnpack(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    emitUnpackResourcesAndNamedBuiltIns(stringBuilder);
+    emitUnpackResourcesAndNamedBuiltIns(stringBuilder, indent);
 
     for (auto& namedStageIn : m_namedStageIns) {
         auto& path = m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].path;
         auto& elementName = namedStageIn.elementName;
+        
+        stringBuilder.append(indent);
         emitMangledInputPath(stringBuilder, path);
         stringBuilder.append(" = ", m_stageInParameterName, '.', elementName, ";\n");
     }
 }
 
-void VertexEntryPointScaffolding::emitPack(StringBuilder& stringBuilder, MangledVariableName inputVariableName, MangledVariableName outputVariableName)
+void VertexEntryPointScaffolding::emitPack(StringBuilder& stringBuilder, MangledVariableName inputVariableName, MangledVariableName outputVariableName, Indentation<4> indent)
 {
-    stringBuilder.append(m_returnStructName, ' ', outputVariableName, ";\n");
+    stringBuilder.append(indent, m_returnStructName, ' ', outputVariableName, ";\n");
     if (m_entryPointItems.outputs.size() == 1 && !m_entryPointItems.outputs[0].path.size()) {
         auto& elementName = m_namedOutputs[0].elementName;
-        stringBuilder.append(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n");
+        stringBuilder.append(indent, outputVariableName, '.', elementName, " = ", inputVariableName, ";\n");
         return;
     }
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& elementName = m_namedOutputs[i].elementName;
         auto& internalTypeName = m_namedOutputs[i].internalTypeName;
         auto& path = m_entryPointItems.outputs[i].path;
-        stringBuilder.append(outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName);
+        stringBuilder.append(indent, outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName);
         emitMangledOutputPath(stringBuilder, path);
         stringBuilder.append(");\n");
     }
@@ -489,66 +502,72 @@ FragmentEntryPointScaffolding::FragmentEntryPointScaffolding(AST::FunctionDefini
     }
 }
 
-void FragmentEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder)
+void FragmentEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    stringBuilder.append("struct ", m_stageInStructName, " {\n");
-    for (auto& namedStageIn : m_namedStageIns) {
-        auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
-        auto elementName = namedStageIn.elementName;
-        auto attributeIndex = namedStageIn.attributeIndex;
-        stringBuilder.append("    ", mangledTypeName, ' ', elementName, " [[user(user", attributeIndex, ")]];\n");
+    stringBuilder.append(indent, "struct ", m_stageInStructName, " {\n");
+    {
+        IndentationScope scope(indent);
+        for (auto& namedStageIn : m_namedStageIns) {
+            auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
+            auto elementName = namedStageIn.elementName;
+            auto attributeIndex = namedStageIn.attributeIndex;
+            stringBuilder.append(indent, mangledTypeName, ' ', elementName, " [[user(user", attributeIndex, ")]];\n");
+        }
     }
     stringBuilder.append(
-        "};\n\n"
-        "struct ", m_returnStructName, " {\n"
+        indent, "};\n\n",
+        indent, "struct ", m_returnStructName, " {\n"
     );
-    for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
-        auto& outputItem = m_entryPointItems.outputs[i];
-        auto& internalTypeName = m_namedOutputs[i].internalTypeName;
-        auto elementName = m_namedOutputs[i].elementName;
-        auto attribute = attributeForSemantic(*outputItem.semantic);
-        stringBuilder.append("    ", internalTypeName, ' ', elementName, ' ', attribute, ";\n");
+    {
+        IndentationScope scope(indent);
+        for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
+            auto& outputItem = m_entryPointItems.outputs[i];
+            auto& internalTypeName = m_namedOutputs[i].internalTypeName;
+            auto elementName = m_namedOutputs[i].elementName;
+            auto attribute = attributeForSemantic(*outputItem.semantic);
+            stringBuilder.append(indent, internalTypeName, ' ', elementName, ' ', attribute, ";\n");
+        }
     }
-    stringBuilder.append(
-        "};\n\n"
-    );
+    stringBuilder.append(indent, "};\n\n");
 
-    emitResourceHelperTypes(stringBuilder);
+    emitResourceHelperTypes(stringBuilder, indent);
 }
 
-void FragmentEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName)
+void FragmentEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName, Indentation<4> indent)
 {
-    stringBuilder.append("fragment ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]");
+    stringBuilder.append(indent, "fragment ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]");
     emitResourceSignature(stringBuilder, IncludePrecedingComma::Yes);
     emitBuiltInsSignature(stringBuilder, IncludePrecedingComma::Yes);
-    stringBuilder.append(')');
+    stringBuilder.append(")\n");
 }
 
-void FragmentEntryPointScaffolding::emitUnpack(StringBuilder& stringBuilder)
+void FragmentEntryPointScaffolding::emitUnpack(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    emitUnpackResourcesAndNamedBuiltIns(stringBuilder);
+    emitUnpackResourcesAndNamedBuiltIns(stringBuilder, indent);
 
     for (auto& namedStageIn : m_namedStageIns) {
         auto& path = m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].path;
         auto& elementName = namedStageIn.elementName;
+
+        stringBuilder.append(indent);
         emitMangledInputPath(stringBuilder, path);
         stringBuilder.append(" = ", m_stageInParameterName, '.', elementName, ";\n");
     }
 }
 
-void FragmentEntryPointScaffolding::emitPack(StringBuilder& stringBuilder, MangledVariableName inputVariableName, MangledVariableName outputVariableName)
+void FragmentEntryPointScaffolding::emitPack(StringBuilder& stringBuilder, MangledVariableName inputVariableName, MangledVariableName outputVariableName, Indentation<4> indent)
 {
-    stringBuilder.append(m_returnStructName, ' ', outputVariableName, ";\n");
+    stringBuilder.append(indent, m_returnStructName, ' ', outputVariableName, ";\n");
     if (m_entryPointItems.outputs.size() == 1 && !m_entryPointItems.outputs[0].path.size()) {
         auto& elementName = m_namedOutputs[0].elementName;
-        stringBuilder.append(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n");
+        stringBuilder.append(indent, outputVariableName, '.', elementName, " = ", inputVariableName, ";\n");
         return;
     }
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& elementName = m_namedOutputs[i].elementName;
         auto& internalTypeName = m_namedOutputs[i].internalTypeName;
         auto& path = m_entryPointItems.outputs[i].path;
-        stringBuilder.append(outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName);
+        stringBuilder.append(indent, outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName);
         emitMangledOutputPath(stringBuilder, path);
         stringBuilder.append(");\n");
     }
@@ -559,25 +578,25 @@ ComputeEntryPointScaffolding::ComputeEntryPointScaffolding(AST::FunctionDefiniti
 {
 }
 
-void ComputeEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder)
+void ComputeEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    emitResourceHelperTypes(stringBuilder);
+    emitResourceHelperTypes(stringBuilder, indent);
 }
 
-void ComputeEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName)
+void ComputeEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName, Indentation<4> indent)
 {
-    stringBuilder.append("kernel void ", functionName, '(');
+    stringBuilder.append(indent, "kernel void ", functionName, '(');
     bool addedToSignature = emitResourceSignature(stringBuilder, IncludePrecedingComma::No);
     emitBuiltInsSignature(stringBuilder, addedToSignature ? IncludePrecedingComma::Yes : IncludePrecedingComma::No);
-    stringBuilder.append(')');
+    stringBuilder.append(")\n");
 }
 
-void ComputeEntryPointScaffolding::emitUnpack(StringBuilder& stringBuilder)
+void ComputeEntryPointScaffolding::emitUnpack(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    emitUnpackResourcesAndNamedBuiltIns(stringBuilder);
+    emitUnpackResourcesAndNamedBuiltIns(stringBuilder, indent);
 }
 
-void ComputeEntryPointScaffolding::emitPack(StringBuilder&, MangledVariableName, MangledVariableName)
+void ComputeEntryPointScaffolding::emitPack(StringBuilder&, MangledVariableName, MangledVariableName, Indentation<4>)
 {
     ASSERT_NOT_REACHED();
 }
