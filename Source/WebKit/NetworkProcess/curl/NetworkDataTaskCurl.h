@@ -45,8 +45,8 @@ public:
 
     ~NetworkDataTaskCurl();
 
-    void ref() override { RefCounted<NetworkDataTask>::ref(); }
-    void deref() override { RefCounted<NetworkDataTask>::deref(); }
+    void ref() override { NetworkDataTask::ref(); }
+    void deref() override { NetworkDataTask::deref(); }
 
 private:
     enum class RequestStatus {

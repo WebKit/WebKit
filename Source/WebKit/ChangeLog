@@ -1,3 +1,14 @@
+2019-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for WinCairo port.
+
+        The base class of NetworkDataTask has been changed in r248874.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+        (ref):
+        (deref):
+        Call 'ref' and 'deref' of NetworkDataTask instead of RefCounted<NetworkDataTask>.
+
 2019-08-19  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix for security entitlements.
