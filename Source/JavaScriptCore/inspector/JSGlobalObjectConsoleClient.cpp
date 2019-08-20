@@ -68,6 +68,11 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
     String message;
     arguments->getFirstArgumentAsString(message);
     m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTFMove(arguments), exec));
+
+    if (type == MessageType::Assert) {
+        if (m_debuggerAgent)
+            m_debuggerAgent->handleConsoleAssert(message);
+    }
 }
 
 void JSGlobalObjectConsoleClient::count(ExecState* exec, const String& label)
