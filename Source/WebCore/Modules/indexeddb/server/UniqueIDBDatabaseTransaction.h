@@ -53,7 +53,7 @@ namespace IDBServer {
 class IDBServer;
 class UniqueIDBDatabaseConnection;
 
-class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransaction> {
+class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransaction>, public CanMakeWeakPtr<UniqueIDBDatabaseTransaction> {
 public:
     enum class State { Running, Aborting, Committing, Aborted, Committed };
 

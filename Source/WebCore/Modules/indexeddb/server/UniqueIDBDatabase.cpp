@@ -802,12 +802,16 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     LOG(IndexedDB, "(main) UniqueIDBDatabase::createObjectStore");
 
     auto taskSize = defaultWriteOperationCost + estimateSize(info);
-    requestSpace(taskSize, "createObjectStore", [this, taskSize, transaction = makeRef(transaction), info, callback = WTFMove(callback)](auto error) mutable {
+    requestSpace(taskSize, "createObjectStore", [this, taskSize, transaction = makeWeakPtr(transaction), info, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->createObjectStoreAfterQuotaCheck(taskSize, transaction.get(), info, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->createObjectStoreAfterQuotaCheck(taskSize, *transaction, info, WTFMove(callback));
     });
 }
 
@@ -848,12 +852,16 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteObjectStore");
 
-    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), objectStoreName, callback = WTFMove(callback)](auto error) mutable {
+    waitForRequestSpaceCompletion([this, transaction = makeWeakPtr(transaction), objectStoreName, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->deleteObjectStoreAfterQuotaCheck(transaction, objectStoreName, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->deleteObjectStoreAfterQuotaCheck(*transaction, objectStoreName, WTFMove(callback));
     });
 }
 
@@ -901,12 +909,16 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
     LOG(IndexedDB, "(main) UniqueIDBDatabase::renameObjectStore");
 
     auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
-    requestSpace(taskSize, "renameObjectStore", [this, taskSize, transaction = makeRef(transaction), objectStoreIdentifier, newName, callback = WTFMove(callback)](auto error) mutable {
+    requestSpace(taskSize, "renameObjectStore", [this, taskSize, transaction = makeWeakPtr(transaction), objectStoreIdentifier, newName, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->renameObjectStoreAfterQuotaCheck(taskSize, transaction.get(), objectStoreIdentifier, newName, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->renameObjectStoreAfterQuotaCheck(taskSize, *transaction, objectStoreIdentifier, newName, WTFMove(callback));
     });
 }
 
@@ -953,12 +965,16 @@ void UniqueIDBDatabase::clearObjectStore(UniqueIDBDatabaseTransaction& transacti
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::clearObjectStore");
 
-    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), objectStoreIdentifier, callback = WTFMove(callback)](auto error) mutable {
+    waitForRequestSpaceCompletion([this, transaction = makeWeakPtr(transaction), objectStoreIdentifier, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->clearObjectStoreAfetQuotaCheck(transaction, objectStoreIdentifier, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->clearObjectStoreAfetQuotaCheck(*transaction, objectStoreIdentifier, WTFMove(callback));
     });
 }
 
@@ -996,12 +1012,16 @@ void UniqueIDBDatabase::createIndex(UniqueIDBDatabaseTransaction& transaction, c
     LOG(IndexedDB, "(main) UniqueIDBDatabase::createIndex");
 
     auto taskSize = defaultWriteOperationCost + estimateSize(info);
-    requestSpace(taskSize, "createIndex", [this, taskSize, transaction = makeRef(transaction), info, callback = WTFMove(callback)](auto error) mutable {
+    requestSpace(taskSize, "createIndex", [this, taskSize, transaction = makeWeakPtr(transaction), info, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->createIndexAfterQuotaCheck(taskSize, transaction.get(), info, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->createIndexAfterQuotaCheck(taskSize, *transaction, info, WTFMove(callback));
     });
 }
 
@@ -1051,12 +1071,16 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, u
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteIndex");
 
-    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), objectStoreIdentifier, indexName, callback = WTFMove(callback)](auto error) mutable {
+    waitForRequestSpaceCompletion([this, transaction = makeWeakPtr(transaction), objectStoreIdentifier, indexName, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->deleteIndexAfterQuotaCheck(transaction, objectStoreIdentifier, indexName, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->deleteIndexAfterQuotaCheck(*transaction, objectStoreIdentifier, indexName, WTFMove(callback));
     });
 }
 
@@ -1113,12 +1137,16 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, u
     LOG(IndexedDB, "(main) UniqueIDBDatabase::renameIndex");
 
     auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
-    requestSpace(taskSize, "renameIndex", [this, taskSize, transaction = makeRef(transaction), objectStoreIdentifier, indexIdentifier, newName, callback = WTFMove(callback)](auto error) mutable {
+    requestSpace(taskSize, "renameIndex", [this, taskSize, transaction = makeWeakPtr(transaction), objectStoreIdentifier, indexIdentifier, newName, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->renameIndexAfterQuotaCheck(taskSize, transaction.get(), objectStoreIdentifier, indexIdentifier, newName, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->renameIndexAfterQuotaCheck(taskSize, *transaction, objectStoreIdentifier, indexIdentifier, newName, WTFMove(callback));
     });
 }
 
@@ -1591,12 +1619,16 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
 
     ASSERT(transaction.databaseConnection().database() == this);
 
-    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), callback = WTFMove(callback)](auto error) mutable {
+    waitForRequestSpaceCompletion([this, transaction = makeWeakPtr(transaction), callback = WTFMove(callback)](auto error) mutable {
         if (error) {
             callback(WTFMove(*error));
             return;
         }
-        this->commitTransactionAfterQuotaCheck(transaction, WTFMove(callback));
+        if (!transaction) {
+            callback(IDBError { UnknownError });
+            return;
+        }
+        this->commitTransactionAfterQuotaCheck(*transaction, WTFMove(callback));
     });
 }
 
@@ -1663,12 +1695,16 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
     ASSERT(transaction.databaseConnection().database() == this);
 
     if (waitForPendingTasks == WaitForPendingTasks::Yes) {
-        waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), callback = WTFMove(callback)](auto&& error) mutable {
+        waitForRequestSpaceCompletion([this, transaction = makeWeakPtr(transaction), callback = WTFMove(callback)](auto&& error) mutable {
             if (error) {
                 callback(WTFMove(*error));
                 return;
             }
-            this->abortTransaction(transaction, WaitForPendingTasks::No, WTFMove(callback));
+            if (!transaction) {
+                callback(IDBError { UnknownError });
+                return;
+            }
+            this->abortTransaction(*transaction, WaitForPendingTasks::No, WTFMove(callback));
         });
         return;
     }
