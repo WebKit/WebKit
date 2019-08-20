@@ -94,12 +94,9 @@ WI.ResourceDetailsSection = class ResourceDetailsSection
             // Don't include a colon if no value.
             keyElement.textContent = key + (value ? ": " : "");
 
-            let valueElement = p.appendChild(document.createElement("span"));
+            let valueElement = p.appendChild(document.createElement("bdi"));
             valueElement.className = "value";
-            if (value instanceof Node)
-                valueElement.appendChild(value);
-            else
-                valueElement.textContent = value;
+            valueElement.append(value || "");
         }
 
         return p;
