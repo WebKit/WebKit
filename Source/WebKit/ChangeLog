@@ -1,5 +1,14 @@
 2019-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [CMake] WebKit2.dll can't link because of missing PAL's import symbols for WinCairo port
+        https://bugs.webkit.org/show_bug.cgi?id=200910
+
+        Unreviewed build fix for Windows port.
+
+        * CMakeLists.txt: Added -DSTATICALLY_LINKED_WITH_PAL=1 if PAL_LIBRARY_TYPE is STATIC.
+
+2019-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Unreviewed build fix for WinCairo port.
 
         The base class of NetworkDataTask has been changed in r248874.
