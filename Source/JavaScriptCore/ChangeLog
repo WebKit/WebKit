@@ -1,3 +1,59 @@
+2019-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Array.prototype.toString should not get "join" function each time
+        https://bugs.webkit.org/show_bug.cgi?id=200905
+
+        Reviewed by Mark Lam.
+
+        We avoid looking up `join` every time Array#toString is called. This patch implements the most profitable and easy
+        case first as we are doing optimization for Array#slice: non-modified original Array. Configuring watchpoint for
+        Array.prototype.join change and use this information and structure information to determine whether `join` lookup
+        in Array.prototype.toString is unnecessary. This improves JetStream2/3d-raytrace-SP score by 1.6%
+
+            ToT:     363.56
+            Patched: 369.26
+
+        This patch also renames InlineWatchpointSet fields from Watchpoint to WatchpointSet since they are not Watchpoint.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isWatchingArrayIteratorProtocolWatchpoint):
+        (JSC::DFG::Graph::isWatchingNumberToStringWatchpoint):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesWatchpointIsValid):
+        (JSC::canUseDefaultArrayJoinForToString):
+        (JSC::arrayProtoFuncToString):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::tryInstallArraySpeciesWatchpoint):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::mapIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::setIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::stringIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::mapSetWatchpointSet):
+        (JSC::JSGlobalObject::setAddWatchpointSet):
+        (JSC::JSGlobalObject::arraySpeciesWatchpointSet):
+        (JSC::JSGlobalObject::arrayJoinWatchpointSet):
+        (JSC::JSGlobalObject::numberToStringWatchpointSet):
+        (JSC::JSGlobalObject::arrayIteratorProtocolWatchpoint): Deleted.
+        (JSC::JSGlobalObject::mapIteratorProtocolWatchpoint): Deleted.
+        (JSC::JSGlobalObject::setIteratorProtocolWatchpoint): Deleted.
+        (JSC::JSGlobalObject::stringIteratorProtocolWatchpoint): Deleted.
+        (JSC::JSGlobalObject::mapSetWatchpoint): Deleted.
+        (JSC::JSGlobalObject::setAddWatchpoint): Deleted.
+        (JSC::JSGlobalObject::arraySpeciesWatchpoint): Deleted.
+        (JSC::JSGlobalObject::numberToStringWatchpoint): Deleted.
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isMapPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isSetPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isStringPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isMapPrototypeSetFastAndNonObservable):
+        (JSC::JSGlobalObject::isSetPrototypeAddFastAndNonObservable):
+
 2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Support for JavaScript BigInt

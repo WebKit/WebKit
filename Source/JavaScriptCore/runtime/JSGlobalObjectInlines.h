@@ -62,7 +62,7 @@ ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObs
     // carefully set up watchpoints to have correct ordering while JS code is
     // executing concurrently.
 
-    return arrayIteratorProtocolWatchpoint().isStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
+    return arrayIteratorProtocolWatchpointSet().isStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
 }
 
 // We're non-observable if the iteration protocol hasn't changed.
@@ -73,27 +73,27 @@ ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObs
 // executing concurrently.
 ALWAYS_INLINE bool JSGlobalObject::isMapPrototypeIteratorProtocolFastAndNonObservable()
 {
-    return mapIteratorProtocolWatchpoint().isStillValid();
+    return mapIteratorProtocolWatchpointSet().isStillValid();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isSetPrototypeIteratorProtocolFastAndNonObservable()
 {
-    return setIteratorProtocolWatchpoint().isStillValid();
+    return setIteratorProtocolWatchpointSet().isStillValid();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isStringPrototypeIteratorProtocolFastAndNonObservable()
 {
-    return stringIteratorProtocolWatchpoint().isStillValid();
+    return stringIteratorProtocolWatchpointSet().isStillValid();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isMapPrototypeSetFastAndNonObservable()
 {
-    return mapSetWatchpoint().isStillValid();
+    return mapSetWatchpointSet().isStillValid();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isSetPrototypeAddFastAndNonObservable()
 {
-    return setAddWatchpoint().isStillValid();
+    return setAddWatchpointSet().isStillValid();
 }
 
 } // namespace JSC

@@ -196,15 +196,15 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(ExecState* exec, JSObject* thisObjec
     JSGlobalObject* globalObject = thisObject->globalObject(vm);
     ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
 
-    if (globalObject->arraySpeciesWatchpoint().stateOnJSThread() == ClearWatchpoint) {
+    if (globalObject->arraySpeciesWatchpointSet().stateOnJSThread() == ClearWatchpoint) {
         dataLogLnIf(ArrayPrototypeInternal::verbose, "Initializing Array species watchpoints for Array.prototype: ", pointerDump(arrayPrototype), " with structure: ", pointerDump(arrayPrototype->structure(vm)), "\nand Array: ", pointerDump(globalObject->arrayConstructor()), " with structure: ", pointerDump(globalObject->arrayConstructor()->structure(vm)));
         globalObject->tryInstallArraySpeciesWatchpoint(exec);
-        ASSERT(globalObject->arraySpeciesWatchpoint().stateOnJSThread() != ClearWatchpoint);
+        ASSERT(globalObject->arraySpeciesWatchpointSet().stateOnJSThread() != ClearWatchpoint);
     }
 
     return !thisObject->hasCustomProperties(vm)
         && arrayPrototype == thisObject->getPrototypeDirect(vm)
-        && globalObject->arraySpeciesWatchpoint().stateOnJSThread() == IsWatched;
+        && globalObject->arraySpeciesWatchpointSet().stateOnJSThread() == IsWatched;
 }
 
 enum class SpeciesConstructResult {
@@ -576,6 +576,21 @@ generalCase:
     RELEASE_AND_RETURN(scope, joiner.join(state));
 }
 
+inline bool canUseDefaultArrayJoinForToString(VM& vm, JSObject* thisObject)
+{
+    JSGlobalObject* globalObject = thisObject->globalObject();
+
+    if (globalObject->arrayJoinWatchpointSet().stateOnJSThread() != IsWatched)
+        return false;
+
+    Structure* structure = thisObject->structure(vm);
+
+    // This is the fast case. Many arrays will be an original array.
+    // We are doing very simple check here. If we do more complicated checks like looking into getDirect "join" of thisObject,
+    // it would be possible that just looking into "join" function will show the same performance.
+    return globalObject->isOriginalArrayStructure(structure);
+}
+
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -585,26 +600,28 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     // 1. Let array be the result of calling ToObject on the this value.
     JSObject* thisObject = thisValue.toObject(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
-    JSValue function = JSValue(thisObject).get(exec, vm.propertyNames->join);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
-    bool customJoinCase = false;
-    if (!function.isCell())
-        customJoinCase = true;
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None)
-        customJoinCase = true;
+    if (!canUseDefaultArrayJoinForToString(vm, thisObject)) {
+        // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
+        JSValue function = JSValue(thisObject).get(exec, vm.propertyNames->join);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (UNLIKELY(customJoinCase))
-        RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(vm)->className(thisObject, vm), "]")));
+        // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
+        bool customJoinCase = false;
+        if (!function.isCell())
+            customJoinCase = true;
+        CallData callData;
+        CallType callType = getCallData(vm, function, callData);
+        if (callType == CallType::None)
+            customJoinCase = true;
 
-    // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
-    if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
-        RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, function, callType, callData, thisObject, *vm.emptyList)));
+        if (UNLIKELY(customJoinCase))
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(vm)->className(thisObject, vm), "]")));
+
+        // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
+        if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
+            RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, function, callType, callData, thisObject, *vm.emptyList)));
+    }
 
     ASSERT(isJSArray(thisValue));
     JSArray* thisArray = asArray(thisValue);

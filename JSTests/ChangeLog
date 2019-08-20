@@ -1,3 +1,18 @@
+2019-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Array.prototype.toString should not get "join" function each time
+        https://bugs.webkit.org/show_bug.cgi?id=200905
+
+        Reviewed by Mark Lam.
+
+        * stress/array-prototype-join-change.js: Added.
+        (shouldBe):
+        (array2.join):
+        (DerivedArray):
+        (DerivedArray.prototype.join):
+        (array3.__proto__.join):
+        (Array.prototype.join):
+
 2019-08-20  Justin Michaud  <justin_michaud@apple.com>
 
         Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value
