@@ -82,17 +82,13 @@ private:
     void mediaStreamIsReady(Ref<MediaStream>&&);
     void mediaStreamDidFail(RealtimeMediaSource::Type);
 
-    class PendingActivationMediaStream : public RefCounted<PendingActivationMediaStream>, private MediaStreamPrivate::Observer {
+    class PendingActivationMediaStream : private MediaStreamPrivate::Observer {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
-        static Ref<PendingActivationMediaStream> create(Ref<PendingActivity<UserMediaRequest>>&& protectingUserMediaRequest, UserMediaRequest& userMediaRequest, Ref<MediaStream>&& stream, CompletionHandler<void()>&& completionHandler)
-        {
-            return adoptRef(*new PendingActivationMediaStream { WTFMove(protectingUserMediaRequest), userMediaRequest, WTFMove(stream), WTFMove(completionHandler) });
-        }
+        PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&&, UserMediaRequest&, Ref<MediaStream>&&, CompletionHandler<void()>&&);
         ~PendingActivationMediaStream();
 
     private:
-        PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&&, UserMediaRequest&, Ref<MediaStream>&&, CompletionHandler<void()>&&);
-
         void characteristicsChanged() final;
 
         Ref<PendingActivity<UserMediaRequest>> m_protectingUserMediaRequest;
@@ -105,7 +101,7 @@ private:
     Vector<String> m_audioDeviceUIDs;
 
     DOMPromiseDeferred<IDLInterface<MediaStream>> m_promise;
-    RefPtr<PendingActivationMediaStream> m_pendingActivationMediaStream;
+    std::unique_ptr<PendingActivationMediaStream> m_pendingActivationMediaStream;
     MediaStreamRequest m_request;
 };
 

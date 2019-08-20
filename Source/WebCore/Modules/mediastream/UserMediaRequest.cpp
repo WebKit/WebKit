@@ -240,7 +240,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
         }
 
         scopeExit.release();
-        m_pendingActivationMediaStream = PendingActivationMediaStream::create(WTFMove(protector), *this, WTFMove(stream), WTFMove(completionHandler));
+        m_pendingActivationMediaStream = makeUnique<PendingActivationMediaStream>(WTFMove(protector), *this, WTFMove(stream), WTFMove(completionHandler));
     };
 
     auto& document = downcast<Document>(*scriptExecutionContext());
@@ -395,8 +395,7 @@ void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
         break;
     }
     m_promise.reject(NotReadableError, makeString("Failed starting capture of a "_s, typeDescription, " track"_s));
-    // We are in an observer iterator loop, we do not want to change the observers within this loop.
-    callOnMainThread([stream = WTFMove(m_pendingActivationMediaStream)] { });
+    m_pendingActivationMediaStream = nullptr;
 }
 
 } // namespace WebCore
