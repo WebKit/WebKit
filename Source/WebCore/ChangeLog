@@ -1,3 +1,24 @@
+2019-08-20  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Only take the pointer of a variable or global variable reference if it is used
+        https://bugs.webkit.org/show_bug.cgi?id=200908
+
+        Reviewed by Dean Jackson.
+
+        Previously, we would always emit Metal code to produce an lvalue pointer
+        even when it wasn't used. This patch adds a mechanism to lazily generate
+        such pointers when they're actually needed, since we often don't use them.
+        This is a 7% Metal compile time speedup on compute_boids with a p value of
+        0.0001.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValueWithNullability):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/Metal/WHLSLMangledNames.h:
+        (WebCore::WHLSL::Metal::MangledVariableName::operator bool const):
+
 2019-08-20  Chris Dumez  <cdumez@apple.com>
 
         Unsafe usage of CookieStorageObserver from a background thread

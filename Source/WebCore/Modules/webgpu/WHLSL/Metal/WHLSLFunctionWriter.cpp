@@ -138,9 +138,10 @@ protected:
 
     struct StackItem {
         MangledVariableName value;
-        Optional<MangledVariableName> leftValue;
+        MangledVariableName leftValue;
         Nullability valueNullability;
         Nullability leftValueNullability;
+        std::function<MangledVariableName()> generateLeftValue;
     };
 
     struct StackValue {
@@ -155,7 +156,7 @@ protected:
     // a non-null lvalue.
     void appendRightValueWithNullability(AST::Expression&, MangledVariableName value, Nullability nullability)
     {
-        m_stack.append({ WTFMove(value), WTF::nullopt, nullability, Nullability::CanBeNull });
+        m_stack.append({ WTFMove(value), { }, nullability, Nullability::CanBeNull, { } });
     }
 
     void appendRightValue(AST::Expression& expression, MangledVariableName value)
@@ -163,10 +164,11 @@ protected:
         appendRightValueWithNullability(expression, WTFMove(value), Nullability::CanBeNull);
     }
 
-    void appendLeftValue(AST::Expression& expression, MangledVariableName value, MangledVariableName leftValue, Nullability nullability)
+    void appendLeftValue(AST::Expression& expression, MangledVariableName value, MangledVariableName leftValue, Nullability nullability, std::function<MangledVariableName()> generateLeftValue = { })
     {
         ASSERT_UNUSED(expression, expression.typeAnnotation().leftAddressSpace());
-        m_stack.append({ WTFMove(value), WTFMove(leftValue), Nullability::CanBeNull, nullability });
+        ASSERT(leftValue || generateLeftValue);
+        m_stack.append({ WTFMove(value), WTFMove(leftValue), Nullability::CanBeNull, nullability, WTFMove(generateLeftValue) });
     }
 
     MangledVariableName takeLastValue()
@@ -182,9 +184,10 @@ protected:
 
     StackValue takeLastLeftValue()
     {
-        ASSERT(m_stack.last().leftValue);
         auto last = m_stack.takeLast();
-        return { *last.leftValue, last.leftValueNullability };
+        if (!last.leftValue)
+            last.leftValue = last.generateLeftValue();
+        return { last.leftValue, last.leftValueNullability };
     }
 
     enum class BreakContext {
@@ -522,14 +525,24 @@ void FunctionDefinitionWriter::visit(AST::DotExpression& dotExpression)
 void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariableReference)
 {
     auto valueName = generateNextVariableName();
-    auto pointerName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(globalVariableReference.resolvedType());
+    MangledTypeName mangledTypeName = m_typeNamer.mangledNameForType(globalVariableReference.resolvedType());
+
     checkErrorAndVisit(globalVariableReference.base());
+    MangledVariableName structVariable = takeLastValue();
+
+    MangledStructureElementName mangledFieldName = m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField());
+
     m_stringBuilder.append(
-        m_indent, "thread ", mangledTypeName, "* ", pointerName, " = &", takeLastValue(), "->", m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField()), ";\n",
-        m_indent, mangledTypeName, ' ', valueName, " = ", "*", pointerName, ";\n"
-    );
-    appendLeftValue(globalVariableReference, valueName, pointerName, Nullability::NotNull);
+        m_indent, mangledTypeName, ' ', valueName, " = ", structVariable, "->", mangledFieldName, ";\n");
+
+    Indentation<4> indent = m_indent;
+    appendLeftValue(globalVariableReference, valueName, { }, Nullability::NotNull,
+        [this, mangledTypeName, structVariable, mangledFieldName, indent] {
+            auto pointerName = generateNextVariableName();
+            m_stringBuilder.append(
+                indent, "thread ", mangledTypeName, "* ", pointerName, " = &", structVariable, "->", mangledFieldName, ";\n");
+            return pointerName;
+        });
 }
 
 void FunctionDefinitionWriter::visit(AST::IndexExpression& indexExpression)
@@ -644,7 +657,7 @@ void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpr
     if (nullability == Nullability::CanBeNull) {
         m_stringBuilder.append(
             m_indent, "if (", resultPointer, ")\n",
-            m_indent, "    ", resultValue, " = *", inputPointer, ";\n",
+            m_indent, "    ", resultValue, " = *", resultPointer, ";\n",
             m_indent, "else\n",
             m_indent, "    ", resultValue, " = { };\n"
         );
@@ -750,9 +763,15 @@ void FunctionDefinitionWriter::visit(AST::VariableReference& variableReference)
     auto iterator = m_variableMapping.find(variableReference.variable());
     ASSERT(iterator != m_variableMapping.end());
 
-    auto pointerName = generateNextVariableName();
-    m_stringBuilder.append(m_indent, "thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", iterator->value, ";\n");
-    appendLeftValue(variableReference, iterator->value, pointerName, Nullability::NotNull);
+    MangledVariableName variableName = iterator->value;
+
+    Indentation<4> indent = m_indent;
+    appendLeftValue(variableReference, variableName, { }, Nullability::NotNull,
+        [this, &variableReference, variableName, indent] {
+            auto pointerName = generateNextVariableName();
+            m_stringBuilder.append(indent, "thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", variableName, ";\n");
+            return pointerName;
+        });
 }
 
 void FunctionDefinitionWriter::emitConstantExpressionString(AST::ConstantExpression& constantExpression)

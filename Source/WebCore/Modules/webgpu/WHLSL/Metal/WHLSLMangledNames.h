@@ -38,7 +38,8 @@ namespace WHLSL {
 namespace Metal {
 
 struct MangledVariableName {
-    unsigned value;
+    explicit operator bool() const { return value != std::numeric_limits<unsigned>::max(); }
+    unsigned value { std::numeric_limits<unsigned>::max() };
     static constexpr const char* prefix = "variable";
 };
 
