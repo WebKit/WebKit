@@ -28,20 +28,23 @@
     background-color: var(--background-color);
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .computed-style-properties {
+.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) {
     --disclosure-button-size: 15px;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .computed-style-properties .property .go-to-arrow {
-    display: none;
-    position: absolute;
-    width: var(--disclosure-button-size);
-    height: var(--disclosure-button-size);
-    vertical-align: text-bottom;
+.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property {
+    position: relative;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .computed-style-properties .property:hover .go-to-arrow {
-    display: initial;
+.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property .go-to-arrow {
+    position: absolute;
+    bottom: 0;
+    width: var(--disclosure-button-size);
+    height: var(--disclosure-button-size);
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property:not(:hover) .go-to-arrow {
+    display: none;
 }
 
 .sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) > .content {
