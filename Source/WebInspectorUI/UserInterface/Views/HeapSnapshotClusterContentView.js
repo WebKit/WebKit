@@ -95,6 +95,9 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
         case "Symbol":
         case "symbol":
             return "symbol";
+        case "BigInt":
+        case "bigint":
+            return "bigint";
         }
 
         if (className.endsWith("Prototype"))

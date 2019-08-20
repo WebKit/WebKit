@@ -103,6 +103,7 @@
     --value-changed-highlight: hsla(83, 100%, 48%, 0.4);
 
     --syntax-highlight-number-color: hsl(248, 100%, 40%);
+    --syntax-highlight-bigint-color: hsl(192, 100%, 38%);
     --syntax-highlight-boolean-color: hsl(309, 85%, 35%);
     --syntax-highlight-string-color: hsl(1, 79%, 42%);
     --syntax-highlight-link-color: hsl(240, 100%, 52%);
@@ -282,13 +283,13 @@ body.window-inactive * {
         --value-visual-highlight: var(--yellow-highlight-background-color);
 
         --syntax-highlight-number-color: hsl(276, 100%, 85%);
+        --syntax-highlight-bigint-color: hsl(195, 100%, 85%);
         --syntax-highlight-boolean-color: hsl(299, 71%, 80%);
         --syntax-highlight-string-color: hsl(28, 84%, 63%);
         --syntax-highlight-link-color: hsl(223, 100%, 77%);
         --syntax-highlight-regexp-color: hsl(20, 100%, 64%);
         --syntax-highlight-symbol-color: hsl(172, 45%, 65%);
         --syntax-highlight-comment-color: hsl(119, 40%, 72%);
-        --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
 
         --console-secondary-text-color: hsla(0, 0%, 100%, 0.45);
 

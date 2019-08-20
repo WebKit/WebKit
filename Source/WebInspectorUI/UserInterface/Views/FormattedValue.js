@@ -32,6 +32,7 @@ WI.FormattedValue.hasSimpleDisplay = function(object)
     case "number":
     case "string":
     case "symbol":
+    case "bigint":
     case "undefined":
         return true;
 

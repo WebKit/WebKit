@@ -325,11 +325,15 @@
         return style && (style + " m-" + (this.alternateName || this.name));
     }
 
-    function extendedToken(stream, state)
+    function extendedJavaScriptToken(stream, state)
     {
         // CodeMirror moves the original token function to _token when we extended it.
         // So call it to get the style that we will add an additional class name to.
         var style = this._token(stream, state);
+
+        if (style === "number" && stream.current().endsWith("n"))
+            style += " bigint";
+
         return style && (style + " m-" + (this.alternateName || this.name));
     }
 
@@ -360,7 +364,7 @@
 
     CodeMirror.extendMode("css", {token: extendedCSSToken});
     CodeMirror.extendMode("xml", {token: extendedXMLToken});
-    CodeMirror.extendMode("javascript", {token: extendedToken});
+    CodeMirror.extendMode("javascript", {token: extendedJavaScriptToken});
 
     CodeMirror.defineInitHook(function(codeMirror) {
         codeMirror.on("scrollCursorIntoView", scrollCursorIntoView);

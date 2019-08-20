@@ -412,7 +412,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
         void* wrappedAddress = 0;
         unsigned labelIndex = 0;
-        if (!node.cell->isString()) {
+        if (!node.cell->isString() && !node.cell->isBigInt()) {
             Structure* structure = node.cell->structure(vm);
             if (!structure || !structure->globalObject())
                 flags |= static_cast<unsigned>(NodeFlags::Internal);

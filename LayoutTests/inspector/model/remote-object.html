@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useBigInt=true ] -->
 <html>
 <head>
 <meta charset="utf-8">
@@ -37,6 +37,9 @@ function test()
         {expression: `NaN`},
         {expression: `Infinity`},
         {expression: `-Infinity`},
+
+        // BigInt
+        {expression: `123n`},
 
         // Strings
         {expression: `''`},
@@ -95,7 +98,7 @@ function test()
         // Object
         {expression: `({})`},
         {expression: `({a: 1})`},
-        {expression: `({a: 1, b: 0, c: -0})`},
+        {expression: `({a: 1, b: 0, c: -0, d: 456n})`},
         {expression: `({a: 1, b: \"string\", c: /regex/, d: Symbol("sym")})`},
         {expression: `o = {a:1}; o.b = o; o`}, // cyclic
         {expression: `({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})`},

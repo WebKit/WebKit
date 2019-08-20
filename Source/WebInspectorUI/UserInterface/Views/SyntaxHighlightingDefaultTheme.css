@@ -49,6 +49,11 @@
     color: var(--syntax-highlight-number-color);
 }
 
+.cm-s-default .cm-number.cm-bigint,
+.syntax-highlighted .javascript-bigint {
+    color: var(--syntax-highlight-bigint-color);
+}
+
 .cm-s-default :matches(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
 .cm-s-default .cm-m-css:matches(.cm-tag, .cm-string-2, .cm-builtin, .cm-qualifier),
 .syntax-highlighted :matches(.css-property, .css-selector, .javascript-ident) {

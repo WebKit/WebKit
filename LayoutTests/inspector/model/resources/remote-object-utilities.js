@@ -20,6 +20,8 @@ TestPage.registerInitializer(() => {
             return undefined;
         if (key === "_objectId" || key === "_stackTrace")
             return "<filtered>";
+        if (typeof value === "bigint")
+            return "<filtered " + String(value) + "n>";
         return value;
     }
 

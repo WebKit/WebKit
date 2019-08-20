@@ -299,8 +299,13 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             }
 
             if (string) {
-                let primitiveRemoteObject = WI.RemoteObject.fromPrimitiveValue(string);
-                containerElement.appendChild(WI.FormattedValue.createElementForRemoteObject(primitiveRemoteObject));
+                if (this._node.className === "BigInt") {
+                    let bigIntRemoteObject = WI.RemoteObject.createBigIntFromDescriptionString(string + "n");
+                    containerElement.appendChild(WI.FormattedValue.createElementForRemoteObject(bigIntRemoteObject));
+                } else {
+                    let primitiveRemoteObject = WI.RemoteObject.fromPrimitiveValue(string);
+                    containerElement.appendChild(WI.FormattedValue.createElementForRemoteObject(primitiveRemoteObject));
+                }
                 return;
             }
 

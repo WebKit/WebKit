@@ -86,6 +86,8 @@ public:
     static JSBigInt* parseInt(ExecState*, StringView, ErrorParseMode = ErrorParseMode::ThrowExceptions);
     static JSBigInt* stringToBigInt(ExecState*, StringView);
 
+    static String tryGetString(VM&, JSBigInt*, unsigned radix);
+
     Optional<uint8_t> singleDigitValueForString();
     String toString(ExecState*, unsigned radix);
     
@@ -200,8 +202,8 @@ private:
     static Digit digitDiv(Digit high, Digit low, Digit divisor, Digit& remainder);
     static Digit digitPow(Digit base, Digit exponent);
 
-    static String toStringBasePowerOfTwo(ExecState*, JSBigInt*, unsigned radix);
-    static String toStringGeneric(ExecState*, JSBigInt*, unsigned radix);
+    static String toStringBasePowerOfTwo(VM&, ExecState*, JSBigInt*, unsigned radix);
+    static String toStringGeneric(VM&, ExecState*, JSBigInt*, unsigned radix);
 
     inline bool isZero() const
     {

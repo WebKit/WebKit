@@ -111,6 +111,10 @@
     content: url(../Images/TypeNumber.svg);
 }
 
+.heap-snapshot .icon.bigint {
+    content: url(../Images/TypeBigInt.svg);
+}
+
 .heap-snapshot .icon.object {
     content: url(../Images/TypeObject.svg);
 }

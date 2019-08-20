@@ -160,6 +160,8 @@ WI.TypeTokenView = class TypeTokenView extends WI.Object
             return "String";
         if (typeSet.isContainedIn(WI.TypeSet.TypeBit.Symbol))
             return "Symbol";
+        if (typeSet.isContainedIn(WI.TypeSet.TypeBit.BigInt))
+            return "BigInt";
 
         if (typeSet.isContainedIn(WI.TypeSet.NullOrUndefinedTypeBits))
             return "(?)";
@@ -176,6 +178,8 @@ WI.TypeTokenView = class TypeTokenView extends WI.Object
             return "String?";
         if (typeSet.isContainedIn(WI.TypeSet.TypeBit.Symbol | WI.TypeSet.NullOrUndefinedTypeBits))
             return "Symbol?";
+        if (typeSet.isContainedIn(WI.TypeSet.TypeBit.BigInt | WI.TypeSet.NullOrUndefinedTypeBits))
+            return "BigInt?";
 
         if (typeSet.isContainedIn(WI.TypeSet.TypeBit.Object | WI.TypeSet.TypeBit.Function | WI.TypeSet.TypeBit.String))
             return "Object";
@@ -194,6 +198,7 @@ WI.TypeTokenView.TitleType = {
 WI.TypeTokenView.ColorClassForType = {
     "String": "type-token-string",
     "Symbol": "type-token-symbol",
+    "BigInt": "type-token-bigint",
     "Function": "type-token-function",
     "Number": "type-token-number",
     "Integer": "type-token-number",

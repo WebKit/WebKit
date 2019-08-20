@@ -40,6 +40,10 @@
     content: url(../Images/TypeNumber.svg);
 }
 
+.object-tree-property.bigint > .icon {
+    content: url(../Images/TypeBigInt.svg);
+}
+
 .object-tree-property.object > .icon {
     content: url(../Images/TypeObject.svg);
 }

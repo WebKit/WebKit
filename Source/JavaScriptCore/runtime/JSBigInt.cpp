@@ -59,8 +59,7 @@
 
 namespace JSC {
 
-const ClassInfo JSBigInt::s_info =
-    { "JSBigInt", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
+const ClassInfo JSBigInt::s_info = { "BigInt", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
 
 JSBigInt::JSBigInt(VM& vm, Structure* structure, unsigned length)
     : Base(vm, structure)
@@ -226,9 +225,20 @@ String JSBigInt::toString(ExecState* exec, unsigned radix)
         return exec->vm().smallStrings.singleCharacterStringRep('0');
 
     if (hasOneBitSet(radix))
-        return toStringBasePowerOfTwo(exec, this, radix);
+        return toStringBasePowerOfTwo(exec->vm(), exec, this, radix);
 
-    return toStringGeneric(exec, this, radix);
+    return toStringGeneric(exec->vm(), exec, this, radix);
+}
+
+String JSBigInt::tryGetString(VM& vm, JSBigInt* bigInt, unsigned radix)
+{
+    if (bigInt->isZero())
+        return vm.smallStrings.singleCharacterStringRep('0');
+
+    if (hasOneBitSet(radix))
+        return toStringBasePowerOfTwo(vm, nullptr, bigInt, radix);
+
+    return toStringGeneric(vm, nullptr, bigInt, radix);
 }
 
 // Multiplies {this} with {factor} and adds {summand} to the result.
@@ -1554,12 +1564,11 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned 
     return maximumCharactersRequired;
 }
 
-String JSBigInt::toStringBasePowerOfTwo(ExecState* exec, JSBigInt* x, unsigned radix)
+String JSBigInt::toStringBasePowerOfTwo(VM& vm, ExecState* exec, JSBigInt* x, unsigned radix)
 {
     ASSERT(hasOneBitSet(radix));
     ASSERT(radix >= 2 && radix <= 32);
     ASSERT(!x->isZero());
-    VM& vm = exec->vm();
 
     const unsigned length = x->length();
     const bool sign = x->sign();
@@ -1575,8 +1584,10 @@ String JSBigInt::toStringBasePowerOfTwo(ExecState* exec, JSBigInt* x, unsigned r
     const size_t charsRequired = (bitLength + bitsPerChar - 1) / bitsPerChar + sign;
 
     if (charsRequired > JSString::MaxLength) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        throwOutOfMemoryError(exec, scope);
+        if (exec) {
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            throwOutOfMemoryError(exec, scope);            
+        }
         return String();
     }
 
@@ -1615,13 +1626,11 @@ String JSBigInt::toStringBasePowerOfTwo(ExecState* exec, JSBigInt* x, unsigned r
     return StringImpl::adopt(WTFMove(resultString));
 }
 
-String JSBigInt::toStringGeneric(ExecState* exec, JSBigInt* x, unsigned radix)
+String JSBigInt::toStringGeneric(VM& vm, ExecState* exec, JSBigInt* x, unsigned radix)
 {
     // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=18067
     Vector<LChar> resultString;
-
-    VM& vm = exec->vm();
 
     ASSERT(radix >= 2 && radix <= 36);
     ASSERT(!x->isZero());
@@ -1633,8 +1642,10 @@ String JSBigInt::toStringGeneric(ExecState* exec, JSBigInt* x, unsigned radix)
     uint64_t maximumCharactersRequired = calculateMaximumCharactersRequired(length, radix, x->digit(length - 1), sign);
 
     if (maximumCharactersRequired > JSString::MaxLength) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        throwOutOfMemoryError(exec, scope);
+        if (exec) {
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            throwOutOfMemoryError(exec, scope);            
+        }
         return String();
     }
 

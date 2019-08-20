@@ -59,6 +59,10 @@
     background-color: var(--syntax-highlight-symbol-color);
 }
 
+.type-token-bigint {
+    background-color: var(--syntax-highlight-bigint-color);
+}
+
 .type-token-default {
     background-color: hsl(83, 71%, 39%);
 }

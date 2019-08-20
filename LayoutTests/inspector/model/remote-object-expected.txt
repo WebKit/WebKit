@@ -146,6 +146,14 @@ EXPRESSION: -Infinity
 }
 
 -----------------------------------------------------
+EXPRESSION: 123n
+{
+  "_type": "bigint",
+  "_description": "123n",
+  "_value": "<filtered 123n>"
+}
+
+-----------------------------------------------------
 EXPRESSION: ''
 {
   "_type": "string",
@@ -1296,7 +1304,7 @@ EXPRESSION: ({a: 1})
 }
 
 -----------------------------------------------------
-EXPRESSION: ({a: 1, b: 0, c: -0})
+EXPRESSION: ({a: 1, b: 0, c: -0, d: 456n})
 {
   "_type": "object",
   "_objectId": "<filtered>",
@@ -1321,6 +1329,11 @@ EXPRESSION: ({a: 1, b: 0, c: -0})
         "_name": "c",
         "_type": "number",
         "_value": "-0"
+      },
+      {
+        "_name": "d",
+        "_type": "bigint",
+        "_value": "456n"
       }
     ],
     "_entries": null

@@ -1,3 +1,59 @@
+2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Support for JavaScript BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=180731
+        <rdar://problem/36298748>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/External/CodeMirror/javascript.js:
+        (expressionAllowed):
+        Cherry-pick BigInt JavaScript mode support from CodeMirror:
+        https://github.com/codemirror/CodeMirror/pull/5411
+
+        * UserInterface/Images/TypeBigInt.svg: Added.
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default .cm-number.cm-bigint,):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property.bigint > .icon):
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot .icon.bigint):
+        Style BigInt similiar but different from numbers but with
+        a [B] icon instead of [N].
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-bigint):
+        * UserInterface/Views/FormattedValue.js:
+        (WI.FormattedValue.hasSimpleDisplay):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression.populate):
+        (WI.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression):
+        Simple value formatting for the new type.
+
+        * UserInterface/Models/TypeSet.js:
+        (WI.TypeSet):
+        (WI.TypeSet.prototype.get primitiveTypeNames):
+        * UserInterface/Views/TypeTokenView.css:
+        (.type-token-bigint):
+        * UserInterface/Views/TypeTokenView.js:
+        (WI.TypeTokenView.prototype._displayTypeName):
+        (WI.TypeTokenView):
+        New type handling for the Type profiler.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject):
+        (WI.RemoteObject.createBigIntFromDescriptionString):
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WI.HeapSnapshotClusterContentView.iconStyleClassNameForClassName):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WI.HeapSnapshotInstanceDataGridNode.prototype._populatePreview):
+        BigInt values are not tied to a GlobalObject, so do some special casing
+        in the Heap output (like Strings) so we get a preview.
+
 2019-08-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Use URL constructor to better handle all kinds of URLs

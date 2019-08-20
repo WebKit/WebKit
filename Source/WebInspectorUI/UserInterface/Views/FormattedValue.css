@@ -58,6 +58,10 @@
     color: var(--syntax-highlight-symbol-color);
 }
 
+.formatted-bigint {
+    color: var(--syntax-highlight-bigint-color);
+}
+
 .formatted-null, .formatted-undefined {
     color: hsl(0, 0%, 50%);
 }

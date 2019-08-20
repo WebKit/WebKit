@@ -49,6 +49,8 @@ WI.TypeSet = class TypeSet
             bitString |= WI.TypeSet.TypeBit.Object;
         if (typeSet.isSymbol)
             bitString |= WI.TypeSet.TypeBit.Symbol;
+        if (typeSet.isBigInt)
+            bitString |= WI.TypeSet.TypeBit.BigInt;
         console.assert(bitString);
 
         this._typeSet = typeSet;
@@ -102,6 +104,8 @@ WI.TypeSet = class TypeSet
             this._primitiveTypeNames.push("String");
         if (typeSet.isSymbol)
             this._primitiveTypeNames.push("Symbol");
+        if (typeSet.isBigInt)
+            this._primitiveTypeNames.push("BigInt");
 
         // It's implied that type Integer is contained in type Number. Don't put
         // both 'Integer' and 'Number' into the set because this could imply that
@@ -124,7 +128,8 @@ WI.TypeSet.TypeBit = {
     "Number"      :  0x20,
     "String"      :  0x40,
     "Object"      :  0x80,
-    "Symbol"      :  0x100
+    "Symbol"      :  0x100,
+    "BigInt"      :  0x200,
 };
 
 WI.TypeSet.NullOrUndefinedTypeBits = WI.TypeSet.TypeBit.Null | WI.TypeSet.TypeBit.Undefined;

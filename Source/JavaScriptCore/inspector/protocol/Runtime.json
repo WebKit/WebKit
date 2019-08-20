@@ -12,7 +12,7 @@
             "type": "object",
             "description": "Mirror object referencing original JavaScript object.",
             "properties": [
-                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "symbol"], "description": "Object type." },
+                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint"], "description": "Object type." },
                 { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap", "weakset", "iterator", "class", "proxy"], "description": "Object subtype hint. Specified for <code>object</code> <code>function</code> (for class) type values only." },
                 { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
                 { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
@@ -28,7 +28,7 @@
             "type": "object",
             "description": "Object containing abbreviated remote object value.",
             "properties": [
-                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "symbol"], "description": "Object type." },
+                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint"], "description": "Object type." },
                 { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap", "weakset", "iterator", "class", "proxy"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                 { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
                 { "name": "lossless", "type": "boolean", "description": "Determines whether preview is lossless (contains all information of the original object)." },
@@ -43,7 +43,7 @@
             "type": "object",
             "properties": [
                 { "name": "name", "type": "string", "description": "Property name." },
-                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "symbol", "accessor"], "description": "Object type." },
+                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint", "accessor"], "description": "Object type." },
                 { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap", "weakset", "iterator", "class", "proxy"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                 { "name": "value", "type": "string", "optional": true, "description": "User-friendly property value string." },
                 { "name": "valuePreview", "$ref": "ObjectPreview", "optional": true, "description": "Nested value preview." },
@@ -156,7 +156,8 @@
                 { "name": "isNumber", "type": "boolean", "description": "Indicates if this type description has been type Number." },
                 { "name": "isString", "type": "boolean", "description": "Indicates if this type description has been type String." },
                 { "name": "isObject", "type": "boolean", "description": "Indicates if this type description has been type Object." },
-                { "name": "isSymbol", "type": "boolean", "description": "Indicates if this type description has been type Symbol." }
+                { "name": "isSymbol", "type": "boolean", "description": "Indicates if this type description has been type Symbol." },
+                { "name": "isBigInt", "type": "boolean", "description": "Indicates if this type description has been type BigInt." }
             ]
         },
         {

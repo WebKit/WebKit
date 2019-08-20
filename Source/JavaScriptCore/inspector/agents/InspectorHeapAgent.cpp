@@ -31,6 +31,7 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorEnvironment.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "VM.h"
 #include <wtf/Stopwatch.h>
@@ -180,6 +181,12 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     JSCell* cell = optionalNode->cell;
     if (cell->isString()) {
         resultString = asString(cell)->tryGetValue();
+        return;
+    }
+
+    // BigInt preview.
+    if (cell->isBigInt()) {
+        resultString = JSBigInt::tryGetString(vm, asBigInt(cell), 10);
         return;
     }
 

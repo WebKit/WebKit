@@ -41,12 +41,13 @@ enum RuntimeType : uint16_t {
     TypeNumber             = 0x20,
     TypeString             = 0x40,
     TypeObject             = 0x80,
-    TypeSymbol             = 0x100
+    TypeSymbol             = 0x100,
+    TypeBigInt             = 0x200,
 };
 
 typedef uint16_t RuntimeTypeMask;
 
-static const RuntimeTypeMask RuntimeTypeMaskAllTypes = TypeFunction | TypeUndefined | TypeNull | TypeBoolean | TypeAnyInt | TypeNumber | TypeString | TypeObject | TypeSymbol;
+static const RuntimeTypeMask RuntimeTypeMaskAllTypes = TypeFunction | TypeUndefined | TypeNull | TypeBoolean | TypeAnyInt | TypeNumber | TypeString | TypeObject | TypeSymbol | TypeBigInt;
 
 class JSValue;
 RuntimeType runtimeTypeForValue(VM&, JSValue);

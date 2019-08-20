@@ -45,6 +45,9 @@ function toStringDescription(obj)
     if (obj === 0 && 1 / obj < 0)
         return "-0";
 
+    if (isBigInt(obj))
+        return toString(obj) + "n";
+
     return toString(obj);
 }
 
@@ -55,9 +58,14 @@ function isUInt32(obj)
     return "" + (obj >>> 0) === obj;
 }
 
-function isSymbol(obj)
+function isSymbol(value)
 {
-    return typeof obj === "symbol";
+    return typeof value === "symbol";
+}
+
+function isBigInt(value)
+{
+    return typeof value === "bigint";
 }
 
 function isEmptyObject(object)
@@ -484,7 +492,7 @@ let InjectedScript = class InjectedScript
         if (isPrimitiveValue(object))
             result.value = object;
         else
-            result.description = toString(object);
+            result.description = toStringDescription(object);
         return result;
     }
 
@@ -887,9 +895,10 @@ let RemoteObject = class RemoteObject
         if (this.type === "undefined" && InjectedScriptHost.isHTMLAllCollection(object))
             this.type = "object";
 
-        if (isPrimitiveValue(object) || object === null || forceValueType) {
+        if (isPrimitiveValue(object) || isBigInt(object) || object === null || forceValueType) {
             // We don't send undefined values over JSON.
-            if (this.type !== "undefined")
+            // BigInt values are not JSON serializable.
+            if (this.type !== "undefined" && this.type !== "bigint")
                 this.value = object;
 
             // Null object is object with 'null' subtype.
@@ -897,8 +906,9 @@ let RemoteObject = class RemoteObject
                 this.subtype = "null";
 
             // Provide user-friendly number values.
-            if (this.type === "number")
+            if (this.type === "number" || this.type === "bigint")
                 this.description = toStringDescription(object);
+
             return;
         }
 
@@ -966,7 +976,7 @@ let RemoteObject = class RemoteObject
         if (value === null)
             return "null";
 
-        if (isPrimitiveValue(value) || isSymbol(value))
+        if (isPrimitiveValue(value) || isBigInt(value) || isSymbol(value))
             return null;
 
         if (InjectedScriptHost.isHTMLAllCollection(value))
@@ -988,6 +998,9 @@ let RemoteObject = class RemoteObject
     static describe(value)
     {
         if (isPrimitiveValue(value))
+            return null;
+
+        if (isBigInt(value))
             return null;
 
         if (isSymbol(value))
@@ -1208,7 +1221,7 @@ let RemoteObject = class RemoteObject
 
             // Primitive.
             const maxLength = 100;
-            if (isPrimitiveValue(value)) {
+            if (isPrimitiveValue(value) || isBigInt(value)) {
                 if (type === "string" && value.length > maxLength) {
                     value = this._abbreviateString(value, maxLength, true);
                     preview.lossless = false;
@@ -1326,7 +1339,7 @@ let RemoteObject = class RemoteObject
             return false;
 
         // Primitive.
-        if (isPrimitiveValue(object) || isSymbol(object))
+        if (isPrimitiveValue(object) || isBigInt(object) || isSymbol(object))
             return true;
 
         // Null.

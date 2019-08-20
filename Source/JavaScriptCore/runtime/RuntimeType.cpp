@@ -55,6 +55,8 @@ RuntimeType runtimeTypeForValue(VM& vm, JSValue value)
         return TypeFunction;
     if (value.isSymbol())
         return TypeSymbol;
+    if (value.isBigInt())
+        return TypeBigInt;
 
     return TypeNothing;
 }
@@ -77,6 +79,10 @@ String runtimeTypeAsString(RuntimeType type)
         return "Boolean"_s;
     if (type == TypeFunction)
         return "Function"_s;
+    if (type == TypeSymbol)
+        return "Symbol"_s;
+    if (type == TypeBigInt)
+        return "BigInt"_s;
     if (type == TypeNothing)
         return "(Nothing)"_s;
 

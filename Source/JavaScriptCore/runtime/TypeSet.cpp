@@ -189,6 +189,8 @@ String TypeSet::displayName() const
         return "String"_s;
     if (doesTypeConformTo(TypeSymbol))
         return "Symbol"_s;
+    if (doesTypeConformTo(TypeBigInt))
+        return "BigInt"_s;
 
     if (doesTypeConformTo(TypeNull | TypeUndefined))
         return "(?)"_s;
@@ -205,6 +207,8 @@ String TypeSet::displayName() const
         return "String?"_s;
     if (doesTypeConformTo(TypeSymbol | TypeNull | TypeUndefined))
         return "Symbol?"_s;
+    if (doesTypeConformTo(TypeBigInt | TypeNull | TypeUndefined))
+        return "BigInt?"_s;
    
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString))
         return "Object"_s;
@@ -241,6 +245,7 @@ Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
         .setIsString((m_seenTypes & TypeString) != TypeNothing)
         .setIsObject((m_seenTypes & TypeObject) != TypeNothing)
         .setIsSymbol((m_seenTypes & TypeSymbol) != TypeNothing)
+        .setIsBigInt((m_seenTypes & TypeBigInt) != TypeNothing)
         .release();
 }
 

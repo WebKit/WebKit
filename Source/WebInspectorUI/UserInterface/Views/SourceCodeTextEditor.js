@@ -1771,8 +1771,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             case "string":
             case "number":
             case "boolean":
-            case "undefined":
             case "symbol":
+            case "bigint":
+            case "undefined":
                 this._showPopoverWithFormattedValue(data);
                 break;
             }
