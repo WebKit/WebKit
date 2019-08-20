@@ -154,11 +154,18 @@ public:
         m_impl->clear();
     }
 
+    void initializeIfNeeded(const T& object) const
+    {
+        if (m_impl)
+            return;
+
+        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+        m_impl = WeakPtrImpl::create(const_cast<T*>(&object));
+    }
+
     WeakPtr<T> createWeakPtr(T& object) const
     {
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
-        if (!m_impl)
-            m_impl = WeakPtrImpl::create(&object);
+        initializeIfNeeded(object);
 
         ASSERT(&object == m_impl->get<T>());
         return WeakPtr<T>(makeRef(*m_impl));
@@ -166,9 +173,7 @@ public:
 
     WeakPtr<const T> createWeakPtr(const T& object) const
     {
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
-        if (!m_impl)
-            m_impl = WeakPtrImpl::create(const_cast<T*>(&object));
+        initializeIfNeeded(object);
 
         ASSERT(&object == m_impl->get<T>());
         return WeakPtr<T>(makeRef(*m_impl));
@@ -192,12 +197,23 @@ private:
 #endif
 };
 
-template<typename T> class CanMakeWeakPtr {
+// We use lazy initialization of the WeakPtrFactory by default to avoid unnecessary initialization. Eager
+// initialization is however useful if you plan to call makeWeakPtr() from other threads.
+enum class WeakPtrFactoryInitialization { Lazy, Eager };
+
+template<typename T, WeakPtrFactoryInitialization initializationMode = WeakPtrFactoryInitialization::Lazy> class CanMakeWeakPtr {
 public:
-    typedef T WeakValueType;
+    using WeakValueType = T;
 
     const WeakPtrFactory<T>& weakPtrFactory() const { return m_weakPtrFactory; }
     WeakPtrFactory<T>& weakPtrFactory() { return m_weakPtrFactory; }
+
+protected:
+    CanMakeWeakPtr()
+    {
+        if (initializationMode == WeakPtrFactoryInitialization::Eager)
+            m_weakPtrFactory.initializeIfNeeded(static_cast<T&>(*this));
+    }
 
 private:
     WeakPtrFactory<T> m_weakPtrFactory;
@@ -278,4 +294,5 @@ template<typename T, typename U> inline bool operator!=(T* a, const WeakPtr<U>& 
 using WTF::CanMakeWeakPtr;
 using WTF::WeakPtr;
 using WTF::WeakPtrFactory;
+using WTF::WeakPtrFactoryInitialization;
 using WTF::makeWeakPtr;

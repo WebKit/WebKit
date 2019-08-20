@@ -1,3 +1,19 @@
+2019-08-20  Chris Dumez  <cdumez@apple.com>
+
+        WebSQLiteDatabaseTracker does not ensure it is still alive after dispatching to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=200925
+
+        Reviewed by Geoffrey Garen.
+
+        WebSQLiteDatabaseTracker does not ensure it is still alive after dispatching to the main thread,
+        which is not safe. Use WeakPtr to address the issue.
+
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::willBeginFirstTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::didFinishLastTransaction):
+        * Shared/WebSQLiteDatabaseTracker.h:
+
 2019-08-20  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Fix scrolling in modern WebKit views

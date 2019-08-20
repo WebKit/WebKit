@@ -60,15 +60,17 @@ void WebSQLiteDatabaseTracker::setIsSuspended(bool isSuspended)
 
 void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
 {
-    RunLoop::main().dispatch([this] {
-        m_hysteresis.start();
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->m_hysteresis.start();
     });
 }
 
 void WebSQLiteDatabaseTracker::didFinishLastTransaction()
 {
-    RunLoop::main().dispatch([this] {
-        m_hysteresis.stop();
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->m_hysteresis.stop();
     });
 }
 
