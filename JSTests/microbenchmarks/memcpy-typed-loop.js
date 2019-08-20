@@ -1,3 +1,4 @@
+//@ skip if $buildType == "debug"
 function doTest(arr1, arr2) {
     if (arr1.length != arr2.length)
         return []

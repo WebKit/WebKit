@@ -1,4 +1,4 @@
-//@ defaultNoEagerRun
+//@ defaultNoEagerRun(*NO_CJIT_OPTIONS)
 
 function foo(a, inBounds) {
     a[0] = 1;

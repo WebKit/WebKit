@@ -885,22 +885,22 @@ end
 # This is expected to not do eager runs because eager runs can have a lot of recompilations
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
-def defaultNoEagerRun
-    runDefault
+def defaultNoEagerRun(*optionalTestSpecificOptions)
+    runDefault(*optionalTestSpecificOptions)
     if $jitTests
-        runNoLLInt
-        runNoCJITValidatePhases
-        runNoCJITCollectContinuously if shouldCollectContinuously?
+        runNoLLInt(*optionalTestSpecificOptions)
+        runNoCJITValidatePhases(*optionalTestSpecificOptions)
+        runNoCJITCollectContinuously(*optionalTestSpecificOptions) if shouldCollectContinuously?
 
         return if !$isFTLPlatform
 
-        runNoFTL
-        runFTLNoCJITValidate
+        runNoFTL(*optionalTestSpecificOptions)
+        runFTLNoCJITValidate(*optionalTestSpecificOptions)
 
         return if $mode == "basic"
 
-        runFTLNoCJITNoInlineValidate
-        runFTLNoCJITB3O0
+        runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
+        runFTLNoCJITB3O0(*optionalTestSpecificOptions)
     end
 end
 

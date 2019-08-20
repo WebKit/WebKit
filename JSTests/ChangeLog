@@ -1,3 +1,15 @@
+2019-08-20  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix InBounds speculation of typed array PutByVal and add extra step to integer range optimization to search for equality relationships on the RHS value
+        https://bugs.webkit.org/show_bug.cgi?id=200782
+
+        Reviewed by Saam Barati.
+
+        Skip long memcpy test on debug, and try to fix flakiness for recompilation count tests by disabling cjit.
+
+        * microbenchmarks/memcpy-typed-loop.js:
+        * stress/int8-repeat-in-then-out-of-bounds.js:
+
 2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy constructor should throw if handler is revoked Proxy
