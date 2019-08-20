@@ -283,7 +283,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(const Optional<StorageAreaImplI
 {
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
-    WebPage* webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(m_storageNamespace->storageNamespaceID()));
+    WebPage* webPage = WebProcess::singleton().webPage(m_storageNamespace->sessionStoragePageID());
     if (!webPage)
         return;
 
@@ -318,7 +318,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(const Optional<StorageAreaImplIde
     Vector<RefPtr<Frame>> frames;
 
     // Namespace IDs for local storage namespaces are equivalent to web page group IDs.
-    PageGroup& pageGroup = *WebProcess::singleton().webPageGroup(m_storageNamespace->storageNamespaceID())->corePageGroup();
+    PageGroup& pageGroup = *WebProcess::singleton().webPageGroup(m_storageNamespace->pageGroupID())->corePageGroup();
     const HashSet<Page*>& pages = pageGroup.pages();
     for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it) {
         for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {

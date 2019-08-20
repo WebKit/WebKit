@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "LocalStorageDatabaseTracker.h"
+#include "StorageNamespaceIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageMap.h>
 #include <wtf/Forward.h>
@@ -55,9 +56,9 @@ public:
     explicit StorageManager(String&& localStorageDirectory);
     ~StorageManager();
 
-    void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
-    void destroySessionStorageNamespace(uint64_t storageNamespaceID);
-    void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
+    void createSessionStorageNamespace(StorageNamespaceIdentifier, unsigned quotaInBytes);
+    void destroySessionStorageNamespace(StorageNamespaceIdentifier);
+    void cloneSessionStorageNamespace(StorageNamespaceIdentifier oldStorageNamespaceID, StorageNamespaceIdentifier newStorageNamespaceID);
 
     HashSet<WebCore::SecurityOriginData> getSessionStorageOriginsCrossThreadCopy() const;
     void deleteSessionStorageOrigins();
@@ -77,19 +78,19 @@ public:
     
     static const unsigned localStorageDatabaseQuotaInBytes;
 
-    StorageArea* createLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
-    StorageArea* createTransientLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
-    StorageArea* createSessionStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea* createLocalStorageArea(StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea* createTransientLocalStorageArea(StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea* createSessionStorageArea(StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
 
 private:
-    LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
-    TransientLocalStorageNamespace* getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin);
-    SessionStorageNamespace* getOrCreateSessionStorageNamespace(uint64_t storageNamespaceID);
+    LocalStorageNamespace* getOrCreateLocalStorageNamespace(StorageNamespaceIdentifier);
+    TransientLocalStorageNamespace* getOrCreateTransientLocalStorageNamespace(StorageNamespaceIdentifier, WebCore::SecurityOriginData&& topLevelOrigin);
+    SessionStorageNamespace* getOrCreateSessionStorageNamespace(StorageNamespaceIdentifier);
 
     RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
-    HashMap<uint64_t, std::unique_ptr<LocalStorageNamespace>> m_localStorageNamespaces;
-    HashMap<std::pair<uint64_t, WebCore::SecurityOriginData>, std::unique_ptr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
-    HashMap<uint64_t, std::unique_ptr<SessionStorageNamespace>> m_sessionStorageNamespaces;
+    HashMap<StorageNamespaceIdentifier, std::unique_ptr<LocalStorageNamespace>> m_localStorageNamespaces;
+    HashMap<std::pair<StorageNamespaceIdentifier, WebCore::SecurityOriginData>, std::unique_ptr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
+    HashMap<StorageNamespaceIdentifier, std::unique_ptr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 };
 
 } // namespace WebKit

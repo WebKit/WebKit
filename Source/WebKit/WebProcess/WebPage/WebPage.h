@@ -47,6 +47,7 @@
 #include "SandboxExtension.h"
 #include "ShareSheetCallbackID.h"
 #include "SharedMemory.h"
+#include "StorageNamespaceIdentifier.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
 #include "WebPageMessages.h"
@@ -291,6 +292,7 @@ public:
 
     WebCore::Page* corePage() const { return m_page.get(); }
     WebCore::PageIdentifier pageID() const { return m_pageID; }
+    StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(m_pageID.toUInt64()); }
     PAL::SessionID sessionID() const { return m_page->sessionID(); }
     bool usesEphemeralSession() const { return m_page->usesEphemeralSession(); }
 

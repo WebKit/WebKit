@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "StorageNamespaceIdentifier.h"
 #include "WebPageGroupData.h"
 #include <wtf/Ref.h>
 
@@ -44,6 +45,7 @@ public:
 
     const String& identifier() const { return m_data.identifier; }
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
+    StorageNamespaceIdentifier localStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(pageGroupID()); }
     WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
 
     WebUserContentController& userContentController();

@@ -76,15 +76,15 @@ private:
     StorageManagerSet();
 
     // Message Handlers
-    void connectToLocalStorageArea(IPC::Connection&, PAL::SessionID , uint64_t storageNamespaceID, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
-    void connectToTransientLocalStorageArea(IPC::Connection&, PAL::SessionID , uint64_t storageNamespaceID, SecurityOriginData&&, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
-    void connectToSessionStorageArea(IPC::Connection&, PAL::SessionID, uint64_t storageNamespaceID, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
+    void connectToLocalStorageArea(IPC::Connection&, PAL::SessionID , StorageNamespaceIdentifier, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
+    void connectToTransientLocalStorageArea(IPC::Connection&, PAL::SessionID , StorageNamespaceIdentifier, SecurityOriginData&&, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
+    void connectToSessionStorageArea(IPC::Connection&, PAL::SessionID, StorageNamespaceIdentifier, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
     void getValues(IPC::Connection&, StorageAreaIdentifier, GetValuesCallback&&);
     void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
     void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& key, const String& urlString);
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& urlString);
-    void cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID, uint64_t fromStorageNamespaceID, uint64_t toStorageNamespaceID);
+    void cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID, StorageNamespaceIdentifier fromStorageNamespaceID, StorageNamespaceIdentifier toStorageNamespaceID);
 
     HashMap<PAL::SessionID, std::unique_ptr<StorageManager>> m_storageManagers;
     HashMap<PAL::SessionID, String> m_storageManagerPaths;

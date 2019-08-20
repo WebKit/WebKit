@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,11 @@
 
 #pragma once
 
-#include "StorageNamespaceIdentifier.h"
-#include <WebCore/SecurityOriginData.h>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class StorageArea;
-class StorageManager;
+enum StorageNamespaceIdentifierType { };
+using StorageNamespaceIdentifier = ObjectIdentifier<StorageNamespaceIdentifierType>;
 
-class LocalStorageNamespace : public CanMakeWeakPtr<LocalStorageNamespace> {
-    WTF_MAKE_NONCOPYABLE(LocalStorageNamespace);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    LocalStorageNamespace(StorageManager&, StorageNamespaceIdentifier);
-    ~LocalStorageNamespace();
-
-    StorageManager* storageManager() const { return &m_storageManager; }
-
-    enum class IsEphemeral : bool { No, Yes };
-    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, IsEphemeral, Ref<WorkQueue>&&);
-
-    void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
-    void clearAllStorageAreas();
-
-    Vector<WebCore::SecurityOriginData> ephemeralOrigins() const;
-
-private:
-    StorageManager& m_storageManager;
-    unsigned m_quotaInBytes { 0 };
-
-    HashMap<WebCore::SecurityOriginData, std::unique_ptr<StorageArea>> m_storageAreaMap;
-};
-
-} // namespace WebKit
+}

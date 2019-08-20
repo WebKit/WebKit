@@ -60,7 +60,7 @@ StorageManager::~StorageManager()
     ASSERT(!RunLoop::isMain());
 }
 
-void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes)
+void StorageManager::createSessionStorageNamespace(StorageNamespaceIdentifier storageNamespaceID, unsigned quotaInBytes)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -69,7 +69,7 @@ void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, 
     });
 }
 
-void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
+void StorageManager::destroySessionStorageNamespace(StorageNamespaceIdentifier storageNamespaceID)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -78,7 +78,7 @@ void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
         m_sessionStorageNamespaces.remove(storageNamespaceID);
 }
 
-void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
+void StorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier storageNamespaceID, StorageNamespaceIdentifier newStorageNamespaceID)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -92,7 +92,7 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
     sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
 }
 
-HashSet<WebCore::SecurityOriginData> StorageManager::getSessionStorageOriginsCrossThreadCopy() const
+HashSet<SecurityOriginData> StorageManager::getSessionStorageOriginsCrossThreadCopy() const
 {
     ASSERT(!RunLoop::isMain());
 
@@ -113,7 +113,7 @@ void StorageManager::deleteSessionStorageOrigins()
         sessionStorageNamespace->clearAllStorageAreas();
 }
 
-void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
+void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<SecurityOriginData>& origins)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -123,7 +123,7 @@ void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore:
     }
 }
 
-HashSet<WebCore::SecurityOriginData> StorageManager::getLocalStorageOriginsCrossThreadCopy() const
+HashSet<SecurityOriginData> StorageManager::getLocalStorageOriginsCrossThreadCopy() const
 {
     ASSERT(!RunLoop::isMain());
 
@@ -176,7 +176,7 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time)
     }
 }
 
-void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
+void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<SecurityOriginData>& origins)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -192,7 +192,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::S
     }
 }
 
-StorageArea* StorageManager::createLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
+StorageArea* StorageManager::createLocalStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -202,10 +202,10 @@ StorageArea* StorageManager::createLocalStorageArea(uint64_t storageNamespaceID,
     return nullptr;
 }
 
-StorageArea* StorageManager::createTransientLocalStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin, WebCore::SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
+StorageArea* StorageManager::createTransientLocalStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& topLevelOrigin, SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT((HashMap<uint64_t, RefPtr<TransientLocalStorageNamespace>>::isValidKey(storageNamespaceID)));
+    ASSERT((HashMap<StorageNamespaceIdentifier, RefPtr<TransientLocalStorageNamespace>>::isValidKey(storageNamespaceID)));
 
     if (auto* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, WTFMove(topLevelOrigin)))
         return &transientLocalStorageNamespace->getOrCreateStorageArea(WTFMove(origin), WTFMove(workQueue));
@@ -213,10 +213,10 @@ StorageArea* StorageManager::createTransientLocalStorageArea(uint64_t storageNam
     return nullptr;
 }
 
-StorageArea* StorageManager::createSessionStorageArea(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
+StorageArea* StorageManager::createSessionStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
+    ASSERT((HashMap<StorageNamespaceIdentifier, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
 
     if (auto* sessionStorageNamespace = getOrCreateSessionStorageNamespace(storageNamespaceID))
         return &sessionStorageNamespace->getOrCreateStorageArea(WTFMove(origin), WTFMove(workQueue));
@@ -224,7 +224,7 @@ StorageArea* StorageManager::createSessionStorageArea(uint64_t storageNamespaceI
     return nullptr;
 }
 
-LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)
+LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(StorageNamespaceIdentifier storageNamespaceID)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -236,7 +236,7 @@ LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t
     }).iterator->value.get();
 }
 
-TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin)
+TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& topLevelOrigin)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -248,7 +248,7 @@ TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorage
     }).iterator->value.get();
 }
 
-SessionStorageNamespace* StorageManager::getOrCreateSessionStorageNamespace(uint64_t storageNamespaceID)
+SessionStorageNamespace* StorageManager::getOrCreateSessionStorageNamespace(StorageNamespaceIdentifier storageNamespaceID)
 {
     ASSERT(!RunLoop::isMain());
 

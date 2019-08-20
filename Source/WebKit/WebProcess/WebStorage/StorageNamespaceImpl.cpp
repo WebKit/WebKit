@@ -42,22 +42,22 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes, PAL::SessionID sessionID)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(Identifier identifier, unsigned quotaInBytes, PAL::SessionID sessionID)
 {
     return adoptRef(*new StorageNamespaceImpl(StorageType::Session, identifier, nullptr, quotaInBytes, sessionID));
 }
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes, PAL::SessionID sessionID)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(Identifier identifier, unsigned quotaInBytes, PAL::SessionID sessionID)
 {
     return adoptRef(*new StorageNamespaceImpl(StorageType::Local, identifier, nullptr, quotaInBytes, sessionID));
 }
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes, PAL::SessionID sessionID)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(Identifier identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes, PAL::SessionID sessionID)
 {
     return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, identifier, &topLevelOrigin, quotaInBytes, sessionID));
 }
 
-StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, PAL::SessionID sessionID)
+StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, Identifier storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, PAL::SessionID sessionID)
     : m_storageType(storageType)
     , m_storageNamespaceID(storageNamespaceID)
     , m_topLevelOrigin(topLevelOrigin)
@@ -93,11 +93,12 @@ Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& sec
 Ref<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
 {
     ASSERT(m_storageNamespaceID);
+    ASSERT(m_storageType == StorageType::Session);
 
     if (auto networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::StorageManagerSet::CloneSessionStorageNamespace(newPage->sessionID(), m_storageNamespaceID, WebPage::fromCorePage(newPage)->pageID().toUInt64()), 0);
+        networkProcessConnection->connection().send(Messages::StorageManagerSet::CloneSessionStorageNamespace(newPage->sessionID(), m_storageNamespaceID, WebPage::fromCorePage(newPage)->sessionStorageNamespaceIdentifier()), 0);
 
-    return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage)->pageID().toUInt64(), m_topLevelOrigin.get(), m_quotaInBytes, newPage->sessionID()));
+    return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage)->sessionStorageNamespaceIdentifier(), m_topLevelOrigin.get(), m_quotaInBytes, newPage->sessionID()));
 }
 
 void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID sessionID)
@@ -105,6 +106,18 @@ void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID sessionID)
     m_sessionID = sessionID;
     for (auto storageAreaMap : m_storageAreaMaps.values())
         storageAreaMap->disconnect();
+}
+
+PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const
+{
+    ASSERT(m_storageType == StorageType::Session);
+    return makeObjectIdentifier<PageIdentifierType>(m_storageNamespaceID.toUInt64());
+}
+
+uint64_t StorageNamespaceImpl::pageGroupID() const
+{
+    ASSERT(m_storageType == StorageType::Local || m_storageType == StorageType::TransientLocal);
+    return m_storageNamespaceID.toUInt64();
 }
 
 } // namespace WebKit

@@ -906,6 +906,7 @@
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		4657D88922664A2D005DE823 /* WKOrientationAccessAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 4657D88722664A19005DE823 /* WKOrientationAccessAlert.h */; };
 		4657D88A22664A2F005DE823 /* WKOrientationAccessAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4657D88822664A1A005DE823 /* WKOrientationAccessAlert.mm */; };
+		465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 465F4E05230B2E7C003CEDB7 /* StorageNamespaceIdentifier.h */; };
 		466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */; };
 		467E43E82243FF7D00B13924 /* WebProcessDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
@@ -3190,6 +3191,7 @@
 		4657D88822664A1A005DE823 /* WKOrientationAccessAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKOrientationAccessAlert.mm; sourceTree = "<group>"; };
 		465F4E02230759D5003CEDB7 /* StorageAreaIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageAreaIdentifier.h; sourceTree = "<group>"; };
 		465F4E032307604E003CEDB7 /* StorageAreaImplIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageAreaImplIdentifier.h; sourceTree = "<group>"; };
+		465F4E05230B2E7C003CEDB7 /* StorageNamespaceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceIdentifier.h; sourceTree = "<group>"; };
 		466BC0381FA266C9002FA9C1 /* WebSWContextManagerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWContextManagerConnection.cpp; sourceTree = "<group>"; };
 		466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWContextManagerConnection.h; sourceTree = "<group>"; };
 		466BC03A1FA266C9002FA9C1 /* WebSWContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWContextManagerConnection.messages.in; sourceTree = "<group>"; };
@@ -5158,6 +5160,7 @@
 				1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */,
 				1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */,
 				1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */,
+				465F4E05230B2E7C003CEDB7 /* StorageNamespaceIdentifier.h */,
 				1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */,
 				1A17635516B1D5D000D88FD6 /* StorageNamespaceImpl.h */,
 				1A52C0F51A38CDC70016160A /* WebStorageNamespaceProvider.cpp */,
@@ -9683,6 +9686,7 @@
 				93B2614D227D149E00B97A76 /* StorageManager.h in Headers */,
 				936B059823039097002FC06B /* StorageManagerSet.h in Headers */,
 				9368EEDF2303A9ED00BDB11A /* StorageManagerSetMessages.h in Headers */,
+				465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */,
 				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */,

@@ -282,7 +282,7 @@ void StorageManagerSet::getLocalStorageOriginDetails(PAL::SessionID sessionID, G
     });
 }
 
-void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t storageNamespaceID, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
+void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -307,7 +307,7 @@ void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, P
     storageArea->addListener(connection.uniqueID());
 }
 
-void StorageManagerSet::connectToTransientLocalStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t storageNamespaceID, SecurityOriginData&& topLevelOriginData, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
+void StorageManagerSet::connectToTransientLocalStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& topLevelOriginData, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -332,7 +332,7 @@ void StorageManagerSet::connectToTransientLocalStorageArea(IPC::Connection& conn
     storageArea->addListener(connection.uniqueID());
 }
 
-void StorageManagerSet::connectToSessionStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t storageNamespaceID, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
+void StorageManagerSet::connectToSessionStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -415,7 +415,7 @@ void StorageManagerSet::clear(IPC::Connection& connection, StorageAreaIdentifier
     connection.send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageAreaID);
 }
 
-void StorageManagerSet::cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID sessionID, uint64_t fromStorageNamespaceID, uint64_t toStorageNamespaceID)
+void StorageManagerSet::cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID sessionID, StorageNamespaceIdentifier fromStorageNamespaceID, StorageNamespaceIdentifier toStorageNamespaceID)
 {
     ASSERT(!RunLoop::isMain());
 

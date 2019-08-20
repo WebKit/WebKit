@@ -28,56 +28,55 @@
 
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
+#include "WebPageGroupProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<uint64_t, WebStorageNamespaceProvider*>& storageNamespaceProviders()
+static HashMap<StorageNamespaceIdentifier, WebStorageNamespaceProvider*>& storageNamespaceProviders()
 {
-    static NeverDestroyed<HashMap<uint64_t, WebStorageNamespaceProvider*>> storageNamespaceProviders;
+    static NeverDestroyed<HashMap<StorageNamespaceIdentifier, WebStorageNamespaceProvider*>> storageNamespaceProviders;
 
     return storageNamespaceProviders;
 }
 
-Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::getOrCreate(uint64_t identifier)
+Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::getOrCreate(WebPageGroupProxy& pageGroup)
 {
-    auto& slot = storageNamespaceProviders().add(identifier, nullptr).iterator->value;
-    if (slot)
-        return *slot;
-
-    auto storageNamespaceProvider = adoptRef(*new WebStorageNamespaceProvider(identifier));
-    slot = storageNamespaceProvider.ptr();
-
-    return storageNamespaceProvider;
+    RefPtr<WebStorageNamespaceProvider> storageNamespaceProvider;
+    auto* result = storageNamespaceProviders().ensure(pageGroup.localStorageNamespaceIdentifier(), [&]() {
+        storageNamespaceProvider = adoptRef(*new WebStorageNamespaceProvider(pageGroup.localStorageNamespaceIdentifier()));
+        return storageNamespaceProvider.get();
+    }).iterator->value;
+    return *result;
 }
 
-WebStorageNamespaceProvider::WebStorageNamespaceProvider(uint64_t identifier)
-    : m_identifier(identifier)
+WebStorageNamespaceProvider::WebStorageNamespaceProvider(StorageNamespaceIdentifier localStorageNamespaceIdentifier)
+    : m_localStorageNamespaceIdentifier(localStorageNamespaceIdentifier)
 {
 }
 
 WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 {
-    ASSERT(storageNamespaceProviders().contains(m_identifier));
+    ASSERT(storageNamespaceProviders().contains(m_localStorageNamespaceIdentifier));
 
-    storageNamespaceProviders().remove(m_identifier);
+    storageNamespaceProviders().remove(m_localStorageNamespaceIdentifier);
 }
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
 {
-    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(&page)->pageID().toUInt64(), quota, page.sessionID());
+    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(&page)->sessionStorageNamespaceIdentifier(), quota, page.sessionID());
 }
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota, PAL::SessionID sessionID)
 {
-    return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota, sessionID);
+    return StorageNamespaceImpl::createLocalStorageNamespace(m_localStorageNamespaceIdentifier, quota, sessionID);
 }
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota, PAL::SessionID sessionID)
 {
-    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_identifier, topLevelOrigin, quota, sessionID);
+    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_localStorageNamespaceIdentifier, topLevelOrigin, quota, sessionID);
 }
 
 }

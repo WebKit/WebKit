@@ -25,23 +25,26 @@
 
 #pragma once
 
+#include "StorageNamespaceIdentifier.h"
 #include <WebCore/StorageNamespaceProvider.h>
 
 namespace WebKit {
 
+class WebPageGroupProxy;
+
 class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider {
 public:
-    static Ref<WebStorageNamespaceProvider> getOrCreate(uint64_t identifier);
+    static Ref<WebStorageNamespaceProvider> getOrCreate(WebPageGroupProxy&);
     virtual ~WebStorageNamespaceProvider();
 
 private:
-    explicit WebStorageNamespaceProvider(uint64_t identifier);
+    explicit WebStorageNamespaceProvider(StorageNamespaceIdentifier localStorageIdentifier);
 
     Ref<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
     Ref<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota, PAL::SessionID) override;
     Ref<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota, PAL::SessionID) override;
 
-    const uint64_t m_identifier;
+    const StorageNamespaceIdentifier m_localStorageNamespaceIdentifier;
 };
 
 }

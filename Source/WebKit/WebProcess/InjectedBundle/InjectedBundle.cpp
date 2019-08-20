@@ -354,7 +354,7 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
 
     PageGroup::pageGroup(pageGroup->identifier())->enableLegacyPrivateBrowsingForTesting(enabled);
 
-    auto webStorageNameSpaceProvider = WebStorageNamespaceProvider::getOrCreate(pageGroup->pageGroupID());
+    auto webStorageNameSpaceProvider = WebStorageNamespaceProvider::getOrCreate(*pageGroup);
     webStorageNameSpaceProvider->enableLegacyPrivateBrowsingForTesting(enabled);
 }
 

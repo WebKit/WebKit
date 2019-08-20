@@ -1,3 +1,67 @@
+2019-08-20  Chris Dumez  <cdumez@apple.com>
+
+        Use a strongly typed identifier for StorageNamespace's identifier
+        https://bugs.webkit.org/show_bug.cgi?id=200895
+
+        Reviewed by Alex Christensen and Youenn Fablet.
+
+        Use a strongly typed identifier for StorageNamespace's identifier instead of uint64_t, to
+        avoid type confusion.
+
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::LocalStorageNamespace):
+        * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+        (WebKit::StorageManager::cloneSessionStorageNamespace):
+        (WebKit::StorageManager::createLocalStorageArea):
+        (WebKit::StorageManager::createTransientLocalStorageArea):
+        (WebKit::StorageManager::createSessionStorageArea):
+        (WebKit::StorageManager::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateTransientLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateSessionStorageNamespace):
+        * NetworkProcess/WebStorage/StorageManager.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::connectToLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToTransientLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToSessionStorageArea):
+        (WebKit::StorageManagerSet::cloneSessionStorageNamespace):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.messages.in:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sessionStorageNamespaceIdentifier const):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebKit::WebPageGroupProxy::localStorageNamespaceIdentifier const):
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        * WebProcess/WebStorage/StorageNamespaceIdentifier.h: Copied from Source/WebKit/WebProcess/WebStorage/WebStorageNamespaceProvider.h.
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createTransientLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebKit::StorageNamespaceImpl::copy):
+        (WebKit::StorageNamespaceImpl::sessionStoragePageID const):
+        (WebKit::StorageNamespaceImpl::pageGroupID const):
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+        (WebKit::StorageNamespaceImpl::storageNamespaceID const):
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::getOrCreate):
+        (WebKit::WebStorageNamespaceProvider::WebStorageNamespaceProvider):
+        (WebKit::WebStorageNamespaceProvider::~WebStorageNamespaceProvider):
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createLocalStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createTransientLocalStorageNamespace):
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.h:
+
 2019-08-20  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Open in New Tab is missing from context menu
