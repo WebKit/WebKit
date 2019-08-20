@@ -13,7 +13,11 @@ function test()
             function testInvalid(url) {
                 InspectorTest.log("");
                 InspectorTest.log("Test Invalid: " + url);
-                InspectorTest.expectThat(parseURL(url).scheme === null, "Should not be a complete URL");
+
+                let urlComponents = parseURL(url);
+                InspectorTest.expectNull(urlComponents.scheme, "Should not be a complete URL");
+                if (urlComponents.scheme)
+                    InspectorTest.json(urlComponents);
 
                 try {
                     new URL(url);
@@ -50,7 +54,7 @@ function test()
                 host: "example.com",
                 port: null,
                 origin: "http://example.com",
-                path: null,
+                path: "/",
                 queryString: null,
                 fragment: null,
                 lastPathComponent: null,
@@ -72,8 +76,20 @@ function test()
                 scheme: "http",
                 userinfo: null,
                 host: "example.com",
-                port: 80,
-                origin: "http://example.com:80",
+                port: null,
+                origin: "http://example.com",
+                path: "/",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://example.com:42/", {
+                scheme: "http",
+                userinfo: null,
+                host: "example.com",
+                port: 42,
+                origin: "http://example.com:42",
                 path: "/",
                 queryString: null,
                 fragment: null,
@@ -99,7 +115,7 @@ function test()
                 port: null,
                 origin: "http://example.com",
                 path: "/path/to/page.html",
-                queryString: "",
+                queryString: null,
                 fragment: null,
                 lastPathComponent: "page.html",
             });
@@ -170,7 +186,7 @@ function test()
                 host: "example.com",
                 port: null,
                 origin: "http://example.com",
-                path: null,
+                path: "/",
                 queryString: null,
                 fragment: "alpha/beta",
                 lastPathComponent: null,
@@ -194,7 +210,7 @@ function test()
                 host: "example",
                 port: null,
                 origin: "http://example",
-                path: null,
+                path: "/",
                 queryString: null,
                 fragment: null,
                 lastPathComponent: null,
@@ -206,7 +222,7 @@ function test()
                 host: "my.example.com",
                 port: null,
                 origin: "http://my.example.com",
-                path: null,
+                path: "/",
                 queryString: null,
                 fragment: null,
                 lastPathComponent: null,
@@ -225,12 +241,8 @@ function test()
                 lastPathComponent: null,
             });
 
-            // FIXME: <https://webkit.org/b/165155> Web Inspector: Use URL constructor to better handle all kinds of URLs
-            InspectorTest.log("");
-            InspectorTest.log("-- Known issues <https://webkit.org/b/165155>");
-
             testInvalid("http://");
-            testInvalid("http://example.com:999999999");
+            testInvalid("http://example.com:65537");
 
             testValid("http:example.com/", {
                 scheme: "http",
@@ -268,9 +280,9 @@ function test()
                 lastPathComponent: null,
             });
 
-            testValid("http://user@pass:example.com/", {
+            testValid("http://:pass@example.com/", {
                 scheme: "http",
-                userinfo: null,
+                userinfo: ":pass",
                 host: "example.com",
                 port: null,
                 origin: "http://example.com",
@@ -280,13 +292,15 @@ function test()
                 lastPathComponent: null,
             });
 
+            testInvalid("http://user@pass:example.com/");
+
             testValid("http://example.com?key=alpha/beta", {
                 scheme: "http",
                 userinfo: null,
                 host: "example.com",
                 port: null,
                 origin: "http://example.com",
-                path: null,
+                path: "/",
                 queryString: "key=alpha/beta",
                 fragment: null,
                 lastPathComponent: null,
@@ -443,25 +457,26 @@ function test()
         name: "WI.displayNameForURL",
         test() {
             function test(tests) {
-                for (let {url, expected} of tests)
+                for (let {url, expected} of tests) {
+                    expected = expected || url;
                     InspectorTest.expectEqual(WI.displayNameForURL(url), expected, `Display name of '${url}' should be '${expected}'.`);
+                }
 
                 InspectorTest.newline();
 
                 InspectorTest.log("Allowing directory as name...");
-                for (let {url, expected, directory} of tests)
-                    InspectorTest.expectEqual(WI.displayNameForURL(url, null, {allowDirectoryAsName: true}), directory || expected, `Display name of '${url}' should be '${directory || expected}'.`);
+                for (let {url, expected, directory} of tests) {
+                    expected = directory || expected || url;
+                    InspectorTest.expectEqual(WI.displayNameForURL(url, null, {allowDirectoryAsName: true}), expected, `Display name of '${url}' should be '${expected}'.`);
+                }
             }
 
             test([
-                {url: "a", expected: "a"},
-
-                {url: "http://", expected: "http://"},
-                {url: "http://example", expected: "example"},
-                {url: "http://example.com", expected: "example.com"},
+                {url: "http://example", expected: "example", directory: "/"},
+                {url: "http://example.com", expected: "example.com", directory: "/"},
                 {url: "http://example.com/", expected: "example.com", directory: "/"},
-                {url: "http://example.com:999999999", expected: "example.com"},
                 {url: "http://example.com:80/", expected: "example.com", directory: "/"},
+                {url: "http://example.com:42/", expected: "example.com", directory: "/"},
                 {url: "http://example.com/path", expected: "path"},
                 {url: "http://example.com/path/", expected: "path", directory: "/"},
                 {url: "http://example.com/path/to", expected: "to"},
@@ -474,23 +489,30 @@ function test()
                 {url: "http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test", expected: "page.html"},
                 {url: "http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test", expected: "page.html"},
 
-                {url: "http://example.com#foo%20bar", expected: "example.com"},
+                {url: "http://example.com#foo%20bar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/#foo%20bar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/foo%20bar", expected: "foo bar"},
+                {url: "http://example.com?key=foo%20bar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/?key=foo%20bar", expected: "example.com", directory: "/"},
+                {url: "http://example.com?key=foo bar", expected: "example.com", directory: "/"},
+                {url: "http://example.com/?key=foo bar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/foo%20bar", expected: "foo bar"},
                 {url: "http://example.com/foo bar", expected: "foo bar"},
 
-                {url: "http://example.com#foo/bar", expected: "example.com"},
+                {url: "http://example.com#foo/bar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/#foo/bar", expected: "example.com", directory: "/"},
-                {url: "http://example.com#foo%2Fbar", expected: "example.com"},
+                {url: "http://example.com#foo%2Fbar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/#foo%2Fbar", expected: "example.com", directory: "/"},
+                {url: "http://example.com?key=foo%2Fbar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/?key=foo%2Fbar", expected: "example.com", directory: "/"},
+                {url: "http://example.com?key=foo/bar", expected: "example.com", directory: "/"},
+                {url: "http://example.com/?key=foo/bar", expected: "example.com", directory: "/"},
                 {url: "http://example.com/foo%2Fbar", expected: "foo/bar"},
 
                 {url: "http://user:pass@example.com/", expected: "example.com", directory: "/"},
+                {url: "http://:pass@example.com/", expected: "example.com", directory: "/"},
 
-                {url: "http://my.example.com", expected: "my.example.com"},
+                {url: "http://my.example.com", expected: "my.example.com", directory: "/"},
                 {url: "http://my.example.com/", expected: "my.example.com", directory: "/"},
 
                 {url: "file:///foo", expected: "foo"},
@@ -505,19 +527,12 @@ function test()
                 {url: "app-specific://example.com", expected: "example.com"},
                 {url: "app-specific://example.com/", expected: "example.com", directory: "/"},
                 {url: "app-specific://example.com/path", expected: "path"},
-            ]);
 
-            // FIXME: <https://webkit.org/b/165155> Web Inspector: Use URL constructor to better handle all kinds of URLs
-            InspectorTest.newline();
-            InspectorTest.log("-- Known issues <https://webkit.org/b/165155>");
-            InspectorTest.newline();
-
-            test([
-                {url: "http://example.com?key=foo%2Fbar", expected: "example.com"},
-                {url: "http://example.com?key=foo/bar", expected: "example.com"},
-
-                {url: "http://example.com?key=foo%20bar", expected: "example.com"},
-                {url: "http://example.com?key=foo bar", expected: "example.com"},
+                // Invalid
+                {url: "a"},
+                {url: "http://"},
+                {url: "http://example.com:65537"},
+                {url: "http://user@pass:example.com/"},
             ]);
         },
     });
@@ -550,6 +565,14 @@ function test()
             test("http://user:pass@example.com:123/foo", "example.com:123");
             test("https://user:pass@example.com:123/foo", "example.com:123");
 
+            test("ftp://:pass@example.com/foo", ":pass@example.com");
+            test("http://:pass@example.com/foo", "example.com");
+            test("https://:pass@example.com/foo", "example.com");
+
+            test("ftp://:pass@example.com:123/foo", ":pass@example.com:123");
+            test("http://:pass@example.com:123/foo", "example.com:123");
+            test("https://:pass@example.com:123/foo", "example.com:123");
+
             return true;
         }
     });
@@ -564,7 +587,7 @@ function test()
 
             test("http://example.com", "/");
             test("https://example.com", "/");
-            test("ftp://example.com", "");
+            test("ftp://example.com", "/");
 
             test("http://example.com/foo", "/foo");
             test("https://example.com/foo", "/foo");

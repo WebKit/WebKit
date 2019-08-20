@@ -16,7 +16,7 @@ PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: origin should be: 'http://example.com'
-PASS: path should be: 'null'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
@@ -36,8 +36,19 @@ Test Valid: http://example.com:80/
 PASS: scheme should be: 'http'
 PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
-PASS: port should be: '80'
-PASS: origin should be: 'http://example.com:80'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://example.com:42/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: '42'
+PASS: origin should be: 'http://example.com:42'
 PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
@@ -61,7 +72,7 @@ PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: origin should be: 'http://example.com'
 PASS: path should be: '/path/to/page.html'
-PASS: queryString should be: ''
+PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'page.html'
 
@@ -126,7 +137,7 @@ PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: origin should be: 'http://example.com'
-PASS: path should be: 'null'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'alpha/beta'
 PASS: lastPathComponent should be: 'null'
@@ -148,7 +159,7 @@ PASS: userinfo should be: 'null'
 PASS: host should be: 'example'
 PASS: port should be: 'null'
 PASS: origin should be: 'http://example'
-PASS: path should be: 'null'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
@@ -159,7 +170,7 @@ PASS: userinfo should be: 'null'
 PASS: host should be: 'my.example.com'
 PASS: port should be: 'null'
 PASS: origin should be: 'http://my.example.com'
-PASS: path should be: 'null'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
@@ -175,54 +186,32 @@ PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
 
--- Known issues <https://webkit.org/b/165155>
-
 Test Invalid: http://
-FAIL: Should not be a complete URL
-    Expected: truthy
-    Actual: false
+PASS: Should not be a complete URL
 PASS: URL constructor thinks this is invalid
 
-Test Invalid: http://example.com:999999999
-FAIL: Should not be a complete URL
-    Expected: truthy
-    Actual: false
+Test Invalid: http://example.com:65537
+PASS: Should not be a complete URL
 PASS: URL constructor thinks this is invalid
 
 Test Valid: http:example.com/
-FAIL: scheme should be: 'http'
-    Expected: "http"
-    Actual: null
+PASS: scheme should be: 'http'
 PASS: userinfo should be: 'null'
-FAIL: host should be: 'example.com'
-    Expected: "example.com"
-    Actual: null
+PASS: host should be: 'example.com'
 PASS: port should be: 'null'
-FAIL: origin should be: 'http://example.com'
-    Expected: "http://example.com"
-    Actual: null
-FAIL: path should be: '/'
-    Expected: "/"
-    Actual: null
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
 
 Test Valid: http:/example.com/
-FAIL: scheme should be: 'http'
-    Expected: "http"
-    Actual: null
+PASS: scheme should be: 'http'
 PASS: userinfo should be: 'null'
-FAIL: host should be: 'example.com'
-    Expected: "example.com"
-    Actual: null
+PASS: host should be: 'example.com'
 PASS: port should be: 'null'
-FAIL: origin should be: 'http://example.com'
-    Expected: "http://example.com"
-    Actual: null
-FAIL: path should be: '/'
-    Expected: "/"
-    Actual: null
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
@@ -238,45 +227,31 @@ PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
 
-Test Valid: http://user@pass:example.com/
-FAIL: scheme should be: 'http'
-    Expected: "http"
-    Actual: null
-PASS: userinfo should be: 'null'
-FAIL: host should be: 'example.com'
-    Expected: "example.com"
-    Actual: null
+Test Valid: http://:pass@example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: ':pass'
+PASS: host should be: 'example.com'
 PASS: port should be: 'null'
-FAIL: origin should be: 'http://example.com'
-    Expected: "http://example.com"
-    Actual: null
-FAIL: path should be: '/'
-    Expected: "/"
-    Actual: null
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
 PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
 
+Test Invalid: http://user@pass:example.com/
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
 Test Valid: http://example.com?key=alpha/beta
 PASS: scheme should be: 'http'
 PASS: userinfo should be: 'null'
-FAIL: host should be: 'example.com'
-    Expected: "example.com"
-    Actual: "example.com?key=alpha"
+PASS: host should be: 'example.com'
 PASS: port should be: 'null'
-FAIL: origin should be: 'http://example.com'
-    Expected: "http://example.com"
-    Actual: "http://example.com?key=alpha"
-FAIL: path should be: 'null'
-    Expected: null
-    Actual: "/beta"
-FAIL: queryString should be: 'key=alpha/beta'
-    Expected: "key=alpha/beta"
-    Actual: null
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'key=alpha/beta'
 PASS: fragment should be: 'null'
-FAIL: lastPathComponent should be: 'null'
-    Expected: null
-    Actual: "beta"
+PASS: lastPathComponent should be: 'null'
 
 -- Running test case: parseDataURL
 
@@ -380,13 +355,11 @@ PASS: The query 'a&b=1&c==2=&d&e=3&f==4=' was parsed successfully.
 PASS: The query 'a=foo%20bar&b=123%3A456' was parsed successfully.
 
 -- Running test case: WI.displayNameForURL
-PASS: Display name of 'a' should be 'a'.
-PASS: Display name of 'http://' should be 'http://'.
 PASS: Display name of 'http://example' should be 'example'.
 PASS: Display name of 'http://example.com' should be 'example.com'.
 PASS: Display name of 'http://example.com/' should be 'example.com'.
-PASS: Display name of 'http://example.com:999999999' should be 'example.com'.
 PASS: Display name of 'http://example.com:80/' should be 'example.com'.
+PASS: Display name of 'http://example.com:42/' should be 'example.com'.
 PASS: Display name of 'http://example.com/path' should be 'path'.
 PASS: Display name of 'http://example.com/path/' should be 'path'.
 PASS: Display name of 'http://example.com/path/to' should be 'to'.
@@ -401,16 +374,23 @@ PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#
 PASS: Display name of 'http://example.com#foo%20bar' should be 'example.com'.
 PASS: Display name of 'http://example.com/#foo%20bar' should be 'example.com'.
 PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com?key=foo%20bar' should be 'example.com'.
 PASS: Display name of 'http://example.com/?key=foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com?key=foo bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo bar' should be 'example.com'.
 PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
 PASS: Display name of 'http://example.com/foo bar' should be 'foo bar'.
 PASS: Display name of 'http://example.com#foo/bar' should be 'example.com'.
 PASS: Display name of 'http://example.com/#foo/bar' should be 'example.com'.
 PASS: Display name of 'http://example.com#foo%2Fbar' should be 'example.com'.
 PASS: Display name of 'http://example.com/#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com?key=foo%2Fbar' should be 'example.com'.
 PASS: Display name of 'http://example.com/?key=foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com?key=foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo/bar' should be 'example.com'.
 PASS: Display name of 'http://example.com/foo%2Fbar' should be 'foo/bar'.
 PASS: Display name of 'http://user:pass@example.com/' should be 'example.com'.
+PASS: Display name of 'http://:pass@example.com/' should be 'example.com'.
 PASS: Display name of 'http://my.example.com' should be 'my.example.com'.
 PASS: Display name of 'http://my.example.com/' should be 'my.example.com'.
 PASS: Display name of 'file:///foo' should be 'foo'.
@@ -422,15 +402,17 @@ PASS: Display name of 'about:srcdoc' should be 'about:srcdoc'.
 PASS: Display name of 'app-specific://example.com' should be 'example.com'.
 PASS: Display name of 'app-specific://example.com/' should be 'example.com'.
 PASS: Display name of 'app-specific://example.com/path' should be 'path'.
-
-Allowing directory as name...
 PASS: Display name of 'a' should be 'a'.
 PASS: Display name of 'http://' should be 'http://'.
-PASS: Display name of 'http://example' should be 'example'.
-PASS: Display name of 'http://example.com' should be 'example.com'.
+PASS: Display name of 'http://example.com:65537' should be 'http://example.com:65537'.
+PASS: Display name of 'http://user@pass:example.com/' should be 'http://user@pass:example.com/'.
+
+Allowing directory as name...
+PASS: Display name of 'http://example' should be '/'.
+PASS: Display name of 'http://example.com' should be '/'.
 PASS: Display name of 'http://example.com/' should be '/'.
-PASS: Display name of 'http://example.com:999999999' should be 'example.com'.
 PASS: Display name of 'http://example.com:80/' should be '/'.
+PASS: Display name of 'http://example.com:42/' should be '/'.
 PASS: Display name of 'http://example.com/path' should be 'path'.
 PASS: Display name of 'http://example.com/path/' should be '/'.
 PASS: Display name of 'http://example.com/path/to' should be 'to'.
@@ -442,20 +424,27 @@ PASS: Display name of 'http://example.com/path/to/page.html?a=1' should be 'page
 PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar' should be 'page.html'.
 PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
 PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
-PASS: Display name of 'http://example.com#foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com#foo%20bar' should be '/'.
 PASS: Display name of 'http://example.com/#foo%20bar' should be '/'.
 PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com?key=foo%20bar' should be '/'.
 PASS: Display name of 'http://example.com/?key=foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com?key=foo bar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo bar' should be '/'.
 PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
 PASS: Display name of 'http://example.com/foo bar' should be 'foo bar'.
-PASS: Display name of 'http://example.com#foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com#foo/bar' should be '/'.
 PASS: Display name of 'http://example.com/#foo/bar' should be '/'.
-PASS: Display name of 'http://example.com#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com#foo%2Fbar' should be '/'.
 PASS: Display name of 'http://example.com/#foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com?key=foo%2Fbar' should be '/'.
 PASS: Display name of 'http://example.com/?key=foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com?key=foo/bar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo/bar' should be '/'.
 PASS: Display name of 'http://example.com/foo%2Fbar' should be 'foo/bar'.
 PASS: Display name of 'http://user:pass@example.com/' should be '/'.
-PASS: Display name of 'http://my.example.com' should be 'my.example.com'.
+PASS: Display name of 'http://:pass@example.com/' should be '/'.
+PASS: Display name of 'http://my.example.com' should be '/'.
 PASS: Display name of 'http://my.example.com/' should be '/'.
 PASS: Display name of 'file:///foo' should be 'foo'.
 PASS: Display name of 'file:///foo/' should be '/'.
@@ -466,35 +455,10 @@ PASS: Display name of 'about:srcdoc' should be 'about:srcdoc'.
 PASS: Display name of 'app-specific://example.com' should be 'example.com'.
 PASS: Display name of 'app-specific://example.com/' should be '/'.
 PASS: Display name of 'app-specific://example.com/path' should be 'path'.
-
--- Known issues <https://webkit.org/b/165155>
-
-FAIL: Display name of 'http://example.com?key=foo%2Fbar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "example.com?key=foo%2fbar"
-FAIL: Display name of 'http://example.com?key=foo/bar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "bar"
-FAIL: Display name of 'http://example.com?key=foo%20bar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "example.com?key=foo%20bar"
-FAIL: Display name of 'http://example.com?key=foo bar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "example.com?key=foo bar"
-
-Allowing directory as name...
-FAIL: Display name of 'http://example.com?key=foo%2Fbar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "example.com?key=foo%2fbar"
-FAIL: Display name of 'http://example.com?key=foo/bar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "bar"
-FAIL: Display name of 'http://example.com?key=foo%20bar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "example.com?key=foo%20bar"
-FAIL: Display name of 'http://example.com?key=foo bar' should be 'example.com'.
-    Expected: "example.com"
-    Actual: "example.com?key=foo bar"
+PASS: Display name of 'a' should be 'a'.
+PASS: Display name of 'http://' should be 'http://'.
+PASS: Display name of 'http://example.com:65537' should be 'http://example.com:65537'.
+PASS: Display name of 'http://user@pass:example.com/' should be 'http://user@pass:example.com/'.
 
 -- Running test case: WI.h2Authority
 PASS: HTTP/2 :authority of 'http://example.com' should be 'example.com'.
@@ -512,11 +476,17 @@ PASS: HTTP/2 :authority of 'https://user:pass@example.com/foo' should be 'exampl
 PASS: HTTP/2 :authority of 'ftp://user:pass@example.com:123/foo' should be 'user:pass@example.com:123'.
 PASS: HTTP/2 :authority of 'http://user:pass@example.com:123/foo' should be 'example.com:123'.
 PASS: HTTP/2 :authority of 'https://user:pass@example.com:123/foo' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'ftp://:pass@example.com/foo' should be ':pass@example.com'.
+PASS: HTTP/2 :authority of 'http://:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://:pass@example.com:123/foo' should be ':pass@example.com:123'.
+PASS: HTTP/2 :authority of 'http://:pass@example.com:123/foo' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'https://:pass@example.com:123/foo' should be 'example.com:123'.
 
 -- Running test case: WI.h2Path
 PASS: HTTP/2 :path of 'http://example.com' should be '/'.
 PASS: HTTP/2 :path of 'https://example.com' should be '/'.
-PASS: HTTP/2 :path of 'ftp://example.com' should be ''.
+PASS: HTTP/2 :path of 'ftp://example.com' should be '/'.
 PASS: HTTP/2 :path of 'http://example.com/foo' should be '/foo'.
 PASS: HTTP/2 :path of 'https://example.com/foo' should be '/foo'.
 PASS: HTTP/2 :path of 'ftp://example.com/foo' should be '/foo'.

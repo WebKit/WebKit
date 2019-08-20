@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: <https://webkit.org/b/165155> Web Inspector: Use URL constructor to better handle all kinds of URLs
-
 function removeURLFragment(url)
 {
     var hashIndex = url.indexOf("#");
@@ -93,52 +91,71 @@ function parseDataURL(url)
 
 function parseURL(url)
 {
-    url = url ? url.trim() : "";
+    let result = {
+        scheme: null,
+        userinfo: null,
+        host: null,
+        port: null,
+        origin: null,
+        path: null,
+        queryString: null,
+        fragment: null,
+        lastPathComponent: null,
+    };
 
-    if (url.startsWith("data:"))
-        return {scheme: "data", userinfo: null, host: null, port: null, origin: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
-
-    let match = url.match(/^(?<scheme>[^\/:]+):\/\/(?:(?<userinfo>[^#@\/]+)@)?(?<host>[^\/#:]*)(?::(?<port>[\d]+))?(?:(?<path>\/[^#]*)?(?:#(?<fragment>.*))?)?$/i);
-    if (!match)
-        return {scheme: null, userinfo: null, host: null, port: null, origin: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
-
-    let scheme = match.groups.scheme.toLowerCase();
-    let userinfo = match.groups.userinfo || null;
-    let host = match.groups.host.toLowerCase();
-    let port = Number(match.groups.port) || null;
-    let wholePath = match.groups.path || null;
-    let fragment = match.groups.fragment || null;
-    let path = wholePath;
-    let queryString = null;
-
-    // Split the path and the query string.
-    if (wholePath) {
-        let indexOfQuery = wholePath.indexOf("?");
-        if (indexOfQuery !== -1) {
-            path = wholePath.substring(0, indexOfQuery);
-            queryString = wholePath.substring(indexOfQuery + 1);
-        }
-        path = resolveDotsInPath(path);
+    // dataURLs should be handled by `parseDataURL`.
+    if (url && url.startsWith("data:")) {
+        result.scheme = "data";
+        return result;
     }
+
+    let parsed = null;
+    try {
+        parsed = new URL(url);
+    } catch {
+        return result;
+    }
+
+    result.scheme = parsed.protocol.slice(0, -1); // remove trailing ":"
+
+    if (parsed.username)
+        result.userinfo = parsed.username;
+    if (parsed.password)
+        result.userinfo = (result.userinfo || "") + ":" + parsed.password;
+
+    if (parsed.hostname)
+        result.host = parsed.hostname;
+
+    if (parsed.port)
+        result.port = Number(parsed.port);
+
+    if (parsed.origin)
+        result.origin = parsed.origin;
+    else if (result.scheme && result.host) {
+        result.origin = result.scheme + "://" + result.host;
+        if (result.port)
+            result.origin += ":" + result.port;
+    }
+
+    if (parsed.pathname)
+        result.path = parsed.pathname;
+
+    if (parsed.search)
+        result.queryString = parsed.search.substring(1); // remove leading "?"
+
+    if (parsed.hash)
+        result.fragment = parsed.hash.substring(1); // remove leading "#"
 
     // Find last path component.
-    let lastPathComponent = null;
-    if (path && path !== "/") {
+    if (result.path && result.path !== "/") {
         // Skip the trailing slash if there is one.
-        let endOffset = path[path.length - 1] === "/" ? 1 : 0;
-        let lastSlashIndex = path.lastIndexOf("/", path.length - 1 - endOffset);
+        let endOffset = result.path.endsWith("/") ? 1 : 0;
+        let lastSlashIndex = result.path.lastIndexOf("/", result.path.length - 1 - endOffset);
         if (lastSlashIndex !== -1)
-            lastPathComponent = path.substring(lastSlashIndex + 1, path.length - endOffset);
+            result.lastPathComponent = result.path.substring(lastSlashIndex + 1, result.path.length - endOffset);
     }
 
-    let origin = null;
-    if (scheme && host) {
-        origin = scheme + "://" + host;
-        if (port)
-            origin += ":" + port;
-    }
-
-    return {scheme, userinfo, host, port, origin, path, queryString, fragment, lastPathComponent};
+    return result;
 }
 
 function absoluteURL(partialURL, baseURL)
