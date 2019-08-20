@@ -1,3 +1,19 @@
+2019-08-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: add a global breakpoint for pausing in the next microtask
+        https://bugs.webkit.org/show_bug.cgi?id=200652
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/debugger/setPauseOnMicrotasks.html
+
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/worker/WorkerDebuggerAgent.h:
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::willRunMicrotask): Added.
+        (WebCore::InspectorTimelineAgent::didRunMicrotask): Added.
+
 2019-08-19  Sam Weinig  <weinig@apple.com>
 
         [WHLSL] Make generated Metal code should be indented properly to ease reading while debugging

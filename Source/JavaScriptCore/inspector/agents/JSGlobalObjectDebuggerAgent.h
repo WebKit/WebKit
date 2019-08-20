@@ -38,8 +38,10 @@ public:
     JSGlobalObjectDebuggerAgent(JSAgentContext&, InspectorConsoleAgent*);
     virtual ~JSGlobalObjectDebuggerAgent() { }
 
+private:
     InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
+    // JSC::ScriptDebugListener
     void breakpointActionLog(JSC::ExecState&, const String&) final;
 
     // NOTE: JavaScript inspector does not yet need to mute a console because no messages
@@ -47,7 +49,6 @@ public:
     void muteConsole() final { }
     void unmuteConsole() final { }
 
-private:
     InspectorConsoleAgent* m_consoleAgent { nullptr };
 };
 

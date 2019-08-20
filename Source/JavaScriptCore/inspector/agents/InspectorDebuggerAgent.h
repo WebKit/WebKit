@@ -63,7 +63,6 @@ public:
     // DebuggerBackendDispatcherHandler
     void enable(ErrorString&) final;
     void disable(ErrorString&) final;
-    void setPauseForInternalScripts(ErrorString&, bool shouldPause) final;
     void setAsyncStackTraceDepth(ErrorString&, int depth) final;
     void setBreakpointsActive(ErrorString&, bool active) final;
     void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const JSON::Object* options, Protocol::Debugger::BreakpointId*, RefPtr<JSON::ArrayOf<Protocol::Debugger::Location>>& locations) final;
@@ -71,16 +70,18 @@ public:
     void removeBreakpoint(ErrorString&, const String& breakpointIdentifier) final;
     void continueUntilNextRunLoop(ErrorString&) final;
     void continueToLocation(ErrorString&, const JSON::Object& location) final;
-    void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>&) final;
-    void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) final;
-    void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>&) final;
-    void pause(ErrorString&) final;
-    void resume(ErrorString&) final;
     void stepOver(ErrorString&) final;
     void stepInto(ErrorString&) final;
     void stepOut(ErrorString&) final;
+    void pause(ErrorString&) final;
+    void resume(ErrorString&) final;
+    void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>&) final;
+    void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) final;
+    void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>&) final;
     void setPauseOnExceptions(ErrorString&, const String& pauseState) final;
     void setPauseOnAssertions(ErrorString&, bool enabled) final;
+    void setPauseOnMicrotasks(ErrorString&, bool enabled) final;
+    void setPauseForInternalScripts(ErrorString&, bool shouldPause) final;
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
 
     bool isPaused() const;
@@ -131,8 +132,6 @@ protected:
 
     virtual void enable();
     virtual void disable(bool skipRecompile);
-    void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue) final;
-    void didContinue() final;
 
     virtual String sourceMapURLForScript(const Script&);
 
@@ -142,9 +141,13 @@ protected:
 private:
     Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
 
+    // JSC::ScriptDebugListener
     void didParseSource(JSC::SourceID, const Script&) final;
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
-
+    void willRunMicrotask() final;
+    void didRunMicrotask() final;
+    void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue) final;
+    void didContinue() final;
     void breakpointActionSound(int breakpointActionIdentifier) final;
     void breakpointActionProbe(JSC::ExecState&, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
 
@@ -199,6 +202,7 @@ private:
     bool m_enabled { false };
     bool m_enablePauseWhenIdle { false };
     bool m_pauseOnAssertionFailures { false };
+    bool m_pauseOnMicrotasks { false };
     bool m_pauseForInternalScripts { false };
     bool m_javaScriptPauseScheduled { false };
     bool m_didPauseStopwatch { false };

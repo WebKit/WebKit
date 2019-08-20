@@ -216,6 +216,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (InspectorBackend.domains.Debugger.setPauseOnAssertions && WI.settings.showAssertionFailuresBreakpoint.value)
             WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
+        // COMPATIBILITY (iOS 13): DebuggerAgent.setPauseOnMicrotasks did not exist yet.
+        if (InspectorBackend.domains.Debugger.setPauseOnMicrotasks && WI.settings.showAllMicrotasksBreakpoint.value)
+            WI.debuggerManager.addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
+
         for (let target of WI.targets)
             this._addTarget(target);
         this._updateCallStackTreeOutline();
@@ -389,6 +393,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             cookie[DebuggerSidebarPanel.SelectedAssertionFailuresCookieKey] = true;
             return;
 
+        case WI.debuggerManager.allMicrotasksBreakpoint:
+            cookie[DebuggerSidebarPanel.SelectedAllMicrotasksCookieKey] = true;
+            return;
+
         case WI.domDebuggerManager.allAnimationFramesBreakpoint:
             cookie[DebuggerSidebarPanel.SelectedAllAnimationFramesBreakpoint] = true;
             return;
@@ -432,6 +440,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             revealAndSelect(this._breakpointsContentTreeOutline, WI.debuggerManager.uncaughtExceptionsBreakpoint);
         else if (cookie[DebuggerSidebarPanel.SelectedAssertionFailuresCookieKey])
             revealAndSelect(this._breakpointsContentTreeOutline, WI.debuggerManager.assertionFailuresBreakpoint);
+        else if (cookie[DebuggerSidebarPanel.SelectedAllMicrotasksCookieKey])
+            revealAndSelect(this._breakpointsContentTreeOutline, WI.debuggerManager.allMicrotasksBreakpoint);
         else if (cookie[DebuggerSidebarPanel.SelectedAllAnimationFramesBreakpoint])
             revealAndSelect(this._breakpointsContentTreeOutline, WI.domDebuggerManager.allAnimationFramesBreakpoint);
         else if (cookie[DebuggerSidebarPanel.SelectedAllIntervalsBreakpoint])
@@ -533,6 +543,9 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         } else if (breakpoint === WI.debuggerManager.assertionFailuresBreakpoint) {
             options.className = WI.DebuggerSidebarPanel.AssertionIconStyleClassName;
             options.title = WI.repeatedUIString.assertionFailures();
+        } else if (breakpoint === WI.debuggerManager.allMicrotasksBreakpoint) {
+            options.className = "breakpoint-microtask-icon";
+            options.title = WI.UIString("All Microtasks");
         } else if (breakpoint instanceof WI.DOMBreakpoint) {
             if (!breakpoint.domNodeIdentifier)
                 return null;
@@ -1118,6 +1131,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.uncaughtExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint,
                 (treeElement) => treeElement instanceof WI.BreakpointTreeElement || treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement,
+                (treeElement) => treeElement.representedObject === WI.debuggerManager.allMicrotasksBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allAnimationFramesBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allTimeoutsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allIntervalsBreakpoint,
@@ -1373,6 +1387,11 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             this._pauseReasonGroup.rows = [eventBreakpointRow];
             return true;
 
+        case WI.DebuggerManager.PauseReason.Microtask:
+            this._pauseReasonTextRow.text = WI.UIString("Microtask Fired");
+            this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
+            return true;
+
         case WI.DebuggerManager.PauseReason.PauseOnNextStatement:
             this._pauseReasonTextRow.text = WI.UIString("Immediate Pause Requested");
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
@@ -1550,6 +1569,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             setting = WI.settings.showAssertionFailuresBreakpoint;
             break;
 
+        case WI.debuggerManager.allMicrotasksBreakpoint:
+            setting = WI.settings.showAllMicrotasksBreakpoint;
+            break;
+
         case WI.domDebuggerManager.allAnimationFramesBreakpoint:
             setting = WI.settings.showAllAnimationFramesBreakpoint;
             break;
@@ -1590,6 +1613,22 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             }, assertionFailuresBreakpointShown);
         }
 
+        contextMenu.appendSeparator();
+
+        // COMPATIBILITY (iOS 13): DebuggerAgent.setPauseOnMicrotasks did not exist yet.
+        if (InspectorBackend.domains.Debugger.setPauseOnMicrotasks) {
+            let allMicrotasksBreakpointShown = WI.settings.showAllMicrotasksBreakpoint.value;
+
+            contextMenu.appendCheckboxItem(WI.UIString("All Microtasks"), () => {
+                if (allMicrotasksBreakpointShown)
+                    WI.debuggerManager.removeBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
+                else {
+                    WI.debuggerManager.allMicrotasksBreakpoint.disabled = false;
+                    WI.debuggerManager.addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
+                }
+            }, allMicrotasksBreakpointShown);
+        }
+
         if (WI.DOMDebuggerManager.supportsEventBreakpoints() || WI.DOMDebuggerManager.supportsEventListenerBreakpoints()) {
             function addToggleForSpecialEventBreakpoint(breakpoint, label, checked) {
                 contextMenu.appendCheckboxItem(label, () => {
@@ -1601,8 +1640,6 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                     }
                 }, checked);
             }
-
-            contextMenu.appendSeparator();
 
             addToggleForSpecialEventBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint, WI.UIString("All Animation Frames"), WI.settings.showAllAnimationFramesBreakpoint.value);
             addToggleForSpecialEventBreakpoint(WI.domDebuggerManager.allTimeoutsBreakpoint, WI.UIString("All Timeouts"), WI.settings.showAllTimeoutsBreakpoint.value);
@@ -1617,11 +1654,11 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                 let popover = new WI.EventBreakpointPopover(this);
                 popover.show(this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
             });
-
-            contextMenu.appendSeparator();
         }
 
         if (WI.DOMDebuggerManager.supportsURLBreakpoints() || WI.DOMDebuggerManager.supportsXHRBreakpoints()) {
+            contextMenu.appendSeparator();
+
             let allRequestsBreakpointShown = WI.settings.showAllRequestsBreakpoint.value;
             contextMenu.appendCheckboxItem(WI.repeatedUIString.allRequests(), () => {
                 if (allRequestsBreakpointShown)
@@ -1648,6 +1685,7 @@ WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName = "breakpoint-paused-
 WI.DebuggerSidebarPanel.SelectedAllExceptionsCookieKey = "debugger-sidebar-panel-all-exceptions-breakpoint";
 WI.DebuggerSidebarPanel.SelectedUncaughtExceptionsCookieKey = "debugger-sidebar-panel-uncaught-exceptions-breakpoint";
 WI.DebuggerSidebarPanel.SelectedAssertionFailuresCookieKey = "debugger-sidebar-panel-assertion-failures-breakpoint";
+WI.DebuggerSidebarPanel.SelectedAllMicrotasksCookieKey = "debugger-sidebar-panel-all-microtasks-breakpoint";
 WI.DebuggerSidebarPanel.SelectedAllAnimationFramesBreakpoint = "debugger-sidebar-panel-all-animation-frames-breakpoint";
 WI.DebuggerSidebarPanel.SelectedAllIntervalsBreakpoint = "debugger-sidebar-panel-all-intervals-breakpoint";
 WI.DebuggerSidebarPanel.SelectedAllListenersBreakpoint = "debugger-sidebar-panel-all-listeners-breakpoint";

@@ -1,5 +1,44 @@
 2019-08-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: add a global breakpoint for pausing in the next microtask
+        https://bugs.webkit.org/show_bug.cgi?id=200652
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.initializeTarget):
+        (WI.DebuggerManager.prototype.get allMicrotasksBreakpoint): ADded.
+        (WI.DebuggerManager.prototype.isBreakpointSpecial):
+        (WI.DebuggerManager.prototype._pauseReasonFromPayload):
+        (WI.DebuggerManager.prototype._breakpointDisabledStateDidChange):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype.saveStateToCookie):
+        (WI.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.DebuggerSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.DebuggerSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._insertDebuggerTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.breakpoint-microtask-icon .icon): Added.
+        * UserInterface/Images/Microtask.svg: Added.
+
+        * UserInterface/Base/Setting.js:
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-08-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r248682): Elements: Computed: go-to arrows in the Variables section are misaligned
         https://bugs.webkit.org/show_bug.cgi?id=200841
 

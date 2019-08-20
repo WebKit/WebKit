@@ -56,6 +56,10 @@ public:
 
     virtual void didParseSource(JSC::SourceID, const Script&) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
+
+    virtual void willRunMicrotask() = 0;
+    virtual void didRunMicrotask() = 0;
+
     virtual void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exception) = 0;
     virtual void didContinue() = 0;
 

@@ -51,27 +51,33 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this._breakpointsEnabledSetting = new WI.Setting("breakpoints-enabled", true);
-        this._allExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-all-exceptions", false);
-        this._uncaughtExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-uncaught-exceptions", false);
-        this._assertionFailuresBreakpointEnabledSetting = new WI.Setting("break-on-assertion-failures", false);
         this._asyncStackTraceDepthSetting = new WI.Setting("async-stack-trace-depth", 200);
 
-        let specialBreakpointLocation = new WI.SourceCodeLocation(null, Infinity, Infinity);
+        const specialBreakpointLocation = new WI.SourceCodeLocation(null, Infinity, Infinity);
 
+        this._allExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-all-exceptions", false);
         this._allExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
             disabled: !this._allExceptionsBreakpointEnabledSetting.value,
         });
         this._allExceptionsBreakpoint.resolved = true;
 
+        this._uncaughtExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-uncaught-exceptions", false);
         this._uncaughtExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
             disabled: !this._uncaughtExceptionsBreakpointEnabledSetting.value,
         });
         this._uncaughtExceptionsBreakpoint.resolved = true;
 
+        this._assertionFailuresBreakpointEnabledSetting = new WI.Setting("break-on-assertion-failures", false);
         this._assertionFailuresBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
             disabled: !this._assertionFailuresBreakpointEnabledSetting.value,
         });
         this._assertionFailuresBreakpoint.resolved = true;
+
+        this._allMicrotasksBreakpointEnabledSetting = new WI.Setting("break-on-all-microtasks", false);
+        this._allMicrotasksBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
+            disabled: !this._allMicrotasksBreakpointEnabledSetting.value,
+        });
+        this._allMicrotasksBreakpoint.resolved = true;
 
         this._breakpoints = [];
         this._breakpointContentIdentifierMap = new Multimap;
@@ -141,7 +147,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
         if (target.DebuggerAgent.setPauseOnAssertions)
-            target.DebuggerAgent.setPauseOnAssertions(this._assertionFailuresBreakpointEnabledSetting.value);
+            target.DebuggerAgent.setPauseOnAssertions(!this._assertionFailuresBreakpoint.disabled);
+
+        // COMPATIBILITY (iOS 13): DebuggerAgent.setPauseOnMicrotasks did not exist yet.
+        if (target.DebuggerAgent.setPauseOnMicrotasks)
+            target.DebuggerAgent.setPauseOnMicrotasks(!this._allMicrotasksBreakpoint.disabled);
 
         // COMPATIBILITY (iOS 10): Debugger.setAsyncStackTraceDepth did not exist yet.
         if (target.DebuggerAgent.setAsyncStackTraceDepth)
@@ -209,6 +219,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     get allExceptionsBreakpoint() { return this._allExceptionsBreakpoint; }
     get uncaughtExceptionsBreakpoint() { return this._uncaughtExceptionsBreakpoint; }
     get assertionFailuresBreakpoint() { return this._assertionFailuresBreakpoint; }
+    get allMicrotasksBreakpoint() { return this._allMicrotasksBreakpoint; }
     get breakpoints() { return this._breakpoints; }
 
     breakpointForIdentifier(id)
@@ -261,7 +272,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     isBreakpointSpecial(breakpoint)
     {
         return !this.isBreakpointRemovable(breakpoint)
-            || breakpoint === this._assertionFailuresBreakpoint;
+            || breakpoint === this._assertionFailuresBreakpoint
+            || breakpoint === this._allMicrotasksBreakpoint;
     }
 
     isBreakpointEditable(breakpoint)
@@ -857,6 +869,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.Interval;
         case DebuggerAgent.PausedReason.Listener:
             return WI.DebuggerManager.PauseReason.Listener;
+        case DebuggerAgent.PausedReason.Microtask:
+            return WI.DebuggerManager.PauseReason.Microtask;
         case DebuggerAgent.PausedReason.PauseOnNextStatement:
             return WI.DebuggerManager.PauseReason.PauseOnNextStatement;
         case DebuggerAgent.PausedReason.Timeout:
@@ -1043,8 +1057,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     _breakpointDisabledStateDidChange(event)
     {
         let breakpoint = event.target;
-
-        if (breakpoint === this._allExceptionsBreakpoint) {
+        switch (breakpoint) {
+        case this._allExceptionsBreakpoint:
             if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;
             this._allExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
@@ -1052,9 +1066,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             for (let target of WI.targets)
                 target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
             return;
-        }
 
-        if (breakpoint === this._uncaughtExceptionsBreakpoint) {
+        case this._uncaughtExceptionsBreakpoint:
             if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;
             this._uncaughtExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
@@ -1062,14 +1075,21 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             for (let target of WI.targets)
                 target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
             return;
-        }
 
-        if (breakpoint === this._assertionFailuresBreakpoint) {
+        case this._assertionFailuresBreakpoint:
             if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;
             this._assertionFailuresBreakpointEnabledSetting.value = !breakpoint.disabled;
             for (let target of WI.targets)
-                target.DebuggerAgent.setPauseOnAssertions(this._assertionFailuresBreakpointEnabledSetting.value);
+                target.DebuggerAgent.setPauseOnAssertions(!breakpoint.disabled);
+            return;
+
+        case this._allMicrotasksBreakpoint:
+            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
+                this.breakpointsEnabled = true;
+            this._allMicrotasksBreakpointEnabledSetting.value = !breakpoint.disabled;
+            for (let target of WI.targets)
+                target.DebuggerAgent.setPauseOnMicrotasks(!breakpoint.disabled);
             return;
         }
 
@@ -1383,6 +1403,7 @@ WI.DebuggerManager.PauseReason = {
     Fetch: "fetch",
     Interval: "interval",
     Listener: "listener",
+    Microtask: "microtask",
     PauseOnNextStatement: "pause-on-next-statement",
     Timeout: "timeout",
     XHR: "xhr",

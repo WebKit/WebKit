@@ -105,6 +105,7 @@ localizedStrings["All Events"] = "All Events";
 localizedStrings["All Exceptions"] = "All Exceptions";
 localizedStrings["All Intervals"] = "All Intervals";
 localizedStrings["All Layers"] = "All Layers";
+localizedStrings["All Microtasks"] = "All Microtasks";
 /* A submenu item of 'Break on' that breaks (pauses) before all network requests */
 localizedStrings["All Requests"] = "All Requests";
 localizedStrings["All Resources"] = "All Resources";
@@ -691,6 +692,7 @@ localizedStrings["Memory: %s"] = "Memory: %s";
 localizedStrings["Message"] = "Message";
 localizedStrings["Method"] = "Method";
 localizedStrings["Microtask Dispatched"] = "Microtask Dispatched";
+localizedStrings["Microtask Fired"] = "Microtask Fired";
 localizedStrings["Missing result level"] = "Missing result level";
 localizedStrings["Mixed"] = "Mixed";
 localizedStrings["Module Code"] = "Module Code";

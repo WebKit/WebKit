@@ -118,6 +118,7 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     clearAsyncStackTraceData();
 
     m_pauseOnAssertionFailures = false;
+    m_pauseOnMicrotasks = false;
 
     m_enabled = false;
 }
@@ -826,6 +827,11 @@ void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString&, bool enabled)
     m_pauseOnAssertionFailures = enabled;
 }
 
+void InspectorDebuggerAgent::setPauseOnMicrotasks(ErrorString&, bool enabled)
+{
+    m_pauseOnMicrotasks = enabled;
+}
+
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* /* emulateUserGesture */, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
 {
     if (!m_currentCallStack) {
@@ -960,6 +966,24 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
 void InspectorDebuggerAgent::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
 {
     m_frontendDispatcher->scriptFailedToParse(url, data, firstLine, errorLine, errorMessage);
+}
+
+void InspectorDebuggerAgent::willRunMicrotask()
+{
+    if (!m_scriptDebugServer.breakpointsActive())
+        return;
+
+    if (m_pauseOnMicrotasks)
+        schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason::Microtask, nullptr);
+}
+
+void InspectorDebuggerAgent::didRunMicrotask()
+{
+    if (!m_scriptDebugServer.breakpointsActive())
+        return;
+
+    if (m_pauseOnMicrotasks)
+        cancelPauseOnNextStatement();
 }
 
 void InspectorDebuggerAgent::didPause(JSC::ExecState& scriptState, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue)

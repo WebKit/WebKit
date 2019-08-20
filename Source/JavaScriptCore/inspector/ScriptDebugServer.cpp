@@ -91,10 +91,12 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
 
     switch (breakpointAction.type) {
-    case ScriptBreakpointActionTypeLog: {
-        dispatchBreakpointActionLog(debuggerCallFrame.globalExec(), breakpointAction.data);
+    case ScriptBreakpointActionTypeLog:
+        dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+            listener.breakpointActionLog(*debuggerCallFrame.globalExec(), breakpointAction.data);
+        });
         break;
-    }
+
     case ScriptBreakpointActionTypeEvaluate: {
         NakedPtr<Exception> exception;
         JSObject* scopeExtensionObject = nullptr;
@@ -103,9 +105,13 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
             reportException(debuggerCallFrame.globalExec(), exception);
         break;
     }
+
     case ScriptBreakpointActionTypeSound:
-        dispatchBreakpointActionSound(debuggerCallFrame.globalExec(), breakpointAction.identifier);
+        dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+            listener.breakpointActionSound(breakpointAction.identifier);
+        });
         break;
+
     case ScriptBreakpointActionTypeProbe: {
         NakedPtr<Exception> exception;
         JSObject* scopeExtensionObject = nullptr;
@@ -114,9 +120,12 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         if (exception)
             reportException(exec, exception);
 
-        dispatchBreakpointActionProbe(exec, breakpointAction, exception ? exception->value() : result);
+        dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+            listener.breakpointActionProbe(*exec, breakpointAction, m_currentProbeBatchId, m_nextProbeSampleId++, exception ? exception->value() : result);
+        });
         break;
     }
+
     default:
         ASSERT_NOT_REACHED();
     }
@@ -124,67 +133,22 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     return true;
 }
 
-void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
+void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
-    ASSERT(isPaused());
-    DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
-    JSGlobalObject* globalObject = debuggerCallFrame.scope()->globalObject();
-    JSC::ExecState& state = *globalObject->globalExec();
-    JSValue jsCallFrame = toJS(&state, globalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
-    listener->didPause(state, jsCallFrame, exceptionOrCaughtValue(&state));
-}
-
-void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const String& message)
-{
-    if (m_callingListeners)
+    // Preemptively check whether we can dispatch so that we don't do any unnecessary allocations.
+    if (!canDispatchFunctionToListeners())
         return;
 
-    if (m_listeners.isEmpty())
+    if (errorLine != -1) {
+        auto url = sourceProvider->url();
+        auto data = sourceProvider->source().toString();
+        auto firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
+        dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+            listener.failedToParseSource(url, data, firstLine, errorLine, errorMessage);
+        });
         return;
+    }
 
-    SetForScope<bool> change(m_callingListeners, true);
-
-    for (auto* listener : copyToVector(m_listeners))
-        listener->breakpointActionLog(*exec, message);
-}
-
-void ScriptDebugServer::dispatchBreakpointActionSound(ExecState*, int breakpointActionIdentifier)
-{
-    if (m_callingListeners)
-        return;
-
-    if (m_listeners.isEmpty())
-        return;
-
-    SetForScope<bool> change(m_callingListeners, true);
-
-    for (auto* listener : copyToVector(m_listeners))
-        listener->breakpointActionSound(breakpointActionIdentifier);
-}
-
-void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const ScriptBreakpointAction& action, JSC::JSValue sampleValue)
-{
-    if (m_callingListeners)
-        return;
-
-    if (m_listeners.isEmpty())
-        return;
-
-    SetForScope<bool> change(m_callingListeners, true);
-
-    unsigned sampleId = m_nextProbeSampleId++;
-
-    for (auto* listener : copyToVector(m_listeners))
-        listener->breakpointActionProbe(*exec, action, m_currentProbeBatchId, sampleId, sampleValue);
-}
-
-void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
-{
-    listener->didContinue();
-}
-
-void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, bool isContentScript)
-{
     JSC::SourceID sourceID = sourceProvider->asID();
 
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify ScriptDebugListener::Script to use SourceProvider
@@ -194,7 +158,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     script.source = sourceProvider->source().toString();
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
-    script.isContentScript = isContentScript;
+    script.isContentScript = isContentScript(exec);
     script.sourceURL = sourceProvider->sourceURLDirective();
     script.sourceMappingURL = sourceProvider->sourceMappingURLDirective();
 
@@ -214,54 +178,43 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     else
         script.endColumn = sourceLength - lastLineStart;
 
-    for (auto* listener : copyToVector(listeners))
-        listener->didParseSource(sourceID, script);
+    dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+        listener.didParseSource(sourceID, script);
+    });
 }
 
-void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
+void ScriptDebugServer::willRunMicrotask()
 {
-    String url = sourceProvider->url();
-    String data = sourceProvider->source().toString();
-    int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
-
-    for (auto* listener : copyToVector(listeners))
-        listener->failedToParseSource(url, data, firstLine, errorLine, errorMessage);
+    dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+        listener.willRunMicrotask();
+    });
 }
 
-void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
+void ScriptDebugServer::didRunMicrotask()
+{
+    dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+        listener.didRunMicrotask();
+    });
+}
+
+bool ScriptDebugServer::canDispatchFunctionToListeners() const
 {
     if (m_callingListeners)
-        return;
-
+        return false;
     if (m_listeners.isEmpty())
+        return false;
+    return true;
+}
+
+void ScriptDebugServer::dispatchFunctionToListeners(Function<void(ScriptDebugListener&)> callback)
+{
+    if (!canDispatchFunctionToListeners())
         return;
 
     SetForScope<bool> change(m_callingListeners, true);
 
-    bool isError = errorLine != -1;
-    if (isError)
-        dispatchFailedToParseSource(m_listeners, sourceProvider, errorLine, errorMessage);
-    else
-        dispatchDidParseSource(m_listeners, sourceProvider, isContentScript(exec));
-}
-
-void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback callback)
-{
-    if (m_callingListeners)
-        return;
-
-    if (m_listeners.isEmpty())
-        return;
-
-    SetForScope<bool> change(m_callingListeners, true);
-
-    dispatchFunctionToListeners(m_listeners, callback);
-}
-
-void ScriptDebugServer::dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback)
-{
-    for (auto* listener : copyToVector(listeners))
-        (this->*callback)(listener);
+    for (auto* listener : copyToVector(m_listeners))
+        callback(*listener);
 }
 
 void ScriptDebugServer::notifyDoneProcessingDebuggerEvents()
@@ -294,14 +247,25 @@ void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::ExecState* exe
 
 void ScriptDebugServer::handlePause(JSGlobalObject* vmEntryGlobalObject, Debugger::ReasonForPause)
 {
-    dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidPause);
+    dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+        ASSERT(isPaused());
+        auto& debuggerCallFrame = currentDebuggerCallFrame();
+        auto* globalObject = debuggerCallFrame.scope()->globalObject();
+        auto& state = *globalObject->globalExec();
+        auto jsCallFrame = toJS(&state, globalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
+        listener.didPause(state, jsCallFrame, exceptionOrCaughtValue(&state));
+    });
+
     didPause(vmEntryGlobalObject);
 
     m_doneProcessingDebuggerEvents = false;
     runEventLoopWhilePaused();
 
     didContinue(vmEntryGlobalObject);
-    dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue);
+
+    dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
+        listener.didContinue();
+    });
 }
 
 void ScriptDebugServer::addListener(ScriptDebugListener* listener)

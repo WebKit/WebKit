@@ -122,6 +122,8 @@ public:
     void setSuppressAllPauses(bool suppress) { m_suppressAllPauses = suppress; }
 
     virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
+    virtual void willRunMicrotask() { }
+    virtual void didRunMicrotask() { }
 
     void exception(CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);

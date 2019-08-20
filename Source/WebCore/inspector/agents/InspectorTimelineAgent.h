@@ -144,12 +144,13 @@ public:
     void mainFrameNavigated();
 
 private:
-    // ScriptDebugListener
+    // JSC::ScriptDebugListener
     void didParseSource(JSC::SourceID, const Script&) final { }
     void failedToParseSource(const String&, const String&, int, int, const String&) final { }
+    void willRunMicrotask() final { }
+    void didRunMicrotask() final { }
     void didPause(JSC::ExecState&, JSC::JSValue, JSC::JSValue) final { }
     void didContinue() final { }
-
     void breakpointActionLog(JSC::ExecState&, const String&) final { }
     void breakpointActionSound(int) final { }
     void breakpointActionProbe(JSC::ExecState&, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) final;

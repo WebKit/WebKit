@@ -1,5 +1,49 @@
 2019-08-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: add a global breakpoint for pausing in the next microtask
+        https://bugs.webkit.org/show_bug.cgi?id=200652
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Debugger.json:
+        Add `setPauseOnMicrotasks` command.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::disable):
+        (Inspector::InspectorDebuggerAgent::setPauseOnMicrotasks): Added.
+        (Inspector::InspectorDebuggerAgent::willRunMicrotask): Added.
+        (Inspector::InspectorDebuggerAgent::didRunMicrotask): Added.
+
+        * debugger/Debugger.h:
+        (JSC::Debugger::willRunMicrotask): Added.
+        (JSC::Debugger::didRunMicrotask): Added.
+        * inspector/ScriptDebugListener.h:
+        * inspector/ScriptDebugServer.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        (Inspector::ScriptDebugServer::sourceParsed):
+        (Inspector::ScriptDebugServer::willRunMicrotask): Added.
+        (Inspector::ScriptDebugServer::didRunMicrotask): Added.
+        (Inspector::ScriptDebugServer::canDispatchFunctionToListeners const): ADded.
+        (Inspector::ScriptDebugServer::dispatchFunctionToListeners): ADded.
+        (Inspector::ScriptDebugServer::handlePause):
+        (Inspector::ScriptDebugServer::dispatchDidPause): Deleted.
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionLog): Deleted.
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionSound): Deleted.
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionProbe): Deleted.
+        (Inspector::ScriptDebugServer::dispatchDidContinue): Deleted.
+        (Inspector::ScriptDebugServer::dispatchDidParseSource): Deleted.
+        (Inspector::ScriptDebugServer::dispatchFailedToParseSource): Deleted.
+        Unify the various `dispatch*` functions to use lambdas so state management is centralized.
+
+        * runtime/JSMicrotask.cpp:
+        (JSC::JSMicrotask::run):
+
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+
+2019-08-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: pause on assertion failures breakpoint doesn't work when inspecting a JSContext
         https://bugs.webkit.org/show_bug.cgi?id=200874
 

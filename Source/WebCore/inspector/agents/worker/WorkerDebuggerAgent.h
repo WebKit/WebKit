@@ -43,7 +43,9 @@ private:
     void muteConsole() override { }
     void unmuteConsole() override { }
 
+    // JSC::ScriptDebugListener
     void breakpointActionLog(JSC::ExecState&, const String&) override;
+
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     WorkerGlobalScope& m_workerGlobalScope;

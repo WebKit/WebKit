@@ -27,6 +27,7 @@
 #include "JSMicrotask.h"
 
 #include "CatchScope.h"
+#include "Debugger.h"
 #include "Error.h"
 #include "Exception.h"
 #include "JSCInlines.h"
@@ -86,6 +87,10 @@ void JSMicrotask::run(ExecState* exec)
         if (UNLIKELY(handlerArguments.hasOverflowed()))
             return;
     }
+
+    if (UNLIKELY(exec->lexicalGlobalObject()->hasDebugger()))
+        exec->lexicalGlobalObject()->debugger()->willRunMicrotask();
+
     profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
     scope.clearException();
 }

@@ -32,6 +32,7 @@
 #include "Debugger.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
@@ -60,9 +61,6 @@ public:
     void removeListener(ScriptDebugListener*, bool isBeingDestroyed);
 
 protected:
-    typedef HashSet<ScriptDebugListener*> ListenerSet;
-    typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);
-
     ScriptDebugServer(JSC::VM&);
     ~ScriptDebugServer();
 
@@ -77,15 +75,8 @@ protected:
 
     bool evaluateBreakpointAction(const ScriptBreakpointAction&);
 
-    void dispatchFunctionToListeners(JavaScriptExecutionCallback);
-    void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback);
-    void dispatchDidPause(ScriptDebugListener*);
-    void dispatchDidContinue(ScriptDebugListener*);
-    void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
-    void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
-    void dispatchBreakpointActionLog(JSC::ExecState*, const String&);
-    void dispatchBreakpointActionSound(JSC::ExecState*, int breakpointActionIdentifier);
-    void dispatchBreakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, JSC::JSValue sample);
+    bool canDispatchFunctionToListeners() const;
+    void dispatchFunctionToListeners(Function<void(ScriptDebugListener&)> callback);
 
     bool m_doneProcessingDebuggerEvents { true };
 
@@ -93,6 +84,8 @@ private:
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
     void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) final;
+    void willRunMicrotask() final;
+    void didRunMicrotask() final;
     void handleBreakpointHit(JSC::JSGlobalObject*, const JSC::Breakpoint&) final;
     void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::Exception*) const final;
     void handlePause(JSC::JSGlobalObject*, JSC::Debugger::ReasonForPause) final;
@@ -101,7 +94,7 @@ private:
     JSC::JSValue exceptionOrCaughtValue(JSC::ExecState*);
 
     BreakpointIDToActionsMap m_breakpointIDToActions;
-    ListenerSet m_listeners;
+    HashSet<ScriptDebugListener*> m_listeners;
     bool m_callingListeners { false };
     unsigned m_nextProbeSampleId { 1 };
     unsigned m_currentProbeBatchId { 0 };
