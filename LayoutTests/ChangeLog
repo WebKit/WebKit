@@ -1,5 +1,25 @@
 2019-08-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248875. rdar://problem/52961406
+
+    rdar://52961406 (scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky image failure on iOS)
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ios/TestExpectations: Updated test expectations to [ Pass Failure ]
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-19  Russell Epstein  <repstein@apple.com>
+
+            rdar://52961406 (scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky image failure on iOS)
+
+            Unreviewed Test Gardening.
+
+            * platform/ios/TestExpectations: Updated test expectations to [ Pass Failure ]
+
+2019-08-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248863. rdar://problem/54481698
 
     rdar://54481698 (Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing)
