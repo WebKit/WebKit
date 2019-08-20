@@ -1,3 +1,17 @@
+2019-08-19  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Fix misspelling of -preventsDisplaySleepForVideoPlayback
+        https://bugs.webkit.org/show_bug.cgi?id=200774
+        <rdar://problem/54321071>
+
+        Reviewed by Eric Carlson.
+
+        Only declare the API on platforms where that API is undefined, so as
+        to catch this kind of misspelling at compile time.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+
 2019-08-19  Justin Fan  <justin_fan@apple.com>
 
         WebGPU layers don't show up sometimes

@@ -65,10 +65,6 @@
 - (instancetype)initWithStorageDirectoryAtURL:(NSURL *)storageDirectory;
 @end
 
-@interface AVSampleBufferDisplayLayer (WebCorePrivate)
-@property (assign, nonatomic) BOOL preventDisplaySleepForVideoPlayback;
-@end
-
 namespace WebCore {
 using namespace PAL;
 
@@ -762,8 +758,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
     }
 
-    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventDisplaySleepForVideoPlayback:)])
-        m_sampleBufferDisplayLayer.get().preventDisplaySleepForVideoPlayback = NO;
+    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
+        m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
     [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
     if (m_mediaSourcePrivate)
