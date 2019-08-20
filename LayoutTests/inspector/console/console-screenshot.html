@@ -76,20 +76,30 @@ function test()
                 let {message} = event.data;
 
                 if (message.level === WI.ConsoleMessage.MessageLevel.Error) {
-                    InspectorTest.expectThat(shouldError, message.messageText);
+                    InspectorTest.expectThat(shouldError, "Error: " + message.messageText);
                     return;
                 }
 
                 InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
                 InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
 
-                let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-                if (shouldCaptureViewport) {
-                    InspectorTest.expectGreaterThan(img.width, 2, "The image width should be greater than 2px.");
-                    InspectorTest.expectGreaterThan(img.height, 2, "The image height should be greater than 2px.");
-                } else {
-                    InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
-                    InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+                try {
+                    let image = new Image;
+                    await new Promise((resolve, reject) => {
+                        image.addEventListener("load", resolve);
+                        image.addEventListener("error", reject);
+                        image.src = message.messageText;
+                    });
+
+                    if (shouldCaptureViewport) {
+                        InspectorTest.expectGreaterThan(image.width, 2, "The image width should be greater than 2px.");
+                        InspectorTest.expectGreaterThan(image.height, 2, "The image height should be greater than 2px.");
+                    } else {
+                        InspectorTest.expectEqual(image.width, 2, "The image width should be 2px.");
+                        InspectorTest.expectEqual(image.height, 2, "The image height should be 2px.");
+                    }
+                } catch {
+                    InspectorTest.expectThat(shouldError, "The image should not load.");
                 }
             },
         });
@@ -149,19 +159,37 @@ function test()
     });
 
     addTest({
-        name: "console.screenshot.String.Base64.Valid",
-        expression: `console.screenshot("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=")`, // 2x2 red square
-    });
-
-    addTest({
-        name: "console.screenshot.String.Base64.NoContent",
-        expression: `console.screenshot("data:image/png;a1=b2;base64,")`,
+        name: "console.screenshot.String.Valid",
+        expression: `console.screenshot("test")`,
         shouldCaptureViewport: true,
     });
 
     addTest({
-        name: "console.screenshot.String.Base64.Invalid",
-        expression: `console.screenshot("invalid")`,
+        name: "console.screenshot.String.dataURL.Valid",
+        expression: `console.screenshot("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=")`, // 2x2 red square
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidMIME",
+        expression: `console.screenshot("data:fake/mime")`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidContent",
+        expression: `console.screenshot("data:image/png;base64,<INVALID>")`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidNoContent",
+        expression: `console.screenshot("data:image/png;a1=b2;base64,")`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.ValidNoContent",
+        expression: `console.screenshot("data:")`,
         shouldCaptureViewport: true,
     });
 

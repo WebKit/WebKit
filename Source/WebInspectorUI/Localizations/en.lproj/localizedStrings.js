@@ -296,6 +296,7 @@ localizedStrings["Copy Rule"] = "Copy Rule";
 localizedStrings["Copy Selected"] = "Copy Selected";
 localizedStrings["Copy Table"] = "Copy Table";
 localizedStrings["Copy as cURL"] = "Copy as cURL";
+localizedStrings["Could not capture screenshot"] = "Could not capture screenshot";
 localizedStrings["Could not fetch properties. Object may no longer exist."] = "Could not fetch properties. Object may no longer exist.";
 localizedStrings["Count"] = "Count";
 localizedStrings["Create %s Rule"] = "Create %s Rule";
