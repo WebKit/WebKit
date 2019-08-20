@@ -45,7 +45,7 @@ PASS: Capturing started.
           "functionName": "",
           "url": "",
           "scriptId": "<filtered>",
-          "lineNumber": 138,
+          "lineNumber": 141,
           "columnNumber": 97
         }
       ],
@@ -107,7 +107,7 @@ PASS: Capturing started.
               "functionName": "",
               "url": "",
               "scriptId": "<filtered>",
-              "lineNumber": 138,
+              "lineNumber": 141,
               "columnNumber": 97
             }
           ],
@@ -160,7 +160,7 @@ PASS: Capturing started.
           "functionName": "",
           "url": "",
           "scriptId": "<filtered>",
-          "lineNumber": 138,
+          "lineNumber": 141,
           "columnNumber": 97
         }
       ],
@@ -220,7 +220,7 @@ PASS: Capturing started.
           "functionName": "",
           "url": "",
           "scriptId": "<filtered>",
-          "lineNumber": 138,
+          "lineNumber": 141,
           "columnNumber": 97
         }
       ],
