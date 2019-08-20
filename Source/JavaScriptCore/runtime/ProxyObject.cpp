@@ -91,14 +91,20 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
         return;
     }
     if (ProxyObject* targetAsProxy = jsDynamicCast<ProxyObject*>(vm, target)) {
-        if (targetAsProxy->handler().isNull()) {
-            throwTypeError(exec, scope, "If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked"_s);
+        if (targetAsProxy->isRevoked()) {
+            throwTypeError(exec, scope, "A Proxy's 'target' shouldn't be a revoked Proxy"_s);
             return;
         }
     }
     if (!handler.isObject()) {
         throwTypeError(exec, scope, "A Proxy's 'handler' should be an Object"_s);
         return;
+    }
+    if (ProxyObject* handlerAsProxy = jsDynamicCast<ProxyObject*>(vm, handler)) {
+        if (handlerAsProxy->isRevoked()) {
+            throwTypeError(exec, scope, "A Proxy's 'handler' shouldn't be a revoked Proxy"_s);
+            return;
+        }
     }
 
     JSObject* targetAsObject = jsCast<JSObject*>(target);

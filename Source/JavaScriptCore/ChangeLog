@@ -1,3 +1,16 @@
+2019-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Proxy constructor should throw if handler is revoked Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=198755
+
+        Reviewed by Saam Barati.
+
+        Reword error message and check if handler is revoked Proxy.
+        (step 4 of https://tc39.es/ecma262/#sec-proxycreate)
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation): Add isRevoked check.
+
 2019-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] OSR entry to Wasm OMG

@@ -95,7 +95,7 @@ function assert(b) {
                 new Proxy(proxy, {});
             } catch(e) {
                 threw = true;
-                assert(e.toString() === "TypeError: If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked");
+                assert(e.toString() === "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy");
             }
             assert(threw);
         }
