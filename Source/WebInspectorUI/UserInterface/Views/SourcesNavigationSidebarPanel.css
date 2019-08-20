@@ -104,6 +104,16 @@
     display: none;
 }
 
+.sidebar > .panel.navigation.sources > .filter-bar .sources-resource-type-scope-bar.default-item-selected:not(:hover) {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
+}
+
+.sidebar > .panel.navigation.sources > .filter-bar .sources-resource-type-scope-bar.default-item-selected:hover {
+    --scope-bar-background-opacity-override: 0.5;
+}
+
 @media (min-height: 650px) {
     .sidebar > .panel.navigation.sources > .content {
         display: flex;

@@ -140,12 +140,18 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._inputField.value = null; // Get the placeholder to show again.
     }
 
+    addFilterNavigationItem(navigationItem)
+    {
+        console.assert(navigationItem instanceof WI.NavigationItem);
+        this._filtersNavigationBar.addNavigationItem(navigationItem);
+    }
+
     addFilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight)
     {
         var filterBarButton = new WI.FilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight);
         filterBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleFilterBarButtonClicked, this);
         filterBarButton.addEventListener(WI.FilterBarButton.Event.ActivatedStateToggled, this._handleFilterButtonToggled, this);
-        this._filtersNavigationBar.addNavigationItem(filterBarButton);
+        this.addFilterNavigationItem(filterBarButton);
         if (filterBarButton.activated) {
             this._filterFunctionsMap.set(filterBarButton.identifier, filterBarButton.filterFunction);
             this._handleFilterChanged();

@@ -1,3 +1,51 @@
+2019-08-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: move the resource type scope bar to be next to the filter
+        https://bugs.webkit.org/show_bug.cgi?id=200891
+
+        Reviewed by Joseph Pecoraro.
+
+        It's odd to have UI for controlling the active filters in two different places. Move the
+        resource type `WI.ScopeBar` to the filter bar area, and "promote" the resource grouping mode
+        items from a context menu to an always visible `WI.ScopeBar` in the space left by the
+        resource type `WI.ScopeBar` (switching between grouping modes quickly is a useful workflow).
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.hasCustomFilters):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceGroupingModeScopeBarSelectionChanged): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceGroupingModeChanged):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateResourceGroupingModeContextMenu.addOption): Deleted.
+        (WI.SourcesNavigationSidebarPanel.prototype._populateResourceGroupingModeContextMenu): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .filter-bar .sources-resource-type-scope-bar.default-item-selected:not(:hover)): Added.
+        (.sidebar > .panel.navigation.sources > .filter-bar .sources-resource-type-scope-bar.default-item-selected:hover): Added.
+
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar.prototype.addFilterNavigationItem): Added.
+        (WI.FilterBar.prototype.addFilterBarButton):
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > .navigation-bar > .item):
+        (.filter-bar > .navigation-bar > .item.button): Added.
+        (.filter-bar > .navigation-bar > .item.scope-bar): Added.
+        (.filter-bar > input[type="search"] + .navigation-bar > .item.scope-bar:last-child): Added.
+        Provide a way to add arbitrary `WI.NavigationItem` to the contained `WI.NavigationBar`.
+        Slightly adjust the spacing of the items (depending on their type) in the `WI.NavigationBar`
+        so they are all centered.
+
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar):
+        (.scope-bar > li):
+        (.scope-bar > li::after):
+        (.scope-bar > li:not(.selected):hover): Added.
+        (body[dir=ltr] .scope-bar > li.multiple > select):
+        (body[dir=rtl] .scope-bar > li.multiple > select):
+        (.scope-bar > li:not(.selected):hover::after): Added.
+        Introduce CSS variables for `margin`, `padding`, and `opacity` that callers can override to
+        customize the appearance of the `WI.ScopeBar`.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Sources: Give Origins their own icon in the Sources sidebar

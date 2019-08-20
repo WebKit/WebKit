@@ -39,7 +39,16 @@
 }
 
 .filter-bar > .navigation-bar > .item {
-    padding: 0 0 3px;
+    padding: 0 0 2px;
+}
+
+.filter-bar > .navigation-bar > .item.button {
+    padding-bottom: 3px;
+}
+
+.filter-bar > .navigation-bar > .item.scope-bar {
+    --scope-bar-padding-override: 4px;
+    --scope-bar-margin-override: 0;
 }
 
 .filter-bar > input[type="search"] {
@@ -61,6 +70,10 @@
     background-clip: padding-box;
 
     height: 22px;
+}
+
+.filter-bar > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
+    -webkit-margin-end: 4px;
 }
 
 .filter-bar > .navigation-bar + input[type="search"] {

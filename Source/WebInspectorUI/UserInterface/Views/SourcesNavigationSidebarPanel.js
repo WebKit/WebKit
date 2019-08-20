@@ -221,28 +221,17 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this.contentView.addSubview(this._resourcesNavigationBar);
         this.contentView.element.insertBefore(this._resourcesNavigationBar.element, this._breakpointsContainer.nextSibling);
 
-        this._resourcesNavigationBar.addNavigationItem(new WI.FlexibleSpaceNavigationItem);
+        this._resourceGroupingModeScopeBarItems = {};
+        let createResourceGroupingModeScopeBarItem = (mode, label) => {
+            this._resourceGroupingModeScopeBarItems[mode] = new WI.ScopeBarItem("sources-resource-grouping-mode-" + mode, label, {exclusive: true});
+            this._resourceGroupingModeScopeBarItems[mode][SourcesNavigationSidebarPanel.ResourceGroupingModeSymbol] = mode;
+        };
+        createResourceGroupingModeScopeBarItem(WI.Resource.GroupingMode.Type, WI.UIString("By Type"));
+        createResourceGroupingModeScopeBarItem(WI.Resource.GroupingMode.Path, WI.UIString("By Path"));
 
-        const resourceTypeScopeItemPrefix = "sources-resource-type-";
-        let resourceTypeScopeBarItems = [];
-        resourceTypeScopeBarItems.push(new WI.ScopeBarItem(resourceTypeScopeItemPrefix + "all", WI.UIString("All Resources"), {exclusive: true}));
-        for (let value of Object.values(WI.Resource.Type)) {
-            let scopeBarItem = new WI.ScopeBarItem(resourceTypeScopeItemPrefix + value, WI.Resource.displayNameForType(value, true));
-            scopeBarItem[WI.SourcesNavigationSidebarPanel.ResourceTypeSymbol] = value;
-            resourceTypeScopeBarItems.push(scopeBarItem);
-        }
-
-        const shouldGroupNonExclusiveItems = true;
-        this._resourceTypeScopeBar = new WI.ScopeBar("sources-resource-type-scope-bar", resourceTypeScopeBarItems, resourceTypeScopeBarItems[0], shouldGroupNonExclusiveItems);
-        this._resourceTypeScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._handleResourceTypeScopeBarSelectionChanged, this);
-        this._resourcesNavigationBar.addNavigationItem(this._resourceTypeScopeBar);
-
-        this._resourcesNavigationBar.addNavigationItem(new WI.FlexibleSpaceNavigationItem);
-
-        let resourceGroupingModeNavigationItem = new WI.ButtonNavigationItem("grouping-mode", WI.UIString("Grouping Mode"), "Images/Gear.svg", 15, 15);
-        resourceGroupingModeNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        WI.addMouseDownContextMenuHandlers(resourceGroupingModeNavigationItem.element, this._populateResourceGroupingModeContextMenu.bind(this));
-        this._resourcesNavigationBar.addNavigationItem(resourceGroupingModeNavigationItem);
+        this._resourceGroupingModeScopeBar = new WI.ScopeBar("sources-resource-grouping-mode-scope-bar", Object.values(this._resourceGroupingModeScopeBarItems), this._resourceGroupingModeScopeBarItems[WI.settings.resourceGroupingMode.value]);
+        this._resourceGroupingModeScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._handleResourceGroupingModeScopeBarSelectionChanged, this);
+        this._resourcesNavigationBar.addNavigationItem(this._resourceGroupingModeScopeBar);
 
         let resourcesContainer = document.createElement("div");
         resourcesContainer.classList.add("resources-container");
@@ -265,6 +254,20 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         const activatedByDefault = false;
         this.filterBar.addFilterBarButton("sources-only-show-resources-with-issues", this._filterByResourcesWithIssues.bind(this), activatedByDefault, WI.UIString("Only show resources with issues"), WI.UIString("Show all resources"), "Images/Errors.svg", 15, 15);
+
+        const resourceTypeScopeItemPrefix = "sources-resource-type-";
+        let resourceTypeScopeBarItems = [];
+        resourceTypeScopeBarItems.push(new WI.ScopeBarItem(resourceTypeScopeItemPrefix + "all", WI.UIString("All")));
+        for (let value of Object.values(WI.Resource.Type)) {
+            let scopeBarItem = new WI.ScopeBarItem(resourceTypeScopeItemPrefix + value, WI.Resource.displayNameForType(value, true));
+            scopeBarItem[SourcesNavigationSidebarPanel.ResourceTypeSymbol] = value;
+            resourceTypeScopeBarItems.push(scopeBarItem);
+        }
+
+        const shouldGroupNonExclusiveItems = true;
+        this._resourceTypeScopeBar = new WI.ScopeBar("sources-resource-type-scope-bar", resourceTypeScopeBarItems, resourceTypeScopeBarItems[0], shouldGroupNonExclusiveItems);
+        this._resourceTypeScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._handleResourceTypeScopeBarSelectionChanged, this);
+        this.filterBar.addFilterNavigationItem(this._resourceTypeScopeBar);
 
         WI.settings.resourceGroupingMode.addEventListener(WI.Setting.Event.Changed, this._handleResourceGroupingModeChanged, this);
 
@@ -557,7 +560,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         console.assert(this._resourceTypeScopeBar.selectedItems.length === 1);
         let selectedScopeBarItem = this._resourceTypeScopeBar.selectedItems[0];
-        return selectedScopeBarItem && !selectedScopeBarItem.exclusive;
+        return selectedScopeBarItem && selectedScopeBarItem !== this._resourceTypeScopeBar.defaultItem;
     }
 
     matchTreeElementAgainstCustomFilters(treeElement, flags)
@@ -569,8 +572,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         console.assert(this._resourceTypeScopeBar.selectedItems.length === 1);
         let selectedScopeBarItem = this._resourceTypeScopeBar.selectedItems[0];
 
-        // Show everything if there is no selection or "All Resources" is selected (the exclusive item).
-        if (!selectedScopeBarItem || selectedScopeBarItem.exclusive)
+        // Show everything if there is no selection or "All Resources" is selected (the default item).
+        if (!selectedScopeBarItem || selectedScopeBarItem === this._resourceTypeScopeBar.defaultItem)
             return true;
 
         // Folders are hidden on the first pass, but visible childen under the folder will force the folder visible again.
@@ -1514,20 +1517,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         return false;
     }
 
+    _handleResourceGroupingModeScopeBarSelectionChanged(event)
+    {
+        console.assert(this._resourceGroupingModeScopeBar.selectedItems.length === 1);
+        let selectedScopeBarItem = this._resourceGroupingModeScopeBar.selectedItems[0];
+        WI.settings.resourceGroupingMode.value = selectedScopeBarItem[SourcesNavigationSidebarPanel.ResourceGroupingModeSymbol] || WI.Resource.GroupingMode.Type;
+    }
+
     _handleResourceTypeScopeBarSelectionChanged(event)
     {
         this.updateFilter();
-    }
-
-    _populateResourceGroupingModeContextMenu(contextMenu)
-    {
-        function addOption(mode, label) {
-            contextMenu.appendCheckboxItem(label, () => {
-                WI.settings.resourceGroupingMode.value = mode;
-            }, WI.settings.resourceGroupingMode.value === mode);
-        }
-        addOption(WI.Resource.GroupingMode.Path, WI.UIString("Group by Path"));
-        addOption(WI.Resource.GroupingMode.Type, WI.UIString("Group by Type"));
     }
 
     _handleTreeSelectionDidChange(event)
@@ -1758,6 +1757,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._anonymousScriptsFolderTreeElement = null;
 
         this._originTreeElementMap.clear();
+
+        let resourceGroupingModeScopeBarItem = this._resourceGroupingModeScopeBarItems[WI.settings.resourceGroupingMode.value];
+        console.assert(resourceGroupingModeScopeBarItem);
+        if (resourceGroupingModeScopeBarItem)
+            resourceGroupingModeScopeBarItem.selected = true;
 
         this._resourcesTreeOutline.removeChildren();
 
@@ -2148,3 +2152,4 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 };
 
 WI.SourcesNavigationSidebarPanel.ResourceTypeSymbol = Symbol("resource-type");
+WI.SourcesNavigationSidebarPanel.ResourceGroupingModeSymbol = Symbol("resource-grouping-mode");
