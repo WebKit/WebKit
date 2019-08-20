@@ -1,3 +1,13 @@
+2019-08-19  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix for security entitlements.
+
+        Bug 200242 (r248164) changed the way that entitlements were generated
+        and applied during the build. In that refactoring, the codesign
+        parameter "-o library" was dropped. This change adds it back.
+
+        * Configurations/BaseXPCService.xcconfig:
+
 2019-08-19  Chris Dumez  <cdumez@apple.com>
 
         NetworkDataTask is being ref'd / deref'd from several threads and is not ThreadSafeRefCounted
