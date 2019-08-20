@@ -159,6 +159,8 @@ public:
 
     void initScriptForWindowProxy(JSWindowProxy&);
 
+    bool willReplaceWithResultOfExecutingJavascriptURL() const { return m_willReplaceWithResultOfExecutingJavascriptURL; }
+
 private:
     void setupModuleScriptHandlers(LoadableModuleScript&, JSC::JSInternalPromise&, DOMWrapperWorld&);
 
@@ -171,6 +173,7 @@ private:
     const String* m_sourceURL;
 
     bool m_paused;
+    bool m_willReplaceWithResultOfExecutingJavascriptURL { false };
 
     // The root object used for objects bound outside the context of a plugin, such
     // as NPAPI plugins. The plugins using these objects prevent a page from being cached so they
