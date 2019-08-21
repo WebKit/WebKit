@@ -88,6 +88,7 @@ BEGIN {
        &sdkPlatformDirectory
        &setConfiguration
        &setupMacWebKitEnvironment
+       &setupUnixWebKitEnvironment
        &sharedCommandLineOptions
        &sharedCommandLineOptionsUsage
        &shutDownIOSSimulatorDevice
@@ -2054,7 +2055,7 @@ sub wrapperPrefixIfNeeded()
     if (isAppleCocoaWebKit()) {
         return ("xcrun");
     }
-    if (-e getJhbuildPath()) {
+    if (shouldUseJhbuild() and ! shouldUseFlatpak()) {
         my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper"));
         if (isGtk()) {
             push(@prefix, "--gtk");
@@ -2494,6 +2495,14 @@ sub setupMacWebKitEnvironment($)
     setUpGuardMallocIfNeeded();
 }
 
+sub setupUnixWebKitEnvironment($)
+{
+    my ($productDir) = @_;
+
+    $ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = File::Spec->catfile($productDir, "lib", "libTestRunnerInjectedBundle.so");
+    $ENV{TEST_RUNNER_TEST_PLUGIN_PATH} = File::Spec->catdir($productDir, "lib", "plugins");
+}
+
 sub setupIOSWebKitEnvironment($)
 {
     my ($dyldFrameworkPath) = @_;
@@ -2837,6 +2846,24 @@ sub execMacWebKitAppForDebugging($)
     exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
 
+sub execUnixAppForDebugging($)
+{
+    my ($appPath) = @_;
+
+    my $debuggerPath = `which gdb | head -1`;
+    chomp $debuggerPath;
+    die "Can't find the gdb executable.\n" unless -x $debuggerPath;
+
+    my $productDir = productDir();
+    setupUnixWebKitEnvironment($productDir);
+
+    my @cmdline = wrapperPrefixIfNeeded();
+    push @cmdline, $debuggerPath, "--args", $appPath;
+
+    print "Starting @{[basename($appPath)]} under gdb with build WebKit in $productDir.\n";
+    exec @cmdline, @ARGV or die;
+}
+
 sub debugSafari
 {
     if (isAppleMacWebKit()) {
@@ -2900,6 +2927,8 @@ sub debugWebKitTestRunner
 {
     if (isAppleMacWebKit()) {
         execMacWebKitAppForDebugging(File::Spec->catfile(productDir(), "WebKitTestRunner"));
+    } elsif (isGtk() or isWPE()) {
+        execUnixAppForDebugging(File::Spec->catfile(productDir(), "bin", "WebKitTestRunner"));
     }
 
     return 1;

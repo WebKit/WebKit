@@ -1,3 +1,17 @@
+2019-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Make debug-test-runner work
+        https://bugs.webkit.org/show_bug.cgi?id=193576
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitdirs.pm:
+        (wrapperPrefixIfNeeded): Only add the wrapper prefix when not running inside a Flatpak sandbox.
+        (setupUnixWebKitEnvironment): Added, sets TEST_RUNNER_INJECTED_BUNDLE_FILENAME and
+        TEST_RUNNER_TEST_PLUGIN_PATH in the environment.
+        (execUnixAppForDebugging): Added.
+        (debugWebKitTestRunner): Alternatively, use execUnixAppForDebugging() for the WPE and GTK+ ports.
+
 2019-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Put keygen element behind a runtime flag and disable it by default
