@@ -110,8 +110,6 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     if (mappedData.isNull())
         return { };
 
-    FileSystem::makeSafeToUseMemoryMapForPath(blobPath);
-
     if (!FileSystem::hardLink(blobPath, path))
         WTFLogAlways("Failed to create hard link from %s to %s", blobPath.utf8().data(), path.utf8().data());
 

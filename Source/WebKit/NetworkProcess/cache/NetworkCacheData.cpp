@@ -50,6 +50,8 @@ Data Data::mapToFile(const String& path) const
         close(fd);
         return { };
     }
+    
+    FileSystem::makeSafeToUseMemoryMapForPath(path);
 
     void* map = mmap(nullptr, m_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (map == MAP_FAILED) {
