@@ -236,7 +236,7 @@ UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
-UIProcess/gtk/AcceleratedBackingStore.cpp
+UIProcess/gtk/AcceleratedBackingStore.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreWayland.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
 UIProcess/gtk/DragAndDropHandler.cpp

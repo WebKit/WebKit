@@ -1,3 +1,17 @@
+2019-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Build failure due to unwieldy definition of “None” from X11 headers
+        https://bugs.webkit.org/show_bug.cgi?id=200984
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * SourcesGTK.txt: Mark AcceleratedBackingStore.cpp with @no-unify
+        because it includes AcceleratedSurfaceX11.h when building with
+        ENABLE_X11_TARGET=ON, which in turn will include the X11 headers.
+        It is just lucky that most of the time the order of the generated
+        #include statements in the unified sources has been masking this
+        problem.
+
 2019-08-21  Rob Buis  <rbuis@igalia.com>
 
         Verify Prefetch and credential behavior
