@@ -1,3 +1,16 @@
+2019-08-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] REGRESSION (248501): gmail.com images are still not shown on some versions of iPhone iOS13
+        https://bugs.webkit.org/show_bug.cgi?id=200948
+
+        Reviewed by Tim Horton.
+
+        Apply the gmail.com quirk for all iPhone iOS versions till the gmail.com
+        bug is fixed.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformUserAgent const):
+
 2019-08-20  Chris Dumez  <cdumez@apple.com>
 
         WebSQLiteDatabaseTracker does not ensure it is still alive after dispatching to the main thread

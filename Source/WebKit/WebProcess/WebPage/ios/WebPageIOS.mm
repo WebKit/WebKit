@@ -3755,7 +3755,7 @@ String WebPage::platformUserAgent(const URL&) const
     if (!document)
         return String();
 
-    if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS" && systemMarketingVersionForUserAgentString() == "13_1")
+    if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS")
         return standardUserAgentWithApplicationName({ }, "12_1_3");
 
     return String();
