@@ -1,5 +1,29 @@
 2019-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        nextElementWithGreaterTabIndex should use shadowAdjustedTabIndex
+        https://bugs.webkit.org/show_bug.cgi?id=200943
+
+        Reviewed by Wenson Hsieh.
+
+        Use shadowAdjustedTabIndex instead of tabIndexForElement in nextElementWithGreaterTabIndex.
+
+        Because nextElementWithGreaterTabIndex is only called to find an element with a tab index
+        set to a greater value than the argument tabIndex, which is always a positive integer,
+        whether we call shadowAdjustedTabIndex or tabIndexForElement has no effect on an element
+        with a shadow root or on a slot element. Furthermore, none of the elements with
+        an isKeyboardFocusable override can have a author defined shadow root attached either.
+
+        As a result, this refactoring will have no observable behavioral change.
+
+        No new tests since there should be no observable behavior change.
+
+        * page/FocusController.cpp:
+        (WebCore::tabIndexForElement): Merged into shadowAdjustedTabIndex.
+        (WebCore::shadowAdjustedTabIndex):
+        (WebCore::nextElementWithGreaterTabIndex):
+
+2019-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove MathMLElement::defaultTabIndex()
         https://bugs.webkit.org/show_bug.cgi?id=200944
 
