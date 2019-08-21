@@ -59,6 +59,8 @@ public:
 
 private:
     RegistrationDatabase(RegistrationStore&, String&& databaseDirectory);
+    
+    String databaseDirectory() const { return m_databaseDirectory.isolatedCopy(); }
 
     void postTaskToWorkQueue(Function<void()>&&);
 

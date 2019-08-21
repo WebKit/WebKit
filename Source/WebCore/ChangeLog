@@ -1,3 +1,20 @@
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
+        Crash under StringImpl::endsWith() in RegistrationDatabase::openSQLiteDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=200991
+        <rdar://problem/54566689>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we call isolatedCopy() on RegistrationDatabase::m_databaseDirectory before using
+        it from background threads.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+        (WebCore::RegistrationDatabase::clearAll):
+        * workers/service/server/RegistrationDatabase.h:
+        (WebCore::RegistrationDatabase::databaseDirectory const):
+
 2019-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Disabling text autosizing should prevent text autosizing
