@@ -1110,7 +1110,7 @@ localizedStrings["This test will pass with all nodes owned (\u0022%s\u0022) by t
 localizedStrings["This test will pass with all of the child nodes of the <body> element in the accessibility tree."] = "This test will pass with all of the child nodes of the <body> element in the accessibility tree.";
 localizedStrings["This test will pass with data indicating whether the <body> element has any click event listeners."] = "This test will pass with data indicating whether the <body> element has any click event listeners.";
 localizedStrings["This test will pass with data indicating whether the <body> element has any event listeners."] = "This test will pass with data indicating whether the <body> element has any event listeners.";
-localizedStrings["This test will pass with somee basic information about each resource."] = "This test will pass with somee basic information about each resource.";
+localizedStrings["This test will pass with some basic information about each resource."] = "This test will pass with some basic information about each resource.";
 localizedStrings["This test will pass with the active descendant (\u0022%s\u0022) of the <body> element, if it exists."] = "This test will pass with the active descendant (\u0022%s\u0022) of the <body> element, if it exists.";
 localizedStrings["This test will pass with the contents of the main resource."] = "This test will pass with the contents of the main resource.";
 localizedStrings["This test will pass with the node that would handle mouse events for the <body> element, if applicable."] = "This test will pass with the node that would handle mouse events for the <body> element, if applicable.";

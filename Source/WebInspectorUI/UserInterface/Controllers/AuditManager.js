@@ -1032,7 +1032,7 @@ WI.AuditManager = class AuditManager extends WI.Object
                         new WI.AuditTestCase("hasEventListeners-click", removeWhitespace(hasEventListenersClick), {description: WI.UIString("This test will pass with data indicating whether the <body> element has any click event listeners."), supports: 3}),
                     ], {description: WI.UIString("These tests demonstrate how to use %s to get information about DOM nodes.").format(WI.unlocalizedString("WebInspectorAudit.DOM")), supports: 1}),
                     new WI.AuditTestGroup(WI.UIString("Resources"), [
-                        new WI.AuditTestCase("getResources", removeWhitespace(getResources), {description: WI.UIString("This test will pass with somee basic information about each resource."), supports: 3}),
+                        new WI.AuditTestCase("getResources", removeWhitespace(getResources), {description: WI.UIString("This test will pass with some basic information about each resource."), supports: 3}),
                         new WI.AuditTestCase("getResourceContent", removeWhitespace(getResourceContent), {description: WI.UIString("This test will pass with the contents of the main resource."), supports: 3}),
                     ], {description: WI.UIString("These tests demonstrate how to use %s to get information about loaded resources.").format(WI.unlocalizedString("WebInspectorAudit.Resources")), supports: 2}),
                 ], {description: WI.UIString("These tests demonstrate how to use %s to access information not normally available to JavaScript.").format(WI.unlocalizedString("WebInspectorAudit")), supports: 1}),

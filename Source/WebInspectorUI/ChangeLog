@@ -1,3 +1,32 @@
+2019-08-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r247867. rdar://problem/54543378
+
+    Web Inspector: AXI: Audit: Typo of "some" as "somee"
+    https://bugs.webkit.org/show_bug.cgi?id=200166
+    
+    Patch by Greg Doolittle <gr3g@apple.com> on 2019-07-26
+    Reviewed by Devin Rousso.
+    
+    * Localizations/en.lproj/localizedStrings.js:
+    * UserInterface/Controllers/AuditManager.js:
+    (WI.AuditManager.prototype._addDefaultTests):
+    (WI.AuditManager):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247867 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-26  Greg Doolittle  <gr3g@apple.com>
+
+            Web Inspector: AXI: Audit: Typo of "some" as "somee"
+            https://bugs.webkit.org/show_bug.cgi?id=200166
+
+            Reviewed by Devin Rousso.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            * UserInterface/Controllers/AuditManager.js:
+            (WI.AuditManager.prototype._addDefaultTests):
+            (WI.AuditManager):
+
 2019-07-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Device Settings: update Safari user agent from 12.2 to 13.0
