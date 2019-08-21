@@ -1,3 +1,16 @@
+2019-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unnecessary properties on SVGs
+        https://bugs.webkit.org/show_bug.cgi?id=200968
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Images/EventPause.svg:
+        * UserInterface/Images/EventPlay.svg:
+        * UserInterface/Images/EventProcessing.svg:
+        * UserInterface/Images/EventStop.svg:
+        * UserInterface/Images/MediaInstrument.svg:
+
 2019-08-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Implement `queryHolders` Command Line API
