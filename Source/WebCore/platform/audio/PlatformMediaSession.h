@@ -192,6 +192,7 @@ public:
 #endif
 
     bool canPlayConcurrently(const PlatformMediaSession&) const;
+    bool shouldOverridePauseDuringRouteChange() const;
 
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
@@ -260,6 +261,8 @@ public:
     virtual bool hasMediaStreamSource() const { return false; }
 
     virtual void processIsSuspendedChanged() { }
+
+    virtual bool shouldOverridePauseDuringRouteChange() const { return false; }
 
 protected:
     virtual ~PlatformMediaSessionClient() = default;

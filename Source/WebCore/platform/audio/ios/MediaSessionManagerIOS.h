@@ -50,6 +50,7 @@ public:
 #if HAVE(CELESTIAL)
     void carPlayServerDied();
     void updateCarPlayIsConnected(Optional<bool>&&);
+    void activeRouteDidChange(Optional<bool>&&);
 #endif
 
 private:

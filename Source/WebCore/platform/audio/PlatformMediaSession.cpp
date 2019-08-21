@@ -393,6 +393,11 @@ bool PlatformMediaSession::canPlayConcurrently(const PlatformMediaSession& other
     return m_client.hasMediaStreamSource() && otherSession.m_client.hasMediaStreamSource();
 }
 
+bool PlatformMediaSession::shouldOverridePauseDuringRouteChange() const
+{
+    return m_client.shouldOverridePauseDuringRouteChange();
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PlatformMediaSession::logChannel() const
 {

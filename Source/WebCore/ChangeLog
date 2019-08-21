@@ -1,3 +1,27 @@
+2019-08-21  Jer Noble  <jer.noble@apple.com>
+
+        Adopt AVSystemController_ActiveAudioRouteDidChangeNotification
+        https://bugs.webkit.org/show_bug.cgi?id=200992
+        <rdar://problem/54408993>
+
+        Reviewed by Eric Carlson.
+
+        When the system notifies us that the active audio route has changed in such a way
+        that necessitates pausing, pause all media sessions, exempting those that are
+        associated with WebRTC, since "pausing" an active audio conference isn't really
+        possible.
+
+        * Modules/mediastream/MediaStream.h:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::shouldOverridePauseDuringRouteChange const):
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::shouldOverridePauseDuringRouteChange const):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::activeRouteDidChange):
+        (-[WebMediaSessionHelper initWithCallback:]):
+        (-[WebMediaSessionHelper activeAudioRouteDidChange:]):
+
 2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Put keygen element behind a runtime flag and disable it by default

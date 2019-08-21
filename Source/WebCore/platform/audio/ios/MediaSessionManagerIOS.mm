@@ -60,6 +60,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedAttr
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedDidChangeNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedNotificationParameter, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ServerConnectionDiedNotification, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ActiveAudioRouteDidChangeNotification, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause, NSString *)
 #endif
 
 using namespace WebCore;
@@ -223,6 +225,17 @@ void MediaSessionManageriOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIs
 
     setIsPlayingToAutomotiveHeadUnit([[[getAVSystemControllerClass() sharedAVSystemController] attributeForKey:getAVSystemController_CarPlayIsConnectedAttribute()] boolValue]);
 }
+
+void MediaSessionManageriOS::activeRouteDidChange(Optional<bool>&& shouldPause)
+{
+    if (!shouldPause || !shouldPause.value())
+        return;
+
+    forEachSession([](auto& session) {
+        if (!session.shouldOverridePauseDuringRouteChange())
+            session.pauseSession();
+    });
+}
 #endif
 
 } // namespace WebCore
@@ -254,6 +267,8 @@ void MediaSessionManageriOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIs
         [center addObserver:self selector:@selector(carPlayServerDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
     if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification())
         [center addObserver:self selector:@selector(carPlayIsConnectedDidChange:) name:getAVSystemController_CarPlayIsConnectedDidChangeNotification() object:nil];
+    if (canLoadAVSystemController_ActiveAudioRouteDidChangeNotification())
+        [center addObserver:self selector:@selector(activeAudioRouteDidChange:) name:getAVSystemController_ActiveAudioRouteDidChangeNotification() object:nil];
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
@@ -483,6 +498,26 @@ void MediaSessionManageriOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIs
         if (auto* callback = protectedSelf->_callback)
             callback->updateCarPlayIsConnected(WTFMove(carPlayIsConnected));
     });
+}
+
+- (void)activeAudioRouteDidChange:(NSNotification *)notification
+{
+    if (!_callback)
+        return;
+
+    UNUSED_PARAM(notification);
+    Optional<bool> shouldPause;
+    if (notification && canLoadAVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause()) {
+        NSNumber* nsShouldPause = [notification.userInfo valueForKey:getAVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause()];
+        if (nsShouldPause)
+            shouldPause = nsShouldPause.boolValue;
+    }
+
+    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), shouldPause = WTFMove(shouldPause)]() mutable {
+        if (auto* callback = protectedSelf->_callback)
+            callback->activeRouteDidChange(WTFMove(shouldPause));
+    });
+
 }
 #endif // HAVE(CELESTIAL)
 @end
