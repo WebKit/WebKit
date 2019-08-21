@@ -199,7 +199,7 @@ public:
     CookieStorageObserver& cookieStorageObserver() const;
 
 private:
-    mutable RefPtr<CookieStorageObserver> m_cookieStorageObserver;
+    mutable std::unique_ptr<CookieStorageObserver> m_cookieStorageObserver;
 #endif
     static bool m_processMayUseCookieAPI;
 };

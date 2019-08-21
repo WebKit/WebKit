@@ -98,7 +98,7 @@ private:
     uint64_t m_processPoolCreationListenerIdentifier { 0 };
 
 #if PLATFORM(COCOA)
-    RefPtr<WebCore::CookieStorageObserver> m_defaultUIProcessObserver;
+    std::unique_ptr<WebCore::CookieStorageObserver> m_defaultUIProcessObserver;
 #endif
 };
 
