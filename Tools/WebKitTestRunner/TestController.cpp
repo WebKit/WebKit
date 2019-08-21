@@ -814,6 +814,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks);
     WKPreferencesSetAttachmentElementEnabled(preferences, options.enableAttachmentElement);
     WKPreferencesSetMenuItemElementEnabled(preferences, options.enableMenuItemElement);
+    WKPreferencesSetKeygenElementEnabled(preferences, options.enableKeygenElement);
     WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls);
     WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);
     WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled(preferences, options.enableWebAuthenticationLocalAuthenticator);
@@ -1345,6 +1346,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableIntersectionObserver = parseBooleanTestHeaderValue(value);
         else if (key == "enableMenuItemElement")
             testOptions.enableMenuItemElement = parseBooleanTestHeaderValue(value);
+        else if (key == "enableKeygenElement")
+            testOptions.enableKeygenElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableModernMediaControls")
             testOptions.enableModernMediaControls = parseBooleanTestHeaderValue(value);
         else if (key == "enablePointerLock")

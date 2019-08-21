@@ -1,3 +1,20 @@
+2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Put keygen element behind a runtime flag and disable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=200850
+
+        Reviewed by Antti Koivisto.
+
+        Re-sycned htmlformcontrolscollection.html as of ffc0fba7d4063f0fb063b9a215dd9ef7fedefebd.
+
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt:
+        Rebaselined due to the whitespace change due to the keygen element rendering differently.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml-expected.txt:
+        Ditto.
+        * web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmlformcontrolscollection-expected.txt:
+        * web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmlformcontrolscollection.html:
+        * web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt: Rebaselined now that the test for keygen is passing.
+
 2019-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert the unintended test change in r248914.

@@ -33,6 +33,7 @@ struct TestOptions {
     bool useAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
     bool enableMenuItemElement { false };
+    bool enableKeygenElement { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
     bool enableDragDestinationActionLoad { false };

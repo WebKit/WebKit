@@ -2092,6 +2092,20 @@ HRESULT WebPreferences::setMenuItemElementEnabled(BOOL enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::keygenElementEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitKeygenElementEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setKeygenElementEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitKeygenElementEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
 HRESULT WebPreferences::crossOriginWindowPolicySupportEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)

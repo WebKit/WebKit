@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: text/html; charset=UTF-8");
 ?>
-<html>
+<html><!-- webkit-test-runner [ enableKeygenElement=true ] -->
 <head>
 <script>
 

@@ -144,8 +144,8 @@ PASS Interfaces for isindex
 PASS Interfaces for ISINDEX 
 PASS Interfaces for kbd 
 PASS Interfaces for KBD 
-FAIL Interfaces for keygen assert_equals: Element keygen should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLKeygenElement]"
-FAIL Interfaces for KEYGEN assert_equals: Element KEYGEN should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLKeygenElement]"
+PASS Interfaces for keygen 
+PASS Interfaces for KEYGEN 
 PASS Interfaces for label 
 PASS Interfaces for LABEL 
 PASS Interfaces for legend 

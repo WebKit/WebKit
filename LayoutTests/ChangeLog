@@ -1,3 +1,79 @@
+2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Put keygen element behind a runtime flag and disable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=200850
+
+        Reviewed by Antti Koivisto.
+
+        Deployed enableKeygenElement test runner option to keep the layout tests running.
+
+        * accessibility/content-changed-notification-causes-crash.html:
+        * accessibility/contenteditable-table-check-causes-crash.html:
+        * accessibility/duplicate-axrenderobject-crash.html:
+        * fast/block/float/float-not-removed-from-first-letter.html:
+        * fast/block/float/split-inline-sibling-of-float-crash.html:
+        * fast/css/pseudo-required-optional-unapplied.html:
+        * fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html:
+        * fast/dom/HTMLKeygenElement/keygen-keytype.html:
+        * fast/dom/HTMLKeygenElement/keygen.html:
+        * fast/dom/adopt-node-crash-2.html:
+        * fast/dom/attribute-set-before-element-in-tree.html:
+        * fast/dom/domstring-attribute-reflection.html:
+        * fast/dom/set-custom-validity-with-too-few-arguments.html:
+        * fast/dom/tabindex-defaults.html:
+        * fast/dom/wrapper-classes.html:
+        * fast/dynamic/insertAdjacentHTML-allowed-parents.html:
+        * fast/flexbox/crash-button-keygen.html:
+        * fast/forms/ValidityState-001.html:
+        * fast/forms/autofocus-keygen.html:
+        * fast/forms/checkValidity-001.html:
+        * fast/forms/fieldset/fieldset-elements-htmlcollection.html:
+        * fast/forms/fieldset/fieldset-elements.html:
+        * fast/forms/form-associated-element-crash3.html:
+        * fast/forms/form-attribute.html:
+        * fast/forms/form-collection-elements-order.html:
+        * fast/forms/form-collection-elements.html:
+        * fast/forms/form-collection-radio-node-list.html:
+        * fast/forms/label/labelable-elements.html:
+        * fast/forms/label/labels-add-htmlFor-label.html:
+        * fast/forms/label/labels-add-parent-label.html:
+        * fast/forms/label/labels-change-htmlFor-attribute.html:
+        * fast/forms/label/labels-multiple-sibling-labels.html:
+        * fast/forms/label/labels-parent-and-sibling-labels.html:
+        * fast/forms/label/labels-remove-htmlFor-attribute.html:
+        * fast/forms/label/labels-remove-htmlFor-label.html:
+        * fast/forms/label/labels-remove-parent-label.html:
+        * fast/forms/label/labels-set-htmlFor-attribute.html:
+        * fast/forms/large-parts.html:
+        * fast/forms/scrollheight-with-mutation-crash.html:
+        * fast/forms/setCustomValidity-arguments.html:
+        * fast/forms/setCustomValidity-existence.html:
+        * fast/forms/setCustomValidity-null-parameter.html:
+        * fast/forms/state-restore-skip-stateless.html:
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure.html:
+        * fast/forms/validationMessage.html:
+        * fast/forms/willvalidate.html:
+        * fast/html/clone-keygen.html:
+        * fast/html/keygen.html:
+        * fast/html/marquee-reparent-check.html:
+        * fast/invalid/residual-style-expected.html:
+        * fast/invalid/residual-style.html:
+        * fast/multicol/span/positioned-child-not-removed-crash.html:
+        * fast/ruby/float-object-doesnt-crash.html:
+        * fast/shadow-dom/keygen-shadow-manipulation.html:
+        * fast/table/crash-splitColumn-2.html:
+        * fast/table/multiple-captions-crash3-expected.html:
+        * fast/table/multiple-captions-crash3.html:
+        * http/tests/misc/resources/check-keygen-post.php:
+        * http/tests/misc/submit-post-keygen.html:
+        * imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow-expected.html:
+        * imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow.html:
+        * imported/blink/fast/text/international-iteration-simple-text.html:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Rebaselined
+        now that the test case for keygen is passing.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Ditto.
+        * svg/dom/css-animate-input-foucs-crash.html:
+
 2019-08-21  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r248942.

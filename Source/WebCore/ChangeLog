@@ -1,3 +1,20 @@
+2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Put keygen element behind a runtime flag and disable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=200850
+
+        Reviewed by Antti Koivisto.
+
+        The HTML keygen element has been removed from Chrome, Firefox, and the HTML specification in 2017.
+        This patch disables the keygen element by default by adding a runtime enabled flag which is disabled by default.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLTagNames.in:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setKeygenElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::keygenElementEnabled const):
+
 2019-08-21  Chris Dumez  <cdumez@apple.com>
 
         Get rid of m_weakThis data members now that we have a safe way to call makeWeakPtr() from various threads

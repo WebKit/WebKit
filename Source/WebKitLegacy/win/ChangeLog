@@ -1,3 +1,19 @@
+2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Put keygen element behind a runtime flag and disable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=200850
+
+        Reviewed by Antti Koivisto.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::keygenElementEnabled):
+        (WebPreferences::setKeygenElementEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2019-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK1] A browser window starts as an inactive window because AcceleratedCompositingContext::acceleratedCompositingAvailable creates temporary window

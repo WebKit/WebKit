@@ -3066,6 +3066,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitDialogElementEnabledPreferenceKey];
 }
 
+- (BOOL)keygenElementEnabled
+{
+    return [self _boolValueForKey:WebKitKeygenElementEnabledPreferenceKey];
+}
+
+- (void)setKeygenElementEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitKeygenElementEnabledPreferenceKey];
+}
+
 - (BOOL)cacheAPIEnabled
 {
     return [self _boolValueForKey:WebKitCacheAPIEnabledPreferenceKey];

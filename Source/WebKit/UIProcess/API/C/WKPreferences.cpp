@@ -1740,6 +1740,16 @@ bool WKPreferencesGetDialogElementEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->dialogElementEnabled();
 }
 
+void WKPreferencesSetKeygenElementEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setKeygenElementEnabled(flag);
+}
+
+bool WKPreferencesGetKeygenElementEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->keygenElementEnabled();
+}
+
 void WKPreferencesSetWebShareEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebShareEnabled(flag);

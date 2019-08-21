@@ -204,6 +204,9 @@ public:
     void setDialogElementEnabled(bool isEnabled) { m_dialogElementEnabled = isEnabled; }
     bool dialogElementEnabled() const { return m_dialogElementEnabled; }
 
+    void setKeygenElementEnabled(bool isEnabled) { m_keygenElementEnabled = isEnabled; }
+    bool keygenElementEnabled() const { return m_keygenElementEnabled; }
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
     bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
@@ -430,6 +433,7 @@ private:
     bool m_syntheticEditingCommandsEnabled { true };
     bool m_dialogElementEnabled { false };
     bool m_webSQLEnabled { true };
+    bool m_keygenElementEnabled { false };
     bool m_pageAtRuleSupportEnabled { false };
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

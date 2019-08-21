@@ -70,6 +70,7 @@ struct TestOptions {
     bool enableAttachmentElement { false };
     bool enableIntersectionObserver { false };
     bool enableMenuItemElement { false };
+    bool enableKeygenElement { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
     bool enableWebAuthentication { true };
@@ -123,6 +124,7 @@ struct TestOptions {
             || enableAttachmentElement != options.enableAttachmentElement
             || enableIntersectionObserver != options.enableIntersectionObserver
             || enableMenuItemElement != options.enableMenuItemElement
+            || enableKeygenElement != options.enableKeygenElement
             || enableModernMediaControls != options.enableModernMediaControls
             || enablePointerLock != options.enablePointerLock
             || enableWebAuthentication != options.enableWebAuthentication
