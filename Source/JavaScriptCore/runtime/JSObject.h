@@ -111,7 +111,7 @@ public:
 
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
-    JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
+    JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*, VM&);
     JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);

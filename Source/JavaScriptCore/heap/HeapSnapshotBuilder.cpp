@@ -46,7 +46,8 @@ NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvail
 void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
 
 HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type)
-    : m_profiler(profiler)
+    : HeapAnalyzer()
+    , m_profiler(profiler)
     , m_snapshotType(type)
 {
 }
@@ -67,18 +68,19 @@ void HeapSnapshotBuilder::buildSnapshot()
 
     m_snapshot = makeUnique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
     {
-        m_profiler.setActiveSnapshotBuilder(this);
+        ASSERT(!m_profiler.activeHeapAnalyzer());
+        m_profiler.setActiveHeapAnalyzer(this);
         m_profiler.vm().heap.collectNow(Sync, CollectionScope::Full);
-        m_profiler.setActiveSnapshotBuilder(nullptr);
+        m_profiler.setActiveHeapAnalyzer(nullptr);
     }
     m_snapshot->finalize();
 
     m_profiler.appendSnapshot(WTFMove(m_snapshot));
 }
 
-void HeapSnapshotBuilder::appendNode(JSCell* cell)
+void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
 {
-    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(m_profiler.activeHeapAnalyzer() == this);
 
     ASSERT(m_profiler.vm().heap.isMarked(cell));
 
@@ -90,9 +92,9 @@ void HeapSnapshotBuilder::appendNode(JSCell* cell)
     m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
 }
 
-void HeapSnapshotBuilder::appendEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason rootMarkReason)
+void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason rootMarkReason)
 {
-    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
     // Avoid trivial edges.
@@ -113,9 +115,9 @@ void HeapSnapshotBuilder::appendEdge(JSCell* from, JSCell* to, SlotVisitor::Root
     m_edges.append(HeapSnapshotEdge(from, to));
 }
 
-void HeapSnapshotBuilder::appendPropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName)
+void HeapSnapshotBuilder::analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName)
 {
-    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
     std::lock_guard<Lock> lock(m_buildingEdgeMutex);
@@ -123,9 +125,9 @@ void HeapSnapshotBuilder::appendPropertyNameEdge(JSCell* from, JSCell* to, Uniqu
     m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Property, propertyName));
 }
 
-void HeapSnapshotBuilder::appendVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName)
+void HeapSnapshotBuilder::analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName)
 {
-    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
     std::lock_guard<Lock> lock(m_buildingEdgeMutex);
@@ -133,9 +135,9 @@ void HeapSnapshotBuilder::appendVariableNameEdge(JSCell* from, JSCell* to, Uniqu
     m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Variable, variableName));
 }
 
-void HeapSnapshotBuilder::appendIndexEdge(JSCell* from, JSCell* to, uint32_t index)
+void HeapSnapshotBuilder::analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index)
 {
-    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
     std::lock_guard<Lock> lock(m_buildingEdgeMutex);

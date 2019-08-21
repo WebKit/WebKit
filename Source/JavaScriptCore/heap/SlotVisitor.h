@@ -40,7 +40,7 @@ class ConservativeRoots;
 class GCThreadSharedData;
 class Heap;
 class HeapCell;
-class HeapSnapshotBuilder;
+class HeapAnalyzer;
 class MarkedBlock;
 class MarkingConstraint;
 class MarkingConstraintSolver;
@@ -160,8 +160,8 @@ public:
     
     void dump(PrintStream&) const;
 
-    bool isBuildingHeapSnapshot() const { return !!m_heapSnapshotBuilder; }
-    HeapSnapshotBuilder* heapSnapshotBuilder() const { return m_heapSnapshotBuilder; }
+    bool isAnalyzingHeap() const { return !!m_heapAnalyzer; }
+    HeapAnalyzer* heapAnalyzer() const { return m_heapAnalyzer; }
     
     RootMarkReason rootMarkReason() const { return m_rootMarkReason; }
     void setRootMarkReason(RootMarkReason reason) { m_rootMarkReason = reason; }
@@ -250,7 +250,7 @@ private:
     
     Heap& m_heap;
 
-    HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
+    HeapAnalyzer* m_heapAnalyzer { nullptr };
     JSCell* m_currentCell { nullptr };
     RootMarkReason m_rootMarkReason { RootMarkReason::None };
     bool m_isFirstVisit { false };

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSSegmentedVariableObject.h"
 
-#include "HeapSnapshotBuilder.h"
+#include "HeapAnalyzer.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -75,10 +75,10 @@ void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& slotVis
         slotVisitor.appendHidden(thisObject->m_variables[i]);
 }
 
-void JSSegmentedVariableObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+void JSSegmentedVariableObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
-    Base::heapSnapshot(cell, builder);
+    Base::analyzeHeap(cell, analyzer);
 
     ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
     SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
@@ -91,7 +91,7 @@ void JSSegmentedVariableObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& 
 
         JSValue toValue = thisObject->variableAt(offset).get();
         if (toValue && toValue.isCell())
-            builder.appendVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+            analyzer.analyzeVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
     }
 }
 

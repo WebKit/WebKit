@@ -747,7 +747,8 @@ webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 webkit.org/b/128736 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]
 
-# This test is fast enough in release but quite slow in debug builds.
+# These tests are fast enough in release but quite slow in debug builds.
+[ Debug ] inspector/console/queryHolders.html [ Skip ]
 [ Debug ] inspector/debugger/debugger-stack-overflow.html [ Skip ]
 
 # Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend.

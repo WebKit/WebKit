@@ -49,7 +49,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestPromiseRejectionEvent& wrapped() const
     {
         return static_cast<TestPromiseRejectionEvent&>(Base::wrapped());

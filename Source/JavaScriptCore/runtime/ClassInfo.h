@@ -33,7 +33,7 @@ class PrintStream;
 
 namespace JSC {
 
-class HeapSnapshotBuilder;
+class HeapAnalyzer;
 class JSArrayBufferView;
 class Snippet;
 struct HashTable;
@@ -123,8 +123,8 @@ struct MethodTable {
     using DumpToStreamFunctionPtr = void (*)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr METHOD_TABLE_ENTRY(dumpToStream);
 
-    using HeapSnapshotFunctionPtr = void (*)(JSCell*, HeapSnapshotBuilder&);
-    HeapSnapshotFunctionPtr METHOD_TABLE_ENTRY(heapSnapshot);
+    using AnalyzeHeapFunctionPtr = void (*)(JSCell*, HeapAnalyzer&);
+    AnalyzeHeapFunctionPtr METHOD_TABLE_ENTRY(analyzeHeap);
 
     using EstimatedSizeFunctionPtr = size_t (*)(JSCell*, VM&);
     EstimatedSizeFunctionPtr METHOD_TABLE_ENTRY(estimatedSize);
@@ -181,7 +181,7 @@ struct MethodTable {
         &ClassName::setPrototype, \
         &ClassName::getPrototype, \
         &ClassName::dumpToStream, \
-        &ClassName::heapSnapshot, \
+        &ClassName::analyzeHeap, \
         &ClassName::estimatedSize, \
         &ClassName::visitOutputConstraints, \
     }, \

@@ -29,7 +29,6 @@
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BlockDirectoryInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
-#include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/MarkedBlockInlines.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>

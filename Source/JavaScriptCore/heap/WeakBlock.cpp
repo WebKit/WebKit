@@ -28,7 +28,7 @@
 
 #include "CellContainerInlines.h"
 #include "Heap.h"
-#include "HeapSnapshotBuilder.h"
+#include "HeapAnalyzer.h"
 #include "JSCInlines.h"
 #include "JSObject.h"
 #include "WeakHandleOwner.h"
@@ -117,7 +117,7 @@ void WeakBlock::specializedVisit(ContainerType& container, SlotVisitor& visitor)
         
         const char* reason = "";
         const char** reasonPtr = nullptr;
-        if (UNLIKELY(visitor.isBuildingHeapSnapshot()))
+        if (UNLIKELY(visitor.isAnalyzingHeap()))
             reasonPtr = &reason;
 
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor, reasonPtr))
@@ -125,9 +125,9 @@ void WeakBlock::specializedVisit(ContainerType& container, SlotVisitor& visitor)
 
         visitor.appendUnbarriered(jsValue);
 
-        if (UNLIKELY(visitor.isBuildingHeapSnapshot())) {
+        if (UNLIKELY(visitor.isAnalyzingHeap())) {
             if (jsValue.isCell())
-                visitor.heapSnapshotBuilder()->setOpaqueRootReachabilityReasonForCell(jsValue.asCell(), *reasonPtr);
+                visitor.heapAnalyzer()->setOpaqueRootReachabilityReasonForCell(jsValue.asCell(), *reasonPtr);
         }
     }
 }

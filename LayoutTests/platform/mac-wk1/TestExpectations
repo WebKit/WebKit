@@ -396,6 +396,7 @@ webgl/1.0.3/151055_asan.html [ Failure ]
 inspector/script-profiler/event-type-API.html [ Skip ]
 
 # WK1 Inspector running in the same VM as the inspected page skews heap snapshot results.
+inspector/console/queryHolders.html [ Skip ]
 inspector/heap/getPreview.html [ Skip ]
 inspector/heap/getRemoteObject.html [ Skip ]
 inspector/unit-tests/heap-snapshot.html [ Skip ]

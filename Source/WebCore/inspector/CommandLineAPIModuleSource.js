@@ -103,6 +103,7 @@ CommandLineAPI.methods = [
     "profileEnd",
     "queryInstances",
     "queryObjects",
+    "queryHolders",
     "screenshot",
     "table",
     "unmonitorEvents",
@@ -271,6 +272,11 @@ CommandLineAPIImpl.prototype = {
     queryObjects()
     {
         return InjectedScriptHost.queryInstances(...arguments);
+    },
+
+    queryHolders()
+    {
+        return InjectedScriptHost.queryHolders(...arguments);
     },
 
     copy: function(object)

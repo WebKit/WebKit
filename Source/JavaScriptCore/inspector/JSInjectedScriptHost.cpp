@@ -31,10 +31,13 @@
 #include "BuiltinNames.h"
 #include "Completion.h"
 #include "DateInstance.h"
+#include "DeferGC.h"
 #include "DirectArguments.h"
 #include "Error.h"
 #include "FunctionPrototype.h"
+#include "HeapAnalyzer.h"
 #include "HeapIterationScope.h"
+#include "HeapProfiler.h"
 #include "InjectedScriptHost.h"
 #include "IterationKind.h"
 #include "IteratorOperations.h"
@@ -45,6 +48,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSInjectedScriptHostPrototype.h"
+#include "JSLock.h"
 #include "JSMap.h"
 #include "JSPromise.h"
 #include "JSPromisePrototype.h"
@@ -59,6 +63,7 @@
 #include "MarkedSpaceInlines.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
+#include "PreventCollectionScope.h"
 #include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
@@ -66,6 +71,14 @@
 #include "SetPrototype.h"
 #include "SourceCode.h"
 #include "TypedArrayInlines.h"
+#include <wtf/Function.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
+#include <wtf/Lock.h>
+#include <wtf/PrintStream.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace JSC;
 
@@ -733,6 +746,169 @@ JSValue JSInjectedScriptHost::queryInstances(ExecState* exec)
     }
 
     return array;
+}
+
+class HeapHolderFinder final : public HeapAnalyzer {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    HeapHolderFinder(HeapProfiler& profiler, JSCell* target)
+        : HeapAnalyzer()
+        , m_target(target)
+    {
+        ASSERT(!profiler.activeHeapAnalyzer());
+        profiler.setActiveHeapAnalyzer(this);
+        profiler.vm().heap.collectNow(Sync, CollectionScope::Full);
+        profiler.setActiveHeapAnalyzer(nullptr);
+
+        HashSet<JSCell*> queue;
+
+        // Filter `m_holders` based on whether they're reachable from a non-Debugger root.
+        HashSet<JSCell*> visited;
+        for (auto* root : m_rootsToInclude)
+            queue.add(root);
+        while (auto* from = queue.takeAny()) {
+            if (m_rootsToIgnore.contains(from))
+                continue;
+            if (!visited.add(from).isNewEntry)
+                continue;
+            for (auto* to : m_successors.get(from))
+                queue.add(to);
+        }
+
+        // If a known holder is not an object, also consider all of the holder's holders.
+        for (auto* holder : m_holders)
+            queue.add(holder);
+        while (auto* holder = queue.takeAny()) {
+            if (holder->isObject())
+                continue;
+
+            for (auto* from : m_predecessors.get(holder)) {
+                if (!m_holders.contains(from)) {
+                    m_holders.add(from);
+                    queue.add(from);
+                }
+            }
+        }
+
+        m_holders.removeIf([&] (auto* holder) {
+            return !holder->isObject() || !visited.contains(holder);
+        });
+    }
+
+    HashSet<JSCell*>& holders() { return m_holders; }
+
+    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason reason)
+    {
+        ASSERT(to);
+        ASSERT(to->vm()->heapProfiler()->activeHeapAnalyzer() == this);
+
+        auto locker = holdLock(m_mutex);
+
+        if (from && from != to) {
+            m_successors.ensure(from, [] {
+                return HashSet<JSCell*>();
+            }).iterator->value.add(to);
+
+            m_predecessors.ensure(to, [] {
+                return HashSet<JSCell*>();
+            }).iterator->value.add(from);
+
+            if (to == m_target)
+                m_holders.add(from);
+        }
+
+        if (reason == SlotVisitor::RootMarkReason::Debugger)
+            m_rootsToIgnore.add(to);
+        else if (!from || reason != SlotVisitor::RootMarkReason::None)
+            m_rootsToInclude.add(to);
+    }
+    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+
+    void analyzeNode(JSCell*) { }
+    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) { }
+    void setWrappedObjectForCell(JSCell*, void*) { }
+    void setLabelForCell(JSCell*, const String&) { }
+
+    void dump(PrintStream& out) const
+    {
+        Indentation<4> indent;
+
+        HashSet<JSCell*> visited;
+
+        Function<void(JSCell*)> visit = [&] (auto* from) {
+            auto isFirstVisit = visited.add(from).isNewEntry;
+
+            out.print(makeString(indent));
+
+            out.print("[ "_s);
+            if (from == m_target)
+                out.print("T "_s);
+            if (m_holders.contains(from))
+                out.print("H "_s);
+            if (m_rootsToIgnore.contains(from))
+                out.print("- "_s);
+            else if (m_rootsToInclude.contains(from))
+                out.print("+ "_s);
+            if (!isFirstVisit)
+                out.print("V "_s);
+            out.print("] "_s);
+
+            from->dump(out);
+
+            out.println();
+
+            if (isFirstVisit) {
+                IndentationScope scope(indent);
+                for (auto* to : m_successors.get(from))
+                    visit(to);
+            }
+        };
+
+        for (auto* from : m_rootsToInclude)
+            visit(from);
+    }
+
+private:
+    Lock m_mutex;
+    HashMap<JSCell*, HashSet<JSCell*>> m_predecessors;
+    HashMap<JSCell*, HashSet<JSCell*>> m_successors;
+    HashSet<JSCell*> m_rootsToInclude;
+    HashSet<JSCell*> m_rootsToIgnore;
+    HashSet<JSCell*> m_holders;
+    const JSCell* m_target;
+};
+
+JSValue JSInjectedScriptHost::queryHolders(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue target = exec->uncheckedArgument(0);
+    if (!target.isObject())
+        return throwTypeError(exec, scope, "queryHolders first argument must be an object."_s);
+
+    JSArray* result = constructEmptyArray(exec, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    {
+        DeferGC deferGC(vm.heap);
+        PreventCollectionScope preventCollectionScope(vm.heap);
+        sanitizeStackForVM(&vm);
+
+        HeapHolderFinder holderFinder(vm.ensureHeapProfiler(), target.asCell());
+
+        auto holders = copyToVector(holderFinder.holders());
+        std::sort(holders.begin(), holders.end());
+        for (auto* holder : holders)
+            result->putDirectIndex(exec, result->length(), holder);
+    }
+
+    return result;
 }
 
 } // namespace Inspector

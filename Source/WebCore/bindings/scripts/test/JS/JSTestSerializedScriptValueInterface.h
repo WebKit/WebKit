@@ -55,7 +55,7 @@ public:
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedReadonlyValue;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
     JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerializedScriptValueInterface>&&);
 

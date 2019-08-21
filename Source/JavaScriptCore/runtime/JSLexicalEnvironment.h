@@ -135,7 +135,7 @@ protected:
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, HeapAnalyzer&);
 };
 
 inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)

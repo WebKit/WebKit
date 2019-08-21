@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSLexicalEnvironment.h"
 
-#include "HeapSnapshotBuilder.h"
+#include "HeapAnalyzer.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"
@@ -46,10 +46,10 @@ void JSLexicalEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendValuesHidden(thisObject->variables(), thisObject->symbolTable()->scopeSize());
 }
 
-void JSLexicalEnvironment::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSLexicalEnvironment*>(cell);
-    Base::heapSnapshot(cell, builder);
+    Base::analyzeHeap(cell, analyzer);
 
     ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
     SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
@@ -62,7 +62,7 @@ void JSLexicalEnvironment::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& build
 
         JSValue toValue = thisObject->variableAt(offset).get();
         if (toValue && toValue.isCell())
-            builder.appendVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+            analyzer.analyzeVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "HeapProfiler.h"
+#pragma once
 
-#include "HeapSnapshot.h"
-#include "VM.h"
+#include "SlotVisitor.h"
+#include <wtf/text/UniquedStringImpl.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
-HeapProfiler::HeapProfiler(VM& vm)
-    : m_vm(vm)
-{
-}
+class JS_EXPORT_PRIVATE HeapAnalyzer {
+public:
+    virtual ~HeapAnalyzer() = default;
 
-HeapProfiler::~HeapProfiler()
-{
-}
+    // A root or marked cell.
+    virtual void analyzeNode(JSCell*) = 0;
 
-HeapSnapshot* HeapProfiler::mostRecentSnapshot()
-{
-    if (m_snapshots.isEmpty())
-        return nullptr;
-    return m_snapshots.last().get();
-}
+    // A reference from one cell to another.
+    virtual void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason) = 0;
+    virtual void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName) = 0;
+    virtual void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName) = 0;
+    virtual void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index) = 0;
 
-void HeapProfiler::appendSnapshot(std::unique_ptr<HeapSnapshot> snapshot)
-{
-    m_snapshots.append(WTFMove(snapshot));
-}
-
-void HeapProfiler::clearSnapshots()
-{
-    m_snapshots.clear();
-}
-
-void HeapProfiler::setActiveHeapAnalyzer(HeapAnalyzer* analyzer)
-{
-    ASSERT(!!m_activeAnalyzer != !!analyzer);
-    m_activeAnalyzer = analyzer;
-}
+    virtual void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) = 0;
+    virtual void setWrappedObjectForCell(JSCell*, void*) = 0;
+    virtual void setLabelForCell(JSCell*, const String&) = 0;
+};
 
 } // namespace JSC

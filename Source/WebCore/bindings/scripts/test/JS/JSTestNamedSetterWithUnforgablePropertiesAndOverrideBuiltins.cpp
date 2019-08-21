@@ -31,7 +31,7 @@
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/FunctionPrototype.h>
-#include <JavaScriptCore/HeapSnapshotBuilder.h>
+#include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
@@ -325,13 +325,13 @@ EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithUnforgablePropertiesAndOverrid
     return IDLOperation<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::call<jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperationBody>(*state, "unforgeableOperation");
 }
 
-void JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+void JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins*>(cell);
-    builder.setWrappedObjectForCell(cell, &thisObject->wrapped());
+    analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        builder.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
-    Base::heapSnapshot(cell, builder);
+        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+    Base::analyzeHeap(cell, analyzer);
 }
 
 bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)

@@ -35,7 +35,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/BuiltinNames.h>
-#include <JavaScriptCore/HeapSnapshotBuilder.h>
+#include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
@@ -424,13 +424,13 @@ EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 
-void JSTestNode::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+void JSTestNode::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestNode*>(cell);
-    builder.setWrappedObjectForCell(cell, &thisObject->wrapped());
+    analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        builder.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
-    Base::heapSnapshot(cell, builder);
+        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+    Base::analyzeHeap(cell, analyzer);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

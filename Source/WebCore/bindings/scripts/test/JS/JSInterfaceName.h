@@ -52,7 +52,7 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
     JSInterfaceName(JSC::Structure*, JSDOMGlobalObject&, Ref<InterfaceName>&&);
 

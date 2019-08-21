@@ -65,7 +65,7 @@ public:
 #endif
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 
     // Custom attributes
     JSC::JSValue customAttr(JSC::ExecState&) const;

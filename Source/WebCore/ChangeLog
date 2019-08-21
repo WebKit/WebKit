@@ -1,3 +1,31 @@
+2019-08-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Implement `queryHolders` Command Line API
+        https://bugs.webkit.org/show_bug.cgi?id=200458
+
+        Reviewed by Joseph Pecoraro.
+
+        Call `queryHolders(object)` from the Console to return an array of objects that strongly
+        reference the given `object`. This could be very useful for finding JavaScript "leaks".
+
+        Test: inspector/console/queryHolders.html
+
+        * inspector/CommandLineAPIModuleSource.js:
+        (CommandLineAPIImpl.prototype.queryHolders): Added.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/js/DOMGCOutputConstraint.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::analyzeHeap): Added.
+        (WebCore::JSDOMWindow::heapSnapshot): Deleted.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::analyzeHeap): Added.
+        (WebCore::JSDocument::heapSnapshot): Deleted.
+        * bindings/scripts/test/JS/*:
+        Rename `heapSnapshot` to `analyzeHeap` to match JavaScriptCore changes.
+
 2019-08-20  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] We need to null check when emitting native code for operator&.<field-name>

@@ -50,7 +50,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
     JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedConstructor>&&);
 

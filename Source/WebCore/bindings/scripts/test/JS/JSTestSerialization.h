@@ -50,7 +50,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static JSC::JSObject* serialize(JSC::ExecState&, JSTestSerialization& thisObject, JSDOMGlobalObject&, JSC::ThrowScope&);
-    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
     JSTestSerialization(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerialization>&&);
 

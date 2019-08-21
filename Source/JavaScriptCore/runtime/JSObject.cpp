@@ -32,7 +32,7 @@
 #include "Exception.h"
 #include "GCDeferralContextInlines.h"
 #include "GetterSetter.h"
-#include "HeapSnapshotBuilder.h"
+#include "HeapAnalyzer.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCInlines.h"
 #include "JSCustomGetterSetterFunction.h"
@@ -450,16 +450,16 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
 }
 
-void JSObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
-    Base::heapSnapshot(cell, builder);
+    Base::analyzeHeap(cell, analyzer);
 
     Structure* structure = thisObject->structure();
     for (auto& entry : structure->getPropertiesConcurrently()) {
         JSValue toValue = thisObject->getDirect(entry.offset);
         if (toValue && toValue.isCell())
-            builder.appendPropertyNameEdge(thisObject, toValue.asCell(), entry.key);
+            analyzer.analyzePropertyNameEdge(thisObject, toValue.asCell(), entry.key);
     }
 
     Butterfly* butterfly = thisObject->butterfly();
@@ -483,7 +483,7 @@ void JSObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
         for (uint32_t i = 0; i < count; ++i) {
             JSValue toValue = data[i].get();
             if (toValue && toValue.isCell())
-                builder.appendIndexEdge(thisObject, toValue.asCell(), i);
+                analyzer.analyzeIndexEdge(thisObject, toValue.asCell(), i);
         }
     }
 }

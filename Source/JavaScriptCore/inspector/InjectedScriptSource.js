@@ -1521,6 +1521,10 @@ BasicCommandLineAPI.methods = [
     function queryObjects() {
         return InjectedScriptHost.queryInstances(...arguments);
     },
+
+    function queryHolders() {
+        return InjectedScriptHost.queryHolders(...arguments);
+    },
 ];
 
 for (let i = 0; i < BasicCommandLineAPI.methods.length; ++i) {

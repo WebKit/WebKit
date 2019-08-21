@@ -48,14 +48,14 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
     Dependency dependency;
     if (UNLIKELY(cell->isLargeAllocation())) {
         if (LIKELY(cell->largeAllocation().isMarked())) {
-            if (LIKELY(!m_heapSnapshotBuilder))
+            if (LIKELY(!m_heapAnalyzer))
                 return;
         }
     } else {
         MarkedBlock& block = cell->markedBlock();
         dependency = block.aboutToMark(m_markingVersion);
         if (LIKELY(block.isMarked(cell, dependency))) {
-            if (LIKELY(!m_heapSnapshotBuilder))
+            if (LIKELY(!m_heapAnalyzer))
                 return;
         }
     }

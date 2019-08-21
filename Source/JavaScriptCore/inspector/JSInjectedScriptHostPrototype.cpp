@@ -51,6 +51,7 @@ static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSet
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetEntries(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIteratorEntries(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances(ExecState*);
+static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeEvaluate(ExecState*);
@@ -76,6 +77,7 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakSetEntries", jsInjectedScriptHostPrototypeFunctionWeakSetEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("iteratorEntries", jsInjectedScriptHostPrototypeFunctionIteratorEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryInstances", jsInjectedScriptHostPrototypeFunctionQueryInstances, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryHolders", jsInjectedScriptHostPrototypeFunctionQueryHolders, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension", jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("evaluate", jsInjectedScriptHostPrototypeAttributeEvaluate, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
@@ -236,6 +238,19 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances
         return throwVMTypeError(exec, scope);
 
     return JSValue::encode(castedThis->queryInstances(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = exec->thisValue();
+    JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
+    if (!castedThis)
+        return throwVMTypeError(exec, scope);
+
+    return JSValue::encode(castedThis->queryHolders(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension(ExecState* exec)

@@ -92,7 +92,7 @@ public:
     JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd, JSValue);
     
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
-    JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
+    JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
     
     static void destroy(JSCell*);
     

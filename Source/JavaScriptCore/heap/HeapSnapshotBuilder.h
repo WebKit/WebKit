@@ -25,12 +25,10 @@
 
 #pragma once
 
-#include "SlotVisitor.h"
+#include "HeapAnalyzer.h"
 #include <functional>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
-#include <wtf/text/UniquedStringImpl.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -102,7 +100,7 @@ struct HeapSnapshotEdge {
     EdgeType type;
 };
 
-class JS_EXPORT_PRIVATE HeapSnapshotBuilder {
+class JS_EXPORT_PRIVATE HeapSnapshotBuilder final : public HeapAnalyzer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum SnapshotType { InspectorSnapshot, GCDebuggingSnapshot };
@@ -116,13 +114,13 @@ public:
     void buildSnapshot();
 
     // A root or marked cell.
-    void appendNode(JSCell*);
+    void analyzeNode(JSCell*);
 
     // A reference from one cell to another.
-    void appendEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason);
-    void appendPropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName);
-    void appendVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName);
-    void appendIndexEdge(JSCell* from, JSCell* to, uint32_t index);
+    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason);
+    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName);
+    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName);
+    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index);
 
     void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*);
     void setWrappedObjectForCell(JSCell*, void*);

@@ -583,6 +583,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/HandleSet.h
     heap/HandleTypes.h
     heap/Heap.h
+    heap/HeapAnalyzer.h
     heap/HeapCell.h
     heap/HeapCellInlines.h
     heap/HeapCellType.h

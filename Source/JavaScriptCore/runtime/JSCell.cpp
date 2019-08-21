@@ -64,7 +64,7 @@ size_t JSCell::estimatedSize(JSCell* cell, VM&)
     return cell->cellSize();
 }
 
-void JSCell::heapSnapshot(JSCell*, HeapSnapshotBuilder&)
+void JSCell::analyzeHeap(JSCell*, HeapAnalyzer&)
 {
 }
 

@@ -1,3 +1,113 @@
+2019-08-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Implement `queryHolders` Command Line API
+        https://bugs.webkit.org/show_bug.cgi?id=200458
+
+        Reviewed by Joseph Pecoraro.
+
+        Call `queryHolders(object)` from the Console to return an array of objects that strongly
+        reference the given `object`. This could be very useful for finding JavaScript "leaks".
+
+        * inspector/InjectedScriptSource.js:
+        (queryHolders): Added.
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::HeapHolderFinder::HeapHolderFinder): Added.
+        (Inspector::HeapHolderFinder::holders): Added.
+        (Inspector::HeapHolderFinder::analyzeEdge): Added.
+        (Inspector::HeapHolderFinder::analyzePropertyNameEdge): Added.
+        (Inspector::HeapHolderFinder::analyzeVariableNameEdge): Added.
+        (Inspector::HeapHolderFinder::analyzeIndexEdge): Added.
+        (Inspector::HeapHolderFinder::analyzeNode): Added.
+        (Inspector::HeapHolderFinder::setOpaqueRootReachabilityReasonForCell): Added.
+        (Inspector::HeapHolderFinder::setWrappedObjectForCell): Added.
+        (Inspector::HeapHolderFinder::setLabelForCell): Added.
+        (Inspector::HeapHolderFinder::dump): Added.
+        (Inspector::JSInjectedScriptHost::queryHolders): Added.
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionQueryHolders): Added.
+
+        * heap/HeapAnalyzer.h: Added.
+        Create an abstract base class for analyzing the Heap during a GC. Rather than create an
+        entire `HeapSnapshot` for `queryHolders`, the `HeapHolderFinder` can just walk the Heap and
+        only save the information it needs to determine the holders of the given `object`.
+
+        * heap/Heap.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::isAnalyzingHeap const): Added.
+        (JSC::GatherExtraHeapData::GatherExtraHeapData): Added.
+        (JSC::GatherExtraHeapData::operator() const): Added.
+        (JSC::Heap::gatherExtraHeapData): Added.
+        (JSC::Heap::didFinishCollection): Added.
+        (JSC::Heap::isHeapSnapshotting const): Deleted.
+        (JSC::GatherHeapSnapshotData::GatherHeapSnapshotData): Deleted.
+        (JSC::GatherHeapSnapshotData::operator() const): Deleted.
+        (JSC::Heap::gatherExtraHeapSnapshotData): Deleted.
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::isAnalyzingHeap const): Added.
+        (JSC::SlotVisitor::heapAnalyzer const): Added.
+        (JSC::SlotVisitor::isBuildingHeapSnapshot const): Deleted.
+        (JSC::SlotVisitor::heapSnapshotBuilder const): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::appendSlow):
+        (JSC::SlotVisitor::visitChildren):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendUnbarriered):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+        Rename `HeapAnalyzer` functions to be less specific to building a `HeapSnapshot`.
+
+        * heap/HeapProfiler.h:
+        (JSC::HeapProfiler::activeHeapAnalyzer const): Added.
+        (JSC::HeapProfiler::activeSnapshotBuilder const): Deleted.
+        * heap/HeapProfiler.cpp:
+        (JSC::HeapProfiler::setActiveHeapAnalyzer): Added.
+        (JSC::HeapProfiler::setActiveSnapshotBuilder): Deleted.
+        * heap/HeapSnapshotBuilder.h:
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::HeapSnapshotBuilder):
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::analyzeNode): Added.
+        (JSC::HeapSnapshotBuilder::analyzeEdge): Added.
+        (JSC::HeapSnapshotBuilder::analyzePropertyNameEdge): Added.
+        (JSC::HeapSnapshotBuilder::analyzeVariableNameEdge): Added.
+        (JSC::HeapSnapshotBuilder::analyzeIndexEdge): Added.
+        (JSC::HeapSnapshotBuilder::appendNode): Deleted.
+        (JSC::HeapSnapshotBuilder::appendEdge): Deleted.
+        (JSC::HeapSnapshotBuilder::appendPropertyNameEdge): Deleted.
+        (JSC::HeapSnapshotBuilder::appendVariableNameEdge): Deleted.
+        (JSC::HeapSnapshotBuilder::appendIndexEdge): Deleted.
+
+        * inspector/InjectedScriptManager.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::analyzeHeap): Added.
+        (JSC::JSCell::heapSnapshot): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::analyzeHeap): Added.
+        (JSC::JSLexicalEnvironment::heapSnapshot): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::analyzeHeap): Added.
+        (JSC::JSObject::heapSnapshot): Deleted.
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::analyzeHeap): Added.
+        (JSC::JSSegmentedVariableObject::heapSnapshot): Deleted.
+        Rename `heapSnapshot` to `analyzeHeap`.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-08-20  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Enable by default

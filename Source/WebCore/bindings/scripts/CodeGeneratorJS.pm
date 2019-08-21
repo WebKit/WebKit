@@ -2800,7 +2800,7 @@ sub GenerateHeader
     }
 
     if (NeedsImplementationClass($interface)) {
-        push(@headerContent, "    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);\n");
+        push(@headerContent, "    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);\n");
     }
     
     if ($numCustomAttributes > 0) {
@@ -4620,16 +4620,16 @@ sub GenerateImplementation
     }
 
     if (NeedsImplementationClass($interface) && !$interface->extendedAttributes->{CustomHeapSnapshot}) {
-        AddToImplIncludes("<JavaScriptCore/HeapSnapshotBuilder.h>");
+        AddToImplIncludes("<JavaScriptCore/HeapAnalyzer.h>");
         AddToImplIncludes("ScriptExecutionContext.h");
         AddToImplIncludes("<wtf/URL.h>");
-        push(@implContent, "void ${className}::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)\n");
+        push(@implContent, "void ${className}::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
-        push(@implContent, "    builder.setWrappedObjectForCell(cell, &thisObject->wrapped());\n");
+        push(@implContent, "    analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());\n");
         push(@implContent, "    if (thisObject->scriptExecutionContext())\n");
-        push(@implContent, "        builder.setLabelForCell(cell, \"url \" + thisObject->scriptExecutionContext()->url().string());\n");
-        push(@implContent, "    Base::heapSnapshot(cell, builder);\n");
+        push(@implContent, "        analyzer.setLabelForCell(cell, \"url \" + thisObject->scriptExecutionContext()->url().string());\n");
+        push(@implContent, "    Base::analyzeHeap(cell, analyzer);\n");
         push(@implContent, "}\n\n");
     }
 

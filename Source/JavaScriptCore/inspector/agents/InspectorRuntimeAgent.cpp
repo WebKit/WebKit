@@ -36,6 +36,7 @@
 #include "DFGWorklist.h"
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
+#include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontendRouter.h"
 #include "JSLock.h"

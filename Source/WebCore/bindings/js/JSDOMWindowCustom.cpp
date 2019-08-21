@@ -49,7 +49,7 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
-#include <JavaScriptCore/HeapSnapshotBuilder.h>
+#include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSMicrotask.h>
@@ -337,13 +337,13 @@ bool JSDOMWindow::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
 
-void JSDOMWindow::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     auto& location = thisObject->wrapped().location();
-    builder.setLabelForCell(cell, location.href());
+    analyzer.setLabelForCell(cell, location.href());
 
-    Base::heapSnapshot(cell, builder);
+    Base::analyzeHeap(cell, analyzer);
 }
 
 // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)

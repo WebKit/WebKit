@@ -30,7 +30,6 @@
 #pragma once
 
 #include "InjectedScript.h"
-#include "InjectedScriptHost.h"
 #include "InspectorEnvironment.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -41,6 +40,8 @@ class ExecState;
 }
 
 namespace Inspector {
+
+class InjectedScriptHost;
 
 class JS_EXPORT_PRIVATE InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager);

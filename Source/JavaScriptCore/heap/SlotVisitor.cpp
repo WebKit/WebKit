@@ -30,9 +30,9 @@
 #include "CPU.h"
 #include "ConservativeRoots.h"
 #include "GCSegmentedArrayInlines.h"
+#include "HeapAnalyzer.h"
 #include "HeapCellInlines.h"
 #include "HeapProfiler.h"
-#include "HeapSnapshotBuilder.h"
 #include "JSArray.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
@@ -113,8 +113,8 @@ void SlotVisitor::didStartMarking()
     }
 
     if (HeapProfiler* heapProfiler = vm().heapProfiler())
-        m_heapSnapshotBuilder = heapProfiler->activeSnapshotBuilder();
-    
+        m_heapAnalyzer = heapProfiler->activeHeapAnalyzer();
+
     m_markingVersion = heap()->objectSpace().markingVersion();
 }
 
@@ -122,7 +122,7 @@ void SlotVisitor::reset()
 {
     m_bytesVisited = 0;
     m_visitCount = 0;
-    m_heapSnapshotBuilder = nullptr;
+    m_heapAnalyzer = nullptr;
     RELEASE_ASSERT(!m_currentCell);
 }
 
@@ -234,9 +234,9 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
 
 void SlotVisitor::appendSlow(JSCell* cell, Dependency dependency)
 {
-    if (UNLIKELY(m_heapSnapshotBuilder))
-        m_heapSnapshotBuilder->appendEdge(m_currentCell, cell, m_rootMarkReason);
-    
+    if (UNLIKELY(m_heapAnalyzer))
+        m_heapAnalyzer->analyzeEdge(m_currentCell, cell, m_rootMarkReason);
+
     appendHiddenSlowImpl(cell, dependency);
 }
 
@@ -406,10 +406,10 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
         cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
     }
-    
-    if (UNLIKELY(m_heapSnapshotBuilder)) {
+
+    if (UNLIKELY(m_heapAnalyzer)) {
         if (m_isFirstVisit)
-            m_heapSnapshotBuilder->appendNode(const_cast<JSCell*>(cell));
+            m_heapAnalyzer->analyzeNode(const_cast<JSCell*>(cell));
     }
 }
 

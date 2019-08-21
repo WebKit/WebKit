@@ -178,7 +178,7 @@ public:
     
     bool isShuttingDown() const { return m_isShuttingDown; }
 
-    JS_EXPORT_PRIVATE bool isHeapSnapshotting() const;
+    JS_EXPORT_PRIVATE bool isAnalyzingHeap() const;
 
     JS_EXPORT_PRIVATE void sweepSynchronously();
 
@@ -530,7 +530,7 @@ private:
     void updateAllocationLimits();
     void didFinishCollection();
     void resumeCompilerThreads();
-    void gatherExtraHeapSnapshotData(HeapProfiler&);
+    void gatherExtraHeapData(HeapProfiler&);
     void removeDeadHeapSnapshotNodes(HeapProfiler&);
     void finalize();
     void sweepInFinalize();

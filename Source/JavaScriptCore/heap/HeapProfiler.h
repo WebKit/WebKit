@@ -30,7 +30,7 @@
 namespace JSC {
 
 class HeapSnapshot;
-class HeapSnapshotBuilder;
+class HeapAnalyzer;
 class VM;
 
 class HeapProfiler {
@@ -45,13 +45,13 @@ public:
     void appendSnapshot(std::unique_ptr<HeapSnapshot>);
     void clearSnapshots();
 
-    HeapSnapshotBuilder* activeSnapshotBuilder() const { return m_activeBuilder; }
-    void setActiveSnapshotBuilder(HeapSnapshotBuilder*);
+    HeapAnalyzer* activeHeapAnalyzer() const { return m_activeAnalyzer; }
+    void setActiveHeapAnalyzer(HeapAnalyzer*);
 
 private:
     VM& m_vm;
     Vector<std::unique_ptr<HeapSnapshot>> m_snapshots;
-    HeapSnapshotBuilder* m_activeBuilder { nullptr };
+    HeapAnalyzer* m_activeAnalyzer { nullptr };
 };
 
 } // namespace JSC

@@ -330,6 +330,7 @@ WI.JavaScriptRuntimeCompletionProvider._commandLineAPI = [
     "monitorEvents",
     "profile",
     "profileEnd",
+    "queryHolders",
     "queryInstances",
     "queryObjects",
     "screenshot",
