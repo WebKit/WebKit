@@ -1,3 +1,17 @@
+2019-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Disabling text autosizing should prevent text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=200955
+        <rdar://problem/48095374>
+
+        Reviewed by Simon Fraser.
+
+        Before this change there was no way to reliably change the text size on iOS when a -webkit-text-size-adjust:none style was applied
+        because it would ignore the WKPreferences value for _textAutosizingEnabled.  Now that value has the desired effect when laying out.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkForTextSizeAdjust):
+
 2019-08-21  Jer Noble  <jer.noble@apple.com>
 
         Adopt AVSystemController_ActiveAudioRouteDidChangeNotification

@@ -1,3 +1,16 @@
+2019-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Disabling text autosizing should prevent text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=200955
+        <rdar://problem/48095374>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text-autosizing/ios/text-size-adjust-inline-style.html:
+        The comment was incorrect because we call WKPreferencesSetTextAutosizingEnabled(preferences, false) in TestController::platformResetPreferencesToConsistentValues.
+        In order to test the effect of text autosizing in this test, we need to explicitly turn it on.  The disabling of text autosizing didn't do anything before this
+        patch, so it wasn't needed before now.
+
 2019-08-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, land test expectations for rdar://54561673.

@@ -1883,7 +1883,9 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
 #if ENABLE(TEXT_AUTOSIZING)
 void StyleResolver::checkForTextSizeAdjust(RenderStyle& style)
 {
-    if (style.textSizeAdjust().isAuto() || (settings().textAutosizingUsesIdempotentMode() && !style.textSizeAdjust().isNone()))
+    if (style.textSizeAdjust().isAuto()
+        || !settings().textAutosizingEnabled()
+        || (settings().textAutosizingUsesIdempotentMode() && !style.textSizeAdjust().isNone()))
         return;
 
     auto newFontDescription = style.fontDescription();
