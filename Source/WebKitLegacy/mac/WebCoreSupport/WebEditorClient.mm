@@ -1258,3 +1258,12 @@ void WebEditorClient::requestCheckingOfString(WebCore::TextCheckingRequest& requ
         }];
 #endif
 }
+
+#if PLATFORM(IOS_FAMILY)
+bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection) const
+{
+    // The text selection assistant will handle selection in the case where we are already editing the node
+    auto* editableRoot = newSelection.rootEditableElement();
+    return !editableRoot || editableRoot != targetNode.rootEditableElement();
+}
+#endif

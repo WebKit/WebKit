@@ -186,6 +186,8 @@ public:
     virtual bool performTwoStepDrop(DocumentFragment&, Range& destination, bool isMove) = 0;
 
     virtual bool canShowFontPanel() const = 0;
+
+    virtual bool shouldAllowSingleClickToChangeSelection(Node&, const VisibleSelection&) const { return true; }
 };
 
 }

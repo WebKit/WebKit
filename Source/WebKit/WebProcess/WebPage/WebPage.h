@@ -678,6 +678,7 @@ public:
     void setFocusedElementValueAsNumber(double);
     void setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection);
     void setIsShowingInputViewForFocusedElement(bool);
+    bool isShowingInputViewForFocusedElement() const { return m_isShowingInputViewForFocusedElement; }
     void updateSelectionAppearance();
     void getSelectionContext(CallbackID);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);

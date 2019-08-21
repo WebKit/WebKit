@@ -1,3 +1,19 @@
+2019-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        [Mail] Tapping top of message scrolls back to copied text instead of top of the message
+        https://bugs.webkit.org/show_bug.cgi?id=200999
+        <rdar://problem/54564878>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: editing/selection/ios/change-selection-by-tapping-with-existing-selection.html
+
+        * page/EditorClient.h:
+        (WebCore::EditorClient::shouldAllowSingleClickToChangeSelection const):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        Instead of encoding platform behaviors in EventHandler, defer to EditorClient.
+
 2019-08-21  Chris Dumez  <cdumez@apple.com>
 
         Crash under StringImpl::endsWith() in SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()

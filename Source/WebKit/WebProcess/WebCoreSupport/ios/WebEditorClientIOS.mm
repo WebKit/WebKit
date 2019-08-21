@@ -102,6 +102,13 @@ void WebEditorClient::overflowScrollPositionChanged()
     m_page->didChangeOverflowScrollPosition();
 }
 
+bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection) const
+{
+    // The text selection assistant will handle selection in the case where we are already editing the node
+    auto* editableRoot = newSelection.rootEditableElement();
+    return !editableRoot || editableRoot != targetNode.rootEditableElement() || !m_page->isShowingInputViewForFocusedElement();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
