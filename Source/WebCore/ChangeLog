@@ -1,5 +1,28 @@
 2019-08-21  Chris Dumez  <cdumez@apple.com>
 
+        Crash under StringImpl::~StringImpl() in IDBServer::computeSpaceUsedForOrigin()
+        https://bugs.webkit.org/show_bug.cgi?id=200989
+        <rdar://problem/54565546>
+
+        Reviewed by Alex Christensen.
+
+        Make sure we call isolatedCopy() on IDBServer::m_databaseDirectoryPath before using it from
+        background threads.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        (WebCore::IDBServer::IDBServer::performGetAllDatabaseNames):
+        (WebCore::IDBServer::IDBServer::removeDatabasesModifiedSinceForVersion):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::removeDatabasesWithOriginsForVersion):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::IDBServer::computeSpaceUsedForOrigin):
+        (WebCore::IDBServer::IDBServer::upgradeFilesIfNecessary):
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::databaseDirectoryPath const):
+
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
         Crash under StringImpl::endsWith() in RegistrationDatabase::openSQLiteDatabase()
         https://bugs.webkit.org/show_bug.cgi?id=200991
         <rdar://problem/54566689>
