@@ -831,6 +831,7 @@ public:
     void setWrappedObjectForCell(JSCell*, void*) { }
     void setLabelForCell(JSCell*, const String&) { }
 
+#ifndef NDEBUG
     void dump(PrintStream& out) const
     {
         Indentation<4> indent;
@@ -860,7 +861,7 @@ public:
             out.println();
 
             if (isFirstVisit) {
-                IndentationScope scope(indent);
+                IndentationScope<4> scope(indent);
                 for (auto* to : m_successors.get(from))
                     visit(to);
             }
@@ -869,6 +870,7 @@ public:
         for (auto* from : m_rootsToInclude)
             visit(from);
     }
+#endif
 
 private:
     Lock m_mutex;
