@@ -1,5 +1,17 @@
 2019-08-21  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Fix capitalization in Found x new Test failure message
+        https://bugs.webkit.org/show_bug.cgi?id=201004
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeLayoutTestsResults.report_failure):
+        (AnalyzeAPITestsResults.analyzeResults):
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests accordingly.
+
+2019-08-21  Aakash Jain  <aakash_jain@apple.com>
+
         Assign ews117 to EWS High-Sierra Debug queues
         https://bugs.webkit.org/show_bug.cgi?id=200993
 

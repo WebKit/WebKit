@@ -1065,7 +1065,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         self.build.results = FAILURE
         pluralSuffix = 's' if len(new_failures) > 1 else ''
         new_failures_string = ', '.join([failure_name for failure_name in new_failures])
-        message = 'Found {} new Test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
+        message = 'Found {} new test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
         self.descriptionDone = message
         self.build.buildFinished([message], FAILURE)
         return defer.succeed(None)
@@ -1386,7 +1386,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.finished(FAILURE)
             self.build.results = FAILURE
             pluralSuffix = 's' if len(new_failures) > 1 else ''
-            message = 'Found {} new API Test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
+            message = 'Found {} new API test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
             self.descriptionDone = message
             self.build.buildFinished([message], FAILURE)
         else:

@@ -1267,7 +1267,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('first_run_failures', ["jquery/offset.html"])
         self.setProperty('second_run_failures', ["jquery/offset.html"])
-        self.expectOutcome(result=FAILURE, state_string='Found 1 new Test failure: jquery/offset.html (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new test failure: jquery/offset.html (failure)')
         return self.runStep()
 
     def test_failure_on_clean_tree(self):
@@ -1282,7 +1282,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test1'])
-        self.expectOutcome(result=FAILURE, state_string='Found 1 new Test failure: test1 (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new test failure: test1 (failure)')
         return self.runStep()
 
     def test_flaky_and_inconsistent_failures_without_clean_tree_failures(self):
@@ -1350,7 +1350,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 10)])
-        self.expectOutcome(result=FAILURE, state_string='Found 30 new Test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8, test24, test25, test26, test27, test20, test21, test22, test23, test28, test29, test19, test18, test11, test10, test13, test12, test15, test14, test17, test16 (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8, test24, test25, test26, test27, test20, test21, test22, test23, test28, test29, test19, test18, test11, test10, test13, test12, test15, test14, test17, test16 (failure)')
         return self.runStep()
 
 class TestCheckOutSpecificRevision(BuildStepMixinAdditions, unittest.TestCase):
