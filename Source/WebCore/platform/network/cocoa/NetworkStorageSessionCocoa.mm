@@ -121,7 +121,7 @@ NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
 CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
 {
     if (!m_cookieStorageObserver)
-        m_cookieStorageObserver = makeUnique<CookieStorageObserver>(nsCookieStorage());
+        m_cookieStorageObserver = std::make_unique<CookieStorageObserver>(nsCookieStorage());
 
     return *m_cookieStorageObserver;
 }
