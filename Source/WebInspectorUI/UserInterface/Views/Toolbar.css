@@ -110,10 +110,6 @@ body.mac-platform:not(.docked) {
     margin: 4px;
 }
 
-.toolbar .search-bar > input[type="search"]::-webkit-textfield-decoration-container {
-    margin-left: 4px;
-}
-
 .toolbar .item.button,
 .toolbar .search-bar > input[type="search"],
 .toolbar .dashboard-container {

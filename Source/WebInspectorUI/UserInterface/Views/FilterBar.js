@@ -96,26 +96,6 @@ WI.FilterBar = class FilterBar extends WI.Object
             this._handleFilterChanged();
     }
 
-    get indicatingProgress()
-    {
-        return this._element.classList.contains("indicating-progress");
-    }
-
-    set indicatingProgress(progress)
-    {
-        this._element.classList.toggle("indicating-progress", !!progress);
-    }
-
-    get indicatingActive()
-    {
-        return this._element.classList.contains("active");
-    }
-
-    set indicatingActive(active)
-    {
-        this._element.classList.toggle("active", !!active);
-    }
-
     focus()
     {
         // FIXME: Workaround for: <https://webkit.org/b/149504> Caret missing from <input> after clearing text and calling select()
@@ -201,7 +181,8 @@ WI.FilterBar = class FilterBar extends WI.Object
         if (this.hasFilterChanged()) {
             this._lastFilterValue = this.filters;
             this.dispatchEventToListeners(WI.FilterBar.Event.FilterDidChange);
-        }
+        } else if (!this._inputField.value)
+            this._inputField.blur();
     }
 
     _handleFilterInputEvent(event)

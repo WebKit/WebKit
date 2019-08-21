@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,65 +55,65 @@
     display: flex;
     flex: 1;
     min-width: 0;
-
     margin: 3px 0 4px;
     -webkit-margin-start: 6px;
-    padding-top: 0;
-
-    outline: none;
-
-    -webkit-appearance: none;
-
-    border: 1px solid hsla(0, 0%, 0%, 0.25);
-    border-radius: 3px;
-    background-color: hsla(0, 0%, 100%, 0.2);
-    background-clip: padding-box;
-
-    height: 22px;
 }
 
-.filter-bar > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
+:matches(.filter-bar, .search-bar) > input[type="search"] {
+    height: 22px;
+    padding-top: 0;
+    color: var(--text-color-active);
+    background-color: transparent;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+:matches(.filter-bar, .search-bar) > input[type="search"]:matches(:focus, :not(:placeholder-shown)) {
+    background-color: var(--background-color-content);
+}
+
+:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-decoration {
+    align-self: center;
+    width: 13px;
+    height: 13px;
+    margin: 4px 4px 3px 3px;
+    background-image: url(../Images/FilterFieldGlyph.svg);
+    -webkit-appearance: none;
+}
+
+:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {
     -webkit-margin-end: 4px;
 }
 
-.filter-bar > .navigation-bar + input[type="search"] {
+/* FIXME: use a different image for ::-webkit-search-decoration when :not(:placeholder-shown) */
+
+:matches(.filter-bar, .search-bar) > input[type="search"]::placeholder {
+    color: var(--text-color-secondary);
+}
+
+:matches(.filter-bar, .search-bar) > input[type="search"]:matches(:not(:focus), :placeholder-shown)::-webkit-search-cancel-button {
+    display: none;
+}
+
+:matches(.filter-bar, .search-bar) > .navigation-bar + input[type="search"] {
     -webkit-margin-start: 0;
 }
 
-.filter-bar > input[type="search"]::placeholder {
-    color: hsla(0, 0%, 0%, 0.35);
+:matches(.filter-bar, .search-bar) > input[type="search"]:focus {
+    -webkit-margin-end: 6px;
 }
 
-.filter-bar > input[type="search"]:focus { background-color: white; }
-
-.filter-bar > input[type="search"]::-webkit-search-decoration {
-    width: 13px;
-    height: 13px;
-
-    margin: 4px 4px 3px 3px;
-
-    align-self: center;
-
-    background-image: url(../Images/FilterFieldGlyph.svg);
-
-    -webkit-appearance: none;
-}
-
-.filter-bar.active > input[type="search"]::-webkit-search-decoration {
-    background-image: url(../Images/FilterFieldActiveGlyph.svg);
-}
-
-.filter-bar.indicating-progress > input[type="search"]::-webkit-search-decoration {
-    background-image: url(../Images/IndeterminateProgressSpinner1.svg);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-
-    animation-name: discrete-spinner;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-timing-function: step-start;
-}
-
-.filter-bar > input[type="search"] + .navigation-bar:empty {
+:matches(.filter-bar, .search-bar) > input[type="search"] + :empty {
     -webkit-margin-start: 6px;
+}
+
+:matches(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
+    display: none;
+}
+
+:matches(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
+    -webkit-margin-end: 4px;
 }

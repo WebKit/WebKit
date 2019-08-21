@@ -1519,11 +1519,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._table.scrollContainer.style.width = this._nameColumn.width + "px";
     }
 
-    _updateURLFilterActiveIndicator()
-    {
-        this._urlFilterNavigationItem.filterBar.indicatingActive = this._hasURLFilter();
-    }
-
     _updateEmptyFilterResultsMessage()
     {
         if (this._hasActiveFilter() && !this._activeCollection.filteredEntries.length)
@@ -1957,7 +1952,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             });
         }
 
-        this._updateURLFilterActiveIndicator();
         this._updateEmptyFilterResultsMessage();
     }
 

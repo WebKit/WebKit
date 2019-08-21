@@ -35,21 +35,16 @@
     left: 0;
     right: 0;
     height: calc(var(--navigation-bar-height) - 1px);
-    margin: 0 6px;
     white-space: nowrap;
     overflow: hidden;
 }
 
 .sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
-    display: flex;
-    flex: 1;
     width: 100%;
-    margin: 0;
-    -webkit-margin-end: 4px;
 }
 
-.sidebar > .panel.navigation.search > .search-bar > input[type="search"]::-webkit-search-results-button {
-    margin-right: 4px;
+.sidebar > .panel.navigation.search > .search-bar > .search-settings {
+    -webkit-margin-end: 6px;
 }
 
 body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {

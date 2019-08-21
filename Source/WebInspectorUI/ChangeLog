@@ -1,3 +1,73 @@
+2019-08-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: increase the filter bar's width when it's focused if a resource type filter is active
+        https://bugs.webkit.org/show_bug.cgi?id=200940
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar.prototype._handleFilterChanged):
+        (WI.FilterBar.prototype.get indicatingProgress): Deleted.
+        (WI.FilterBar.prototype.set indicatingProgress): Deleted.
+        (WI.FilterBar.prototype.get indicatingActive): Deleted.
+        (WI.FilterBar.prototype.set indicatingActive): Deleted.
+        If escape is pressed when the <input> is empty, unfocus (blur) the <input>.
+        Drive-by: remove unused/unnecessary functions.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]):
+        (:matches(.filter-bar, .search-bar) > input[type="search"]): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]:matches(:focus, :not(:placeholder-shown))): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-decoration): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]::placeholder): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]:matches(:not(:focus), :placeholder-shown)::-webkit-search-cancel-button): Added.
+        (:matches(.filter-bar, .search-bar) > .navigation-bar + input[type="search"]): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]:focus): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"] + :empty): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"]:focus ~ *): Added.
+        (:matches(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child): Added.
+        (.filter-bar > input[type="search"] + .navigation-bar > .item.scope-bar:last-child): Deleted.
+        (.filter-bar > .navigation-bar + input[type="search"]): Deleted.
+        (.filter-bar > input[type="search"]::placeholder): Deleted.
+        (.filter-bar > input[type="search"]:focus): Deleted.
+        (.filter-bar > input[type="search"]::-webkit-search-decoration): Deleted.
+        (.filter-bar.active > input[type="search"]::-webkit-search-decoration): Deleted.
+        (.filter-bar.indicating-progress > input[type="search"]::-webkit-search-decoration): Deleted.
+        (.filter-bar > input[type="search"] + .navigation-bar:empty): Deleted.
+        When the <input> is `:focus`, hide the following `WI.NavigationBar` (if it's being used) so
+        that there's more room to show the filter text.
+        Drive-by: fix background, border, and text color styling when `:focus`.
+
+        * UserInterface/Views/SearchBar.css:
+        (.search-bar > input[type="search"]):
+        (.search-bar > input[type="search"]::placeholder): Deleted.
+        (.search-bar > input[type="search"]:focus): Deleted.
+        (.search-bar > input[type="search"]:not(:placeholder-shown)): Deleted.
+        (.search-bar > input[type="search"]:placeholder-shown::-webkit-search-cancel-button): Deleted.
+        (@media (prefers-color-scheme: dark)): Deleted.
+        (:matches(.search-bar, .filter-bar) > input[type="search"],): Deleted.
+        (:matches(.search-bar, .filter-bar) > input[type="search"]::placeholder): Deleted.
+        (:matches(.search-bar, .filter-bar) > input[type="search"]:focus): Deleted.
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar):
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]):
+        (.sidebar > .panel.navigation.search > .search-bar > .search-settings): Added.
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]::-webkit-search-results-button): Deleted.
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .search-bar > input[type="search"]::-webkit-textfield-decoration-container): Deleted.
+        Move shared styles to FilterBar.css as `WI.FilterBar` are more common.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark) :root):
+        Expose some CSS variables in light mode that were previously only defined in dark mode.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._updateURLFilterActiveIndicator): Deleted.
+        * UserInterface/Images/FilterFieldActiveGlyph.svg: Removed.
+
 2019-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unnecessary properties on SVGs

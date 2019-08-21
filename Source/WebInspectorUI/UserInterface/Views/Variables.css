@@ -50,6 +50,9 @@
     --background-color-content: white;
     --background-color-code: white;
 
+    --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
+    --background-color-selected: hsla(0, 0%, var(--foreground-lightness), 0.1);
+
     /* Gray background with lighter foreground. In dark mode this is lighter. */
     --gray-background-color: hsl(0, 0%, 66%);
     --gray-foreground-color: white;
@@ -202,7 +205,6 @@ body.window-inactive * {
 }
 
 @media (prefers-color-scheme: dark) {
-
     :root {
         color: var(--text-color);
 
@@ -232,9 +234,6 @@ body.window-inactive * {
         --gray-background-color: hsl(0, 0%, 50%);
 
         --link-text-color: var(--text-color-secondary);
-
-        --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
-        --background-color-selected: hsla(0, 0%, var(--foreground-lightness), 0.1);
 
         --color-button: hsl(0, 0%, 99%);
         --color-button-active: var(--text-color-active);

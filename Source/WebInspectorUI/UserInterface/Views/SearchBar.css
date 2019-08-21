@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,52 +24,7 @@
  */
 
 .search-bar > input[type="search"] {
-    padding-top: 0;
     margin: 1px 6px;
-
-    outline: none;
-
-    -webkit-appearance: none;
-
-    border: 1px solid hsla(0, 0%, 0%, 0.25);
-    border-radius: 3px;
-    background-color: hsla(0, 0%, 100%, 0.2);
-    background-clip: padding-box;
-
-    height: 22px;
 }
 
-.search-bar > input[type="search"]::placeholder {
-    color: hsla(0, 0%, 0%, 0.35);
-}
-
-.search-bar > input[type="search"]:focus {
-    background-color: white;
-}
-
-/* Make the search field's background white when it is not focused and has content.
-   Needs to be a separate rule. See http://webkit.org/b/118162 */
-.search-bar > input[type="search"]:not(:placeholder-shown) {
-    background-color: white;
-}
-
-.search-bar > input[type="search"]:placeholder-shown::-webkit-search-cancel-button {
-    display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    :matches(.search-bar, .filter-bar) > input[type="search"],
-    .search-bar > input[type="search"]:not(:placeholder-shown) {
-        border-color: var(--background-color-selected);
-        background-color: var(--background-color-alternate);
-    }
-
-    :matches(.search-bar, .filter-bar) > input[type="search"]::placeholder {
-        color: var(--text-color-secondary);
-    }
-
-    :matches(.search-bar, .filter-bar) > input[type="search"]:focus {
-        background-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
-        color: var(--text-color-active);
-    }
-}
+/* Many styles shared with `WI.FilterBar` */
