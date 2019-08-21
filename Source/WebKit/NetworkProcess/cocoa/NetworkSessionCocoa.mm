@@ -990,7 +990,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
         configuration._socketStreamProperties = @{ @"kCFStreamPropertyAutoErrorOnSystemChange" : @NO };
 #endif
 
-#if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 60000
+#if PLATFORM(WATCHOS)
     configuration._companionProxyPreference = NSURLSessionCompanionProxyPreferencePreferDirectToCloud;
 #endif
 

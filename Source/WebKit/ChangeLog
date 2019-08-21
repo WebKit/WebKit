@@ -1,3 +1,20 @@
+2019-08-21  Keith Rollin  <krollin@apple.com>
+
+        Remove support for watchOS < 6.0
+        https://bugs.webkit.org/show_bug.cgi?id=200937
+        <rdar://problem/54524009>
+
+        Reviewed by Darin Adler.
+
+        Update conditionals that reference __WATCH_OS_VERSION_MIN_REQUIRED and
+        __WATCH_OS_VERSION_MAX_ALLOWED, assuming that they both have values >=
+        60000. This means that expressions like
+        "__WATCH_OS_VERSION_MIN_REQUIRED < 60000" are always False and
+        "__WATCH_OS_VERSION_MIN_REQUIRED >= 60000" are always True.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2019-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Build failure due to unwieldy definition of “None” from X11 headers
