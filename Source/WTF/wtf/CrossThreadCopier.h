@@ -145,6 +145,15 @@ template<typename K, typename V> struct CrossThreadCopierBase<false, false, Hash
     }
 };
 
+// Default specialization for pairs of CrossThreadCopyable classes
+template<typename F, typename S> struct CrossThreadCopierBase<false, false, std::pair<F, S> > {
+    typedef std::pair<F, S> Type;
+    static Type copy(const Type& source)
+    {
+        return std::make_pair(CrossThreadCopier<F>::copy(source.first), CrossThreadCopier<S>::copy(source.second));
+    }
+};
+
 // Default specialization for Optional of CrossThreadCopyable class.
 template<typename T> struct CrossThreadCopierBase<false, false, Optional<T>> {
     template<typename U> static Optional<T> copy(U&& source)

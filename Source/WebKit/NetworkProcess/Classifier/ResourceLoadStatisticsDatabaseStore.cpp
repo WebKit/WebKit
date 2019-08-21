@@ -1511,7 +1511,7 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Pre
     return false;
 }
 
-HashMap<RegistrableDomain, WebsiteDataToRemove> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
+Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1523,15 +1523,15 @@ HashMap<RegistrableDomain, WebsiteDataToRemove> ResourceLoadStatisticsDatabaseSt
 
     clearExpiredUserInteractions();
     
-    HashMap<RegistrableDomain, WebsiteDataToRemove> domainsToRemoveWebsiteDataFor;
+    Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
 
     Vector<PrevalentDomainData> prevalentDomains = this->prevalentDomains();
     Vector<unsigned> domainIDsToClearGrandfathering;
     for (auto& statistic : prevalentDomains) {
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
-            domainsToRemoveWebsiteDataFor.add(statistic.registerableDomain, WebsiteDataToRemove::All);
+            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registerableDomain, WebsiteDataToRemove::All));
         else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering))
-            domainsToRemoveWebsiteDataFor.add(statistic.registerableDomain, WebsiteDataToRemove::AllButCookies);
+            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registerableDomain, WebsiteDataToRemove::AllButCookies));
 
         if (shouldClearGrandfathering && statistic.grandfathered)
             domainIDsToClearGrandfathering.append(statistic.domainID);

@@ -65,14 +65,16 @@ static String domainsToString(const Vector<RegistrableDomain>& domains)
     return builder.toString();
 }
 
-static String domainsToString(const HashMap<RegistrableDomain, WebsiteDataToRemove>& domainsToRemoveWebsiteDataFor)
+static String domainsToString(const Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>>& domainsToRemoveWebsiteDataFor)
 {
     StringBuilder builder;
-    for (auto& domain : domainsToRemoveWebsiteDataFor.keys()) {
+    for (auto& pair : domainsToRemoveWebsiteDataFor) {
+        auto& domain = pair.first;
+        auto& dataToRemove = pair.second;
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
         builder.append(domain.string());
-        switch (domainsToRemoveWebsiteDataFor.get(domain)) {
+        switch (dataToRemove) {
         case WebsiteDataToRemove::All:
             builder.appendLiteral("(all data)");
             break;

@@ -1,3 +1,33 @@
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
+        registrableDomainsToRemoveWebsiteDataFor() does not need to return a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=200985
+
+        Reviewed by John Wilander.
+
+        registrableDomainsToRemoveWebsiteDataFor() does not need to return a HashMap. It is more
+        efficient to simply return a Vector since we never need to look up keys.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::domainsToString):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::deleteCookiesForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::deleteWebsiteDataForRegistrableDomains):
+        * NetworkProcess/NetworkSession.h:
+
 2019-08-21  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r248942.
