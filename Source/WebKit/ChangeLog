@@ -1,5 +1,36 @@
 2019-08-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r248928. rdar://problem/54543351
+
+    [iOS] REGRESSION (248501): gmail.com images are still not shown on some versions of iPhone iOS13
+    https://bugs.webkit.org/show_bug.cgi?id=200948
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2019-08-20
+    Reviewed by Tim Horton.
+    
+    Apply the gmail.com quirk for all iPhone iOS versions till the gmail.com
+    bug is fixed.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::platformUserAgent const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248928 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            [iOS] REGRESSION (248501): gmail.com images are still not shown on some versions of iPhone iOS13
+            https://bugs.webkit.org/show_bug.cgi?id=200948
+
+            Reviewed by Tim Horton.
+
+            Apply the gmail.com quirk for all iPhone iOS versions till the gmail.com
+            bug is fixed.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::platformUserAgent const):
+
+2019-08-20  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r248902. rdar://problem/54543355
 
     Unsafe usage of CookieStorageObserver from a background thread
