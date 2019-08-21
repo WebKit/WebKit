@@ -221,12 +221,6 @@ bool MathMLElement::supportsFocus() const
     return isLink() || StyledElement::supportsFocus();
 }
 
-int MathMLElement::defaultTabIndex() const
-{
-    // FIXME: This seems wrong.
-    return 0;
-}
-
 }
 
 #endif // ENABLE(MATHML)
