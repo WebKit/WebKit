@@ -35,6 +35,7 @@
 #include "InspectorInstrumentation.h"
 #include "Microtasks.h"
 #include "Performance.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -139,6 +140,9 @@ void WorkerGlobalScope::removeAllEventListeners()
 
 bool WorkerGlobalScope::isSecureContext() const
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().secureContextChecksEnabled())
+        return true;
+
     return securityOrigin() && securityOrigin()->isPotentiallyTrustworthy();
 }
 

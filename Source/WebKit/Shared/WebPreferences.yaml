@@ -1532,6 +1532,14 @@ WebAPIStatisticsEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 
+SecureContextChecksEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Secure Context Checks"
+  humanReadableDescription: "Allow access to HTTPS-only Web APIs over HTTP"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+
 SelectionAcrossShadowBoundariesEnabled:
   type: bool
   defaultValue: true

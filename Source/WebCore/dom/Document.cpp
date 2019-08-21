@@ -5934,6 +5934,8 @@ bool Document::isSecureContext() const
 {
     if (!m_frame)
         return true;
+    if (!RuntimeEnabledFeatures::sharedFeatures().secureContextChecksEnabled())
+        return true;
     if (!securityOrigin().isPotentiallyTrustworthy())
         return false;
     for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {

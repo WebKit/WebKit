@@ -1,3 +1,17 @@
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
+        Add internal setting to disable SecureContext checks
+        https://bugs.webkit.org/show_bug.cgi?id=200980
+        <rdar://problem/54438512>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        (log):
+        (requestPermission):
+
 2019-08-21  Keith Rollin  <krollin@apple.com>
 
         Remove support for watchOS < 6.0

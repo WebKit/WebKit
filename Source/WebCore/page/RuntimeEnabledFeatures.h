@@ -377,6 +377,9 @@ public:
     void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { m_isNSURLSessionWebSocketEnabled = isEnabled; }
 #endif
 
+    bool secureContextChecksEnabled() const { return m_secureContextChecksEnabled; }
+    void setSecureContextChecksEnabled(bool isEnabled) { m_secureContextChecksEnabled = isEnabled; }
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -566,6 +569,7 @@ private:
 #endif
 
     bool m_lazyImageLoadingEnabled { false };
+    bool m_secureContextChecksEnabled { true };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

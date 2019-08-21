@@ -851,6 +851,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->mediaSourceEnabled();
 }
 
+- (BOOL)_secureContextChecksEnabled
+{
+    return _preferences->secureContextChecksEnabled();
+}
+
+- (void)_setSecureContextChecksEnabled:(BOOL)enabled
+{
+    _preferences->setSecureContextChecksEnabled(enabled);
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {

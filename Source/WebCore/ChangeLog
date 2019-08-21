@@ -1,3 +1,22 @@
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
+        Add internal setting to disable SecureContext checks
+        https://bugs.webkit.org/show_bug.cgi?id=200980
+        <rdar://problem/54438512>
+
+        Reviewed by Alex Christensen.
+
+        Add internal setting to disable SecureContext checks, in order to facilitate development
+        for features like Service workers or device orientation / motion.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isSecureContext const):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::secureContextChecksEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setSecureContextChecksEnabled):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::isSecureContext const):
+
 2019-08-21  Jer Noble  <jer.noble@apple.com>
 
         [iOS] HLS streams disappear from Now Playing when paused on the lock screen

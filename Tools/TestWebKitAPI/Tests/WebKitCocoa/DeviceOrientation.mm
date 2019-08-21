@@ -29,7 +29,9 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/Function.h>
 #import <wtf/HashMap.h>
@@ -298,6 +300,92 @@ TEST(DeviceOrientation, FireOrientationEventsRightAwayIfPermissionAlreadyGranted
 
     TestWebKitAPI::Util::run(&didReceiveMessage);
     EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
+}
+
+static const char* mainBytes = R"TESTRESOURCE(
+<script>
+
+function log(msg)
+{
+    webkit.messageHandlers.testHandler.postMessage(msg);
+}
+
+function requestPermission() {
+    DeviceOrientationEvent.requestPermission().then((result) => {
+        log(result);
+    });
+}
+
+</script>
+)TESTRESOURCE";
+
+enum class ShouldEnableSecureContextChecks { No, Yes };
+static void runPermissionSecureContextCheckTest(ShouldEnableSecureContextChecks shouldEnableSecureContextChecks)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+    
+    auto preferences = [configuration preferences];
+    [preferences _setSecureContextChecksEnabled:shouldEnableSecureContextChecks == ShouldEnableSecureContextChecks::Yes ? YES : NO];
+
+    auto messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+    
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
+    [webView setUIDelegate:uiDelegate.get()];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host/main.html"]];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+    
+    [webView evaluateJavaScript:@"requestPermission();" completionHandler:nil];
+    
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    if (shouldEnableSecureContextChecks == ShouldEnableSecureContextChecks::Yes) {
+        EXPECT_WK_STREQ(@"denied", receivedMessages.get()[0]);
+        return;
+    }
+
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+    
+    bool addedEventListener = false;
+    [webView evaluateJavaScript:@"addEventListener('deviceorientation', (e) => { webkit.messageHandlers.testHandler.postMessage('received-event') });" completionHandler: [&] (id result, NSError *error) {
+        addedEventListener = true;
+    }];
+
+    TestWebKitAPI::Util::run(&addedEventListener);
+    addedEventListener = false;
+
+    // Simulate a device orientation event. The page's event listener should get called even though it did not request permission,
+    // because it was previously granted permission during this browsing session.
+    [webView _simulateDeviceOrientationChangeWithAlpha:1.0 beta:2.0 gamma:3.0];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
+}
+
+TEST(DeviceOrientation, PermissionSecureContextCheck)
+{
+    runPermissionSecureContextCheckTest(ShouldEnableSecureContextChecks::Yes);
+}
+
+TEST(DeviceOrientation, PermissionSecureContextCheckDisabled)
+{
+    runPermissionSecureContextCheckTest(ShouldEnableSecureContextChecks::No);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
