@@ -25,3 +25,5 @@ http/tests/local/fileapi/file-last-modified-using-open-panel.html [ Pass ]
 http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html [ Pass ]
 http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass ]
 
+# rdar://54561673 (REGRESSION: Layout test http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-2.html is a flaky timeout)
+http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-2.html [ Pass ]

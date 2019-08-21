@@ -1,3 +1,10 @@
+2019-08-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, land test expectations for rdar://54561673.
+
+        * platform/ios/TestExpectations:
+        * platform/ios-12/TestExpectations:
+
 2019-08-21  Rob Buis  <rbuis@igalia.com>
 
         Verify Prefetch and credential behavior
