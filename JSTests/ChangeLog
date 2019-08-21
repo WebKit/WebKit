@@ -1,3 +1,16 @@
+2019-08-21  Michael Saboff  <msaboff@apple.com>
+
+        [JSC] incorrent JIT lead to StackOverflow
+        https://bugs.webkit.org/show_bug.cgi?id=197823
+
+        Reviewed by Tadeu Zagallo.
+
+        New test.
+
+        * stress/bound-function-stack-overflow.js: Added.
+        (foo):
+        (catch):
+
 2019-08-20  Justin Michaud  <justin_michaud@apple.com>
 
         Identify memcpy loops in b3
