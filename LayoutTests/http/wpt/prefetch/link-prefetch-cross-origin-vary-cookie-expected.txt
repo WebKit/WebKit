@@ -1,3 +1,0 @@
-
-PASS Verify that navigating to a prefetched main resource that sets Vary: Cookie does send cookies. 
-
