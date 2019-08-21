@@ -1,5 +1,23 @@
 2019-08-21  Chris Dumez  <cdumez@apple.com>
 
+        Crash under StringImpl::endsWith() in SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
+        https://bugs.webkit.org/show_bug.cgi?id=200990
+        <rdar://problem/54566439>
+
+        Reviewed by Alex Christensen.
+
+        Make sure we call isolatedCopy() on SQLiteIDBBackingStore::m_databaseRootDirectory before using
+        it from background threads.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForOrigin const):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseRootDirectory const):
+
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
         Crash under StringImpl::~StringImpl() in IDBServer::computeSpaceUsedForOrigin()
         https://bugs.webkit.org/show_bug.cgi?id=200989
         <rdar://problem/54565546>

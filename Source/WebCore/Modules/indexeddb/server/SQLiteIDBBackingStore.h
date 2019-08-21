@@ -108,6 +108,8 @@ private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
+    
+    String databaseRootDirectory() const { return m_databaseRootDirectory.isolatedCopy(); }
 
     bool ensureValidRecordsTable();
     bool ensureValidIndexRecordsTable();
