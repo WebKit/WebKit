@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class TextureMapperShaderProgram;
-class ImageOrientation;
+struct ImageOrientation;
 
 class VideoTextureCopierGStreamer {
     WTF_MAKE_FAST_ALLOCATED;

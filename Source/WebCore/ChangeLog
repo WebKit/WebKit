@@ -1,3 +1,16 @@
+2019-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GStreamer] Clang warns about mismatched type tag in declarations for ImageOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=200982
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h: Change
+        type tag in the forward declaration to "struct", hence matching the
+        actual type definition.
+
 2019-08-21  Antti Koivisto  <antti@apple.com>
 
         ASSERTION FAILED: !s_isInvalidatingStyleWithRuleSets in com.apple.WebCore: WebCore::DocumentRuleSets::collectFeatures const
