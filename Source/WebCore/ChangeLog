@@ -1,3 +1,21 @@
+2019-08-21  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] HLS streams disappear from Now Playing when paused on the lock screen
+        https://bugs.webkit.org/show_bug.cgi?id=200951
+        <rdar://problem/54534301>
+
+        Reviewed by Eric Carlson.
+
+        The AVPlayerItemTracks will get recreated on occasion (during seeks, and when
+        changing buffering policy) which can result in a player which no longer reports
+        that it has audio, which in turn results in Now Playing no longer considering
+        the web page to be an eligable now playing application. Bridge this gap by also
+        taking AVPlayerItem.hasEnabledAudio into account when determining whether the 
+        player has audio.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+
 2019-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GStreamer] Clang warns about mismatched type tag in declarations for ImageOrientation
