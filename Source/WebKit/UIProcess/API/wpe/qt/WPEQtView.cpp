@@ -380,6 +380,7 @@ void WPEQtView::loadHtml(const QString& html, const QUrl& baseUrl)
 }
 
 struct JavascriptCallbackData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     JavascriptCallbackData(QJSValue cb, QPointer<WPEQtView> obj)
         : callback(cb)
         , object(obj) { }

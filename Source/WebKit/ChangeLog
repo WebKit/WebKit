@@ -1,3 +1,30 @@
+2019-08-21  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Build failure after r248846 ([WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part)
+        https://bugs.webkit.org/show_bug.cgi?id=200973
+
+        WPE fails to build with `-DENABLE_WPE_QT_API=ON` after changes done by r248846 in:
+
+          Source/WebKit/UIProcess/API/wpe/qt/WPEQtView.cpp
+          Source/WebKit/UIProcess/API/wpe/qt/WPEQtViewBackend.cpp
+
+        ; to forces FastMalloc use.
+
+        Related to:
+
+          https://bugs.webkit.org/show_bug.cgi?id=200611
+          https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        This patch puts WPEQt... classes into FastMalloc in the same way it
+        was done by many others in r248603.
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::runJavaScript):
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.h:
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequest.h:
+
 2019-08-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] REGRESSION (248501): gmail.com images are still not shown on some versions of iPhone iOS13
