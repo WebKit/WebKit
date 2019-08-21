@@ -625,8 +625,14 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
     if (is<HTMLTableElement>(*node))
         return false;
     
+    if (!node->renderer()->isReplaced() || !canHaveChildrenForEditing(*node) || !downcast<RenderBox>(*node->renderer()).height())
+        return false;
+
     // There is a VisiblePosition inside an empty inline-block container.
-    return node->renderer()->isReplaced() && canHaveChildrenForEditing(*node) && downcast<RenderBox>(*node->renderer()).height() && !node->firstChild();
+    if (!node->hasChildNodes())
+        return true;
+
+    return !Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*node->renderer()));
 }
 
 static Node* enclosingVisualBoundary(Node* node)
