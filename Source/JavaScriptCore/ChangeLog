@@ -1,5 +1,35 @@
 2019-08-20  Mark Lam  <mark.lam@apple.com>
 
+        Remove superfluous size argument to allocateCell() for fixed size objects.
+        https://bugs.webkit.org/show_bug.cgi?id=200958
+
+        Reviewed by Yusuke Suzuki.
+
+        The size is already automatically computed by the allocateCell() template's default
+        arguments.  Removing these superfluous arguments will make it easier for us to
+        grep for cases where we do allocate variable size cells (for later analysis work).
+
+        * jsc.cpp:
+        (JSC::Masquerader::create):
+        (JSCMemoryFootprint::create):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMCallFrame::create):
+        (JSC::Element::create):
+        (JSC::Root::create):
+        (JSC::SimpleObject::create):
+        (JSC::ImpureGetter::create):
+        (JSC::CustomGetter::create):
+        (JSC::DOMJITNode::create):
+        (JSC::DOMJITGetter::create):
+        (JSC::DOMJITGetterComplex::create):
+        (JSC::DOMJITFunctionObject::create):
+        (JSC::DOMJITCheckSubClassObject::create):
+        (JSC::DOMJITGetterBaseJSObject::create):
+        (JSC::JSTestCustomGetterSetter::create):
+        (JSC::WasmStreamingParser::create):
+
+2019-08-20  Mark Lam  <mark.lam@apple.com>
+
         JSBigInt::m_length should be immutable.
         https://bugs.webkit.org/show_bug.cgi?id=200956
 

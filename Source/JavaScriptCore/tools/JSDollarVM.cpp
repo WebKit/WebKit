@@ -79,7 +79,7 @@ public:
         VM& vm = exec->vm();
         JSGlobalObject* globalObject = exec->lexicalGlobalObject();
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        JSDollarVMCallFrame* frame = new (NotNull, allocateCell<JSDollarVMCallFrame>(vm.heap, sizeof(JSDollarVMCallFrame))) JSDollarVMCallFrame(vm, structure);
+        JSDollarVMCallFrame* frame = new (NotNull, allocateCell<JSDollarVMCallFrame>(vm.heap)) JSDollarVMCallFrame(vm, structure);
         frame->finishCreation(vm, exec, requestedFrameIndex);
         return frame;
     }
@@ -148,7 +148,7 @@ public:
     static Element* create(VM& vm, JSGlobalObject* globalObject, Root* root)
     {
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        Element* element = new (NotNull, allocateCell<Element>(vm.heap, sizeof(Element))) Element(vm, structure);
+        Element* element = new (NotNull, allocateCell<Element>(vm.heap)) Element(vm, structure);
         element->finishCreation(vm, root);
         return element;
     }
@@ -209,7 +209,7 @@ public:
     static Root* create(VM& vm, JSGlobalObject* globalObject)
     {
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        Root* root = new (NotNull, allocateCell<Root>(vm.heap, sizeof(Root))) Root(vm, structure);
+        Root* root = new (NotNull, allocateCell<Root>(vm.heap)) Root(vm, structure);
         root->finishCreation(vm);
         return root;
     }
@@ -247,7 +247,7 @@ public:
     static SimpleObject* create(VM& vm, JSGlobalObject* globalObject)
     {
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        SimpleObject* simpleObject = new (NotNull, allocateCell<SimpleObject>(vm.heap, sizeof(SimpleObject))) SimpleObject(vm, structure);
+        SimpleObject* simpleObject = new (NotNull, allocateCell<SimpleObject>(vm.heap)) SimpleObject(vm, structure);
         simpleObject->finishCreation(vm);
         return simpleObject;
     }
@@ -300,7 +300,7 @@ public:
 
     static ImpureGetter* create(VM& vm, Structure* structure, JSObject* delegate)
     {
-        ImpureGetter* getter = new (NotNull, allocateCell<ImpureGetter>(vm.heap, sizeof(ImpureGetter))) ImpureGetter(vm, structure);
+        ImpureGetter* getter = new (NotNull, allocateCell<ImpureGetter>(vm.heap)) ImpureGetter(vm, structure);
         getter->finishCreation(vm, delegate);
         return getter;
     }
@@ -362,7 +362,7 @@ public:
 
     static CustomGetter* create(VM& vm, Structure* structure)
     {
-        CustomGetter* getter = new (NotNull, allocateCell<CustomGetter>(vm.heap, sizeof(CustomGetter))) CustomGetter(vm, structure);
+        CustomGetter* getter = new (NotNull, allocateCell<CustomGetter>(vm.heap)) CustomGetter(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -555,7 +555,7 @@ public:
 
     static DOMJITNode* create(VM& vm, Structure* structure)
     {
-        DOMJITNode* getter = new (NotNull, allocateCell<DOMJITNode>(vm.heap, sizeof(DOMJITNode))) DOMJITNode(vm, structure);
+        DOMJITNode* getter = new (NotNull, allocateCell<DOMJITNode>(vm.heap)) DOMJITNode(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -589,7 +589,7 @@ public:
 
     static DOMJITGetter* create(VM& vm, Structure* structure)
     {
-        DOMJITGetter* getter = new (NotNull, allocateCell<DOMJITGetter>(vm.heap, sizeof(DOMJITGetter))) DOMJITGetter(vm, structure);
+        DOMJITGetter* getter = new (NotNull, allocateCell<DOMJITGetter>(vm.heap)) DOMJITGetter(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -672,7 +672,7 @@ public:
 
     static DOMJITGetterComplex* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        DOMJITGetterComplex* getter = new (NotNull, allocateCell<DOMJITGetterComplex>(vm.heap, sizeof(DOMJITGetterComplex))) DOMJITGetterComplex(vm, structure);
+        DOMJITGetterComplex* getter = new (NotNull, allocateCell<DOMJITGetterComplex>(vm.heap)) DOMJITGetterComplex(vm, structure);
         getter->finishCreation(vm, globalObject);
         return getter;
     }
@@ -784,7 +784,7 @@ public:
 
     static DOMJITFunctionObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        DOMJITFunctionObject* object = new (NotNull, allocateCell<DOMJITFunctionObject>(vm.heap, sizeof(DOMJITFunctionObject))) DOMJITFunctionObject(vm, structure);
+        DOMJITFunctionObject* object = new (NotNull, allocateCell<DOMJITFunctionObject>(vm.heap)) DOMJITFunctionObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }
@@ -855,7 +855,7 @@ public:
 
     static DOMJITCheckSubClassObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        DOMJITCheckSubClassObject* object = new (NotNull, allocateCell<DOMJITCheckSubClassObject>(vm.heap, sizeof(DOMJITCheckSubClassObject))) DOMJITCheckSubClassObject(vm, structure);
+        DOMJITCheckSubClassObject* object = new (NotNull, allocateCell<DOMJITCheckSubClassObject>(vm.heap)) DOMJITCheckSubClassObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }
@@ -908,7 +908,7 @@ public:
 
     static DOMJITGetterBaseJSObject* create(VM& vm, Structure* structure)
     {
-        DOMJITGetterBaseJSObject* getter = new (NotNull, allocateCell<DOMJITGetterBaseJSObject>(vm.heap, sizeof(DOMJITGetterBaseJSObject))) DOMJITGetterBaseJSObject(vm, structure);
+        DOMJITGetterBaseJSObject* getter = new (NotNull, allocateCell<DOMJITGetterBaseJSObject>(vm.heap)) DOMJITGetterBaseJSObject(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -998,7 +998,7 @@ public:
 
     static JSTestCustomGetterSetter* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
-        JSTestCustomGetterSetter* result = new (NotNull, allocateCell<JSTestCustomGetterSetter>(vm.heap, sizeof(JSTestCustomGetterSetter))) JSTestCustomGetterSetter(vm, structure);
+        JSTestCustomGetterSetter* result = new (NotNull, allocateCell<JSTestCustomGetterSetter>(vm.heap)) JSTestCustomGetterSetter(vm, structure);
         result->finishCreation(vm);
         return result;
     }
@@ -1121,7 +1121,7 @@ public:
     static WasmStreamingParser* create(VM& vm, JSGlobalObject* globalObject)
     {
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        WasmStreamingParser* result = new (NotNull, allocateCell<WasmStreamingParser>(vm.heap, sizeof(WasmStreamingParser))) WasmStreamingParser(vm, structure);
+        WasmStreamingParser* result = new (NotNull, allocateCell<WasmStreamingParser>(vm.heap)) WasmStreamingParser(vm, structure);
         result->finishCreation(vm);
         return result;
     }

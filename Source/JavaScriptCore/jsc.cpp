@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -201,7 +201,7 @@ public:
     {
         globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(vm, "Masquerading object allocated");
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        Masquerader* result = new (NotNull, allocateCell<Masquerader>(vm.heap, sizeof(Masquerader))) Masquerader(vm, structure);
+        Masquerader* result = new (NotNull, allocateCell<Masquerader>(vm.heap)) Masquerader(vm, structure);
         result->finishCreation(vm);
         return result;
     }
@@ -1392,7 +1392,7 @@ public:
     static JSCMemoryFootprint* create(VM& vm, JSGlobalObject* globalObject)
     {
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        JSCMemoryFootprint* footprint = new (NotNull, allocateCell<JSCMemoryFootprint>(vm.heap, sizeof(JSCMemoryFootprint))) JSCMemoryFootprint(vm, structure);
+        JSCMemoryFootprint* footprint = new (NotNull, allocateCell<JSCMemoryFootprint>(vm.heap)) JSCMemoryFootprint(vm, structure);
         footprint->finishCreation(vm);
         return footprint;
     }
