@@ -1,5 +1,16 @@
 2019-08-21  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] view layout test results option should be displayed next to layout-test build step
+        https://bugs.webkit.org/show_bug.cgi?id=200048
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ExtractTestResults.getLastBuildStepByName): Method to return the last build-step matching the step name.
+        (ExtractTestResults.addCustomURLs): Add urls to corresponding layout-test step.
+
+2019-08-21  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Fix capitalization in Found x new Test failure message
         https://bugs.webkit.org/show_bug.cgi?id=201004
 

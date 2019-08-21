@@ -1489,9 +1489,18 @@ class ExtractTestResults(master.MasterShellCommand):
     def resultsDownloadURL(self):
         return self.zipFile.replace('public_html/', '/')
 
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
     def addCustomURLs(self):
-        self.addURL('view layout test results', self.resultDirectoryURL() + 'results.html')
-        self.addURL('download layout test results', self.resultsDownloadURL())
+        step = self.getLastBuildStepByName(RunWebKitTests.name)
+        if not step:
+            step = self
+        step.addURL('view layout test results', self.resultDirectoryURL() + 'results.html')
+        step.addURL('download layout test results', self.resultsDownloadURL())
 
     def finished(self, result):
         self.addCustomURLs()
