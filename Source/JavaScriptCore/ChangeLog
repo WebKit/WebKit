@@ -1,3 +1,39 @@
+2019-08-20  Justin Michaud  <justin_michaud@apple.com>
+
+        Identify memcpy loops in b3
+        https://bugs.webkit.org/show_bug.cgi?id=200181
+
+        Reviewed by Saam Barati.
+
+        Add a new pass in B3 to identify one type of forward byte copy loop and replace it with a call to a custom version of memcpy
+        that will not cause GC tearing and have the correct behaviour when overlapping regions are passed in. 
+
+        Microbenchmarks show memcpy-typed-loop-large is about 6x faster, and everything else is neutral. The optimization is disabled
+        on arm for now, until we add a memcpy implementation for it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3ReduceLoopStrength.cpp: Added.
+        (JSC::B3::fastForwardCopy32):
+        (JSC::B3::ReduceLoopStrength::AddrInfo::appendAddr):
+        (JSC::B3::ReduceLoopStrength::ReduceLoopStrength):
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+        (JSC::B3::ReduceLoopStrength::hoistValue):
+        (JSC::B3::ReduceLoopStrength::run):
+        (JSC::B3::reduceLoopStrength):
+        * b3/B3ReduceLoopStrength.h: Added.
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_8.cpp:
+        (testFastForwardCopy32):
+        (testByteCopyLoop):
+        (testByteCopyLoopStartIsLoopDependent):
+        (testByteCopyLoopBoundIsLoopDependent):
+        (addCopyTests):
+
 2019-08-20  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, speculative build fix for High Sierra after r248925

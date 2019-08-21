@@ -156,6 +156,7 @@ b3/B3PhiChildren.cpp
 b3/B3Procedure.cpp
 b3/B3PureCSE.cpp
 b3/B3ReduceDoubleToFloat.cpp
+b3/B3ReduceLoopStrength.cpp
 b3/B3ReduceStrength.cpp
 b3/B3SSACalculator.cpp
 b3/B3SlotBaseValue.cpp

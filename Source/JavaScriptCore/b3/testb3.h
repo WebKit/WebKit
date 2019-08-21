@@ -48,6 +48,7 @@
 #include "B3MoveConstants.h"
 #include "B3NativeTraits.h"
 #include "B3Procedure.h"
+#include "B3ReduceLoopStrength.h"
 #include "B3ReduceStrength.h"
 #include "B3SlotBaseValue.h"
 #include "B3StackSlot.h"
@@ -1015,6 +1016,13 @@ void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
 void addAtomicTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
 void addLoadTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
 void addTupleTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
+
+void testFastForwardCopy32();
+void testByteCopyLoop();
+void testByteCopyLoopStartIsLoopDependent();
+void testByteCopyLoopBoundIsLoopDependent();
+
+void addCopyTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
 
 bool shouldRun(const char* filter, const char* testName);
 

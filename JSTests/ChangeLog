@@ -1,3 +1,46 @@
+2019-08-20  Justin Michaud  <justin_michaud@apple.com>
+
+        Identify memcpy loops in b3
+        https://bugs.webkit.org/show_bug.cgi?id=200181
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/memcpy-loop.js: Added.
+        (doTest):
+        (let.arr1):
+        * microbenchmarks/memcpy-typed-loop-large.js: Added.
+        (doTest):
+        (let.arr1.new.Int32Array.1000000.let.arr2.new.Int32Array.1000000):
+        (arr2):
+        * microbenchmarks/memcpy-typed-loop-small.js: Added.
+        (doTest):
+        (16.let.arr1.new.Int32Array.size.let.arr2.new.Int32Array.size):
+        (16.arr2):
+        * microbenchmarks/memcpy-typed-loop-speculative.js: Added.
+        (doTest):
+        (let.arr1.new.Int32Array.10.let.arr2.new.Int32Array.10):
+        (arr2):
+        * microbenchmarks/memcpy-wasm-large.js: Added.
+        (typeof.WebAssembly.string_appeared_here.eq):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        * microbenchmarks/memcpy-wasm-medium.js: Added.
+        (typeof.WebAssembly.string_appeared_here.eq):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        * microbenchmarks/memcpy-wasm-small.js: Added.
+        (typeof.WebAssembly.string_appeared_here.eq):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        * microbenchmarks/memcpy-wasm.js: Added.
+        (typeof.WebAssembly.string_appeared_here.eq):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        * stress/memcpy-typed-loops.js: Added.
+        (noLoop):
+        (invalidStart):
+        (const.size.10.let.arr1.new.Int32Array.size.let.arr2.new.Int32Array.size):
+        (arr2):
+        * wasm/function-tests/memcpy-wasm-loop.js: Added.
+        (0.GetLocal.3.I32Const.1.I32Add.SetLocal.3.Br.1.End.End.End.WebAssembly):
+        (string_appeared_here):
+
 2019-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Array.prototype.toString should not get "join" function each time

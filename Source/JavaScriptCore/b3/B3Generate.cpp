@@ -48,6 +48,7 @@
 #include "B3Procedure.h"
 #include "B3PureCSE.h"
 #include "B3ReduceDoubleToFloat.h"
+#include "B3ReduceLoopStrength.h"
 #include "B3ReduceStrength.h"
 #include "B3TimingScope.h"
 #include "B3Validate.h"
@@ -91,6 +92,7 @@ void generateToAir(Procedure& procedure)
             eliminateCommonSubexpressions(procedure);
         eliminateDeadCode(procedure);
         inferSwitches(procedure);
+        reduceLoopStrength(procedure);
         if (Options::useB3TailDup())
             duplicateTails(procedure);
         fixSSA(procedure);
