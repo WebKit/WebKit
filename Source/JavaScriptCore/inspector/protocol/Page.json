@@ -111,6 +111,14 @@
     ],
     "commands": [
         {
+            "name": "enable",
+            "description": "Enables page domain notifications."
+        },
+        {
+            "name": "disable",
+            "description": "Disables page domain notifications."
+        },
+        {
             "name": "reload",
             "description": "Reloads the main frame of the inspected page.",
             "parameters": [

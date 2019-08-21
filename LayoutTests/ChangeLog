@@ -1,3 +1,20 @@
+2019-08-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Page: re-add enable/disable after r248454
+        https://bugs.webkit.org/show_bug.cgi?id=200947
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/page/loading-iframe-document-node.html:
+        * inspector/css/getMatchedStylesForNode.html:
+        * inspector/css/getMatchedStylesForNode-expected.txt:
+        * inspector/page/archive.html:
+        * inspector/page/frameScheduledNavigation.html:
+        * inspector/page/frameScheduledNavigation-async-delegates.html:
+        * inspector/page/frameStartedLoading.html:
+        * inspector/page/media-query-list-listener-exception.html:
+        * inspector/timeline/line-column.html:
+
 2019-08-21  Rob Buis  <rbuis@igalia.com>
 
         Verify Prefetch and credential behavior

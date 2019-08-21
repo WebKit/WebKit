@@ -36,6 +36,13 @@ function test()
 {
     Promise.resolve()
     .then(() => {
+        ProtocolTest.log("Enabling Page domain...");
+        return InspectorProtocol.awaitCommand({
+            method: "Page.enable",
+            params: {},
+        });
+    })
+    .then(() => {
         ProtocolTest.log("Requesting document...");
         return InspectorProtocol.awaitCommand({
             method: "DOM.getDocument",

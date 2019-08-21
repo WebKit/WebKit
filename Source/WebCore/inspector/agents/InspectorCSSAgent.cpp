@@ -681,11 +681,15 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
 
 void InspectorCSSAgent::createStyleSheet(ErrorString& errorString, const String& frameId, String* styleSheetId)
 {
-    Frame* frame = m_instrumentingAgents.inspectorPageAgent()->frameForId(frameId);
-    if (!frame) {
-        errorString = "No frame for given id found"_s;
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Page domain must be enabled"_s;
         return;
     }
+
+    auto* frame = pageAgent->assertFrame(errorString, frameId);
+    if (!frame)
+        return;
 
     Document* document = frame->document();
     if (!document) {

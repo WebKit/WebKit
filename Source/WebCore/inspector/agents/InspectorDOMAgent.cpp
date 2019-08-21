@@ -1224,11 +1224,15 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
     RefPtr<Document> document;
 
     if (frameId) {
-        Frame* frame = m_instrumentingAgents.inspectorPageAgent()->frameForId(*frameId);
-        if (!frame) {
-            errorString = "No frame for given id found"_s;
+        auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+        if (!pageAgent) {
+            errorString = "Page domain must be enabled"_s;
             return;
         }
+
+        auto* frame = pageAgent->assertFrame(errorString, *frameId);
+        if (!frame)
+            return;
 
         document = frame->document();
     } else
@@ -1311,7 +1315,13 @@ void InspectorDOMAgent::highlightNodeList(ErrorString& errorString, const JSON::
 
 void InspectorDOMAgent::highlightFrame(ErrorString& errorString, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor)
 {
-    Frame* frame = m_instrumentingAgents.inspectorPageAgent()->assertFrame(errorString, frameId);
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Page domain must be enabled"_s;
+        return;
+    }
+
+    auto* frame = pageAgent->assertFrame(errorString, frameId);
     if (!frame)
         return;
 
@@ -1551,8 +1561,11 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setChildren(WTFMove(children));
     }
 
-    if (auto* frameView = node->document().view())
-        value->setFrameId(m_instrumentingAgents.inspectorPageAgent()->frameId(&frameView->frame()));
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (pageAgent) {
+        if (auto* frameView = node->document().view())
+            value->setFrameId(pageAgent->frameId(&frameView->frame()));
+    }
 
     if (is<Element>(*node)) {
         Element& element = downcast<Element>(*node);
@@ -1588,7 +1601,8 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         }
     } else if (is<Document>(*node)) {
         Document& document = downcast<Document>(*node);
-        value->setFrameId(m_instrumentingAgents.inspectorPageAgent()->frameId(document.frame()));
+        if (pageAgent)
+            value->setFrameId(pageAgent->frameId(document.frame()));
         value->setDocumentURL(documentURLString(&document));
         value->setBaseURL(documentBaseURLString(&document));
         value->setXmlVersion(document.xmlVersion());

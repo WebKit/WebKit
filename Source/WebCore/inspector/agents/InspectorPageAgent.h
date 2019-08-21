@@ -88,6 +88,8 @@ public:
     static DocumentLoader* assertDocumentLoader(ErrorString&, Frame*);
 
     // PageBackendDispatcherHandler
+    void enable(ErrorString&) final;
+    void disable(ErrorString&) final;
     void reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources) final;
     void navigate(ErrorString&, const String& url) final;
     void overrideUserAgent(ErrorString&, const String* value) final;

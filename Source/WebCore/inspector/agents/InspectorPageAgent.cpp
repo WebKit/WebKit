@@ -343,6 +343,21 @@ InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorClien
 
 void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
+}
+
+void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
+{
+    ErrorString unused;
+    disable(unused);
+}
+
+void InspectorPageAgent::enable(ErrorString& errorString)
+{
+    if (m_instrumentingAgents.inspectorPageAgent() == this) {
+        errorString = "Page domain already enabled"_s;
+        return;
+    }
+
     m_instrumentingAgents.setInspectorPageAgent(this);
 
     auto stopwatch = m_environment.executionStopwatch();
@@ -354,8 +369,10 @@ void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*,
 #endif
 }
 
-void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
+void InspectorPageAgent::disable(ErrorString&)
 {
+    m_instrumentingAgents.setInspectorPageAgent(nullptr);
+
     ErrorString unused;
     setShowPaintRects(unused, false);
     setShowRulers(unused, false);
@@ -371,8 +388,6 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 #undef DISABLE_INSPECTOR_OVERRIDE_SETTING
 
     m_client->setMockCaptureDevicesEnabledOverride(WTF::nullopt);
-
-    m_instrumentingAgents.setInspectorPageAgent(nullptr);
 }
 
 double InspectorPageAgent::timestamp()

@@ -35,14 +35,17 @@ function test()
 
     function step1_bootstrap() {
         ProtocolTest.log("step1_bootstrap");
-        // Enable the Runtime.executionContextCreated event.
-        InspectorProtocol.sendCommand("Runtime.enable", {}, function() {
-            // Initialize the DOM agent.
-            InspectorProtocol.sendCommand("DOM.getDocument", {}, function() {
-                ProtocolTest.log("Main document loaded");
-                
-                // Add the iframe to the DOM.
-                InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "appendIframe()" });
+        // Enable the frame events.
+        InspectorProtocol.sendCommand("Page.enable", {}, function() {
+            // Enable the Runtime.executionContextCreated event.
+            InspectorProtocol.sendCommand("Runtime.enable", {}, function() {
+                // Initialize the DOM agent.
+                InspectorProtocol.sendCommand("DOM.getDocument", {}, function() {
+                    ProtocolTest.log("Main document loaded");
+
+                    // Add the iframe to the DOM.
+                    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "appendIframe()" });
+                });
             });
         });
     }

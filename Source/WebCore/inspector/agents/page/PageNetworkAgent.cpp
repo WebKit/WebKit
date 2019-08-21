@@ -48,15 +48,19 @@ PageNetworkAgent::PageNetworkAgent(PageAgentContext& context)
 
 String PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
-    if (loader)
-        return m_instrumentingAgents.inspectorPageAgent()->loaderId(loader);
+    if (loader) {
+        if (auto* pageAgent = m_instrumentingAgents.inspectorPageAgent())
+            return pageAgent->loaderId(loader);
+    }
     return { };
 }
 
 String PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
-    if (loader)
-        return m_instrumentingAgents.inspectorPageAgent()->frameId(loader->frame());
+    if (loader) {
+        if (auto* pageAgent = m_instrumentingAgents.inspectorPageAgent())
+            return pageAgent->frameId(loader->frame());
+    }
     return { };
 }
 
@@ -96,7 +100,13 @@ void PageNetworkAgent::setResourceCachingDisabled(bool disabled)
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(ErrorString& errorString, const String& frameId)
 {
-    auto* frame = m_instrumentingAgents.inspectorPageAgent()->assertFrame(errorString, frameId);
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Page domain must be enabled"_s;
+        return nullptr;
+    }
+
+    auto* frame = pageAgent->assertFrame(errorString, frameId);
     if (!frame)
         return nullptr;
 

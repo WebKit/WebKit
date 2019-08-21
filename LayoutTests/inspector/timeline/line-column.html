@@ -37,6 +37,7 @@ function test()
 {
     let suite = ProtocolTest.createAsyncSuite("Timeline.LineColumn");
 
+    InspectorProtocol.sendCommand("Page.enable", {});
     InspectorProtocol.sendCommand("Timeline.enable");
 
     function replacer(key, value) {

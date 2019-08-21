@@ -1,5 +1,20 @@
 2019-08-21  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Page: re-add enable/disable after r248454
+        https://bugs.webkit.org/show_bug.cgi?id=200947
+
+        Reviewed by Joseph Pecoraro.
+
+        We shouldn't design the agent system with only Web Inspector in mind. Other clients may want
+        to have different functionality, not being told about frames creation/updates/destruction.
+        In these cases, we should have graceful error message failures for other agents that rely on
+        the Page agent.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.initializeTarget):
+
+2019-08-21  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: increase the filter bar's width when it's focused if a resource type filter is active
         https://bugs.webkit.org/show_bug.cgi?id=200940
 

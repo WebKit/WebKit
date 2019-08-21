@@ -85,6 +85,10 @@ void InspectorApplicationCacheAgent::disable(ErrorString& errorString)
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
 {
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent)
+        return;
+
     if (!frame)
         return;
 
@@ -96,7 +100,7 @@ void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
     int status = host.status();
     auto manifestURL = host.applicationCacheInfo().manifest.string();
 
-    m_frontendDispatcher->applicationCacheStatusUpdated(m_instrumentingAgents.inspectorPageAgent()->frameId(frame), manifestURL, status);
+    m_frontendDispatcher->applicationCacheStatusUpdated(pageAgent->frameId(frame), manifestURL, status);
 }
 
 void InspectorApplicationCacheAgent::networkStateChanged()
@@ -104,8 +108,14 @@ void InspectorApplicationCacheAgent::networkStateChanged()
     m_frontendDispatcher->networkStateUpdated(platformStrategies()->loaderStrategy()->isOnLine());
 }
 
-void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
+void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString& errorString, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
 {
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Page domain must be enabled"_s;
+        return;
+    }
+
     result = JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
 
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -117,7 +127,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
         String manifestURL = host.applicationCacheInfo().manifest.string();
         if (!manifestURL.isEmpty()) {
             result->addItem(Inspector::Protocol::ApplicationCache::FrameWithManifest::create()
-                .setFrameId(m_instrumentingAgents.inspectorPageAgent()->frameId(frame))
+                .setFrameId(pageAgent->frameId(frame))
                 .setManifestURL(manifestURL)
                 .setStatus(static_cast<int>(host.status()))
                 .release());
@@ -127,7 +137,13 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
 
 DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(ErrorString& errorString, const String& frameId)
 {
-    Frame* frame = m_instrumentingAgents.inspectorPageAgent()->assertFrame(errorString, frameId);
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Page domain must be enabled"_s;
+        return nullptr;
+    }
+
+    auto* frame = pageAgent->assertFrame(errorString, frameId);
     if (!frame)
         return nullptr;
 

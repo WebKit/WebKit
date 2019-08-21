@@ -16,6 +16,7 @@ function test()
     InspectorProtocol.eventHandler["Page.frameScheduledNavigation"] = onScheduled;
     InspectorProtocol.eventHandler["Page.frameStartedLoading"] = onStarted;
     InspectorProtocol.eventHandler["Page.frameClearedScheduledNavigation"] = onCleared;
+    InspectorProtocol.sendCommand("Page.enable", {});
 
     function onScheduled(msg)
     {

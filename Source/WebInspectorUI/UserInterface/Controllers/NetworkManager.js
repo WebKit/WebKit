@@ -76,10 +76,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     initializeTarget(target)
     {
         if (target.PageAgent) {
-            // COMPATIBILITY (iOS 13): Page.enable was removed.
-            if (target.PageAgent.enable)
-                target.PageAgent.enable();
-
+            target.PageAgent.enable();
             target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
         }
 
