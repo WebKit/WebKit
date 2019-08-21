@@ -1,3 +1,26 @@
+2019-08-21  Antti Koivisto  <antti@apple.com>
+
+        ASSERTION FAILED: !s_isInvalidatingStyleWithRuleSets in com.apple.WebCore: WebCore::DocumentRuleSets::collectFeatures const
+        https://bugs.webkit.org/show_bug.cgi?id=200919
+        <rdar://problem/53413013>
+
+        Reviewed by Zalan Bujtas.
+
+        Bots show that in some timing-dependent cases we may end up constructing a style resolver in the middle the class change invalidation.
+
+        This happens flakily on Pad bots in
+
+        media/track/track-node-add-remove.html
+        media/W3C/video/events/event_loadstart_manual.html
+        media/W3C/video/readyState/readyState_initial.html
+
+        and also reproes locally with lots of runs over these tests.
+
+        * style/StyleInvalidationFunctions.h:
+        (WebCore::Style::traverseRuleFeatures):
+
+        Ensure that for elements in shadow tree the host resolver is also always constructed before starting rule-based invalidation.
+
 2019-08-21  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: naver.com - Multiple taps are required to open email
