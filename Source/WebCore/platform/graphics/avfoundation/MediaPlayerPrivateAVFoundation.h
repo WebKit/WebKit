@@ -46,7 +46,8 @@ class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVF;
 class GenericCueData;
 
-class MediaPlayerPrivateAVFoundation : public CanMakeWeakPtr<MediaPlayerPrivateAVFoundation>, public MediaPlayerPrivateInterface, public AVFInbandTrackParent
+// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
+class MediaPlayerPrivateAVFoundation : public CanMakeWeakPtr<MediaPlayerPrivateAVFoundation, WeakPtrFactoryInitialization::Eager>, public MediaPlayerPrivateInterface, public AVFInbandTrackParent
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -327,7 +328,6 @@ protected:
     const URL& resolvedURL() const { return m_resolvedURL; }
 
 private:
-    WeakPtr<MediaPlayerPrivateAVFoundation> m_weakThis;
     MediaPlayer* m_player;
 
     WTF::Function<void()> m_pendingSeek;

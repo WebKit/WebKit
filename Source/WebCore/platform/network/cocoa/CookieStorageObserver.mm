@@ -75,8 +75,7 @@
 namespace WebCore {
 
 CookieStorageObserver::CookieStorageObserver(NSHTTPCookieStorage *cookieStorage)
-    : m_weakThis(makeWeakPtr(*this))
-    , m_cookieStorage(cookieStorage)
+    : m_cookieStorage(cookieStorage)
 {
     ASSERT(isMainThread());
     ASSERT(m_cookieStorage);
@@ -130,7 +129,7 @@ void CookieStorageObserver::stopObserving()
 
 void CookieStorageObserver::cookiesDidChange()
 {
-    callOnMainThread([weakThis = m_weakThis] {
+    callOnMainThread([weakThis = makeWeakPtr(*this)] {
         if (weakThis && weakThis->m_cookieChangeCallback)
             weakThis->m_cookieChangeCallback();
     });

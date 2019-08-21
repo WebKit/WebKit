@@ -1,5 +1,26 @@
 2019-08-21  Chris Dumez  <cdumez@apple.com>
 
+        Get rid of m_weakThis data members now that we have a safe way to call makeWeakPtr() from various threads
+        https://bugs.webkit.org/show_bug.cgi?id=200981
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp:
+        (WebCore::LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend):
+        (WebCore::LibWebRTCDTMFSenderBackend::OnToneChange):
+        * platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.h:
+        * platform/network/cocoa/CookieStorageObserver.h:
+        * platform/network/cocoa/CookieStorageObserver.mm:
+        (WebCore::CookieStorageObserver::CookieStorageObserver):
+        (WebCore::CookieStorageObserver::cookiesDidChange):
+
+2019-08-21  Chris Dumez  <cdumez@apple.com>
+
         Add internal setting to disable SecureContext checks
         https://bugs.webkit.org/show_bug.cgi?id=200980
         <rdar://problem/54438512>

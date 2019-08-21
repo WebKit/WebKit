@@ -39,7 +39,6 @@ static inline String toWTFString(const std::string& value)
 
 LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&& sender)
     : m_sender(WTFMove(sender))
-    , m_weakThis(makeWeakPtr(this))
 {
     m_sender->RegisterObserver(this);
 }
@@ -80,7 +79,7 @@ void LibWebRTCDTMFSenderBackend::OnToneChange(const std::string& tone, const std
     // We are just interested in notifying the end of the tone, which corresponds to the empty string.
     if (!tone.empty())
         return;
-    callOnMainThread([this, weakThis = m_weakThis, tone = toWTFString(tone)] {
+    callOnMainThread([this, weakThis = makeWeakPtr(*this), tone = toWTFString(tone)] {
         if (!weakThis)
             return;
         if (m_onTonePlayed)

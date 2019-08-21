@@ -39,7 +39,8 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend> {
+// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
+class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&&);
@@ -59,7 +60,6 @@ private:
 
     rtc::scoped_refptr<webrtc::DtmfSenderInterface> m_sender;
     Function<void(const String&)> m_onTonePlayed;
-    WeakPtr<LibWebRTCDTMFSenderBackend> m_weakThis;
 };
 
 } // namespace WebCore
