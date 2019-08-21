@@ -327,6 +327,9 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
         if (equalLettersIgnoringASCIICase(host, "tv.naver.com"))
             return false;
+        // Disable the quirk for mail.naver.com subdomain to be able to tap on mail subjects.
+        if (equalLettersIgnoringASCIICase(host, "mail.naver.com"))
+            return false;
         // Disable the quirk on the mobile site.
         // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
         if (equalLettersIgnoringASCIICase(host, "m.naver.com"))
