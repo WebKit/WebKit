@@ -1,3 +1,15 @@
+2019-08-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JSTests/stress/optional-chaining should not call shouldThrowTypeError in a loop
+        https://bugs.webkit.org/show_bug.cgi?id=200965
+
+        Reviewed by Saam Barati.
+
+        This has nothing to do with ?. in particular, but throwing >1M type errors takes 100s in Debug on my machine.
+        The main idea here was to JITify the simple success cases, so let's not run the simple failures so many times.
+
+        * stress/optional-chaining.js:
+
 2019-08-21  Michael Saboff  <msaboff@apple.com>
 
         [JSC] incorrent JIT lead to StackOverflow

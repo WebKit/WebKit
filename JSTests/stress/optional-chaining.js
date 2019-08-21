@@ -35,7 +35,7 @@ function shouldThrowTypeError(func, messagePrefix) {
 const masquerader = makeMasquerader();
 masquerader.foo = 3;
 
-function testBasicCases() {
+function testBasicSuccessCases() {
     shouldBe(undefined?.valueOf(), undefined);
     shouldBe(null?.valueOf(), undefined);
     shouldBe(true?.valueOf(), true);
@@ -66,6 +66,11 @@ function testBasicCases() {
 
     shouldBe(undefined?.(), undefined);
     shouldBe(null?.(), undefined);
+    shouldBe((() => 3)?.(), 3);
+}
+noInline(testBasicSuccessCases);
+
+function testBasicFailureCases() {
     shouldThrowTypeError(() => true?.(), 'true is not a function');
     shouldThrowTypeError(() => false?.(), 'false is not a function');
     shouldThrowTypeError(() => 0?.(), '0 is not a function');
@@ -78,10 +83,13 @@ function testBasicCases() {
     shouldThrowTypeError(() => ['hi']?.(), '[\'hi\'] is not a function');
     shouldThrowTypeError(() => masquerader?.(), 'masquerader is not a function');
 }
-noInline(testBasicCases);
+noInline(testBasicFailureCases);
 
 for (let i = 0; i < 1e5; i++)
-    testBasicCases();
+    testBasicSuccessCases();
+
+for (let i = 0; i < 100; i++)
+    testBasicFailureCases();
 
 shouldThrowTypeError(() => ({})?.i(), '({})?.i is not a function');
 shouldBe(({}).i?.(), undefined);
