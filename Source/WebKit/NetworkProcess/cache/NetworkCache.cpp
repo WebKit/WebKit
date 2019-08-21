@@ -415,7 +415,8 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
             mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
         }
 #endif
-        completionHandler(mappedBody);
+        if (completionHandler)
+            completionHandler(mappedBody);
         LOG(NetworkCache, "(NetworkProcess) stored");
     });
 

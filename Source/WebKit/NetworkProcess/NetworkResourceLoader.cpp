@@ -231,7 +231,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
                 auto buffer = entry->releaseBuffer();
                 auto cacheEntry = m_cache->makeEntry(request, entry->response, buffer.copyRef());
                 retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
-                m_cache->store(request, entry->response, WTFMove(buffer), nullptr);
+                m_cache->store(request, entry->response, WTFMove(buffer));
                 return;
             }
         }
