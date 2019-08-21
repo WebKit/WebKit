@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +72,6 @@ public:
     void setSign(bool sign) { m_sign = sign; }
     bool sign() const { return m_sign; }
 
-    void setLength(unsigned length) { m_length = length; }
     unsigned length() const { return m_length; }
 
     enum class ErrorParseMode {
@@ -246,8 +246,8 @@ private:
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit);
-        
-    unsigned m_length;
+
+    const unsigned m_length;
     bool m_sign { false };
 };
 
