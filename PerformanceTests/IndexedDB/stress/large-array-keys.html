@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
 var iterationCount = 20;
 var numberDeleted = 0;
 
 // Delete all databases for the test ahead of time.
-var databasePrefix = "large-number-of-inserts-DB-";
+var databasePrefix = "large-array-keys-DB-";
 for (var i = 0; i < iterationCount + 1; ++i) {
     indexedDB.deleteDatabase(databasePrefix + i).onsuccess = function() {
         if (++numberDeleted == iterationCount)
@@ -42,19 +42,25 @@ function nextStep()
     testGenerator.next();
 }
 
-var numberOfObjects = 100000;
-var objectsToInsert = new Array(numberOfObjects);
-for (var i = 0; i < numberOfObjects; ++i) {
-    objectsToInsert[i] = { data: Math.random() };
-    objectsToInsert[i].id = 'object_' + i;
+function createSubArray(count)
+{
+    var array = new Array(count);
+    for (var i = 0; i < count; ++i) {
+        array[i] = createSubArray(count - 1);
+    }
+    return array;
 }
+
+var numberOfSubarrays = 6;
+var array = createSubArray(numberOfSubarrays);
+array.push("variant");
 
 function *runIteration()
 {
     var openRequest = indexedDB.open(databasePrefix + currentIteration);
     openRequest.onupgradeneeded = function(event) {
         db = event.target.result;
-        db.createObjectStore('objects', {keyPath: 'id'});
+        db.createObjectStore('arrays');
     }
     openRequest.onsuccess = nextStep;
 
@@ -62,10 +68,14 @@ function *runIteration()
 
     var startTime = PerfTestRunner.now();
 
-    var objectStore = db.transaction('objects', 'readwrite').objectStore('objects');
+    var objectStore = db.transaction('arrays', 'readwrite').objectStore('arrays');
     objectStore.transaction.oncomplete = nextStep;
-    for (var i = 0; i < numberOfObjects; ++i)
-        objectStore.put(objectsToInsert[i]);
+
+    var numberOfInserts = 100;
+    for (var i = 0; i < numberOfInserts; ++i) {
+        array[numberOfSubarrays] = i;
+        objectStore.put("Some value!!!", array);
+    }
 
     yield;
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
 var iterationCount = 20;
@@ -46,10 +46,13 @@ var baseString;
 for (var i = 0; i < 100000; ++i)
     baseString += "abcdefghijklmnopqrstuvwxyz";
 
-var numberOfInserts = 10;
+var numberOfInserts = 50;
 var array = new Array(numberOfInserts);
-for (var i = 0; i < numberOfInserts; ++i)
-    array[i] = baseString + i;
+for (var i = 0; i < numberOfInserts; ++i) {
+    array[i] = new ArrayBuffer(2097152);
+    var view = new Int32Array(array[i]);
+    view[view.length - 1] = i;
+}
 
 function *runIteration()
 {

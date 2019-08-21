@@ -1,3 +1,39 @@
+2019-08-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Add some IDB performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=200906
+
+        Reviewed by Geoffrey Garen.
+
+        Add test coverage for IDB performance, and organize IDB tests into two categories.
+
+        * IndexedDB/basic/index-count-key.html: Added.
+        * IndexedDB/basic/index-count.html: Added.
+        * IndexedDB/basic/index-cursor-advance.html: Added.
+        * IndexedDB/basic/index-cursor-continue.html: Added.
+        * IndexedDB/basic/index-cursor-continuePrimaryKey.html: Added.
+        * IndexedDB/basic/index-cursor-delete.html: Added.
+        * IndexedDB/basic/index-cursor-update.html: Added.
+        * IndexedDB/basic/index-get.html: Added.
+        * IndexedDB/basic/index-multientry.html: Renamed from PerformanceTests/IndexedDB/index-multientry.html.
+        * IndexedDB/basic/objectstore-add.html: Added.
+        * IndexedDB/basic/objectstore-clear.html: Added.
+        * IndexedDB/basic/objectstore-count.html: Added.
+        * IndexedDB/basic/objectstore-cursor-advance.html: Added.
+        * IndexedDB/basic/objectstore-cursor-continue.html: Added.
+        * IndexedDB/basic/objectstore-cursor-delete.html: Added.
+        * IndexedDB/basic/objectstore-cursor-update.html: Added.
+        * IndexedDB/basic/objectstore-cursor.html: Renamed from PerformanceTests/IndexedDB/objectstore-cursor.html.
+        * IndexedDB/basic/objectstore-delete.html: Renamed from PerformanceTests/IndexedDB/index-get.html.
+        * IndexedDB/basic/objectstore-get.html: Added.
+        * IndexedDB/basic/objectstore-put.html: Renamed from PerformanceTests/IndexedDB/objectstore-get.html.
+        * IndexedDB/stress/large-array-keys.html: Renamed from PerformanceTests/IndexedDB/large-array-keys.html.
+        * IndexedDB/stress/large-binary-keys.html: Renamed from PerformanceTests/IndexedDB/large-binary-keys.html.
+        * IndexedDB/stress/large-number-of-inserts-responsiveness.html: Renamed from PerformanceTests/IndexedDB/large-number-of-inserts-responsiveness.html.
+        * IndexedDB/stress/large-number-of-inserts.html: Renamed from PerformanceTests/IndexedDB/large-number-of-inserts.html.
+        * IndexedDB/stress/large-string-keys.html: Renamed from PerformanceTests/IndexedDB/large-string-keys.html.
+        * Skipped:
+
 2019-08-19  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDB-specific quota

@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
+const numberOfIterations = 20;
+const numberOfItems = 5000;
+
 // Delete database(s) for the test ahead of time.
-var databaseName = "index-get-DB";
+var databaseName = "objectstore-count-DB";
 indexedDB.deleteDatabase(databaseName).onsuccess = function() {
     startIteration();
 }
 
 var testGenerator = null;
 var db = null;
-var transaction = null;
 
 PerfTestRunner.prepareToMeasureValuesAsync({
-    customIterationCount: 10,
+    customIterationCount: numberOfIterations,
     unit: 'ms',
     done: function () {
-        transaction = null;
         db = null;
         testGenerator = null;
         PerfTestRunner.gc();
@@ -36,17 +37,14 @@ function nextStep()
     testGenerator.next();
 }
 
-var numberOfEntries = 5000;
-
 function *runIteration()
 {
     var openRequest = indexedDB.open(databaseName);
     openRequest.onupgradeneeded = function(event) {
         db = event.target.result;
         var objectStore = db.createObjectStore('store');
-        objectStore.createIndex('index', 'indexKey');
-        for (var i = 0; i < numberOfEntries; i++)
-           objectStore.put( { test: 'yo', indexKey: "index" + i }, i);
+        for (var i = 0; i < numberOfItems; ++i)
+           objectStore.put("value" + i, i);
     }
     openRequest.onsuccess = nextStep;
 
@@ -54,17 +52,12 @@ function *runIteration()
 
     var startTime = PerfTestRunner.now();
 
-    var index = db.transaction('store').objectStore('store').index('index');
-    var completedGets = 0;
-    for (var i = 0; i < numberOfEntries; i++)
-    {
-        index.get('index' + i).onsuccess = function (event) {
-            if (event.target.result.test != "yo")
-                alert("Expected 'yo', got '" + event.target.result.test + "'");
+    var objectStore = db.transaction('store').objectStore('store');
+    objectStore.count().onsuccess = function(event) {
+        if (event.target.result != numberOfItems)
+            alert("Expected " + numberOfItems + "items but get " + event.target.result);
 
-            if (++completedGets == numberOfEntries)
-                nextStep();
-        };
+        nextStep();
     }
 
     yield;

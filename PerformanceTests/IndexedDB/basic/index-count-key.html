@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
+const numberOfIterations = 20;
+const numberOfItems = 5000;
+
 // Delete database(s) for the test ahead of time.
-var databaseName = "objectstore-get-DB";
+var databaseName = "index-count-DB";
 indexedDB.deleteDatabase(databaseName).onsuccess = function() {
     startIteration();
 }
 
 var testGenerator = null;
 var db = null;
-var transaction = null;
 
 PerfTestRunner.prepareToMeasureValuesAsync({
-    customIterationCount: 20,
+    customIterationCount: numberOfIterations,
     unit: 'ms',
     done: function () {
         transaction = null;
         db = null;
-        testGenerator = null;
         PerfTestRunner.gc();
     }
 });
@@ -36,16 +37,15 @@ function nextStep()
     testGenerator.next();
 }
 
-var numberOfEntries = 5000;
-
 function *runIteration()
 {
     var openRequest = indexedDB.open(databaseName);
     openRequest.onupgradeneeded = function(event) {
         db = event.target.result;
         var objectStore = db.createObjectStore('store');
-        for (var i = 0; i < numberOfEntries; ++i)
-           objectStore.put("index" + i, i);
+        objectStore.createIndex('index', 'indexKey');
+        for (var i = 0; i < numberOfItems; i++)
+           objectStore.put( { value: 'value', indexKey: "index" + i }, i);
     }
     openRequest.onsuccess = nextStep;
 
@@ -53,20 +53,17 @@ function *runIteration()
 
     var startTime = PerfTestRunner.now();
 
-    var objectStore = db.transaction('store').objectStore('store');
-    var completedGets = 0;
-    for (var i = 0; i < numberOfEntries; ++i)
+    var index = db.transaction('store').objectStore('store').index('index');
+    var completedCounts = 0;
+    for (var i = 0; i < numberOfItems; i++)
     {
-        
-        objectStore.get(i).onsuccess = (function (j) {
-            return function(event) {
-                if (event.target.result != ("index" + j))
-                    alert("Expected 'index" + j + "', got '" + event.target.result + "'");
+        index.count('index' + i).onsuccess = function (event) {
+            if (event.target.result != 1)
+                alert("Expected 1 item for key index" + i);
 
-                if (++completedGets == numberOfEntries)
-                    nextStep();
-            }
-        })(i);
+            if (++completedCounts == numberOfItems)
+                nextStep();
+        };
     }
 
     yield;

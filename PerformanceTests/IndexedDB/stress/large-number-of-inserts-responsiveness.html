@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
 var iterationCount = 20;
 var numberDeleted = 0;
 
 // Delete all databases for the test ahead of time.
-var databasePrefix = "large-string-keys-DB-";
+var databasePrefix = "large-number-of-inserts-responsiveness-DB-";
 for (var i = 0; i < iterationCount + 1; ++i) {
     indexedDB.deleteDatabase(databasePrefix + i).onsuccess = function() {
         if (++numberDeleted == iterationCount)
@@ -25,6 +25,7 @@ PerfTestRunner.prepareToMeasureValuesAsync({
     unit: 'ms',
     done: function () {
         db = null;
+        largestDelay = 0;
         testGenerator = null;
         PerfTestRunner.gc();
         ++currentIteration;
@@ -42,16 +43,11 @@ function nextStep()
     testGenerator.next();
 }
 
-var baseString;
-for (var i = 0; i < 100000; ++i)
-    baseString += "abcdefghijklmnopqrstuvwxyz";
-
-var numberOfInserts = 50;
-var array = new Array(numberOfInserts);
-for (var i = 0; i < numberOfInserts; ++i) {
-    array[i] = new ArrayBuffer(2097152);
-    var view = new Int32Array(array[i]);
-    view[view.length - 1] = i;
+var numberOfObjects = 50000;
+var objectsToInsert = new Array(numberOfObjects);
+for (var i = 0; i < numberOfObjects; ++i) {
+    objectsToInsert[i] = { data: Math.random() };
+    objectsToInsert[i].id = 'object_' + i;
 }
 
 function *runIteration()
@@ -59,23 +55,24 @@ function *runIteration()
     var openRequest = indexedDB.open(databasePrefix + currentIteration);
     openRequest.onupgradeneeded = function(event) {
         db = event.target.result;
-        db.createObjectStore('arrays');
+        db.createObjectStore('objects', {keyPath: 'id'});
     }
     openRequest.onsuccess = nextStep;
 
     yield;
 
-    var startTime = PerfTestRunner.now();
-
-    var objectStore = db.transaction('arrays', 'readwrite').objectStore('arrays');
+    var objectStore = db.transaction('objects', 'readwrite').objectStore('objects');
     objectStore.transaction.oncomplete = nextStep;
+    for (var i = 0; i < numberOfObjects; ++i)
+        objectStore.put(objectsToInsert[i]);
 
-    for (var i = 0; i < numberOfInserts; ++i)
-        objectStore.put("Some value!!!", array[i]);
+    PerfTestRunner.startCheckingResponsiveness();
 
     yield;
 
-    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+    PerfTestRunner.stopCheckingResponsiveness();
+    
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.longestResponsivenessDelay()))
         return;
 
     setTimeout(startIteration, 0);

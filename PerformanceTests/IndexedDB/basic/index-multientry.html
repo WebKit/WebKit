@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
-var iterationCount = 20;
-var numberDeleted = 0;
+const numberOfIterations = 20;
 
 // Delete all databases for the test ahead of time.
+var numberDeleted = 0;
 var databaseNamePrefix = "index-multientry-DB-";
-for (var i = 0; i < iterationCount + 1; ++i) {
+for (var i = 0; i < numberOfIterations + 1; ++i) {
     req = indexedDB.deleteDatabase(databaseNamePrefix + i);
     req.onsuccess = function() {
-        if (++numberDeleted == iterationCount)
+        if (++numberDeleted == numberOfIterations)
             startIteration();
     }
 }
@@ -23,7 +23,7 @@ var transaction = null;
 var currentIteration = 0;
 
 PerfTestRunner.prepareToMeasureValuesAsync({
-    customIterationCount: iterationCount,
+    customIterationCount: numberOfIterations,
     unit: 'ms',
     done: function () {
         transaction = null;

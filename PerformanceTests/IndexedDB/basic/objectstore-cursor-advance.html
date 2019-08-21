@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
-var iterationCount = 10;
-var numberDeleted = 0;
-// Delete all databases for the test ahead of time.
-var databaseName = "objectstore-cursor-DB";
+const numberOfIterations = 20;
+const numberOfItems = 5000;
+const cursorStep = 2;
+
+// Delete database(s) for the test ahead of time.
+var databaseName = "objectstore-curosr-advance-DB";
 indexedDB.deleteDatabase(databaseName).onsuccess = function() {
     startIteration();
 }
 
 var testGenerator = null;
 var db = null;
-var currentIteration = 0;
 
 PerfTestRunner.prepareToMeasureValuesAsync({
-    customIterationCount: iterationCount,
+    customIterationCount: numberOfIterations,
     unit: 'ms',
     done: function () {
         db = null;
         testGenerator = null;
         PerfTestRunner.gc();
-        ++currentIteration;
     }
 });
 
@@ -44,31 +44,29 @@ function *runIteration()
     openRequest.onupgradeneeded = function(event) {
         db = event.target.result;
         var objectStore = db.createObjectStore('store');
-        for (var i = 0; i < 25000; ++i) {
-            var suffix = ("0000000" + i).slice(-7);
-            objectStore.put("bar_value_" + suffix, "foo_key_" + suffix);
-        }
+        for (var i = 0; i < numberOfItems; ++i)
+           objectStore.put("value" + i, i);
     }
     openRequest.onsuccess = nextStep;
 
     yield;
 
     var startTime = PerfTestRunner.now();
-    var cursorRequest = db.transaction('store').objectStore('store').openCursor();
-    var cursorIteration = 0;
-    cursorRequest.onsuccess = function(event) {
+
+    var objectStore = db.transaction('store').objectStore('store');
+    var expectedKey = 0;
+    objectStore.openCursor().onsuccess = function(event) {
         var cursor = event.target.result;
-        if (cursor) {
-            var suffix = ("0000000" + cursorIteration).slice(-7);
-            if (cursor.key != "foo_key_" + suffix)
-                alert("Incorrect value retrieved: " + cursor.key);
-            if (cursor.value != "bar_value_" + suffix)
-                alert("Incorrect value retrieved: " + cursor.key);
-            ++cursorIteration;
-            cursor.continue();
-        } else
+        if(cursor) {
+            if (cursor.key != expectedKey)
+                alert("Expected cursor.key '" + expectedKey + "', got '" + cursor.key + "'");
+
+            expectedKey += cursorStep;
+            cursor.advance(cursorStep);
+        } else {
             nextStep();
-    };
+        }
+    }
 
     yield;
 

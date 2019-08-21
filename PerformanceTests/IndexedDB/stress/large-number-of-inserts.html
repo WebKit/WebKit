@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../resources/runner.js"></script>
+<script src="../../resources/runner.js"></script>
 <script>
 
 var iterationCount = 20;
 var numberDeleted = 0;
 
 // Delete all databases for the test ahead of time.
-var databasePrefix = "large-number-of-inserts-responsiveness-DB-";
+var databasePrefix = "large-number-of-inserts-DB-";
 for (var i = 0; i < iterationCount + 1; ++i) {
     indexedDB.deleteDatabase(databasePrefix + i).onsuccess = function() {
         if (++numberDeleted == iterationCount)
@@ -25,7 +25,6 @@ PerfTestRunner.prepareToMeasureValuesAsync({
     unit: 'ms',
     done: function () {
         db = null;
-        largestDelay = 0;
         testGenerator = null;
         PerfTestRunner.gc();
         ++currentIteration;
@@ -43,7 +42,7 @@ function nextStep()
     testGenerator.next();
 }
 
-var numberOfObjects = 50000;
+var numberOfObjects = 100000;
 var objectsToInsert = new Array(numberOfObjects);
 for (var i = 0; i < numberOfObjects; ++i) {
     objectsToInsert[i] = { data: Math.random() };
@@ -61,18 +60,16 @@ function *runIteration()
 
     yield;
 
+    var startTime = PerfTestRunner.now();
+
     var objectStore = db.transaction('objects', 'readwrite').objectStore('objects');
     objectStore.transaction.oncomplete = nextStep;
     for (var i = 0; i < numberOfObjects; ++i)
         objectStore.put(objectsToInsert[i]);
 
-    PerfTestRunner.startCheckingResponsiveness();
-
     yield;
 
-    PerfTestRunner.stopCheckingResponsiveness();
-    
-    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.longestResponsivenessDelay()))
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
         return;
 
     setTimeout(startIteration, 0);
