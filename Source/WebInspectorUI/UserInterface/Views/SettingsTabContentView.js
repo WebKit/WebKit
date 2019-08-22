@@ -413,6 +413,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         });
 
         protocolMessagesGroup.addSetting(WI.settings.protocolAutoLogTimeStats, WI.unlocalizedString("Time Stats"));
+        protocolMessagesGroup.addSetting(WI.settings.protocolLogAsText, WI.unlocalizedString("Log as Text"));
 
         this._debugSettingsView.addSeparator();
 
