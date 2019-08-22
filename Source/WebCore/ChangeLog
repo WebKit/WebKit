@@ -1,3 +1,17 @@
+2019-08-22  Youenn Fablet  <youenn@apple.com>
+
+        Make MediaStreamTrackPrivate WeakPtrFactoryInitialization::Eager
+        https://bugs.webkit.org/show_bug.cgi?id=201037
+
+        Reviewed by Darin Adler.
+
+        No change of behavior, replacing m_weakThis by the more convenient Eager.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::audioSamplesAvailable):
+        (WebCore::MediaStreamTrackPrivate::MediaStreamTrackPrivate): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends

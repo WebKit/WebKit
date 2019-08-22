@@ -56,8 +56,7 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&&
 }
 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id)
-    : m_weakThis(makeWeakPtr(*this))
-    , m_source(WTFMove(source))
+    : m_source(WTFMove(source))
     , m_id(WTFMove(id))
     , m_logger(WTFMove(logger))
 #if !RELEASE_LOG_DISABLED
@@ -265,7 +264,7 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
     if (!m_hasSentStartProducedData) {
-        callOnMainThread([this, weakThis = m_weakThis] {
+        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
             if (!weakThis)
                 return;
 

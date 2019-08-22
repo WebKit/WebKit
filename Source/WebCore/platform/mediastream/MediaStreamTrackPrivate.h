@@ -43,7 +43,7 @@ class WebAudioSourceProvider;
 
 class MediaStreamTrackPrivate final
     : public ThreadSafeRefCounted<MediaStreamTrackPrivate, WTF::DestructionThread::Main>
-    , public CanMakeWeakPtr<MediaStreamTrackPrivate>
+    , public CanMakeWeakPtr<MediaStreamTrackPrivate, WeakPtrFactoryInitialization::Eager>
     , public RealtimeMediaSource::Observer
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -144,7 +144,6 @@ private:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    WeakPtr<MediaStreamTrackPrivate> m_weakThis;
     mutable RecursiveLock m_observersLock;
     HashSet<Observer*> m_observers;
     Ref<RealtimeMediaSource> m_source;
