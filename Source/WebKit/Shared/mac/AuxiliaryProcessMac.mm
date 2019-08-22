@@ -234,10 +234,7 @@ static Optional<CString> setAndSerializeSandboxParameters(const SandboxInitializ
             WTFLogAlways("%s: Could not set sandbox parameter: %s\n", getprogname(), strerror(errno));
             CRASH();
         }
-        builder.append(name);
-        builder.append(':');
-        builder.append(value);
-        builder.append(':');
+        builder.append(name, ':', value, ':');
     }
     if (isProfilePath) {
         auto contents = fileContents(profileOrProfilePath);

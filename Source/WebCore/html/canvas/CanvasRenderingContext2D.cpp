@@ -111,6 +111,7 @@ String CanvasRenderingContext2D::font() const
     for (unsigned i = 0; i < fontDescription.familyCount(); ++i) {
         if (i)
             serializedFont.append(',');
+
         // FIXME: We should append family directly to serializedFont rather than building a temporary string.
         String family = fontDescription.familyAt(i);
         if (family.startsWith("-webkit-"))
@@ -118,8 +119,7 @@ String CanvasRenderingContext2D::font() const
         if (family.contains(' '))
             family = makeString('"', family, '"');
 
-        serializedFont.append(' ');
-        serializedFont.append(family);
+        serializedFont.append(' ', family);
     }
 
     return serializedFont.toString();

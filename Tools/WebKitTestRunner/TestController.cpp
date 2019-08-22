@@ -1094,25 +1094,14 @@ void TestController::dumpResponse(const String& result)
 
 void TestController::findAndDumpWebKitProcessIdentifiers()
 {
-    StringBuilder builder;
-
 #if PLATFORM(COCOA)
-    builder.append(TestController::webProcessName());
-    builder.appendLiteral(": ");
-    pid_t webContentPID = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
-    builder.appendNumber(webContentPID);
-    builder.append('\n');
-
-    builder.append(TestController::networkProcessName());
-    builder.appendLiteral(": ");
-    pid_t networkingPID = WKContextGetNetworkProcessIdentifier(m_context.get());
-    builder.appendNumber(networkingPID);
-    builder.append('\n');
+    dumpResponse(makeString(TestController::webProcessName(), ": ",
+        WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page()), '\n',
+        TestController::networkProcessName(), ": ",
+        WKContextGetNetworkProcessIdentifier(m_context.get()), '\n'));
 #else
-    builder.append('\n');
+    dumpResponse("\n"_s);
 #endif
-
-    dumpResponse(builder.toString());
 }
 
 void TestController::findAndDumpWorldLeaks()
@@ -2450,14 +2439,8 @@ void TestController::downloadDidFinish(WKContextRef, WKDownloadRef)
 
 void TestController::downloadDidReceiveServerRedirectToURL(WKContextRef, WKDownloadRef, WKURLRef url)
 {
-    if (m_shouldLogDownloadCallbacks) {
-        StringBuilder builder;
-        builder.appendLiteral("Download was redirected to \"");
-        WKRetainPtr<WKStringRef> urlStringWK = adoptWK(WKURLCopyString(url));
-        builder.append(toSTD(urlStringWK).c_str());
-        builder.appendLiteral("\".\n");
-        m_currentInvocation->outputText(builder.toString());
-    }
+    if (m_shouldLogDownloadCallbacks)
+        m_currentInvocation->outputText(makeString("Download was redirected to \"", toWTFString(adoptWK(WKURLCopyString(url))), "\".\n"));
 }
 
 void TestController::downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef error)
@@ -2465,20 +2448,11 @@ void TestController::downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef err
     if (m_shouldLogDownloadCallbacks) {
         m_currentInvocation->outputText("Download failed.\n"_s);
 
-        WKRetainPtr<WKStringRef> errorDomain = adoptWK(WKErrorCopyDomain(error));
-        WKRetainPtr<WKStringRef> errorDescription = adoptWK(WKErrorCopyLocalizedDescription(error));
-        int errorCode = WKErrorGetErrorCode(error);
+        auto domain = toWTFString(adoptWK(WKErrorCopyDomain(error)));
+        auto description = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
+        int code = WKErrorGetErrorCode(error);
 
-        StringBuilder errorBuilder;
-        errorBuilder.append("Failed: ");
-        errorBuilder.append(toWTFString(errorDomain));
-        errorBuilder.append(", code=");
-        errorBuilder.appendNumber(errorCode);
-        errorBuilder.append(", description=");
-        errorBuilder.append(toWTFString(errorDescription));
-        errorBuilder.append("\n");
-
-        m_currentInvocation->outputText(errorBuilder.toString());
+        m_currentInvocation->outputText(makeString("Failed: ", domain, ", code=", code, ", description=", description, "\n"));
     }
     m_currentInvocation->notifyDownloadDone();
 }

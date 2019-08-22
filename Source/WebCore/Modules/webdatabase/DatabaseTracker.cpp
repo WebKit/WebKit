@@ -308,12 +308,7 @@ String DatabaseTracker::originPath(const SecurityOriginData& origin) const
 
 static String generateDatabaseFileName()
 {
-    StringBuilder stringBuilder;
-
-    stringBuilder.append(createCanonicalUUIDString());
-    stringBuilder.appendLiteral(".db");
-
-    return stringBuilder.toString();
+    return makeString(createCanonicalUUIDString(), ".db");
 }
 
 String DatabaseTracker::fullPathForDatabaseNoLock(const SecurityOriginData& origin, const String& name, bool createIfNotExists)

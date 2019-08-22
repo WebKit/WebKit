@@ -51,8 +51,7 @@ String CSSMediaRule::cssText() const
     StringBuilder result;
     result.appendLiteral("@media ");
     if (mediaQueries()) {
-        result.append(mediaQueries()->mediaText());
-        result.append(' ');
+        result.append(mediaQueries()->mediaText(), ' ');
     }
     result.appendLiteral("{ \n");
     appendCssTextForItems(result);

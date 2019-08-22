@@ -47,13 +47,7 @@ CSSFilterImageValue::~CSSFilterImageValue()
 
 String CSSFilterImageValue::customCSSText() const
 {
-    StringBuilder result;
-    result.appendLiteral("filter(");
-    result.append(m_imageValue->cssText());
-    result.appendLiteral(", ");
-    result.append(m_filterValue->cssText());
-    result.append(')');
-    return result.toString();
+    return makeString("filter(", m_imageValue->cssText(), ", ", m_filterValue->cssText(), ')');
 }
 
 FloatSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)

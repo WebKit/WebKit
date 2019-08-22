@@ -69,19 +69,10 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
 
 String CSSFontFaceSrcValue::customCSSText() const
 {
-    StringBuilder result;
-    if (isLocal())
-        result.appendLiteral("local(");
-    else
-        result.appendLiteral("url(");
-    result.append(m_resource);
-    result.append(')');
-    if (!m_format.isEmpty()) {
-        result.appendLiteral(" format(");
-        result.append(m_format);
-        result.append(')');
-    }
-    return result.toString();
+    const char* prefix = isLocal() ? "local(" : "url(";
+    if (m_format.isEmpty())
+        return makeString(prefix, m_resource, ')');
+    return makeString(prefix, m_resource, ')', " format(", m_format, ')');
 }
 
 bool CSSFontFaceSrcValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const

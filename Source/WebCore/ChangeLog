@@ -1,3 +1,89 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends
+        https://bugs.webkit.org/show_bug.cgi?id=200862
+
+        Reviewed by Ryosuke Niwa.
+
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        (WebCore::IDBDatabaseInfo::loggingString const): Use one append instead of multiple.
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::loggingString const): Ditto.
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCCodecParameters): Ditto.
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::youTubeURLFromAbsoluteURL): Ditto.
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::generateDatabaseFileName): Ditto.
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::createHeaderValue const): Ditto.
+        (WebCore::WebSocketExtensionDispatcher::appendAcceptedExtension): Ditto.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientLocation const): Use makeString instead of
+        StringBuilder.
+
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::appendArgumentMustBe): Use one append instead of multiple.
+        (WebCore::throwArgumentMustBeEnumError): Ditto.
+        (WebCore::throwArgumentTypeError): Ditto.
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::recursivePrint): Ditto.
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildCircleString): Ditto.
+        (WebCore::buildEllipseString): Ditto.
+        (WebCore::buildPolygonString): Ditto.
+        (WebCore::buildInsetString): Ditto.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::buildCssText): Deleted.
+        (WebCore::CSSCalcValue::customCSSText const): Use makeString.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::cssText const): Use one append instead of multiple.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::customCSSText const): Use makeString.
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::customCSSText const): Ditto.
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::cssText const): Ditto.
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::customCSSText const): Ditto.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::appendGradientStops): Moved code here from CSSLinearGradientValue::customCSSText
+        so it can be shared with CSSRadialGradientValue::customCSSText. Use one append per stop.
+        (WebCore::CSSLinearGradientValue::customCSSText const): Use one append instead of multiple.
+        (WebCore::CSSRadialGradientValue::customCSSText const): Ditto.
+        (WebCore::CSSConicGradientValue::customCSSText const): Ditto.
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::cssText const): Ditto.
+        * css/CSSNamespaceRule.cpp:
+        (WebCore::CSSNamespaceRule::cssText const): Ditto.
+
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::selectorText const): Use makeString.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        Use one append instead of multiple.
+
+        * css/CSSPropertySourceData.cpp:
+        (WebCore::CSSPropertySourceData::CSSPropertySourceData): Initialize in the
+        structure definition instead of the constructor.
+        (WebCore::CSSPropertySourceData::toString const): Use makeString.
+        * css/CSSPropertySourceData.h: Initialize in the structure definition.
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::cssText const): Use makeString.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceDescriptor): Use makeString.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::font const): Use one append instead of multiple.
+
 2019-08-22  Kai Ninomiya  <kainino@chromium.org>
 
         Pass conformance/attribs WebGL conformance tests

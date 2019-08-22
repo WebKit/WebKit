@@ -81,12 +81,9 @@ JSObject* createStackOverflowError(ExecState* exec, JSGlobalObject* globalObject
 
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
-    if (ident.isPrivateName()) {
-        String message(makeString("Can't find private variable: PrivateSymbol.", ident.string()));
-        return createReferenceError(exec, message);
-    }
-    String message(makeString("Can't find variable: ", ident.string()));
-    return createReferenceError(exec, message);
+    if (ident.isPrivateName())
+        return createReferenceError(exec, makeString("Can't find private variable: PrivateSymbol.", ident.string()));
+    return createReferenceError(exec, makeString("Can't find variable: ", ident.string()));
 }
     
 String errorDescriptionForValue(ExecState* exec, JSValue v)
@@ -203,12 +200,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     if (!base)
         return defaultApproximateSourceError(originalMessage, sourceText);
     StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
-    builder.append(base);
-    builder.appendLiteral(" is not a function. (In '");
-    builder.append(sourceText);
-    builder.appendLiteral("', '");
-    builder.append(base);
-    builder.appendLiteral("' is ");
+    builder.append(base, " is not a function. (In '", sourceText, "', '", base, "' is ");
     if (type == TypeSymbol)
         builder.appendLiteral("a Symbol");
     else {
@@ -219,7 +211,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     builder.append(')');
 
     if (builder.hasOverflowed())
-        return makeString("object is not a function."_s);
+        return "object is not a function."_s;
 
     return builder.toString();
 }
@@ -265,12 +257,12 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
 
 static String invalidParameterInstanceofNotFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
-    return invalidParameterInstanceofSourceAppender(WTF::makeString(" is not a function"), originalMessage, sourceText, runtimeType, occurrence);
+    return invalidParameterInstanceofSourceAppender(" is not a function"_s, originalMessage, sourceText, runtimeType, occurrence);
 }
 
 static String invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
-    return invalidParameterInstanceofSourceAppender(WTF::makeString("[Symbol.hasInstance] is not a function, undefined, or null"), originalMessage, sourceText, runtimeType, occurrence);
+    return invalidParameterInstanceofSourceAppender("[Symbol.hasInstance] is not a function, undefined, or null"_s, originalMessage, sourceText, runtimeType, occurrence);
 }
 
 JSObject* createError(ExecState* exec, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
@@ -296,25 +288,22 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
 
 JSObject* createInvalidFunctionApplyParameterError(ExecState* exec, JSValue value)
 {
-    VM& vm = exec->vm();
-    JSObject* exception = createTypeError(exec, makeString("second argument to Function.prototype.apply must be an Array-like object"), defaultSourceAppender, runtimeTypeForValue(vm, value));
-    ASSERT(exception->isErrorInstance());
-    return exception;
+    return createTypeError(exec, "second argument to Function.prototype.apply must be an Array-like object"_s, defaultSourceAppender, runtimeTypeForValue(exec->vm(), value));
 }
 
 JSObject* createInvalidInParameterError(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, makeString("is not an Object."), invalidParameterInSourceAppender);
+    return createError(exec, value, "is not an Object."_s, invalidParameterInSourceAppender);
 }
 
 JSObject* createInvalidInstanceofParameterErrorNotFunction(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, makeString(" is not a function"), invalidParameterInstanceofNotFunctionSourceAppender);
+    return createError(exec, value, " is not a function"_s, invalidParameterInstanceofNotFunctionSourceAppender);
 }
 
 JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, makeString("[Symbol.hasInstance] is not a function, undefined, or null"), invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
+    return createError(exec, value, "[Symbol.hasInstance] is not a function, undefined, or null"_s, invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
 }
 
 JSObject* createNotAConstructorError(ExecState* exec, JSValue value)

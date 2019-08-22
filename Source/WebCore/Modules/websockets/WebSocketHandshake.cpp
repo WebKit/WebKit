@@ -166,12 +166,7 @@ bool WebSocketHandshake::secure() const
 
 String WebSocketHandshake::clientLocation() const
 {
-    StringBuilder builder;
-    builder.append(m_secure ? "wss" : "ws");
-    builder.appendLiteral("://");
-    builder.append(hostName(m_url, m_secure));
-    builder.append(resourceName(m_url));
-    return builder.toString();
+    return makeString(m_secure ? "wss" : "ws", "://", hostName(m_url, m_secure), resourceName(m_url));
 }
 
 CString WebSocketHandshake::clientHandshakeMessage() const

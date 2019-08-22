@@ -1,3 +1,13 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends
+        https://bugs.webkit.org/show_bug.cgi?id=200862
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::setAndSerializeSandboxParameters): Use one append instead of multiple.
+
 2019-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Typing Korean in title field after typing in the body inserts extraneous characters on blog.naver.com

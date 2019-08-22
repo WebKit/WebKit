@@ -112,18 +112,15 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         program = makeString(prefix, functionName.string(), "() {\n", body, "\n}");
     } else {
         StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
-        builder.append(prefix);
-        builder.append(functionName.string());
+        builder.append(prefix, functionName.string(), '(');
 
-        builder.append('(');
         auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
         builder.append(viewWithString.view);
         for (size_t i = 1; !builder.hasOverflowed() && i < args.size() - 1; i++) {
-            builder.appendLiteral(", ");
             auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
-            builder.append(viewWithString.view);
+            builder.append(", ", viewWithString.view);
         }
         if (builder.hasOverflowed()) {
             throwOutOfMemoryError(exec, scope);
@@ -131,12 +128,10 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         }
 
         functionConstructorParametersEndPosition = builder.length() + 1;
-        builder.appendLiteral(") {\n");
 
         auto body = args.at(args.size() - 1).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        builder.append(body.view);
-        builder.appendLiteral("\n}");
+        builder.append(") {\n", body.view, "\n}");
         if (builder.hasOverflowed()) {
             throwOutOfMemoryError(exec, scope);
             return nullptr;

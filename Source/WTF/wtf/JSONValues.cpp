@@ -485,11 +485,9 @@ inline void appendDoubleQuotedString(StringBuilder& builder, StringView string)
         // We could encode characters >= 127 as UTF-8 instead of \u escape sequences.
         // We could handle surrogates here if callers wanted that; for now we just
         // write them out as a \u sequence, so a surrogate pair appears as two of them.
-        builder.appendLiteral("\\u");
-        builder.append(upperNibbleToASCIIHexDigit(codeUnit >> 8));
-        builder.append(lowerNibbleToASCIIHexDigit(codeUnit >> 8));
-        builder.append(upperNibbleToASCIIHexDigit(codeUnit));
-        builder.append(lowerNibbleToASCIIHexDigit(codeUnit));
+        builder.append("\\u",
+            upperNibbleToASCIIHexDigit(codeUnit >> 8), lowerNibbleToASCIIHexDigit(codeUnit >> 8),
+            upperNibbleToASCIIHexDigit(codeUnit), lowerNibbleToASCIIHexDigit(codeUnit));
     }
     builder.append('"');
 }

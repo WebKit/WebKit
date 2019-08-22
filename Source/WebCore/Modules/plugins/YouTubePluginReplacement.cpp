@@ -327,12 +327,9 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
         finalURL.appendLiteral("http://www.youtube.com");
     else
         finalURL.append(srcURLPrefix);
-    finalURL.appendLiteral("/embed/");
-    finalURL.append(videoID);
-    if (!query.isEmpty()) {
-        finalURL.append('?');
-        finalURL.append(query);
-    }
+    finalURL.append("/embed/", videoID);
+    if (!query.isEmpty())
+        finalURL.append('?', query);
     return finalURL.toString();
 }
     

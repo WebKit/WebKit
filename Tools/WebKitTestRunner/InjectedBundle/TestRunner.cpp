@@ -1906,16 +1906,9 @@ void TestRunner::statisticsDidRunTelemetryCallback(unsigned totalPrevalentResour
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("{ \"totalPrevalentResources\" : ");
-    stringBuilder.appendNumber(totalPrevalentResources);
-    stringBuilder.appendLiteral(", \"totalPrevalentResourcesWithUserInteraction\" : ");
-    stringBuilder.appendNumber(totalPrevalentResourcesWithUserInteraction);
-    stringBuilder.appendLiteral(", \"top3SubframeUnderTopFrameOrigins\" : ");
-    stringBuilder.appendNumber(top3SubframeUnderTopFrameOrigins);
-    stringBuilder.appendLiteral(" }");
+    String string = makeString("{ \"totalPrevalentResources\" : ", totalPrevalentResources, ", \"totalPrevalentResourcesWithUserInteraction\" : ", totalPrevalentResourcesWithUserInteraction, ", \"top3SubframeUnderTopFrameOrigins\" : ", top3SubframeUnderTopFrameOrigins, " }");
     
-    JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
+    JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(string.utf8().data())).get());
 
     callTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, 1, &result);
 }

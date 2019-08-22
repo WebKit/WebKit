@@ -86,24 +86,16 @@ static Ref<CSSPrimitiveValue> buildSerializablePositionOffset(CSSPrimitiveValue*
 
 static String buildCircleString(const String& radius, const String& centerX, const String& centerY)
 {
-    char opening[] = "circle(";
-    char at[] = "at";
-    char separator[] = " ";
     StringBuilder result;
-    result.appendLiteral(opening);
+    result.appendLiteral("circle(");
     if (!radius.isNull())
         result.append(radius);
-
     if (!centerX.isNull() || !centerY.isNull()) {
         if (!radius.isNull())
-            result.appendLiteral(separator);
-        result.appendLiteral(at);
-        result.appendLiteral(separator);
-        result.append(centerX);
-        result.appendLiteral(separator);
-        result.append(centerY);
+            result.append(' ');
+        result.append("at ", centerX, ' ', centerY);
     }
-    result.appendLiteral(")");
+    result.append(')');
     return result.toString();
 }
 
@@ -134,11 +126,8 @@ bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
 
 static String buildEllipseString(const String& radiusX, const String& radiusY, const String& centerX, const String& centerY)
 {
-    char opening[] = "ellipse(";
-    char at[] = "at";
-    char separator[] = " ";
     StringBuilder result;
-    result.appendLiteral(opening);
+    result.appendLiteral("ellipse(");
     bool needsSeparator = false;
     if (!radiusX.isNull()) {
         result.append(radiusX);
@@ -146,21 +135,16 @@ static String buildEllipseString(const String& radiusX, const String& radiusY, c
     }
     if (!radiusY.isNull()) {
         if (needsSeparator)
-            result.appendLiteral(separator);
+            result.append(' ');
         result.append(radiusY);
         needsSeparator = true;
     }
-
     if (!centerX.isNull() || !centerY.isNull()) {
         if (needsSeparator)
-            result.appendLiteral(separator);
-        result.appendLiteral(at);
-        result.appendLiteral(separator);
-        result.append(centerX);
-        result.appendLiteral(separator);
-        result.append(centerY);
+            result.append(' ');
+        result.append("at ", centerX, ' ', centerY);
     }
-    result.appendLiteral(")");
+    result.append(')');
     return result.toString();
 }
 
@@ -270,9 +254,7 @@ static String buildPolygonString(const WindRule& windRule, const Vector<String>&
     for (size_t i = 0; i < points.size(); i += 2) {
         if (i)
             result.appendLiteral(commaSeparator);
-        result.append(points[i]);
-        result.append(' ');
-        result.append(points[i + 1]);
+        result.append(points[i], ' ', points[i + 1]);
     }
 
     result.append(')');
@@ -322,28 +304,18 @@ static String buildInsetString(const String& top, const String& right, const Str
     const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
     const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
 {
-    char opening[] = "inset(";
-    char separator[] = " ";
-    char cornersSeparator[] = "round";
     StringBuilder result;
-    result.appendLiteral(opening);
-    result.append(top);
+    result.append("inset(", top);
 
     bool showLeftArg = !left.isNull() && left != right;
     bool showBottomArg = !bottom.isNull() && (bottom != top || showLeftArg);
     bool showRightArg = !right.isNull() && (right != top || showBottomArg);
-    if (showRightArg) {
-        result.appendLiteral(separator);
-        result.append(right);
-    }
-    if (showBottomArg) {
-        result.appendLiteral(separator);
-        result.append(bottom);
-    }
-    if (showLeftArg) {
-        result.appendLiteral(separator);
-        result.append(left);
-    }
+    if (showRightArg)
+        result.append(' ', right);
+    if (showBottomArg)
+        result.append(' ', bottom);
+    if (showLeftArg)
+        result.append(' ', left);
 
     if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
         Vector<String> horizontalRadii;
@@ -353,23 +325,16 @@ static String buildInsetString(const String& top, const String& right, const Str
         areDefaultCornerRadii &= buildInsetRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
 
         if (!areDefaultCornerRadii) {
-            result.appendLiteral(separator);
-            result.appendLiteral(cornersSeparator);
+            result.appendLiteral(" round");
 
-            for (size_t i = 0; i < horizontalRadii.size(); ++i) {
-                result.appendLiteral(separator);
-                result.append(horizontalRadii[i]);
-            }
+            for (auto& radius : horizontalRadii)
+                result.append(' ', radius);
 
             if (verticalRadii.size() != horizontalRadii.size()
                 || !WTF::VectorComparer<false, String>::compare(verticalRadii.data(), horizontalRadii.data(), verticalRadii.size())) {
-                result.appendLiteral(separator);
-                result.appendLiteral("/");
-
-                for (size_t i = 0; i < verticalRadii.size(); ++i) {
-                    result.appendLiteral(separator);
-                    result.append(verticalRadii[i]);
-                }
+                result.appendLiteral(" /");
+                for (auto& radius : verticalRadii)
+                    result.append(' ', radius);
             }
         }
     }

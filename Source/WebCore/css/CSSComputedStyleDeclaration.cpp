@@ -1691,16 +1691,11 @@ void CSSComputedStyleDeclaration::deref()
 String CSSComputedStyleDeclaration::cssText() const
 {
     StringBuilder result;
-
     for (unsigned i = 0; i < numComputedProperties; i++) {
         if (i)
             result.append(' ');
-        result.append(getPropertyName(computedProperties[i]));
-        result.appendLiteral(": ");
-        result.append(getPropertyValue(computedProperties[i]));
-        result.append(';');
+        result.append(getPropertyName(computedProperties[i]), ": ", getPropertyValue(computedProperties[i]), ';');
     }
-
     return result.toString();
 }
 

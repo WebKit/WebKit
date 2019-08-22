@@ -60,9 +60,9 @@ struct CSSPropertySourceData {
 
     String name;
     String value;
-    bool important;
-    bool disabled;
-    bool parsedOk;
+    bool important { false };
+    bool disabled { false };
+    bool parsedOk { false };
     SourceRange range;
 };
 

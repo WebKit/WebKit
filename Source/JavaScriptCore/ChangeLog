@@ -1,3 +1,30 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends
+        https://bugs.webkit.org/show_bug.cgi?id=200862
+
+        Reviewed by Ryosuke Niwa.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError): Got rid of unnecessary local variable.
+        (JSC::notAFunctionSourceAppender): Use single append instead of multiple.
+        Eliminate unneeded and unconventional use of makeString on a single string literal.
+        (JSC::invalidParameterInstanceofNotFunctionSourceAppender): Ditto.
+        (JSC::invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender): Ditto.
+        (JSC::createInvalidFunctionApplyParameterError): Ditto.
+        (JSC::createInvalidInParameterError): Ditto.
+        (JSC::createInvalidInstanceofParameterErrorNotFunction): Ditto.
+        (JSC::createInvalidInstanceofParameterErrorHasInstanceValueNotFunction): Ditto.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck): Use single append instead of multiple.
+        * runtime/Options.cpp:
+        (JSC::Options::dumpOption): Ditto.
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset): Ditto.
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::stringRepresentation): Ditto. Also use a modern for loop.
+
 2019-08-21  Mark Lam  <mark.lam@apple.com>
 
         Wasm::FunctionParser is failing to enforce maxFunctionLocals.

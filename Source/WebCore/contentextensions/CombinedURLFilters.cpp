@@ -119,9 +119,7 @@ static void recursivePrint(const PrefixTreeVertex& vertex, const HashMap<const P
         StringBuilder builder;
         for (unsigned i = 0; i < depth * 2; ++i)
             builder.append(' ');
-        builder.appendLiteral("vertex edge: ");
-        builder.append(edge.term->toString());
-        builder.append('\n');
+        builder.append("vertex edge: ", edge.term->toString(), '\n');
         dataLogF("%s", builder.toString().utf8().data());
         ASSERT(edge.child);
         recursivePrint(*edge.child.get(), actions, depth + 1);

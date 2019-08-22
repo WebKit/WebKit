@@ -134,20 +134,15 @@ void IDBObjectStoreInfo::deleteIndex(uint64_t indexIdentifier)
 }
 
 #if !LOG_DISABLED
+
 String IDBObjectStoreInfo::loggingString(int indent) const
 {
     StringBuilder builder;
     for (int i = 0; i < indent; ++i)
         builder.append(' ');
-
-    builder.appendLiteral("Object store: ");
-    builder.append(m_name);
-    builder.appendNumber(m_identifier);
-    for (auto index : m_indexMap.values()) {
-        builder.append(index.loggingString(indent + 1));
-        builder.append('\n');
-    }
-
+    builder.append("Object store: ", m_name, m_identifier);
+    for (auto index : m_indexMap.values())
+        builder.append(index.loggingString(indent + 1), '\n');
     return builder.toString();
 }
 

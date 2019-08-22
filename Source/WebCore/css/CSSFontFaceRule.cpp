@@ -50,14 +50,10 @@ CSSStyleDeclaration& CSSFontFaceRule::style()
 
 String CSSFontFaceRule::cssText() const
 {
-    StringBuilder result;
-    result.appendLiteral("@font-face { ");
-    String descs = m_fontFaceRule->properties().asText();
-    result.append(descs);
-    if (!descs.isEmpty())
-        result.append(' ');
-    result.append('}');
-    return result.toString();
+    String declarations = m_fontFaceRule->properties().asText();
+    if (declarations.isEmpty())
+        return "@font-face { }"_s;
+    return makeString("@font-face { ", declarations, " }");
 }
 
 void CSSFontFaceRule::reattach(StyleRuleBase& rule)

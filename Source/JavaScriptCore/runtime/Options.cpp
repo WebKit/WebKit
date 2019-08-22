@@ -866,8 +866,7 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
 
     if (header)
         builder.append(header);
-    builder.append(option.name());
-    builder.append('=');
+    builder.append(option.name(), '=');
     option.dump(builder);
 
     if (wasOverridden && (dumpDefaultsOption == DumpDefaults)) {
@@ -876,10 +875,8 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
         builder.appendLiteral(")");
     }
 
-    if (needsDescription) {
-        builder.appendLiteral("   ... ");
-        builder.append(option.description());
-    }
+    if (needsDescription)
+        builder.append("   ... ", option.description());
 
     builder.append(footer);
 }

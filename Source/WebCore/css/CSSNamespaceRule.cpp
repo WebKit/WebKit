@@ -57,9 +57,7 @@ String CSSNamespaceRule::cssText() const
     serializeIdentifier(prefix(), result);
     if (!prefix().isEmpty())
         result.append(' ');
-    result.append("url(");
-    result.append(serializeString(namespaceURI()));
-    result.append(");");
+    result.append("url(", serializeString(namespaceURI()), ");");
     return result.toString();
 }
 

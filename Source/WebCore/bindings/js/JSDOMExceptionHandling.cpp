@@ -170,20 +170,11 @@ static EncodedJSValue throwTypeError(JSC::ExecState& state, JSC::ThrowScope& sco
 
 static void appendArgumentMustBe(StringBuilder& builder, unsigned argumentIndex, const char* argumentName, const char* interfaceName, const char* functionName)
 {
-    builder.appendLiteral("Argument ");
-    builder.appendNumber(argumentIndex + 1);
-    builder.appendLiteral(" ('");
-    builder.append(argumentName);
-    builder.appendLiteral("') to ");
-    if (!functionName) {
-        builder.appendLiteral("the ");
-        builder.append(interfaceName);
-        builder.appendLiteral(" constructor");
-    } else {
-        builder.append(interfaceName);
-        builder.append('.');
-        builder.append(functionName);
-    }
+    builder.append("Argument ", argumentIndex + 1, " ('", argumentName, "') to ");
+    if (!functionName)
+        builder.append("the ", interfaceName, " constructor");
+    else
+        builder.append(interfaceName, '.', functionName);
     builder.appendLiteral(" must be ");
 }
 
@@ -209,8 +200,7 @@ JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState& state, JSC::Thr
 {
     StringBuilder builder;
     appendArgumentMustBe(builder, argumentIndex, argumentName, functionInterfaceName, functionName);
-    builder.appendLiteral("one of: ");
-    builder.append(expectedValues);
+    builder.append("one of: ", expectedValues);
     return throwVMTypeError(&state, scope, builder.toString());
 }
 
@@ -226,8 +216,7 @@ JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState& state, JSC::ThrowScop
 {
     StringBuilder builder;
     appendArgumentMustBe(builder, argumentIndex, argumentName, functionInterfaceName, functionName);
-    builder.appendLiteral("an instance of ");
-    builder.append(expectedType);
+    builder.append("an instance of ", expectedType);
     return throwVMTypeError(&state, scope, builder.toString());
 }
 

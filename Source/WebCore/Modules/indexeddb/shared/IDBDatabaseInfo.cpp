@@ -156,21 +156,16 @@ void IDBDatabaseInfo::deleteObjectStore(uint64_t objectStoreIdentifier)
 }
 
 #if !LOG_DISABLED
+
 String IDBDatabaseInfo::loggingString() const
 {
     StringBuilder builder;
-    builder.appendLiteral("Database:");
-    builder.append(m_name);
-    builder.appendLiteral(" version ");
-    builder.appendNumber(m_version);
-    builder.append('\n');
-    for (const auto& objectStore : m_objectStoreMap.values()) {
-        builder.append(objectStore.loggingString(1));
-        builder.append('\n');
-    }
-
+    builder.append("Database:", m_name, " version ", m_version, '\n');
+    for (auto& objectStore : m_objectStoreMap.values())
+        builder.append(objectStore.loggingString(1), '\n');
     return builder.toString();
 }
+
 #endif
 
 } // namespace WebCore

@@ -412,18 +412,10 @@ String StructureShape::stringRepresentation()
 
     representation.append('{');
     while (curShape) {
-        for (auto it = curShape->m_fields.begin(), end = curShape->m_fields.end(); it != end; ++it) {
-            String prop((*it).get());
-            representation.append(prop);
-            representation.appendLiteral(", ");
-        }
-
-        if (curShape->m_proto) {
-            representation.appendLiteral("__proto__ [");
-            representation.append(curShape->m_proto->m_constructorName);
-            representation.appendLiteral("], ");
-        }
-
+        for (auto& field : curShape->m_fields)
+            representation.append(StringView { field.get() }, ", ");
+        if (curShape->m_proto)
+            representation.append("__proto__ [", curShape->m_proto->m_constructorName, "], ");
         curShape = curShape->m_proto;
     }
 

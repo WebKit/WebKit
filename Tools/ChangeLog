@@ -1,3 +1,17 @@
+2019-08-17  Darin Adler  <darin@apple.com>
+
+        Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends
+        https://bugs.webkit.org/show_bug.cgi?id=200862
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsDidRunTelemetryCallback): Use makeString.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::findAndDumpWebKitProcessIdentifiers): Ditto.
+        (WTR::TestController::downloadDidReceiveServerRedirectToURL): Ditto.
+        (WTR::TestController::downloadDidFail): Ditto.
+
 2019-08-22  clopez@igalia.com  <clopez@igalia.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 
         [GTK][WPE] Support for command "--version" on the MiniBrowser (follow-up fix)

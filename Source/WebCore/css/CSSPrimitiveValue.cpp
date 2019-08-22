@@ -1003,10 +1003,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
             serializeString(separator, result);
         }
         String listStyle = m_value.counter->listStyle();
-        if (!listStyle.isEmpty()) {
-            result.appendLiteral(", ");
-            result.append(listStyle);
-        }
+        if (!listStyle.isEmpty())
+            result.append(", ", listStyle);
         result.append(')');
 
         return result.toString();

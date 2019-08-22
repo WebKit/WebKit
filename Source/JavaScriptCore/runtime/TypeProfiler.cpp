@@ -93,9 +93,7 @@ String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDesc
         json.appendLiteral("null");
     json.append(',');
 
-    json.appendLiteral("\"instructionTypeSet\":");
-    json.append(location->m_instructionTypeSet->toJSONString());
-    json.append(',');
+    json.append("\"instructionTypeSet\":", location->m_instructionTypeSet->toJSONString(), ',');
 
     json.appendLiteral("\"isOverflown\":");
     if (location->m_instructionTypeSet->isOverflown() || (location->m_globalTypeSet && location->m_globalTypeSet->isOverflown()))
@@ -104,7 +102,7 @@ String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDesc
         json.appendLiteral("false");
 
     json.append('}');
-    
+
     return json.toString();
 }
 

@@ -64,10 +64,8 @@ const String WebSocketExtensionDispatcher::createHeaderValue() const
 
     StringBuilder builder;
     builder.append(m_processors[0]->handshakeString());
-    for (size_t i = 1; i < numProcessors; ++i) {
-        builder.appendLiteral(", ");
-        builder.append(m_processors[i]->handshakeString());
-    }
+    for (size_t i = 1; i < numProcessors; ++i)
+        builder.append(", ", m_processors[i]->handshakeString());
     return builder.toString();
 }
 
@@ -78,12 +76,9 @@ void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensi
     m_acceptedExtensionsBuilder.append(extensionToken);
     // FIXME: Should use ListHashSet to keep the order of the parameters.
     for (auto& parameter : extensionParameters) {
-        m_acceptedExtensionsBuilder.appendLiteral("; ");
-        m_acceptedExtensionsBuilder.append(parameter.key);
-        if (!parameter.value.isNull()) {
-            m_acceptedExtensionsBuilder.append('=');
-            m_acceptedExtensionsBuilder.append(parameter.value);
-        }
+        m_acceptedExtensionsBuilder.append("; ", parameter.key);
+        if (!parameter.value.isNull())
+            m_acceptedExtensionsBuilder.append('=', parameter.value);
     }
 }
 

@@ -149,22 +149,12 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitType type)
     return false;
 }
 
-static String buildCssText(const String& expression)
-{
-    StringBuilder result;
-    result.appendLiteral("calc");
-    bool expressionHasSingleTerm = expression[0] != '(';
-    if (expressionHasSingleTerm)
-        result.append('(');
-    result.append(expression);
-    if (expressionHasSingleTerm)
-        result.append(')');
-    return result.toString();
-}
-
 String CSSCalcValue::customCSSText() const
 {
-    return buildCssText(m_expression->customCSSText());
+    auto expression = m_expression->customCSSText();
+    if (expression[0] == '(')
+        return makeString("calc", expression);
+    return makeString("calc(", expression, ')');
 }
 
 bool CSSCalcValue::equals(const CSSCalcValue& other) const
