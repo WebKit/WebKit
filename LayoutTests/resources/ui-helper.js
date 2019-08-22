@@ -708,6 +708,12 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
+    static immediateZoomToScale(scale)
+    {
+        const uiScript = `uiController.immediateZoomToScale(${scale})`;
+        return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+    }
+
     static typeCharacter(characterString)
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {
