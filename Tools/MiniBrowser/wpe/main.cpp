@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
     g_option_context_free(context);
 
     if (printVersion) {
-        g_print("WPE WebKit %d.%d.%d\n",
+        g_print("WPE WebKit %u.%u.%u\n",
             webkit_get_major_version(),
             webkit_get_minor_version(),
             webkit_get_micro_version());
