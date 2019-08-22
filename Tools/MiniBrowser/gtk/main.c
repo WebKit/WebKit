@@ -53,6 +53,7 @@ static const char *cookiesFile;
 static const char *cookiesPolicy;
 static const char *proxy;
 static gboolean darkMode;
+static gboolean printVersion;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -116,6 +117,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
+    { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -517,6 +519,14 @@ int main(int argc, char *argv[])
         return 1;
     }
     g_option_context_free (context);
+
+    if (printVersion) {
+        g_print("WebKitGTK %d.%d.%d\n",
+            webkit_get_major_version(),
+            webkit_get_minor_version(),
+            webkit_get_micro_version());
+        return 0;
+    }
 
     WebKitWebContext *webContext = (privateMode || automationMode) ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
 

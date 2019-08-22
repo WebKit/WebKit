@@ -48,6 +48,7 @@ static const char* cookiesFile;
 static const char* cookiesPolicy;
 static const char* proxy;
 const char* bgColor;
+static gboolean printVersion;
 
 static const GOptionEntry commandLineOptions[] =
 {
@@ -61,6 +62,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", nullptr },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { "bg-color", 0, 0, G_OPTION_ARG_STRING, &bgColor, "Window background color. Default: white", "COLOR" },
+    { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
 };
@@ -166,6 +168,14 @@ int main(int argc, char *argv[])
         return 1;
     }
     g_option_context_free(context);
+
+    if (printVersion) {
+        g_print("WPE WebKit %d.%d.%d\n",
+            webkit_get_major_version(),
+            webkit_get_minor_version(),
+            webkit_get_micro_version());
+        return 0;
+    }
 
     auto* loop = g_main_loop_new(nullptr, FALSE);
 

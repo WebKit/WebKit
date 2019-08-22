@@ -1,3 +1,19 @@
+2019-08-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Support for command "--version" on the MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=200978
+
+        Reviewed by Žan Doberšek.
+
+        Printing the engine version used from the MiniBrowser is useful.
+        For example, the test scripts on WPT can use this info to better
+        tag the generated results.
+
+        * MiniBrowser/gtk/main.c: Print the engine version when called with --version or -v.
+        (main):
+        * MiniBrowser/wpe/main.cpp: Ditto.
+        (main):
+
 2019-08-22  Youenn Fablet  <youenn@apple.com>
 
         Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages
