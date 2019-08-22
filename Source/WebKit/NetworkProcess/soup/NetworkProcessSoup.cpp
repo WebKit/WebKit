@@ -117,10 +117,10 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     SoupNetworkSession::clearOldSoupCache(FileSystem::directoryName(m_diskCacheDirectory));
 
-    OptionSet<NetworkCache::CacheOption> cacheOptions { NetworkCache::CacheOption::RegisterNotify };
+    m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-        cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
+        m_cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
 #endif
 
     supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, OptionalCallbackID());

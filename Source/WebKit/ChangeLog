@@ -1,3 +1,17 @@
+2019-08-22  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [SOUP] NetworkProcessSoup does not initialize CacheOptions correctly
+        https://bugs.webkit.org/show_bug.cgi?id=200886
+
+        Reviewed by Philippe Normand.
+
+        r247567 wrongly initializes CacheOptions in a local variable that is never used
+        instead of using NetworkProcess's member variable, that is later used by the
+        NetworkSession to initialize the cache.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+
 2019-08-21  Tim Horton  <timothy_horton@apple.com>
 
         [Mail] Tapping top of message scrolls back to copied text instead of top of the message
