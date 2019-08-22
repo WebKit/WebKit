@@ -56,13 +56,15 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&&
 }
 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id)
-    : m_source(WTFMove(source))
+    : m_weakThis(makeWeakPtr(*this))
+    , m_source(WTFMove(source))
     , m_id(WTFMove(id))
     , m_logger(WTFMove(logger))
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
+    ASSERT(isMainThread());
     UNUSED_PARAM(logger);
 #if !RELEASE_LOG_DISABLED
     m_source->setLogger(m_logger.copyRef(), m_logIdentifier);
@@ -72,6 +74,7 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Ref
 
 MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 {
+    ASSERT(isMainThread());
     m_source->removeObserver(*this);
 }
 
@@ -262,7 +265,10 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
     if (!m_hasSentStartProducedData) {
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
+        callOnMainThread([this, weakThis = m_weakThis] {
+            if (!weakThis)
+                return;
+
             if (!m_haveProducedData) {
                 m_haveProducedData = true;
                 updateReadyState();
