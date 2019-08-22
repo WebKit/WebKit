@@ -1,3 +1,13 @@
+2019-08-22  Justin Michaud  <justin_michaud@apple.com>
+
+        Add missing exception check in canonicalizeLocaleList
+        https://bugs.webkit.org/show_bug.cgi?id=201021
+
+        Reviewed by Mark Lam.
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends

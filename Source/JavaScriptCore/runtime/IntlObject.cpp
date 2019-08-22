@@ -549,9 +549,12 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
             JSString* tag = kValue.toString(&state);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-            String canonicalizedTag = canonicalizeLanguageTag(tag->value(&state));
+            auto tagValue = tag->value(&state);
+            RETURN_IF_EXCEPTION(scope, Vector<String>());
+
+            String canonicalizedTag = canonicalizeLanguageTag(tagValue);
             if (canonicalizedTag.isNull()) {
-                throwException(&state, scope, createRangeError(&state, "invalid language tag: " + tag->value(&state)));
+                throwException(&state, scope, createRangeError(&state, "invalid language tag: " + tagValue));
                 return Vector<String>();
             }
 
