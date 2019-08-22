@@ -172,14 +172,17 @@ class DarwinPort(ApplePort):
 
         exit_status = host.executive.run_command(command, return_exit_code=True)
         if not exit_status:  # Symbolicate tailspin log using spindump
+            spindump_command = [
+                '/usr/sbin/spindump',
+                '-i', temp_tailspin_file_path,
+                '-file', DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
+            ]
             try:
-                host.executive.run_command([
-                    '/usr/sbin/spindump',
-                    '-i',
-                    temp_tailspin_file_path,
-                    '-file',
-                    DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
-                ])
+                exit_code = host.executive.run_command(spindump_command + ['-noBulkSymbolication'], return_exit_code=True)
+
+                # FIXME: Remove the fallback when we no longer support Catalina.
+                if not exit_code:
+                    host.executive.run_command(spindump_command)
                 host.filesystem.move_to_base_host(DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
                                                   DarwinPort.tailspin_file_path(self.host, name, pid, self.results_directory()))
             except IOError as e:

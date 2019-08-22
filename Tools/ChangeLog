@@ -1,3 +1,19 @@
+2019-08-22  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Use -noBulkSymbolication when calling spindump
+        https://bugs.webkit.org/show_bug.cgi?id=201000
+        <rdar://problem/53778938>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.sample_process): Attempt to symbolicate with -noBulkSymbolication first.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_tailspin):
+        (DarwinTest.test_get_crash_log): Deleted.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_tailspin):
+
 2019-08-22  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org Webkit.css] Change input's disable style
