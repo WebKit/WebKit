@@ -31,7 +31,6 @@
 #include "WHLSLError.h"
 #include "WHLSLLexer.h"
 #include "WHLSLParsingMode.h"
-#include "WHLSLProgram.h"
 #include <wtf/Expected.h>
 #include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
@@ -40,9 +39,11 @@ namespace WebCore {
 
 namespace WHLSL {
 
+class Program;
+
 class Parser {
 public:
-    Expected<void, Error> parse(Program&, StringView, ParsingMode);
+    Expected<void, Error> parse(Program&, StringView, ParsingMode, AST::NameSpace);
 
 private:
     // FIXME: We should not need this

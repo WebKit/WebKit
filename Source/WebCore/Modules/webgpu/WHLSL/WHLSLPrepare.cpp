@@ -38,6 +38,7 @@
 #include "WHLSLLiteralTypeChecker.h"
 #include "WHLSLMetalCodeGenerator.h"
 #include "WHLSLNameResolver.h"
+#include "WHLSLNameSpace.h"
 #include "WHLSLParser.h"
 #include "WHLSLPreserveVariableLifetimes.h"
 #include "WHLSLProgram.h"
@@ -54,6 +55,35 @@
 #include "WHLSLSynthesizeStructureAccessors.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
+
+namespace WebCore {
+
+namespace WHLSL {
+
+struct ShaderModule {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+
+    ShaderModule(const String& whlslSource)
+        : whlslSource(whlslSource)
+    {
+    }
+
+    String whlslSource;
+};
+
+}
+
+}
+
+namespace std {
+
+void default_delete<WebCore::WHLSL::ShaderModule>::operator()(WebCore::WHLSL::ShaderModule* shaderModule) const
+{
+    delete shaderModule;
+}
+
+}
 
 namespace WebCore {
 
@@ -124,12 +154,17 @@ public:
         }
     }
 
-
 private:
     String m_phaseName;
     PhaseTimes& m_phaseTimes;
     MonotonicTime m_start;
 };
+
+UniqueRef<ShaderModule> createShaderModule(const String& whlslSource)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200872 We should consider moving as much work from prepare() into here as possible.
+    return makeUniqueRef<ShaderModule>(whlslSource);
+}
 
 #define CHECK_PASS(pass, ...) \
     do { \
@@ -138,8 +173,8 @@ private:
         auto result = pass(__VA_ARGS__); \
         if (!result) { \
             if (dumpPassFailure) \
-                dataLogLn("failed pass: " # pass, Lexer::errorString(whlslSource, result.error())); \
-            return makeUnexpected(Lexer::errorString(whlslSource, result.error())); \
+                dataLogLn("failed pass: " # pass, Lexer::errorString(result.error(), whlslSource1, whlslSource2)); \
+            return makeUnexpected(Lexer::errorString(result.error(), whlslSource1, whlslSource2)); \
         } \
     } while (0)
 
@@ -150,19 +185,31 @@ private:
         pass(__VA_ARGS__); \
     } while (0)
 
-static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, String& whlslSource)
+static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, const String& whlslSource1, const String* whlslSource2 = nullptr)
 {
     Program program;
     Parser parser;
 
     {
+        program.nameContext().setCurrentNameSpace(AST::NameSpace::NameSpace1);
+
         PhaseTimer phaseTimer("parse", phaseTimes);
-        auto parseResult = parser.parse(program, whlslSource, ParsingMode::User);
+        auto parseResult = parser.parse(program, whlslSource1, ParsingMode::User, AST::NameSpace::NameSpace1);
         if (!parseResult) {
             if (dumpPassFailure)
-                dataLogLn("failed to parse the program: ", Lexer::errorString(whlslSource, parseResult.error()));
-            return makeUnexpected(Lexer::errorString(whlslSource, parseResult.error()));
+                dataLogLn("failed to parse the program: ", Lexer::errorString(parseResult.error(), whlslSource1, whlslSource2));
+            return makeUnexpected(Lexer::errorString(parseResult.error(), whlslSource1, whlslSource2));
         }
+        if (whlslSource2) {
+            program.nameContext().setCurrentNameSpace(AST::NameSpace::NameSpace2);
+            auto parseResult = parser.parse(program, *whlslSource2, ParsingMode::User, AST::NameSpace::NameSpace2);
+            if (!parseResult) {
+                if (dumpPassFailure)
+                    dataLogLn("failed to parse the program: ", Lexer::errorString(parseResult.error(), whlslSource1, whlslSource2));
+                return makeUnexpected(Lexer::errorString(parseResult.error(), whlslSource1, whlslSource2));
+            }
+        }
+        program.nameContext().setCurrentNameSpace(AST::NameSpace::StandardLibrary);
     }
 
     {
@@ -200,23 +247,29 @@ static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, String& w
     return program;
 }
 
-Expected<RenderPrepareResult, String> prepare(String& whlslSource, RenderPipelineDescriptor& renderPipelineDescriptor)
+Expected<RenderPrepareResult, String> prepare(const ShaderModule& vertexShaderModule, const ShaderModule* fragmentShaderModule, RenderPipelineDescriptor& renderPipelineDescriptor)
 {
     PhaseTimes phaseTimes;
     Metal::RenderMetalCode generatedCode;
 
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
-        auto program = prepareShared(phaseTimes, whlslSource);
+        const String* secondShader = nullptr;
+        bool distinctFragmentShader = false;
+        if (fragmentShaderModule && fragmentShaderModule != &vertexShaderModule) {
+            secondShader = &fragmentShaderModule->whlslSource;
+            distinctFragmentShader = true;
+        }
+        auto program = prepareShared(phaseTimes, vertexShaderModule.whlslSource, secondShader);
         if (!program)
             return makeUnexpected(program.error());
 
         Optional<MatchedRenderSemantics> matchedSemantics;
         {
             PhaseTimer phaseTimer("matchSemantics", phaseTimes);
-            matchedSemantics = matchSemantics(*program, renderPipelineDescriptor);
+            matchedSemantics = matchSemantics(*program, renderPipelineDescriptor, distinctFragmentShader, fragmentShaderModule);
             if (!matchedSemantics)
-                return makeUnexpected(Lexer::errorString(whlslSource, Error("Could not match semantics"_str)));
+                return makeUnexpected(Lexer::errorString(Error("Could not match semantics"_str), vertexShaderModule.whlslSource, secondShader));
         }
 
         {
@@ -234,7 +287,7 @@ Expected<RenderPrepareResult, String> prepare(String& whlslSource, RenderPipelin
     return result;
 }
 
-Expected<ComputePrepareResult, String> prepare(String& whlslSource, ComputePipelineDescriptor& computePipelineDescriptor)
+Expected<ComputePrepareResult, String> prepare(const ShaderModule& shaderModule, ComputePipelineDescriptor& computePipelineDescriptor)
 {
     PhaseTimes phaseTimes;
     Metal::ComputeMetalCode generatedCode;
@@ -242,7 +295,7 @@ Expected<ComputePrepareResult, String> prepare(String& whlslSource, ComputePipel
 
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
-        auto program = prepareShared(phaseTimes, whlslSource);
+        auto program = prepareShared(phaseTimes, shaderModule.whlslSource);
         if (!program)
             return makeUnexpected(program.error());
 
@@ -251,14 +304,14 @@ Expected<ComputePrepareResult, String> prepare(String& whlslSource, ComputePipel
             PhaseTimer phaseTimer("matchSemantics", phaseTimes);
             matchedSemantics = matchSemantics(*program, computePipelineDescriptor);
             if (!matchedSemantics)
-                return makeUnexpected(Lexer::errorString(whlslSource, Error("Could not match semantics"_str)));
+                return makeUnexpected(Lexer::errorString(Error("Could not match semantics"_str), shaderModule.whlslSource));
         }
 
         {
             PhaseTimer phaseTimer("computeDimensions", phaseTimes);
             computeDimensions = WHLSL::computeDimensions(*program, *matchedSemantics->shader);
             if (!computeDimensions)
-                return makeUnexpected(Lexer::errorString(whlslSource, Error("Could not match compute dimensions"_str)));
+                return makeUnexpected(Lexer::errorString(Error("Could not match compute dimensions"_str), shaderModule.whlslSource));
         }
 
         {

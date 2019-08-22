@@ -357,7 +357,7 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
         // However, fragment shaders are optional.
-        if (!fragmentMetalLibrary)
+        if (!fragmentMetalLibrary || fragmentEntryPointName.isNull())
             return true;
 
         auto function = adoptNS([fragmentMetalLibrary newFunctionWithName:fragmentEntryPointName]);
@@ -382,15 +382,14 @@ static bool trySetFunctions(const GPUPipelineStageDescriptor& vertexStage, const
     String vertexEntryPoint, fragmentEntryPoint;
 
     if (whlslDescriptor) {
-        // WHLSL functions are compiled to MSL first.
-        String whlslSource = vertexStage.module->whlslSource();
-        ASSERT(!whlslSource.isNull());
+        ASSERT(vertexStage.module->whlslModule());
+        ASSERT(!fragmentStage || fragmentStage->module->whlslModule());
 
         whlslDescriptor->vertexEntryPointName = vertexStage.entryPoint;
         if (fragmentStage)
             whlslDescriptor->fragmentEntryPointName = fragmentStage->entryPoint;
 
-        auto whlslCompileResult = WHLSL::prepare(whlslSource, *whlslDescriptor);
+        auto whlslCompileResult = WHLSL::prepare(*vertexStage.module->whlslModule(), fragmentStage ? fragmentStage->module->whlslModule() : nullptr, *whlslDescriptor);
         if (!whlslCompileResult) {
             errorScopes.generatePrefixedError(makeString("WHLSL compile error: ", whlslCompileResult.error()));
             return false;
@@ -420,7 +419,8 @@ static bool trySetFunctions(const GPUPipelineStageDescriptor& vertexStage, const
 
         fragmentLibrary = vertexLibrary;
         vertexEntryPoint = whlslCompileResult->mangledVertexEntryPointName.toString();
-        fragmentEntryPoint = whlslCompileResult->mangledFragmentEntryPointName.toString();
+        if (fragmentStage)
+            fragmentEntryPoint = whlslCompileResult->mangledFragmentEntryPointName.toString();
     } else {
         vertexLibrary = vertexStage.module->platformShaderModule();
         vertexEntryPoint = vertexStage.entryPoint;
@@ -452,8 +452,9 @@ static RetainPtr<MTLRenderPipelineDescriptor> convertRenderPipelineDescriptor(co
     const auto& vertexStage = descriptor.vertexStage;
     const auto& fragmentStage = descriptor.fragmentStage;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195446 Allow WHLSL shaders to come from different programs.
-    bool isWhlsl = !vertexStage.module->whlslSource().isNull() && (!fragmentStage || vertexStage.module.ptr() == fragmentStage->module.ptr());
+    if (fragmentStage && static_cast<bool>(vertexStage.module->whlslModule()) != static_cast<bool>(fragmentStage->module->whlslModule()))
+        return nullptr;
+    bool isWhlsl = vertexStage.module->whlslModule();
 
     // Set data for the Metal pipeline descriptor (and WHLSL's, if needed).
     Optional<WHLSL::RenderPipelineDescriptor> whlslDescriptor;

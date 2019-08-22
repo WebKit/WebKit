@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
+#include <wtf/Expected.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,7 +38,7 @@ namespace WHLSL {
 class Parser;
 class Program;
 
-void includeStandardLibrary(Program&, Parser&, bool parseFullStandardLibrary);
+Expected<void, Error> includeStandardLibrary(Program&, Parser&, bool parseFullStandardLibrary);
 
 }
 

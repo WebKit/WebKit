@@ -48,7 +48,7 @@ struct MatchedRenderSemantics {
     HashMap<AttachmentDescriptor*, size_t> matchedColorAttachments;
 };
 
-Optional<MatchedRenderSemantics> matchSemantics(Program&, RenderPipelineDescriptor&);
+Optional<MatchedRenderSemantics> matchSemantics(Program&, RenderPipelineDescriptor&, bool distinctFragmentShader, bool fragmentShaderExists);
 
 struct MatchedComputeSemantics {
     AST::FunctionDefinition* shader;

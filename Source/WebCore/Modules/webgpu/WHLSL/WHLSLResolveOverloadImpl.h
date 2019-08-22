@@ -43,9 +43,9 @@ class NamedType;
 
 }
 
-AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes);
-AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NamedType* castReturnType);
-AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::UnnamedType* castReturnType);
+AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NameSpace);
+AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NamedType* castReturnType, AST::NameSpace);
+AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::UnnamedType* castReturnType, AST::NameSpace);
 AST::NamedType* resolveTypeOverloadImpl(Vector<std::reference_wrapper<AST::NamedType>, 1>&, AST::TypeArguments&);
 
 }

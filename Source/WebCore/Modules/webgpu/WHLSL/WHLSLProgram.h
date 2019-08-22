@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLEnumerationDefinition.h"
+#include "WHLSLError.h"
 #include "WHLSLFunctionDefinition.h"
 #include "WHLSLIntrinsics.h"
 #include "WHLSLNameContext.h"
@@ -46,38 +47,38 @@ public:
     Program() = default;
     Program(Program&&) = default;
 
-    bool append(AST::TypeDefinition&& typeDefinition)
+    Expected<void, Error> append(AST::TypeDefinition&& typeDefinition)
     {
         m_typeDefinitions.append(makeUniqueRef<AST::TypeDefinition>(WTFMove(typeDefinition)));
         return m_nameContext.add(m_typeDefinitions.last());
     }
 
-    bool append(AST::StructureDefinition&& structureDefinition)
+    Expected<void, Error> append(AST::StructureDefinition&& structureDefinition)
     {
         m_structureDefinitions.append(makeUniqueRef<AST::StructureDefinition>(WTFMove(structureDefinition)));
         return m_nameContext.add(m_structureDefinitions.last());
     }
 
-    bool append(AST::EnumerationDefinition&& enumerationDefinition)
+    Expected<void, Error> append(AST::EnumerationDefinition&& enumerationDefinition)
     {
         m_enumerationDefinitions.append(makeUniqueRef<AST::EnumerationDefinition>(WTFMove(enumerationDefinition)));
         return m_nameContext.add(m_enumerationDefinitions.last());
     }
 
-    bool append(AST::FunctionDefinition&& functionDefinition)
+    Expected<void, Error> append(AST::FunctionDefinition&& functionDefinition)
     {
         m_functionDefinitions.append(makeUniqueRef<AST::FunctionDefinition>(WTFMove(functionDefinition)));
         return m_nameContext.add(m_functionDefinitions.last());
     }
 
-    bool append(AST::NativeFunctionDeclaration&& nativeFunctionDeclaration)
+    Expected<void, Error> append(AST::NativeFunctionDeclaration&& nativeFunctionDeclaration)
     {
         m_nativeFunctionDeclarations.append(makeUniqueRef<AST::NativeFunctionDeclaration>(WTFMove(nativeFunctionDeclaration)));
         m_intrinsics.add(m_nativeFunctionDeclarations.last());
         return m_nameContext.add(m_nativeFunctionDeclarations.last());
     }
 
-    bool append(AST::NativeTypeDeclaration&& nativeTypeDeclaration)
+    Expected<void, Error> append(AST::NativeTypeDeclaration&& nativeTypeDeclaration)
     {
         m_nativeTypeDeclarations.append(makeUniqueRef<AST::NativeTypeDeclaration>(WTFMove(nativeTypeDeclaration)));
         m_intrinsics.add(m_nativeTypeDeclarations.last());

@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLNameSpace.h"
+
 namespace WebCore {
 
 namespace WHLSL {
@@ -35,31 +37,60 @@ struct Token;
 
 class CodeLocation {
 public:
-    CodeLocation() = default;
-    CodeLocation(unsigned startOffset, unsigned endOffset)
+    CodeLocation()
+        : m_startOffset(0x7FFFFFFF)
+        , m_endOffset(0x7FFFFFFF)
+        , m_nameSpace(static_cast<unsigned>(AST::NameSpace::StandardLibrary))
+    {
+    }
+
+    CodeLocation(unsigned startOffset, unsigned endOffset, AST::NameSpace nameSpace)
         : m_startOffset(startOffset)
         , m_endOffset(endOffset)
-    { }
+        , m_nameSpace(static_cast<unsigned>(nameSpace))
+    {
+    }
+
     CodeLocation(const Token&);
+
     CodeLocation(const CodeLocation& location1, const CodeLocation& location2)
         : m_startOffset(location1.startOffset())
         , m_endOffset(location2.endOffset())
-    { }
+        , m_nameSpace(static_cast<unsigned>(location1.nameSpace()))
+    {
+        ASSERT(location1.nameSpace() == location2.nameSpace());
+    }
 
-    unsigned startOffset() const { return m_startOffset; }
-    unsigned endOffset() const { return m_endOffset; }
+    unsigned startOffset() const
+    {
+        return m_startOffset;
+    }
+
+    unsigned endOffset() const
+    {
+        return m_endOffset;
+    }
+
+    AST::NameSpace nameSpace() const
+    {
+        return static_cast<AST::NameSpace>(m_nameSpace);
+    }
 
     bool operator==(const CodeLocation& other) const 
     {
         return m_startOffset == other.m_startOffset
-            && m_endOffset == other.m_endOffset;
+            && m_endOffset == other.m_endOffset
+            && m_nameSpace == other.m_nameSpace;
     }
+
     bool operator!=(const CodeLocation& other) const { return !(*this == other); }
+
     explicit operator bool() const { return *this != CodeLocation(); }
 
 private:
-    unsigned m_startOffset { std::numeric_limits<unsigned>::max() };
-    unsigned m_endOffset { std::numeric_limits<unsigned>::max() };
+    unsigned m_startOffset : 31;
+    unsigned m_endOffset : 31;
+    unsigned m_nameSpace : 2;
 };
 
 } // namespace WHLSL

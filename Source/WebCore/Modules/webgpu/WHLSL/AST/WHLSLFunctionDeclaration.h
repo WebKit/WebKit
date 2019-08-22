@@ -30,6 +30,7 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLEntryPointType.h"
 #include "WHLSLFunctionAttribute.h"
+#include "WHLSLNameSpace.h"
 #include "WHLSLParsingMode.h"
 #include "WHLSLSemantic.h"
 #include "WHLSLUnnamedType.h"
@@ -83,6 +84,9 @@ public:
 
     ParsingMode parsingMode() const { return m_parsingMode; }
 
+    NameSpace nameSpace() const { return m_nameSpace; }
+    void setNameSpace(NameSpace nameSpace) { m_nameSpace = nameSpace; }
+
 private:
     CodeLocation m_codeLocation;
     AttributeBlock m_attributeBlock;
@@ -93,6 +97,7 @@ private:
     String m_name;
     VariableDeclarations m_parameters;
     std::unique_ptr<Semantic> m_semantic;
+    NameSpace m_nameSpace { NameSpace::StandardLibrary };
 };
 
 } // namespace AST

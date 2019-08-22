@@ -1,3 +1,65 @@
+2019-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Vertex shader and fragment shader need to be able to come from two different programs
+        https://bugs.webkit.org/show_bug.cgi?id=195446
+
+        Reviewed by Saam Barati.
+
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-10-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-10.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-11-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-11.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-12-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-12.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-13-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-13.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-14-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-14.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-15-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-15.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-16-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-16.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-17-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-17.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-18-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-18.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-19-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-2-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-2.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-20-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-20.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-21-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-21.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-22-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-22.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-23-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-23.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-24-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-25-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-25.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-26-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-27-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-27.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-3-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-3.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-4-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-4.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-5-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-5.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-6-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-6.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-7-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-7.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-8-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-8.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-9-expected.txt: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-9.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-expected.html: Added.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules.html: Added.
+
 2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         SVG element should become focusable when focus and key event listeners are added

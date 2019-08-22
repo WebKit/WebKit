@@ -27,6 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
+#include "WHLSLNameSpace.h"
+
 #include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -54,25 +57,35 @@ class NameContext {
 public:
     NameContext(NameContext* parent = nullptr);
 
-    bool add(AST::TypeDefinition&);
-    bool add(AST::StructureDefinition&);
-    bool add(AST::EnumerationDefinition&);
-    bool add(AST::FunctionDefinition&);
-    bool add(AST::NativeFunctionDeclaration&);
-    bool add(AST::NativeTypeDeclaration&);
-    bool add(AST::VariableDeclaration&);
+    void setCurrentNameSpace(AST::NameSpace currentNameSpace)
+    {
+        ASSERT(!m_parent);
+        m_currentNameSpace = currentNameSpace;
+    }
 
-    Vector<std::reference_wrapper<AST::NamedType>, 1>* getTypes(const String&);
-    Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>* getFunctions(const String&);
+    Expected<void, Error> add(AST::TypeDefinition&);
+    Expected<void, Error> add(AST::StructureDefinition&);
+    Expected<void, Error> add(AST::EnumerationDefinition&);
+    Expected<void, Error> add(AST::FunctionDefinition&);
+    Expected<void, Error> add(AST::NativeFunctionDeclaration&);
+    Expected<void, Error> add(AST::NativeTypeDeclaration&);
+    Expected<void, Error> add(AST::VariableDeclaration&);
+
+    Vector<std::reference_wrapper<AST::NamedType>, 1> getTypes(const String&, AST::NameSpace fromNamespace);
+    Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1> getFunctions(const String&, AST::NameSpace fromNamespace);
     AST::VariableDeclaration* getVariable(const String&);
 
 private:
-    bool exists(String&);
+    AST::NamedType* searchTypes(String& name) const;
+    AST::FunctionDeclaration* searchFunctions(String& name) const;
+    Optional<CodeLocation> topLevelExists(String& name) const;
+    AST::VariableDeclaration* localExists(String& name) const;
 
-    HashMap<String, Vector<std::reference_wrapper<AST::NamedType>, 1>> m_types;
-    HashMap<String, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>> m_functions;
+    HashMap<String, Vector<std::reference_wrapper<AST::NamedType>, 1>> m_types[AST::nameSpaceCount];
+    HashMap<String, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>> m_functions[AST::nameSpaceCount];
     HashMap<String, AST::VariableDeclaration*> m_variables;
     NameContext* m_parent;
+    AST::NameSpace m_currentNameSpace { AST::NameSpace::StandardLibrary };
 };
 
 }

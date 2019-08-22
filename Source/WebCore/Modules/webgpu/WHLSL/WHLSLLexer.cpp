@@ -316,7 +316,7 @@ auto Lexer::consumeTokenFromStream() -> Token
         auto oldOffset = m_offset;
         m_offset = offset;
         skipWhitespaceAndComments();
-        return { { oldOffset, offset }, type };
+        return { { oldOffset, offset, m_nameSpace }, type };
     };
 
     switch (shift()) {
@@ -1702,7 +1702,6 @@ static inline bool isNewline(UChar codeUnit)
     }
 }
 
-
 auto Lexer::lineAndColumnNumberFromOffset(const StringView& stringView, unsigned targetOffset) -> LineAndColumn
 {
     // Counting from 1 to match most text editors.
@@ -1718,11 +1717,26 @@ auto Lexer::lineAndColumnNumberFromOffset(const StringView& stringView, unsigned
     return { lineNumber, columnNumber };
 }
 
-String Lexer::errorString(const StringView& source, Error error)
+static Optional<StringView> sourceFromNameSpace(AST::NameSpace nameSpace, const String& source1, const String* source2)
 {
-    if (error.codeLocation()) {
-        auto lineAndColumn = lineAndColumnNumberFromOffset(source, error.codeLocation().startOffset());
-        return makeString(lineAndColumn.line, ':', lineAndColumn.column, ": ", error.message());
+    switch (nameSpace) {
+    case AST::NameSpace::StandardLibrary:
+        return WTF::nullopt;
+    case AST::NameSpace::NameSpace1:
+        return StringView(source1);
+    case AST::NameSpace::NameSpace2:
+        ASSERT(source2);
+        return StringView(*source2);
+    }
+}
+
+String Lexer::errorString(Error error, const String& source1, const String* source2)
+{
+    if (auto codeLocation = error.codeLocation()) {
+        if (auto source = sourceFromNameSpace(codeLocation.nameSpace(), source1, source2)) {
+            auto lineAndColumn = lineAndColumnNumberFromOffset(*source, error.codeLocation().startOffset());
+            return makeString(lineAndColumn.line, ':', lineAndColumn.column, ": ", error.message());
+        }
     }
     return error.message();
 }

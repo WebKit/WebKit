@@ -45,99 +45,138 @@ NameContext::NameContext(NameContext* parent)
 {
 }
 
-bool NameContext::add(AST::TypeDefinition& typeDefinition)
+Expected<void, Error> NameContext::add(AST::TypeDefinition& typeDefinition)
 {
-    if (exists(typeDefinition.name()))
-        return false;
-    auto result = m_types.add(typeDefinition.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
-    if (!result.isNewEntry)
-        return false;
+    if (auto existing = topLevelExists(typeDefinition.name()))
+        return makeUnexpected(Error("Duplicate name in program", *existing));
+    typeDefinition.setNameSpace(m_currentNameSpace);
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    auto result = m_types[index].add(typeDefinition.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
+    ASSERT(result.isNewEntry);
     result.iterator->value.append(typeDefinition);
-    return true;
+    return { };
 }
 
-bool NameContext::add(AST::StructureDefinition& structureDefinition)
+Expected<void, Error> NameContext::add(AST::StructureDefinition& structureDefinition)
 {
-    if (exists(structureDefinition.name()))
-        return false;
-    auto result = m_types.add(structureDefinition.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
-    if (!result.isNewEntry)
-        return false;
+    if (auto existing = topLevelExists(structureDefinition.name()))
+        return makeUnexpected(Error("Duplicate name in program.", *existing));
+    structureDefinition.setNameSpace(m_currentNameSpace);
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    auto result = m_types[index].add(structureDefinition.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
+    ASSERT(result.isNewEntry);
     result.iterator->value.append(structureDefinition);
-    return true;
+    return { };
 }
 
-bool NameContext::add(AST::EnumerationDefinition& enumerationDefinition)
+Expected<void, Error> NameContext::add(AST::EnumerationDefinition& enumerationDefinition)
 {
-    if (exists(enumerationDefinition.name()))
-        return false;
-    auto result = m_types.add(enumerationDefinition.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
-    if (!result.isNewEntry)
-        return false;
+    if (auto existing = topLevelExists(enumerationDefinition.name()))
+        return makeUnexpected(Error("Duplicate name in program.", *existing));
+    enumerationDefinition.setNameSpace(m_currentNameSpace);
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    auto result = m_types[index].add(enumerationDefinition.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
+    ASSERT(result.isNewEntry);
     result.iterator->value.append(enumerationDefinition);
-    return true;
+    return { };
 }
 
-bool NameContext::add(AST::FunctionDefinition& functionDefinition)
+Expected<void, Error> NameContext::add(AST::FunctionDefinition& functionDefinition)
 {
-    if (m_types.find(functionDefinition.name()) != m_types.end()
-        || m_variables.find(functionDefinition.name()) != m_variables.end())
-        return false;
-    auto result = m_functions.add(functionDefinition.name(), Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>());
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    if (auto* type = searchTypes(functionDefinition.name()))
+        return makeUnexpected(Error("Duplicate name in program.", type->codeLocation()));
+    functionDefinition.setNameSpace(m_currentNameSpace);
+    auto result = m_functions[index].add(functionDefinition.name(), Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>());
     result.iterator->value.append(functionDefinition);
-    return true;
+    return { };
 }
 
-bool NameContext::add(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
+Expected<void, Error> NameContext::add(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
 {
-    if (m_types.find(nativeFunctionDeclaration.name()) != m_types.end()
-        || m_variables.find(nativeFunctionDeclaration.name()) != m_variables.end())
-        return false;
-    auto result = m_functions.add(nativeFunctionDeclaration.name(), Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>());
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    if (auto* type = searchTypes(nativeFunctionDeclaration.name()))
+        return makeUnexpected(Error("Duplicate name in program.", type->codeLocation()));
+    nativeFunctionDeclaration.setNameSpace(m_currentNameSpace);
+    auto result = m_functions[index].add(nativeFunctionDeclaration.name(), Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>());
     result.iterator->value.append(nativeFunctionDeclaration);
-    return true;
+    return { };
 }
 
-bool NameContext::add(AST::NativeTypeDeclaration& nativeTypeDeclaration)
+Expected<void, Error> NameContext::add(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 {
-    if (m_functions.find(nativeTypeDeclaration.name()) != m_functions.end()
-        || m_variables.find(nativeTypeDeclaration.name()) != m_variables.end())
-        return false;
-    auto result = m_types.add(nativeTypeDeclaration.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    if (auto* function = searchFunctions(nativeTypeDeclaration.name()))
+        return makeUnexpected(Error("Duplicate name in program.", function->codeLocation()));
+    nativeTypeDeclaration.setNameSpace(m_currentNameSpace);
+    auto result = m_types[index].add(nativeTypeDeclaration.name(), Vector<std::reference_wrapper<AST::NamedType>, 1>());
     result.iterator->value.append(nativeTypeDeclaration);
-    return true;
+    return { };
 }
 
-bool NameContext::add(AST::VariableDeclaration& variableDeclaration)
+Expected<void, Error> NameContext::add(AST::VariableDeclaration& variableDeclaration)
 {
     if (variableDeclaration.name().isNull())
-        return true;
-    if (exists(variableDeclaration.name()))
-        return false;
+        return { };
+    if (auto* declaration = localExists(variableDeclaration.name()))
+        return makeUnexpected(Error("Duplicate name in program.", declaration->codeLocation()));
     auto result = m_variables.add(String(variableDeclaration.name()), &variableDeclaration);
-    return result.isNewEntry;
+    ASSERT_UNUSED(result, result.isNewEntry);
+    return { };
 }
 
-Vector<std::reference_wrapper<AST::NamedType>, 1>* NameContext::getTypes(const String& name)
+Vector<std::reference_wrapper<AST::NamedType>, 1> NameContext::getTypes(const String& name, AST::NameSpace fromNamespace)
 {
-    auto iterator = m_types.find(name);
-    if (iterator == m_types.end()) {
-        if (m_parent)
-            return m_parent->getTypes(name);
-        return nullptr;
+    // Named types can only be declared in the global name context.
+    if (m_parent)
+        return m_parent->getTypes(name, fromNamespace);
+
+    Vector<std::reference_wrapper<AST::NamedType>, 1> result;
+
+    unsigned index = static_cast<unsigned>(fromNamespace);
+    auto iterator = m_types[index].find(name);
+    if (iterator != m_types[index].end()) {
+        for (auto type : iterator->value)
+            result.append(type);
     }
-    return &iterator->value;
+
+    if (fromNamespace != AST::NameSpace::StandardLibrary) {
+        index = static_cast<unsigned>(AST::NameSpace::StandardLibrary);
+        iterator = m_types[index].find(name);
+        if (iterator != m_types[index].end()) {
+            for (auto type : iterator->value)
+                result.append(type);
+        }
+    }
+
+    return result;
 }
 
-Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>* NameContext::getFunctions(const String& name)
+Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1> NameContext::getFunctions(const String& name, AST::NameSpace fromNamespace)
 {
-    auto iterator = m_functions.find(name);
-    if (iterator == m_functions.end()) {
-        if (m_parent)
-            return m_parent->getFunctions(name);
-        return nullptr;
+    // Functions can only be declared in the global name context.
+    if (m_parent)
+        return m_parent->getFunctions(name, fromNamespace);
+
+    Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1> result;
+
+    unsigned index = static_cast<unsigned>(fromNamespace);
+    auto iterator = m_functions[index].find(name);
+    if (iterator != m_functions[index].end()) {
+        for (auto type : iterator->value)
+            result.append(type);
     }
-    return &iterator->value;
+
+    if (fromNamespace != AST::NameSpace::StandardLibrary) {
+        index = static_cast<unsigned>(AST::NameSpace::StandardLibrary);
+        iterator = m_functions[index].find(name);
+        if (iterator != m_functions[index].end()) {
+            for (auto type : iterator->value)
+                result.append(type);
+        }
+    }
+
+    return result;
 }
 
 AST::VariableDeclaration* NameContext::getVariable(const String& name)
@@ -151,11 +190,72 @@ AST::VariableDeclaration* NameContext::getVariable(const String& name)
     return iterator->value;
 }
 
-bool NameContext::exists(String& name)
+AST::NamedType* NameContext::searchTypes(String& name) const
 {
-    return m_types.find(name) != m_types.end()
-        || m_functions.find(name) != m_functions.end()
-        || m_variables.find(name) != m_variables.end();
+    ASSERT(!m_parent);
+    if (m_currentNameSpace == AST::NameSpace::StandardLibrary) {
+        for (auto& types : m_types) {
+            auto iter = types.find(name);
+            if (iter != types.end())
+                return &iter->value[0].get();
+        }
+        return nullptr;
+    }
+
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    auto iter = m_types[index].find(name);
+    if (iter != m_types[index].end())
+        return &iter->value[0].get();
+
+    index = static_cast<unsigned>(AST::NameSpace::StandardLibrary);
+    iter = m_types[index].find(name);
+    if (iter != m_types[index].end())
+        return &iter->value[0].get();
+
+    return nullptr;
+}
+
+AST::FunctionDeclaration* NameContext::searchFunctions(String& name) const
+{
+    ASSERT(!m_parent);
+    if (m_currentNameSpace == AST::NameSpace::StandardLibrary) {
+        for (auto& functions : m_functions) {
+            auto iter = functions.find(name);
+            if (iter != functions.end())
+                return &iter->value[0].get();
+        }
+        return nullptr;
+    }
+
+    auto index = static_cast<unsigned>(m_currentNameSpace);
+    auto iter = m_functions[index].find(name);
+    if (iter != m_functions[index].end())
+        return &iter->value[0].get();
+
+    index = static_cast<unsigned>(AST::NameSpace::StandardLibrary);
+    iter = m_functions[index].find(name);
+    if (iter != m_functions[index].end())
+        return &iter->value[0].get();
+
+    return nullptr;
+}
+
+Optional<CodeLocation> NameContext::topLevelExists(String& name) const
+{
+    if (auto* type = searchTypes(name))
+        return type->codeLocation();
+    if (auto* function = searchFunctions(name))
+        return function->codeLocation();
+    return WTF::nullopt;
+}
+
+AST::VariableDeclaration* NameContext::localExists(String& name) const
+{
+    ASSERT(m_parent);
+    auto iter = m_variables.find(name);
+    if (iter != m_variables.end())
+        return iter->value;
+    return nullptr;
 }
 
 } // namespace WHLSL

@@ -70,13 +70,11 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUPipelineStage
     WHLSL::ComputeDimensions computeDimensions { 1, 1, 1 };
 
     if (whlslDescriptor) {
-        // WHLSL functions are compiled to MSL first.
-        String whlslSource = computeStage.module->whlslSource();
-        ASSERT(!whlslSource.isNull());
+        ASSERT(computeStage.module->whlslModule());
 
         whlslDescriptor->entryPointName = computeStage.entryPoint;
 
-        auto whlslCompileResult = WHLSL::prepare(whlslSource, *whlslDescriptor);
+        auto whlslCompileResult = WHLSL::prepare(*computeStage.module->whlslModule(), *whlslDescriptor);
         if (!whlslCompileResult) {
             errorScopes.generatePrefixedError(makeString("WHLSL compile error: ", whlslCompileResult.error()));
             return WTF::nullopt;
@@ -134,7 +132,7 @@ static Optional<ConvertResult> convertComputePipelineDescriptor(const GPUCompute
 
     const auto& computeStage = descriptor.computeStage;
 
-    bool isWhlsl = !computeStage.module->whlslSource().isNull();
+    bool isWhlsl = computeStage.module->whlslModule();
 
     Optional<WHLSL::ComputePipelineDescriptor> whlslDescriptor;
     if (isWhlsl)

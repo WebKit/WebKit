@@ -1,3 +1,168 @@
+2019-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Vertex shader and fragment shader need to be able to come from two different programs
+        https://bugs.webkit.org/show_bug.cgi?id=195446
+
+        Reviewed by Saam Barati.
+
+        When an author configures WebGPU to render things, the author provides a vertex shader and a fragment
+        shader, and they both execute within the same draw call. It's common for authors coming from WebGL to
+        put the two shaders in distinct files. Until this patch, WHLSL was unable to process two shaders from
+        different sources which were meant to be hooked together.
+
+        The first thing this patch does is add the notion of a "shader module" to the WHLSL compiler. This
+        represents the source code containing one or more shaders. When the author wants to actually compile
+        their source, they supply one or more shader modules to the compiler. The compiler then looks in the
+        first module for the vertex shader and the second module for the fragment shader. The two modules are
+        passed by reference, so they may refer to the same underlying object, which is supported.
+
+        Shader modules have this interesting behavior where, within a shader module, funtion / type names may
+        refer to each other, but may not refer to any other name within any other shader module. They behave
+        as if all the names inside the module are not exported. So, it would seem that the most natural way to
+        support this would be to run the WHLSL compiler and the MSL compiler twice independently, once for each
+        module. However, this means that our compile times would double, which would be unfortunate. Instead,
+        a more performant option would be to make the WHLSL compiler smart enough to handle multiple shader
+        modules at once, and to produce a single merged output program that contains everything. It does this
+        by parsing all the shader modules into a single Program object, but remembering which items in the 
+        Program came from which places.
+
+        This is implemented by teaching the WHLSL compiler about "namespaces." There are three namespaces: one
+        for each shader module, and an additional one for the standard library. Every global object (e.g.
+        named types and functions) knows which namespace it lives inside. The NameResolver has been educated
+        to understand namespaces, so when you ask it for a name in a particular namespace, it will look up
+        all the names both in that namespace and in the standard library's namespace, and it will union the
+        results together.
+
+        Function overload resolution doesn't actually go through the name resolver; instead, it's handled by
+        sorting all functions into buckets such that any CallExpression only has to look in a single bucket
+        to find all its potential overloads. These buckets can't be educated about namespaces (consider a
+        function which has overloads in all 3 namespaces that is called from both shader modules - all the
+        overloads must end up in the same bucket). Therefore, this logic is moved into
+        resolveFunctionOverload(), which will now disregard candidate functions if they are in an inaccessible 
+        namespace.
+
+        Tests: webgpu/whlsl/separate-shader-modules/separate-shader-modules-10.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-11.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-12.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-13.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-14.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-15.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-16.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-17.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-18.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-2.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-20.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-21.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-22.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-23.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-25.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-27.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-3.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-4.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-5.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-6.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-7.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-8.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules-9.html
+               webgpu/whlsl/separate-shader-modules/separate-shader-modules.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        (WebCore::WHLSL::AST::FunctionDeclaration::nameSpace const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::setNameSpace):
+        * Modules/webgpu/WHLSL/AST/WHLSLNameSpace.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.h.
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h:
+        (WebCore::WHLSL::AST::NamedType::nameSpace const):
+        (WebCore::WHLSL::AST::NamedType::setNameSpace):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::emitMetalFunctions):
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        (WebCore::WHLSL::DuplicateFunctionKey::operator== const):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::FunctionKey::operator== const):
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::checkShaderType):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::Checker::resolveFunction):
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        * Modules/webgpu/WHLSL/WHLSLNameContext.cpp:
+        (WebCore::WHLSL::NameContext::add):
+        (WebCore::WHLSL::NameContext::getTypes):
+        (WebCore::WHLSL::NameContext::getFunctions):
+        (WebCore::WHLSL::NameContext::searchTypes const):
+        (WebCore::WHLSL::NameContext::searchFunctions const):
+        (WebCore::WHLSL::NameContext::globalExists const):
+        (WebCore::WHLSL::NameContext::localExists const):
+        (WebCore::WHLSL::NameContext::exists): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLNameContext.h:
+        (WebCore::WHLSL::NameContext::setCurrentNameSpace):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::NameResolver):
+        (WebCore::WHLSL::NameResolver::visit):
+        (WebCore::WHLSL::resolveNamesInTypes):
+        (WebCore::WHLSL::resolveTypeNamesInFunctions):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        (WebCore::WHLSL::NameResolver::setCurrentNameSpace):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parse):
+        (WebCore::WHLSL::Parser::fail):
+        (WebCore::WHLSL::Parser::consumeIntegralLiteral):
+        (WebCore::WHLSL::Parser::consumeNonNegativeIntegralLiteral):
+        (WebCore::WHLSL::Parser::parseConstantExpression):
+        (WebCore::WHLSL::Parser::parseTypeSuffixAbbreviated):
+        (WebCore::WHLSL::Parser::parseTypeSuffixNonAbbreviated):
+        (WebCore::WHLSL::Parser::parseBuiltInSemantic):
+        (WebCore::WHLSL::Parser::parseResourceSemantic):
+        (WebCore::WHLSL::Parser::parseStageInOutSemantic):
+        (WebCore::WHLSL::Parser::parseEnumerationDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationMember):
+        (WebCore::WHLSL::Parser::parseNumThreadsFunctionAttribute):
+        (WebCore::WHLSL::Parser::parseVertexOrFragmentFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseRegularFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseSwitchCase):
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseVariableDeclarations):
+        (WebCore::WHLSL::Parser::completeAssignment):
+        (WebCore::WHLSL::Parser::parsePossibleTernaryConditional):
+        (WebCore::WHLSL::Parser::parseTerm):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::ShaderModule::ShaderModule):
+        (WebCore::WHLSL::createShaderModule):
+        (WebCore::WHLSL::ShaderModuleDeleter::operator()):
+        (WebCore::WHLSL::prepareShared):
+        (WebCore::WHLSL::prepare):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        * Modules/webgpu/WHLSL/WHLSLProgram.h:
+        (WebCore::WHLSL::Program::append):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp:
+        (WebCore::WHLSL::resolveFunctionOverloadImpl):
+        (WebCore::WHLSL::resolveFunctionOverload):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.h:
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp:
+        (WebCore::WHLSL::matchSemantics):
+        (WebCore::WHLSL::findEntryPoint): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.h:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp:
+        (WebCore::WHLSL::includeStandardLibrary):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUShaderModule.h:
+        (WebCore::GPUShaderModule::platformShaderModule const):
+        (WebCore::GPUShaderModule::whlslModule const):
+        (WebCore::GPUShaderModule::whlslSource const): Deleted.
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        (WebCore::convertComputePipelineDescriptor):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertRenderPipelineDescriptor):
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::tryCreate):
+        (WebCore::GPUShaderModule::GPUShaderModule):
+
 2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         SVG element should become focusable when focus and key event listeners are added

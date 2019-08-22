@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLCodeLocation.h"
+#include "WHLSLNameSpace.h"
 #include "WHLSLType.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -60,12 +61,15 @@ public:
 
     String& name() { return m_name; }
 
+    NameSpace nameSpace() const { return m_nameSpace; }
+    void setNameSpace(NameSpace nameSpace) { m_nameSpace = nameSpace; }
 
 private:
     friend class Type;
     Type& unifyNodeImpl() { return *this; }
     CodeLocation m_codeLocation;
     String m_name;
+    NameSpace m_nameSpace { NameSpace::StandardLibrary };
 };
 
 } // namespace AST

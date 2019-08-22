@@ -161,7 +161,7 @@ public:
                 return false;
         }
 
-        if (!!m_castReturnType != !!other.m_castReturnType)
+        if (static_cast<bool>(m_castReturnType) != static_cast<bool>(other.m_castReturnType))
             return false;
 
         if (!m_castReturnType)
@@ -427,7 +427,7 @@ static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPoint
     return true;
 }
 
-static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinition, NameContext& nameContext)
+static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinition, NameContext& nameContext, AST::NameSpace currentNameSpace)
 {
     enum class CheckKind {
         Index,
@@ -483,16 +483,14 @@ static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinit
             return false;
         auto& valueType = *functionDefinition.parameters()[numExpectedParameters - 1]->type();
         auto getterName = functionDefinition.name().substring(0, functionDefinition.name().length() - 1);
-        auto* getterFuncs = nameContext.getFunctions(getterName);
-        if (!getterFuncs)
-            return false;
+        auto getterFuncs = nameContext.getFunctions(getterName, currentNameSpace);
         Vector<ResolvingType> argumentTypes;
         Vector<std::reference_wrapper<ResolvingType>> argumentTypeReferences;
         for (size_t i = 0; i < numExpectedParameters - 1; ++i)
             argumentTypes.append(*functionDefinition.parameters()[i]->type());
         for (auto& argumentType : argumentTypes)
             argumentTypeReferences.append(argumentType);
-        auto* overload = resolveFunctionOverload(*getterFuncs, argumentTypeReferences);
+        auto* overload = resolveFunctionOverload(getterFuncs, argumentTypeReferences, currentNameSpace);
         if (!overload)
             return false;
         auto& resultType = overload->type();
@@ -672,14 +670,15 @@ private:
     RefPtr<AST::TypeReference> m_wrappedFloatType;
     RefPtr<AST::UnnamedType> m_genericPointerType;
     HashMap<AST::Expression*, std::unique_ptr<ResolvingType>> m_typeMap;
-    HashSet<String> m_vertexEntryPoints;
-    HashSet<String> m_fragmentEntryPoints;
-    HashSet<String> m_computeEntryPoints;
+    HashSet<String> m_vertexEntryPoints[AST::nameSpaceCount];
+    HashSet<String> m_fragmentEntryPoints[AST::nameSpaceCount];
+    HashSet<String> m_computeEntryPoints[AST::nameSpaceCount];
     const Intrinsics& m_intrinsics;
     Program& m_program;
     AST::FunctionDefinition* m_currentFunction { nullptr };
     HashMap<FunctionKey, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>, FunctionKey::Hash, FunctionKey::Traits> m_functions;
     HashMap<AndOverloadTypeKey, RefPtr<AST::UnnamedType>, AndOverloadTypeKey::Hash, AndOverloadTypeKey::Traits> m_andOverloadTypeMap;
+    AST::NameSpace m_currentNameSpace { AST::NameSpace::StandardLibrary };
 };
 
 void Checker::visit(Program& program)
@@ -723,18 +722,20 @@ Expected<void, Error> Checker::assignTypes()
 
 bool Checker::checkShaderType(const AST::FunctionDefinition& functionDefinition)
 {
+    auto index = static_cast<unsigned>(m_currentNameSpace);
     switch (*functionDefinition.entryPointType()) {
     case AST::EntryPointType::Vertex:
-        return static_cast<bool>(m_vertexEntryPoints.add(functionDefinition.name()));
+        return static_cast<bool>(m_vertexEntryPoints[index].add(functionDefinition.name()));
     case AST::EntryPointType::Fragment:
-        return static_cast<bool>(m_fragmentEntryPoints.add(functionDefinition.name()));
+        return static_cast<bool>(m_fragmentEntryPoints[index].add(functionDefinition.name()));
     case AST::EntryPointType::Compute:
-        return static_cast<bool>(m_computeEntryPoints.add(functionDefinition.name()));
+        return static_cast<bool>(m_computeEntryPoints[index].add(functionDefinition.name()));
     }
 }
 
 void Checker::visit(AST::FunctionDefinition& functionDefinition)
 {
+    m_currentNameSpace = functionDefinition.nameSpace();
     m_currentFunction = &functionDefinition;
     if (functionDefinition.entryPointType()) {
         if (!checkShaderType(functionDefinition)) {
@@ -751,7 +752,7 @@ void Checker::visit(AST::FunctionDefinition& functionDefinition)
             return;
         }
     }
-    if (!checkOperatorOverload(functionDefinition, m_program.nameContext())) {
+    if (!checkOperatorOverload(functionDefinition, m_program.nameContext(), m_currentNameSpace)) {
         setError(Error("Operator does not match expected signature.", functionDefinition.codeLocation()));
         return;
     }
@@ -834,7 +835,7 @@ AST::FunctionDeclaration* Checker::resolveFunction(Vector<std::reference_wrapper
     {
         auto iter = m_functions.find(FunctionKey { name, WTFMove(unnamedTypes), castReturnType });
         if (iter != m_functions.end()) {
-            if (AST::FunctionDeclaration* function = resolveFunctionOverload(iter->value, types, castReturnType))
+            if (AST::FunctionDeclaration* function = resolveFunctionOverload(iter->value, types, castReturnType, m_currentNameSpace))
                 return function;
         }
     }
@@ -1652,15 +1653,14 @@ void Checker::visit(AST::CallExpression& callExpression)
 
     if (!function) {
         NameContext& nameContext = m_program.nameContext();
-        if (auto* castTypes = nameContext.getTypes(callExpression.name())) {
-            if (castTypes->size() == 1) {
-                AST::NamedType& castType = (*castTypes)[0].get();
-                function = resolveFunction(types, "operator cast"_str, callExpression.codeLocation(), &castType);
-                if (hasError())
-                    return;
-                if (function)
-                    callExpression.setCastData(castType);
-            }
+        auto castTypes = nameContext.getTypes(callExpression.name(), m_currentNameSpace);
+        if (castTypes.size() == 1) {
+            AST::NamedType& castType = castTypes[0].get();
+            function = resolveFunction(types, "operator cast"_str, callExpression.codeLocation(), &castType);
+            if (hasError())
+                return;
+            if (function)
+                callExpression.setCastData(castType);
         }
     }
 

@@ -902,11 +902,12 @@ private:
 RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, Program& program, TypeNamer& typeNamer, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
 {
     auto& vertexShaderEntryPoint = *matchedSemantics.vertexShader;
-    auto& fragmentShaderEntryPoint = *matchedSemantics.fragmentShader;
+    auto* fragmentShaderEntryPoint = matchedSemantics.fragmentShader;
 
     ReachableFunctionsGatherer reachableFunctionsGatherer;
     reachableFunctionsGatherer.Visitor::visit(vertexShaderEntryPoint);
-    reachableFunctionsGatherer.Visitor::visit(fragmentShaderEntryPoint);
+    if (fragmentShaderEntryPoint)
+        reachableFunctionsGatherer.Visitor::visit(*fragmentShaderEntryPoint);
     auto reachableFunctions = reachableFunctionsGatherer.takeReachableFunctions();
 
     auto functionMapping = generateMetalFunctionsMapping(program);
@@ -919,7 +920,7 @@ RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, 
             functionDefinitionWriter.visit(functionDefinition);
     }
 
-    return { functionMapping.get(&vertexShaderEntryPoint), functionMapping.get(&fragmentShaderEntryPoint) };
+    return { functionMapping.get(&vertexShaderEntryPoint), fragmentShaderEntryPoint ? functionMapping.get(fragmentShaderEntryPoint) : MangledFunctionName { 0 } };
 }
 
 ComputeMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, Program& program, TypeNamer& typeNamer, MatchedComputeSemantics&& matchedSemantics, Layout& layout)

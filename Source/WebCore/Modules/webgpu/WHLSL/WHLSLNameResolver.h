@@ -46,6 +46,8 @@ public:
 
     virtual ~NameResolver();
 
+    void setCurrentNameSpace(AST::NameSpace nameSpace) { m_currentNameSpace = nameSpace; }
+
 private:
     void visit(AST::FunctionDefinition&) override;
     void visit(AST::NativeFunctionDeclaration&) override;
@@ -63,6 +65,7 @@ private:
     NameContext& m_nameContext;
     HashSet<AST::TypeReference*> m_typeReferences;
     NameResolver* m_parentNameResolver { nullptr };
+    AST::NameSpace m_currentNameSpace { AST::NameSpace::StandardLibrary };
 };
 
 Expected<void, Error> resolveNamesInTypes(Program&, NameResolver&);
