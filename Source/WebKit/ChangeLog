@@ -1,3 +1,15 @@
+2019-08-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fixes for non-unified builds after r248547
+        https://bugs.webkit.org/show_bug.cgi?id=201044
+
+        Reviewed by Philippe Normand.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp: Add missing inclusion of
+        the wtf/CrossThreadCopier.h header.
+        * WebProcess/WebStorage/StorageNamespaceImpl.h: Add missing inclusion of the
+        WebCore/PageIdentifier.h header.
+
 2019-08-22  Alex Christensen  <achristensen@webkit.org>
 
         Disable legacy TLS versions and add a temporary default to re-enable it

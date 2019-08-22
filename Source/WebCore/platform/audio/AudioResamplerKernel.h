@@ -27,6 +27,8 @@
 
 #include "AudioArray.h"
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
 class AudioResampler;

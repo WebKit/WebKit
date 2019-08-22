@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmCallee.h"
 #include "WasmContext.h"
 #include "WasmModule.h"
 #include "WasmOperations.h"
@@ -34,7 +35,6 @@
 
 namespace JSC {
 
-class BBQCallee;
 class CallLinkInfo;
 
 namespace Wasm {

@@ -1,3 +1,16 @@
+2019-08-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fixes for non-unified builds after r248547
+        https://bugs.webkit.org/show_bug.cgi?id=201044
+
+        Reviewed by Philippe Normand.
+
+        * b3/B3ReduceLoopStrength.cpp: Add missing inclusions of B3BasicBlockInlines.h,
+        B3InsertionSet.h, and B3NaturalLoops.h
+        * wasm/WasmOMGForOSREntryPlan.h: Include WasmCallee.h instead of forward-declaring
+        BBQCallee in order to avoid build failure due to incomplete definition on template
+        expansions.
+
 2019-08-22  Justin Michaud  <justin_michaud@apple.com>
 
         Add missing exception check in canonicalizeLocaleList

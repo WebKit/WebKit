@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StorageNamespaceIdentifier.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
