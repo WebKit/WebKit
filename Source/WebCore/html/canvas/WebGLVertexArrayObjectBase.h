@@ -62,7 +62,7 @@ public:
     void setElementArrayBuffer(WebGLBuffer*);
 
     VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
-    void setVertexAttribState(GC3Duint, GC3Dsizei, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr, WebGLBuffer&);
+    void setVertexAttribState(GC3Duint, GC3Dsizei, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr, WebGLBuffer*);
     void unbindBuffer(WebGLBuffer&);
 
     void setVertexAttribDivisor(GC3Duint index, GC3Duint divisor);

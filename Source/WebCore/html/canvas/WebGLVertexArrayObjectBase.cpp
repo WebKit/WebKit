@@ -49,17 +49,18 @@ void WebGLVertexArrayObjectBase::setElementArrayBuffer(WebGLBuffer* buffer)
     
 }
 
-void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei bytesPerElement, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset, WebGLBuffer& buffer)
+void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei bytesPerElement, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset, WebGLBuffer* buffer)
 {
     GC3Dsizei validatedStride = stride ? stride : bytesPerElement;
     
     auto& state = m_vertexAttribState[index];
     
-    buffer.onAttached();
+    if (buffer)
+        buffer->onAttached();
     if (state.bufferBinding)
         state.bufferBinding->onDetached(context()->graphicsContext3D());
     
-    state.bufferBinding = &buffer;
+    state.bufferBinding = buffer;
     state.bytesPerElement = bytesPerElement;
     state.size = size;
     state.type = type;

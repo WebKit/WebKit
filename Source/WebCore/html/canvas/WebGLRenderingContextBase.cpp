@@ -2042,6 +2042,7 @@ bool WebGLRenderingContextBase::validateIndexArrayPrecise(GC3Dsizei count, GC3De
 
 bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, unsigned primitiveCount)
 {
+#if !USE(ANGLE)
     if (!m_currentProgram)
         return false;
 
@@ -2109,6 +2110,7 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
             return false;
         }
     }
+#endif
     
     return true;
 }
@@ -5029,7 +5031,7 @@ void WebGLRenderingContextBase::vertexAttribPointer(GC3Duint index, GC3Dint size
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "vertexAttribPointer", "bad offset");
         return;
     }
-    if (!m_boundArrayBuffer) {
+    if (!m_boundArrayBuffer && offset) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "vertexAttribPointer", "no bound ARRAY_BUFFER");
         return;
     }
@@ -5045,7 +5047,7 @@ void WebGLRenderingContextBase::vertexAttribPointer(GC3Duint index, GC3Dint size
     }
     GC3Dsizei bytesPerElement = size * typeSize;
 
-    m_boundVertexArrayObject->setVertexAttribState(index, bytesPerElement, size, type, normalized, stride, static_cast<GC3Dintptr>(offset), *m_boundArrayBuffer);
+    m_boundVertexArrayObject->setVertexAttribState(index, bytesPerElement, size, type, normalized, stride, static_cast<GC3Dintptr>(offset), m_boundArrayBuffer.get());
     m_context->vertexAttribPointer(index, size, type, normalized, stride, static_cast<GC3Dintptr>(offset));
 }
 

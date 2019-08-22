@@ -1,3 +1,24 @@
+2019-08-22  Kai Ninomiya  <kainino@chromium.org>
+
+        Pass conformance/attribs WebGL conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=200901
+
+        Reviewed by Alex Christensen.
+
+        Tested by
+        LayoutTests/webgl/*/conformance/attribs/gl-vertexattribpointer.html,
+        LayoutTests/webgl/2.0.0/conformance/more/functions/vertexAttribPointerBadArgs.html,
+        and other conformance/attribs/* tests not included in LayoutTests.
+        LayoutTests/webgl/1.0.2/conformance/more/functions/vertexAttribPointerBadArgs.html
+        fails as expected because it is an old snapshot of an incorrect test.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateVertexAttributes):
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribState):
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+
 2019-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Typing Korean in title field after typing in the body inserts extraneous characters on blog.naver.com
