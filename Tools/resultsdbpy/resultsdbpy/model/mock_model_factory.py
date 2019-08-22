@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import base64
+import io
 import time
 
 import calendar
@@ -30,6 +32,32 @@ from resultsdbpy.model.model import Model
 
 
 class MockModelFactory(object):
+    ARCHIVE_ZIP = """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"""
+    THREE_WEEKS = 60 * 60 * 24 * 21
 
     @classmethod
     def create(cls, redis, cassandra, async_processing=False):
@@ -116,7 +144,7 @@ class MockModelFactory(object):
 
         with model.upload_context:
             current = time.time()
-            old = current - 60 * 60 * 24 * 21
+            old = current - cls.THREE_WEEKS
             for complete_configuration in configurations:
                 if complete_configuration != configuration:
                     continue
@@ -129,7 +157,7 @@ class MockModelFactory(object):
                 cls.iterate_all_commits(model, lambda commits: model.upload_context.upload_test_results(complete_configuration, commits, suite=suite, test_results=test_results, timestamp=timestamp_to_use))
 
     @classmethod
-    def process_results(self, model, configuration=Configuration(), suite='layout-tests'):
+    def process_results(cls, model, configuration=Configuration(), suite='layout-tests'):
         configurations = [configuration] if configuration.is_complete() else ConfigurationContextTest.CONFIGURATIONS
 
         with model.upload_context:
@@ -147,3 +175,22 @@ class MockModelFactory(object):
                                 configuration=config, commits=result['commits'], suite=suite,
                                 test_results=result['test_results'], timestamp=result['timestamp'],
                             )
+
+    @classmethod
+    def add_mock_archives(cls, model, configuration=Configuration(), suite='layout-tests', archive=None):
+        archive = archive or io.BytesIO(base64.b64decode(cls.ARCHIVE_ZIP))
+        configurations = [configuration] if configuration.is_complete() else ConfigurationContextTest.CONFIGURATIONS
+
+        with model.upload_context:
+            current = time.time()
+            old = current - cls.THREE_WEEKS
+            for complete_configuration in configurations:
+                if complete_configuration != configuration:
+                    continue
+
+                timestamp_to_use = current
+                if (complete_configuration.platform == 'Mac' and complete_configuration.version <= Configuration.version_to_integer('10.13')) \
+                   or (complete_configuration.platform == 'iOS' and complete_configuration.version <= Configuration.version_to_integer('11')):
+                    timestamp_to_use = old
+
+                cls.iterate_all_commits(model, lambda commits: model.archive_context.register(archive, complete_configuration, commits, suite=suite, timestamp=timestamp_to_use))

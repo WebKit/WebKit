@@ -1,3 +1,33 @@
+2019-08-21  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Add database table to save zip archives to
+        https://bugs.webkit.org/show_bug.cgi?id=200718
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/archive_context.py: Added.
+        (ArchiveContext):
+        (ArchiveContext.ArchivesByCommit): Store archives to be retrieved by commit and configuration.
+        (ArchiveContext.ArchivesByCommit.unpack):
+        (ArchiveContext.assert_zipfile):
+        (ArchiveContext.open_zipfile):
+        (ArchiveContext.__init__):
+        (ArchiveContext.__enter__):
+        (ArchiveContext.__exit__):
+        (ArchiveContext.register): Save the provided archive to Cassandra.
+        (ArchiveContext.find_archive): Find all archives matching the specified criteria.
+        (ArchiveContext._files_for_archive):
+        (ArchiveContext.ls): List all files in the matching archives.
+        (ArchiveContext.file): Extract a file from the matching archives.
+        * resultsdbpy/resultsdbpy/model/archive_context_unittest.py: Added.
+        (ArchiveContextTest):
+        * resultsdbpy/resultsdbpy/model/mock_model_factory.py:
+        (MockModelFactory):
+        (MockModelFactory.process_results):
+        (MockModelFactory.add_mock_archives):
+        * resultsdbpy/resultsdbpy/model/model.py:
+        (Model.__init__): Add an ArchiveContext to the model.
+
 2019-08-21  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] view layout test results option should be displayed next to layout-test build step

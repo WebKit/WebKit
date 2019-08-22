@@ -23,6 +23,7 @@
 import traceback
 import sys
 
+from resultsdbpy.model.archive_context import ArchiveContext
 from resultsdbpy.model.ci_context import CIContext
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ConfigurationContext
@@ -73,6 +74,12 @@ class Model(object):
 
         for context in [self.suite_context, self.test_context, self.ci_context]:
             self.upload_context.register_upload_callback(context.name, context.register)
+
+        self.archive_context = ArchiveContext(
+            configuration_context=self.configuration_context,
+            commit_context=self.commit_context,
+            ttl_seconds=self.default_ttl_seconds,
+        )
 
     def do_work(self):
         if not self._async_processing:
