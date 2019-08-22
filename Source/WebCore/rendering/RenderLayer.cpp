@@ -2701,8 +2701,11 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             targetRect.move(0, frameView.headerHeight());
 
             LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
-            ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
-            frameView.setScrollPosition(clampedScrollPosition);
+            // Avoid scrolling to the rounded value of revealRect.location() if we don't actually need to scroll
+            if (revealRect != viewRect) {
+                ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
+                frameView.setScrollPosition(clampedScrollPosition);
+            }
 
             // This is the outermost view of a web page, so after scrolling this view we
             // scroll its container by calling Page::scrollRectIntoView.

@@ -1,3 +1,16 @@
+2019-08-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Do not adjust viewport if editing selection is already visible
+        https://bugs.webkit.org/show_bug.cgi?id=200907
+        <rdar://problem/53903417>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/autoscroll-input-when-very-zoomed-expected.txt: Added.
+        * fast/scrolling/ios/autoscroll-input-when-very-zoomed.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.immediateZoomToScale):
+
 2019-08-21  Tim Horton  <timothy_horton@apple.com>
 
         [Mail] Tapping top of message scrolls back to copied text instead of top of the message

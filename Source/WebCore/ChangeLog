@@ -1,3 +1,23 @@
+2019-08-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Do not adjust viewport if editing selection is already visible
+        https://bugs.webkit.org/show_bug.cgi?id=200907
+        <rdar://problem/53903417>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/scrolling/ios/autoscroll-input-when-very-zoomed.html
+
+        Currently due to scrolling being mostly handled by integers, we are getting
+        issues with rounding errors when trying to adjust the viewport while
+        editing text when we are significantly zoomed in. The real fix would be to 
+        start dealing with scrolling with floats/doubles, but until such time,
+        we should early out of adjusting selections that we are certain are currently
+        visible.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2019-08-21  Tim Horton  <timothy_horton@apple.com>
 
         [Mail] Tapping top of message scrolls back to copied text instead of top of the message
