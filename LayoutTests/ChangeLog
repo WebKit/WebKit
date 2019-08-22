@@ -1,5 +1,23 @@
 2019-08-21  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248964. rdar://problem/54561673
+
+    Unreviewed test gardening, land test expectations for rdar://54561673.
+    
+    * platform/ios/TestExpectations:
+    * platform/ios-12/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248964 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed test gardening, land test expectations for rdar://54561673.
+
+            * platform/ios/TestExpectations:
+            * platform/ios-12/TestExpectations:
+
+2019-08-21  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248917. rdar://problem/53829560
 
     Updating Expectations for Multiple Newly Passing Tests.
