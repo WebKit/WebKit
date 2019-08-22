@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2019 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -621,7 +621,7 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 
 #endif // CPU(ARM64)
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
@@ -634,7 +634,7 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint6
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
@@ -646,7 +646,7 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint6
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
@@ -657,7 +657,7 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint6
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
@@ -667,7 +667,7 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint6
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
@@ -676,7 +676,7 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint6
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint64_t misc1)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
@@ -684,7 +684,7 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason, uint6
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason)
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     __asm__ volatile (CRASH_INST : : "r"(reasonGPR));
@@ -693,13 +693,13 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason)
 
 #else
 
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t) { CRASH(); }
 
 #endif // OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
 
