@@ -30,6 +30,7 @@
 #include "MiniBrowserLibResource.h"
 #include "WebKitLegacyBrowserWindow.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <sstream>
 
 #if ENABLE(WEBKIT)
 #include "WebKitBrowserWindow.h"
@@ -115,16 +116,16 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
     EnableMenuItem(GetMenu(m_hMainWnd), IDM_NEW_WEBKIT_WINDOW, MF_GRAYED);
 #endif
 
-    float scaleFactor = WebCore::deviceScaleFactorForWindow(nullptr);
     m_hBackButtonWnd = CreateWindow(L"BUTTON", L"<", WS_CHILD | WS_VISIBLE  | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_HISTORY_BACKWARD), hInstance, 0);
     m_hForwardButtonWnd = CreateWindow(L"BUTTON", L">", WS_CHILD | WS_VISIBLE | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_HISTORY_FORWARD), hInstance, 0);
     m_hReloadButtonWnd = CreateWindow(L"BUTTON", L"↺", WS_CHILD | WS_VISIBLE | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_RELOAD), hInstance, 0);
     m_hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 0, 0, 0, 0, m_hMainWnd, 0, hInstance, 0);
+    m_hProgressIndicator = CreateWindow(L"STATIC", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, m_hMainWnd, 0, hInstance, 0);
 
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
     SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
 
-    m_browserWindow = factory(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView);
+    m_browserWindow = factory(*this, m_hMainWnd, m_hURLBarWnd, usesLayeredWebView);
     if (!m_browserWindow)
         return false;
     HRESULT hr = m_browserWindow->init();
@@ -150,7 +151,8 @@ void MainWindow::resizeSubViews()
     MoveWindow(m_hBackButtonWnd, 0, 0, width, height, TRUE);
     MoveWindow(m_hForwardButtonWnd, width, 0, width, height, TRUE);
     MoveWindow(m_hReloadButtonWnd, width * 2, 0, width, height, TRUE);
-    MoveWindow(m_hURLBarWnd, width * 3, 0, rcClient.right - width * 3, height, TRUE);
+    MoveWindow(m_hURLBarWnd, width * 3, 0, rcClient.right - width * 5, height, TRUE);
+    MoveWindow(m_hProgressIndicator, rcClient.right - width * 2, 0, width * 2, height, TRUE);
 
     if (m_browserWindow->usesLayeredWebView() || !m_browserWindow->hwnd())
         return;
@@ -472,4 +474,16 @@ void MainWindow::updateDeviceScaleFactor()
     m_hURLBarFont = ::CreateFont(fontHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
         OUT_TT_ONLY_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_DONTCARE, L"Tahoma");
     ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(m_hURLBarFont), TRUE);
+}
+
+void MainWindow::progressChanged(double progress)
+{
+    std::wostringstream text;
+    text << static_cast<int>(progress * 100) << L'%';
+    SetWindowText(m_hProgressIndicator, text.str().c_str());
+}
+
+void MainWindow::progressFinished()
+{
+    SetWindowText(m_hProgressIndicator, L"");
 }

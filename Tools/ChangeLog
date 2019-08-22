@@ -1,3 +1,37 @@
+2019-08-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Add a progress indicator to the main window
+        https://bugs.webkit.org/show_bug.cgi?id=200970
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/win/BrowserWindow.h: Added BrowserWindowClient class.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        (MainWindow::resizeSubViews):
+        (MainWindow::progressChanged):
+        (MainWindow::progressFinished):
+        * MiniBrowser/win/MainWindow.h: Inherited BrowserWindowClient.
+        Added m_hProgressIndicator.
+        (MainWindow::hwnd const): Deleted.
+        (MainWindow::browserWindow const): Deleted.
+        (): Deleted.
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::onNotify):
+        * MiniBrowser/win/MiniBrowserWebHost.h:
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::create):
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::didChangeIsLoading):
+        (WebKitBrowserWindow::didChangeEstimatedProgress):
+        (WebKitBrowserWindow::createNewPage):
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::create):
+        (WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow):
+        (WebKitLegacyBrowserWindow::init):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+
 2019-08-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r248970.

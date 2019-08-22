@@ -166,3 +166,28 @@ HRESULT MiniBrowserWebHost::didFirstLayoutInFrame(_In_opt_ IWebView*, _In_opt_ I
 
     return S_OK;
 }
+
+HRESULT MiniBrowserWebHost::onNotify(_In_opt_ IWebNotification* notification)
+{
+    _bstr_t name;
+    HRESULT hr = notification->name(name.GetAddress());
+    if (FAILED(hr))
+        return hr;
+    if (name == _bstr_t(WebViewProgressEstimateChangedNotification)) {
+        IUnknownPtr object;
+        hr = notification->getObject(&object.GetInterfacePtr());
+        if (FAILED(hr))
+            return hr;
+        IWebViewPtr webView(object);
+        if (!webView)
+            return E_NOINTERFACE;
+        double progress;
+        hr = webView->estimatedProgress(&progress);
+        if (FAILED(hr))
+            return hr;
+        m_client->m_client.progressChanged(progress);
+    } else if (name == _bstr_t(WebViewProgressFinishedNotification))
+        m_client->m_client.progressFinished();
+    
+    return S_OK;
+}

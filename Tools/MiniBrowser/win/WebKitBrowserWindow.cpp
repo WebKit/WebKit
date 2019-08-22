@@ -104,7 +104,7 @@ WKRetainPtr<WKURLRef> createWKURL(const std::wstring& str)
     return adoptWK(WKURLCreateWithUTF8CString(utf8.data()));
 }
 
-Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool)
+Ref<BrowserWindow> WebKitBrowserWindow::create(BrowserWindowClient& client, HWND mainWnd, HWND urlBarWnd, bool)
 {
     auto conf = adoptWK(WKPageConfigurationCreate());
 
@@ -121,11 +121,12 @@ Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, boo
     auto context =adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(conf.get(), context.get());
 
-    return adoptRef(*new WebKitBrowserWindow(conf.get(), mainWnd, urlBarWnd));
+    return adoptRef(*new WebKitBrowserWindow(client, conf.get(), mainWnd, urlBarWnd));
 }
 
-WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainWnd, HWND urlBarWnd)
-    : m_hMainWnd(mainWnd)
+WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConfigurationRef conf, HWND mainWnd, HWND urlBarWnd)
+    : m_client(client)
+    , m_hMainWnd(mainWnd)
     , m_urlBarWnd(urlBarWnd)
 {
     RECT rect = { };
@@ -152,6 +153,8 @@ WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainW
     stateClient.base.version = 0;
     stateClient.base.clientInfo = this;
     stateClient.didChangeTitle = didChangeTitle;
+    stateClient.didChangeIsLoading = didChangeIsLoading;
+    stateClient.didChangeEstimatedProgress = didChangeEstimatedProgress;
     WKPageSetPageStateClient(page, &stateClient.base);
 
     updateProxySettings();
@@ -308,6 +311,20 @@ void WebKitBrowserWindow::didChangeTitle(const void* clientInfo)
     SetWindowText(thisWindow.m_hMainWnd, titleString.c_str());
 }
 
+void WebKitBrowserWindow::didChangeIsLoading(const void* clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    auto page = WKViewGetPage(thisWindow.m_view.get());
+    thisWindow.m_client.progressFinished();
+}
+
+void WebKitBrowserWindow::didChangeEstimatedProgress(const void* clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    auto page = WKViewGetPage(thisWindow.m_view.get());
+    thisWindow.m_client.progressChanged(WKPageGetEstimatedProgress(page));
+}
+
 void WebKitBrowserWindow::didCommitNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
@@ -367,8 +384,8 @@ bool WebKitBrowserWindow::canTrustServerCertificate(WKProtectionSpaceRef protect
 WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     auto& newWindow = MainWindow::create().leakRef();
-    auto factory = [configuration](HWND mainWnd, HWND urlBarWnd, bool) -> auto {
-        return adoptRef(*new WebKitBrowserWindow(configuration, mainWnd, urlBarWnd));
+    auto factory = [configuration](BrowserWindowClient& client, HWND mainWnd, HWND urlBarWnd, bool) -> auto {
+        return adoptRef(*new WebKitBrowserWindow(client, configuration, mainWnd, urlBarWnd));
     };
     bool ok = newWindow.init(factory, hInst);
     if (!ok)

@@ -33,10 +33,10 @@
 
 class WebKitBrowserWindow : public BrowserWindow {
 public:
-    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
+    static Ref<BrowserWindow> create(BrowserWindowClient&, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
 
 private:
-    WebKitBrowserWindow(WKPageConfigurationRef, HWND mainWnd, HWND urlBarWnd);
+    WebKitBrowserWindow(BrowserWindowClient&, WKPageConfigurationRef, HWND mainWnd, HWND urlBarWnd);
 
     HRESULT init() override;
     HWND hwnd() override;
@@ -66,11 +66,14 @@ private:
     bool canTrustServerCertificate(WKProtectionSpaceRef);
 
     static void didChangeTitle(const void*);
+    static void didChangeIsLoading(const void*);
+    static void didChangeEstimatedProgress(const void*);
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void*);
     static WKPageRef createNewPage(WKPageRef, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef, const void *);
     static void didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr, const void*);
 
+    BrowserWindowClient& m_client;
     WKRetainPtr<WKViewRef> m_view;
     HWND m_hMainWnd { nullptr };
     HWND m_urlBarWnd { nullptr };

@@ -31,6 +31,7 @@
 #include <vector>
 #include <wtf/Ref.h>
 
+typedef _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)>> IUnknownPtr;
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
 typedef _com_ptr_t<_com_IIID<IWebViewPrivate2, &__uuidof(IWebViewPrivate2)>> IWebViewPrivatePtr;
@@ -50,7 +51,7 @@ typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWe
 
 class WebKitLegacyBrowserWindow : public BrowserWindow {
 public:
-    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
+    static Ref<BrowserWindow> create(BrowserWindowClient&, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
 
 private:
     friend class AccessibilityDelegate;
@@ -110,10 +111,11 @@ private:
     void updateStatistics(HWND dialog);
     void setPreference(UINT menuID, bool enable);
 
-    WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView);
+    WebKitLegacyBrowserWindow(BrowserWindowClient&, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView);
     void subclassForLayeredWindow();
     bool setCacheFolder();
 
+    BrowserWindowClient& m_client;
     std::vector<IWebHistoryItemPtr> m_historyItems;
 
     IWebViewPtr m_webView;

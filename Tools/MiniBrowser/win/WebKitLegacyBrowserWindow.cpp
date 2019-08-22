@@ -58,14 +58,18 @@ float deviceScaleFactorForWindow(HWND);
 static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
+typedef _com_ptr_t<_com_IIID<IWebNotificationObserver, &__uuidof(IWebNotificationObserver)>> IWebNotificationObserverPtr;
+typedef _com_ptr_t<_com_IIID<IWebNotificationCenter, &__uuidof(IWebNotificationCenter)>> IWebNotificationCenterPtr;
 
-Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
+
+Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(BrowserWindowClient& client, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
 {
-    return adoptRef(*new WebKitLegacyBrowserWindow(mainWnd, urlBarWnd, useLayeredWebView));
+    return adoptRef(*new WebKitLegacyBrowserWindow(client, mainWnd, urlBarWnd, useLayeredWebView));
 }
 
-WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
-    : m_hMainWnd(mainWnd)
+WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(BrowserWindowClient& client, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
+    : m_client(client)
+    , m_hMainWnd(mainWnd)
     , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
 {
@@ -106,6 +110,16 @@ HRESULT WebKitLegacyBrowserWindow::init()
     if (FAILED(hr))
         return hr;
 
+    IWebNotificationCenterPtr notificationCenter;
+    hr = WebKitCreateInstance(CLSID_WebNotificationCenter, 0, __uuidof(notificationCenter), reinterpret_cast<void**>(&notificationCenter.GetInterfacePtr()));
+    if (FAILED(hr))
+        return hr;
+
+    IWebNotificationCenterPtr defaultNotificationCenter;
+    hr = notificationCenter->defaultCenter(&defaultNotificationCenter.GetInterfacePtr());
+    if (FAILED(hr))
+        return hr;
+
     if (!seedInitialDefaultPreferences())
         return E_FAIL;
 
@@ -122,6 +136,14 @@ HRESULT WebKitLegacyBrowserWindow::init()
         return hr;
 
     hr = setFrameLoadDelegatePrivate(webHost);
+    if (FAILED(hr))
+        return hr;
+
+    hr = defaultNotificationCenter->addObserver(webHost, _bstr_t(WebViewProgressEstimateChangedNotification), nullptr);
+    if (FAILED(hr))
+        return hr;
+
+    hr = defaultNotificationCenter->addObserver(webHost, _bstr_t(WebViewProgressFinishedNotification), nullptr);
     if (FAILED(hr))
         return hr;
 

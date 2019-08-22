@@ -31,7 +31,7 @@
 
 class WebKitLegacyBrowserWindow;
 
-class MiniBrowserWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
+class MiniBrowserWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate, public IWebNotificationObserver {
 public:
     MiniBrowserWebHost(WebKitLegacyBrowserWindow* client, HWND urlBar)
         : m_client(client), m_hURLBarWnd(urlBar) { }
@@ -70,6 +70,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didFirstLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE didHandleOnloadEventsForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE didFirstVisuallyNonEmptyLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*)  { return S_OK; }
+
+    // IWebNotificationObserver
+    virtual HRESULT STDMETHODCALLTYPE onNotify(_In_opt_ IWebNotification*);
 
     void loadURL(_bstr_t&);
 

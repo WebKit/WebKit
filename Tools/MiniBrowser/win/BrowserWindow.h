@@ -28,6 +28,12 @@
 #include <windows.h>
 #include <wtf/RefCounted.h>
 
+class BrowserWindowClient {
+public:
+    virtual void progressChanged(double) = 0;
+    virtual void progressFinished() = 0;
+};
+
 class BrowserWindow : public RefCounted<BrowserWindow> {
 public:
     virtual ~BrowserWindow() { };
