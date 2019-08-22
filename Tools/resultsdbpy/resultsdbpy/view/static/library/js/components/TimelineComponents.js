@@ -535,7 +535,7 @@ Timeline.ExpandableSeriesWithHeaderExpanderComponent = (mainSeriesWithLable, ...
         })
     }));
     return {
-        header: Timeline.ExpandableHeaderComponent(`<a href="javascript:void(0)" ref="${ref}">+</a>` + mainLabel, subLabels, composer),
+        header: Timeline.ExpandableHeaderComponent(`<a class="link-button" href="javascript:void(0)" ref="${ref}">+</a>` + mainLabel, subLabels, composer),
         series: Timeline.ExpandableSeriesComponent(mainSeries, subSerieses, composer),
     }
 }

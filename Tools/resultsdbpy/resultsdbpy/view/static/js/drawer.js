@@ -59,7 +59,7 @@ function Drawer(controls = []) {
         }
     });
 
-    return `<div class="drawer left under-topbar-with-actions" ref="${drawerRef}">
+    return `<div class="drawer left under-topbar-with-actions unselectable" ref="${drawerRef}">
             ${controls.map(control => {
                 return `<div class="list">
                         <div class="item">${control}</div>
@@ -226,7 +226,7 @@ function ConfigurationSelectors(callback) {
                     }
                 });
 
-                DOM.inject(element, `<a style="cursor: pointer;" class="text medium" ref="${expander}">+</a>
+                DOM.inject(element, `<a class="link-button text medium" ref="${expander}">+</a>
                     ${details.name} <br>
                     ${options.map(option => {
                         let isChecked = false;
@@ -275,7 +275,7 @@ function ConfigurationSelectors(callback) {
             ref.setState(configurations);
         });
 
-        return `<div ref="${ref}"></div>`;
+        return `<div style="font-size: var(--smallSize);" ref="${ref}"></div>`;
     }).join('')
 }
 

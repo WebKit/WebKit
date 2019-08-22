@@ -194,6 +194,11 @@ a:hover {
   text-decoration: underline;
 }
 
+.link-button:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .divider, hr {
   margin-block-start: 0.5em;
   margin-block-end: 0.5em;
@@ -2554,4 +2559,10 @@ pre {
 
 .progress-bar-container .progress-bar.error {
   background: var(--orange);
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
