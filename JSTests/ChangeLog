@@ -1,3 +1,14 @@
+2019-08-21  Mark Lam  <mark.lam@apple.com>
+
+        Wasm::FunctionParser is failing to enforce maxFunctionLocals.
+        https://bugs.webkit.org/show_bug.cgi?id=201016
+        <rdar://problem/54579911>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/stress/too-many-locals.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.catch):
+
 2019-08-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         JSTests/stress/optional-chaining should not call shouldThrowTypeError in a loop

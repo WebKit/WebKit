@@ -115,18 +115,19 @@ FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functio
 template<typename Context>
 auto FunctionParser<Context>::parse() -> Result
 {
-    uint32_t localCount;
+    uint32_t localGroupsCount;
 
     WASM_PARSER_FAIL_IF(!m_context.addArguments(m_signature), "can't add ", m_signature.argumentCount(), " arguments to Function");
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(localCount), "can't get local count");
-    WASM_PARSER_FAIL_IF(localCount > maxFunctionLocals, "Function section's local count is too big ", localCount, " maximum ", maxFunctionLocals);
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(localGroupsCount), "can't get local groups count");
 
-    for (uint32_t i = 0; i < localCount; ++i) {
+    uint64_t totalNumberOfLocals = m_signature.argumentCount();
+    for (uint32_t i = 0; i < localGroupsCount; ++i) {
         uint32_t numberOfLocals;
         Type typeOfLocal;
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfLocals), "can't get Function's number of locals in group ", i);
-        WASM_PARSER_FAIL_IF(numberOfLocals > maxFunctionLocals, "Function section's ", i, "th local group count is too big ", numberOfLocals, " maximum ", maxFunctionLocals);
+        totalNumberOfLocals += numberOfLocals;
+        WASM_PARSER_FAIL_IF(totalNumberOfLocals > maxFunctionLocals, "Function's number of locals is too big ", totalNumberOfLocals, " maximum ", maxFunctionLocals);
         WASM_PARSER_FAIL_IF(!parseValueType(typeOfLocal), "can't get Function local's type in group ", i);
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }

@@ -1,3 +1,21 @@
+2019-08-21  Mark Lam  <mark.lam@apple.com>
+
+        Wasm::FunctionParser is failing to enforce maxFunctionLocals.
+        https://bugs.webkit.org/show_bug.cgi?id=201016
+        <rdar://problem/54579911>
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, Wasm::FunctionParser is allowing
+
+            maxFunctionParams + maxFunctionLocals * maxFunctionLocals
+
+        ... locals, which is 0x9502FCE8.  It should be enforcing max locals of
+        maxFunctionLocals instead.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parse):
+
 2019-08-21  Michael Saboff  <msaboff@apple.com>
 
         [JSC] incorrent JIT lead to StackOverflow
