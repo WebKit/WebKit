@@ -1,5 +1,44 @@
 2019-08-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248978. rdar://problem/54579627
+
+    Adopt AVSystemController_ActiveAudioRouteDidChangeNotification
+    https://bugs.webkit.org/show_bug.cgi?id=200992
+    <rdar://problem/54408993>
+    
+    Reviewed by Eric Carlson.
+    
+    Follow-up to r248962: When the active audio route changes, and the
+    system instructs us to pause, only pause the currently audible sessions.
+    
+    * platform/audio/ios/MediaSessionManagerIOS.h:
+    * platform/audio/ios/MediaSessionManagerIOS.mm:
+    (WebCore::MediaSessionManageriOS::activeAudioRouteDidChange):
+    (-[WebMediaSessionHelper activeAudioRouteDidChange:]):
+    (WebCore::MediaSessionManageriOS::activeRouteDidChange): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248978 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-21  Jer Noble  <jer.noble@apple.com>
+
+            Adopt AVSystemController_ActiveAudioRouteDidChangeNotification
+            https://bugs.webkit.org/show_bug.cgi?id=200992
+            <rdar://problem/54408993>
+
+            Reviewed by Eric Carlson.
+
+            Follow-up to r248962: When the active audio route changes, and the
+            system instructs us to pause, only pause the currently audible sessions.
+
+            * platform/audio/ios/MediaSessionManagerIOS.h:
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            (WebCore::MediaSessionManageriOS::activeAudioRouteDidChange):
+            (-[WebMediaSessionHelper activeAudioRouteDidChange:]):
+            (WebCore::MediaSessionManageriOS::activeRouteDidChange): Deleted.
+
+2019-08-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248962. rdar://problem/54579627
 
     Adopt AVSystemController_ActiveAudioRouteDidChangeNotification

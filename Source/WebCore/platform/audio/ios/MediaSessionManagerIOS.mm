@@ -226,13 +226,13 @@ void MediaSessionManageriOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIs
     setIsPlayingToAutomotiveHeadUnit([[[getAVSystemControllerClass() sharedAVSystemController] attributeForKey:getAVSystemController_CarPlayIsConnectedAttribute()] boolValue]);
 }
 
-void MediaSessionManageriOS::activeRouteDidChange(Optional<bool>&& shouldPause)
+void MediaSessionManageriOS::activeAudioRouteDidChange(Optional<bool>&& shouldPause)
 {
     if (!shouldPause || !shouldPause.value())
         return;
 
     forEachSession([](auto& session) {
-        if (!session.shouldOverridePauseDuringRouteChange())
+        if (session.canProduceAudio() && !session.shouldOverridePauseDuringRouteChange())
             session.pauseSession();
     });
 }
@@ -515,7 +515,7 @@ void MediaSessionManageriOS::activeRouteDidChange(Optional<bool>&& shouldPause)
 
     callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), shouldPause = WTFMove(shouldPause)]() mutable {
         if (auto* callback = protectedSelf->_callback)
-            callback->activeRouteDidChange(WTFMove(shouldPause));
+            callback->activeAudioRouteDidChange(WTFMove(shouldPause));
     });
 
 }
