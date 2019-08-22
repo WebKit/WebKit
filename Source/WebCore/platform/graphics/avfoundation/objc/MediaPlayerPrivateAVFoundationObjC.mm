@@ -1836,6 +1836,12 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         hasAudio |= (m_audibleGroup && m_audibleGroup->selectedOption());
         hasVideo |= (m_visualGroup && m_visualGroup->selectedOption());
 
+        // HLS streams will occasionally recreate all their tracks; during seek and after
+        // buffering policy changes. "debounce" notifications which result in no enabled
+        // audio tracks by also taking AVPlayerItem.hasEnabledAudio into account when determining
+        // whethere there is any audio present.
+        hasAudio |= m_cachedHasEnabledAudio;
+
         // Always says we have video if the AVPlayerLayer is ready for diaplay to work around
         // an AVFoundation bug which causes it to sometimes claim a track is disabled even
         // when it is not.
