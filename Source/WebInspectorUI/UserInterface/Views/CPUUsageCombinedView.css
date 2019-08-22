@@ -38,7 +38,7 @@
 }
 
 .cpu-usage-combined-view > .graph > .stacked-area-chart {
-    height: calc(var(--cpu-usage-combined-view-height));
+    height: var(--cpu-usage-combined-view-height);
 }
 
 .cpu-usage-combined-view > .graph > .range-chart {

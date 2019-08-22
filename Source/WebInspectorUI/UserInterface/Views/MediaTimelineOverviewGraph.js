@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
@@ -116,5 +115,3 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
         this.needsLayout();
     }
 };
-
-WI.MediaTimelineOverviewGraph.MaximumRowCount = 6;

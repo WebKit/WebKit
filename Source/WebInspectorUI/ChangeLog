@@ -1,5 +1,19 @@
 2019-08-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Cleanup some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=201041
+
+        Reviewed by Alex Christensen.
+
+        * UserInterface/Views/CPUUsageCombinedView.css:
+        (.cpu-usage-combined-view > .graph > .stacked-area-chart):
+        * UserInterface/Views/CPUUsageCombinedView.js:
+        (WI.CPUUsageCombinedView):
+        * UserInterface/Views/MediaTimelineOverviewGraph.js:
+        (WI.MediaTimelineOverviewGraph):
+
+2019-08-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Provide an engineering option to log protocol traffic as text
         https://bugs.webkit.org/show_bug.cgi?id=200969
 

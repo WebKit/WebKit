@@ -243,6 +243,3 @@ WI.CPUUsageCombinedView = class CPUUsageCombinedView extends WI.View
         this._detailsMaxElement.textContent = WI.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.percentageString(maxSize / 100) : emDash);
     }
 };
-
-WI.CPUUsageCombinedView._cachedMainThreadIndicatorFillColor = null;
-WI.CPUUsageCombinedView._cachedMainThreadIndicatorStrokeColor = null;
