@@ -1,3 +1,13 @@
+2019-08-22  Tim Horton  <timothy_horton@apple.com>
+
+        Rebaseline some editing tests after r248974
+        https://bugs.webkit.org/show_bug.cgi?id=200999
+        <rdar://problem/54564878>
+
+        * platform/ios/editing/deleting/smart-delete-003-expected.txt:
+        * platform/ios/editing/deleting/smart-delete-004-expected.txt:
+        * platform/ios/editing/pasteboard/smart-paste-008-expected.txt:
+
 2019-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Typing Korean in title field after typing in the body inserts extraneous characters on blog.naver.com
