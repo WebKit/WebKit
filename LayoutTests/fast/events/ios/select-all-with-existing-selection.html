@@ -26,20 +26,18 @@ function testSelectAll()
         UIHelper.keyDown("a", ["metaKey"]);
 }
 
-function runTest()
+async function runTest()
 {
     let testElement = document.getElementById("test");
     console.assert(testElement.value.indexOf("word") !== -1);
-    function handleFocus() {
-        document.addEventListener("selectionchange", testSelectAll, { once: true });
-        testElement.setSelectionRange(testElement.value.indexOf("word"), testElement.value.length);
-    }
-    testElement.addEventListener("focus", handleFocus, { once: true });
 
     if (window.testRunner)
-        UIHelper.activateElement(testElement);
+        await UIHelper.activateElement(testElement);
     else
         testElement.focus();
+
+    document.addEventListener("selectionchange", testSelectAll, { once: true });
+    testElement.setSelectionRange(testElement.value.indexOf("word"), testElement.value.length);
 }
 
 description("This tests that pressing Command + A selects all the text even when there is an existing range selction. To run this test by hand, press Command + A.");
