@@ -73,7 +73,7 @@ bool deleteFile(const String& path)
 
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     bool unlinked = !unlink(fsRep.data());
-    if (!unlinked)
+    if (!unlinked && errno != ENOENT)
         LOG_ERROR("File failed to delete. Error message: %s", strerror(errno));
 
     return unlinked;

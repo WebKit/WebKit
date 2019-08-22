@@ -1,3 +1,16 @@
+2019-08-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        Logging in FileSystem::deleteFile should avoid logging unsurprising errors
+        https://bugs.webkit.org/show_bug.cgi?id=200831
+
+        Reviewed by Chris Dumez.
+
+        To avoid overlogging unnecessary information, added a check to avoid logging
+        ENOENT (file not found) errors.
+
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::deleteFile):
+
 2019-08-22  Alex Christensen  <achristensen@webkit.org>
 
         Disable legacy TLS versions and add a temporary default to re-enable it
