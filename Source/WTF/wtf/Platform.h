@@ -1089,7 +1089,8 @@
 #define ENABLE_DATA_DETECTION 1
 #endif
 
-#if !PLATFORM(APPLETV)
+/* FIXME: Enable HAVE_PARENTAL_CONTROLS for watchOS Simulator once rdar://problem/54608386 is resolved */
+#if !PLATFORM(APPLETV) && (!PLATFORM(WATCHOS) || !PLATFORM(IOS_FAMILY_SIMULATOR))
 #define HAVE_PARENTAL_CONTROLS 1
 #endif
 
