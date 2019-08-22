@@ -159,7 +159,7 @@ private:
     bool canProduceAudio() const final;
     Document* hostingDocument() const final { return document(); }
     bool processingUserGestureForMedia() const final;
-    bool shouldOverridePauseDuringRouteChange() const { return true; }
+    bool shouldOverridePauseDuringRouteChange() const final { return true; }
 
     // ActiveDOMObject API.
     void stop() final;
