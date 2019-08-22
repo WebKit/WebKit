@@ -1,3 +1,19 @@
+2019-08-22  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r248997. rdar://problem/54579627
+
+    Unreviewed build fix; add a 'final' declaration on shouldOverridePauseDuringRouteChange().
+    
+    * Modules/mediastream/MediaStream.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248997 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-21  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; add a 'final' declaration on shouldOverridePauseDuringRouteChange().
+
+            * Modules/mediastream/MediaStream.h:
+
 2019-08-21  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r248978. rdar://problem/54579627
