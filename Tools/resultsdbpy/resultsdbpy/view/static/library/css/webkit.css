@@ -2270,8 +2270,8 @@ pre {
   vertical-align: top;
 }
 
-.input>input[type="text"][required]:disabled, .input>input[type="number"][required]:disabled,
-.input>input[type="password"][required]:disabled, .input>input[type="email"][required]:disabled, .input>select:disabled {
+.input>input[type="text"][required][disabled], .input>input[type="number"][required][disabled],
+.input>input[type="password"][required][disabled], .input>input[type="email"][required][disabled], .input>select[disabled] {
   border: 1px solid var(--greyLighter);
 }
 
@@ -2294,9 +2294,16 @@ pre {
   z-index: 1;
 }
 
-.input>input[type="text"][required]:disabled~label, .input>input[type="number"][required]:disabled~label,
-.input>input[type="password"][required]:disabled~label, .input>input[type="email"][required]:disabled~label, .input>select:disabled~label {
+.input>input[type="text"][required][disabled], .input>input[type="number"][required][disabled],
+.input>input[type="password"][required][disabled], .input>input[type="email"][required][disabled], .input>select[disabled] {
+  color: var(--greyDarker);
+}
+
+.input>input[type="text"][required][disabled]~label, .input>input[type="number"][required][disabled]~label,
+.input>input[type="password"][required][disabled]~label, .input>input[type="email"][required][disabled]~label, .input>select[disabled]~label {
   color: var(--grey);
+  font-size: var(--tinySize);
+  top: 4px;
 }
 
 
@@ -2337,13 +2344,14 @@ pre {
     color: var(--grey);
   }
 
-  .input>input[type="text"][required]:disabled, .input>input[type="number"][required]:disabled,
-  .input>input[type="password"][required]:disabled, .input>input[type="email"][required]:disabled, .input>select:disabled {
+  .input>input[type="text"][required][disabled], .input>input[type="number"][required][disabled],
+  .input>input[type="password"][required][disabled], .input>input[type="email"][required][disabled], .input>select[disabled] {
     border: 1px solid var(--greyDarker);
+    color: var(--blackDark);
   }
 
-  .input>input[type="text"][required]:disabled~label, .input>input[type="number"][required]:disabled~label,
-  .input>input[type="password"][required]:disabled~label, .input>input[type="email"][required]:disabled~label, .input>select:disabled~label {
+  .input>input[type="text"][required][disabled]~label, .input>input[type="number"][required][disabled]~label,
+  .input>input[type="password"][required][disabled]~label, .input>input[type="email"][required][disabled]~label, .input>select[disabled]~label {
     color: var(--greyDarker);
   }
 
