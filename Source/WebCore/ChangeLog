@@ -1,3 +1,19 @@
+2019-08-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash may happen when an SVG <feImage> element references the root <svg> element
+        https://bugs.webkit.org/show_bug.cgi?id=201014
+
+        Reviewed by Ryosuke Niwa.
+
+        When an <feImage> references an <svg> element as its target image but
+        this <svg> element is also one of the ancestors of the <feImage>, the
+        parent <filter> should not be applied.
+
+        Test: svg/filters/filter-image-ref-root.html
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build const):
+
 2019-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make ImageBuffer and SVG's FilterData isoheap'ed

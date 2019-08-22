@@ -1,3 +1,16 @@
+2019-08-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash may happen when an SVG <feImage> element references the root <svg> element
+        https://bugs.webkit.org/show_bug.cgi?id=201014
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensure the cyclic reference between the <feImage> renderer and its
+        ancestor <svg> root renderer is broken.
+
+        * svg/filters/filter-image-ref-root-expected.txt: Added.
+        * svg/filters/filter-image-ref-root.html: Added.
+
 2019-08-22  Tim Horton  <timothy_horton@apple.com>
 
         Rebaseline some editing tests after r248974

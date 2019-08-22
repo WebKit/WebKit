@@ -185,6 +185,11 @@ RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter& filter)
 {
     if (m_cachedImage)
         return FEImage::createWithImage(filter, m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());
+
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
+    if (isDescendantOrShadowDescendantOf(target.element.get()))
+        return nullptr;
+
     return FEImage::createWithIRIReference(filter, treeScope(), href(), preserveAspectRatio());
 }
 
