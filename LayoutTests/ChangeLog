@@ -1,3 +1,20 @@
+2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SVG element should become focusable when focus and key event listeners are added
+        https://bugs.webkit.org/show_bug.cgi?id=200997
+
+        Reviewed by Said Abou-Hallawa.
+
+        Updated existing tests to set tabIndex where appropriate, and added SVG elements
+        without tabindex content attribute to tabindex-order.html so that the test would
+        skip those elements when sequentially focus navigating across them.
+
+        * svg/custom/add-event-listener-shadow-tree-element.html:
+        * svg/custom/resources/focus-event-handling-keyboard.js:
+        * svg/custom/resources/focus-event-handling.js:
+        * svg/custom/tabindex-order-expected.txt:
+        * svg/custom/tabindex-order.html: Added test cases without tabindex.
+
 2019-08-21  Megan Gardner  <megan_gardner@apple.com>
 
         Do not adjust viewport if editing selection is already visible

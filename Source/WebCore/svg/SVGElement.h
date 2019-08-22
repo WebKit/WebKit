@@ -116,7 +116,6 @@ public:
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
-    bool hasFocusEventListeners() const;
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
 
@@ -152,9 +151,6 @@ public:
 protected:
     SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
-
-    bool isMouseFocusable() const override;
-    bool supportsFocus() const override { return false; }
 
     bool rendererIsNeeded(const RenderStyle&) override;
     void parseAttribute(const QualifiedName&, const AtomString&) override;

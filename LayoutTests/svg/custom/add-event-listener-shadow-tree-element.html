@@ -19,6 +19,7 @@
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
             }
+            use1.tabIndex = 0;
             use1.setAttribute("onfocusin", "eventhandler()");
             use1.focus();
         }

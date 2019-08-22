@@ -65,19 +65,29 @@
     <p>To test, put focus in &quot;a&quot;. Pressing Tab should focus &quot;a&quot; through &quot;k&quot; in order, and pressing Shift-Tab should reverse the order.</p>
     <svg>
         <rect class="tab" tabindex="6" id="g" width="1" height="1"/>
+        <rect class="tab" id="rect without tabindex is not focusable" width="1" height="1"/>
         <circle class="tab" tabindex="1" id="a" r="1" cx="0" cy="0"/>
+        <circle class="tab" id="circle without tabindex is not focusable" r="1" cx="0" cy="0"/>
         <rect class="tab" tabindex="-5" id="not in tab order (negative tabindex)" width="1" height="1"/>
         <g class="tab" tabindex="1" id="b"/>
+        <g class="tab" id="g without tabindex is not focusable"/>
         <svg class="tab" tabindex="0" id="i" width="1" height="1"/>
         <text class="tab" tabindex="6" id="h" width="1" height="1"/>
+        <text class="tab" id="text without tabindex is not focusable" width="1" height="1"/>
         <ellipse class="tab" tabindex="1" id="c" rx="1" ry="1" cx="0" cy="0"/>
-        <symbol class="tab" tabindex="1" id="symbol is not focusable" width="1" height="1"/>
+        <ellipse class="tab" id="ellipse without tabindex is not focusable" rx="1" ry="1" cx="0" cy="0"/>
+        <symbol class="tab" tabindex="1" id="symbol" width="1" height="1"/>
+        <symbol class="tab" id="symbol without tabindex is not focusable" width="1" height="1"/>
         <defs class="tab" tabindex="1" id="defs is not focusable"/>
         <path class="tab" tabindex="1" id="d" d="M0,0"/>
+        <path class="tab" id="path without tabindex is not focusable" d="M0,0"/>
         <line class="tab" tabindex="0" id="j" x1="1" x2="1" y1="0" y2="0"/>
+        <line class="tab" id="line without tabindex is not focusable" x1="1" x2="1" y1="0" y2="0"/>
         <rect class="tab" tabindex="-1" id="not in tab order (negative tabindex)" width="1" height="1"/>
         <polygon class="tab" tabindex="0" id="k" points="1,1 2,2"/>
+        <polygon class="tab" id="polygon without tabindex is not focusable" points="1,1 2,2"/>
         <polyline class="tab" tabindex="4" id="f" points="1,1 2,2"/>
+        <polyline class="tab" id="polyline without tabindex is not focusable" points="1,1 2,2"/>
         <a class="tab" tabindex="3" id="e"><rect width="1" height="1"/></a>
     </svg>
 

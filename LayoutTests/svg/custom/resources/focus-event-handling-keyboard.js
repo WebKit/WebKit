@@ -22,16 +22,22 @@ function focusoutHandler(evt)
     focusoutSeen = evt.target.getAttribute('id');
 }
 
+rectElement.tabIndex = 0;
 rectElement.setAttribute("onfocusin", "focusinHandler(evt)");
 rectElement.setAttribute("onfocusout", "focusoutHandler(evt)");
+gElement.tabIndex = 0;
 gElement.setAttribute("onfocusin", "focusinHandler(evt)");
 gElement.setAttribute("onfocusout", "focusoutHandler(evt)");
+useElement.tabIndex = 0;
 useElement.setAttribute("onfocusin", "focusinHandler(evt)");
 useElement.setAttribute("onfocusout", "focusoutHandler(evt)");
+useElement2.tabIndex = 0;
 useElement2.setAttribute("onfocusin", "focusinHandler(evt)");
 useElement2.setAttribute("onfocusout", "focusoutHandler(evt)");
+switchElement.tabIndex = 0;
 switchElement.setAttribute("onfocusin", "focusinHandler(evt)");
 switchElement.setAttribute("onfocusout", "focusoutHandler(evt)");
+imgElement.tabIndex = 0;
 imgElement.setAttribute("onfocusin", "focusinHandler(evt)");
 imgElement.setAttribute("onfocusout", "focusoutHandler(evt)");
 

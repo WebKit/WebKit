@@ -983,26 +983,6 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
     }
 }
 
-bool SVGElement::hasFocusEventListeners() const
-{
-    Element* eventTarget = const_cast<SVGElement*>(this);
-    return eventTarget->hasEventListeners(eventNames().focusinEvent)
-        || eventTarget->hasEventListeners(eventNames().focusoutEvent)
-        || eventTarget->hasEventListeners(eventNames().focusEvent)
-        || eventTarget->hasEventListeners(eventNames().blurEvent);
-}
-
-bool SVGElement::isMouseFocusable() const
-{
-    if (!isFocusable())
-        return false;
-    Element* eventTarget = const_cast<SVGElement*>(this);
-    return hasFocusEventListeners()
-        || eventTarget->hasEventListeners(eventNames().keydownEvent)
-        || eventTarget->hasEventListeners(eventNames().keyupEvent)
-        || eventTarget->hasEventListeners(eventNames().keypressEvent);
-}
-    
 void SVGElement::accessKeyAction(bool sendMouseEvents)
 {
     dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);

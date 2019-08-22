@@ -161,7 +161,7 @@ bool SVGAElement::supportsFocus() const
     if (hasEditableStyle())
         return SVGGraphicsElement::supportsFocus();
     // If not a link we should still be able to focus the element if it has a tabIndex.
-    return isLink() || Element::supportsFocus();
+    return isLink() || SVGGraphicsElement::supportsFocus();
 }
 
 bool SVGAElement::isURLAttribute(const Attribute& attribute) const
