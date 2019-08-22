@@ -1,5 +1,58 @@
 2019-08-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248962. rdar://problem/54579627
+
+    Adopt AVSystemController_ActiveAudioRouteDidChangeNotification
+    https://bugs.webkit.org/show_bug.cgi?id=200992
+    <rdar://problem/54408993>
+    
+    Reviewed by Eric Carlson.
+    
+    When the system notifies us that the active audio route has changed in such a way
+    that necessitates pausing, pause all media sessions, exempting those that are
+    associated with WebRTC, since "pausing" an active audio conference isn't really
+    possible.
+    
+    * Modules/mediastream/MediaStream.h:
+    * platform/audio/PlatformMediaSession.cpp:
+    (WebCore::PlatformMediaSession::shouldOverridePauseDuringRouteChange const):
+    * platform/audio/PlatformMediaSession.h:
+    (WebCore::PlatformMediaSessionClient::shouldOverridePauseDuringRouteChange const):
+    * platform/audio/ios/MediaSessionManagerIOS.h:
+    * platform/audio/ios/MediaSessionManagerIOS.mm:
+    (WebCore::MediaSessionManageriOS::activeRouteDidChange):
+    (-[WebMediaSessionHelper initWithCallback:]):
+    (-[WebMediaSessionHelper activeAudioRouteDidChange:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248962 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-21  Jer Noble  <jer.noble@apple.com>
+
+            Adopt AVSystemController_ActiveAudioRouteDidChangeNotification
+            https://bugs.webkit.org/show_bug.cgi?id=200992
+            <rdar://problem/54408993>
+
+            Reviewed by Eric Carlson.
+
+            When the system notifies us that the active audio route has changed in such a way
+            that necessitates pausing, pause all media sessions, exempting those that are
+            associated with WebRTC, since "pausing" an active audio conference isn't really
+            possible.
+
+            * Modules/mediastream/MediaStream.h:
+            * platform/audio/PlatformMediaSession.cpp:
+            (WebCore::PlatformMediaSession::shouldOverridePauseDuringRouteChange const):
+            * platform/audio/PlatformMediaSession.h:
+            (WebCore::PlatformMediaSessionClient::shouldOverridePauseDuringRouteChange const):
+            * platform/audio/ios/MediaSessionManagerIOS.h:
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            (WebCore::MediaSessionManageriOS::activeRouteDidChange):
+            (-[WebMediaSessionHelper initWithCallback:]):
+            (-[WebMediaSessionHelper activeAudioRouteDidChange:]):
+
+2019-08-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248974. rdar://problem/54579634
 
     [Mail] Tapping top of message scrolls back to copied text instead of top of the message
