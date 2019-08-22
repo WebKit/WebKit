@@ -99,7 +99,9 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         this._renderRepeatCount();
 
-        if (this._message.type === WI.ConsoleMessage.MessageType.Image) {
+        if (this._message.type === WI.ConsoleMessage.MessageType.Dir)
+            this.expand();
+        else if (this._message.type === WI.ConsoleMessage.MessageType.Image) {
             this._element.classList.add("console-image");
             this._element.addEventListener("contextmenu", this._handleContextMenu.bind(this));
         }

@@ -1,3 +1,16 @@
+2019-08-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: console.dir should expand objects
+        https://bugs.webkit.org/show_bug.cgi?id=152039
+        <rdar://problem/23816853>
+
+        Reviewed by Joseph Pecoraro.
+
+        Expand objects logged by console.dir but keep them collapsed when logged by console.log.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.render):
+
 2019-08-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup some unused code
