@@ -6818,6 +6818,9 @@ bool RenderLayer::isTransparentOrFullyClippedRespectingParentFrames() const
         if (!renderViewLayer)
             return false;
 
+        if (is<HTMLFrameOwnerElement>(layer.renderer().element()) && layer.visibleSize().isEmpty())
+            return true;
+
         LayoutRect layerBounds;
         ClipRect backgroundRect;
         ClipRect foregroundRect;

@@ -408,6 +408,7 @@ messages -> WebPageProxy {
 
     ElementDidFocus(struct WebKit::FocusedElementInformation information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, WebKit::UserData userData)
     ElementDidBlur()
+    UpdateInputContextAfterBlurringAndRefocusingElement()
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
     ScrollingNodeScrollWillStartScroll()
     ScrollingNodeScrollDidEndScroll()
