@@ -735,6 +735,7 @@ class WebCoreDocumentProvider:
 class FlagEnumerationProvider(object):
     def __init__(self, valobj, internal_dict):
         self.valobj = valobj
+        self._elements = []
         self.update()
 
     # Subclasses must override this to return a dictionary that maps emumerator values to names.
@@ -750,6 +751,24 @@ class FlagEnumerationProvider(object):
     def _update(self):
         pass
 
+    # Subclasses can override this to provide the index that corresponds to the specified name.
+    # If this method is overridden then it is also expected that _get_child_at_index() will be
+    # overridden to provide the value for the index returned by this method. Note that the
+    # returned index must be greater than or equal to self.size in order to avoid breaking
+    # printing of synthetic children.
+    def _get_child_index(self, name):
+        return None
+
+    # Subclasses can override this to provide the SBValue for the specified index. It is only
+    # meaningful to override this method if _get_child_index() is also overridden.
+    def _get_child_at_index(self, index):
+        return None
+
+    @property
+    def size(self):
+        return len(self._elements)
+
+    # LLDB overrides
     def has_children(self):
         return bool(self._elements)
 
@@ -757,10 +776,7 @@ class FlagEnumerationProvider(object):
         return len(self._elements)
 
     def get_child_index(self, name):
-        try:
-            return int(name.lstrip('[').rstrip(']'))
-        except:
-            return None
+        return self._get_child_index(name)
 
     def get_child_at_index(self, index):
         if index < 0 or not self.valobj.IsValid():
@@ -768,13 +784,10 @@ class FlagEnumerationProvider(object):
         if index < len(self._elements):
             (name, value) = self._elements[index]
             return self.valobj.CreateValueFromExpression(name, str(value))
-        return None
+        return self._get_child_at_index(index)
 
     def update(self):
         self._update()
-
-        self._elements = []
-        self.size = 0
 
         enumerator_value_to_name_map = self._enumerator_value_to_name_map()
         if not enumerator_value_to_name_map:
@@ -793,8 +806,6 @@ class FlagEnumerationProvider(object):
             elements.append((enumerator_value_to_name_map[current], current))  # e.g. ('Spelling', 4)
             bitmask = bitmask & (bitmask - 1)  # Turn off the rightmost set bit.
         self._elements = elements
-        self.size = len(elements)
-
 
 class WTFOptionSetProvider(FlagEnumerationProvider):
     def _enumerator_value_to_name_map(self):
@@ -811,6 +822,16 @@ class WTFOptionSetProvider(FlagEnumerationProvider):
 
     def _update(self):
         self.storage = self.valobj.GetChildMemberWithName('m_storage')  # May be an invalid value.
+
+    def _get_child_index(self, name):
+        if name == 'm_storage':
+            return self.size
+        return None
+
+    def _get_child_at_index(self, index):
+        if index == self.size:
+            return self.storage
+        return None
 
 
 class RawBitmaskProviderBase(FlagEnumerationProvider):

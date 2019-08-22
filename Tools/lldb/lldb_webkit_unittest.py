@@ -185,7 +185,7 @@ class TestSummaryProviders(unittest.TestCase):
     def serial_test_WTFOptionSetProvider_empty(self):
         variable = self._sbFrame.FindVariable('exampleFlagsEmpty')
         provider = lldb_webkit.WTFOptionSetProvider(variable, {})
-        self.assertEqual(provider.get_child_at_index(0), None)
+        self.assertEqual(provider.get_child_at_index(0).GetName(), 'm_storage')
 
     def serial_test_WTFOptionSetProvider_simple(self):
         variable = self._sbFrame.FindVariable('exampleFlagsSimple')

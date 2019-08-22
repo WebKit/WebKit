@@ -1,3 +1,45 @@
+2019-08-22  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] OptionSet summary shows size 0 sometimes for non-empty set
+        https://bugs.webkit.org/show_bug.cgi?id=200742
+
+        Reviewed by Simon Fraser.
+
+        The OptionSet synthetic provider must respond to requests for the value of m_storage
+        (i.e. GetChildMemberWithName('m_storage')) to avoid interfering with the computation
+        of the type summary.
+
+        Synthetic providers substitute alternative debug information (children) for the default
+        information for a variable. The OptionSet type summary is implemented in terms of the
+        OptionSet synthetic provider to maximize code reuse. If LLDB instantiates the provider
+        before invoking the type summary handler then evaluating GetChildMemberWithName() on
+        the SBValue passed to the type summary handler will access the substitute information
+        instead of the original debug information. As a result OptionSet's synthetic provider's
+        get_child_index('m_storage') returns None hence SBValue.GetChildMemberWithName('m_storage')
+        returned an invalid value; => WTFOptionSetProvider._bitmask() returns 0; => the size
+        reported in the type summary for the OptionSet is 0. Instead get_child_index('m_storage')
+        should return a valid value.
+
+        * lldb/lldb_webkit.py:
+        (FlagEnumerationProvider.__init__):
+        (FlagEnumerationProvider):
+        (FlagEnumerationProvider._get_child_index): Added. WTFOptionSetProvider will override.
+        (FlagEnumerationProvider._get_child_at_index): Added. WTFOptionSetProvider will override.
+        (FlagEnumerationProvider.size): Added.
+        (FlagEnumerationProvider.get_child_index): Modified to call _get_child_index().
+        (FlagEnumerationProvider.get_child_at_index): Modified to call _get_child_at_index().
+        (FlagEnumerationProvider.update): Moved initialization of self._elements to the constructor
+        and removed self.size. For the latter we can just expose a getter that returns the size of
+        the list self._elements.
+        (WTFOptionSetProvider._get_child_index): Added. Return the index for LLDB to query for the
+        value of m_storage.
+        (WTFOptionSetProvider):
+        (WTFOptionSetProvider._get_child_at_index): Added. Return the value for m_storage if it
+        matches the specified index.
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_empty): Update expected result now
+        that we return the value of m_storage as the last synthetic child.
+
 2019-08-22  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Remove branch and repository information from commit tooltip
