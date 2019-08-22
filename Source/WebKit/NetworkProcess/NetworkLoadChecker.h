@@ -84,6 +84,8 @@ public:
     }
 #endif
 
+    NetworkProcess& networkProcess() { return m_networkProcess; }
+
     const URL& url() const { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
 

@@ -133,6 +133,7 @@ Shared/cf/CookieStorageUtilsCF.mm
 
 Shared/cg/ShareableBitmapCG.cpp
 
+Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm
 Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
 Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
 

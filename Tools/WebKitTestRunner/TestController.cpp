@@ -1032,7 +1032,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 #if PLATFORM(IOS_FAMILY)
     m_openPanelFileURLsMediaIcon = nullptr;
 #endif
-    
+
+    setAllowsAnySSLCertificate(true);
+
     statisticsResetToConsistentState();
     
     clearAdClickAttribution();
@@ -1192,10 +1194,13 @@ const char* TestController::networkProcessName()
 #endif
 }
 
+#if !PLATFORM(COCOA)
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
+    m_allowsAnySSLCertificate = allows;
     WKContextSetAllowsAnySSLCertificateForWebSocketTesting(platformContext(), allows);
 }
+#endif
 
 static std::string testPath(WKURLRef url)
 {
@@ -2339,8 +2344,12 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 
         m_serverTrustEvaluationCallbackCallsCount++;
 
-        WKRetainPtr<WKCredentialRef> credential = adoptWK(WKCredentialCreate(toWK("accept server trust").get(), toWK("").get(), kWKCredentialPersistenceNone));
-        WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
+        if (m_allowsAnySSLCertificate) {
+            WKRetainPtr<WKCredentialRef> credential = adoptWK(WKCredentialCreate(toWK("accept server trust").get(), toWK("").get(), kWKCredentialPersistenceNone));
+            WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
+            return;
+        }
+        WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(decisionListener);
         return;
     }
 

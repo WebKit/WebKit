@@ -1,3 +1,22 @@
+2019-08-22  Youenn Fablet  <youenn@apple.com>
+
+        Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages
+        https://bugs.webkit.org/show_bug.cgi?id=196870
+
+        Reviewed by Alex Christensen.
+
+        Implement the new delegate by respecting the value set by testRunner.setAllowsAnySSLCertificate
+        Accept any server certificate by default.
+
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::TestController::setAllowsAnySSLCertificate):
+        * WebKitTestRunner/cocoa/TestWebsiteDataStoreDelegate.h:
+        * WebKitTestRunner/cocoa/TestWebsiteDataStoreDelegate.mm:
+        (-[TestWebsiteDataStoreDelegate didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[TestWebsiteDataStoreDelegate setAllowAnySSLCertificate:]):
+
 2019-08-21  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Fix drawer style

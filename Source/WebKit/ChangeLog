@@ -1,3 +1,57 @@
+2019-08-22  Youenn Fablet  <youenn@apple.com>
+
+        Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages
+        https://bugs.webkit.org/show_bug.cgi?id=196870
+
+        Reviewed by Alex Christensen.
+
+        Make NetworkProcess provide the session ID for any authentication challenge.
+        In case there is no associated page for the authentication challenge or this is related to a service worker,
+        ask the website data store to take a decision.
+        Add website data store delegate to allow applications to make the decision.
+        Restrict using the delegate to server trust evaluation only.
+
+        Make ping loads reuse the same mechanism.
+
+        Covered by service worker tests and updated beacon test.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::sessionID const):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::networkProcess):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::didReceiveChallenge):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.h: Copied from Tools/WebKitTestRunner/cocoa/TestWebsiteDataStoreDelegate.h.
+        * Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm: Copied from Source/WebKit/Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h.
+        (WebKit::toAuthenticationChallengeDisposition):
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (WebsiteDataStoreClient::WebsiteDataStoreClient):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::isServiceWorkerPageID const):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreClient.h:
+        (WebKit::WebsiteDataStoreClient::didReceiveAuthenticationChallenge):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-08-22  Claudio Saavedra  <csaavedra@igalia.com>
 
         [SOUP] NetworkProcessSoup does not initialize CacheOptions correctly

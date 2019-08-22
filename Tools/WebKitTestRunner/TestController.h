@@ -591,6 +591,7 @@ private:
 
     uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
     bool m_shouldDismissJavaScriptAlertsAsynchronously { false };
+    bool m_allowsAnySSLCertificate { true };
 };
 
 struct TestCommand {

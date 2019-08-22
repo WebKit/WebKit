@@ -35,6 +35,7 @@
 #import <Foundation/Foundation.h>
 #import <Security/SecItem.h>
 #import <WebKit/WKContextConfigurationRef.h>
+#import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKCookieManager.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -395,6 +396,13 @@ bool TestController::keyExistsInKeychain(const String& attrLabel, const String& 
 void TestController::setAllowStorageQuotaIncrease(bool value)
 {
     [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: value];
+}
+
+void TestController::setAllowsAnySSLCertificate(bool allows)
+{
+    m_allowsAnySSLCertificate = allows;
+    WKContextSetAllowsAnySSLCertificateForWebSocketTesting(platformContext(), allows);
+    [globalWebsiteDataStoreDelegateClient setAllowAnySSLCertificate: allows];
 }
 
 bool TestController::canDoServerTrustEvaluationInNetworkProcess() const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "AuthenticationChallengeDisposition.h"
-#include "AuthenticationChallengeProxy.h"
-#include "AuthenticationDecisionListener.h"
-#include <wtf/CompletionHandler.h>
-
-namespace WebCore {
-struct SecurityOriginData;
-}
+#include "config.h"
+#include "AuthenticationChallengeDispositionCocoa.h"
 
 namespace WebKit {
 
-class WebsiteDataStoreClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~WebsiteDataStoreClient() { }
-
-    virtual void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&& completionHandler)
-    {
-        completionHandler({ });
+AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition disposition)
+{
+    switch (disposition) {
+    case NSURLSessionAuthChallengeUseCredential:
+        return AuthenticationChallengeDisposition::UseCredential;
+    case NSURLSessionAuthChallengePerformDefaultHandling:
+        return AuthenticationChallengeDisposition::PerformDefaultHandling;
+    case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
+        return AuthenticationChallengeDisposition::Cancel;
+    case NSURLSessionAuthChallengeRejectProtectionSpace:
+        return AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue;
     }
-
-    virtual void didReceiveAuthenticationChallenge(Ref<AuthenticationChallengeProxy>&& challenge)
-    {
-        challenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
-    }
-};
+    [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
+}
 
 } // namespace WebKit

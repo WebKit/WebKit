@@ -2231,17 +2231,17 @@ void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& 
 #endif
 }
 
-#if ENABLE(SERVICE_WORKER)
-ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(PageIdentifier pageID) const
+bool WebProcessPool::isServiceWorkerPageID(PageIdentifier pageID) const
 {
+#if ENABLE(SERVICE_WORKER)
     // FIXME: This is inefficient.
     for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
         if (serviceWorkerProcess->pageID() == pageID)
-            return serviceWorkerProcess;
+            return true;
     }
-    return nullptr;
-}
 #endif
+    return false;
+}
 
 void WebProcessPool::addProcessToOriginCacheSet(WebProcessProxy& process, const URL& url)
 {
