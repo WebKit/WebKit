@@ -225,8 +225,6 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
             ToolTip.set(
                 `<div class="content">
                     Time: ${new Date(node.label.timestamp * 1000).toLocaleString()}<br>
-                    Repository: ${node.label.repository_id}<br>
-                    Branch: ${node.label.branch}<br>
                     Committer: ${node.label.committer}
                     ${node.label.message ? `<br><div>${escapeHTML(node.label.message.split('\n')[0])}</div>` : ''}
                 </div>`,

@@ -1,5 +1,15 @@
 2019-08-22  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Remove branch and repository information from commit tooltip
+        https://bugs.webkit.org/show_bug.cgi?id=201035
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale): Remove branch and repository information from tooltip.
+
+2019-08-22  Jonathan Bedard  <jbedard@apple.com>
+
         run-webkit-tests: Use -noBulkSymbolication when calling spindump
         https://bugs.webkit.org/show_bug.cgi?id=201000
         <rdar://problem/53778938>
