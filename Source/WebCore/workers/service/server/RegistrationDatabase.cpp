@@ -135,27 +135,15 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
 
     LOG(ServiceWorker, "ServiceWorker RegistrationDatabase opening file %s", fullFilename.utf8().data());
 
-    String errorMessage;
-    auto scopeExit = makeScopeExit([this, protectedThis = makeRef(*this), errorMessage = &errorMessage] {
-        ASSERT_UNUSED(errorMessage, !errorMessage->isNull());
-
-#if RELEASE_LOG_DISABLED
-        LOG_ERROR("Failed to open Service Worker registration database: %s", errorMessage->utf8().data());
-#else
-        RELEASE_LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database: %{public}s", errorMessage->utf8().data());
-#endif
-
-        m_database = nullptr;
-        callOnMainThread([protectedThis = protectedThis.copyRef()] {
-            protectedThis->databaseFailedToOpen();
-        });
-    });
-
     SQLiteFileSystem::ensureDatabaseDirectoryExists(databaseDirectory);
 
     m_database = makeUnique<SQLiteDatabase>();
     if (!m_database->open(fullFilename)) {
-        errorMessage = "Failed to open registration database";
+        RELEASE_LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database");
+        m_database = nullptr;
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            databaseFailedToOpen();
+        });
         return;
     }
 
@@ -164,15 +152,26 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     // necessary run on the same thread every time (as per GCD documentation).
     m_database->disableThreadingChecks();
     
-    errorMessage = ensureValidRecordsTable();
-    if (!errorMessage.isNull())
+    auto doRecoveryAttempt = [&] {
+        // Delete the database and re-create it.
+        m_database = nullptr;
+        SQLiteFileSystem::deleteDatabaseFile(fullFilename);
+        openSQLiteDatabase(fullFilename);
+    };
+    
+    String errorMessage = ensureValidRecordsTable();
+    if (!errorMessage.isNull()) {
+        RELEASE_LOG_ERROR(ServiceWorker, "ensureValidRecordsTable failed, reason: %{public}s", errorMessage.utf8().data());
+        doRecoveryAttempt();
         return;
+    }
     
     errorMessage = importRecords();
-    if (!errorMessage.isNull())
+    if (!errorMessage.isNull()) {
+        RELEASE_LOG_ERROR(ServiceWorker, "importRecords failed, reason: %{public}s", errorMessage.utf8().data());
+        doRecoveryAttempt();
         return;
-
-    scopeExit.release();
+    }
 }
 
 void RegistrationDatabase::importRecordsIfNecessary()
@@ -220,10 +219,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
     if (currentSchema == recordsTableSchema() || currentSchema == recordsTableSchemaAlternate())
         return { };
 
-    // This database has a Records table but it is not a schema we expect.
-    // Trying to recover by deleting the data contained within is dangerous so
-    // we should consider this an unrecoverable error.
-    RELEASE_ASSERT_NOT_REACHED();
+    return makeString("Unexpected schema: ", currentSchema);
 }
 
 static String updateViaCacheToString(ServiceWorkerUpdateViaCache update)

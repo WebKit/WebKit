@@ -1,3 +1,16 @@
+2019-08-22  Chris Dumez  <cdumez@apple.com>
+
+        Try to recover nicely when getting an unexpected schema in the service workers database
+        https://bugs.webkit.org/show_bug.cgi?id=201002
+        <rdar://problem/54574991>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-08-22  Keith Rollin  <krollin@apple.com>
 
         Remove support for tvOS < 13.0
