@@ -2709,6 +2709,18 @@ WI.resolvedLayoutDirection = function()
     return layoutDirection;
 };
 
+WI.resolveLayoutDirectionForElement = function(element)
+{
+    let layoutDirection = WI.resolvedLayoutDirection();
+
+    // Global LTR never includes RTL containers. Return early.
+    if (layoutDirection === WI.LayoutDirection.LTR)
+        return layoutDirection;
+
+    let style = getComputedStyle(element);
+    return style.direction;
+};
+
 WI.setLayoutDirection = function(value)
 {
     console.assert(WI.isDebugUIEnabled());

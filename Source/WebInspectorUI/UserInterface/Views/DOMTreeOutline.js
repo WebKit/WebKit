@@ -44,6 +44,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this.element.addEventListener("dragend", this._ondragend.bind(this), false);
 
         this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
+        this.element.dir = "ltr";
 
         if (showLastSelected)
             this.element.classList.add("show-last-selected");

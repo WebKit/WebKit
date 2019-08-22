@@ -1,3 +1,36 @@
+2019-08-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: RTL: DOM outline in Elements tab should be LTR
+        https://bugs.webkit.org/show_bug.cgi?id=200601
+
+        Reviewed by Timothy Hatcher.
+
+        Make DOM outlines in Console and Elements tab always LTR,
+        and unsure that Left and Right arrow keys continue working correctly.
+
+        * UserInterface/Base/Main.js:
+        (WI.resolveLayoutDirectionForElement): Added.
+        The existing WI.resolvedLayoutDirection function returns the value of the root DOM element.
+        The newly added resolveLayoutDirectionForElement function returns the correct value for any element,
+        including elements with `dir=ltr` inside of `<body dir=rtl>`.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded):
+        (.tree-outline.dom li:not(.editing)):
+        (.tree-outline.dom li.editing):
+        (.tree-outline.dom li .pseudo-class-indicator):
+        (.tree-outline.dom.single-node li):
+        (.tree-outline.dom li.parent):
+        (.tree-outline.dom li .html-tag.close):
+        (.tree-outline.dom li.parent::before):
+        (.tree-outline.dom li.parent.shadow::after):
+        Remove RTL logic.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._treeKeyDown):
+        Make Left and Right arrow keys work correctly for LTR DOM outlines inside of the global RTL.
+
 2019-08-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Page: re-add enable/disable after r248454

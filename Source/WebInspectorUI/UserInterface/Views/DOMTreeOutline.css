@@ -101,12 +101,8 @@
     border: 0 solid hsla(0, 0%, 83%, 0.5);
 }
 
-body[dir=ltr] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
+.tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
     border-left-width: var(--sublist-border-width-start);
-}
-
-body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
-    border-right-width: var(--sublist-border-width-start);
 }
 
 .tree-outline.dom li.selected + ol.children.expanded {
@@ -122,13 +118,13 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
 }
 
 .tree-outline.dom li:not(.editing) {
-    -webkit-padding-start: var(--item-padding-start);
-    -webkit-padding-end: var(--item-padding-end);
+    padding-left: var(--item-padding-start);
+    padding-right: var(--item-padding-end);
 }
 
 .tree-outline.dom li.editing {
-    -webkit-margin-start: var(--item-padding-start);
-    -webkit-margin-end: var(--item-padding-end);
+    margin-left: var(--item-padding-start);
+    margin-right: var(--item-padding-end);
 }
 
 .tree-outline.dom li .pseudo-class-indicator {
@@ -142,12 +138,8 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
     border-radius: 50%;
 }
 
-body[dir=ltr] .tree-outline.dom li .pseudo-class-indicator {
+.tree-outline.dom li .pseudo-class-indicator {
     left: var(--item-pseudo-class-indicator-start);
-}
-
-body[dir=rtl] .tree-outline.dom li .pseudo-class-indicator {
-    right: var(--item-pseudo-class-indicator-start);
 }
 
 .tree-outline.dom:focus li.selected .pseudo-class-indicator {
@@ -155,7 +147,7 @@ body[dir=rtl] .tree-outline.dom li .pseudo-class-indicator {
 }
 
 .tree-outline.dom.single-node li {
-    -webkit-padding-start: 2px;
+    padding-left: 2px;
 }
 
 .tree-outline.dom:focus li.selected {
@@ -167,12 +159,12 @@ body[dir=rtl] .tree-outline.dom li .pseudo-class-indicator {
 }
 
 .tree-outline.dom li.parent {
-    -webkit-margin-start: -15px;
+    margin-left: -15px;
     line-height: 13px;
 }
 
 .tree-outline.dom li .html-tag.close {
-    -webkit-margin-start: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
+    margin-left: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
 }
 
 .tree-outline.dom li .html-tag ~ .go-to-arrow {
@@ -189,20 +181,15 @@ body[dir=rtl] .tree-outline.dom li .pseudo-class-indicator {
     z-index: 20;
     width: 13px;
     height: 13px;
-    -webkit-padding-end: 2px;
+    padding-right: 2px;
     content: "";
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-size: 13px 13px;
     background-repeat: no-repeat;
 }
 
-body[dir=ltr] .tree-outline.dom li.parent::before {
+.tree-outline.dom li.parent::before {
     float: left;
-}
-
-body[dir=rtl] .tree-outline.dom li.parent::before {
-    float: right;
-    transform: scaleX(-1);
 }
 
 .tree-outline.dom:focus li.parent.selected::before {
@@ -238,7 +225,7 @@ body[dir=rtl] .tree-outline.dom li.parent::before {
     width: calc(100% + 8px);
     height: 1.2em;
     margin-top: -13px;
-    -webkit-margin-start: -2px;
+    margin-left: -2px;
     content: "";
     background-color: hsla(0, 0%, 90%, 0.5);
 }

@@ -598,7 +598,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (event.target !== this._childrenListNode)
             return;
 
-        let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
+        let isRTL = WI.resolveLayoutDirectionForElement(this.element) === WI.LayoutDirection.RTL;
         let expandKeyIdentifier = isRTL ? "Left" : "Right";
         let collapseKeyIdentifier = isRTL ? "Right" : "Left";
 
