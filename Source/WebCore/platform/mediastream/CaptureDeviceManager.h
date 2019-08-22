@@ -29,11 +29,10 @@
 
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class WEBCORE_EXPORT CaptureDeviceManager : public CanMakeWeakPtr<CaptureDeviceManager> {
+class WEBCORE_EXPORT CaptureDeviceManager {
 public:
     virtual const Vector<CaptureDevice>& captureDevices() = 0;
     virtual Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) { return WTF::nullopt; }

@@ -54,13 +54,11 @@ private:
     
     Vector<CoreAudioCaptureDevice>& coreAudioCaptureDevices();
 
-    enum NotifyIfDevicesHaveChanged { Notify, DoNotNotify };
+    enum class NotifyIfDevicesHaveChanged { Notify, DoNotNotify };
     void refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged);
 
     Vector<CaptureDevice> m_devices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
-
-    AudioObjectPropertyListenerBlock m_listenerBlock;
 };
 
 } // namespace WebCore

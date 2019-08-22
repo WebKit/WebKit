@@ -52,12 +52,13 @@ CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& 
 
 void CaptureDeviceManager::deviceChanged()
 {
-    callOnMainThread([weakThis = makeWeakPtr(*this)] {
-        if (!weakThis)
-            return;
-
-        RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
-    });
+    if (!isMainThread()) {
+        callOnMainThread([] {
+            RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
+        });
+        return;
+    }
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 } // namespace WebCore
