@@ -113,7 +113,7 @@ void StringBuilder::allocateBuffer(const LChar* currentCharacters, unsigned requ
     auto buffer = StringImpl::tryCreateUninitialized(requiredLength, m_bufferCharacters8);
     if (UNLIKELY(!buffer))
         return didOverflow();
-    memcpy(m_bufferCharacters8, currentCharacters, static_cast<size_t>(m_length.unsafeGet()) * sizeof(LChar)); // This can't overflow.
+    std::memcpy(m_bufferCharacters8, currentCharacters, m_length.unsafeGet());
     
     // Update the builder state.
     m_buffer = WTFMove(buffer);
@@ -131,7 +131,7 @@ void StringBuilder::allocateBuffer(const UChar* currentCharacters, unsigned requ
     auto buffer = StringImpl::tryCreateUninitialized(requiredLength, m_bufferCharacters16);
     if (UNLIKELY(!buffer))
         return didOverflow();
-    memcpy(m_bufferCharacters16, currentCharacters, static_cast<size_t>(m_length.unsafeGet()) * sizeof(UChar)); // This can't overflow.
+    std::memcpy(m_bufferCharacters16, currentCharacters, static_cast<size_t>(m_length.unsafeGet()) * sizeof(UChar)); // This can't overflow.
     
     // Update the builder state.
     m_buffer = WTFMove(buffer);
@@ -233,7 +233,7 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
 // Make 'additionalLength' additional capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
 // Returns nullptr if the size of the new builder would have overflowed
-template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::appendUninitialized(unsigned additionalLength)
+template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::extendBufferForAppending(unsigned additionalLength)
 {
     ASSERT(additionalLength);
 
@@ -244,10 +244,10 @@ template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::app
         return nullptr;
     }
 
-    return appendUninitializedWithoutOverflowCheck<CharacterType>(requiredLength);
+    return extendBufferForAppendingWithoutOverflowCheck<CharacterType>(requiredLength);
 }
 
-template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength)
+template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::extendBufferForAppendingWithoutOverflowCheck(CheckedInt32 requiredLength)
 {
     ASSERT(!requiredLength.hasOverflowed());
 
@@ -260,19 +260,19 @@ template<typename CharacterType> ALWAYS_INLINE CharacterType* StringBuilder::app
         return getBufferCharacters<CharacterType>() + currentLength;
     }
 
-    return appendUninitializedSlow<CharacterType>(requiredLength.unsafeGet());
+    return extendBufferForAppendingSlowCase<CharacterType>(requiredLength.unsafeGet());
 }
 
-LChar* StringBuilder::appendUninitialized8(CheckedInt32 requiredLength)
+LChar* StringBuilder::extendBufferForAppending8(CheckedInt32 requiredLength)
 {
     if (UNLIKELY(requiredLength.hasOverflowed())) {
         didOverflow();
         return nullptr;
     }
-    return appendUninitializedWithoutOverflowCheck<LChar>(requiredLength);
+    return extendBufferForAppendingWithoutOverflowCheck<LChar>(requiredLength);
 }
 
-UChar* StringBuilder::appendUninitialized16(CheckedInt32 requiredLength)
+UChar* StringBuilder::extendBufferForAppending16(CheckedInt32 requiredLength)
 {
     if (UNLIKELY(requiredLength.hasOverflowed())) {
         didOverflow();
@@ -294,12 +294,12 @@ UChar* StringBuilder::appendUninitialized16(CheckedInt32 requiredLength)
         m_length = requiredLength.unsafeGet();
         return m_bufferCharacters16 + oldLength;
     }
-    return appendUninitializedWithoutOverflowCheck<UChar>(requiredLength);
+    return extendBufferForAppendingWithoutOverflowCheck<UChar>(requiredLength);
 }
 
 // Make 'requiredLength' capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
-template<typename CharacterType> CharacterType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
+template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAppendingSlowCase(unsigned requiredLength)
 {
     ASSERT(!hasOverflowed());
     ASSERT(requiredLength);
@@ -337,7 +337,7 @@ void StringBuilder::appendCharacters(const UChar* characters, unsigned length)
 
     // FIXME: Should we optimize memory by keeping the string 8-bit when all the characters are Latin-1?
 
-    UChar* destination = appendUninitialized16(m_length + length);
+    UChar* destination = extendBufferForAppending16(m_length + length);
     if (UNLIKELY(!destination))
         return;
     std::memcpy(destination, characters, static_cast<size_t>(length) * sizeof(UChar));
@@ -353,28 +353,28 @@ void StringBuilder::appendCharacters(const LChar* characters, unsigned length)
     ASSERT(characters);
 
     if (m_is8Bit) {
-        LChar* dest = appendUninitialized<LChar>(length);
-        if (!dest) {
+        LChar* destination = extendBufferForAppending<LChar>(length);
+        if (!destination) {
             ASSERT(hasOverflowed());
             return;
         }
         if (length > 8)
-            memcpy(dest, characters, length);
+            std::memcpy(destination, characters, length);
         else {
             // FIXME: How strong is our evidence that this is faster than memcpy? What platforms is this true for?
             const LChar* end = characters + length;
             while (characters < end)
-                *(dest++) = *(characters++);
+                *destination++ = *characters++;
         }
     } else {
-        UChar* dest = appendUninitialized<UChar>(length);
-        if (!dest) {
+        UChar* destination = extendBufferForAppending<UChar>(length);
+        if (!destination) {
             ASSERT(hasOverflowed());
             return;
         }
         const LChar* end = characters + length;
         while (characters < end)
-            *(dest++) = *(characters++);
+            *destination++ = *characters++;
     }
 }
 

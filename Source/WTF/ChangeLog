@@ -1,3 +1,20 @@
+2019-08-22  Darin Adler  <darin@apple.com>
+
+        Rename StringBuilder functions to avoid unclear "append uninitialized" terminology
+        https://bugs.webkit.org/show_bug.cgi?id=201020
+
+        Reviewed by Alex Christensen.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBuffer): Use std::memcpy instead of just memcpy.
+        (WTF::StringBuilder::extendBufferForAppending): Renamed.
+        (WTF::StringBuilder::extendBufferForAppendingWithoutOverflowCheck): Ditto.
+        (WTF::StringBuilder::extendBufferForAppending8): Ditto.
+        (WTF::StringBuilder::extendBufferForAppending16): Ditto.
+        (WTF::StringBuilder::extendBufferForAppendingSlowPath): Ditto.
+        (WTF::StringBuilder::appendCharacters): Updated for new names.
+        * wtf/text/StringBuilder.h: Updated for new names.
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends

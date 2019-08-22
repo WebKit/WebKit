@@ -357,11 +357,11 @@ private:
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
     void allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
     template<typename CharacterType> void reallocateBuffer(unsigned requiredLength);
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* appendUninitialized(unsigned additionalLength);
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength);
-    template<typename CharacterType> CharacterType* appendUninitializedSlow(unsigned requiredLength);
-    WTF_EXPORT_PRIVATE LChar* appendUninitialized8(CheckedInt32 requiredLength);
-    WTF_EXPORT_PRIVATE UChar* appendUninitialized16(CheckedInt32 requiredLength);
+    template<typename CharacterType> ALWAYS_INLINE CharacterType* extendBufferForAppending(unsigned additionalLength);
+    template<typename CharacterType> ALWAYS_INLINE CharacterType* extendBufferForAppendingWithoutOverflowCheck(CheckedInt32 requiredLength);
+    template<typename CharacterType> CharacterType* extendBufferForAppendingSlowCase(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE LChar* extendBufferForAppending8(CheckedInt32 requiredLength);
+    WTF_EXPORT_PRIVATE UChar* extendBufferForAppending16(CheckedInt32 requiredLength);
 
     template<typename CharacterType> ALWAYS_INLINE CharacterType* getBufferCharacters();
     WTF_EXPORT_PRIVATE void reifyString() const;
@@ -401,14 +401,14 @@ void StringBuilder::appendFromAdapters(StringTypeAdapters... adapters)
 {
     auto requiredLength = checkedSum<int32_t>(m_length, adapters.length()...);
     if (m_is8Bit && are8Bit(adapters...)) {
-        LChar* destination = appendUninitialized8(requiredLength);
+        LChar* destination = extendBufferForAppending8(requiredLength);
         if (!destination) {
             ASSERT(hasOverflowed());
             return;
         }
         stringTypeAdapterAccumulator(destination, adapters...);
     } else {
-        UChar* destination = appendUninitialized16(requiredLength);
+        UChar* destination = extendBufferForAppending16(requiredLength);
         if (!destination) {
             ASSERT(hasOverflowed());
             return;
