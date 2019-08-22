@@ -149,6 +149,7 @@ private:
     void restorePageCenterAndScale(Optional<WebCore::FloatPoint>, double) override;
 
     void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, API::Object* userData) override;
+    void updateInputContextAfterBlurringAndRefocusingElement() final;
     void elementDidBlur() override;
     void focusedElementDidChangeInputMode(WebCore::InputMode) override;
     void didReceiveEditorStateUpdateAfterFocus() override;

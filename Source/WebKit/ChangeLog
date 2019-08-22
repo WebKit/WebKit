@@ -1,3 +1,75 @@
+2019-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Typing Korean in title field after typing in the body inserts extraneous characters on blog.naver.com
+        https://bugs.webkit.org/show_bug.cgi?id=201023
+        <rdar://problem/54294794>
+
+        Reviewed by Ryosuke Niwa.
+
+        After r242833, we began to avoid sending redundant ElementDidFocus updates in the case where a focused element
+        was blurred and refocused within the same runloop. This was done to prevent the input view from flickering due
+        to input view reloading, as well as scrolling to reveal the focused element, when tapping to change selection on
+        Microsoft Word online.
+
+        However, on blog.naver.com, these ElementDidFocus messages were necessary in order to ensure that the platform
+        input context changes when moving between the title and body fields, or when tapping to change selection. This
+        is because blog.naver.com uses a hidden contenteditable area under a subframe (see WebCore ChangeLog for more
+        detail here). While text is never directly inserted into this hidden contenteditable, the events are observed
+        and used to "play back" editing in the main visible content area.
+
+        Thus, when moving between the title and body fields (or when changing selection within either), the only hint we
+        get is that the hidden editable element is blurred and immediately refocused. Since we no longer send
+        ElementDidFocus updates in this scenario, UIKeyboardImpl and kbd are not aware that the page has effectively
+        changed input contexts.
+
+        Combined with the fact that Korean IME on iOS may insert additional text given the document context (i.e. text
+        that the input manager, kbd, thinks we've previously inserted), this means that when typing several characters
+        into the body field on naver and then switching to edit the title, initial keystrokes may insert unexpected
+        text in the title field.
+
+        To fix this, we add some hooks to notify the UI process when an element that was blurred has been immediately
+        refocused. Upon receiving this message, the UI process then tells UIKeyboardImpl to re-retrieve its input
+        context, which calls into -requestAutocorrectionContextWithCompletionHandler: in WKContentView. While notorious
+        for being synchronous IPC, this is mitigated by (1) being limiting to only instances where we have a hidden
+        editable area, and (2) being limited by a batching mechanism in the web process, such that if the focused
+        element is blurred, refocused, re-blurred, and refocused many times in the same runloop, we'll only send a
+        single UpdateInputContextAfterBlurringAndRefocusingElement message (as opposed to the many ElementDidFocus
+        messages we would've sent in previous releases).
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add a new mechanism to update the platform input context (on iOS, UIKeyboardImpl's document state) when focus
+        moves away from and immediately returns to a hidden editable element.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateInputContextAfterBlurringAndRefocusingElement]):
+
+        Tell the active UIKeyboardImpl to refetch document state from the WKContentView. While this does result in a new
+        autocorrection context request (which, unfortunately, triggers synchronous IPC to the web process), this request
+        would've still happened anyways in the case where we would previously have sent an ElementDidFocus message.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateInputContextAfterBlurringAndRefocusingElement):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidFocus):
+
+        In the case where we avoid sending a full ElementDidFocus message to the UI process due to refocusing the same
+        element, we should still notify the UI process so that it can synchronize state between the application process
+        and kbd. See above for more details.
+
+        (WebKit::WebPage::elementDidBlur):
+        (WebKit::WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded):
+
 2019-08-22  Youenn Fablet  <youenn@apple.com>
 
         Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages

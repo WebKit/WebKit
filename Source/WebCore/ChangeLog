@@ -1,3 +1,20 @@
+2019-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Typing Korean in title field after typing in the body inserts extraneous characters on blog.naver.com
+        https://bugs.webkit.org/show_bug.cgi?id=201023
+        <rdar://problem/54294794>
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensures that we recognize the blog editor on blog.naver.com to be a hidden editable area. This website places
+        focus inside an editable body element of a subframe that is completely empty (width: 0 and border: 0). See the
+        WebKit ChangeLog for more details.
+
+        Test: editing/selection/ios/do-not-show-selection-in-empty-borderless-subframe.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2019-08-22  Youenn Fablet  <youenn@apple.com>
 
         CaptureDeviceManager does not need to be CanMakeWeakPtr

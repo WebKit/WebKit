@@ -606,6 +606,7 @@ public:
     void elementDidBlur(WebCore::Element&);
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode);
     void resetFocusedElementForFrame(WebFrame*);
+    void updateInputContextAfterBlurringAndRefocusingElementIfNeeded(WebCore::Element&);
 
     void disabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&);
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
@@ -1826,6 +1827,7 @@ private:
 
     RefPtr<WebCore::Element> m_focusedElement;
     RefPtr<WebCore::Element> m_recentlyBlurredElement;
+    bool m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement { false };
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)

@@ -5469,6 +5469,7 @@ static bool isTextFormControlOrEditableContent(const WebCore::Element& element)
 void WebPage::elementDidFocus(WebCore::Element& element)
 {
     if (!shouldDispatchUpdateAfterFocusingElement(element)) {
+        updateInputContextAfterBlurringAndRefocusingElementIfNeeded(element);
         m_focusedElement = &element;
         m_recentlyBlurredElement = nullptr;
         return;
@@ -5476,6 +5477,7 @@ void WebPage::elementDidFocus(WebCore::Element& element)
 
     if (is<HTMLSelectElement>(element) || isTextFormControlOrEditableContent(element)) {
         m_focusedElement = &element;
+        m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -5517,6 +5519,7 @@ void WebPage::elementDidBlur(WebCore::Element& element)
             }
             protectedThis->m_recentlyBlurredElement = nullptr;
         });
+        m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
     }
 }
 
@@ -6691,6 +6694,10 @@ void WebPage::updateCurrentModifierState(OptionSet<PlatformEvent::Modifier> modi
 WebCore::IntRect WebPage::rectForElementAtInteractionLocation() const
 {
     return { };
+}
+
+void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Element&)
+{
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

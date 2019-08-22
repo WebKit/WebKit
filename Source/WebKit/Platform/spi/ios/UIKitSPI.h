@@ -270,6 +270,7 @@ typedef enum {
 
 @interface UIKeyboardImpl : UIView <UIKeyboardCandidateListDelegate>
 - (BOOL)smartInsertDeleteIsEnabled;
+- (void)updateForChangedSelection;
 @end
 
 @interface UIKeyboardImpl ()

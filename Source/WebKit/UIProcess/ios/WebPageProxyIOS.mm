@@ -904,6 +904,11 @@ void WebPageProxy::setIsShowingInputViewForFocusedElement(bool showingInputView)
     process().send(Messages::WebPage::SetIsShowingInputViewForFocusedElement(showingInputView), m_pageID);
 }
 
+void WebPageProxy::updateInputContextAfterBlurringAndRefocusingElement()
+{
+    pageClient().updateInputContextAfterBlurringAndRefocusingElement();
+}
+
 void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData& userData)
 {
     m_pendingInputModeChange = WTF::nullopt;

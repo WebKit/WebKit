@@ -558,6 +558,11 @@ void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInform
     [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject];
 }
 
+void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
+{
+    [m_contentView _updateInputContextAfterBlurringAndRefocusingElement];
+}
+
 bool PageClientImpl::isFocusingElement()
 {
     return [m_contentView isFocusingElement];

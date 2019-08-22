@@ -1169,6 +1169,19 @@ void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
         node->inspect();
 }
 
+void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Element& element)
+{
+    if (m_recentlyBlurredElement != &element || !m_isShowingInputViewForFocusedElement)
+        return;
+
+    m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = true;
+    callOnMainThread([this, protectedThis = makeRefPtr(this)] {
+        if (m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement)
+            send(Messages::WebPageProxy::UpdateInputContextAfterBlurringAndRefocusingElement());
+        m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
+    });
+}
+
 void WebPage::blurFocusedElement()
 {
     if (!m_focusedElement)
