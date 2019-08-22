@@ -558,7 +558,7 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url)
     }
 
     // A Web process that was never asked to load a file URL should not ever ask us to do anything with a file URL.
-    WTFLogAlways("Received an unexpected URL from the web process: '%s'\n", url.string().utf8().data());
+    RELEASE_LOG_ERROR(Loading, "Received an unexpected URL from the web process");
     return false;
 }
 

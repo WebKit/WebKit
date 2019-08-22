@@ -1,3 +1,24 @@
+2019-08-22  Keith Rollin  <krollin@apple.com>
+
+        Remove logging that contains a URL
+        https://bugs.webkit.org/show_bug.cgi?id=201052
+        <rdar://problem/54613204>
+
+        Reviewed by Chris Dumez.
+
+        checkURLReceivedFromWebProcess in WebProcessProxy.cpp contains an old
+        logging line that logs a URL. We don't log URLs any more for privacy
+        reasons, so remove this.
+
+        A search for WTFLogAlways.*url turns up other matches, but those are
+        either false positives or cases where the URLs are logged only on
+        demand by the developer as part of debugging.
+        checkURLReceivedFromWebProcess is the only place where a URL is logged
+        as a matter of course.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+
 2019-08-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fixes for non-unified builds after r248547
