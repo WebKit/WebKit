@@ -31,12 +31,15 @@
 #include "ColorUtilities.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBuffer);
 
 std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
 {

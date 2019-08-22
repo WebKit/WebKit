@@ -37,6 +37,7 @@
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -62,7 +63,8 @@ enum class PreserveResolution {
 };
 
 class ImageBuffer {
-    WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(ImageBuffer, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(ImageBuffer);
     friend class IOSurface;
 public:
     // Will return a null pointer on allocation failure.
