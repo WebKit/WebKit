@@ -52,18 +52,11 @@ namespace WebCore {
 
         // ScalableImageDecoder
         String filenameExtension() const override { return "jpg"_s; }
-        bool setSize(const IntSize&) override;
         ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // JPEGImageReader!
         bool setFailed() override;
-
-        bool willDownSample()
-        {
-            ASSERT(ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
-            return m_scaled;
-        }
 
         bool outputScanlines();
         void jpegComplete();

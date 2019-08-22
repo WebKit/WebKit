@@ -98,11 +98,6 @@ public:
 
     IntSize size() const override { return isSizeAvailable() ? m_size : IntSize(); }
 
-    IntSize scaledSize()
-    {
-        return m_scaled ? IntSize(m_scaledColumns.size(), m_scaledRows.size()) : size();
-    }
-
     // This will only differ from size() for ICO (where each frame is a
     // different icon) or other formats where different frames are different
     // sizes. This does NOT differ from size() for GIF, since decoding GIFs
@@ -197,19 +192,9 @@ public:
     Optional<IntPoint> hotSpot() const override { return WTF::nullopt; }
 
 protected:
-    void prepareScaleDataIfNecessary();
-    int upperBoundScaledX(int origX, int searchStart = 0);
-    int lowerBoundScaledX(int origX, int searchStart = 0);
-    int upperBoundScaledY(int origY, int searchStart = 0);
-    int lowerBoundScaledY(int origY, int searchStart = 0);
-    int scaledY(int origY, int searchStart = 0);
-
     RefPtr<SharedBuffer> m_data; // The encoded data.
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache;
     mutable Lock m_mutex;
-    bool m_scaled { false };
-    Vector<int> m_scaledColumns;
-    Vector<int> m_scaledRows;
     bool m_premultiplyAlpha;
     bool m_ignoreGammaAndColorProfile;
     ImageOrientation m_orientation;
@@ -224,12 +209,6 @@ private:
     IntSize m_size;
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::TypeAvailable };
     bool m_decodingSizeFromSetData { false };
-
-    // FIXME: Evaluate the need for decoded data scaling. m_scaled,
-    // m_scaledColumns and m_scaledRows are member variables that are
-    // affected by this value, and are not used at all since the value
-    // is negavite (see prepareScaleDataIfNecessary()).
-    static const int m_maxNumPixels { -1 };
 };
 
 } // namespace WebCore

@@ -248,15 +248,6 @@ RepetitionCount PNGImageDecoder::repetitionCount() const
 }
 #endif
 
-bool PNGImageDecoder::setSize(const IntSize& size)
-{
-    if (!ScalableImageDecoder::setSize(size))
-        return false;
-
-    prepareScaleDataIfNecessary();
-    return true;
-}
-
 ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 {
 #if ENABLE(APNG)
@@ -435,7 +426,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     auto& buffer = m_frameBufferCache[m_currentFrame];
     if (buffer.isInvalid()) {
         png_structp png = m_reader->pngPtr();
-        if (!buffer.initialize(scaledSize(), m_premultiplyAlpha)) {
+        if (!buffer.initialize(size(), m_premultiplyAlpha)) {
             longjmp(JMPBUF(png), 1);
             return;
         }
@@ -477,8 +468,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // make our lives easier.
     if (!rowBuffer)
         return;
-    int y = !m_scaled ? rowIndex : scaledY(rowIndex);
-    if (y < 0 || y >= scaledSize().height())
+    if (rowIndex >= size().height())
         return;
 
     /* libpng comments (continued).
@@ -516,8 +506,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     }
 
     // Write the decoded row pixels to the frame buffer.
-    auto* address = buffer.backingStore()->pixelAt(0, y);
-    int width = scaledSize().width();
+    auto* address = buffer.backingStore()->pixelAt(0, rowIndex);
+    int width = size().width();
     unsigned char nonTrivialAlphaMask = 0;
 
     png_bytep pixel = row;
@@ -777,7 +767,7 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
         // We want to clear the previous frame to transparent, without
         // affecting pixels in the image outside of the frame.
         IntRect prevRect = prevBuffer->backingStore()->frameRect();
-        if (!frameIndex || prevRect.contains(IntRect(IntPoint(), scaledSize()))) {
+        if (!frameIndex || prevRect.contains(IntRect(IntPoint(), size()))) {
             // Clearing the first frame, or a frame the size of the whole
             // image, results in a completely empty image.
             buffer.backingStore()->clear();
@@ -801,11 +791,7 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
     if (frameRect.maxY() > size().height())
         frameRect.setHeight(size().height() - m_yOffset);
 
-    int left = upperBoundScaledX(frameRect.x());
-    int right = lowerBoundScaledX(frameRect.maxX(), left);
-    int top = upperBoundScaledY(frameRect.y());
-    int bottom = lowerBoundScaledY(frameRect.maxY(), top);
-    buffer.backingStore()->setFrameRect(IntRect(left, top, right - left, bottom - top));
+    buffer.backingStore()->setFrameRect(frameRect);
 }
 
 void PNGImageDecoder::frameComplete()
@@ -826,7 +812,6 @@ void PNGImageDecoder::frameComplete()
         if (m_blend && !hasAlpha)
             m_blend = 0;
 
-        ASSERT(!m_scaled);
         png_bytep row = interlaceBuffer;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
@@ -843,7 +828,7 @@ void PNGImageDecoder::frameComplete()
 
         if (!nonTrivialAlpha) {
             IntRect rect = buffer.backingStore()->frameRect();
-            if (rect.contains(IntRect(IntPoint(), scaledSize())))
+            if (rect.contains(IntRect(IntPoint(), size())))
                 buffer.setHasAlpha(false);
             else {
                 size_t frameIndex = m_currentFrame;
