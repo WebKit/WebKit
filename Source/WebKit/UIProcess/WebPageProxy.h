@@ -1945,7 +1945,7 @@ private:
     void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData&);
     void elementDidBlur();
     void updateInputContextAfterBlurringAndRefocusingElement();
-    void focusedElementDidChangeInputMode(WebCore::InputMode);
+    void focusedElementDidChangeInputMode(WebCore::InputMode, OptionSet<WebCore::ActivityState::Flag>);
     void didReleaseAllTouchPoints();
     void didReceiveEditorStateUpdateAfterFocus();
 

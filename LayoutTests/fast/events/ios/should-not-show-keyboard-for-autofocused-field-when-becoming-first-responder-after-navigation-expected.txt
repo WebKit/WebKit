@@ -1,0 +1,11 @@
+This tests that the software keyboard is not shown for an autofocused text field on becoming first responder after navigating from a page with a focused text field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement became document.getElementById('input')
+PASS Keyboard is not on screen.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

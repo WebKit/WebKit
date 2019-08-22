@@ -1,0 +1,18 @@
+This tests that in a focused text field the software keyboard is hidden and shown when the web view resigns and becomes first responder, respectively, eventhough focusing the text field sets inputmode to "none".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+After tapping <input>:
+PASS Keyboard is on screen.
+
+After resigning first responder:
+PASS Keyboard is not on screen.
+
+After becoming first responder:
+PASS Keyboard is on screen.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

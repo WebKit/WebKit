@@ -932,7 +932,7 @@ void WebPageProxy::elementDidBlur()
     pageClient().elementDidBlur();
 }
 
-void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
+void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchAndPointerEventTracking.isTrackingAnything()) {
@@ -941,7 +941,7 @@ void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
     }
 #endif
 
-    pageClient().focusedElementDidChangeInputMode(mode);
+    pageClient().focusedElementDidChangeInputMode(mode, activityStateChanges);
 }
 
 void WebPageProxy::didReleaseAllTouchPoints()
@@ -949,7 +949,7 @@ void WebPageProxy::didReleaseAllTouchPoints()
     if (!m_pendingInputModeChange)
         return;
 
-    pageClient().focusedElementDidChangeInputMode(*m_pendingInputModeChange);
+    pageClient().focusedElementDidChangeInputMode(*m_pendingInputModeChange, { });
     m_pendingInputModeChange = WTF::nullopt;
 }
 

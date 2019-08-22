@@ -1,3 +1,29 @@
+2019-08-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should show input view when became first responder if keyboard was showing when the view was resigned
+        https://bugs.webkit.org/show_bug.cgi?id=200902
+        <rdar://problem/54231756>
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests to ensure that we show the keyboard when becoming first responder if the view resigned with the
+        keyboard on screen. Also add a test to ensure that we keep our current behavior and do NOT show the keyboard
+        for an autofocused text field when the view becomes first responder.
+
+        * fast/events/ios/resources/check-keyboard-on-screen.js: Added.
+        (async.checkKeyboardOnScreen):
+        (async.checkKeyboardNotOnScreen):
+        * fast/events/ios/should-not-show-keyboard-for-autofocused-field-when-becoming-first-responder-after-navigation-expected.txt: Added.
+        * fast/events/ios/should-not-show-keyboard-for-autofocused-field-when-becoming-first-responder-after-navigation.html: Added.
+        * fast/events/ios/show-keyboard-when-becoming-first-responder-despite-inputmode-none-expected.txt: Added.
+        * fast/events/ios/show-keyboard-when-becoming-first-responder-despite-inputmode-none.html: Added.
+        * fast/events/ios/show-keyboard-when-becoming-first-responder-expected.txt: Added.
+        * fast/events/ios/show-keyboard-when-becoming-first-responder.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForKeyboardToShow.return.new.Promise): Added.
+        (window.UIHelper.waitForKeyboardToShow): Added.
+        (window.UIHelper.becomeFirstResponder): Added.
+
 2019-08-22  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r248974): fast/events/ios/select-all-with-existing-selection.html fails

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/check-keyboard-on-screen.js"></script>
+</head>
+<body>
+<input id="input" autofocus> <!-- Only respected on iOS when a hardware keyboard is attached. -->
+<script>
+window.jsTestIsAsync = true;
+
+let inputElement = document.getElementById("input");
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        return;
+    }
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    if (document.location.search == "?checkResult") {
+        async function checkResultAndDone() {
+            await checkKeyboardNotOnScreen();
+            document.body.removeChild(inputElement);
+            finishJSTest();
+        }
+        await UIHelper.becomeFirstResponder();
+        shouldBecomeEqual("document.activeElement", "document.getElementById('input')", checkResultAndDone);
+    } else {
+        await UIHelper.activateElementAndWaitForInputSession(inputElement);
+        await UIHelper.resignFirstResponder();
+        await UIHelper.waitForKeyboardToHide();
+        document.location.href += "?checkResult";
+    }
+}
+
+description("This tests that the software keyboard is not shown for an autofocused text field on becoming first responder after navigating from a page with a focused text field.");
+runTest();
+</script>
+</body>
+</html>

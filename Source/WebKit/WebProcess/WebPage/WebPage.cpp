@@ -5535,7 +5535,7 @@ void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCor
     if (!isTextFormControlOrEditableContent(element))
         return;
 
-    send(Messages::WebPageProxy::FocusedElementDidChangeInputMode(mode));
+    send(Messages::WebPageProxy::FocusedElementDidChangeInputMode(mode, m_lastActivityStateChanges));
 #else
     UNUSED_PARAM(mode);
 #endif

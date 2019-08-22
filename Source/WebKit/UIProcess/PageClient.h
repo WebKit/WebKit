@@ -388,7 +388,7 @@ public:
     virtual void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, API::Object* userData) = 0;
     virtual void updateInputContextAfterBlurringAndRefocusingElement() = 0;
     virtual void elementDidBlur() = 0;
-    virtual void focusedElementDidChangeInputMode(WebCore::InputMode) = 0;
+    virtual void focusedElementDidChangeInputMode(WebCore::InputMode, OptionSet<WebCore::ActivityState::Flag>) = 0;
     virtual void didReceiveEditorStateUpdateAfterFocus() = 0;
     virtual bool isFocusingElement() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;

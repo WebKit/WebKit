@@ -1,3 +1,69 @@
+2019-08-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should show input view when became first responder if keyboard was showing when the view was resigned
+        https://bugs.webkit.org/show_bug.cgi?id=200902
+        <rdar://problem/54231756>
+
+        Reviewed by Wenson Hsieh.
+
+        When resigning first responder save whether the peripheral host has an input view on screen,
+        including the software keyboard, so that we show the input view(s) again when the WKWebView
+        is made first responder. In Safari, this avoids the need for a person to explicitly focus an
+        editable element again to bring up the keyboard when returning to a tab they were previously
+        typing in. It also makes the behavior of switching tabs in Safari with a software keyboard
+        match the behavior of doing the same thing when a hardware keyboard attached.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::focusedElementDidChangeInputMode):
+        Pass a diff of the activity state from the web process to the UI process so that we can
+        differentiate between an inputmode change as a result of page deactivation vs a change
+        caused by some other means. We need to differentiate these cases because we want to
+        ignore a page that sets inputmode "none" (i.e. a request to hide the keyboard) from inside
+        a focus event handler if the handler was called as part of the process of page activation
+        (i.e. switching to the tab). Google Docs is one example of a web site that sets inputmode
+        to "none" as a result of the page activation process.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]): Clear out state.
+        (-[WKContentView resignFirstResponderForWebView]): Save whether the peripheral host is on screen
+        into a local before ending the editing session. We then copy the local into the ivar if we
+        actually will resign. This ordering is explicitly done because:
+                1. Ending the editing session may dismiss the keyboard => we need to query the peripheral
+                   host first.
+                2. If the view is being resigned as a result of a keyboard dismissal (i.e. a person pressed
+                   the hide keyboard button on iPad) then the user has indicated that they are finished
+                   with the keyboard and we do not want to show the keyboard on page re-activation => we
+                   do not want to copy the local to the ivar.
+                3. If the view refuses to resign itself then it does not make sense to save the keyboard
+                   state as responder status hasn't changed.
+        (-[WKContentView shouldShowAutomaticKeyboardUI]): Ignore inputmode="none", if needed.
+        (-[WKContentView _didCommitLoadForMainFrame]): Clear out state.
+        (-[WKContentView isFirstResponderOrBecomingFirstResponder]): Added.
+        (-[WKContentView shouldShowInputViewOnPageActivation:]): Added.
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        Update ivar if this element is being focused as a result of page activation.
+        (-[WKContentView _didUpdateInputMode:activityStateChanges:]): Modified to take the activity state
+        diff. If the input mode was changed as a result of page activation then we want to update our ivar
+        so that when we call -reloadInputViews and UIKit calls us back in -shouldShowAutomaticKeyboardUI we
+        will know to ignore inputmode set to "none" when determining whether to show the automatic keyboard UI.
+        Note that we do not need to check/track whether an earlier -_elementDidFocus actually started an
+        input session as part of updating the value of our ivar because if an input session was not started,
+        say the embedding client disallowed it, then we would not have a focused element => we early return from
+        this function. Also remove duplication and improve code readbility by making use of the convenience function
+        hasFocusedElement() instead of duplicating what it does.
+        (-[WKContentView _didUpdateInputMode:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::focusedElementDidChangeInputMode): Modified to take the activity state diff
+        and pass it through.
+        (WebKit::WebPageProxy::didReleaseAllTouchPoints): Pass the empty set for the activity state diff to
+        keep our current behavior.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::focusedElementDidChangeInputMode): Send the activity state diff to the UI process.
 2019-08-22  Keith Rollin  <krollin@apple.com>
 
         Remove logging that contains a URL
