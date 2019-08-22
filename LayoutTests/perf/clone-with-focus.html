@@ -17,21 +17,22 @@
         {
             if (focusInput)
                 inputElement.focus();
-                
-            var startTime = Date.now();
+
+            var startTime = performance.now();
             for (var i = 0; i < numberOfElements; i++) {
                 var clone = templateElement.cloneNode(true);
                 clone.childNodes[0].textContent = i;
                 listElement.appendChild(clone);
             }
-            var endTime = Date.now();
-            
+            var endTime = performance.now();
+
             if (focusInput)
                 inputElement.blur();
-                
-            while (listElement.firstChild != listElement.lastChild)
-                listElement.removeChild(listElement.lastChild);
-            
+
+            const originalItem = listElement.firstChild;
+            listElement.textContent = '';
+            listElement.appendChild(originalItem);
+
             return endTime - startTime;
         }
 
@@ -42,8 +43,13 @@
             document.getElementById('console').appendChild(element);
         }
 
-        var timeWithoutFocus = test(1000, false);
-        var timeWithFocus = test(1000, true);
+        const start = performance.now();
+        let factor = 0;
+        while (test(1000 * factor, false) < 5)
+            factor++;
+
+        var timeWithoutFocus = test(1000 * factor, false);
+        var timeWithFocus = test(1000 * factor, true);
 
         if (Math.abs(timeWithFocus - timeWithoutFocus) <= timeWithoutFocus) {
             log('PASS. Cloning elements takes roughly as long with as without focus.');

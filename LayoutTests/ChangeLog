@@ -1,3 +1,22 @@
+2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Layout Test perf/clone-with-focus.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=201012
+
+        Reviewed by Antti Koivisto.
+
+        The flakiness was observed when the time to clone elements without focus is 0ms
+        but the time to clone elements with focus is 1ms or greater.
+
+        The test tries to make sure the time to clone elements with foucs is less than 2x
+        of the time to clone elements without focus. When the time to clone without focus
+        is 0ms, any difference is always more than 2x larger.
+
+        Fixed the test by increasing the number of elements until the time to clone without
+        focus takes at least 5ms.
+
+        * perf/clone-with-focus.html:
+
 2019-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Vertex shader and fragment shader need to be able to come from two different programs
