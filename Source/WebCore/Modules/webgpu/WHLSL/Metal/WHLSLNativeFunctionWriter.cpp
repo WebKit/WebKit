@@ -146,15 +146,14 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         if (nativeFunctionDeclaration.parameters().size() == 1) {
             auto& parameterType = *nativeFunctionDeclaration.parameters()[0]->type();
             auto metalParameterTypeName = typeNamer.mangledNameForType(parameterType);
-            auto variableName = generateNextVariableName();
-
-            stringBuilder.append(indent, metalParameterTypeName, ' ', variableName, " = ", args[0], ";\n");
 
             auto isEnumerationDefinition = [] (auto& type) {
                 return is<AST::NamedType>(type) && is<AST::EnumerationDefinition>(downcast<AST::NamedType>(type));
             };
             auto& unifiedReturnType = returnType.unifyNode();
             if (isEnumerationDefinition(unifiedReturnType) && !isEnumerationDefinition(parameterType.unifyNode())) {
+                auto variableName = generateNextVariableName();
+                stringBuilder.append(indent, metalParameterTypeName, ' ', variableName, " = ", args[0], ";\n");
                 auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(downcast<AST::NamedType>(unifiedReturnType));
                 stringBuilder.append(indent, "switch (", variableName, ") {\n");
                 {
@@ -173,9 +172,10 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
                         indent, "    break;\n",
                         indent, "}\n");
                 }
-            }
+                stringBuilder.append(indent, returnName, " = static_cast<", metalReturnTypeName, ">(", variableName, ");\n");
+            } else
+                stringBuilder.append(indent, returnName, " = static_cast<", metalReturnTypeName, ">(", args[0], ");\n");
 
-            stringBuilder.append(indent, returnName, " = static_cast<", metalReturnTypeName, ">(", variableName, ");\n");
             return;
         }
 

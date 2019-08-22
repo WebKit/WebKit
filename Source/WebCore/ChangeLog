@@ -1,3 +1,21 @@
+2019-08-21  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Improve default constructor and emit fewer pointers in metal codegen
+        https://bugs.webkit.org/show_bug.cgi?id=200995
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch makes it so that we:
+        1. Emit less code for copy constructors by omitting an unused variable.
+        2. Emit ternary expressions instead of if statements for conditional assignments.
+        3. Don't copy pointers for producing an lvalue from DereferenceExpression.
+        4. Lazily produce lvalues for GlobalVariableReference.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+
 2019-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Vertex shader and fragment shader need to be able to come from two different programs

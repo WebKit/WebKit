@@ -535,12 +535,11 @@ void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariabl
     m_stringBuilder.append(
         m_indent, mangledTypeName, ' ', valueName, " = ", structVariable, "->", mangledFieldName, ";\n");
 
-    Indentation<4> indent = m_indent;
     appendLeftValue(globalVariableReference, valueName, { }, Nullability::NotNull,
-        [this, mangledTypeName, structVariable, mangledFieldName, indent] {
+        [this, mangledTypeName, structVariable, mangledFieldName] {
             auto pointerName = generateNextVariableName();
             m_stringBuilder.append(
-                indent, "thread ", mangledTypeName, "* ", pointerName, " = &", structVariable, "->", mangledFieldName, ";\n");
+                m_indent, "thread ", mangledTypeName, "* ", pointerName, " = &", structVariable, "->", mangledFieldName, ";\n");
             return pointerName;
         });
 }
@@ -649,21 +648,15 @@ void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpr
     checkErrorAndVisit(dereferenceExpression.pointer());
     auto [inputPointer, nullability] = takeLastValueAndNullability();
     auto resultValue = generateNextVariableName();
-    auto resultPointer = generateNextVariableName();
+    auto resultType = m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType());
 
-    m_stringBuilder.append(
-        m_indent, m_typeNamer.mangledNameForType(dereferenceExpression.pointer().resolvedType()), ' ', resultPointer, " = ", inputPointer, ";\n",
-        m_indent, m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', resultValue, ";\n");
     if (nullability == Nullability::CanBeNull) {
         m_stringBuilder.append(
-            m_indent, "if (", resultPointer, ")\n",
-            m_indent, "    ", resultValue, " = *", resultPointer, ";\n",
-            m_indent, "else\n",
-            m_indent, "    ", resultValue, " = { };\n"
-        );
+            m_indent, resultType , ' ', resultValue, " = ", inputPointer, " ? ", '*', inputPointer, " : ", resultType, "{ };\n");
     } else
         m_stringBuilder.append(m_indent, resultValue, " = *", inputPointer, ";\n");
-    appendLeftValue(dereferenceExpression, resultValue, resultPointer, nullability);
+
+    appendLeftValue(dereferenceExpression, resultValue, inputPointer, nullability);
 }
 
 void FunctionDefinitionWriter::visit(AST::LogicalExpression& logicalExpression)
@@ -711,12 +704,7 @@ void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArra
     if (is<AST::PointerType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
         auto ptrValue = takeLastValue();
         m_stringBuilder.append(
-            m_indent, mangledTypeName, ' ', variableName, ";\n",
-            m_indent, "if (", ptrValue, ")\n",
-            m_indent, "    ", variableName, " = { ", ptrValue, ", 1};\n",
-            m_indent, "else\n",
-            m_indent, "    ", variableName, " = { nullptr, 0 };\n"
-        );
+            m_indent, mangledTypeName, ' ', variableName, " = ", ptrValue, " ? ", mangledTypeName, "{ ", ptrValue, ", 1 } : ", mangledTypeName, "{ nullptr, 0 };\n");
     } else if (is<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
         auto lValue = takeLastLeftValue().value;
         auto& arrayType = downcast<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType());
@@ -765,11 +753,10 @@ void FunctionDefinitionWriter::visit(AST::VariableReference& variableReference)
 
     MangledVariableName variableName = iterator->value;
 
-    Indentation<4> indent = m_indent;
     appendLeftValue(variableReference, variableName, { }, Nullability::NotNull,
-        [this, &variableReference, variableName, indent] {
+        [this, &variableReference, variableName] {
             auto pointerName = generateNextVariableName();
-            m_stringBuilder.append(indent, "thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", variableName, ";\n");
+            m_stringBuilder.append(m_indent, "thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", variableName, ";\n");
             return pointerName;
         });
 }
