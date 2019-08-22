@@ -1,3 +1,20 @@
+2019-08-22  Keith Rollin  <krollin@apple.com>
+
+        Remove support for tvOS < 13.0
+        https://bugs.webkit.org/show_bug.cgi?id=200963
+        <rdar://problem/54541355>
+
+        Reviewed by Tim Horton.
+
+        Update conditionals that reference __TV_OS_VERSION_MIN_REQUIRED and
+        __TV_OS_VERSION_MAX_ALLOWED, assuming that they both have values >=
+        130000. This means that expressions like "__TV_OS_VERSION_MIN_REQUIRED
+        < 130000" are always False and "__TV_OS_VERSION_MIN_REQUIRED >=
+        130000" are always True.
+
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h:
+        * pal/spi/cocoa/NSProgressSPI.h:
+
 2019-08-21  Keith Rollin  <krollin@apple.com>
 
         Remove support for watchOS < 6.0
