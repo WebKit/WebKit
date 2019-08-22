@@ -72,6 +72,7 @@ struct NetworkSessionCreationParameters {
     Seconds loadThrottleLatency;
     URL httpProxy;
     URL httpsProxy;
+    bool enableLegacyTLS { false };
 #endif
 #if USE(SOUP)
     String cookiePersistentStoragePath;

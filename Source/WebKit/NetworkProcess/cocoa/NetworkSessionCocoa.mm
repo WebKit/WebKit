@@ -940,6 +940,14 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
 
+    if (!parameters.enableLegacyTLS) {
+#if HAVE(TLS_PROTOCOL_VERSION_T)
+        configuration.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
+#else
+        configuration.TLSMinimumSupportedProtocol = kTLSProtocol12;
+#endif
+    }
+
 #if HAVE(APP_SSO)
     configuration._preventsAppSSO = true;
 #endif

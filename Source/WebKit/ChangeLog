@@ -1,3 +1,22 @@
+2019-08-22  Alex Christensen  <achristensen@webkit.org>
+
+        Disable legacy TLS versions and add a temporary default to re-enable it
+        https://bugs.webkit.org/show_bug.cgi?id=200945
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2019-08-17  Darin Adler  <darin@apple.com>
 
         Use makeString and multi-argument StringBuilder::append instead of less efficient multiple appends

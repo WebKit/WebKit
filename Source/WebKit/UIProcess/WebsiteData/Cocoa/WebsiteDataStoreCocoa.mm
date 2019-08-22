@@ -69,6 +69,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     bool enableResourceLoadStatisticsDebugMode = false;
     bool enableResourceLoadStatisticsNSURLSessionSwitching = WebCore::RuntimeEnabledFeatures::sharedFeatures().isITPSessionSwitchingEnabled();
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
+    bool enableLegacyTLS = [defaults boolForKey:@"WebKitEnableLegacyTLS"];
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
@@ -128,6 +129,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
         WTFMove(httpProxy),
         WTFMove(httpsProxy),
+        enableLegacyTLS,
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
         false,

@@ -281,6 +281,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
         }
     }
 
+    parameters.defaultDataStoreParameters.networkSessionParameters.enableLegacyTLS = [defaults boolForKey:@"WebKitEnableLegacyTLS"];
+
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
 #if PLATFORM(IOS_FAMILY)
