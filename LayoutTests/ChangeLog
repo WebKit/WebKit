@@ -1,3 +1,20 @@
+2019-08-23  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r248974): fast/events/ios/key-command-delete-to-end-of-paragraph.html is timing out on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=201091
+        <rdar://problem/54647731>
+
+        Reviewed by Megan Gardner.
+
+        * fast/events/ios/key-command-delete-to-end-of-paragraph.html:
+        The test as-written doesn't actually wait for the tap to complete before
+        continuing on with the test - it starts immediately when the focus event
+        fires. This results in the selection being changed by the single click
+        handler *after* focusing the field.
+
+        Rewrite the test to await completion of the tap before moving forward
+        instead of waiting for focus.
+
 2019-08-23  Chris Dumez  <cdumez@apple.com>
 
         [geolocation] Rename interfaces and remove [NoInterfaceObject]

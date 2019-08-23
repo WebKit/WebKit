@@ -35,7 +35,7 @@ function handleMutation()
     finishJSTest();
 }
 
-function runTest()
+async function runTest()
 {
     if (!window.testRunner)
         document.getElementById("manual-instructions").classList.remove("hidden");
@@ -48,9 +48,12 @@ function runTest()
         if (window.testRunner)
             UIHelper.keyDown("k", ["ctrlKey"]);
     }
-    testElement.addEventListener("focus", handleFocus, { once: true });
-    if (window.testRunner)
-        UIHelper.activateElement(testElement);
+
+    if (window.testRunner) {
+        await UIHelper.activateElement(testElement);
+        handleFocus();
+    } else
+        testElement.addEventListener("focus", handleFocus, { once: true });
 }
 
 description("Tests that pressing Control + k in a content-editable field deletes to the end of the paragraph.");
