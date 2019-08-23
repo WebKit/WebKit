@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +27,25 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include "AuthenticatorTransportService.h"
+#include "CtapDriver.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
-class CtapDriver;
-
-class CtapAuthenticator final : public Authenticator {
+class FidoService : public AuthenticatorTransportService {
 public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+    explicit FidoService(Observer&);
+
+protected:
+    void getInfo(std::unique_ptr<CtapDriver>&&);
 
 private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+    void continueAfterGetInfo(WeakPtr<CtapDriver>&&, Vector<uint8_t>&& info);
 
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
+    // Keeping drivers alive when they are getting info from devices.
+    HashSet<std::unique_ptr<CtapDriver>> m_drivers;
 };
 
 } // namespace WebKit

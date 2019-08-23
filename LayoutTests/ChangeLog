@@ -1,3 +1,28 @@
+2019-08-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support NFC authenticators for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188624
+        <rdar://problem/43354214>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/webauthn/ctap-nfc-failure.https-expected.txt: Added.
+        * http/wpt/webauthn/ctap-nfc-failure.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-nfc.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        This patch replaces the "local" keyword with "hid".
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-nfc.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-success-nfc.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-success-nfc.https.html: Added.
+        * http/wpt/webauthn/resources/util.js:
+        * platform/ios-simulator-wk2/TestExpectations:
+        Skip NFC tests for simulators.
+
 2019-08-23  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r249031.

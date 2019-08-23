@@ -48,6 +48,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
+#import "VersionChecks.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"

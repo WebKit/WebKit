@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>Web Authentication API: CTAP NFC failure cases with a mock nfc authenticator.</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="./resources/util.js"></script>
+<script>
+    const defaultOptions = {
+        publicKey: {
+            rp: {
+                name: "example.com"
+            },
+            user: {
+                name: "John Appleseed",
+                id: asciiToUint8Array("123456"),
+                displayName: "John",
+            },
+            challenge: asciiToUint8Array("123456"),
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            timeout: 10
+        }
+    };
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ nfc: { error: "malicious-payload", payloadBase64:[testNfcU2fVersionBase64, ""] } });
+        return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
+    }, "CTAP NFC with empty apdu response in a mock nfc authenticator.");
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ nfc: { error: "malicious-payload", payloadBase64:[testNfcU2fVersionBase64, testU2fApduWrongDataOnlyResponseBase64] } });
+        return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
+    }, "CTAP NFC with wrong data error in a mock nfc authenticator.");
+</script>

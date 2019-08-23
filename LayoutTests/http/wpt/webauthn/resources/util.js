@@ -99,6 +99,40 @@ const testU2fSignResponse =
     "f4V4LeEAhqeD0effTjY553H19q+jWq1Tc4WOkAA=";
 const testCtapErrCredentialExcludedOnlyResponseBase64 = "GQ==";
 const testCtapErrInvalidCredentialResponseBase64 = "Ig==";
+const testNfcU2fVersionBase64 = "VTJGX1YykAA=";
+const testNfcCtapVersionBase64 = "RklET18yXzCQAA==";
+const testGetInfoResponseApduBase64 =
+    "AKYBgmZVMkZfVjJoRklET18yXzACgWtobWFjLXNlY3JldANQbUS6m/bsLkm5MAyP" +
+    "6SDLcwSkYnJr9WJ1cPVkcGxhdPRpY2xpZW50UGlu9AUZBLAGgQGQAA==";
+const testCreationMessageApduBase64 =
+    "AKMBZnBhY2tlZAJYxEbMf7lnnVWy25CS4cjZ5eHQK3WA8LSBLHcJYuHkj1rYQQAA" +
+    "AE74oBHzjApNFYAGFxEfntx9AEAoCK3O6P5OyXN6V/f+9nAga0NA2Cgp4V3mgSJ5" +
+    "jOHLMDrmxp/S0rbD+aihru1C0aAN3BkiM6GNy5nSlDVqOgTgpQECAyYgASFYIEFb" +
+    "he3RkNud6sgyraBGjlh1pzTlCZehQlL/b18HZ6WGIlggJgfUd/en9p5AIqMQbUni" +
+    "nEeXdFLkvW0/zV5BpEjjNxADo2NhbGcmY3NpZ1hHMEUCIQDKg+ZBmEBtf0lWq4Re" +
+    "dH4/i/LOYqOR4uR2NAj2zQmw9QIgbTXb4hvFbj4T27bv/rGrc+y+0puoYOBkBk9P" +
+    "mCewWlNjeDVjgVkCwjCCAr4wggGmoAMCAQICBHSG/cIwDQYJKoZIhvcNAQELBQAw" +
+    "LjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEw" +
+    "IBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG8xCzAJBgNVBAYTAlNF" +
+    "MRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0" +
+    "ZXN0YXRpb24xKDAmBgNVBAMMH1l1YmljbyBVMkYgRUUgU2VyaWFsIDE5NTUwMDM4" +
+    "NDIwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASVXfOt9yR9MXXv/ZzE8xpOh466" +
+    "4YEJVmFQ+ziLLl9lJ79XQJqlgaUNCsUvGERcChNUihNTyKTlmnBOUjvATevto2ww" +
+    "ajAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTATBgsrBgEEAYLl" +
+    "HAIBAQQEAwIFIDAhBgsrBgEEAYLlHAEBBAQSBBD4oBHzjApNFYAGFxEfntx9MAwG" +
+    "A1UdEwEB/wQCMAAwDQYJKoZIhvcNAQELBQADggEBADFcSIDmmlJ+OGaJvWn9Cqhv" +
+    "SeueToVFQVVvqtALOgCKHdwB+Wx29mg2GpHiMsgQp5xjB0ybbnpG6x212FxESJ+G" +
+    "inZD0ipchi7APwPlhIvjgH16zVX44a4e4hOsc6tLIOP71SaMsHuHgCcdH0vg5d2s" +
+    "c006WJe9TXO6fzV+ogjJnYpNKQLmCXoAXE3JBNwKGBIOCvfQDPyWmiiG5bGxYfPt" +
+    "y8Z3pnjX+1MDnM2hhr40ulMxlSNDnX/ZSnDyMGIbk8TOQmjTF02UO8auP8k3wt5D" +
+    "1rROIRU9+FCSX5WQYi68RuDrGMZB8P5+byoJqbKQdxn2LmE1oZAyohPAmLcoPO6Q" +
+    "AA==";
+const testAssertionMessageApduBase64 =
+    "AKMBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+    "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+    "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
+    "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
+    "QoJ1L7Fe64G9uBeQAA==";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 
@@ -296,4 +330,109 @@ function checkPublicKey(publicKey)
     if (publicKey['-3'].byteLength != 32)
         return false;
     return true;
+}
+
+function checkCtapMakeCredentialResult(credential, isNoneAttestation = true)
+{
+    // Check response
+    assert_array_equals(Base64URL.parse(credential.id), Base64URL.parse(testHidCredentialIdBase64));
+    assert_equals(credential.type, 'public-key');
+    assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testHidCredentialIdBase64));
+    assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.create","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
+    assert_not_exists(credential.getClientExtensionResults(), "appid");
+
+    // Check attestation
+    const attestationObject = CBOR.decode(credential.response.attestationObject);
+    if (isNoneAttestation)
+        assert_equals(attestationObject.fmt, "none");
+    else
+        assert_equals(attestationObject.fmt, "packed");
+    // Check authData
+    const authData = decodeAuthData(attestationObject.authData);
+    assert_equals(bytesToHexString(authData.rpIdHash), "46cc7fb9679d55b2db9092e1c8d9e5e1d02b7580f0b4812c770962e1e48f5ad8");
+    assert_equals(authData.flags, 65);
+    assert_equals(authData.counter, 78);
+    if (isNoneAttestation)
+        assert_equals(bytesToHexString(authData.aaguid), "00000000000000000000000000000000");
+    else
+        assert_equals(bytesToHexString(authData.aaguid), "f8a011f38c0a4d15800617111f9edc7d");
+    assert_array_equals(authData.credentialID, Base64URL.parse(testHidCredentialIdBase64));
+    // Check packed attestation
+    assert_true(checkPublicKey(authData.publicKey));
+    if (isNoneAttestation)
+        assert_object_equals(attestationObject.attStmt, { });
+    else {
+        assert_equals(attestationObject.attStmt.alg, -7);
+        assert_equals(attestationObject.attStmt.x5c.length, 1);
+    }
+}
+
+function checkU2fMakeCredentialResult(credential, isNoneAttestation = true)
+{
+    // Check response
+    assert_array_equals(Base64URL.parse(credential.id), Base64URL.parse(testU2fCredentialIdBase64));
+    assert_equals(credential.type, 'public-key');
+    assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testU2fCredentialIdBase64));
+    assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.create","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
+    assert_not_exists(credential.getClientExtensionResults(), "appid");
+
+    // Check attestation
+    const attestationObject = CBOR.decode(credential.response.attestationObject);
+    if (isNoneAttestation)
+        assert_equals(attestationObject.fmt, "none");
+    else
+        assert_equals(attestationObject.fmt, "fido-u2f");
+    // Check authData
+    const authData = decodeAuthData(attestationObject.authData);
+    assert_equals(bytesToHexString(authData.rpIdHash), "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763");
+    assert_equals(authData.flags, 65);
+    assert_equals(authData.counter, 0);
+    assert_equals(bytesToHexString(authData.aaguid), "00000000000000000000000000000000");
+    assert_array_equals(authData.credentialID, Base64URL.parse(testU2fCredentialIdBase64));
+    // Check fido-u2f attestation
+    assert_true(checkPublicKey(authData.publicKey));
+    if (isNoneAttestation)
+        assert_object_equals(attestationObject.attStmt, { });
+    else
+        assert_equals(attestationObject.attStmt.x5c.length, 1);
+}
+
+function checkCtapGetAssertionResult(credential)
+{
+    // Check respond
+    assert_array_equals(Base64URL.parse(credential.id), Base64URL.parse(testHidCredentialIdBase64));
+    assert_equals(credential.type, 'public-key');
+    assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testHidCredentialIdBase64));
+    assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.get","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
+    assert_equals(credential.response.userHandle, null);
+    assert_not_exists(credential.getClientExtensionResults(), "appid");
+
+    // Check authData
+    const authData = decodeAuthData(new Uint8Array(credential.response.authenticatorData));
+    assert_equals(bytesToHexString(authData.rpIdHash), "46cc7fb9679d55b2db9092e1c8d9e5e1d02b7580f0b4812c770962e1e48f5ad8");
+    assert_equals(authData.flags, 1);
+    assert_equals(authData.counter, 80);
+}
+
+function checkU2fGetAssertionResult(credential, isAppID = false, appIDHash = "c2671b6eb9233197d5f2b1288a55ba4f0860f96f7199bba32fe6da7c3f0f31e5")
+{
+    // Check respond
+    assert_array_equals(Base64URL.parse(credential.id), Base64URL.parse(testU2fCredentialIdBase64));
+    assert_equals(credential.type, 'public-key');
+    assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testU2fCredentialIdBase64));
+    assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.get","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
+    assert_equals(credential.response.userHandle, null);
+    if (!isAppID)
+        assert_not_exists(credential.getClientExtensionResults(), "appid");
+    else
+        assert_true(credential.getClientExtensionResults().appid);
+
+    // Check authData
+    const authData = decodeAuthData(new Uint8Array(credential.response.authenticatorData));
+    if (!isAppID)
+        assert_equals(bytesToHexString(authData.rpIdHash), "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763");
+    else
+        assert_equals(bytesToHexString(authData.rpIdHash), appIDHash);
+    assert_equals(authData.flags, 1);
+    assert_equals(authData.counter, 59);
 }

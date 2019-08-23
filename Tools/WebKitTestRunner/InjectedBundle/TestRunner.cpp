@@ -2709,6 +2709,71 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
         configurationValues.append(adoptWK(WKDictionaryCreate(rawHidKeys.data(), rawHidValues.data(), rawHidKeys.size())));
     }
 
+    JSRetainPtr<JSStringRef> nfcPropertyName(Adopt, JSStringCreateWithUTF8CString("nfc"));
+    JSValueRef nfcValue = JSObjectGetProperty(context, configuration, nfcPropertyName.get(), 0);
+    if (!JSValueIsUndefined(context, nfcValue) && !JSValueIsNull(context, nfcValue)) {
+        if (!JSValueIsObject(context, nfcValue))
+            return;
+        JSObjectRef nfc = JSValueToObject(context, nfcValue, 0);
+
+        JSRetainPtr<JSStringRef> errorPropertyName(Adopt, JSStringCreateWithUTF8CString("error"));
+        JSValueRef errorValue = JSObjectGetProperty(context, nfc, errorPropertyName.get(), 0);
+        if (!JSValueIsString(context, errorValue))
+            return;
+
+        Vector<WKRetainPtr<WKStringRef>> nfcKeys;
+        Vector<WKRetainPtr<WKTypeRef>> nfcValues;
+        nfcKeys.append(adoptWK(WKStringCreateWithUTF8CString("Error")));
+        nfcValues.append(toWK(adopt(JSValueToStringCopy(context, errorValue, 0)).get()));
+
+        JSRetainPtr<JSStringRef> payloadBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("payloadBase64"));
+        JSValueRef payloadBase64Value = JSObjectGetProperty(context, nfc, payloadBase64PropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, payloadBase64Value) && !JSValueIsNull(context, payloadBase64Value)) {
+            if (!JSValueIsArray(context, payloadBase64Value))
+                return;
+
+            JSObjectRef payloadBase64 = JSValueToObject(context, payloadBase64Value, nullptr);
+            static auto lengthProperty = adopt(JSStringCreateWithUTF8CString("length"));
+            JSValueRef payloadBase64LengthValue = JSObjectGetProperty(context, payloadBase64, lengthProperty.get(), nullptr);
+            if (!JSValueIsNumber(context, payloadBase64LengthValue))
+                return;
+
+            auto payloadBase64s = adoptWK(WKMutableArrayCreate());
+            auto payloadBase64Length = static_cast<size_t>(JSValueToNumber(context, payloadBase64LengthValue, nullptr));
+            for (size_t i = 0; i < payloadBase64Length; ++i) {
+                JSValueRef payloadBase64Value = JSObjectGetPropertyAtIndex(context, payloadBase64, i, nullptr);
+                if (!JSValueIsString(context, payloadBase64Value))
+                    continue;
+                WKArrayAppendItem(payloadBase64s.get(), toWK(adopt(JSValueToStringCopy(context, payloadBase64Value, 0)).get()).get());
+            }
+
+            nfcKeys.append(adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")));
+            nfcValues.append(payloadBase64s);
+        }
+
+        JSRetainPtr<JSStringRef> multipleTagsPropertyName(Adopt, JSStringCreateWithUTF8CString("multipleTags"));
+        JSValueRef multipleTagsValue = JSObjectGetProperty(context, nfc, multipleTagsPropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, multipleTagsValue) && !JSValueIsNull(context, multipleTagsValue)) {
+            if (!JSValueIsBoolean(context, multipleTagsValue))
+                return;
+            bool multipleTags = JSValueToBoolean(context, multipleTagsValue);
+            nfcKeys.append(adoptWK(WKStringCreateWithUTF8CString("MultipleTags")));
+            nfcValues.append(adoptWK(WKBooleanCreate(multipleTags)).get());
+        }
+
+        Vector<WKStringRef> rawNfcKeys;
+        Vector<WKTypeRef> rawNfcValues;
+        rawNfcKeys.resize(nfcKeys.size());
+        rawNfcValues.resize(nfcValues.size());
+        for (size_t i = 0; i < nfcKeys.size(); ++i) {
+            rawNfcKeys[i] = nfcKeys[i].get();
+            rawNfcValues[i] = nfcValues[i].get();
+        }
+
+        configurationKeys.append(adoptWK(WKStringCreateWithUTF8CString("Nfc")));
+        configurationValues.append(adoptWK(WKDictionaryCreate(rawNfcKeys.data(), rawNfcValues.data(), rawNfcKeys.size())));
+    }
+
     Vector<WKStringRef> rawConfigurationKeys;
     Vector<WKTypeRef> rawConfigurationValues;
     rawConfigurationKeys.resize(configurationKeys.size());

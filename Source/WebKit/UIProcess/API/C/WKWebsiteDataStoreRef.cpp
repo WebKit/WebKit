@@ -632,29 +632,29 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
         auto stage = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Stage")).get())))->string();
         if (stage == "info")
             hid.stage = WebKit::MockWebAuthenticationConfiguration::Hid::Stage::Info;
-        if (stage == "request")
+        else if (stage == "request")
             hid.stage = WebKit::MockWebAuthenticationConfiguration::Hid::Stage::Request;
 
         auto subStage = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("SubStage")).get())))->string();
         if (subStage == "init")
             hid.subStage = WebKit::MockWebAuthenticationConfiguration::Hid::SubStage::Init;
-        if (subStage == "msg")
+        else if (subStage == "msg")
             hid.subStage = WebKit::MockWebAuthenticationConfiguration::Hid::SubStage::Msg;
 
         auto error = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Error")).get())))->string();
         if (error == "success")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::Success;
-        if (error == "data-not-sent")
+        else if (error == "data-not-sent")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::DataNotSent;
-        if (error == "empty-report")
+        else if (error == "empty-report")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::EmptyReport;
-        if (error == "wrong-channel-id")
+        else if (error == "wrong-channel-id")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::WrongChannelId;
-        if (error == "malicious-payload")
+        else if (error == "malicious-payload")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::MaliciousPayload;
-        if (error == "unsupported-options")
+        else if (error == "unsupported-options")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::UnsupportedOptions;
-        if (error == "wrong-nonce")
+        else if (error == "wrong-nonce")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::WrongNonce;
 
         if (auto payloadBase64 = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
@@ -676,6 +676,30 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
             hid.canDowngrade = WKBooleanGetValue(canDowngrade);
 
         configuration.hid = WTFMove(hid);
+    }
+
+    if (auto nfcRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Nfc")).get()))) {
+        WebKit::MockWebAuthenticationConfiguration::Nfc nfc;
+
+        auto error = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(nfcRef, adoptWK(WKStringCreateWithUTF8CString("Error")).get())))->string();
+        if (error == "success")
+            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::Success;
+        else if (error == "no-tags")
+            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::NoTags;
+        else if (error == "wrong-tag-type")
+            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::WrongTagType;
+        else if (error == "no-connections")
+            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::NoConnections;
+        else if (error == "malicious-payload")
+            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::MaliciousPayload;
+
+        if (auto payloadBase64 = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(nfcRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
+            nfc.payloadBase64 = WebKit::toImpl(payloadBase64)->toStringVector();
+
+        if (auto multipleTags = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(nfcRef, adoptWK(WKStringCreateWithUTF8CString("MultipleTags")).get())))
+            nfc.multipleTags = WKBooleanGetValue(multipleTags);
+
+        configuration.nfc = WTFMove(nfc);
     }
 
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setMockWebAuthenticationConfiguration(WTFMove(configuration));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +27,27 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include "MockWebAuthenticationConfiguration.h"
+#include "NfcService.h"
+
+OBJC_CLASS NSData;
 
 namespace WebKit {
 
-class CtapDriver;
+struct MockWebAuthenticationConfiguration;
 
-class CtapAuthenticator final : public Authenticator {
+class MockNfcService final : public NfcService {
 public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+    MockNfcService(Observer&, const MockWebAuthenticationConfiguration&);
+
+    NSData* transceive();
 
 private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+    void platformStartDiscovery() final;
 
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
+    void detectTags() const;
 
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
+    MockWebAuthenticationConfiguration m_configuration;
 };
 
 } // namespace WebKit

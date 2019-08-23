@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CtapAuthenticator.h"
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #include "CtapDriver.h"
 #include "CtapHidDriver.h"
@@ -115,4 +115,4 @@ bool CtapAuthenticator::tryDowngrade()
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)

@@ -1,3 +1,15 @@
+2019-08-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support NFC authenticators for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188624
+        <rdar://problem/43354214>
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+        Setup NFC mock testing configuration.
+
 2019-08-23  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Enable Style queue on new EWS

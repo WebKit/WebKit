@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,28 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include "CtapDriver.h"
+#include "NfcConnection.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
-class CtapDriver;
-
-class CtapAuthenticator final : public Authenticator {
+// The following implements the CTAP NFC protocol:
+// https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc
+class CtapNfcDriver : public CtapDriver {
 public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+    explicit CtapNfcDriver(UniqueRef<NfcConnection>&&);
+
+    void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
 
 private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+    void respondAsync(ResponseCallback&&, Vector<uint8_t>&& response) const;
 
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
+    UniqueRef<NfcConnection> m_connection;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)

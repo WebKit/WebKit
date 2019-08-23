@@ -1,0 +1,4 @@
+
+PASS CTAP NFC with empty apdu response in a mock nfc authenticator. 
+PASS CTAP NFC with wrong data error in a mock nfc authenticator. 
+

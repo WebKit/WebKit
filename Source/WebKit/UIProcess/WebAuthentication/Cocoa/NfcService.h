@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +27,39 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include "FidoService.h"
+
+OBJC_CLASS NFReaderSession;
 
 namespace WebKit {
 
-class CtapDriver;
+class CtapNfcDriver;
 
-class CtapAuthenticator final : public Authenticator {
+class NfcService : public FidoService {
 public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+    explicit NfcService(Observer&);
+    ~NfcService();
+
+    // For NfcConnection.
+    void didConnectTag();
+
+#if HAVE(NEAR_FIELD)
+protected:
+    void setDriver(std::unique_ptr<CtapNfcDriver>&&);
+#endif
 
 private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+    void startDiscoveryInternal() final;
+    void continueAddDeviceAfterGetInfo(Vector<uint8_t>&& response);
 
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
+    // Overrided by MockNfcService.
+    virtual void platformStartDiscovery();
 
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
+#if HAVE(NEAR_FIELD)
+    // Only one reader session is allowed per time.
+    // Keep the reader session alive here when it tries to connect to a tag.
+    std::unique_ptr<CtapNfcDriver> m_driver;
+#endif
 };
 
 } // namespace WebKit

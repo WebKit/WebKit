@@ -1035,6 +1035,10 @@
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */; };
 		570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */; };
+		570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAAC23026F5C00E8FC04 /* NfcService.h */; };
+		570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC02303730300E8FC04 /* NfcConnection.h */; };
+		570DAAC623037F7F00E8FC04 /* WKNFReaderSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */; };
+		570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */; };
 		572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */; };
 		57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EB721811D9A0037F924 /* CtapHidDriver.h */; };
 		57597EBD218184900037F924 /* CtapAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EBB2181848F0037F924 /* CtapAuthenticator.h */; };
@@ -1043,6 +1047,11 @@
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
+		57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826402304EB3E00B72EB0 /* NearFieldSPI.h */; };
+		57B826442304F14000B72EB0 /* NearFieldSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826422304F14000B72EB0 /* NearFieldSoftLink.h */; };
+		57B826452304F14000B72EB0 /* NearFieldSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57B826432304F14000B72EB0 /* NearFieldSoftLink.mm */; };
+		57B8264823050C5100B72EB0 /* FidoService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264623050C5100B72EB0 /* FidoService.h */; };
+		57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264A230603C100B72EB0 /* MockNfcService.h */; };
 		57BBEA6D22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */; };
 		57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */; };
 		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
@@ -3475,6 +3484,15 @@
 		570AB90020B2517400B8BE87 /* AuthenticationChallengeProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeProxyCocoa.mm; sourceTree = "<group>"; };
 		570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecKeyProxyStore.mm; sourceTree = "<group>"; };
 		570B73CF230236DD00FAEC53 /* CtapDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapDriver.h; sourceTree = "<group>"; };
+		570DAAAC23026F5C00E8FC04 /* NfcService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NfcService.h; sourceTree = "<group>"; };
+		570DAAAD23026F5C00E8FC04 /* NfcService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NfcService.mm; sourceTree = "<group>"; };
+		570DAAB0230273D200E8FC04 /* NearField.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NearField.framework; path = System/Library/PrivateFrameworks/NearField.framework; sourceTree = SDKROOT; };
+		570DAAC02303730300E8FC04 /* NfcConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NfcConnection.h; sourceTree = "<group>"; };
+		570DAAC12303730300E8FC04 /* NfcConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NfcConnection.mm; sourceTree = "<group>"; };
+		570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNFReaderSessionDelegate.h; sourceTree = "<group>"; };
+		570DAAC523037F7E00E8FC04 /* WKNFReaderSessionDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNFReaderSessionDelegate.mm; sourceTree = "<group>"; };
+		570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapNfcDriver.h; sourceTree = "<group>"; };
+		570DAAC9230385FD00E8FC04 /* CtapNfcDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapNfcDriver.cpp; sourceTree = "<group>"; };
 		572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebViewDidMoveToWindowObserver.h; sourceTree = "<group>"; };
 		575075A720AB763600693EA9 /* WebCredentialMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialMac.mm; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
@@ -3499,6 +3517,13 @@
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
 		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
 		57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientCertificateAuthenticationXPCConstants.h; sourceTree = "<group>"; };
+		57B826402304EB3E00B72EB0 /* NearFieldSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NearFieldSPI.h; sourceTree = "<group>"; };
+		57B826422304F14000B72EB0 /* NearFieldSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NearFieldSoftLink.h; sourceTree = "<group>"; };
+		57B826432304F14000B72EB0 /* NearFieldSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NearFieldSoftLink.mm; sourceTree = "<group>"; };
+		57B8264623050C5100B72EB0 /* FidoService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoService.h; sourceTree = "<group>"; };
+		57B8264723050C5100B72EB0 /* FidoService.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoService.cpp; sourceTree = "<group>"; };
+		57B8264A230603C100B72EB0 /* MockNfcService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockNfcService.h; sourceTree = "<group>"; };
+		57B8264B230603C100B72EB0 /* MockNfcService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockNfcService.mm; sourceTree = "<group>"; };
 		57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationLoadPolicy.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6195,6 +6220,7 @@
 				A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */,
 				57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */,
 				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
+				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				37B47E2C1D64DB76005F4EFF /* objcSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
@@ -6961,6 +6987,7 @@
 			isa = PBXGroup;
 			children = (
 				5750F32A2032D4E500389347 /* LocalAuthentication.framework */,
+				570DAAB0230273D200E8FC04 /* NearField.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -6973,6 +7000,10 @@
 				570B73CF230236DD00FAEC53 /* CtapDriver.h */,
 				57597EC021818BE20037F924 /* CtapHidDriver.cpp */,
 				57597EB721811D9A0037F924 /* CtapHidDriver.h */,
+				570DAAC9230385FD00E8FC04 /* CtapNfcDriver.cpp */,
+				570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */,
+				57B8264723050C5100B72EB0 /* FidoService.cpp */,
+				57B8264623050C5100B72EB0 /* FidoService.h */,
 				57EB2E3921E1983E00B89CDF /* U2fAuthenticator.cpp */,
 				57EB2E3821E1983E00B89CDF /* U2fAuthenticator.h */,
 			);
@@ -7036,6 +7067,14 @@
 				57DCEDA8214A568B0016B847 /* LocalConnection.mm */,
 				57DCED9A2148B0830016B847 /* LocalService.h */,
 				57DCEDA02148FA0F0016B847 /* LocalService.mm */,
+				57B826422304F14000B72EB0 /* NearFieldSoftLink.h */,
+				57B826432304F14000B72EB0 /* NearFieldSoftLink.mm */,
+				570DAAC02303730300E8FC04 /* NfcConnection.h */,
+				570DAAC12303730300E8FC04 /* NfcConnection.mm */,
+				570DAAAC23026F5C00E8FC04 /* NfcService.h */,
+				570DAAAD23026F5C00E8FC04 /* NfcService.mm */,
+				570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */,
+				570DAAC523037F7E00E8FC04 /* WKNFReaderSessionDelegate.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -7053,6 +7092,8 @@
 				57DCEDC6214F18300016B847 /* MockLocalConnection.mm */,
 				57DCEDC1214F114C0016B847 /* MockLocalService.h */,
 				57DCEDC2214F114C0016B847 /* MockLocalService.mm */,
+				57B8264A230603C100B72EB0 /* MockNfcService.h */,
+				57B8264B230603C100B72EB0 /* MockNfcService.mm */,
 				57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */,
 			);
 			path = Mock;
@@ -9359,6 +9400,7 @@
 				A1FB68271F6E51C100C43F9F /* CrashReporterClientSPI.h in Headers */,
 				57597EBD218184900037F924 /* CtapAuthenticator.h in Headers */,
 				57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */,
+				570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */,
 				C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */,
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
@@ -9390,6 +9432,7 @@
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
+				57B8264823050C5100B72EB0 /* FidoService.h in Headers */,
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,
@@ -9478,6 +9521,7 @@
 				57DCEDCB214F4E420016B847 /* MockAuthenticatorManager.h in Headers */,
 				57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */,
 				57DCEDC3214F114C0016B847 /* MockLocalService.h in Headers */,
+				57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */,
 				57DCEDBF214F0DCF0016B847 /* MockWebAuthenticationConfiguration.h in Headers */,
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
 				2D50366B1BCDE17900E20BB3 /* NativeWebGestureEvent.h in Headers */,
@@ -9485,6 +9529,8 @@
 				1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */,
 				57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */,
 				1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */,
+				57B826442304F14000B72EB0 /* NearFieldSoftLink.h in Headers */,
+				57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */,
 				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
@@ -9530,6 +9576,8 @@
 				5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */,
 				532159551DBAE7290054AA3C /* NetworkSessionCocoa.h in Headers */,
 				417915B92257046F00D6F97E /* NetworkSocketChannel.h in Headers */,
+				570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */,
+				570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
 				3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */,
 				31A2EC521489981900810D71 /* NotificationPermissionRequestManagerProxy.h in Headers */,
@@ -10158,6 +10206,7 @@
 				1A1B0EB818A424CD0038481A /* WKNavigationResponseInternal.h in Headers */,
 				1AA13212191D5924009C1489 /* WKNavigationResponsePrivate.h in Headers */,
 				2D3A65DF1A7C3A7D00CAC637 /* WKNavigationResponseRef.h in Headers */,
+				570DAAC623037F7F00E8FC04 /* WKNFReaderSessionDelegate.h in Headers */,
 				318BE17914743E6F00A8FBB2 /* WKNotification.h in Headers */,
 				318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */,
 				31A2EC74148D59CA00810D71 /* WKNotificationPermissionRequest.h in Headers */,
@@ -11142,6 +11191,7 @@
 				2D92A781212B6A7100F493FD /* MessageReceiverMap.cpp in Sources */,
 				2D92A782212B6A7100F493FD /* MessageSender.cpp in Sources */,
 				2D92A77A212B6A6100F493FD /* Module.cpp in Sources */,
+				57B826452304F14000B72EB0 /* NearFieldSoftLink.mm in Sources */,
 				2D913443212CF9F000128AFD /* NetscapeBrowserFuncs.cpp in Sources */,
 				2D913444212CF9F000128AFD /* NetscapePlugin.cpp in Sources */,
 				2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */,

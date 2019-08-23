@@ -28,15 +28,8 @@
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#import "CtapAuthenticator.h"
 #import "CtapHidDriver.h"
 #import "HidConnection.h"
-#import "U2fAuthenticator.h"
-#import <WebCore/DeviceRequestConverter.h>
-#import <WebCore/DeviceResponseConverter.h>
-#import <WebCore/FidoConstants.h>
-#import <WebCore/FidoHidMessage.h>
-#import <wtf/RunLoop.h>
 
 namespace WebKit {
 using namespace fido;
@@ -56,12 +49,12 @@ static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef
 }
 
 HidService::HidService(Observer& observer)
-    : AuthenticatorTransportService(observer)
+    : FidoService(observer)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
     NSDictionary *matchingDictionary = @{
-        @kIOHIDPrimaryUsagePageKey: adoptNS([NSNumber numberWithInt:kCTAPHIDUsagePage]).get(),
-        @kIOHIDPrimaryUsageKey: adoptNS([NSNumber numberWithInt:kCTAPHIDUsage]).get()
+        @kIOHIDPrimaryUsagePageKey: adoptNS([NSNumber numberWithInt:kCtapHidUsagePage]).get(),
+        @kIOHIDPrimaryUsageKey: adoptNS([NSNumber numberWithInt:kCtapHidUsage]).get()
     };
     IOHIDManagerSetDeviceMatching(m_manager.get(), (__bridge CFDictionaryRef)matchingDictionary);
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager.get(), deviceAddedCallback, this);
@@ -92,32 +85,7 @@ UniqueRef<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) 
 
 void HidService::deviceAdded(IOHIDDeviceRef device)
 {
-    auto driver = makeUnique<CtapHidDriver>(createHidConnection(device));
-    // Get authenticator info from the device.
-    driver->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetInfo), [weakThis = makeWeakPtr(*this), ptr = driver.get()](Vector<uint8_t>&& response) {
-        ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-        weakThis->continueAddDeviceAfterGetInfo(ptr, WTFMove(response));
-    });
-    auto addResult = m_drivers.add(WTFMove(driver));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
-void HidService::continueAddDeviceAfterGetInfo(CtapHidDriver* ptr, Vector<uint8_t>&& response)
-{
-    std::unique_ptr<CtapHidDriver> driver = m_drivers.take(ptr);
-    if (!driver || !observer() || response.isEmpty())
-        return;
-
-    auto info = readCTAPGetInfoResponse(response);
-    if (info && info->versions().find(ProtocolVersion::kCtap) != info->versions().end()) {
-        observer()->authenticatorAdded(CtapAuthenticator::create(WTFMove(driver), WTFMove(*info)));
-        return;
-    }
-    LOG_ERROR("Couldn't parse a ctap get info response.");
-    driver->setProtocol(ProtocolVersion::kU2f);
-    observer()->authenticatorAdded(U2fAuthenticator::create(WTFMove(driver)));
+    getInfo(WTF::makeUnique<CtapHidDriver>(createHidConnection(device)));
 }
 
 } // namespace WebKit

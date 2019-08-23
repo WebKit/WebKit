@@ -1,3 +1,14 @@
+2019-08-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support NFC authenticators for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188624
+        <rdar://problem/43354214>
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Platform.h:
+        Add a feature flag for NearField.
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build
