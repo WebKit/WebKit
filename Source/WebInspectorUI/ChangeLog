@@ -1,5 +1,22 @@
 2019-08-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Console: automatically select the "Evaluations" filter whenever running commands
+        https://bugs.webkit.org/show_bug.cgi?id=201060
+
+        Reviewed by Timothy Hatcher.
+
+        If the Console is actively being filtered (e.g. not "All"), it can be confusing to run a
+        command, only to not see any results. We should automatically enable the "Evaluations"
+        filter in addition to any other existing filters in these cases.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.didAppendConsoleMessageView):
+        * UserInterface/Views/ScopeBarItem.js:
+        (WI.ScopeBarItem.prototype.set selected):
+        (WI.ScopeBarItem.prototype.toggle): Added.
+
+2019-08-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r248485): stack overflow when viewing a source map generated from inline content
         https://bugs.webkit.org/show_bug.cgi?id=201042
         <rdar://problem/54509750>

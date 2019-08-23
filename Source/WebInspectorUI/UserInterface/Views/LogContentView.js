@@ -234,10 +234,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         let target = messageView.message ? messageView.message.target : WI.runtimeManager.activeExecutionContext.target;
         target.connection.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
 
-        if (messageView instanceof WI.ConsoleCommandView || messageView.message instanceof WI.ConsoleCommandResultMessage)
-            this._markScopeBarItemUnread(WI.LogContentView.Scopes.Evaluations);
-        else
-            this._markScopeBarItemForMessageLevelUnread(messageView.message.level);
+        if (!this._scopeBar.item(WI.LogContentView.Scopes.All).selected) {
+            if (messageView instanceof WI.ConsoleCommandView || messageView.message instanceof WI.ConsoleCommandResultMessage)
+                this._scopeBar.item(WI.LogContentView.Scopes.Evaluations).toggle(true, {extendSelection: true});
+            else
+                this._markScopeBarItemForMessageLevelUnread(messageView.message.level);
+        }
 
         console.assert(messageView.element instanceof Element);
         this._filterMessageElements([messageView.element]);

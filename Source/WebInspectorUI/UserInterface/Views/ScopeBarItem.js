@@ -77,13 +77,7 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
 
     set selected(selected)
     {
-        if (this._selectedSetting.value === selected)
-            return;
-
-        this._element.classList.toggle("selected", selected);
-        this._selectedSetting.value = selected;
-
-        this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {
+        this.toggle(selected, {
             extendSelection: this._independent || (WI.modifierKeys.metaKey && !WI.modifierKeys.ctrlKey && !WI.modifierKeys.altKey && !WI.modifierKeys.shiftKey),
         });
     }
@@ -103,6 +97,17 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
         this._element.classList.toggle("hidden", flag);
 
         this.dispatchEventToListeners(WI.ScopeBarItem.Event.HiddenChanged);
+    }
+
+    toggle(selected, {extendSelection} = {})
+    {
+        if (this._selectedSetting.value === selected)
+            return;
+
+        this._element.classList.toggle("selected", selected);
+        this._selectedSetting.value = selected;
+
+        this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {extendSelection});
     }
 
     // Private
