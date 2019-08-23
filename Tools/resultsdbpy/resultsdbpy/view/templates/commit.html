@@ -47,6 +47,38 @@
 
 <script type="module">
 import {CommitTable} from '/assets/js/commit.js';
-document.getElementById("commitTable").innerHTML = CommitTable({{ commits|safe }}, {{ repository_ids|safe }});
+
+function unescapeJinjaText(text) {
+    return text.replace(/&([^;]+);/g, function(match, encoded) {
+        switch (encoded) {
+        case 'amp':
+            return '&';
+        case 'gt':
+            return '>';
+        case 'lt':
+            return '<';
+        case 'quot':
+            return '"';
+        default:
+            if (encoded[0] != '#')
+                return encoded;
+            return String.fromCharCode(encoded.substr(1));
+        }
+    });
+}
+
+let commits = [
+{% for commit in commits %}    {
+    {% for key, value in commit.items() %}
+        {{ key }}:
+        {% if 'str' in value.__class__.__name__ %}
+            unescapeJinjaText('{{ value | replace("\\", "\\\\") | replace("\n", "\\n") }}')
+        {% else %}
+            {{ value }}
+        {% endif %},
+    {% endfor %}},
+{% endfor %}];
+
+document.getElementById('commitTable').innerHTML = CommitTable(commits, {{ repository|safe }});
 </script>
 {% endblock %}

@@ -1,3 +1,16 @@
+2019-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Escape html in changelog
+        https://bugs.webkit.org/show_bug.cgi?id=201025
+        <rdar://problem/54564837>
+
+        Reviewed by Darin Adler.
+
+        * resultsdbpy/resultsdbpy/view/commit_view.py:
+        (CommitView.commit): Output a dictionary instead of a JSON encoded string.
+        * resultsdbpy/resultsdbpy/view/templates/commit.html: Unpack commits dictionary
+        directly into a JavaScript dictionary.
+
 2019-08-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support NFC authenticators for iOS

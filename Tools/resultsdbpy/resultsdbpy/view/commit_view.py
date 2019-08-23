@@ -59,7 +59,7 @@ class CommitView(object):
             title=self.site_menu.title + ': ' + str(commit.id),
             commit=commit,
             repository_ids=repositories,
-            commits=Commit.Encoder().encode([commit] + [item for lst in siblings.values() for item in lst]),
+            commits=Commit.Encoder().default([commit] + [item for lst in siblings.values() for item in lst]),
             **kwargs)
 
     def info(self):
