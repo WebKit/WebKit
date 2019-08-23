@@ -132,10 +132,11 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 {
     ASSERT(!isMainThread());
 
-    if (m_databaseDirectoryPath.isEmpty())
+    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    if (databaseDirectoryPath.isEmpty())
         return MemoryIDBBackingStore::create(identifier);
 
-    return std::make_unique<SQLiteIDBBackingStore>(identifier, m_databaseDirectoryPath, m_backingStoreTemporaryFileHandler, m_perOriginQuota);
+    return std::make_unique<SQLiteIDBBackingStore>(identifier, databaseDirectoryPath, m_backingStoreTemporaryFileHandler, m_perOriginQuota);
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)
@@ -466,7 +467,8 @@ void IDBServer::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const S
 
 void IDBServer::performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
-    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, m_databaseDirectoryPath, "v0");
+    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, databaseDirectoryPath, "v0");
     Vector<String> files = FileSystem::listDirectory(oldDirectory, "*"_s);
     Vector<String> databases;
     for (auto& file : files) {
@@ -474,7 +476,7 @@ void IDBServer::performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, 
         databases.append(SQLiteIDBBackingStore::databaseNameFromEncodedFilename(encodedName));
     }
 
-    String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, m_databaseDirectoryPath, "v1");
+    String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, databaseDirectoryPath, "v1");
     files = FileSystem::listDirectory(directory, "*"_s);
     for (auto& file : files) {
         auto databaseName = SQLiteIDBBackingStore::databaseNameFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(file));
@@ -639,7 +641,7 @@ static void removeAllDatabasesForOriginPath(const String& originPath, WallTime m
 
 void IDBServer::removeDatabasesModifiedSinceForVersion(WallTime modifiedSince, const String& version)
 {
-    String versionPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, version);
+    String versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath(), version);
     for (auto& originPath : FileSystem::listDirectory(versionPath, "*")) {
         String databaseIdentifier = FileSystem::lastComponentOfPathIgnoringTrailingSlash(originPath);
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
@@ -649,7 +651,7 @@ void IDBServer::removeDatabasesModifiedSinceForVersion(WallTime modifiedSince, c
 
 void IDBServer::performCloseAndDeleteDatabasesModifiedSince(WallTime modifiedSince, uint64_t callbackID)
 {
-    if (!m_databaseDirectoryPath.isEmpty()) {
+    if (!databaseDirectoryPath().isEmpty()) {
         removeDatabasesModifiedSinceForVersion(modifiedSince, "v0");
         removeDatabasesModifiedSinceForVersion(modifiedSince, "v1");
     }
@@ -659,7 +661,7 @@ void IDBServer::performCloseAndDeleteDatabasesModifiedSince(WallTime modifiedSin
 
 void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData> &origins, const String& version)
 {
-    String versionPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, version);
+    String versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath(), version);
     for (const auto& origin : origins) {
         String originPath = FileSystem::pathByAppendingComponent(versionPath, origin.databaseIdentifier());
         removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
@@ -673,7 +675,7 @@ void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOrigin
     
 void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
 {
-    if (!m_databaseDirectoryPath.isEmpty()) {
+    if (!databaseDirectoryPath().isEmpty()) {
         removeDatabasesWithOriginsForVersion(origins, "v0");
         removeDatabasesWithOriginsForVersion(origins, "v1");
     }
@@ -775,8 +777,9 @@ void IDBServer::computeSpaceUsedForOrigin(const ClientOrigin& origin)
 {
     ASSERT(!isMainThread());
 
-    auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v0");
-    auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v1");
+    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v0");
+    auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v1");
     auto size = SQLiteIDBBackingStore::databasesSizeForFolder(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForFolder(newVersionOriginDirectory);
 
     postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::finishComputingSpaceUsedForOrigin, origin, size));
@@ -821,10 +824,11 @@ void IDBServer::decreasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t 
 
 void IDBServer::upgradeFilesIfNecessary()
 {
-    if (m_databaseDirectoryPath.isEmpty() || !FileSystem::fileExists(m_databaseDirectoryPath))
+    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    if (databaseDirectoryPath.isEmpty() || !FileSystem::fileExists(databaseDirectoryPath))
         return;
 
-    String newVersionDirectory = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1");
+    String newVersionDirectory = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "v1");
     if (!FileSystem::fileExists(newVersionDirectory))
         FileSystem::makeAllDirectories(newVersionDirectory);
 }
