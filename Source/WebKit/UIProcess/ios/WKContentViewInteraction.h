@@ -337,8 +337,6 @@ struct WKAutoCorrectionData {
 #endif
 
     BOOL _keyboardDidRequestDismissal;
-    BOOL _wasResignedWhileShowingInputView;
-    BOOL _shouldShowAutomaticKeyboardUIWhenInputModeNone;
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     BOOL _candidateViewNeedsUpdate;
@@ -464,7 +462,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_updateInputContextAfterBlurringAndRefocusingElement;
 - (void)_elementDidBlur;
 - (void)_hideContextMenuHintContainer;
-- (void)_didUpdateInputMode:(WebCore::InputMode)mode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges;
+- (void)_didUpdateInputMode:(WebCore::InputMode)mode;
 - (void)_didReceiveEditorStateUpdateAfterFocus;
 - (void)_hardwareKeyboardAvailabilityChanged;
 - (void)_selectionChanged;

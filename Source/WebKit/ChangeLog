@@ -1,3 +1,16 @@
+2019-08-23  Russell Epstein  <repstein@apple.com>
+
+        Unreviewed, rolling out r249031.
+
+        Causes multiple test failures on iOS simulator
+
+        Reverted changeset:
+
+        "[iOS] Should show input view when became first responder if
+        keyboard was showing when the view was resigned"
+        https://bugs.webkit.org/show_bug.cgi?id=200902
+        https://trac.webkit.org/changeset/249031
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build

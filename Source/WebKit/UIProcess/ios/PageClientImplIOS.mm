@@ -573,9 +573,9 @@ void PageClientImpl::elementDidBlur()
     [m_contentView _elementDidBlur];
 }
 
-void PageClientImpl::focusedElementDidChangeInputMode(WebCore::InputMode mode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges)
+void PageClientImpl::focusedElementDidChangeInputMode(WebCore::InputMode mode)
 {
-    [m_contentView _didUpdateInputMode:mode activityStateChanges:activityStateChanges];
+    [m_contentView _didUpdateInputMode:mode];
 }
 
 void PageClientImpl::didReceiveEditorStateUpdateAfterFocus()

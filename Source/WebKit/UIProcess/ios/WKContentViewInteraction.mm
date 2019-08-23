@@ -943,7 +943,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
     [self _resetInputViewDeferral];
     _focusedElementInformation = { };
-    _wasResignedWhileShowingInputView = NO;
     
     [_keyboardScrollingAnimator invalidate];
     _keyboardScrollingAnimator = nil;
@@ -1262,8 +1261,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
     SetForScope<BOOL> resigningFirstResponderScope { _resigningFirstResponder, YES };
 
-    BOOL wasKeyboardOnScreen = UIPeripheralHost.activeInstance.isOnScreen;
-    [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonResigningFirstResponder]; // May dismiss the keyboard.
+    [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonResigningFirstResponder];
 
     // If the user explicitly dismissed the keyboard then we will lose first responder
     // status only to gain it back again. Just don't resign in that case.
@@ -1275,7 +1273,6 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     bool superDidResign = [super resignFirstResponder];
 
     if (superDidResign) {
-        _wasResignedWhileShowingInputView = wasKeyboardOnScreen;
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
     }
@@ -1707,7 +1704,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     // FIXME: We should support inputmode="none" when the hardware keyboard is attached.
     // We currently refrain from doing so because that would prevent UIKit from showing
     // the language picker when pressing the globe key to change the input language.
-    if (_focusedElementInformation.inputMode == WebCore::InputMode::None && !GSEventIsHardwareKeyboardAttached() && !_shouldShowAutomaticKeyboardUIWhenInputModeNone)
+    if (_focusedElementInformation.inputMode == WebCore::InputMode::None && !GSEventIsHardwareKeyboardAttached())
         return NO;
 
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode];
@@ -3978,7 +3975,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     _seenHardwareKeyDownInNonEditableElement = NO;
 #endif
-    _wasResignedWhileShowingInputView = NO;
     [self _elementDidBlur];
     [self _cancelLongPressGestureRecognizer];
     [self _hideContextMenuHintContainer];
@@ -5276,16 +5272,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     }
 }
 
-- (BOOL)isFirstResponderOrBecomingFirstResponder
-{
-    return self.isFirstResponder || _becomingFirstResponder;
-}
-
-- (BOOL)shouldShowInputViewOnPageActivation:(const OptionSet<WebCore::ActivityState::Flag> &)activityStateChanges
-{
-    return [self isFirstResponderOrBecomingFirstResponder] && activityStateChanges.contains(WebCore::ActivityState::IsFocused) && _wasResignedWhileShowingInputView;
-}
-
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
@@ -5310,8 +5296,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if ([inputDelegate respondsToSelector:@selector(_webView:decidePolicyForFocusedElement:)])
         startInputSessionPolicy = [inputDelegate _webView:_webView decidePolicyForFocusedElement:focusedElementInfo.get()];
 
-    SetForScope<BOOL> shouldShowAutomaticKeyboardUIWhenInputModeNoneScope { _shouldShowAutomaticKeyboardUIWhenInputModeNone, startInputSessionPolicy == _WKFocusStartsInputSessionPolicyAuto && [self shouldShowInputViewOnPageActivation:activityStateChanges] };
-
     BOOL shouldShowInputView = [&] {
         switch (startInputSessionPolicy) {
         case _WKFocusStartsInputSessionPolicyAuto:
@@ -5320,8 +5304,11 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
             if (userIsInteracting)
                 return YES;
 
-            if ([self isFirstResponderOrBecomingFirstResponder]) {
-                if (_shouldShowAutomaticKeyboardUIWhenInputModeNone)
+            if (self.isFirstResponder || _becomingFirstResponder) {
+                // When the software keyboard is being used to enter an url, only the focus activity state is changing.
+                // In this case, auto focus on the page being navigated to should be disabled, unless a hardware
+                // keyboard is attached.
+                if (activityStateChanges && activityStateChanges != WebCore::ActivityState::IsFocused)
                     return YES;
 
 #if PLATFORM(WATCHOS)
@@ -5535,13 +5522,12 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     [self reloadInputViews];
 }
 
-- (void)_didUpdateInputMode:(WebCore::InputMode)mode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges
+- (void)_didUpdateInputMode:(WebCore::InputMode)mode
 {
-    if (!self.inputDelegate || !hasFocusedElement(_focusedElementInformation))
+    if (!self.inputDelegate || _focusedElementInformation.elementType == WebKit::InputType::None)
         return;
 
 #if !PLATFORM(WATCHOS)
-    SetForScope<BOOL> shouldShowAutomaticKeyboardUIWhenInputModeNoneScope { _shouldShowAutomaticKeyboardUIWhenInputModeNone, [self shouldShowInputViewOnPageActivation:activityStateChanges] };
     _focusedElementInformation.inputMode = mode;
     [self reloadInputViews];
 #endif

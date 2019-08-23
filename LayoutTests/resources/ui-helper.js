@@ -506,22 +506,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static waitForKeyboardToShow()
-    {
-        if (!this.isWebKit2() || !this.isIOSFamily())
-            return Promise.resolve();
-
-        return new Promise(resolve => {
-            testRunner.runUIScript(`
-                (function() {
-                    if (uiController.isShowingKeyboard)
-                        uiController.uiScriptComplete();
-                    else
-                        uiController.didShowKeyboardCallback = () => uiController.uiScriptComplete();
-                })()`, resolve);
-        });
-    }
-
     static getUICaretRect()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
@@ -805,14 +789,6 @@ window.UIHelper = class UIHelper {
             return Promise.resolve();
 
         return new Promise(resolve => testRunner.runUIScript(`uiController.resignFirstResponder()`, resolve));
-    }
-
-    static becomeFirstResponder()
-    {
-        if (!this.isWebKit2())
-            return Promise.resolve();
-
-        return new Promise(resolve => testRunner.runUIScript(`uiController.becomeFirstResponder()`, resolve));
     }
 
     static minimumZoomScale()
