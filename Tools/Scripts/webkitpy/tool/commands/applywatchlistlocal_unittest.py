@@ -48,7 +48,11 @@ MOCK bug comment: bug_id=50002, cc=set(['eric@webkit.org', 'levin@chromium.org',
 Message1.
 
 Message2.
---- End comment ---\n\n"""
+--- End comment ---\n
+Result of watchlist: cc "eric@webkit.org, levin@chromium.org, abarth@webkit.org" messages "Message1.
+
+Message2."
+"""
         self.assert_execute_outputs(ApplyWatchListLocal(), ['50002'], expected_logs=expected_logs)
 
     def test_args_parsing_with_two_bugs(self):

@@ -63,8 +63,6 @@ class ApplyWatchList(AbstractStep):
         if bug_id:
             if cc_emails or comment_text:
                 self._tool.bugs.post_comment_to_bug(bug_id, comment_text, cc_emails)
-            log_result = _log.debug
         else:
             _log.info('No bug was updated because no id was given.')
-            log_result = _log.info
-        log_result('Result of watchlist: cc "%s" messages "%s"' % (', '.join(cc_emails), comment_text))
+        _log.info('Result of watchlist: cc "{}" messages "{}"'.format(', '.join(cc_emails), comment_text))

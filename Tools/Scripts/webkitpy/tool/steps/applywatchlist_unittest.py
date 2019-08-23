@@ -47,5 +47,6 @@ MOCK bug comment: bug_id=50001, cc=set(['levin@chromium.org']), see_also=None
 Message2.
 --- End comment ---
 
+Result of watchlist: cc "levin@chromium.org" messages "Message2."
 """
         capture.assert_outputs(self, step.run, [state], expected_logs=expected_logs)

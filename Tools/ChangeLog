@@ -1,3 +1,14 @@
+2019-08-23  Aakash Jain  <aakash_jain@apple.com>
+
+        Increase log level for watchlist result
+        https://bugs.webkit.org/show_bug.cgi?id=201081
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/tool/steps/applywatchlist.py: Increased log level.
+        * Scripts/webkitpy/tool/steps/applywatchlist_unittest.py: Updated unit-tests.
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal_unittest.py: Ditto.
+
 2019-08-23  Chris Dumez  <cdumez@apple.com>
 
         [geolocation] Rename interfaces and remove [NoInterfaceObject]
