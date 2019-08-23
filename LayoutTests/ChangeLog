@@ -1,5 +1,42 @@
 2019-08-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r249028. rdar://problem/54614691
+
+    REGRESSION (r248974): fast/events/ios/select-all-with-existing-selection.html fails
+    https://bugs.webkit.org/show_bug.cgi?id=201050
+    
+    Reviewed by Wenson Hsieh.
+    
+    * fast/events/ios/select-all-with-existing-selection.html:
+    The test as-written doesn't actually wait for the tap to complete before
+    continuing on with the test - it starts immediately when the focus event
+    fires. This results in the selection being changed by the single click
+    handler *after* focusing the field.
+    
+    Rewrite the test to await completion of the tap before moving forward
+    instead of waiting for focus.
+    
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@249028 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-22  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r248974): fast/events/ios/select-all-with-existing-selection.html fails
+            https://bugs.webkit.org/show_bug.cgi?id=201050
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/events/ios/select-all-with-existing-selection.html:
+            The test as-written doesn't actually wait for the tap to complete before
+            continuing on with the test - it starts immediately when the focus event
+            fires. This results in the selection being changed by the single click
+            handler *after* focusing the field.
+
+            Rewrite the test to await completion of the tap before moving forward
+            instead of waiting for focus.
+
+2019-08-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r249017. rdar://problem/54564878
 
     Rebaseline some editing tests after r248974
