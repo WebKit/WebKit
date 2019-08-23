@@ -97,7 +97,6 @@ public:
 private:
     String m_databaseName;
     ClientOrigin m_origin;
-    SecurityOriginData m_mainFrameOrigin;
 };
 
 struct IDBDatabaseIdentifierHash {
