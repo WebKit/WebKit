@@ -39,7 +39,7 @@
     
     function pageDidScroll()
     {
-        document.getElementById('result').textContent = 'PASS: page scrolled to ' + document.scrollingElement.scrollTop;
+        document.getElementById('result').textContent = 'FAIL: page scrolled to ' + document.scrollingElement.scrollTop;
     }
 
     function testTyping()
@@ -76,7 +76,7 @@
 
 <p>Tests that typing into a text input in an iframe should not scroll.</p>
 <div id="result">
-    FAIL: page did not scroll.
+    PASS: page did not scroll.
 </div>
 
 <button id="target" onclick="buttonClicked()">Click to focus input</button>

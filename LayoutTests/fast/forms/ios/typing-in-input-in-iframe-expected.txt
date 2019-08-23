@@ -1,5 +1,5 @@
 Tests that typing into a text input in an iframe should not scroll.
 
-PASS: page scrolled to 1143
+PASS: page did not scroll.
 Click to focus input
 
