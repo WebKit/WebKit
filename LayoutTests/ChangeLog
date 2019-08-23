@@ -1,3 +1,16 @@
+2019-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=201085
+        <rdar://problem/53056118>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that "I’" can be autocorrected to "I’m".
+
+        * fast/events/ios/autocorrect-with-apostrophe-expected.txt: Added.
+        * fast/events/ios/autocorrect-with-apostrophe.html: Added.
+
 2019-08-23  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r248974): fast/events/ios/key-command-delete-to-end-of-paragraph.html is timing out on iOS

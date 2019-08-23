@@ -2334,12 +2334,13 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
 
     RefPtr<Range> range;
     String textForRange;
+    auto originalTextWithFoldedQuoteMarks = foldQuoteMarks(originalText);
 
     if (frame.selection().isCaret()) {
         VisiblePosition position = frame.selection().selection().start();
         range = wordRangeFromPosition(position);
         textForRange = plainTextReplacingNoBreakSpace(range.get());
-        if (textForRange != originalText) {
+        if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
             // Search for the original text before the selection caret.
             for (size_t i = 0; i < originalText.length(); ++i)
                 position = position.previous();
@@ -2369,7 +2370,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         textForRange = plainTextReplacingNoBreakSpace(range.get());
     }
 
-    if (textForRange != originalText)
+    if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks)
         return false;
     
     // Correctly determine affinity, using logic currently only present in VisiblePosition

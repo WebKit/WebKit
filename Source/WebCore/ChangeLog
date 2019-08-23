@@ -1,3 +1,19 @@
+2019-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=201085
+        <rdar://problem/53056118>
+
+        Reviewed by Tim Horton.
+
+        Exposes an existing quote folding function as a helper on TextIterator, and also adjusts foldQuoteMarks to take
+        a const String& rather than a String. See WebKit ChangeLog for more details.
+
+        * editing/TextIterator.cpp:
+        (WebCore::foldQuoteMarks):
+        (WebCore::SearchBuffer::SearchBuffer):
+        * editing/TextIterator.h:
+
 2019-08-23  Youenn Fablet  <youenn@apple.com>
 
         Remove IDBDatabaseIdentifier::m_mainFrameOrigin
