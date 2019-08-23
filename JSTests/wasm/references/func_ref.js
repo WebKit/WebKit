@@ -448,3 +448,62 @@ for (let importedFun of [function(i) { return i; }, makeFuncrefIdent()]) {
         }
     }
 }
+
+{
+    const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
+      .Type().End()
+      .Import().End()
+      .Function().End()
+      .Export()
+          .Function("test")
+      .End()
+      .Code()
+        .Function("test", { params: ["i32", "funcref"], ret: "i32" })
+          .GetLocal(0)
+        .End()
+      .End().WebAssembly().get()), { });
+
+    const myfun = makeExportedFunction(1337);
+    assert.eq(myfun(), 1337)
+    assert.eq(42, $1.exports.test(42, myfun))
+    assert.throws(() => $1.exports.test(42, () => 5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
+}
+
+{
+    const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
+      .Type().End()
+      .Import().End()
+      .Function().End()
+      .Export()
+          .Function("test")
+      .End()
+      .Code()
+        .Function("test", { params: ["i32", "funcref"], ret: "i32" })
+          .GetLocal(0)
+          .If("i32")
+          .Block("i32", (b) =>
+            b.GetLocal(0)
+            .GetLocal(1)
+            .Call(0)
+          )
+          .Else()
+          .Block("i32", (b) =>
+            b.GetLocal(0)
+          )
+          .End()
+        .End()
+      .End().WebAssembly().get()), { });
+
+    const myfun = makeExportedFunction(1337);
+    function foo(b) {
+        $1.exports.test(b, myfun)
+    }
+    noInline(foo);
+
+    for (let i = 0; i < 100; ++i)
+        foo(0);
+
+    assert.throws(() => $1.exports.test(42, () => 5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.test(42, myfun), RangeError, "Maximum call stack size exceeded.")
+    assert.throws(() => foo(1), RangeError, "Maximum call stack size exceeded.")
+}

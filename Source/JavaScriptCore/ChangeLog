@@ -1,3 +1,17 @@
+2019-08-23  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Do not overwrite argument registers in jsCallEntrypoint
+        https://bugs.webkit.org/show_bug.cgi?id=200952
+
+        Reviewed by Saam Barati.
+
+        The c call that we emitted was incorrect. If we had an int argument that was supposed to be placed in GPR0 by this loop,
+        we would clobber it while making the call (among many other possible registers). To fix this, we just inline the call 
+        to isWebassemblyHostFunction.
+
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-08-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         JSC should have public API for unhandled promise rejections

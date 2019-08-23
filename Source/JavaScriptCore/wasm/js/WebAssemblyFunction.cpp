@@ -266,12 +266,13 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     }
 
     GPRReg scratchGPR = Wasm::wasmCallingConventionAir().prologueScratch(1);
-    GPRReg scratch2GPR = Wasm::wasmCallingConventionAir().prologueScratch(0);
-    jit.loadPtr(vm.addressOfSoftStackLimit(), scratch2GPR);
+    bool stackLimitGPRIsClobbered = false;
+    GPRReg stackLimitGPR = Wasm::wasmCallingConventionAir().prologueScratch(0);
+    jit.loadPtr(vm.addressOfSoftStackLimit(), stackLimitGPR);
 
     CCallHelpers::JumpList slowPath;
     slowPath.append(jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
-    slowPath.append(jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, scratch2GPR));
+    slowPath.append(jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, stackLimitGPR));
 
     // Ensure:
     // argCountPlusThis - 1 >= signature.argumentCount()
@@ -310,24 +311,23 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 }
                 break;
             case Wasm::Funcref: {
-                // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-                bool (*shouldThrow)(Wasm::Instance*, JSValue) = [] (Wasm::Instance* wasmInstance, JSValue arg) -> bool {
-                    JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
-                    JSGlobalObject* globalObject = instance->globalObject();
-                    VM& vm = globalObject->vm();
-                    return !isWebAssemblyHostFunction(vm, arg) && !arg.isNull();
-                };
-                jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), GPRInfo::argumentGPR0);
-                jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), GPRInfo::argumentGPR1);
-                jit.setupArguments<decltype(shouldThrow)>(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
-                auto call = jit.call(OperationPtrTag);
+                // Ensure we have a WASM exported function.
+                jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchGPR);
+                auto isNull = jit.branchIfNull(scratchGPR);
+                slowPath.append(jit.branchIfNotCell(scratchGPR));
 
-                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(shouldThrow));
-                });
+                stackLimitGPRIsClobbered = true;
+                jit.emitLoadStructure(vm, scratchGPR, scratchGPR, stackLimitGPR);
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, Structure::classInfoOffset()), scratchGPR);
 
-                slowPath.append(jit.branchTest32(CCallHelpers::NonZero, GPRInfo::returnValueGPR));
+                static_assert(std::is_final<WebAssemblyFunction>::value, "We do not check for subtypes below");
+                static_assert(std::is_final<WebAssemblyWrapperFunction>::value, "We do not check for subtypes below");
 
+                auto isWasmFunction = jit.branchPtr(CCallHelpers::Equal, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyFunction::info()));
+                slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyWrapperFunction::info())));
+
+                isWasmFunction.link(&jit);
+                isNull.link(&jit);
                 FALLTHROUGH;
             }
             case Wasm::Anyref: {
@@ -432,12 +432,13 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         jit.move(scratchGPR, pinnedRegs.wasmContextInstancePointer);
         jit.storePtr(scratchGPR, vm.wasmContext.pointerToInstance());
     }
-    // This contains the cached stack limit still.
-    jit.storePtr(scratch2GPR, CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedStackLimit()));
+    if (stackLimitGPRIsClobbered)
+        jit.loadPtr(vm.addressOfSoftStackLimit(), stackLimitGPR);
+    jit.storePtr(stackLimitGPR, CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedStackLimit()));
 
     if (!!moduleInformation.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-        GPRReg scratchOrSize = scratch2GPR;
+        GPRReg scratchOrSize = stackLimitGPR;
         auto mode = instance()->memoryMode();
 
         if (isARM64E()) {

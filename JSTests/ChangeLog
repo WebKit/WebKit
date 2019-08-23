@@ -1,3 +1,13 @@
+2019-08-23  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Do not overwrite argument registers in jsCallEntrypoint
+        https://bugs.webkit.org/show_bug.cgi?id=200952
+
+        Reviewed by Saam Barati.
+
+        * wasm/references/func_ref.js:
+        (assert.throws):
+
 2019-08-22  Justin Michaud  <justin_michaud@apple.com>
 
         Add missing exception check in canonicalizeLocaleList
