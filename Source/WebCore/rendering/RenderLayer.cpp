@@ -5590,7 +5590,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             ClipRectsContext parentContext(clipRectsContext);
             parentContext.overlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize; // FIXME: why?
             
-            if (clipCrossesPaintingBoundary())
+            if (parentContext.clipRectsType != TemporaryClipRects && clipCrossesPaintingBoundary())
                 parentContext.clipRectsType = TemporaryClipRects;
 
             parentLayer->calculateClipRects(parentContext, clipRects);

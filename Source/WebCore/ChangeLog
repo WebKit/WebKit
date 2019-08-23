@@ -1,3 +1,16 @@
+2019-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't call clipCrossesPaintingBoundary() when not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=201064
+
+        Reviewed by Zalan Bujtas.
+
+        clipCrossesPaintingBoundary() does some RenderLayer ancestor walks, so avoid
+        calling it when we already know that the clip rects are TemporaryClipRects.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2019-08-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Hole-punch build is broken
