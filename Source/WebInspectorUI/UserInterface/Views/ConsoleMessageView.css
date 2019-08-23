@@ -73,7 +73,7 @@
 
 .console-message-body > .show-grid {
     /* Prevents the light blue highlight from being visible in the checkerboard. */
-    --checkerboard-light-square: white;
+    --checkerboard-light-square: var(--background-color);
 }
 
 .console-image > .console-message-body > :matches(hr, img) {

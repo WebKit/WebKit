@@ -487,7 +487,6 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     }
 
     :matches(img, canvas).show-grid {
-        --checkerboard-light-square: white;
-        --checkerboard-dark-square: hsl(0, 0%, 80%);
+        --checkerboard-dark-square: hsl(0, 0%, 5%);
     }
 }
