@@ -1,5 +1,17 @@
 2019-08-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove unnecessary call to enclosingClippingScopes()
+        https://bugs.webkit.org/show_bug.cgi?id=201063
+
+        Reviewed by Zalan Bujtas.
+
+        This line of code did nothing, and was left in by mistake. Remove it.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverlapMap const):
+
+2019-08-23  Simon Fraser  <simon.fraser@apple.com>
+
         Cache hasCompositedScrollableOverflow as a bit on RenderLayer
         https://bugs.webkit.org/show_bug.cgi?id=201065
 

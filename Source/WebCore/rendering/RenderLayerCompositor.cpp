@@ -1927,7 +1927,6 @@ void RenderLayerCompositor::addDescendantsToOverlapMapRecursive(LayerOverlapMap&
 void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& layerExtent, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap) const
 {
     if (addLayerToOverlap) {
-        auto clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
         addToOverlapMap(overlapMap, layer, layerExtent);
         LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " contributes to overlap, added to map " << overlapMap);
     }
