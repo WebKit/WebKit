@@ -1,3 +1,19 @@
+2019-08-23  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=201075
+        <rdar://problem/54491246>
+
+        Reviewed by Daniel Bates.
+
+        This test was written very early on in the process of implementing Pointer Events and assumed events would keep
+        firing when scrolling occured. We need to add "touch-action: none" to ensure we get pointermove and pointerup
+        events. We also need to ensure that the interaction occurs over content otherwise events won't fire. Finally, we
+        pretty up the test a bit.
+
+        * fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup-expected.txt:
+        * fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup.html:
+
 2019-08-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support NFC authenticators for iOS

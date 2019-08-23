@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ experimental:PointerEventsEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
     <script src="../../../../resources/js-test-pre.js"></script>
@@ -6,6 +6,7 @@
     <style>
         body {
             margin: none;
+            touch-action: none;
         }
     </style>
     <meta name="viewport" content="initial-scale=1">
@@ -20,34 +21,22 @@
 
         function runTest()
         {
-            // FIXME: At the moment a touch listener is required due
-            // to the way pointer events are dispatched.
-            // https://bugs.webkit.org/show_bug.cgi?id=191333
-            window.addEventListener("touchstart", (event) => {
-                debug("Remove this when bug 19133 is fixed.");
-            });
+            window.addEventListener("pointerdown", event => debug("pointerdown fired."));
 
-            window.addEventListener("pointerdown", (event) => {
-                debug("pointerdown fired.");
-            });
-
-            seenMove = false;
-            window.addEventListener("pointermove", (event) => {
+            let seenMove = false;
+            window.addEventListener("pointermove", event => {
                 if (!seenMove)
                     debug("At least one pointermove was fired.");
                 seenMove = true;
             });
 
-            window.addEventListener("pointerup", (event) => {
+            window.addEventListener("pointerup", event => {
                 debug("pointerup fired.");
                 finishJSTest();
             });
 
-            if (window.testRunner) {
-                touchAndDragFromPointToPoint(50, 200, 60, 210).then(() => {
-                    liftUpAtPoint(60, 210);
-                });
-            }
+            if (window.testRunner)
+                touchAndDragFromPointToPoint(50, 50, 40, 40).then(() => liftUpAtPoint(40, 40));
         }
 
         window.addEventListener("load", runTest, false);
