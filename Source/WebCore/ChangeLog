@@ -1,3 +1,19 @@
+2019-08-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Hole-punch build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=200972
+
+        Reviewed by Žan Doberšek.
+
+        This patch fixes link issues when building with
+        USE_GSTREAMER_HOLEPUNCH enabled, the hole punch client destructor
+        was missing.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Remove FAST_ALLOCATED annotation, because:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        it's now in the base class, along with a default destructor.
+
 2019-08-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [SVG] -webkit-clip-path treats url(abc#xyz) as url(#xyz) because it checks only URL fragment part

@@ -1125,7 +1125,6 @@ static void setRectangleToVideoSink(GstElement* videoSink, const IntRect& rect)
 }
 
 class GStreamerHolePunchClient : public TextureMapperPlatformLayerBuffer::HolePunchClient {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     GStreamerHolePunchClient(GRefPtr<GstElement>&& videoSink) : m_videoSink(WTFMove(videoSink)) { };
     void setVideoRectangle(const IntRect& rect) final { setRectangleToVideoSink(m_videoSink.get(), rect); }
