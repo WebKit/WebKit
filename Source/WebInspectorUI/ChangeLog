@@ -1,3 +1,26 @@
+2019-08-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r248485): stack overflow when viewing a source map generated from inline content
+        https://bugs.webkit.org/show_bug.cgi?id=201042
+        <rdar://problem/54509750>
+
+        Reviewed by Antoine Quint.
+
+        In r248485, `WI.ResourceClusterContentView` was changed to `requestContent` whenever the
+        given resource finished loading (by listening for `WI.Resource.Event.LoadingDidFinish`).
+
+        Even though retrieving a source map's contents uses `Promise`s, in the case that the content
+        was inlined in the "original" source code, the code path would mark the source map as being
+        finished (which would fire a `WI.Resource.Event.LoadingDidFinish`) _before_ it could return
+        a `Promise`, which would've been cached (`WI.SourceCode.prototype.requestContent`) and
+        preventend any reentrancy.
+
+        Wrapping the inline code path in a `Promise.resolve()` gives the `WI.SourceCode` a chance to
+        cache the `Promise` before any events are fired.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource.prototype.requestContentFromBackend):
+
 2019-08-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: console.dir should expand objects
