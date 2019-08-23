@@ -1,3 +1,27 @@
+2019-08-22  Mark Lam  <mark.lam@apple.com>
+
+        VirtualRegister::dump() can use more informative CallFrame header slot names.
+        https://bugs.webkit.org/show_bug.cgi?id=201062
+
+        Reviewed by Tadeu Zagallo.
+
+        For example, it currently dumps head3 instead of callee.  This patch changes the
+        dump as follows (for 64-bit addressing):
+            head0 => callerFrame
+            head1 => returnPC
+            head2 => codeBlock
+            head3 => callee
+            head4 => argumentCount
+
+        Now, one might be wondering when would bytecode ever access callerFrame and
+        returnPC?  The answer is never.  However, I don't think its the role of the
+        dumper to catch a bug where these header slots are being used.  The dumper's role
+        is to clearly report them so that we can see that these unexpected values are
+        being used.
+
+        * bytecode/VirtualRegister.cpp:
+        (JSC::VirtualRegister::dump const):
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build
