@@ -130,7 +130,8 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     ASSERT(!isMainThread());
     ASSERT(!m_database);
 
-    cleanOldDatabases(m_databaseDirectory);
+    auto databaseDirectory = this->databaseDirectory();
+    cleanOldDatabases(databaseDirectory);
 
     LOG(ServiceWorker, "ServiceWorker RegistrationDatabase opening file %s", fullFilename.utf8().data());
 
@@ -150,7 +151,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
         });
     });
 
-    SQLiteFileSystem::ensureDatabaseDirectoryExists(m_databaseDirectory);
+    SQLiteFileSystem::ensureDatabaseDirectoryExists(databaseDirectory);
 
     m_database = std::make_unique<SQLiteDatabase>();
     if (!m_database->open(fullFilename)) {
@@ -299,7 +300,7 @@ void RegistrationDatabase::clearAll(CompletionHandler<void()>&& completionHandle
         m_database = nullptr;
 
         SQLiteFileSystem::deleteDatabaseFile(m_databaseFilePath);
-        SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
+        SQLiteFileSystem::deleteEmptyDatabaseDirectory(databaseDirectory());
 
         callOnMainThread(WTFMove(completionHandler));
     });
