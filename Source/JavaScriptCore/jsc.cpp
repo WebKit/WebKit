@@ -384,6 +384,8 @@ static EncodedJSValue JSC_HOST_CALL functionDisableRichSourceInfo(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMallocInALoop(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionTotalCompileTime(ExecState*);
 
+static EncodedJSValue JSC_HOST_CALL functionSetUnhandledRejectionCallback(ExecState*);
+
 struct Script {
     enum class StrictMode {
         Strict,
@@ -638,6 +640,8 @@ protected:
         addFunction(vm, "disableRichSourceInfo", functionDisableRichSourceInfo, 0);
         addFunction(vm, "mallocInALoop", functionMallocInALoop, 0);
         addFunction(vm, "totalCompileTime", functionTotalCompileTime, 0);
+
+        addFunction(vm, "setUnhandledRejectionCallback", functionSetUnhandledRejectionCallback, 1);
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
@@ -2383,6 +2387,19 @@ static EncodedJSValue JSC_HOST_CALL functionWebAssemblyMemoryMode(ExecState* exe
 }
 
 #endif // ENABLE(WEBASSEMBLY)
+
+EncodedJSValue JSC_HOST_CALL functionSetUnhandledRejectionCallback(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSObject* object = exec->argument(0).getObject();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!object || !object->isFunction(vm))
+        return throwVMTypeError(exec, scope);
+
+    exec->lexicalGlobalObject()->setUnhandledRejectionCallback(vm, object);
+    return JSValue::encode(jsUndefined());
+}
 
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to

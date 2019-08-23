@@ -766,10 +766,12 @@ EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(ExecState* ex
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!globalObject->globalObjectMethodTable()->promiseRejectionTracker)
+    JSPromise* promise = jsCast<JSPromise*>(exec->argument(0));
+
+    // InternalPromises should not be exposed to user scripts.
+    if (jsDynamicCast<JSInternalPromise*>(vm, promise))
         return JSValue::encode(jsUndefined());
 
-    JSPromise* promise = jsCast<JSPromise*>(exec->argument(0));
     JSValue operationValue = exec->argument(1);
 
     ASSERT(operationValue.isNumber());
@@ -777,7 +779,18 @@ EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(ExecState* ex
     ASSERT(operation == JSPromiseRejectionOperation::Reject || operation == JSPromiseRejectionOperation::Handle);
     scope.assertNoException();
 
-    globalObject->globalObjectMethodTable()->promiseRejectionTracker(globalObject, exec, promise, operation);
+    if (globalObject->globalObjectMethodTable()->promiseRejectionTracker)
+        globalObject->globalObjectMethodTable()->promiseRejectionTracker(globalObject, exec, promise, operation);
+    else {
+        switch (operation) {
+        case JSPromiseRejectionOperation::Reject:
+            vm.promiseRejected(promise);
+            break;
+        case JSPromiseRejectionOperation::Handle:
+            // do nothing
+            break;
+        }
+    }
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsUndefined());

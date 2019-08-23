@@ -128,6 +128,16 @@ JS_EXPORT bool JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions(
 */
 JS_EXPORT void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx, bool includesNativeCallStack) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
+/*!
+@function
+@abstract Sets the unhandled promise rejection callback for a context.
+@discussion Similar to window.addEventListener('unhandledrejection'), but for contexts not associated with a web view.
+@param ctx The JSGlobalContext to set the callback on.
+@param function The callback function to set, which receives the promise and rejection reason as arguments.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+*/
+JS_EXPORT void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObjectRef function, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
 #ifdef __cplusplus
 }
 #endif

@@ -123,6 +123,7 @@ class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSObject;
+class JSPromise;
 class JSPropertyNameEnumerator;
 class JSRunLoopTimer;
 class JSStringHeapCellType;
@@ -922,6 +923,8 @@ public:
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
 
+    void promiseRejected(JSPromise*);
+
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     StackTrace* nativeStackTraceOfLastThrow() const { return m_nativeStackTraceOfLastThrow.get(); }
     Thread* throwingThread() const { return m_throwingThread.get(); }
@@ -1008,6 +1011,9 @@ private:
     static void primitiveGigacageDisabledCallback(void*);
     void primitiveGigacageDisabled();
 
+    void callPromiseRejectionCallback(Strong<JSPromise>&);
+    void didExhaustMicrotaskQueue();
+
 #if ENABLE(GC_VALIDATION)
     const ClassInfo* m_initializingObjectClass;
 #endif
@@ -1062,6 +1068,9 @@ private:
     std::unique_ptr<FuzzerAgent> m_fuzzerAgent;
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
+
+    // FIXME: We should remove handled promises from this list at GC flip. <https://webkit.org/b/201005>
+    Vector<Strong<JSPromise>> m_aboutToBeNotifiedRejectedPromises;
 
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
     uintptr_t m_currentWeakRefVersion { 0 };

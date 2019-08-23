@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 
+#include <JavaScriptCore/JSContextRefPrivate.h>
 #include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <wtf/DataLog.h>
@@ -137,6 +138,9 @@ public:
     void symbolsDeletePropertyForKey();
     void promiseResolveTrue();
     void promiseRejectTrue();
+    void promiseUnhandledRejection();
+    void promiseUnhandledRejectionFromUnhandledRejectionCallback();
+    void promiseEarlyHandledRejections();
 
     int failed() const { return m_failed; }
 
@@ -454,7 +458,7 @@ void TestAPI::promiseResolveTrue()
 
     auto trueValue = JSValueMakeBoolean(context, true);
     JSObjectCallAsFunction(context, resolve, resolve, 1, &trueValue, &exception);
-    check(!exception, "No exception should be thrown resolve promise");
+    check(!exception, "No exception should be thrown resolving promise");
     check(passedTrueCalled, "then response function should have been called.");
 }
 
@@ -479,7 +483,7 @@ void TestAPI::promiseRejectTrue()
 
     APIString catchString("catch");
     JSValueRef catchFunction = JSObjectGetProperty(context, promise, catchString, &exception);
-    check(!exception && catchFunction && JSValueIsObject(context, catchFunction), "Promise should have a then object property");
+    check(!exception && catchFunction && JSValueIsObject(context, catchFunction), "Promise should have a catch object property");
 
     JSValueRef passedTrueFunction = JSObjectMakeFunctionWithCallback(context, trueString, passedTrue);
     JSObjectCallAsFunction(context, const_cast<JSObjectRef>(catchFunction), promise, 1, &passedTrueFunction, &exception);
@@ -487,8 +491,78 @@ void TestAPI::promiseRejectTrue()
 
     auto trueValue = JSValueMakeBoolean(context, true);
     JSObjectCallAsFunction(context, reject, reject, 1, &trueValue, &exception);
-    check(!exception, "No exception should be thrown resolve promise");
-    check(passedTrueCalled, "then response function should have been called.");
+    check(!exception, "No exception should be thrown rejecting promise");
+    check(passedTrueCalled, "catch response function should have been called.");
+}
+
+void TestAPI::promiseUnhandledRejection()
+{
+    JSObjectRef reject;
+    JSValueRef exception = nullptr;
+    static auto promise = JSObjectMakeDeferredPromise(context, nullptr, &reject, &exception);
+    check(!exception, "creating a (reject-only) deferred promise should not throw");
+    static auto reason = JSValueMakeString(context, APIString("reason"));
+
+    static TestAPI* tester = this;
+    static bool callbackCalled = false;
+    auto callback = [](JSContextRef ctx, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*) -> JSValueRef {
+        tester->check(argumentCount && JSValueIsStrictEqual(ctx, arguments[0], promise), "callback should receive rejected promise as first argument");
+        tester->check(argumentCount > 1 && JSValueIsStrictEqual(ctx, arguments[1], reason), "callback should receive rejection reason as second argument");
+        tester->check(argumentCount == 2, "callback should not receive a third argument");
+        callbackCalled = true;
+        return JSValueMakeUndefined(ctx);
+    };
+    auto callbackFunction = JSObjectMakeFunctionWithCallback(context, APIString("callback"), callback);
+
+    JSGlobalContextSetUnhandledRejectionCallback(context, callbackFunction, &exception);
+    check(!exception, "setting unhandled rejection callback should not throw");
+
+    JSObjectCallAsFunction(context, reject, reject, 1, &reason, &exception);
+    check(!exception && callbackCalled, "unhandled rejection callback should be called upon unhandled rejection");
+}
+
+void TestAPI::promiseUnhandledRejectionFromUnhandledRejectionCallback()
+{
+    static JSObjectRef reject;
+    static JSValueRef exception = nullptr;
+    JSObjectMakeDeferredPromise(context, nullptr, &reject, &exception);
+    check(!exception, "creating a (reject-only) deferred promise should not throw");
+
+    static auto callbackCallCount = 0;
+    auto callback = [](JSContextRef ctx, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*) -> JSValueRef {
+        if (!callbackCallCount)
+            JSObjectCallAsFunction(ctx, reject, reject, 0, nullptr, &exception);
+        callbackCallCount++;
+        return JSValueMakeUndefined(ctx);
+    };
+    auto callbackFunction = JSObjectMakeFunctionWithCallback(context, APIString("callback"), callback);
+
+    JSGlobalContextSetUnhandledRejectionCallback(context, callbackFunction, &exception);
+    check(!exception, "setting unhandled rejection callback should not throw");
+
+    callFunction("(function () { Promise.reject(); })");
+    check(!exception && callbackCallCount == 2, "unhandled rejection from unhandled rejection callback should also trigger the callback");
+}
+
+void TestAPI::promiseEarlyHandledRejections()
+{
+    JSValueRef exception = nullptr;
+    
+    static bool callbackCalled = false;
+    auto callback = [](JSContextRef ctx, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*) -> JSValueRef {
+        callbackCalled = true;
+        return JSValueMakeUndefined(ctx);
+    };
+    auto callbackFunction = JSObjectMakeFunctionWithCallback(context, APIString("callback"), callback);
+
+    JSGlobalContextSetUnhandledRejectionCallback(context, callbackFunction, &exception);
+    check(!exception, "setting unhandled rejection callback should not throw");
+
+    callFunction("(function () { const p = Promise.reject(); p.catch(() => {}); })");
+    check(!callbackCalled, "unhandled rejection callback should not be called for synchronous early-handled rejection");
+
+    callFunction("(function () { const p = Promise.reject(); Promise.resolve().then(() => { p.catch(() => {}); }); })");
+    check(!callbackCalled, "unhandled rejection callback should not be called for asynchronous early-handled rejection");
 }
 
 #define RUN(test) do {                                 \
@@ -521,6 +595,9 @@ int testCAPIViaCpp(const char* filter)
     RUN(symbolsDeletePropertyForKey());
     RUN(promiseResolveTrue());
     RUN(promiseRejectTrue());
+    RUN(promiseUnhandledRejection());
+    RUN(promiseUnhandledRejectionFromUnhandledRejectionCallback());
+    RUN(promiseEarlyHandledRejections());
 
     if (tasks.isEmpty()) {
         dataLogLn("Filtered all tests: ERROR");

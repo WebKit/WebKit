@@ -1090,13 +1090,51 @@ void VM::queueMicrotask(JSGlobalObject& globalObject, Ref<Microtask>&& task)
     m_microtaskQueue.append(makeUnique<QueuedTask>(*this, &globalObject, WTFMove(task)));
 }
 
+void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
+{
+    JSObject* callback = promise->globalObject()->unhandledRejectionCallback();
+    if (!callback)
+        return;
+
+    auto scope = DECLARE_CATCH_SCOPE(*this);
+
+    CallData callData;
+    CallType callType = getCallData(*this, callback, callData);
+    ASSERT(callType != CallType::None);
+
+    MarkedArgumentBuffer args;
+    args.append(promise.get());
+    args.append(promise->result(*this));
+    call(promise->globalObject()->globalExec(), callback, callType, callData, jsNull(), args);
+    scope.clearException();
+}
+
+void VM::didExhaustMicrotaskQueue()
+{
+    auto unhandledRejections = WTFMove(m_aboutToBeNotifiedRejectedPromises);
+    for (auto& promise : unhandledRejections) {
+        if (promise->isHandled(*this))
+            continue;
+
+        callPromiseRejectionCallback(promise);
+    }
+}
+
+void VM::promiseRejected(JSPromise* promise)
+{
+    m_aboutToBeNotifiedRejectedPromises.constructAndAppend(*this, promise);
+}
+
 void VM::drainMicrotasks()
 {
-    while (!m_microtaskQueue.isEmpty()) {
-        m_microtaskQueue.takeFirst()->run();
-        if (m_onEachMicrotaskTick)
-            m_onEachMicrotaskTick(*this);
-    }
+    do {
+        while (!m_microtaskQueue.isEmpty()) {
+            m_microtaskQueue.takeFirst()->run();
+            if (m_onEachMicrotaskTick)
+                m_onEachMicrotaskTick(*this);
+        }
+        didExhaustMicrotaskQueue();
+    } while (!m_microtaskQueue.isEmpty());
     finalizeSynchronousJSExecution();
 }
 

@@ -425,6 +425,8 @@ public:
 
     String m_name;
 
+    Strong<JSObject> m_unhandledRejectionCallback;
+
     Debugger* m_debugger;
 
     VM& m_vm;
@@ -806,6 +808,9 @@ public:
 
     void setName(const String&);
     const String& name() const { return m_name; }
+
+    void setUnhandledRejectionCallback(VM& vm, JSObject* function) { m_unhandledRejectionCallback.set(vm, function); }
+    JSObject* unhandledRejectionCallback() const { return m_unhandledRejectionCallback.get(); }
 
     JSObject* arrayBufferConstructor() const { return m_arrayBufferStructure.constructor(this); }
 

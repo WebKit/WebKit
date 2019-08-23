@@ -1,3 +1,55 @@
+2019-08-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JSC should have public API for unhandled promise rejections
+        https://bugs.webkit.org/show_bug.cgi?id=197172
+
+        Reviewed by Keith Miller.
+
+        This patch makes it possible to register a unhandled promise rejection callback via the JSC API.
+        Since there is no event loop in such an environment, this callback fires off of the microtask queue.
+        The callback receives the promise and rejection reason as arguments and its return value is ignored.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextSetUnhandledRejectionCallback): Added.
+        * API/JSContextRefPrivate.h:
+        Add new C++ API call.
+
+        * API/tests/testapi.cpp:
+        (TestAPI::promiseResolveTrue): Clean up test output.
+        (TestAPI::promiseRejectTrue): Clean up test output.
+        (TestAPI::promiseUnhandledRejection): Added.
+        (TestAPI::promiseUnhandledRejectionFromUnhandledRejectionCallback): Added.
+        (TestAPI::promiseEarlyHandledRejections): Added.
+        (testCAPIViaCpp):
+        Add new C++ API test.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionSetUnhandledRejectionCallback): Added.
+        Add corresponding global to JSC shell.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setUnhandledRejectionCallback): Added.
+        (JSC::JSGlobalObject::unhandledRejectionCallback const): Added.
+        Keep a strong reference to the callback.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncHostPromiseRejectionTracker):
+        Add default behavior.
+
+        * runtime/VM.cpp:
+        (JSC::VM::callPromiseRejectionCallback): Added.
+        (JSC::VM::didExhaustMicrotaskQueue): Added.
+        (JSC::VM::promiseRejected): Added.
+        (JSC::VM::drainMicrotasks):
+        When microtask queue is exhausted, deal with any pending unhandled rejections
+        (in a manner based on RejectedPromiseTracker's reportUnhandledRejections),
+        then make sure this didn't cause any new microtasks to be added to the queue.
+
+        * runtime/VM.h:
+        Store unhandled rejections.
+        (This collection will always be empty in the presence of WebCore.)
+
 2019-08-22  Mark Lam  <mark.lam@apple.com>
 
         VirtualRegister::dump() can use more informative CallFrame header slot names.
