@@ -1,3 +1,23 @@
+2019-08-23  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r248533) Assertion hit in isMainThread() for some clients using WTF because the main thread is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=201083
+
+        Reviewed by Alex Christensen.
+
+        An assertion is hit in isMainThread() for some clients using WTF because the main thread is not initialized, since r248533.
+        Clients can work around this by calling WTF::initializeMainThread() before using WTF but it seems unfortunate to force them
+        to do so. I propose we disable the assertion until the main thread is initialized.
+
+        * wtf/MainThread.h:
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::RefCountedBase):
+        (WTF::RefCountedBase::applyRefDerefThreadingCheck const):
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::isMainThreadInitialized):
+        * wtf/generic/MainThreadGeneric.cpp:
+        (WTF::isMainThreadInitialized):
+
 2019-08-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support NFC authenticators for iOS

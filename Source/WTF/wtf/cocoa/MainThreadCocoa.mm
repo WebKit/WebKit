@@ -181,6 +181,11 @@ bool isMainThreadIfInitialized()
     return isMainThread();
 }
 
+bool isMainThreadInitialized()
+{
+    return true;
+}
+
 bool isUIThread()
 {
     return pthread_main_np();
@@ -237,6 +242,11 @@ bool isMainThreadIfInitialized()
     if (mainThreadEstablishedAsPthreadMain)
         return pthread_main_np();
     return pthread_equal(pthread_self(), mainThreadPthread);
+}
+
+bool isMainThreadInitialized()
+{
+    return mainThreadEstablishedAsPthreadMain || mainThreadPthread;
 }
 
 #endif // USE(WEB_THREAD)
