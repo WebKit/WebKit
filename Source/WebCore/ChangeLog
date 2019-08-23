@@ -1,3 +1,20 @@
+2019-08-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [SVG] -webkit-clip-path treats url(abc#xyz) as url(#xyz) because it checks only URL fragment part
+        https://bugs.webkit.org/show_bug.cgi?id=201030
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: svg/clip-path/clip-path-invalid-reference-001-expected.svg
+               svg/clip-path/clip-path-invalid-reference-001.svg
+               svg/clip-path/clip-path-invalid-reference-002-expected.svg
+               svg/clip-path/clip-path-invalid-reference-002.svg
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertClipPath): Use
+        SVGURIReference::fragmentIdentifierFromIRIString to get fragment
+        identifier from -webkit-clip-path.
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build

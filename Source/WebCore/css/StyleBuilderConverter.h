@@ -590,9 +590,9 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
             String cssURLValue = primitiveValue.stringValue();
-            URL url = styleResolver.document().completeURL(cssURLValue);
+            String fragment = SVGURIReference::fragmentIdentifierFromIRIString(cssURLValue, styleResolver.document());
             // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
-            return ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier());
+            return ReferenceClipPathOperation::create(cssURLValue, fragment);
         }
         ASSERT(primitiveValue.valueID() == CSSValueNone);
         return nullptr;

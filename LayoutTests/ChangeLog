@@ -1,3 +1,15 @@
+2019-08-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [SVG] -webkit-clip-path treats url(abc#xyz) as url(#xyz) because it checks only URL fragment part
+        https://bugs.webkit.org/show_bug.cgi?id=201030
+
+        Reviewed by Ryosuke Niwa.
+
+        * svg/clip-path/clip-path-invalid-reference-001-expected.svg: Added.
+        * svg/clip-path/clip-path-invalid-reference-001.svg: Added.
+        * svg/clip-path/clip-path-invalid-reference-002-expected.svg: Added.
+        * svg/clip-path/clip-path-invalid-reference-002.svg: Added.
+
 2019-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Should show input view when became first responder if keyboard was showing when the view was resigned
