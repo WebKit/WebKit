@@ -34,7 +34,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/Timer.h>
-#include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -130,8 +129,6 @@ public:
     bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
 
     virtual String description() const;
-
-    PAL::SessionID sessionID() const;
 
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);

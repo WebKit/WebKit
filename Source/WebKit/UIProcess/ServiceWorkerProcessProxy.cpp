@@ -90,6 +90,22 @@ void ServiceWorkerProcessProxy::updatePreferencesStore(const WebPreferencesStore
     send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
 
+void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(PageIdentifier pageID, FrameIdentifier frameID, Ref<AuthenticationChallengeProxy>&& challenge)
+{
+    UNUSED_PARAM(pageID);
+    UNUSED_PARAM(frameID);
+
+    // FIXME: Expose an API to delegate the actual decision to the application layer.
+    auto& protectionSpace = challenge->core().protectionSpace();
+    if (protectionSpace.authenticationScheme() == WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested && processPool().allowsAnySSLCertificateForServiceWorker()) {
+        auto credential = WebCore::Credential("accept server trust"_s, emptyString(), WebCore::CredentialPersistenceNone);
+        challenge->listener().completeChallenge(AuthenticationChallengeDisposition::UseCredential, credential);
+        return;
+    }
+    notImplemented();
+    challenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

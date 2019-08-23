@@ -7333,6 +7333,19 @@ void WebPageProxy::gamepadActivity(const Vector<GamepadData>& gamepadDatas, bool
 
 #endif
 
+WeakPtr<SecKeyProxyStore> WebPageProxy::secKeyProxyStore(const WebCore::AuthenticationChallenge& challenge)
+{
+#if HAVE(SEC_KEY_PROXY)
+    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
+        auto secKeyProxyStore = SecKeyProxyStore::create();
+        auto weakPointer = makeWeakPtr(secKeyProxyStore.get());
+        m_websiteDataStore->addSecKeyProxyStore(WTFMove(secKeyProxyStore));
+        return weakPointer;
+    }
+#endif
+    return nullptr;
+}
+    
 void WebPageProxy::didReceiveAuthenticationChallengeProxy(FrameIdentifier, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
 {
     m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());

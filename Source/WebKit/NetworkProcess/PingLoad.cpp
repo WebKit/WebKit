@@ -148,7 +148,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Challeng
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
+        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
         return;
     }
     auto weakThis = makeWeakPtr(*this);

@@ -37,9 +37,6 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "SandboxExtension.h"
-#if HAVE(SEC_KEY_PROXY)
-#include "SecKeyProxyStore.h"
-#endif
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebCompiledContentRuleList.h"
@@ -315,36 +312,20 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
 #endif
 }
 
-void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessionID, PageIdentifier pageID, FrameIdentifier frameID, WebCore::AuthenticationChallenge&& coreChallenge, uint64_t challengeID)
+void NetworkProcessProxy::didReceiveAuthenticationChallenge(PageIdentifier pageID, FrameIdentifier frameID, WebCore::AuthenticationChallenge&& coreChallenge, uint64_t challengeID)
 {
-#if HAVE(SEC_KEY_PROXY)
-    WeakPtr<SecKeyProxyStore> secKeyProxyStore;
-    if (coreChallenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
-        if (auto* store = websiteDataStoreFromSessionID(sessionID)) {
-            auto newSecKeyProxyStore = SecKeyProxyStore::create();
-            secKeyProxyStore = makeWeakPtr(newSecKeyProxyStore.get());
-            store->addSecKeyProxyStore(WTFMove(newSecKeyProxyStore));
-        }
-    }
-    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, makeRef(*connection()), WTFMove(secKeyProxyStore));
-#else
-    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, makeRef(*connection()), nullptr);
-#endif
-
-    WebPageProxy* page = nullptr;
-    if (pageID && !m_processPool.isServiceWorkerPageID(pageID))
-        page = WebProcessProxy::webPage(pageID);
-
-    if (!page) {
-        auto* store = websiteDataStoreFromSessionID(sessionID);
-        if (!store || coreChallenge.protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-            authenticationChallenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
-            return;
-        }
-        store->client().didReceiveAuthenticationChallenge(WTFMove(authenticationChallenge));
+#if ENABLE(SERVICE_WORKER)
+    if (auto* serviceWorkerProcessProxy = m_processPool.serviceWorkerProcessProxyFromPageID(pageID)) {
+        auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, makeRef(*connection()), nullptr);
+        serviceWorkerProcessProxy->didReceiveAuthenticationChallenge(pageID, frameID, WTFMove(authenticationChallenge));
         return;
     }
+#endif
 
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    MESSAGE_CHECK(page);
+
+    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, makeRef(*connection()), page->secKeyProxyStore(coreChallenge));
     page->didReceiveAuthenticationChallengeProxy(frameID, WTFMove(authenticationChallenge));
 }
 

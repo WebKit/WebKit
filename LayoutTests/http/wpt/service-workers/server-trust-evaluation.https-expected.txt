@@ -1,5 +1,0 @@
-
-PASS Setup worker 
-PASS Service worker load should fail 
-PASS Service worker load should succeed 
-

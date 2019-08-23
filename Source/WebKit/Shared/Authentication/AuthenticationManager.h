@@ -63,7 +63,7 @@ public:
 
     static const char* supplementName();
 
-    void didReceiveAuthenticationChallenge(PAL::SessionID, WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
+    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 
     void completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition, WebCore::Credential&&);

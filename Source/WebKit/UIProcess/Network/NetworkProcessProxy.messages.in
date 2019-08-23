@@ -23,7 +23,7 @@
 messages -> NetworkProcessProxy LegacyReceiver {
     DidCreateNetworkConnectionToWebProcess(IPC::Attachment connectionIdentifier)
 
-    DidReceiveAuthenticationChallenge(PAL::SessionID sessionID, WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
+    DidReceiveAuthenticationChallenge(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
     DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
