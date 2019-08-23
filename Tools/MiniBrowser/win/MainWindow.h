@@ -33,7 +33,7 @@
 
 class MainWindow final : public RefCounted<MainWindow>, public BrowserWindowClient {
 public:
-    using BrowserWindowFactory = std::function<Ref<BrowserWindow>(BrowserWindowClient&, HWND mainWnd, HWND urlBarWnd, bool usesLayeredWebView)>;
+    using BrowserWindowFactory = std::function<Ref<BrowserWindow>(BrowserWindowClient&, HWND mainWnd, bool usesLayeredWebView)>;
 
     static Ref<MainWindow> create();
 
@@ -62,6 +62,7 @@ private:
     // BrowserWindowClient
     void progressChanged(double) final;
     void progressFinished() final;
+    void activeURLChanged(std::wstring) final;
 
     HWND m_hMainWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };

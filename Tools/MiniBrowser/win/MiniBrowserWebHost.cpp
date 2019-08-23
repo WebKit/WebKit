@@ -33,40 +33,10 @@
 #include <WebKitLegacy/WebKit.h>
 
 typedef _com_ptr_t<_com_IIID<IWebDataSource, &__uuidof(IWebDataSource)>> IWebDataSourcePtr;
-typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-HRESULT MiniBrowserWebHost::updateAddressBar(IWebView& webView)
+HRESULT MiniBrowserWebHost::didCommitLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
 {
-    IWebFramePtr mainFrame;
-    HRESULT hr = webView.mainFrame(&mainFrame.GetInterfacePtr());
-    if (FAILED(hr))
-        return hr;
-
-    IWebDataSourcePtr dataSource;
-    hr = mainFrame->dataSource(&dataSource.GetInterfacePtr());
-    if (FAILED(hr) || !dataSource)
-        hr = mainFrame->provisionalDataSource(&dataSource.GetInterfacePtr());
-    if (FAILED(hr) || !dataSource)
-        return hr;
-
-    IWebMutableURLRequestPtr request;
-    hr = dataSource->request(&request.GetInterfacePtr());
-    if (FAILED(hr) || !request)
-        return hr;
-
-    _bstr_t frameURL;
-    hr = request->mainDocumentURL(frameURL.GetAddress());
-    if (FAILED(hr))
-        return hr;
-
-    loadURL(frameURL);
-
-    return S_OK;
-}
-
-void MiniBrowserWebHost::loadURL(_bstr_t& url)
-{
-    ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETTEXT), 0, reinterpret_cast<LPARAM>(url.GetBSTR()));
+    return didChangeLocationWithinPageForFrame(webView, frame);
 }
 
 HRESULT MiniBrowserWebHost::didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError *error, _In_opt_ IWebFrame*)
@@ -81,6 +51,25 @@ HRESULT MiniBrowserWebHost::didFailProvisionalLoadWithError(_In_opt_ IWebView*, 
     if (_wcsicmp(errorDescription, L"Cancelled"))
         ::MessageBoxW(0, static_cast<LPCWSTR>(errorDescription), L"Error", MB_APPLMODAL | MB_OK);
 
+    return S_OK;
+}
+
+HRESULT MiniBrowserWebHost::didChangeLocationWithinPageForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
+{
+    IWebFrame2Ptr frame2(frame);
+    if (!frame2)
+        return E_NOINTERFACE;
+    BOOL isMainFrame;
+    HRESULT hr = frame2->isMainFrame(&isMainFrame);
+    if (FAILED(hr))
+        return hr;
+    if (!isMainFrame)
+        return S_OK;
+    _bstr_t url;
+    hr = webView->mainFrameURL(url.GetAddress());
+    if (FAILED(hr))
+        return hr;
+    m_client->m_client.activeURLChanged(url.GetBSTR());
     return S_OK;
 }
 
@@ -109,8 +98,6 @@ ULONG MiniBrowserWebHost::Release()
 {
     return m_client->Release();
 }
-
-typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
 
 HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
 {

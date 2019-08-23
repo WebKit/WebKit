@@ -57,20 +57,14 @@ float deviceScaleFactorForWindow(HWND);
 
 static const int maxHistorySize = 10;
 
-typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
-typedef _com_ptr_t<_com_IIID<IWebNotificationObserver, &__uuidof(IWebNotificationObserver)>> IWebNotificationObserverPtr;
-typedef _com_ptr_t<_com_IIID<IWebNotificationCenter, &__uuidof(IWebNotificationCenter)>> IWebNotificationCenterPtr;
-
-
-Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(BrowserWindowClient& client, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
+Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(BrowserWindowClient& client, HWND mainWnd, bool useLayeredWebView)
 {
-    return adoptRef(*new WebKitLegacyBrowserWindow(client, mainWnd, urlBarWnd, useLayeredWebView));
+    return adoptRef(*new WebKitLegacyBrowserWindow(client, mainWnd, useLayeredWebView));
 }
 
-WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(BrowserWindowClient& client, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
+WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(BrowserWindowClient& client, HWND mainWnd, bool useLayeredWebView)
     : m_client(client)
     , m_hMainWnd(mainWnd)
-    , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
 {
 }
@@ -129,7 +123,7 @@ HRESULT WebKitLegacyBrowserWindow::init()
     if (!setCacheFolder())
         return E_FAIL;
 
-    auto webHost = new MiniBrowserWebHost(this, m_hURLBarWnd);
+    auto webHost = new MiniBrowserWebHost(this);
 
     hr = setFrameLoadDelegate(webHost);
     if (FAILED(hr))
@@ -474,7 +468,7 @@ void WebKitLegacyBrowserWindow::navigateToHistory(UINT menuID)
     _bstr_t frameURL;
     desiredHistoryItem->URLString(frameURL.GetAddress());
 
-    ::SendMessage(m_hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)frameURL.GetBSTR());
+    m_client.activeURLChanged(frameURL.GetBSTR());
 }
 
 bool WebKitLegacyBrowserWindow::goBack()

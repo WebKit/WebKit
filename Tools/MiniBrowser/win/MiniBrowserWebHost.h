@@ -33,8 +33,8 @@ class WebKitLegacyBrowserWindow;
 
 class MiniBrowserWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate, public IWebNotificationObserver {
 public:
-    MiniBrowserWebHost(WebKitLegacyBrowserWindow* client, HWND urlBar)
-        : m_client(client), m_hURLBarWnd(urlBar) { }
+    MiniBrowserWebHost(WebKitLegacyBrowserWindow* client)
+        : m_client(client) { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -45,20 +45,13 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE didReceiveServerRedirectForProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame*)
-    {
-        if (!webView)
-            return E_POINTER;
-
-        return updateAddressBar(*webView);
-    }
-    
+    virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE didReceiveTitle(_In_opt_ IWebView*, _In_ BSTR title, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didReceiveIcon(_In_opt_ IWebView*, _In_ HBITMAP, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE willPerformClientRedirectToURL(_In_opt_ IWebView*, _In_ BSTR url, double delaySeconds, DATE fireDate, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didCancelClientRedirectForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE willCloseFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
@@ -74,12 +67,6 @@ public:
     // IWebNotificationObserver
     virtual HRESULT STDMETHODCALLTYPE onNotify(_In_opt_ IWebNotification*);
 
-    void loadURL(_bstr_t&);
-
-protected:
-    HRESULT updateAddressBar(IWebView&);
-
 private:
     WebKitLegacyBrowserWindow* m_client { nullptr };
-    HWND m_hURLBarWnd { 0 };
 };

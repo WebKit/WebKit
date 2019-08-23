@@ -159,9 +159,6 @@ ULONG PrintWebUIDelegate::Release()
     return m_client.Release();
 }
 
-typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
-typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
-
 HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(_In_opt_ IWebView* view, _Out_ RECT* rect)
 {
     if (!view || !rect)

@@ -32,6 +32,7 @@ class BrowserWindowClient {
 public:
     virtual void progressChanged(double) = 0;
     virtual void progressFinished() = 0;
+    virtual void activeURLChanged(std::wstring) = 0;
 };
 
 class BrowserWindow : public RefCounted<BrowserWindow> {

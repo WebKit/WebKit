@@ -1,3 +1,40 @@
+2019-08-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] URL bar should be updated for in-page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=201032
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/win/BrowserWindow.h: Added activeURLChanged to BrowserWindowClient interface.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        (MainWindow::activeURLChanged): Added.
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::didCommitLoadForFrame):
+        (MiniBrowserWebHost::didChangeLocationWithinPageForFrame): Added.
+        (MiniBrowserWebHost::updateAddressBar): Deleted.
+        (MiniBrowserWebHost::loadURL): Deleted.
+        * MiniBrowser/win/MiniBrowserWebHost.h:
+        (MiniBrowserWebHost::MiniBrowserWebHost):
+        (MiniBrowserWebHost::didCommitLoadForFrame): Deleted.
+        (MiniBrowserWebHost::didChangeLocationWithinPageForFrame): Deleted.
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::create):
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::didChangeIsLoading): Removed an unused variable.
+        (WebKitBrowserWindow::didChangeActiveURL): Added.
+        (WebKitBrowserWindow::createNewPage):
+        (WebKitBrowserWindow::didCommitNavigation): Deleted.
+        * MiniBrowser/win/WebKitBrowserWindow.h: Removed m_urlBarWnd.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::create):
+        (WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow):
+        (WebKitLegacyBrowserWindow::init):
+        (WebKitLegacyBrowserWindow::navigateToHistory):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h: Removed m_urlBarWnd.
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build

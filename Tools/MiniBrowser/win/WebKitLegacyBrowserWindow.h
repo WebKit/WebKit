@@ -33,6 +33,7 @@
 
 typedef _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)>> IUnknownPtr;
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
+typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
 typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
 typedef _com_ptr_t<_com_IIID<IWebViewPrivate2, &__uuidof(IWebViewPrivate2)>> IWebViewPrivatePtr;
 typedef _com_ptr_t<_com_IIID<IWebFrameLoadDelegate, &__uuidof(IWebFrameLoadDelegate)>> IWebFrameLoadDelegatePtr;
@@ -48,10 +49,13 @@ typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoadDelegate)>> IWebResourceLoadDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
+typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
+typedef _com_ptr_t<_com_IIID<IWebNotificationObserver, &__uuidof(IWebNotificationObserver)>> IWebNotificationObserverPtr;
+typedef _com_ptr_t<_com_IIID<IWebNotificationCenter, &__uuidof(IWebNotificationCenter)>> IWebNotificationCenterPtr;
 
 class WebKitLegacyBrowserWindow : public BrowserWindow {
 public:
-    static Ref<BrowserWindow> create(BrowserWindowClient&, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
+    static Ref<BrowserWindow> create(BrowserWindowClient&, HWND mainWnd, bool useLayeredWebView = false);
 
 private:
     friend class AccessibilityDelegate;
@@ -111,7 +115,7 @@ private:
     void updateStatistics(HWND dialog);
     void setPreference(UINT menuID, bool enable);
 
-    WebKitLegacyBrowserWindow(BrowserWindowClient&, HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView);
+    WebKitLegacyBrowserWindow(BrowserWindowClient&, HWND mainWnd, bool useLayeredWebView);
     void subclassForLayeredWindow();
     bool setCacheFolder();
 
@@ -136,7 +140,6 @@ private:
     IWebCachePtr m_webCache;
 
     HWND m_hMainWnd { nullptr };
-    HWND m_hURLBarWnd { nullptr };
     HWND m_viewWnd { nullptr };
 
     bool m_useLayeredWebView;

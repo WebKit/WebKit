@@ -125,7 +125,7 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
     SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
 
-    m_browserWindow = factory(*this, m_hMainWnd, m_hURLBarWnd, usesLayeredWebView);
+    m_browserWindow = factory(*this, m_hMainWnd, usesLayeredWebView);
     if (!m_browserWindow)
         return false;
     HRESULT hr = m_browserWindow->init();
@@ -486,4 +486,9 @@ void MainWindow::progressChanged(double progress)
 void MainWindow::progressFinished()
 {
     SetWindowText(m_hProgressIndicator, L"");
+}
+
+void MainWindow::activeURLChanged(std::wstring url)
+{
+    SetWindowText(m_hURLBarWnd, url.c_str());
 }
