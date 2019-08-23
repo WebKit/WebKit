@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,16 +108,9 @@ template<typename T> struct PerThreadStorage {
     }
 };
 
-class Cache;
-class Heap;
-
-template<> bool PerThreadStorage<PerHeapKind<Cache>>::s_didInitialize;
-template<> pthread_key_t PerThreadStorage<PerHeapKind<Cache>>::s_key;
-template<> std::once_flag PerThreadStorage<PerHeapKind<Cache>>::s_onceFlag;
-
-template<> bool PerThreadStorage<PerHeapKind<Heap>>::s_didInitialize;
-template<> pthread_key_t PerThreadStorage<PerHeapKind<Heap>>::s_key;
-template<> std::once_flag PerThreadStorage<PerHeapKind<Heap>>::s_onceFlag;
+template<typename T> bool PerThreadStorage<T>::s_didInitialize;
+template<typename T> pthread_key_t PerThreadStorage<T>::s_key;
+template<typename T> std::once_flag PerThreadStorage<T>::s_onceFlag;
 
 #endif
 

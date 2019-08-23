@@ -26,7 +26,6 @@
 #include "IsoTLS.h"
 
 #include "Environment.h"
-#include "Gigacage.h"
 #include "IsoTLSEntryInlines.h"
 #include "IsoTLSInlines.h"
 #include "IsoTLSLayout.h"
@@ -184,21 +183,11 @@ void IsoTLS::determineMallocFallbackState()
             if (s_mallocFallbackState != MallocFallbackState::Undecided)
                 return;
 
-#if GIGACAGE_ENABLED || BCPU(ARM64)
-#if !BCPU(ARM64)
-            if (!Gigacage::shouldBeEnabled()) {
-                s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;
-                return;
-            }
-#endif
             const char* env = getenv("bmalloc_IsoHeap");
             if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0")))
                 s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;
             else
                 s_mallocFallbackState = MallocFallbackState::DoNotFallBack;
-#else
-            s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;
-#endif
         });
 }
 
