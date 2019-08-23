@@ -308,6 +308,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_has3DTransformedDescendant(false)
     , m_hasCompositingDescendant(false)
     , m_hasCompositedScrollingAncestor(false)
+    , m_hasCompositedScrollableOverflow(false)
     , m_hasTransformedAncestor(false)
     , m_has3DTransformedAncestor(false)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
@@ -2288,11 +2289,6 @@ bool RenderLayer::canUseCompositedScrolling() const
 #endif
 }
 
-bool RenderLayer::hasCompositedScrollableOverflow() const
-{
-    return canUseCompositedScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
-}
-
 #if ENABLE(IOS_TOUCH_EVENTS)
 bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
@@ -3571,6 +3567,8 @@ void RenderLayer::computeScrollDimensions()
         scrollableLeftOverflow -= verticalScrollbarWidth();
     int scrollableTopOverflow = roundToInt(overflowTop() - box->borderTop());
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
+    
+    m_hasCompositedScrollableOverflow = canUseCompositedScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
 }
 
 bool RenderLayer::hasScrollableHorizontalOverflow() const

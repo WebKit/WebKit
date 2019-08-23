@@ -493,7 +493,7 @@ public:
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
     bool canUseCompositedScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
-    bool hasCompositedScrollableOverflow() const;
+    bool hasCompositedScrollableOverflow() const { return m_hasCompositedScrollableOverflow; }
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
@@ -1233,6 +1233,7 @@ private:
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
 
     bool m_hasCompositedScrollingAncestor : 1; // In the layer-order tree.
+    bool m_hasCompositedScrollableOverflow : 1;
 
     bool m_hasTransformedAncestor : 1;
     bool m_has3DTransformedAncestor : 1;
