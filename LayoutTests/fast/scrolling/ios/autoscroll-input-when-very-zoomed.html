@@ -24,7 +24,7 @@
         await UIHelper.immediateZoomToScale(3.284);
         await UIHelper.immediateScrollTo(390, 390);
 
-        await UIHelper.delayFor(200);
+        await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
 
         var originalXOffset = window.pageXOffset;
         var originalYOffset = window.pageYOffset;
@@ -35,7 +35,7 @@
         var secondYOffset = window.pageYOffset;
 
         // Scrolling is not immedate, wait until the viewport has time to adjust
-        await UIHelper.delayFor(25);
+        await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
         await UIHelper.enterText("a");
 
         var finalXOffset = window.pageXOffset;
@@ -47,7 +47,7 @@
             if ((originalXOffset == secondXOffset) || (originalYOffset == secondYOffset))
                 output += 'FAIL: page has failed to scrolled on the first input<br>';
             if ((secondXOffset != finalXOffset) || (secondYOffset != finalYOffset))
-                output += 'FAIL: page has scrolled on the secont input';
+                output += 'FAIL: page has scrolled on the second input';
         }
         output += '<br>';
 

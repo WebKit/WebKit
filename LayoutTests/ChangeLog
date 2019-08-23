@@ -1,3 +1,20 @@
+2019-08-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Revert delete-in-input-in-iframe.html and typing-in-input-in-iframe.html to original behaviour after r248977 and make associated test autoscroll-input-when-very-zoomed.html more stable
+        https://bugs.webkit.org/show_bug.cgi?id=201058
+
+        Reviewed by Simon Fraser.
+
+        delete-in-input-in-iframe and typing-in-input-in-iframe were changed when scrolling was made to work differently in r244141.
+        They actually did find a bug, and that bug was fixed in r248977, so we put the tests back to test that scolls do not happen.
+        Also update autoscroll-input-when-very-zoomed which was added to test r248977 to be more robust.
+
+        * fast/forms/ios/delete-in-input-in-iframe-expected.txt:
+        * fast/forms/ios/delete-in-input-in-iframe.html:
+        * fast/forms/ios/typing-in-input-in-iframe-expected.txt:
+        * fast/forms/ios/typing-in-input-in-iframe.html:
+        * fast/scrolling/ios/autoscroll-input-when-very-zoomed.html:
+
 2019-08-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [SVG] -webkit-clip-path treats url(abc#xyz) as url(#xyz) because it checks only URL fragment part
