@@ -1,3 +1,25 @@
+2019-08-23  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r248713): WebDriver commands which target the implicit main frame now hit an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=200793
+        <rdar://problem/54516988>
+
+        Reviewed by Chris Dumez.
+
+        SimulatedInputDispatcher and its callers need to support Optional<FrameIdentifier>
+        and WTF::nullopt as an encoding for the implicit main frame.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::resolveLocation):
+        (WebKit::SimulatedInputDispatcher::run):
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::viewportInViewCenterPointOfElement):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        (WebKit::WebAutomationSession::cancelInteractionSequence):
+
 2019-08-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support NFC authenticators for iOS
