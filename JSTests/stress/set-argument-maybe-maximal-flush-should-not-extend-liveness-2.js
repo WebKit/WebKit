@@ -1,4 +1,4 @@
-//@ runDefault("--useMaximalFlushInsertionPhase=1", "--jitPolicyScale=0", "--useConcurrentJIT=0")
+//@ runDefault("--jitPolicyScale=0", "--useConcurrentJIT=0")
 
 function f0() {
 }

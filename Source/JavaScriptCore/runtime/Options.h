@@ -310,8 +310,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(unsigned, maximumVarargsForInlining, 100, Normal, nullptr) \
     \
-    v(bool, useMaximalFlushInsertionPhase, false, Normal, "Setting to true allows the DFG's MaximalFlushInsertionPhase to run.") \
-    \
     v(unsigned, maximumBinaryStringSwitchCaseLength, 50, Normal, nullptr) \
     v(unsigned, maximumBinaryStringSwitchTotalLength, 2000, Normal, nullptr) \
     \
@@ -545,7 +543,6 @@ enum OptionEquivalence {
     v(enableArchitectureSpecificOptimizations, useArchitectureSpecificOptimizations, SameOption) \
     v(enablePolyvariantCallInlining, usePolyvariantCallInlining, SameOption) \
     v(enablePolyvariantByIdInlining, usePolyvariantByIdInlining, SameOption) \
-    v(enableMaximalFlushInsertionPhase, useMaximalFlushInsertionPhase, SameOption) \
     v(objectsAreImmortal, useImmortalObjects, SameOption) \
     v(showObjectStatistics, dumpObjectStatistics, SameOption) \
     v(disableGC, useGC, InvertedOption) \

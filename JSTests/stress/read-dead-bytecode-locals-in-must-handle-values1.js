@@ -1,4 +1,4 @@
-//@ runDefault("--useMaximalFlushInsertionPhase=1", "--useConcurrentJIT=0")
+//@ runDefault("--useConcurrentJIT=0")
 function bar(x) {
   if (x) {
     return;

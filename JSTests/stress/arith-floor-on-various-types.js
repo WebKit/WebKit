@@ -140,11 +140,6 @@ testSingleTypeCall();
 
 function checkCompileCountForUselessNegativeZero(testFunction)
 {
-    if (jscOptions().useMaximalFlushInsertionPhase) {
-        // If we forced a flush after the operation, the negative zero becomes
-        // observable and we may be overly optimistic.
-        return numberOfDFGCompiles(testFunction) <= 2;
-    }
     return numberOfDFGCompiles(testFunction) <= 1;
 }
 

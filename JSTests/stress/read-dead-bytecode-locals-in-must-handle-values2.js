@@ -1,4 +1,4 @@
-//@ runDefault("--useMaximalFlushInsertionPhase=1", "--useConcurrentJIT=0")
+//@ runDefault("--useConcurrentJIT=0")
 function bar(c) {
     if (c > 1) {
         bar(parseInt(c * 2))

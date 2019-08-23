@@ -51,7 +51,6 @@
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
-#include "DFGMaximalFlushInsertionPhase.h"
 #include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
@@ -285,9 +284,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 
     RUN_PHASE(performLiveCatchVariablePreservationPhase);
 
-    if (Options::useMaximalFlushInsertionPhase())
-        RUN_PHASE(performMaximalFlushInsertion);
-    
     RUN_PHASE(performCPSRethreading);
     RUN_PHASE(performUnification);
     RUN_PHASE(performPredictionInjection);

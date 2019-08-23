@@ -1,4 +1,4 @@
-//@ runDefault("--useRandomizingFuzzerAgent=1", "--jitPolicyScale=0", "--useMaximalFlushInsertionPhase=1", "--useConcurrentJIT=0")
+//@ runDefault("--useRandomizingFuzzerAgent=1", "--jitPolicyScale=0", "--useConcurrentJIT=0")
 function foo(obj) {
   for (var x in obj) {
     if (0 > 0) {

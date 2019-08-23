@@ -1,3 +1,33 @@
+2019-08-23  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Remove MaximalFlushInsertionPhase
+        https://bugs.webkit.org/show_bug.cgi?id=201036
+
+        Reviewed by Saam Barati.
+
+        Remove all the references to maximal flush
+
+        * stress/arith-ceil-on-various-types.js:
+        (checkCompileCountForUselessNegativeZero):
+        * stress/arith-floor-on-various-types.js:
+        (checkCompileCountForUselessNegativeZero):
+        * stress/arith-negate-on-various-types.js:
+        (checkCompileCountForUselessNegativeZero):
+        * stress/arith-round-on-various-types.js:
+        (checkCompileCountForUselessNegativeZero):
+        * stress/arith-trunc-on-various-types.js:
+        (checkCompileCountForUselessNegativeZero):
+        * stress/dfg-compare-eq-via-nonSpeculativeNonPeepholeCompareNullOrUndefined.js:
+        * stress/has-indexed-property-should-accept-non-int32.js:
+        * stress/has-indexed-property-with-worsening-array-mode.js:
+        * stress/known-int32-cant-be-used-across-bytecode-boundary.js:
+        * stress/read-dead-bytecode-locals-in-must-handle-values1.js:
+        * stress/read-dead-bytecode-locals-in-must-handle-values2.js:
+        * stress/rest-parameter-many-arguments.js:
+        * stress/set-argument-maybe-maximal-flush-should-not-extend-liveness-2.js:
+        * stress/set-argument-maybe-maximal-flush-should-not-extend-liveness.js:
+        * stress/to-index-string-should-not-assume-incoming-value-is-uint32.js:
+
 2019-08-23  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Do not overwrite argument registers in jsCallEntrypoint

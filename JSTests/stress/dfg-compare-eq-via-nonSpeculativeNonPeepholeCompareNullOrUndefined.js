@@ -1,4 +1,4 @@
-//@ runDefault("--collectContinuously=true", "--collectContinuouslyPeriodMS=0.15", "--useMaximalFlushInsertionPhase=true", "--useLLInt=false", "--useFTLJIT=false", "--jitPolicyScale=0")
+//@ runDefault("--collectContinuously=true", "--collectContinuouslyPeriodMS=0.15", "--useLLInt=false", "--useFTLJIT=false", "--jitPolicyScale=0")
 
 // This test exercises DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined().
 

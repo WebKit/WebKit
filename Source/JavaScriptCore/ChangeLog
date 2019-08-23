@@ -1,3 +1,32 @@
+2019-08-23  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Remove MaximalFlushInsertionPhase
+        https://bugs.webkit.org/show_bug.cgi?id=201036
+
+        Reviewed by Saam Barati.
+
+        Maximal flush has found too many false positives recently, so we decided it's finally time
+        to remove it instead of hacking it to fix the most recent false positive.
+
+        The most recent false positive was caused by a LoadVarargs followed by a SetArgumentDefinitely
+        for the argument count that was being flushed in a much later block. Now, since that block was
+        the head of a loop, and there was a SetLocal in the same block to the same variable, this
+        generated a Phi of both values, which then led to the unification of their VariableAccessData
+        in the unification phase. This caused AI to assign the Int52 type to argument count, which
+        broke the AI’s assumption that it should always be an Int32.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp: Removed.
+        * dfg/DFGMaximalFlushInsertionPhase.h: Removed.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2019-08-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed WinCairo build fix following r249058.

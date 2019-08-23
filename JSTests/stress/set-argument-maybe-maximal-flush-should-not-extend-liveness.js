@@ -1,4 +1,4 @@
-//@ runDefault("--useMaximalFlushInsertionPhase=1", "--validateGraphAtEachPhase=1")
+//@ runDefault("--validateGraphAtEachPhase=1")
 
 function f1() {
 }

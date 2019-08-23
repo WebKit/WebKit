@@ -1,4 +1,4 @@
-//@ runDefault("--useMaximalFlushInsertionPhase=1", "--useRandomizingFuzzerAgent=1")
+//@ runDefault("--useRandomizingFuzzerAgent=1")
 
 function foo() {
     for (var x in ['a', 'b']) {

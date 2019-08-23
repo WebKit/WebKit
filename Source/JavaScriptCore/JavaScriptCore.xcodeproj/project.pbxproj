@@ -1215,7 +1215,6 @@
 		79DFCBDB1D88C59600527D03 /* HasOwnPropertyCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EFD4841EBC045C00F3DFEA /* JSWebAssemblyCodeBlockHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EFD4821EBC045C00F3DFEA /* JSWebAssemblyCodeBlockHeapCellType.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		79F8FC1F1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F8FC1D1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h */; };
 		79FC8A081E32E9F000D88F0E /* DFGRegisteredStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A9774A8206B82E4008D03D0 /* JSWeakValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A9774A7206B82C9008D03D0 /* JSWeakValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC547D21B69599B00959B58 /* WasmFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3990,8 +3989,6 @@
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		79EFD4811EBC045C00F3DFEA /* JSWebAssemblyCodeBlockHeapCellType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyCodeBlockHeapCellType.cpp; path = js/JSWebAssemblyCodeBlockHeapCellType.cpp; sourceTree = "<group>"; };
 		79EFD4821EBC045C00F3DFEA /* JSWebAssemblyCodeBlockHeapCellType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyCodeBlockHeapCellType.h; path = js/JSWebAssemblyCodeBlockHeapCellType.h; sourceTree = "<group>"; };
-		79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMaximalFlushInsertionPhase.cpp; path = dfg/DFGMaximalFlushInsertionPhase.cpp; sourceTree = "<group>"; };
-		79F8FC1D1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMaximalFlushInsertionPhase.h; path = dfg/DFGMaximalFlushInsertionPhase.h; sourceTree = "<group>"; };
 		79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisteredStructure.h; path = dfg/DFGRegisteredStructure.h; sourceTree = "<group>"; };
 		7A9774A6206B828C008D03D0 /* JSWeakValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakValue.cpp; sourceTree = "<group>"; };
 		7A9774A7206B82C9008D03D0 /* JSWeakValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakValue.h; sourceTree = "<group>"; };
@@ -7781,8 +7778,6 @@
 				A7D89CED17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h */,
 				A767B5B317A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp */,
 				A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */,
-				79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */,
-				79F8FC1D1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h */,
 				0F5874EB194FEB1200AAB2C1 /* DFGMayExit.cpp */,
 				0F5874EC194FEB1200AAB2C1 /* DFGMayExit.h */,
 				0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */,
@@ -9167,7 +9162,6 @@
 				79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */,
 				A7D89CFC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h in Headers */,
 				A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */,
-				79F8FC1F1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h in Headers */,
 				0F5874EE194FEB1200AAB2C1 /* DFGMayExit.h in Headers */,
 				0F2BDC451522801B00CD8910 /* DFGMinifiedGraph.h in Headers */,
 				0F2E892D16D02BAF009E4FD2 /* DFGMinifiedID.h in Headers */,
