@@ -202,6 +202,30 @@ TestAPI::ScriptResult TestAPI::callFunction(const char* functionSource, Argument
     return Unexpected<JSValueRef>(exception);
 }
 
+#if COMPILER(MSVC)
+template<>
+TestAPI::ScriptResult TestAPI::callFunction(const char* functionSource)
+{
+    JSValueRef function;
+    {
+        ScriptResult functionResult = evaluateScript(functionSource);
+        if (!functionResult)
+            return functionResult;
+        function = functionResult.value();
+    }
+
+    JSValueRef exception = nullptr;
+    if (JSObjectRef functionObject = JSValueToObject(context, function, &exception)) {
+        JSValueRef result = JSObjectCallAsFunction(context, functionObject, functionObject, 0, nullptr, &exception);
+        if (!exception)
+            return ScriptResult(result);
+    }
+
+    RELEASE_ASSERT(exception);
+    return Unexpected<JSValueRef>(exception);
+}
+#endif
+
 template<typename... ArgumentTypes>
 bool TestAPI::functionReturnsTrue(const char* functionSource, ArgumentTypes... arguments)
 {
