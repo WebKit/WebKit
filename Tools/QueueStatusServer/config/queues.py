@@ -32,7 +32,6 @@ from datetime import timedelta
 # Eventually the list of queues may be stored in the data store.
 all_queue_names = [
     "commit-queue",
-    "style-queue",
     "jsc-ews",
     "jsc-mips-ews",
     "jsc-armv7-ews",

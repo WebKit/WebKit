@@ -27,7 +27,6 @@ BubbleQueueServer = function()
 {
     const queueInfo = {
         "commit-queue": {platform: Dashboard.Platform.macOSHighSierra, shortName: "commit", title: "Commit Queue"},
-        "style-queue": {shortName: "style", title: "Style Checker Queue"},
         "jsc-armv7-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-armv7", title: "ARMv7\xa0Release\xa0Build\xa0EWS"},
         "jsc-ews": {platform: Dashboard.Platform.macOSMojave, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
         "jsc-mips-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-mips-ews", title: "MIPS\xa0Release\xa0Build\xa0EWS"},
