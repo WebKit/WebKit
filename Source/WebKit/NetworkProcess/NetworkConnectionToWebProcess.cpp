@@ -62,6 +62,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SameSiteInfo.h>
@@ -712,14 +713,14 @@ void NetworkConnectionToWebProcess::logSubresourceRedirect(PAL::SessionID sessio
     }
 }
 
-void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& statistics)
+void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(ResourceLoadObserver::PerSessionResourceLoadData&& statistics)
 {
-    auto* networkSession = networkProcess().networkSessionByConnection(connection());
-    if (!networkSession)
-        return;
-
-    if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
+    for (auto& iter : statistics) {
+        if (auto* networkSession = networkProcess().networkSession(iter.first)) {
+            if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+                resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(iter.second));
+        }
+    }
 }
 
 void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)

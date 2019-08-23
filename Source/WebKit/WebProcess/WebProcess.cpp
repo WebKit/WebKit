@@ -217,7 +217,7 @@ WebProcess::WebProcess()
     m_plugInAutoStartOriginHashes.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, WallTime>());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    ResourceLoadObserver::shared().setStatisticsUpdatedCallback([this] (Vector<ResourceLoadStatistics>&& statistics) {
+    ResourceLoadObserver::shared().setStatisticsUpdatedCallback([this] (auto&& statistics) {
         ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 

@@ -1,3 +1,37 @@
+2019-08-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Support ITP on a per-session basis (198923)
+        https://bugs.webkit.org/show_bug.cgi?id=198923
+
+        Reviewed by Chris Dumez.
+
+        This patch updated the data structure used to collect resource load
+        statistics in order to support ITP data collection on a per session
+        basis. Each sessionID is stored as a key-value pair with its own map
+        of ResourceLoadStatistics.
+
+        It also updated the statisticsForURL function call to perform lookups
+        of URL data based on sessionID.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setStatisticsUpdatedCallback):
+        (WebCore::ResourceLoadObserver::shouldLog const):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::logFontLoad):
+        (WebCore::ResourceLoadObserver::logCanvasRead):
+        (WebCore::ResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebCore::ResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebCore::ResourceLoadObserver::logScreenAPIAccessed):
+        (WebCore::ResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain):
+        (WebCore::ResourceLoadObserver::statisticsForURL):
+        (WebCore::ResourceLoadObserver::takeStatistics):
+        (WebCore::ResourceLoadObserver::clearState):
+        * loader/ResourceLoadObserver.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resourceLoadStatisticsForURL):
+
 2019-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Remove unnecessary call to enclosingClippingScopes()

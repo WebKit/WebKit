@@ -64,7 +64,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     LogWebSocketLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
     LogSubresourceLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
     LogSubresourceRedirect(PAL::SessionID sessionID, WebCore::RegistrableDomain sourceDomain, WebCore::RegistrableDomain targetDomain)
-    ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics)
+    ResourceLoadStatisticsUpdated(Vector<std::pair<PAL::SessionID, Vector<WebCore::ResourceLoadStatistics>>> statistics)
     HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess) Async
     RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (enum:bool WebCore::StorageAccessWasGranted wasGranted, enum:bool WebCore::StorageAccessPromptWasShown promptWasShown) Async
     RequestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)

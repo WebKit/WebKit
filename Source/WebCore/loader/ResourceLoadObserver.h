@@ -59,6 +59,7 @@ struct ResourceLoadStatistics;
 class ResourceLoadObserver {
     friend class WTF::NeverDestroyed<ResourceLoadObserver>;
 public:
+    using PerSessionResourceLoadData = Vector<std::pair<PAL::SessionID, Vector<ResourceLoadStatistics>>>;
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
 
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
@@ -71,9 +72,9 @@ public:
     void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI);
     void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI);
 
-    WEBCORE_EXPORT String statisticsForURL(const URL&);
+    WEBCORE_EXPORT String statisticsForURL(PAL::SessionID, const URL&);
 
-    WEBCORE_EXPORT void setStatisticsUpdatedCallback(WTF::Function<void(Vector<ResourceLoadStatistics>&&)>&&);
+    WEBCORE_EXPORT void setStatisticsUpdatedCallback(Function<void(PerSessionResourceLoadData&&)>&&);
     WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)>&&);
     WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&)>&&);
     WEBCORE_EXPORT void setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
@@ -89,18 +90,18 @@ public:
 #endif
 
 private:
-    bool shouldLog(bool usesEphemeralSession) const;
-    ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
+    bool shouldLog(PAL::SessionID) const;
+    ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(PAL::SessionID, const RegistrableDomain&);
 
-    Vector<ResourceLoadStatistics> takeStatistics();
+    PerSessionResourceLoadData takeStatistics();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void requestStorageAccessUnderOpener(PAL::SessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument);
 #endif
 
-    HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
+    HashMap<PAL::SessionID, std::unique_ptr<HashMap<RegistrableDomain, ResourceLoadStatistics>>> m_perSessionResourceStatisticsMap;
     HashMap<RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;
-    Function<void(Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
+    Function<void(PerSessionResourceLoadData)> m_notificationCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)> m_requestStorageAccessUnderOpenerCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&)> m_logUserInteractionNotificationCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logWebSocketLoadingNotificationCallback;

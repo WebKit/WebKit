@@ -1,3 +1,22 @@
+2019-08-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Support ITP on a per-session basis (198923)
+        https://bugs.webkit.org/show_bug.cgi?id=198923
+
+        Reviewed by Chris Dumez.
+
+        The original implementation of resourceLoadStatisticsUpdated
+        did not allow for ITP on a per session basis due to the sessionID
+        not being passed to the resourceLoadStatisticsUpdated function.
+        This patch allows access of the correct networkSession by passing
+        all resourceLoadStatistics in a new data structure of key-value
+        pairs, where the sessionID is the key.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * WebProcess/WebProcess.cpp:
+
 2019-08-23  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r249031.
