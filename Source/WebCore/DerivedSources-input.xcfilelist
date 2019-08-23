@@ -99,6 +99,9 @@ $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
 $(PROJECT_DIR)/Modules/gamepad/NavigatorGamepad.idl
 $(PROJECT_DIR)/Modules/geolocation/Coordinates.idl
 $(PROJECT_DIR)/Modules/geolocation/Geolocation.idl
+$(PROJECT_DIR)/Modules/geolocation/GeolocationCoordinates.idl
+$(PROJECT_DIR)/Modules/geolocation/GeolocationPosition.idl
+$(PROJECT_DIR)/Modules/geolocation/GeolocationPositionError.idl
 $(PROJECT_DIR)/Modules/geolocation/Geoposition.idl
 $(PROJECT_DIR)/Modules/geolocation/NavigatorGeolocation.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionCallback.idl

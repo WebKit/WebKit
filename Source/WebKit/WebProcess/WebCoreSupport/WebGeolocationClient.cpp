@@ -33,7 +33,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Geolocation.h>
-#include <WebCore/GeolocationPosition.h>
+#include <WebCore/GeolocationPositionData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -63,7 +63,7 @@ void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
     WebProcess::singleton().supplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(m_page, enabled);
 }
 
-Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
+Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     return WTF::nullopt;
 }

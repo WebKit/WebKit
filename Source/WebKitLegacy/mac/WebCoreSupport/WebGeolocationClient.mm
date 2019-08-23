@@ -132,7 +132,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
+Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     return core([[m_webView _geolocationProvider] lastPosition]);
 }

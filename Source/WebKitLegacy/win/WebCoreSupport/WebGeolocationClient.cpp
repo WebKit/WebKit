@@ -64,7 +64,7 @@ void WebGeolocationClient::stopUpdating()
     provider->unregisterWebView(m_webView.get());
 }
 
-Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
+Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     COMPtr<IWebGeolocationProvider> provider;
     if (FAILED(m_webView->geolocationProvider(&provider)))

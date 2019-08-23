@@ -48,7 +48,7 @@ WKGeolocationPositionRef WKGeolocationPositionCreate_b(double timestamp, double 
 
 WKGeolocationPositionRef WKGeolocationPositionCreate_c(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
 {
-    WebCore::GeolocationPosition corePosition { timestamp, latitude, longitude, accuracy };
+    WebCore::GeolocationPositionData corePosition { timestamp, latitude, longitude, accuracy };
     if (providesAltitude)
         corePosition.altitude = altitude;
     if (providesAltitudeAccuracy)

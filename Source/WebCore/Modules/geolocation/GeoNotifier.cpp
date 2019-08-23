@@ -44,7 +44,7 @@ GeoNotifier::GeoNotifier(Geolocation& geolocation, Ref<PositionCallback>&& succe
 {
 }
 
-void GeoNotifier::setFatalError(RefPtr<PositionError>&& error)
+void GeoNotifier::setFatalError(RefPtr<GeolocationPositionError>&& error)
 {
     // If a fatal error has already been set, stick with it. This makes sure that
     // when permission is denied, this is the error reported, as required by the
@@ -69,7 +69,7 @@ bool GeoNotifier::hasZeroTimeout() const
     return !m_options.timeout;
 }
 
-void GeoNotifier::runSuccessCallback(Geoposition* position)
+void GeoNotifier::runSuccessCallback(GeolocationPosition* position)
 {
     // If we are here and the Geolocation permission is not approved, something has
     // gone horribly wrong.
@@ -79,7 +79,7 @@ void GeoNotifier::runSuccessCallback(Geoposition* position)
     m_successCallback->handleEvent(position);
 }
 
-void GeoNotifier::runErrorCallback(PositionError& error)
+void GeoNotifier::runErrorCallback(GeolocationPositionError& error)
 {
     if (m_errorCallback)
         m_errorCallback->handleEvent(error);
@@ -121,7 +121,7 @@ void GeoNotifier::timerFired()
     }
     
     if (m_errorCallback) {
-        auto error = PositionError::create(PositionError::TIMEOUT, "Timeout expired"_s);
+        auto error = GeolocationPositionError::create(GeolocationPositionError::TIMEOUT, "Timeout expired"_s);
         m_errorCallback->handleEvent(error);
     }
     m_geolocation->requestTimedOut(this);

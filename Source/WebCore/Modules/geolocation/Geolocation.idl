@@ -25,7 +25,6 @@
 
 // http://www.w3.org/TR/geolocation-API/#geolocation_interface
 [
-    NoInterfaceObject,
     Conditional=GEOLOCATION, 
     GenerateIsReachable=ReachableFromNavigator,
 ] interface Geolocation {

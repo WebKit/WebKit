@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-class Geoposition;
 class Geolocation;
+class GeolocationPosition;
+class GeolocationPositionError;
 class PositionCallback;
-class PositionError;
 class PositionErrorCallback;
 
 class GeoNotifier : public RefCounted<GeoNotifier> {
@@ -50,13 +50,13 @@ public:
     }
 
     const PositionOptions& options() const { return m_options; }
-    void setFatalError(RefPtr<PositionError>&&);
+    void setFatalError(RefPtr<GeolocationPositionError>&&);
 
     bool useCachedPosition() const { return m_useCachedPosition; }
     void setUseCachedPosition();
 
-    void runSuccessCallback(Geoposition*); // FIXME: This should take a reference.
-    void runErrorCallback(PositionError&);
+    void runSuccessCallback(GeolocationPosition*); // FIXME: This should take a reference.
+    void runErrorCallback(GeolocationPositionError&);
 
     void startTimerIfNeeded();
     void stopTimer();
@@ -71,7 +71,7 @@ private:
     RefPtr<PositionErrorCallback> m_errorCallback;
     PositionOptions m_options;
     Timer m_timer;
-    RefPtr<PositionError> m_fatalError;
+    RefPtr<GeolocationPositionError> m_fatalError;
     bool m_useCachedPosition;
 };
 

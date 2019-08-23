@@ -67,10 +67,10 @@ Modules/fetch/FetchRequest.cpp
 Modules/fetch/FetchResponse.cpp
 Modules/fetch/WorkerGlobalScopeFetch.cpp
 
-Modules/geolocation/Coordinates.cpp
 Modules/geolocation/GeoNotifier.cpp
 Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp
+Modules/geolocation/GeolocationCoordinates.cpp
 Modules/geolocation/NavigatorGeolocation.cpp
 
 Modules/indexeddb/DOMWindowIndexedDatabase.cpp
@@ -2672,7 +2672,6 @@ JSCompositeOperation.cpp
 JSCompositeOperationOrAuto.cpp
 JSComputedEffectTiming.cpp
 JSConvolverNode.cpp
-JSCoordinates.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialRequestOptions.cpp
@@ -2831,7 +2830,9 @@ JSGPUVertexBufferDescriptor.cpp
 JSGPUVertexInputDescriptor.cpp
 JSGainNode.cpp
 JSGeolocation.cpp
-JSGeoposition.cpp
+JSGeolocationCoordinates.cpp
+JSGeolocationPosition.cpp
+JSGeolocationPositionError.cpp
 JSGlobalCrypto.cpp
 JSGlobalEventHandlers.cpp
 JSGlobalPerformance.cpp
@@ -3072,7 +3073,6 @@ JSPlaybackDirection.cpp
 JSPointerEvent.cpp
 JSPopStateEvent.cpp
 JSPositionCallback.cpp
-JSPositionError.cpp
 JSPositionErrorCallback.cpp
 JSPositionOptions.cpp
 JSProcessingInstruction.cpp

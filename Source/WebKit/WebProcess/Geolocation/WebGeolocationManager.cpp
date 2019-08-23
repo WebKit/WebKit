@@ -33,7 +33,7 @@
 #include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
-#include <WebCore/GeolocationPosition.h>
+#include <WebCore/GeolocationPositionData.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {
@@ -90,7 +90,7 @@ void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage& page, bool ena
         m_process.parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(highAccuracyShouldBeEnabled), 0);
 }
 
-void WebGeolocationManager::didChangePosition(const GeolocationPosition& position)
+void WebGeolocationManager::didChangePosition(const GeolocationPositionData& position)
 {
 #if ENABLE(GEOLOCATION)
     for (auto& page : copyToVector(m_pageSet)) {

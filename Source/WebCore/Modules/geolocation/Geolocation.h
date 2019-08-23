@@ -30,9 +30,9 @@
 
 #include "ActiveDOMObject.h"
 #include "Document.h"
-#include "Geoposition.h"
+#include "GeolocationPosition.h"
+#include "GeolocationPositionError.h"
 #include "PositionCallback.h"
-#include "PositionError.h"
 #include "PositionErrorCallback.h"
 #include "PositionOptions.h"
 #include "ScriptWrappable.h"
@@ -79,7 +79,7 @@ public:
 private:
     explicit Geolocation(Navigator&);
 
-    Geoposition* lastPosition();
+    GeolocationPosition* lastPosition();
 
     // ActiveDOMObject
     void stop() override;
@@ -115,8 +115,8 @@ private:
 
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
 
-    void sendError(GeoNotifierVector&, PositionError&);
-    void sendPosition(GeoNotifierVector&, Geoposition&);
+    void sendError(GeoNotifierVector&, GeolocationPositionError&);
+    void sendPosition(GeoNotifierVector&, GeolocationPosition&);
 
     static void extractNotifiersWithCachedPosition(GeoNotifierVector& notifiers, GeoNotifierVector* cached);
     static void copyToSet(const GeoNotifierVector&, GeoNotifierSet&);
@@ -129,8 +129,8 @@ private:
     void cancelRequests(GeoNotifierVector&);
     void cancelAllRequests();
 
-    void makeSuccessCallbacks(Geoposition&);
-    void handleError(PositionError&);
+    void makeSuccessCallbacks(GeolocationPosition&);
+    void handleError(GeolocationPositionError&);
 
     void requestPermission();
 
@@ -153,13 +153,13 @@ private:
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
     GeoNotifierSet m_pendingForPermissionNotifiers;
-    RefPtr<Geoposition> m_lastPosition;
+    RefPtr<GeolocationPosition> m_lastPosition;
 
     enum { Unknown, InProgress, Yes, No } m_allowGeolocation { Unknown };
     bool m_isSuspended { false };
     bool m_resetOnResume { false };
     bool m_hasChangedPosition { false };
-    RefPtr<PositionError> m_errorWaitingForResume;
+    RefPtr<GeolocationPositionError> m_errorWaitingForResume;
     Timer m_resumeTimer;
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };

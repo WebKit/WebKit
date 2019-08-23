@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-class PositionError;
+class GeolocationPositionError;
 
 class PositionErrorCallback : public RefCounted<PositionErrorCallback>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(PositionError&) = 0;
+    virtual CallbackResult<void> handleEvent(GeolocationPositionError&) = 0;
 };
 
 } // namespace WebCore

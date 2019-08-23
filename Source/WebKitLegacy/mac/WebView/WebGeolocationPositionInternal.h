@@ -27,8 +27,8 @@
 #import <wtf/Optional.h>
 
 namespace WebCore {
-    class GeolocationPosition;
+class GeolocationPositionData;
 }
 
-Optional<WebCore::GeolocationPosition> core(WebGeolocationPosition *);
+Optional<WebCore::GeolocationPositionData> core(WebGeolocationPosition *);
 

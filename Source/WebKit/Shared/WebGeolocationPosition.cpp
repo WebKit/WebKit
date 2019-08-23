@@ -32,7 +32,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<WebGeolocationPosition> WebGeolocationPosition::create(GeolocationPosition&& geolocationPosition)
+Ref<WebGeolocationPosition> WebGeolocationPosition::create(GeolocationPositionData&& geolocationPosition)
 {
     return adoptRef(*new WebGeolocationPosition(WTFMove(geolocationPosition)));
 }

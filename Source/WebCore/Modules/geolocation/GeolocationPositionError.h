@@ -30,7 +30,7 @@
 
 namespace WebCore {
     
-class PositionError : public RefCounted<PositionError> {
+class GeolocationPositionError : public RefCounted<GeolocationPositionError> {
 public:
     enum ErrorCode {
         PERMISSION_DENIED = 1,
@@ -38,7 +38,7 @@ public:
         TIMEOUT = 3
     };
     
-    static Ref<PositionError> create(ErrorCode code, const String& message) { return adoptRef(*new PositionError(code, message)); }
+    static Ref<GeolocationPositionError> create(ErrorCode code, const String& message) { return adoptRef(*new GeolocationPositionError(code, message)); }
 
     ErrorCode code() const { return m_code; }
     const String& message() const { return m_message; }
@@ -46,7 +46,7 @@ public:
     bool isFatal() const { return m_isFatal; }
     
 private:
-    PositionError(ErrorCode code, const String& message) 
+    GeolocationPositionError(ErrorCode code, const String& message)
         : m_code(code)
         , m_message(message)
         , m_isFatal(false)

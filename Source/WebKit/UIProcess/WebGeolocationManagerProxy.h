@@ -29,7 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
-#include <WebCore/GeolocationPosition.h>
+#include <WebCore/GeolocationPositionData.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,7 +55,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void resetPermissions();
 #endif
-    const Optional<WebCore::GeolocationPosition>& lastPosition() const { return m_lastPosition; }
+    const Optional<WebCore::GeolocationPositionData>& lastPosition() const { return m_lastPosition; }
 
     using API::Object::ref;
     using API::Object::deref;
@@ -84,7 +84,7 @@ private:
     HashSet<const IPC::Connection::Client*> m_highAccuracyRequesters;
 
     std::unique_ptr<API::GeolocationProvider> m_provider;
-    Optional<WebCore::GeolocationPosition> m_lastPosition;
+    Optional<WebCore::GeolocationPositionData> m_lastPosition;
 };
 
 } // namespace WebKit

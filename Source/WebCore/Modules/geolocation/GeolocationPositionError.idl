@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,16 +24,13 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=GEOLOCATION,
     ImplementationLacksVTable
-] interface Coordinates {
-    readonly attribute unrestricted double latitude;
-    readonly attribute unrestricted double longitude;
-    readonly attribute unrestricted double? altitude;
-    readonly attribute unrestricted double accuracy;
-    readonly attribute unrestricted double? altitudeAccuracy;
-    readonly attribute unrestricted double? heading;
-    readonly attribute unrestricted double? speed;
-    [EnabledBySetting=GeolocationFloorLevel] readonly attribute unrestricted double? floorLevel;
+] interface GeolocationPositionError {
+    const unsigned short PERMISSION_DENIED = 1;
+    const unsigned short POSITION_UNAVAILABLE = 2;
+    const unsigned short TIMEOUT = 3;
+    readonly attribute unsigned short code;
+    readonly attribute DOMString message;
 };
+

@@ -42,7 +42,7 @@
 using namespace WebCore;
 
 @interface WebGeolocationPosition (Internal)
-- (id)initWithGeolocationPosition:(GeolocationPosition&&)coreGeolocationPosition;
+- (id)initWithGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition;
 @end
 
 // CoreLocation runs in the main thread. WebGeolocationProviderIOS lives on the WebThread.
@@ -348,7 +348,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     });
 }
 
-- (void)positionChanged:(WebCore::GeolocationPosition&&)position
+- (void)positionChanged:(WebCore::GeolocationPositionData&&)position
 {
     RetainPtr<WebGeolocationPosition> webPosition = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:WTFMove(position)]);
     WebThreadRun(^{

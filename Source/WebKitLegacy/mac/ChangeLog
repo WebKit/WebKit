@@ -1,3 +1,20 @@
+2019-08-23  Chris Dumez  <cdumez@apple.com>
+
+        [geolocation] Rename interfaces and remove [NoInterfaceObject]
+        https://bugs.webkit.org/show_bug.cgi?id=200885
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebGeolocationClient.h:
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (WebGeolocationClient::lastPosition):
+        * WebView/WebGeolocationPosition.mm:
+        (-[WebGeolocationPositionInternal initWithCoreGeolocationPosition:]):
+        (core):
+        (-[WebGeolocationPosition initWithTimestamp:latitude:longitude:accuracy:]):
+        (-[WebGeolocationPosition initWithGeolocationPosition:]):
+        * WebView/WebGeolocationPositionInternal.h:
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build

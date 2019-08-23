@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
-
-#include "GeolocationPosition.h"
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include "config.h"
+#include "GeolocationCoordinates.h"
 
 namespace WebCore {
 
-class Coordinates : public RefCounted<Coordinates> {
-public:
-    static Ref<Coordinates> create(GeolocationPosition&& position)
-    {
-        return adoptRef(*new Coordinates(WTFMove(position)));
-    }
+GeolocationCoordinates::GeolocationCoordinates(GeolocationPositionData&& position)
+    : m_position(WTFMove(position))
+{
+    ASSERT(m_position.isValid());
+}
 
-    Ref<Coordinates> isolatedCopy() const
-    {
-        return Coordinates::create(GeolocationPosition(m_position));
-    }
-
-    double latitude() const { return m_position.latitude; }
-    double longitude() const { return m_position.longitude; }
-    Optional<double> altitude() const { return m_position.altitude; }
-    double accuracy() const { return m_position.accuracy; }
-    Optional<double> altitudeAccuracy() const { return m_position.altitudeAccuracy; }
-    Optional<double> heading() const { return m_position.heading; }
-    Optional<double> speed() const { return m_position.speed; }
-    Optional<double> floorLevel() const { return m_position.floorLevel; }
-    
-private:
-    explicit Coordinates(GeolocationPosition&&);
-
-    GeolocationPosition m_position;
-};
-    
 } // namespace WebCore

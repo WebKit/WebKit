@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GeoclueGeolocationProvider.h"
 
-#include <WebCore/GeolocationPosition.h>
+#include <WebCore/GeolocationPositionData.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -260,7 +260,7 @@ void GeoclueGeolocationProvider::createLocation(const char* locationPath)
 
 void GeoclueGeolocationProvider::locationUpdated(GRefPtr<GDBusProxy>&& proxy)
 {
-    WebCore::GeolocationPosition position;
+    WebCore::GeolocationPositionData position;
     GRefPtr<GVariant> property = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "Latitude"));
     position.latitude = g_variant_get_double(property.get());
     property = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "Longitude"));

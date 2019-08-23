@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,108 +10,52 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#include <cmath>
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
+#include "DOMTimeStamp.h"
+#include "GeolocationCoordinates.h"
 #include <wtf/RefCounted.h>
-
-#if PLATFORM(IOS_FAMILY)
-OBJC_CLASS CLLocation;
-#endif
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GeolocationPosition {
+class GeolocationPosition : public RefCounted<GeolocationPosition> {
 public:
-    GeolocationPosition() = default;
+    static Ref<GeolocationPosition> create(Ref<GeolocationCoordinates>&& coordinates, DOMTimeStamp timestamp)
+    {
+        return adoptRef(*new GeolocationPosition(WTFMove(coordinates), timestamp));
+    }
 
-    GeolocationPosition(double timestamp, double latitude, double longitude, double accuracy)
-        : timestamp(timestamp)
-        , latitude(latitude)
-        , longitude(longitude)
-        , accuracy(accuracy)
+    Ref<GeolocationPosition> isolatedCopy() const
+    {
+        return create(m_coordinates->isolatedCopy(), m_timestamp);
+    }
+
+    DOMTimeStamp timestamp() const { return m_timestamp; }
+    const GeolocationCoordinates& coords() const { return m_coordinates.get(); }
+    
+private:
+    GeolocationPosition(Ref<GeolocationCoordinates>&& coordinates, DOMTimeStamp timestamp)
+        : m_coordinates(WTFMove(coordinates))
+        , m_timestamp(timestamp)
     {
     }
 
-#if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT explicit GeolocationPosition(CLLocation*);
-#endif
-
-    double timestamp { std::numeric_limits<double>::quiet_NaN() };
-
-    double latitude { std::numeric_limits<double>::quiet_NaN() };
-    double longitude { std::numeric_limits<double>::quiet_NaN() };
-    double accuracy { std::numeric_limits<double>::quiet_NaN() };
-
-    Optional<double> altitude;
-    Optional<double> altitudeAccuracy;
-    Optional<double> heading;
-    Optional<double> speed;
-    Optional<double> floorLevel;
-
-    bool isValid() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, GeolocationPosition&);
+    Ref<GeolocationCoordinates> m_coordinates;
+    DOMTimeStamp m_timestamp;
 };
-
-template<class Encoder>
-void GeolocationPosition::encode(Encoder& encoder) const
-{
-    encoder << timestamp;
-    encoder << latitude;
-    encoder << longitude;
-    encoder << accuracy;
-    encoder << altitude;
-    encoder << altitudeAccuracy;
-    encoder << heading;
-    encoder << speed;
-    encoder << floorLevel;
-}
-
-template<class Decoder>
-bool GeolocationPosition::decode(Decoder& decoder, GeolocationPosition& position)
-{
-    if (!decoder.decode(position.timestamp))
-        return false;
-    if (!decoder.decode(position.latitude))
-        return false;
-    if (!decoder.decode(position.longitude))
-        return false;
-    if (!decoder.decode(position.accuracy))
-        return false;
-    if (!decoder.decode(position.altitude))
-        return false;
-    if (!decoder.decode(position.altitudeAccuracy))
-        return false;
-    if (!decoder.decode(position.heading))
-        return false;
-    if (!decoder.decode(position.speed))
-        return false;
-    if (!decoder.decode(position.floorLevel))
-        return false;
-
-    return true;
-}
-
-inline bool GeolocationPosition::isValid() const
-{
-    return !std::isnan(timestamp) && !std::isnan(latitude) && !std::isnan(longitude) && !std::isnan(accuracy);
-}
-
+    
 } // namespace WebCore

@@ -29,7 +29,7 @@
 @class NSString;
 
 namespace WebCore {
-class GeolocationPosition;
+class GeolocationPositionData;
 }
 
 // WebGeolocationCoreLocationDelegate abstracts the location services of CoreLocation.
@@ -43,7 +43,7 @@ class GeolocationPosition;
 - (void)geolocationAuthorizationGranted;
 - (void)geolocationAuthorizationDenied;
 
-- (void)positionChanged:(WebCore::GeolocationPosition&&)position;
+- (void)positionChanged:(WebCore::GeolocationPositionData&&)position;
 - (void)errorOccurred:(NSString *)errorMessage;
 - (void)resetGeolocation;
 @end

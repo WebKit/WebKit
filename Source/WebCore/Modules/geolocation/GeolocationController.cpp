@@ -30,7 +30,7 @@
 
 #include "GeolocationClient.h"
 #include "GeolocationError.h"
-#include "GeolocationPosition.h"
+#include "GeolocationPositionData.h"
 
 namespace WebCore {
 
@@ -99,7 +99,7 @@ void GeolocationController::cancelPermissionRequest(Geolocation& geolocation)
     m_client.cancelPermissionRequest(geolocation);
 }
 
-void GeolocationController::positionChanged(const Optional<GeolocationPosition>& position)
+void GeolocationController::positionChanged(const Optional<GeolocationPositionData>& position)
 {
     m_lastPosition = position;
     Vector<Ref<Geolocation>> observersVector;
@@ -120,7 +120,7 @@ void GeolocationController::errorOccurred(GeolocationError& error)
         observer->setError(error);
 }
 
-Optional<GeolocationPosition> GeolocationController::lastPosition()
+Optional<GeolocationPositionData> GeolocationController::lastPosition()
 {
     if (m_lastPosition)
         return m_lastPosition.value();

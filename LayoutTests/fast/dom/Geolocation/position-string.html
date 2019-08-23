@@ -26,8 +26,8 @@ navigator.geolocation.getCurrentPosition(function(p) {
     shouldBe('position.coords.latitude', 'mockLatitude');
     shouldBe('position.coords.longitude', 'mockLongitude');
     shouldBe('position.coords.accuracy', 'mockAccuracy');
-    shouldBe('position.toString()', '"[object Geoposition]"');
-    shouldBe('position.coords.toString()', '"[object Coordinates]"');
+    shouldBe('position.toString()', '"[object GeolocationPosition]"');
+    shouldBe('position.coords.toString()', '"[object GeolocationCoordinates]"');
     finishJSTest();
 }, function(e) {
     testFailed('Error callback invoked unexpectedly');

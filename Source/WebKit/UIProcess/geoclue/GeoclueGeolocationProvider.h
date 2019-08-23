@@ -33,7 +33,7 @@
 typedef struct _GDBusProxy GDBusProxy;
 
 namespace WebCore {
-class GeolocationPosition;
+class GeolocationPositionData;
 }
 
 namespace WebKit {
@@ -44,7 +44,7 @@ public:
     GeoclueGeolocationProvider();
     ~GeoclueGeolocationProvider();
 
-    using UpdateNotifyFunction = Function<void(WebCore::GeolocationPosition&&, Optional<CString> error)>;
+    using UpdateNotifyFunction = Function<void(WebCore::GeolocationPositionData&&, Optional<CString> error)>;
     void start(UpdateNotifyFunction&&);
     void stop();
     void setEnableHighAccuracy(bool);

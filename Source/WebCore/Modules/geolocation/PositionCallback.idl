@@ -24,4 +24,4 @@
 
 [
     Conditional=GEOLOCATION,
-] callback PositionCallback = void (Geoposition? position); // FIXME: This should not be nullable.
+] callback PositionCallback = void (GeolocationPosition? position); // FIXME: This should not be nullable.

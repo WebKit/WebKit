@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,38 @@
 
 #pragma once
 
-#include "Coordinates.h"
-#include "DOMTimeStamp.h"
+#include "GeolocationPositionData.h"
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Geoposition : public RefCounted<Geoposition> {
+class GeolocationCoordinates : public RefCounted<GeolocationCoordinates> {
 public:
-    static Ref<Geoposition> create(Ref<Coordinates>&& coordinates, DOMTimeStamp timestamp)
+    static Ref<GeolocationCoordinates> create(GeolocationPositionData&& position)
     {
-        return adoptRef(*new Geoposition(WTFMove(coordinates), timestamp));
+        return adoptRef(*new GeolocationCoordinates(WTFMove(position)));
     }
 
-    Ref<Geoposition> isolatedCopy() const
+    Ref<GeolocationCoordinates> isolatedCopy() const
     {
-        return create(m_coordinates->isolatedCopy(), m_timestamp);
+        return GeolocationCoordinates::create(GeolocationPositionData(m_position));
     }
 
-    DOMTimeStamp timestamp() const { return m_timestamp; }
-    const Coordinates& coords() const { return m_coordinates.get(); }
+    double latitude() const { return m_position.latitude; }
+    double longitude() const { return m_position.longitude; }
+    Optional<double> altitude() const { return m_position.altitude; }
+    double accuracy() const { return m_position.accuracy; }
+    Optional<double> altitudeAccuracy() const { return m_position.altitudeAccuracy; }
+    Optional<double> heading() const { return m_position.heading; }
+    Optional<double> speed() const { return m_position.speed; }
+    Optional<double> floorLevel() const { return m_position.floorLevel; }
     
 private:
-    Geoposition(Ref<Coordinates>&& coordinates, DOMTimeStamp timestamp)
-        : m_coordinates(WTFMove(coordinates))
-        , m_timestamp(timestamp)
-    {
-    }
+    explicit GeolocationCoordinates(GeolocationPositionData&&);
 
-    Ref<Coordinates> m_coordinates;
-    DOMTimeStamp m_timestamp;
+    GeolocationPositionData m_position;
 };
     
 } // namespace WebCore

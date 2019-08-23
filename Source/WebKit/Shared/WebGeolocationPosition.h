@@ -27,7 +27,7 @@
 #define WebGeolocationPosition_h
 
 #include "APIObject.h"
-#include <WebCore/GeolocationPosition.h>
+#include <WebCore/GeolocationPositionData.h>
 #include <wtf/RefPtr.h>
 
 namespace IPC {
@@ -39,7 +39,7 @@ namespace WebKit {
 
 class WebGeolocationPosition : public API::ObjectImpl<API::Object::Type::GeolocationPosition> {
 public:
-    static Ref<WebGeolocationPosition> create(WebCore::GeolocationPosition&&);
+    static Ref<WebGeolocationPosition> create(WebCore::GeolocationPositionData&&);
 
     virtual ~WebGeolocationPosition();
 
@@ -52,15 +52,15 @@ public:
     Optional<double> heading() const { return m_corePosition.heading; }
     Optional<double> speed() const { return m_corePosition.speed; }
 
-    const WebCore::GeolocationPosition& corePosition() const { return m_corePosition; }
+    const WebCore::GeolocationPositionData& corePosition() const { return m_corePosition; }
 
 private:
-    explicit WebGeolocationPosition(WebCore::GeolocationPosition&& geolocationPosition)
+    explicit WebGeolocationPosition(WebCore::GeolocationPositionData&& geolocationPosition)
         : m_corePosition(WTFMove(geolocationPosition))
     {
     }
 
-    WebCore::GeolocationPosition m_corePosition;
+    WebCore::GeolocationPositionData m_corePosition;
 };
 
 } // namespace WebKit

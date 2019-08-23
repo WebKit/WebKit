@@ -655,6 +655,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadWebVR.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadWebVR.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocationCoordinates.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocationCoordinates.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocationPosition.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocationPosition.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocationPositionError.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocationPositionError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeoposition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeoposition.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGestureEvent.cpp

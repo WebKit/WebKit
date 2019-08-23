@@ -1,3 +1,17 @@
+2019-08-23  Chris Dumez  <cdumez@apple.com>
+
+        [geolocation] Rename interfaces and remove [NoInterfaceObject]
+        https://bugs.webkit.org/show_bug.cgi?id=200885
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/Geolocation/exposed-geolocation-interfaces-expected.txt: Added.
+        * fast/dom/Geolocation/exposed-geolocation-interfaces.html: Added.
+        * fast/dom/Geolocation/position-string-expected.txt:
+        * fast/dom/Geolocation/position-string.html:
+
 2019-08-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249001.

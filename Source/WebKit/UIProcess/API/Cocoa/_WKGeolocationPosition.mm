@@ -37,7 +37,7 @@
     if (!location)
         return nil;
 
-    return wrapper(WebKit::WebGeolocationPosition::create(WebCore::GeolocationPosition { location }));
+    return wrapper(WebKit::WebGeolocationPosition::create(WebCore::GeolocationPositionData { location }));
 }
 
 - (void)dealloc

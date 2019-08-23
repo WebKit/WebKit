@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,19 +20,38 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=GEOLOCATION,
-    ImplementationLacksVTable
-] interface PositionError {
-    readonly attribute unsigned short code;
-    readonly attribute DOMString message;
+#import "config.h"
+#import "GeolocationPosition.h"
 
-    const unsigned short PERMISSION_DENIED = 1;
-    const unsigned short POSITION_UNAVAILABLE = 2;
-    const unsigned short TIMEOUT = 3;
-};
+#if PLATFORM(IOS_FAMILY)
 
+#import <CoreLocation/CLLocation.h>
+
+namespace WebCore {
+
+GeolocationPositionData::GeolocationPositionData(CLLocation* location)
+    : timestamp(location.timestamp.timeIntervalSince1970)
+    , latitude(location.coordinate.latitude)
+    , longitude(location.coordinate.longitude)
+    , accuracy(location.horizontalAccuracy)
+{
+    if (location.verticalAccuracy >= 0.0) {
+        altitude = location.altitude;
+        altitudeAccuracy = location.verticalAccuracy;
+    }
+    if (location.speed >= 0.0)
+        speed = location.speed;
+    if (location.course >= 0.0)
+        heading = location.course;
+#if !PLATFORM(MACCATALYST)
+    if (location.floor)
+        floorLevel = location.floor.level;
+#endif
+}
+
+}
+
+#endif // PLATFORM(IOS_FAMILY)

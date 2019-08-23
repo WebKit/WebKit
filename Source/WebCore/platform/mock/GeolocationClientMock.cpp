@@ -61,7 +61,7 @@ void GeolocationClientMock::setController(GeolocationController *controller)
     m_controller = controller;
 }
 
-void GeolocationClientMock::setPosition(GeolocationPosition&& position)
+void GeolocationClientMock::setPosition(GeolocationPositionData&& position)
 {
     m_lastPosition = WTFMove(position);
     clearError();
@@ -156,7 +156,7 @@ void GeolocationClientMock::setEnableHighAccuracy(bool)
     // See https://bugs.webkit.org/show_bug.cgi?id=49438
 }
 
-Optional<GeolocationPosition> GeolocationClientMock::lastPosition()
+Optional<GeolocationPositionData> GeolocationClientMock::lastPosition()
 {
     return m_lastPosition;
 }

@@ -32,7 +32,7 @@
 #pragma once
 
 #include "GeolocationClient.h"
-#include "GeolocationPosition.h"
+#include "GeolocationPositionData.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -52,7 +52,7 @@ public:
     void reset();
     void setController(GeolocationController*);
 
-    void setPosition(GeolocationPosition&&);
+    void setPosition(GeolocationPositionData&&);
     void setPositionUnavailableError(const String& errorMessage);
     void setPermission(bool allowed);
     int numberOfPendingPermissionRequests() const;
@@ -62,7 +62,7 @@ public:
     void startUpdating() override;
     void stopUpdating() override;
     void setEnableHighAccuracy(bool) override;
-    Optional<GeolocationPosition> lastPosition() override;
+    Optional<GeolocationPositionData> lastPosition() override;
     void requestPermission(Geolocation&) override;
     void cancelPermissionRequest(Geolocation&) override;
 
@@ -76,7 +76,7 @@ private:
     void clearError();
 
     GeolocationController* m_controller;
-    Optional<GeolocationPosition> m_lastPosition;
+    Optional<GeolocationPositionData> m_lastPosition;
     bool m_hasError;
     String m_errorMessage;
     Timer m_controllerTimer;

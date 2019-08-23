@@ -26,8 +26,6 @@
 #include "WebGeolocationPosition.h"
 #include <WebCore/COMPtr.h>
 
-#include <WebCore/GeolocationPosition.h>
-
 using namespace WebCore;
 
 COMPtr<WebGeolocationPosition> WebGeolocationPosition::createInstance()
@@ -81,11 +79,11 @@ ULONG WebGeolocationPosition::Release()
 
 HRESULT WebGeolocationPosition::initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy)
 {
-    m_position = GeolocationPosition { timestamp, latitude, longitude, accuracy };
+    m_position = GeolocationPositionData { timestamp, latitude, longitude, accuracy };
     return S_OK;
 }
 
-Optional<GeolocationPosition> core(IWebGeolocationPosition* position)
+Optional<GeolocationPositionData> core(IWebGeolocationPosition* position)
 {
     if (!position)
         return WTF::nullopt;
