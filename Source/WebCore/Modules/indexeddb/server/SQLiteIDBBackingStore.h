@@ -105,6 +105,8 @@ private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
+    
+    String databaseRootDirectory() const { return m_databaseRootDirectory.isolatedCopy(); }
 
     uint64_t quotaForOrigin() const;
     uint64_t maximumSize() const;
