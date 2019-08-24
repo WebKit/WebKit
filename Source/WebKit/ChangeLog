@@ -1,3 +1,18 @@
+2019-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Make CacheStorageEngineCaches's decodeCachesNames() more robust against bad input data
+        https://bugs.webkit.org/show_bug.cgi?id=201102
+
+        Reviewed by Antti Koivisto.
+
+        Use Vector::tryReserveCapacity() instead of Vector::reserveInitialCapacity() in CacheStorage::decodeCachesNames()
+        since the size is read from disk and thus cannot be trusted. If the size is too large, reserveInitialCapacity()
+        would end up crashing the network process. Now, we merely discard the data if tryReserveCapacity() fails because
+        the size is too large.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::decodeCachesNames):
+
 2019-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing

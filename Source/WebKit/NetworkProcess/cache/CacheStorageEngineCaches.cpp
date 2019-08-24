@@ -411,7 +411,9 @@ static inline Expected<Vector<std::pair<String, String>>, Error> decodeCachesNam
         return makeUnexpected(Error::ReadDisk);
 
     Vector<std::pair<String, String>> names;
-    names.reserveInitialCapacity(count);
+    if (!names.tryReserveCapacity(count))
+        return makeUnexpected(Error::ReadDisk);
+
     for (size_t index = 0; index < count; ++index) {
         String name;
         if (!decoder.decode(name))
