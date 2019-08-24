@@ -273,6 +273,9 @@ public:
     NodeRareData()
     { }
 
+    virtual ~NodeRareData()
+    { }
+
     void clearNodeLists() { m_nodeLists = nullptr; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
     NodeListsNodeData& ensureNodeLists()

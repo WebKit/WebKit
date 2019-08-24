@@ -1,3 +1,17 @@
+2019-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r248807): Objects stored in ElementRareData are leaked
+        https://bugs.webkit.org/show_bug.cgi?id=200954
+
+        Reviewed by David Kilzer.
+
+        NodeRareData didn't have a virtual destructor. As a result, member variables
+        of ElementRareData did not get destructed properly.
+
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::~NodeRareData):
+
 2019-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing
