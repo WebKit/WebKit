@@ -50,7 +50,6 @@ public:
         TableColumn,
         TableRow,
         TableColumnGroup,
-        TableRowGroup,
         TableHeaderGroup,
         TableBodyGroup,
         TableFooterGroup,

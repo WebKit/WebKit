@@ -1,3 +1,19 @@
+2019-08-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Remove redundant Layout::Box::ElementType::TableRowGroup
+        https://bugs.webkit.org/show_bug.cgi?id=201112
+        <rdar://problem/54663833>
+
+        Reviewed by Antti Koivisto.
+
+        Use Layout::Box::ElementType::TableBodyGroup instead.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isPaddingApplicable const):
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
 2019-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         RenderLayerModelObject should not call private RenderLayer functions

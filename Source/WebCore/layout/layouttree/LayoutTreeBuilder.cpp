@@ -106,8 +106,6 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
                 return Box::ElementAttributes { Box::ElementType::TableRow };
             if (element->hasTagName(HTMLNames::colgroupTag))
                 return Box::ElementAttributes { Box::ElementType::TableColumnGroup };
-            if (element->hasTagName(HTMLNames::tbodyTag))
-                return Box::ElementAttributes { Box::ElementType::TableRowGroup };
             if (element->hasTagName(HTMLNames::theadTag))
                 return Box::ElementAttributes { Box::ElementType::TableHeaderGroup };
             if (element->hasTagName(HTMLNames::tbodyTag))

@@ -366,8 +366,8 @@ bool Box::isPaddingApplicable() const
         return false;
 
     auto elementType = m_elementAttributes.value().elementType;
-    return elementType != ElementType::TableRowGroup
-        && elementType != ElementType::TableHeaderGroup
+    return elementType != ElementType::TableHeaderGroup
+        && elementType != ElementType::TableBodyGroup
         && elementType != ElementType::TableFooterGroup
         && elementType != ElementType::TableRow
         && elementType != ElementType::TableColumnGroup
