@@ -284,6 +284,12 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << "TABLE";
     else if (layoutBox.isTableCaption())
         stream << "CAPTION";
+    else if (layoutBox.isTableHeader())
+        stream << "THEAD";
+    else if (layoutBox.isTableBody())
+        stream << "TBODY";
+    else if (layoutBox.isTableFooter())
+        stream << "TFOOT";
     else if (layoutBox.isTableCell())
         stream << "TD";
     else if (layoutBox.isTableRow())

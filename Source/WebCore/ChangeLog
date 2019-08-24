@@ -1,5 +1,16 @@
 2019-08-24  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add THEAD/TBODY/TFOOT output to Layout::showLayoutTree
+        https://bugs.webkit.org/show_bug.cgi?id=201113
+        <rdar://problem/54664134>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+
+2019-08-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Remove redundant Layout::Box::ElementType::TableRowGroup
         https://bugs.webkit.org/show_bug.cgi?id=201112
         <rdar://problem/54663833>
