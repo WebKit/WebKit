@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-size: 7.96px;
+        }
+        .box {
+            height: 10em;
+            width: 2em;
+            border-radius: 50%;
+            border-left: .35em solid green;
+        }
+
+        .box2 {
+            height: 2em;
+            width: 10em;
+            border-radius: 50%;
+            border-top: .35em solid green;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <p>This test should not crash.</p>
+    <div class="box"></div>
+    <div class="box2"></div>
+</body>
+</html>

@@ -1,3 +1,13 @@
+2019-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Page crashes under CGPathAddUnevenCornersRoundedRect
+        https://bugs.webkit.org/show_bug.cgi?id=201117
+
+        Reviewed by Dean Jackson.
+
+        * fast/borders/renderable-uneven-rounded-rects-expected.txt: Added.
+        * fast/borders/renderable-uneven-rounded-rects.html: Added.
+
 2019-08-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: "Copy Rule" menu item does not propagate comments properly

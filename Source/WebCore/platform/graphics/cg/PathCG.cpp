@@ -307,9 +307,9 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
         CGRect rectToDraw = rect;
         CGFloat rectWidth = CGRectGetWidth(rectToDraw);
         CGFloat rectHeight = CGRectGetHeight(rectToDraw);
-        if (rectWidth < 2 * radiusWidth)
+        if (2 * radiusWidth > rectWidth)
             radiusWidth = rectWidth / 2 - std::numeric_limits<CGFloat>::epsilon();
-        if (rectHeight < 2 * radiusHeight)
+        if (2 * radiusHeight > rectHeight)
             radiusHeight = rectHeight / 2 - std::numeric_limits<CGFloat>::epsilon();
         CGPathAddRoundedRect(ensurePlatformPath(), nullptr, rectToDraw, radiusWidth, radiusHeight);
         return;
@@ -317,7 +317,24 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     CGRect rectToDraw = rect;
+    
+    enum Corners {
+        BottomLeft,
+        BottomRight,
+        TopRight,
+        TopLeft
+    };
     CGSize corners[4] = { bottomLeftRadius, bottomRightRadius, topRightRadius, topLeftRadius };
+
+    CGFloat rectWidth = CGRectGetWidth(rectToDraw);
+    CGFloat rectHeight = CGRectGetHeight(rectToDraw);
+    
+    // Clamp the radii after conversion to CGFloats.
+    corners[TopRight].width = std::min(corners[TopRight].width, rectWidth - corners[TopLeft].width);
+    corners[BottomRight].width = std::min(corners[BottomRight].width, rectWidth - corners[BottomLeft].width);
+    corners[BottomLeft].height = std::min(corners[BottomLeft].height, rectHeight - corners[TopLeft].height);
+    corners[BottomRight].height = std::min(corners[BottomRight].height, rectHeight - corners[TopRight].height);
+
     CGPathAddUnevenCornersRoundedRect(ensurePlatformPath(), nullptr, rectToDraw, corners);
     return;
 #endif
