@@ -1,5 +1,19 @@
 2019-08-24  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Non-inline formatting context(table, grid etc) root container should not collapse through.
+        https://bugs.webkit.org/show_bug.cgi?id=201099
+        <rdar://problem/54658946>
+
+        Reviewed by Antti Koivisto.
+
+        I didn't manage to find it in the spec, but surely formatting contexts like table, grid and flex should behave like
+        block so that their vertical margins are not adjoining, when they have at least one inflow child.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough):
+
+2019-08-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add THEAD/TBODY/TFOOT output to Layout::showLayoutTree
         https://bugs.webkit.org/show_bug.cgi?id=201113
         <rdar://problem/54664134>

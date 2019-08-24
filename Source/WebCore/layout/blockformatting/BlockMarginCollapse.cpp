@@ -408,8 +408,8 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Layout
             return true;
         }
 
-        if (establishesBlockFormattingContext(layoutBox))
-            return false;
+        // A root of a non-inline formatting context (table, flex etc) with inflow descendants should not collapse through.
+        return false;
     }
 
     for (auto* inflowChild = downcast<Container>(layoutBox).firstInFlowOrFloatingChild(); inflowChild; inflowChild = inflowChild->nextInFlowOrFloatingSibling()) {
