@@ -1,5 +1,19 @@
 2019-08-24  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add section renderers to the layout tree (THEAD/TBODY/TFOOT)
+        https://bugs.webkit.org/show_bug.cgi?id=201114
+        <rdar://problem/54664992>
+
+        Reviewed by Antti Koivisto.
+
+        Section renderers (THEAD/TBODY/TFOOT) are direct children of the RenderTable. Let's include them in the layout tree as well.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createTableStructure):
+        (WebCore::Layout::outputInlineRuns):
+
+2019-08-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Box::isAnonymous() can not rely on the lack of ElementType.
         https://bugs.webkit.org/show_bug.cgi?id=201106
         <rdar://problem/54660287>

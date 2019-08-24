@@ -215,9 +215,14 @@ void TreeBuilder::createTableStructure(const RenderTable& tableRenderer, Contain
 
     auto tableBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
     appendChild(tableWrapperBox, *tableBox);
-    while (tableChild) {
-        TreeBuilder::createSubTree(downcast<RenderElement>(*tableChild), *tableBox);
-        tableChild = tableChild->nextSibling();
+    auto* sectionRenderer = tableChild;
+    while (sectionRenderer) {
+        auto sectionBox = createLayoutBox(tableRenderer, *sectionRenderer);
+        appendChild(*tableBox, *sectionBox);
+        auto& sectionContainer = downcast<Container>(*sectionBox);
+        TreeBuilder::createSubTree(downcast<RenderElement>(*sectionRenderer), sectionContainer);
+        sectionBox.release();
+        sectionRenderer = sectionRenderer->nextSibling();
     }
     // Temporary
     tableBox.release();
@@ -259,7 +264,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
             stream << " ";
         if (inlineRun->textContext())
             stream << "inline text box";
-        else  
+        else
             stream << "inline box";
         stream << " at (" << inlineRun->logicalLeft() << "," << inlineRun->logicalTop() << ") size " << inlineRun->logicalWidth() << "x" << inlineRun->logicalHeight();
         if (inlineRun->textContext())
