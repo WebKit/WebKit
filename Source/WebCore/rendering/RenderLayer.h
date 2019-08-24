@@ -140,6 +140,8 @@ class RenderLayer final : public ScrollableArea {
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;
+    friend class RenderLayerBacking;
+    friend class RenderLayerCompositor;
 
     explicit RenderLayer(RenderLayerModelObject&);
     virtual ~RenderLayer();
@@ -529,19 +531,8 @@ public:
 
     bool canRender3DTransforms() const;
 
-    enum UpdateLayerPositionsFlag {
-        CheckForRepaint                     = 1 << 0,
-        NeedsFullRepaintInBacking           = 1 << 1,
-        ContainingClippingLayerChangedSize  = 1 << 2,
-        UpdatePagination                    = 1 << 3,
-        SeenFixedLayer                      = 1 << 4,
-        SeenTransformedLayer                = 1 << 5,
-        Seen3DTransformedLayer              = 1 << 6,
-        SeenCompositedScrollingLayer        = 1 << 7,
-    };
-    static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint }; }
-
-    void updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, OptionSet<UpdateLayerPositionsFlag>);
+    void updateLayerPositionsAfterStyleChange();
+    void updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint);
 
     void updateLayerPositionsAfterOverflowScroll();
     void updateLayerPositionsAfterDocumentScroll();
@@ -559,6 +550,7 @@ public:
     
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
+    void willRemoveChildWithBlendMode();
 #endif
 
     const LayoutSize& offsetForInFlowPosition() const { return m_offsetForInFlowPosition; }
@@ -986,6 +978,18 @@ private:
     void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
     void updateScrollbarsAfterLayout();
 
+    enum UpdateLayerPositionsFlag {
+        CheckForRepaint                     = 1 << 0,
+        NeedsFullRepaintInBacking           = 1 << 1,
+        ContainingClippingLayerChangedSize  = 1 << 2,
+        UpdatePagination                    = 1 << 3,
+        SeenFixedLayer                      = 1 << 4,
+        SeenTransformedLayer                = 1 << 5,
+        Seen3DTransformedLayer              = 1 << 6,
+        SeenCompositedScrollingLayer        = 1 << 7,
+    };
+    static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint }; }
+
     // Returns true if the position changed.
     bool updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* = nullptr);
 
@@ -1170,10 +1174,6 @@ private:
     
     void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = static_cast<unsigned>(reason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
-
-    friend class RenderLayerBacking;
-    friend class RenderLayerCompositor;
-    friend class RenderLayerModelObject;
 
     LayoutUnit overflowTop() const;
     LayoutUnit overflowBottom() const;

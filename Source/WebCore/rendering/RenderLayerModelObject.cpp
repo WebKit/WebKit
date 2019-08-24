@@ -171,13 +171,13 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             createLayer();
             if (parent() && !needsLayout() && containingBlock()) {
                 layer()->setRepaintStatus(NeedsFullRepaint);
-                layer()->updateLayerPositions();
+                layer()->updateLayerPositionsAfterStyleChange();
             }
         }
     } else if (layer() && layer()->parent()) {
 #if ENABLE(CSS_COMPOSITING)
         if (oldStyle->hasBlendMode())
-            layer()->parent()->dirtyAncestorChainHasBlendingDescendants();
+            layer()->willRemoveChildWithBlendMode();
 #endif
         setHasTransformRelatedProperty(false); // All transform-related propeties force layers, so we know we don't have one or the object doesn't support them.
         setHasReflection(false);

@@ -875,13 +875,30 @@ bool RenderLayer::requiresFullLayerImageForFilters() const
     return m_filters && m_filters->hasFilterThatMovesPixels();
 }
 
-void RenderLayer::updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, OptionSet<UpdateLayerPositionsFlag> flags)
+void RenderLayer::updateLayerPositionsAfterStyleChange()
 {
+    updateLayerPositions(nullptr, RenderLayer::updateLayerPositionsDefaultFlags());
+}
+
+void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint)
+{
+    auto updateLayerPositionFlags = [&](bool isRelayoutingSubtree, bool didFullRepaint) {
+        auto flags = RenderLayer::updateLayerPositionsDefaultFlags();
+        if (didFullRepaint) {
+            flags.remove(RenderLayer::CheckForRepaint);
+            flags.add(RenderLayer::NeedsFullRepaintInBacking);
+        }
+        if (isRelayoutingSubtree && enclosingPaginationLayer(RenderLayer::IncludeCompositedPaginatedLayers))
+            flags.add(RenderLayer::UpdatePagination);
+        return flags;
+    };
+
     LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout", this);
     RenderGeometryMap geometryMap(UseTransforms);
-    if (this != rootLayer)
+    if (!isRenderViewLayer())
         geometryMap.pushMappingsToAncestor(parent(), nullptr);
-    updateLayerPositions(&geometryMap, flags);
+
+    updateLayerPositions(&geometryMap, updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint));
 }
 
 void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet<UpdateLayerPositionsFlag> flags)
@@ -1168,6 +1185,11 @@ void RenderLayer::updateBlendMode()
     BlendMode newBlendMode = renderer().style().blendMode();
     if (newBlendMode != static_cast<BlendMode>(m_blendMode))
         m_blendMode = static_cast<unsigned>(newBlendMode);
+}
+
+void RenderLayer::willRemoveChildWithBlendMode()
+{
+    parent()->dirtyAncestorChainHasBlendingDescendants();
 }
 
 void RenderLayer::updateAncestorChainHasBlendingDescendants()

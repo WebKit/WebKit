@@ -145,18 +145,6 @@ static constexpr float defaultSignificantRenderedTextMeanLength = 50;
 static constexpr unsigned mainArticleSignificantRenderedTextCharacterThreshold = 1500;
 static constexpr float mainArticleSignificantRenderedTextMeanLength = 25;
 
-static OptionSet<RenderLayer::UpdateLayerPositionsFlag> updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
-{
-    auto flags = RenderLayer::updateLayerPositionsDefaultFlags();
-    if (didFullRepaint) {
-        flags.remove(RenderLayer::CheckForRepaint);
-        flags.add(RenderLayer::NeedsFullRepaintInBacking);
-    }
-    if (isRelayoutingSubtree && layer->enclosingPaginationLayer(RenderLayer::IncludeCompositedPaginatedLayers))
-        flags.add(RenderLayer::UpdatePagination);
-    return flags;
-}
-
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 {
     Overflow overflow = style.overflowY();
@@ -1245,7 +1233,7 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 {
     renderView()->releaseProtectedRenderWidgets();
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
-    layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layoutRootEnclosingLayer, !is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint()));
+    layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint());
 
     updateCompositingLayersAfterLayout();
 
