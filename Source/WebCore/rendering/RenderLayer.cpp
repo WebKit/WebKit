@@ -875,15 +875,36 @@ bool RenderLayer::requiresFullLayerImageForFilters() const
     return m_filters && m_filters->hasFilterThatMovesPixels();
 }
 
+OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLayerPositions(RenderLayer& startingLayer)
+{
+    OptionSet<UpdateLayerPositionsFlag> flags = { CheckForRepaint };
+
+    if (auto* parent = startingLayer.parent()) {
+        if (parent->hasTransformedAncestor() || parent->transform())
+            flags.add(SeenTransformedLayer);
+
+        if (parent->has3DTransformedAncestor() || (parent->transform() && !parent->transform()->isAffine()))
+            flags.add(Seen3DTransformedLayer);
+
+        if (parent->behavesAsFixed() || (parent->renderer().isFixedPositioned() && !parent->hasTransformedAncestor()))
+            flags.add(SeenFixedLayer);
+
+        if (parent->hasCompositedScrollingAncestor() || parent->hasCompositedScrollableOverflow())
+            flags.add(SeenCompositedScrollingLayer);
+    }
+
+    return flags;
+}
+
 void RenderLayer::updateLayerPositionsAfterStyleChange()
 {
-    updateLayerPositions(nullptr, RenderLayer::updateLayerPositionsDefaultFlags());
+    updateLayerPositions(nullptr, flagsForUpdateLayerPositions(*this));
 }
 
 void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint)
 {
     auto updateLayerPositionFlags = [&](bool isRelayoutingSubtree, bool didFullRepaint) {
-        auto flags = RenderLayer::updateLayerPositionsDefaultFlags();
+        auto flags = flagsForUpdateLayerPositions(*this);
         if (didFullRepaint) {
             flags.remove(RenderLayer::CheckForRepaint);
             flags.add(RenderLayer::NeedsFullRepaintInBacking);
@@ -6974,7 +6995,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor\n"
+    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor, (t)transformed ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
@@ -7021,6 +7042,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << compositedPaintingDestinationString();
     stream << (layer.hasCompositingDescendant() ? "c" : "-");
     stream << (layer.hasCompositedScrollingAncestor() ? "s" : "-");
+    stream << (layer.hasTransformedAncestor() ? "t" : "-");
 
     stream << " ";
 

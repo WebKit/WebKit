@@ -1,3 +1,28 @@
+2019-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        RenderLayer::updateLayerPositions() doesn't propagate the ancestor flags correctly
+        https://bugs.webkit.org/show_bug.cgi?id=201115
+
+        Reviewed by Zalan Bujtas.
+
+        When an updateLayerPositions() traversal starts at a non-root layer, we failed to populate
+        the ancestor-related UpdateLayerPositionsFlag flags, leaving layers with missing flags
+        (e.g. the m_hasTransformedAncestor flag). This is detected by the patch in bug 201066.
+
+        Fix by having updateLayerPositionsAfterStyleChange() and updateLayerPositionsAfterLayout()
+        initialize the flags from the parent layer.
+
+        This is a behavior change not detected by any existing test, but will be exercised once
+        the patch from bug 201066 lands.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::flagsForUpdateLayerPositions):
+        (WebCore::RenderLayer::updateLayerPositionsAfterStyleChange):
+        (WebCore::RenderLayer::updateLayerPositionsAfterLayout):
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputPaintOrderTreeRecursive): Log hasTransformedAncestor().
+        * rendering/RenderLayer.h:
+
 2019-08-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add section renderers to the layout tree (THEAD/TBODY/TFOOT)

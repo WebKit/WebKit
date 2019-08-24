@@ -784,6 +784,7 @@ public:
     FloatPoint perspectiveOrigin() const;
     bool preserves3D() const { return renderer().style().transformStyle3D() == TransformStyle3D::Preserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
+    bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
 
     void filterNeedsRepaint();
     bool hasFilter() const { return renderer().hasFilter(); }
@@ -988,12 +989,12 @@ private:
         Seen3DTransformedLayer              = 1 << 6,
         SeenCompositedScrollingLayer        = 1 << 7,
     };
-    static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint }; }
+    static OptionSet<UpdateLayerPositionsFlag> flagsForUpdateLayerPositions(RenderLayer& startingLayer);
 
     // Returns true if the position changed.
     bool updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* = nullptr);
 
-    void updateLayerPositions(RenderGeometryMap* = nullptr, OptionSet<UpdateLayerPositionsFlag> = updateLayerPositionsDefaultFlags());
+    void updateLayerPositions(RenderGeometryMap*, OptionSet<UpdateLayerPositionsFlag>);
 
     enum UpdateLayerPositionsAfterScrollFlag {
         IsOverflowScroll                        = 1 << 0,
@@ -1127,8 +1128,6 @@ private:
     void setAncestorChainHasVisibleDescendant();
 
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
-
-    bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
     bool has3DTransformedAncestor() const { return m_has3DTransformedAncestor; }
 
     void dirty3DTransformedDescendantStatus();
