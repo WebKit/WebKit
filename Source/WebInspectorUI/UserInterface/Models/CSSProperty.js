@@ -149,6 +149,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     commentOut(disabled)
     {
+        console.assert(this.editable);
         if (this._enabled === !disabled)
             return;
 
@@ -181,7 +182,10 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (!this._name)
             return "";
 
-        return `${this._name}: ${this._rawValue};`;
+        let text = `${this._name}: ${this._rawValue};`;
+        if (!this._enabled)
+            text = "/* " + text + " */";
+        return text;
     }
 
     get modified()

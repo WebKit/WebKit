@@ -1,3 +1,15 @@
+2019-08-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: "Copy Rule" menu item does not propagate comments properly
+        https://bugs.webkit.org/show_bug.cgi?id=201095
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.commentOut):
+        (WI.CSSProperty.prototype.get formattedText):
+        Wrap the `text` in `/* ${text} */` if the `WI.CSSProperty` isn't `enabled` (e.g. commented out).
+
 2019-08-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create additional command line api functions for other console methods
