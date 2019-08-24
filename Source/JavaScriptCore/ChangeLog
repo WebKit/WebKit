@@ -1,3 +1,40 @@
+2019-08-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create additional command line api functions for other console methods
+        https://bugs.webkit.org/show_bug.cgi?id=200971
+
+        Reviewed by Joseph Pecoraro.
+
+        Expose all `console.*` functions in the command line API, since they're all already able to
+        be referenced via the `console` object.
+
+        Provide a simpler interface for other injected scripts to modify the command line API.
+
+        * inspector/InjectedScriptModule.cpp:
+        (Inspector::InjectedScriptModule::ensureInjected):
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.inspectObject):
+        (InjectedScript.prototype.addCommandLineAPIGetter): Added.
+        (InjectedScript.prototype.addCommandLineAPIMethod): Added.
+        (InjectedScript.prototype.hasInjectedModule): Added.
+        (InjectedScript.prototype.injectModule):
+        (InjectedScript.prototype._evaluateOn):
+        (InjectedScript.CommandLineAPI): Added.
+        (InjectedScript.prototype.module): Deleted.
+        (InjectedScript.prototype._savedResult): Deleted.
+        (bind): Deleted.
+        (BasicCommandLineAPI): Deleted.
+        (clear): Deleted.
+        (table): Deleted.
+        (profile): Deleted.
+        (profileEnd): Deleted.
+        (keys): Deleted.
+        (values): Deleted.
+        (queryInstances): Deleted.
+        (queryObjects): Deleted.
+        (queryHolders): Deleted.
+
 2019-08-23  Tadeu Zagallo  <tzagallo@apple.com>
 
         Remove MaximalFlushInsertionPhase

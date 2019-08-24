@@ -44,6 +44,50 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._clearLastProperties, this);
     }
 
+    // Static
+
+    static get _commandLineAPIKeys()
+    {
+        if (!JavaScriptRuntimeCompletionProvider.__cachedCommandLineAPIKeys) {
+            JavaScriptRuntimeCompletionProvider.__cachedCommandLineAPIKeys = [
+                "$_",
+                "assert",
+                "clear",
+                "count",
+                "countReset",
+                "debug",
+                "dir",
+                "dirxml",
+                "error",
+                "group",
+                "groupCollapsed",
+                "groupEnd",
+                "info",
+                "inspect",
+                "keys",
+                "log",
+                "profile",
+                "profileEnd",
+                "queryHolders",
+                "queryInstances",
+                "queryObjects",
+                "record",
+                "recordEnd",
+                "screenshot",
+                "table",
+                "takeHeapSnapshot",
+                "time",
+                "timeEnd",
+                "timeLog",
+                "timeStamp",
+                "trace",
+                "values",
+                "warn",
+            ];
+        }
+        return JavaScriptRuntimeCompletionProvider.__cachedCommandLineAPIKeys;
+    }
+
     // Protected
 
     completionControllerCompletionsNeeded(completionController, defaultCompletions, base, prefix, suffix, forced)
@@ -113,7 +157,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 clearTimeout(this._clearLastPropertiesTimeout);
             this._clearLastPropertiesTimeout = setTimeout(this._clearLastProperties.bind(this), WI.JavaScriptLogViewController.CachedPropertiesDuration);
 
-            this._lastPropertyNames = propertyNames || {};
+            this._lastPropertyNames = propertyNames || [];
         }
 
         function evaluated(result, wasThrown)
@@ -211,40 +255,59 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         function receivedPropertyNames(propertyNames)
         {
-            propertyNames = propertyNames || {};
+            propertyNames = propertyNames ? Object.keys(propertyNames) : [];
 
             updateLastPropertyNames.call(this, propertyNames);
 
             WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
 
             if (!base) {
-                let commandLineAPI = WI.JavaScriptRuntimeCompletionProvider._commandLineAPI.slice(0);
-                if (WI.debuggerManager.paused) {
-                    let targetData = WI.debuggerManager.dataForTarget(WI.runtimeManager.activeExecutionContext.target);
-                    if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Listener || targetData.pauseReason === WI.DebuggerManager.PauseReason.EventListener)
-                        commandLineAPI.push("$event");
-                    else if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Exception)
-                        commandLineAPI.push("$exception");
-                }
-                for (let name of commandLineAPI)
-                    propertyNames[name] = true;
+                propertyNames.push(...JavaScriptRuntimeCompletionProvider._commandLineAPIKeys);
 
                 let savedResultAlias = WI.settings.consoleSavedResultAlias.value;
-                if (savedResultAlias) {
-                    propertyNames[savedResultAlias + "0"] = true;
-                    propertyNames[savedResultAlias + "_"] = true;
+                if (savedResultAlias)
+                    propertyNames.push(savedResultAlias + "_");
+
+                let target = WI.runtimeManager.activeExecutionContext.target;
+
+                if (WI.debuggerManager.paused) {
+                    let targetData = WI.debuggerManager.dataForTarget(target);
+                    if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Listener || targetData.pauseReason === WI.DebuggerManager.PauseReason.EventListener) {
+                        propertyNames.push("$event");
+                        if (savedResultAlias)
+                            propertyNames.push(savedResultAlias + "event");
+                    } else if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Exception) {
+                        propertyNames.push("$exception");
+                        if (savedResultAlias)
+                            propertyNames.push(savedResultAlias + "exception");
+                    }
+                }
+
+                switch (target.type) {
+                case WI.Target.Type.Page:
+                    propertyNames.push("$");
+                    propertyNames.push("$$");
+                    propertyNames.push("$0");
+                    if (savedResultAlias)
+                        propertyNames.push(savedResultAlias + "0");
+                    propertyNames.push("$x");
+                    // fallthrough
+                case WI.Target.Type.ServiceWorker:
+                case WI.Target.Type.Worker:
+                    propertyNames.push("copy");
+                    propertyNames.push("getEventListeners");
+                    propertyNames.push("monitorEvents");
+                    propertyNames.push("unmonitorEvents");
+                    break;
                 }
 
                 // FIXME: Due to caching, sometimes old $n values show up as completion results even though they are not available. We should clear that proactively.
                 for (var i = 1; i <= WI.ConsoleCommandResultMessage.maximumSavedResultIndex; ++i) {
-                    propertyNames["$" + i] = true;
-
+                    propertyNames.push("$" + i);
                     if (savedResultAlias)
-                        propertyNames[savedResultAlias + i] = true;
+                        propertyNames.push(savedResultAlias + i);
                 }
             }
-
-            propertyNames = Object.keys(propertyNames);
 
             var implicitSuffix = "";
             if (bracketNotation) {
@@ -313,28 +376,3 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         this._lastPropertyNames = null;
     }
 };
-
-WI.JavaScriptRuntimeCompletionProvider._commandLineAPI = [
-    "$",
-    "$$",
-    "$0",
-    "$_",
-    "$x",
-    "clear",
-    "copy",
-    "dir",
-    "dirxml",
-    "getEventListeners",
-    "inspect",
-    "keys",
-    "monitorEvents",
-    "profile",
-    "profileEnd",
-    "queryHolders",
-    "queryInstances",
-    "queryObjects",
-    "screenshot",
-    "table",
-    "unmonitorEvents",
-    "values",
-];

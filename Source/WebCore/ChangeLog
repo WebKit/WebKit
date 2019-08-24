@@ -1,3 +1,50 @@
+2019-08-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create additional command line api functions for other console methods
+        https://bugs.webkit.org/show_bug.cgi?id=200971
+
+        Reviewed by Joseph Pecoraro.
+
+        Expose all `console.*` functions in the command line API, since they're all already able to
+        be referenced via the `console` object.
+
+        Provide a simpler interface for other injected scripts to modify the command line API.
+
+        * inspector/CommandLineAPIModuleSource.js:
+        (injectedScript._inspectObject): Added.
+        (normalizeEventTypes): Added.
+        (logEvent): Added.
+        (canQuerySelectorOnNode): Added.
+        (bind): Deleted.
+        (value): Deleted.
+        (this.method.toString): Deleted.
+        (CommandLineAPI): Deleted.
+        (CommandLineAPIImpl): Deleted.
+        (CommandLineAPIImpl.prototype): Deleted.
+        (CommandLineAPIImpl.prototype._canQuerySelectorOnNode): Deleted.
+        (CommandLineAPIImpl.prototype.x): Deleted.
+        (CommandLineAPIImpl.prototype.dir): Deleted.
+        (CommandLineAPIImpl.prototype.dirxml): Deleted.
+        (CommandLineAPIImpl.prototype.keys): Deleted.
+        (CommandLineAPIImpl.prototype.values): Deleted.
+        (CommandLineAPIImpl.prototype.profile): Deleted.
+        (CommandLineAPIImpl.prototype.profileEnd): Deleted.
+        (CommandLineAPIImpl.prototype.table): Deleted.
+        (CommandLineAPIImpl.prototype.screenshot): Deleted.
+        (CommandLineAPIImpl.prototype.monitorEvents): Deleted.
+        (CommandLineAPIImpl.prototype.unmonitorEvents): Deleted.
+        (CommandLineAPIImpl.prototype.inspect): Deleted.
+        (CommandLineAPIImpl.prototype.queryInstances): Deleted.
+        (CommandLineAPIImpl.prototype.queryObjects): Deleted.
+        (CommandLineAPIImpl.prototype.queryHolders): Deleted.
+        (CommandLineAPIImpl.prototype.copy): Deleted.
+        (CommandLineAPIImpl.prototype.clear): Deleted.
+        (CommandLineAPIImpl.prototype.getEventListeners): Deleted.
+        (CommandLineAPIImpl.prototype._inspectedObject): Deleted.
+        (CommandLineAPIImpl.prototype._normalizeEventTypes): Deleted.
+        (CommandLineAPIImpl.prototype._logEvent): Deleted.
+        (CommandLineAPIImpl.prototype._inspect): Deleted.
+
 2019-08-23  Chris Dumez  <cdumez@apple.com>
 
         Crash under TimerBase::setNextFireTime() in the NetworkProcess

@@ -1,3 +1,13 @@
+2019-08-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create additional command line api functions for other console methods
+        https://bugs.webkit.org/show_bug.cgi?id=200971
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/dom/cross-domain-inspected-node-access-expected.txt:
+        * inspector/console/command-line-api-expected.txt:
+
 2019-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing

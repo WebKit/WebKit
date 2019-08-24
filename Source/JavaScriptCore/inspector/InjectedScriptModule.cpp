@@ -62,20 +62,21 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
 
     // FIXME: Make the InjectedScript a module itself.
     JSC::JSLockHolder locker(injectedScript.scriptState());
-    Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "module"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
+    Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "hasInjectedModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());
     bool hadException = false;
     auto resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
-    if (hadException || !resultValue || !resultValue.isObject()) {
+    if (hadException || !resultValue || !resultValue.isBoolean() || !resultValue.asBoolean()) {
         Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
         function.appendArgument(name());
         function.appendArgument(source());
         function.appendArgument(host(injectedScriptManager, injectedScript.scriptState()));
         resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
         if (hadException) {
-            ASSERT_NOT_REACHED();
-            return;
+            WTFLogAlways("Failed to parse/execute %s!", name().ascii().data());
+            WTFLogAlways("%s\n", source().ascii().data());
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 }
