@@ -1,3 +1,17 @@
+2019-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement StaticRange constructor
+        https://bugs.webkit.org/show_bug.cgi?id=201055
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test from https://github.com/web-platform-tests/wpt/pull/18619
+        with my review comment addressed.
+
+        * web-platform-tests/dom/interfaces-expected.txt: Rebaselined.
+        * web-platform-tests/dom/ranges/StaticRange-constructor-expected.txt: Added.
+        * web-platform-tests/dom/ranges/StaticRange-constructor.html: Added.
+
 2019-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Put keygen element behind a runtime flag and disable it by default

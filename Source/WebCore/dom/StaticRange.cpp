@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StaticRange.h"
 
+#include "DOMException.h"
 #include "Node.h"
 #include "Range.h"
 
@@ -49,6 +50,20 @@ Ref<StaticRange> StaticRange::create(Ref<Node>&& startContainer, unsigned startO
 Ref<StaticRange> StaticRange::createFromRange(const Range& range)
 {
     return StaticRange::create(range.startContainer(), range.startOffset(), range.endContainer(), range.endOffset());
+}
+
+static inline bool isDocumentTypeOrAttr(Node& node)
+{
+    return node.isDocumentTypeNode() || node.isAttributeNode();
+}
+
+ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
+{
+    ASSERT(init.startContainer);
+    ASSERT(init.endContainer);
+    if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
+        return Exception { InvalidNodeTypeError };
+    return StaticRange::create(init.startContainer.releaseNonNull(), init.startOffset, init.endContainer.releaseNonNull(), init.endOffset);
 }
 
 Node* StaticRange::startContainer() const

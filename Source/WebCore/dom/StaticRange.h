@@ -40,6 +40,15 @@ public:
     static Ref<StaticRange> createFromRange(const Range&);
     static Ref<StaticRange> create(Ref<Node>&& startContainer, unsigned startOffset, Ref<Node>&& endContainer, unsigned endOffset);
 
+    struct Init {
+        RefPtr<Node> startContainer;
+        unsigned long startOffset { 0 };
+        RefPtr<Node> endContainer;
+        unsigned long endOffset { 0 };
+    };
+
+    static ExceptionOr<Ref<StaticRange>> create(Init&&);
+
     unsigned startOffset() const { return m_startOffset; }
     unsigned endOffset() const { return m_endOffset; }
     Node* startContainer() const;

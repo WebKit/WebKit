@@ -26,10 +26,20 @@
 [
     EnabledAtRuntime=InputEvents,
     ImplementationLacksVTable,
+    Exposed=Window,
+    ConstructorMayThrowException,
+    Constructor(StaticRangeInit staticRangeInitDict),
 ] interface StaticRange {
     readonly attribute unsigned long startOffset;
     readonly attribute unsigned long endOffset;
     readonly attribute Node startContainer;
     readonly attribute Node endContainer;
     readonly attribute boolean collapsed;
+};
+
+dictionary StaticRangeInit {
+  required Node startContainer;
+  required unsigned long startOffset;
+  required Node endContainer;
+  required unsigned long endOffset;
 };

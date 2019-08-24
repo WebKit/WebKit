@@ -1437,7 +1437,7 @@ FAIL AbstractRange interface: attribute endContainer assert_own_property: self d
 FAIL AbstractRange interface: attribute endOffset assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 FAIL AbstractRange interface: attribute collapsed assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 FAIL StaticRange interface: existence and properties of interface object assert_own_property: should inherit from AbstractRange, but self has no such property expected property "AbstractRange" missing
-PASS StaticRange interface object length 
+FAIL StaticRange interface object length assert_equals: wrong value for StaticRange.length expected 0 but got 1
 PASS StaticRange interface object name 
 FAIL StaticRange interface: existence and properties of interface prototype object assert_own_property: should inherit from AbstractRange, but self has no such property expected property "AbstractRange" missing
 PASS StaticRange interface: existence and properties of interface prototype object's "constructor" property 

@@ -1,3 +1,20 @@
+2019-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement StaticRange constructor
+        https://bugs.webkit.org/show_bug.cgi?id=201055
+
+        Reviewed by Wenson Hsieh.
+
+        Added the constructor to StaticRange per https://github.com/whatwg/dom/pull/778.
+
+        Test: imported/w3c/web-platform-tests/dom/ranges/StaticRange-constructor.html
+
+        * dom/StaticRange.cpp:
+        (WebCore::isDocumentTypeOrAttr):
+        (WebCore::StaticRange::create):
+        * dom/StaticRange.h:
+        * dom/StaticRange.idl:
+
 2019-08-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create additional command line api functions for other console methods
