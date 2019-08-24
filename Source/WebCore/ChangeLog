@@ -1,3 +1,44 @@
+2019-08-24  Antti Koivisto  <antti@apple.com>
+
+        Implement layout system independent text box iterator
+        https://bugs.webkit.org/show_bug.cgi?id=201076
+
+        Reviewed by Zalan Bujtas.
+
+        Add a generic way to traverse line layout without caring about the details of the underlying layout system.
+
+        This patch adds basic support for traversing text boxes and uses it to remove layout path specific branches in RenderTreeAsText.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeTextBox):
+        (WebCore::write):
+        (WebCore::writeTextRun): Deleted.
+        (WebCore::writeSimpleLine): Deleted.
+        * rendering/line/LineLayoutInterfaceTextBoxes.cpp: Added.
+        (WebCore::LineLayoutInterface::TextBox::rect const):
+        (WebCore::LineLayoutInterface::TextBox::logicalRect const):
+        (WebCore::LineLayoutInterface::TextBox::hasHyphen const):
+        (WebCore::LineLayoutInterface::TextBox::isLeftToRightDirection const):
+        (WebCore::LineLayoutInterface::TextBox::dirOverride const):
+        (WebCore::LineLayoutInterface::TextBox::text const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutInterface::TextBoxIterator::traverseNext):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutInterface::simpleLineRunResolverForText):
+        (WebCore::LineLayoutInterface::rangeForText):
+        (WebCore::LineLayoutInterface::TextBoxRange::TextBoxRange):
+        (WebCore::LineLayoutInterface::textBoxes):
+        * rendering/line/LineLayoutInterfaceTextBoxes.h: Added.
+        (WebCore::LineLayoutInterface::TextBox::TextBox):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator++):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator!= const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator* const):
+        (WebCore::LineLayoutInterface::TextBoxRange::begin const):
+        (WebCore::LineLayoutInterface::TextBoxRange::end const):
+
 2019-08-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Non-inline formatting context(table, grid etc) root container should not collapse through.

@@ -4789,6 +4789,7 @@
 		E47C39331FE6E10800BBBC6B /* RenderTreeBuilderMultiColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39271FE6E0DC00BBBC6B /* RenderTreeBuilderMultiColumn.h */; };
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E484A33E23055325009ADE6A /* LineLayoutInterfaceTextBoxes.h in Headers */ = {isa = PBXBuildFile; fileRef = E484A33B23055303009ADE6A /* LineLayoutInterfaceTextBoxes.h */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14951,6 +14952,8 @@
 		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
 		E48137B81DB3B526005C59BF /* StyleValidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleValidity.h; sourceTree = "<group>"; };
+		E484A33B23055303009ADE6A /* LineLayoutInterfaceTextBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutInterfaceTextBoxes.h; sourceTree = "<group>"; };
+		E484A33D23055303009ADE6A /* LineLayoutInterfaceTextBoxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineLayoutInterfaceTextBoxes.cpp; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
@@ -28172,6 +28175,8 @@
 				FFB698CD1833F17600158A31 /* LineInfo.cpp */,
 				FFB698CE1833F17600158A31 /* LineInfo.h */,
 				FFEFAB2D183BCB6F00514534 /* LineInlineHeaders.h */,
+				E484A33D23055303009ADE6A /* LineLayoutInterfaceTextBoxes.cpp */,
+				E484A33B23055303009ADE6A /* LineLayoutInterfaceTextBoxes.h */,
 				FFEFAB2918380DA000514534 /* LineLayoutState.h */,
 				FFDBC046183D27B700407109 /* LineWidth.cpp */,
 				FFDBC045183D27B700407109 /* LineWidth.h */,
@@ -31917,6 +31922,7 @@
 				B2C3DA3E0D006C1D00EF6F26 /* TextCodecLatin1.h in Headers */,
 				57EF5E601D20C83900171E60 /* TextCodecReplacement.h in Headers */,
 				B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */,
+				E484A33E23055325009ADE6A /* LineLayoutInterfaceTextBoxes.h in Headers */,
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */,
 				142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */,

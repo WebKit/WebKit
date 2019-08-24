@@ -2152,6 +2152,7 @@ rendering/TrailingFloatsRootInlineBox.cpp
 
 rendering/line/LineBreaker.cpp
 rendering/line/LineInfo.cpp
+rendering/line/LineLayoutInterfaceTextBoxes.cpp
 rendering/line/LineWidth.cpp
 rendering/line/TrailingObjects.cpp
 
