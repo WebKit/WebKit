@@ -1,3 +1,24 @@
+2019-08-23  Chris Dumez  <cdumez@apple.com>
+
+        Crash under TimerBase::setNextFireTime() in the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=201097
+        <rdar://problem/54658339>
+
+        Reviewed by Ryosuke Niwa.
+
+        NetworkStateNotifier is a WebCore/platform class used by both WebKitLegacy and WebKit2 in the NetworkProcess.
+        On iOS, the lambda in the implementation of NetworkStateNotifier::startObserving() may get called by the
+        underlying framework on a non-main thread and we therefore want to go back to the main thread before calling
+        NetworkStateNotifier::singleton().updateStateSoon(). This is important because updateStateSoon() will schedule
+        a WebCore::Timer. The issue is that the code was using WebThreadRun() to go back the the main thread. While
+        this works fine in iOS WK1, it does not do what we want in WebKit2 in the network process. Indeed, before there
+        is no WebThread in the network process, WebThreadRun() will simply run the block on whatever thread we're one.
+        This would lead to crashes when trying to schedule the Timer in updateStateSoon(). To address the issue, we now
+        use callOnMainThread().
+
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        (WebCore::NetworkStateNotifier::startObserving):
+
 2019-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r248807): Objects stored in ElementRareData are leaked
