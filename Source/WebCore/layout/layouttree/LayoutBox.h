@@ -45,7 +45,7 @@ public:
     enum class ElementType {
         Document,
         Body,
-        TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes. 
+        TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
         TableColumn,
         TableRow,
@@ -159,6 +159,8 @@ public:
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
     void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
 
+    void setIsAnonymous() { m_isAnonymous = true; }
+
 protected:
     Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
@@ -195,6 +197,7 @@ private:
 
     unsigned m_baseTypeFlags : 6;
     bool m_hasRareData : 1;
+    bool m_isAnonymous : 1;
 };
 
 }

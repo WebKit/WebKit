@@ -1,3 +1,18 @@
+2019-08-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Box::isAnonymous() can not rely on the lack of ElementType.
+        https://bugs.webkit.org/show_bug.cgi?id=201106
+        <rdar://problem/54660287>
+
+        Reviewed by Antti Koivisto.
+
+        Add bool m_isAnonymous member to mark anonymous layout boxes. Anonymous boxes are not rare enough to include this variable in RareData.
+
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::setIsAnonymous):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
 2019-08-24  Antti Koivisto  <antti@apple.com>
 
         Implement layout system independent text box iterator

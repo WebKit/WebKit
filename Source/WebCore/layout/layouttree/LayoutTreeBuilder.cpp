@@ -131,6 +131,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
             childLayoutBox = makeUnique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::clone(parentRenderer.style()));
         else
             childLayoutBox = makeUnique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
+        childLayoutBox->setIsAnonymous();
         return childLayoutBox;
     }
 
@@ -142,6 +143,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
     if (is<RenderTable>(renderer)) {
         // Construct the principal table wrapper box (and not the table box itself).
         childLayoutBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, RenderStyle::clone(renderer.style()));
+        childLayoutBox->setIsAnonymous();
     } else if (is<RenderReplaced>(renderer)) {
         if (displayType == DisplayType::Block)
             childLayoutBox = makeUnique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
@@ -189,6 +191,9 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
         if (columnSpan > 1)
             childLayoutBox->setColumnSpan(columnSpan);
     }
+
+    if (childRenderer.isAnonymous())
+        childLayoutBox->setIsAnonymous();
 
     return childLayoutBox;
 }

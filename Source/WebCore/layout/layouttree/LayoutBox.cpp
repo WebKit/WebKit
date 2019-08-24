@@ -43,6 +43,7 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags)
     , m_hasRareData(false)
+    , m_isAnonymous(false)
 {
     if (isReplaced())
         ensureRareData().replaced = makeUnique<Replaced>(*this);
