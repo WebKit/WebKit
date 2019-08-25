@@ -634,9 +634,10 @@ public:
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
     bool hasAncestorWithFilterOutsets() const;
 
-    bool canUseConvertToLayerCoords() const
+    bool canUseOffsetFromAncestor() const
     {
-        // These RenderObject have an impact on their layers' without them knowing about it.
+        // FIXME: This really needs to know if there are transforms on this layer and any of the layers
+        // between it and the ancestor in question.
         return !renderer().hasTransform() && !renderer().isSVGRoot();
     }
 
