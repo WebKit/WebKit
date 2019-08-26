@@ -1,5 +1,16 @@
 2019-08-26  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [WebAuthn] Support HID authenticators on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=201084
+        <rdar://problem/51908390>
+
+        Reviewed by Youenn Fablet.
+
+        * platform/ios-wk2/TestExpectations:
+        Unskips HID tests for iOS.
+
+2019-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, test gardening
 
         * platform/mac-wk2/TestExpectations:

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "HidConnection.h"
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
@@ -134,5 +134,5 @@ void HidConnection::registerDataReceivedCallbackInternal()
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)
 

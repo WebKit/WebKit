@@ -37,11 +37,7 @@ using namespace WebCore;
 
 namespace AuthenticatorManagerInternal {
 
-#if PLATFORM(MAC)
 const size_t maxTransportNumber = 3;
-#else
-const size_t maxTransportNumber = 2;
-#endif
 
 // Suggested by WebAuthN spec as of 7 August 2018.
 const unsigned maxTimeOutValue = 120000;
@@ -53,10 +49,8 @@ static AuthenticatorManager::TransportSet collectTransports(const Optional<Publi
     if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-#if PLATFORM(MAC)
         addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-#endif
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
@@ -68,12 +62,10 @@ static AuthenticatorManager::TransportSet collectTransports(const Optional<Publi
         return result;
     }
     if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform) {
-        auto addResult = result.add(AuthenticatorTransport::Nfc);
+        auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-#if PLATFORM(MAC)
-        addResult = result.add(AuthenticatorTransport::Usb);
+        addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-#endif
         return result;
     }
 
@@ -92,10 +84,8 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
     if (allowCredentials.isEmpty()) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-#if PLATFORM(MAC)
         addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-#endif
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
@@ -104,18 +94,14 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
     for (auto& allowCredential : allowCredentials) {
         if (allowCredential.transports.isEmpty()) {
             result.add(AuthenticatorTransport::Internal);
-#if PLATFORM(MAC)
             result.add(AuthenticatorTransport::Usb);
-#endif
             result.add(AuthenticatorTransport::Nfc);
             return result;
         }
         if (!result.contains(AuthenticatorTransport::Internal) && allowCredential.transports.contains(AuthenticatorTransport::Internal))
             result.add(AuthenticatorTransport::Internal);
-#if PLATFORM(MAC)
         if (!result.contains(AuthenticatorTransport::Usb) && allowCredential.transports.contains(AuthenticatorTransport::Usb))
             result.add(AuthenticatorTransport::Usb);
-#endif
         if (!result.contains(AuthenticatorTransport::Nfc) && allowCredential.transports.contains(AuthenticatorTransport::Nfc))
             result.add(AuthenticatorTransport::Nfc);
         if (result.size() >= maxTransportNumber)

@@ -52,7 +52,7 @@ NfcConnection::NfcConnection(RetainPtr<NFReaderSession>&& session, NfcService& s
 {
     [m_session setDelegate:m_delegate.get()];
     // FIXME(200933)
-    [m_session updateUIAlertMessage:@"Hold the key against the top of your device."];
+    [m_session updateUIAlertMessage:@"Insert your security key or hold the key against the top of your device."];
     [m_session startPolling];
 }
 

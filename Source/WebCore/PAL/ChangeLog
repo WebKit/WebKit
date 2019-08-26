@@ -1,3 +1,14 @@
+2019-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support HID authenticators on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=201084
+        <rdar://problem/51908390>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/cocoa/IOKitSPI.h:
+        Move IOHIDDevice.h and IOHIDManager.h to IOKitSPI.h given they are in iOS.
+
 2019-08-22  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Content Filtering in the simulator build

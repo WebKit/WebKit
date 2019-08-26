@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CtapHidDriver.h"
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #include <WebCore/FidoConstants.h>
 #include <wtf/RandomNumber.h>
@@ -220,4 +220,4 @@ void CtapHidDriver::returnResponse(Vector<uint8_t>&& response)
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)

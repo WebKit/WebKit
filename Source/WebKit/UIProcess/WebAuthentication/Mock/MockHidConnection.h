@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #include "HidConnection.h"
 #include "MockWebAuthenticationConfiguration.h"
@@ -72,4 +72,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)

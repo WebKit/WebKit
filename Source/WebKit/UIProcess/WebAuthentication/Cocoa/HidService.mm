@@ -26,7 +26,7 @@
 #import "config.h"
 #import "HidService.h"
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #import "CtapHidDriver.h"
 #import "HidConnection.h"
@@ -90,4 +90,4 @@ void HidService::deviceAdded(IOHIDDeviceRef device)
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)

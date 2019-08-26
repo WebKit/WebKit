@@ -25,9 +25,9 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
-#include <IOKit/hid/IOHIDDevice.h>
+#include <pal/spi/cocoa/IOKitSPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -82,4 +82,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)
