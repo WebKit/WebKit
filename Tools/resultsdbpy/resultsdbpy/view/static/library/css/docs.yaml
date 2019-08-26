@@ -1405,7 +1405,9 @@
                     html: |-
                         <div class="lengend">
                             <div class="item">
-                                <div class="dot success"></div>
+                                <div class="dot success">
+                                    <div class="text">✓</div>
+                                </div>
                                 <div class="label">Tests Pass</div>
                             </div>
                             <div class="item">
@@ -1422,7 +1424,9 @@
                     html: |-
                         <div class="lengend horizontal">
                             <div class="item">
-                                <div class="dot success"></div>
+                                <div class="dot success">
+                                    <div class="text">✓</div>
+                                </div>
                                 <div class="label">Tests Pass</div>
                             </div>
                             <div class="item">
@@ -1439,7 +1443,9 @@
                     html: |-
                         <div class="lengend timeline">
                             <div class="item">
-                                <div class="dot success"></div>
+                                <div class="dot success">
+                                    <div class="text">✓</div>
+                                </div>
                                 <div class="label">Tests Pass</div>
                             </div>
                             <div class="item">

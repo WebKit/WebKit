@@ -43,6 +43,13 @@ const stateToIDMapping = {
     PASS: 0x40,
 };
 
+const TestResultsSymbolMap = {
+    success: '✓',
+    failed: '𝖷',
+    timedout: '⎋',
+    crashed: '!',
+}
+
 class Expectations
 {
     static stringToStateId(string) {
@@ -543,6 +550,7 @@ class TimelineFromEndpoint {
 
                 let tag = null;
                 let color = colorMap.success;
+                let symbol = TestResultsSymbolMap.success;
                 if (data.stats) {
                     tag = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
 
@@ -555,20 +563,24 @@ class TimelineFromEndpoint {
                     }
 
                     failureTypeOrder.forEach(type => {
-                        if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0)
+                        if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0) {
                             color = colorMap[type];
+                            symbol = TestResultsSymbolMap[type];
+                        }
                     });
                 } else {
                     let resultId = Expectations.stringToStateId(data.actual);
                     if (willFilterExpected)
                         resultId = Expectations.stringToStateId(Expectations.unexpectedResults(data.actual, data.expected));
                     failureTypeOrder.forEach(type => {
-                        if (Expectations.stringToStateId(failureTypeMapping[type]) >= resultId)
+                        if (Expectations.stringToStateId(failureTypeMapping[type]) >= resultId) {
                             color = colorMap[type];
+                            symbol = TestResultsSymbolMap[type];
+                        }
                     });
                 }
 
-                return drawDot(context, x, y, false, tag ? tag : null, false, color);
+                return drawDot(context, x, y, false, tag ? tag : null, symbol, false, color);
             },
         };
 
@@ -790,7 +802,7 @@ function Legend(callback=null, plural=false) {
     let result = `<br>
          <div class="lengend timeline">
             <div class="item">
-                <div class="dot success"></div>
+                <div class="dot success"><div class="text">${TestResultsSymbolMap.success}</div></div>
                 ${LegendLabel(
                     updateLabelEvents,
                     plural ? 'No unexpected results' : 'Result expected',
@@ -798,7 +810,7 @@ function Legend(callback=null, plural=false) {
                 )}
             </div>
             <div class="item">
-                <div class="dot failed"></div>
+                <div class="dot failed"><div class="text">${TestResultsSymbolMap.failed}</div></div>
                 ${LegendLabel(
                     updateLabelEvents,
                     plural ? 'Some tests unexpectedly failed' : 'Unexpectedly failed',
@@ -806,7 +818,7 @@ function Legend(callback=null, plural=false) {
                 )}
             </div>
             <div class="item">
-                <div class="dot timeout"></div>
+                <div class="dot timeout"><div class="text">${TestResultsSymbolMap.timedout}</div></div>
                 ${LegendLabel(
                     updateLabelEvents,
                     plural ? 'Some tests unexpectedly timed out' : 'Unexpectedly timed out',
@@ -814,7 +826,7 @@ function Legend(callback=null, plural=false) {
                 )}
             </div>
             <div class="item">
-                <div class="dot crash"></div>
+                <div class="dot crash"><div class="text">${TestResultsSymbolMap.crashed}</div></div>
                 ${LegendLabel(
                     updateLabelEvents,
                     plural ? 'Some tests unexpectedly crashed' : 'Unexpectedly crashed',

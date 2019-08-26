@@ -1,3 +1,15 @@
+2019-08-26  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org Timline] Add symbols to the timeline dot
+        https://bugs.webkit.org/show_bug.cgi?id=201105
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (Timeline.CanvasSeriesComponent): Modify the drawDot api to provide user ability to add symbol to the dots, it supports unicode symbol
+        * resultsdbpy/resultsdbpy/view/templates/base.html: Add the encoding UTF-8 for the page, so that we can add unicode symbol to the dots
+
 2019-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, remove useMaximalFlushInsertionPhase use

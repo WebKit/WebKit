@@ -25,6 +25,7 @@ from argparse import ArgumentParser
 import jinja2
 import yaml
 import sys
+import codecs
 
 html_template = jinja2.Template("""
 <!-- This file is auto generated, please do not modify it directly -->
@@ -35,6 +36,7 @@ html_template = jinja2.Template("""
         <link rel="stylesheet" href="webkit.css"></link>
         <link rel="shortcut icon" sizes="32x32" type="image/x-icon" href="https://webkit.org/favicon.ico">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+        <meta charset="UTF-8">
     </head>
     <body>
     <!-- example topbar -->
@@ -135,7 +137,7 @@ def main():
 
     with open(args.yaml) as input_f:
         docs_cfg = yaml.load(input_f)
-        with open(args.output, 'w') as output_f:
+        with codecs.open(args.output, 'w', "utf-8") as output_f:
             output_f.write(html_template.render(sections=docs_cfg));
             print("Output to {}".format(args.output))
 

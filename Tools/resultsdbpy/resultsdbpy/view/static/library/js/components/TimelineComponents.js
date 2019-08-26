@@ -215,7 +215,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     let fontFamily = computedStyle.getPropertyValue('font-family');
     let defaultDotColor = computedStyle.getPropertyValue('--greenLight').trim();
     let defaultEmptyLineColor = computedStyle.getPropertyValue('--grey').trim();
-    let defaultFontSize = parseInt(computedStyle.getPropertyValue('--tinySize'));
+    let defaultInnerLableColor = computedStyle.getPropertyValue('--white').trim();
+    let defaultFontSize = 10;
 
     // Get configuration
     // Default order is left is biggest
@@ -228,24 +229,44 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     const tagHeight = defaultFontSize;
     const height = option.height ? option.height : 2 * radius + tagHeight;
     const colorBatchRender = new ColorBatchRender();
+    let drawLabelsSeqs = [];
 
     // Draw dot api can be used in user defined render function
-    const drawDot = (context, x, y, isEmpty, tag = null, useRadius, color, emptylineColor) => {
+    const drawDot = (context, x, y, isEmpty, tag = null, innerLabel, useRadius, color, innerLabelColor, emptylineColor) => {
         useRadius = useRadius ? useRadius : radius;
         color = color ? color : defaultDotColor;
         emptylineColor = emptylineColor ? emptylineColor : defaultEmptyLineColor;
+        innerLabelColor = innerLabelColor ? innerLabelColor : defaultInnerLableColor;
+        const fontSize = useRadius * 1.5;
+        const baselineY = y + useRadius;
         if (!isEmpty) {
             // Draw the dot
             colorBatchRender.lazyCreateColorSeqs(color, (context) => {
                 context.beginPath();
+                drawLabelsSeqs = [];
             }, (context, color) => {
                 context.fillStyle = color;
                 context.fill();
+                context.font = `${fontSize}px ${fontFamily}`;
+                context.textBaseline = "top";
+                context.textAlign = "center";
+                context.fontWeight = 400;
+                context.fillStyle = innerLabelColor;
+                drawLabelsSeqs.forEach(seq => seq());
             });
             colorBatchRender.addSeq(color, (context, color) => {
-                context.arc(x + dotMargin + radius, y, radius, 0, 2 * Math.PI);
+                context.arc(x + dotMargin + useRadius, baselineY, useRadius, 0, 2 * Math.PI);
+                if (typeof innerLabel === "number" || typeof innerLabel === "string") {
+                    drawLabelsSeqs.push(() => {
+                        // Draw the inner label
+                        const innerLabelSize = context.measureText(innerLabel);
+                        const fontHeight = innerLabelSize.fontBoundingBoxAscent + innerLabelSize.fontBoundingBoxDescent;
+                        const actualHeight = innerLabelSize.actualBoundingBoxAscent + innerLabelSize.actualBoundingBoxDescent;
+                        const realStartGap = innerLabelSize.fontBoundingBoxAscent - innerLabelSize.actualBoundingBoxAscent;
+                        context.fillText(innerLabel, x + dotMargin + useRadius, y - realStartGap + useRadius - (actualHeight < fontHeight ?  actualHeight : fontHeight) / 2);
+                    });
+                }
             });
-
         } else {
             // Draw the empty
             colorBatchRender.lazyCreateColorSeqs(emptylineColor, (context) => {
@@ -255,19 +276,21 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                 context.stroke();
             });
             colorBatchRender.addSeq(emptylineColor, (context) => {
-                context.moveTo(x + dotMargin, y);
-                context.lineTo(x + dotMargin + 2 * radius, y);
+                context.moveTo(x + dotMargin, baselineY);
+                context.lineTo(x + dotMargin + 2 * useRadius, baselineY);
                 context.lineWidth = 1;
             });
         }
 
         // Draw the tag
         if (typeof tag === "number" || typeof tag === "string") {
-            context.font = `${fontFamily} ${defaultFontSize}px`;
+            context.font = `${defaultFontSize}px ${fontFamily}`;
             context.fillStyle = color;
-            const tagSize = context.measureText(tag);
-            context.fillText(tag, x + dotMargin + radius - tagSize.width / 2, radius * 2 + tagSize.emHeightAscent);
+            context.textAlign = "center";
+            context.textBaseline = "top";
+            context.fillText(tag, x + dotMargin + radius, baselineY + useRadius);
         }
+        
     };
     const render = typeof option.renderFactory === "function" ? option.renderFactory(drawDot) : (dot, context, x, y) => drawDot(context, x, y, !dot);
     const sortData = option.sortData === true ? option.sortData : false;
@@ -349,13 +372,13 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         for (let i = startScalesIndex; i <= endScalesIndex; i++) {
             let x = i * dotWidth - scrollLeft;
             if (currentDotIndex < dots.length && comp(scales[i], getScale(dots[currentDotIndex])) === 0) {
-                render(dots[currentDotIndex], context, x, radius);
+                render(dots[currentDotIndex], context, x, 0);
                 dots[currentDotIndex]._dotCenter = {x: x + dotMargin + radius, y: radius};
                 dots[currentDotIndex]._cachedScrollLeft = scrollLeft;
                 inCacheDots.push(dots[currentDotIndex]);
                 currentDotIndex += 1;
             } else
-                render(null, context, x, radius);
+                render(null, context, x, 0);
         }
         colorBatchRender.batchRender(context);
     };

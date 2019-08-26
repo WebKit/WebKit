@@ -2128,39 +2128,56 @@ pre {
   margin: 4px;
   display: flex;
   vertical-align: middle;
+  align-items: center;
 }
 
 .lengend>.item .dot{
-  width: var(--tinySize);
-  height: var(--tinySize);
-  border-radius: var(--tinySize);
+  width: var(--smallSize);
+  height: var(--smallSize);
+  border-radius: var(--smallSize);
+  font-size: calc(var(--tinySize));
+  text-align: middle;
   flex: none;
   vertical-align: middle;
   align-items: center;
   display: flex;
   margin: 0 var(--tinySize);
+  position: relative;
+}
+.lengend>.item .dot .text {
+  font-size: calc(var(--tinySize));
+  font-weight: 400;
+  text-align: center;
+  width: var(--smallSize);
+  height: var(--smallSize);
+  display: inline-block;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
 }
 .timeline.lengend>.item .dot::before{
-  margin-left: calc(0px - var(--tinySize));
+  left: calc(0px - var(--tinySize));
   width: var(--tinySize);
   content: "";
   height: 1px;
   background: var(--borderColorInlineElement);
   display: inline-block;
   flex: none;
+  position: absolute;
 }
 .timeline.lengend>.item .dot::after{
-  margin-left: var(--tinySize);
+  right: calc(0px - var(--tinySize));
   width: var(--tinySize);
   content: "";
   height: 1px;
   background: var(--borderColorInlineElement);
   display: inline-block;
   flex: none;
+  position: absolute;
 }
 .lengend>.item .label{
   font-size: var(--tinySize);
-  line-height: 1;
   padding: 0 4px;
 }
 
