@@ -832,7 +832,7 @@ String localizedMediaControlElementHelpText(const String& name)
     if (name == "RewindButton")
         return WEB_UI_STRING("seek movie back 30 seconds", "accessibility help text for jump back 30 seconds button");
     if (name == "ReturnToRealtimeButton")
-        return WEB_UI_STRING("return streaming movie to real time", "accessibility help text for return streaming movie to real time button");
+        return WEB_UI_STRING("resume real time streaming", "accessibility help text for return streaming movie to real time button");
     if (name == "CurrentTimeDisplay")
         return WEB_UI_STRING("current movie time in seconds", "accessibility help text for elapsed time display");
     if (name == "TimeRemainingDisplay")

@@ -1316,7 +1316,7 @@
 "reset content" = "reset content";
 
 /* accessibility help text for return streaming movie to real time button */
-"return streaming movie to real time" = "return streaming movie to real time";
+"resume real time streaming" = "resume real time streaming";
 
 /* accessibility label for return to real time button */
 "return to realtime" = "return to realtime";

@@ -1,3 +1,19 @@
+2019-08-26  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (18E140): “return streaming movie to real time” suggesting “resume real time streaming”
+        https://bugs.webkit.org/show_bug.cgi?id=201108
+        <rdar://problem/46372525>
+
+        Reviewed by Eric Carlson.
+
+        Update Localizable.strings.
+
+        No new test.
+
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::localizedMediaControlElementHelpText):
+
 2019-08-26  Youenn Fablet  <youenn@apple.com>
 
         CacheStorageConnection::computeRealBodySize is not thread-safe
