@@ -1,3 +1,10 @@
+2019-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, remove useMaximalFlushInsertionPhase use
+        https://bugs.webkit.org/show_bug.cgi?id=201036
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-08-26  David Kilzer  <ddkilzer@apple.com>
 
         Don't compute upconverted characters twice in buildQuery() in DataDetection.mm

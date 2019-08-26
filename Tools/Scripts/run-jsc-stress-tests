@@ -776,8 +776,8 @@ def runNoCJIT(*optionalTestSpecificOptions)
     run("no-cjit", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runDFGMaximalFlushPhase(*optionalTestSpecificOptions)
-    run("dfg-maximal-flush-validate-no-cjit", "--forceCodeBlockToJettisonDueToOldAge=true", "--validateGraph=true", "--useMaximalFlushInsertionPhase=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+def runEagerJettisonNoCJIT(*optionalTestSpecificOptions)
+    run("eager-jettison-no-cjit", "--forceCodeBlockToJettisonDueToOldAge=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runShadowChicken(*optionalTestSpecificOptions)
@@ -802,7 +802,7 @@ def defaultRun
             runDFGEager
             if $mode != "basic"
                 runDFGEagerNoCJITValidate
-                runDFGMaximalFlushPhase
+                runEagerJettisonNoCJIT
             end
 
             return if !$isFTLPlatform
@@ -834,7 +834,7 @@ def defaultNoNoLLIntRun
             runDFGEager
             if $mode != "basic"
                 runDFGEagerNoCJITValidate
-                runDFGMaximalFlushPhase
+                runEagerJettisonNoCJIT
             end
 
             return if !$isFTLPlatform
@@ -879,7 +879,7 @@ end
 
 def defaultSpotCheck
     defaultSpotCheckNoMaximalFlush
-    runDFGMaximalFlushPhase
+    runEagerJettisonNoCJIT
 end
 
 # This is expected to not do eager runs because eager runs can have a lot of recompilations
@@ -912,7 +912,7 @@ def defaultNoSamplingProfilerRun
         runNoCJITCollectContinuously if shouldCollectContinuously?
         runDFGEager
         runDFGEagerNoCJITValidate
-        runDFGMaximalFlushPhase
+        runEagerJettisonNoCJIT
 
         return if !$isFTLPlatform
 
