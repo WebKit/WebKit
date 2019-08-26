@@ -1,3 +1,16 @@
+2019-08-26  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Cap the number of automatically booted simulators at 12
+        https://bugs.webkit.org/show_bug.cgi?id=201139
+
+        Reviewed by Aakash Jain.
+
+        To make local development with simulators more pleasant, machines should
+        never automatically boot more than 12 simulators.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.max_supported_simulators):
+
 2019-08-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add EWS queue for applying watchlist

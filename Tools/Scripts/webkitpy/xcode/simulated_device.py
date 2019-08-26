@@ -67,6 +67,10 @@ class SimulatedDeviceManager(object):
     MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 6 * (1024 ** 3)  # 6GB a simulator.
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 125
 
+    # Testing on iMac Pros has indicated that more than 12 simulators, even if we seem to have enough resources for them,
+    # results in diminishing returns.
+    MAX_NUMBER_OF_SIMULATORS = 12
+
     xcrun = '/usr/bin/xcrun'
     simulator_device_path = '~/Library/Developer/CoreSimulator/Devices'
     simulator_bundle_id = 'com.apple.iphonesimulator'
@@ -417,7 +421,11 @@ class SimulatedDeviceManager(object):
         except (ValueError, ScriptError):
             return 0
 
-        max_supported_simulators_for_hardware = min(host.executive.cpu_count() / 2, host.platform.total_bytes_memory() // SimulatedDeviceManager.MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE)
+        max_supported_simulators_for_hardware = min(
+            host.executive.cpu_count() // 2,
+            host.platform.total_bytes_memory() // SimulatedDeviceManager.MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE,
+            SimulatedDeviceManager.MAX_NUMBER_OF_SIMULATORS,
+        )
         max_supported_simulators_locally = (system_process_count_limit - current_process_count) // SimulatedDeviceManager.PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE
 
         if (max_supported_simulators_locally < max_supported_simulators_for_hardware):
