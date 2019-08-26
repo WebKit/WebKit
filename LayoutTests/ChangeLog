@@ -1,5 +1,18 @@
 2019-08-26  Russell Epstein  <repstein@apple.com>
 
+        Unreviewed, rolling out r248961.
+
+        Same patch was re-landed after being rolled out. Patch is
+        causing Catalina/iOS 13 test failures. Rolling out.
+
+        Reverted changeset:
+
+        "Verify Prefetch and credential behavior"
+        https://bugs.webkit.org/show_bug.cgi?id=200000
+        https://trac.webkit.org/changeset/248961
+
+2019-08-26  Russell Epstein  <repstein@apple.com>
+
         rdar://51857070 (iPad: Many fast/text-autosizing layout tests are consistently failing)
 
         Unreviewed Test Gardening.

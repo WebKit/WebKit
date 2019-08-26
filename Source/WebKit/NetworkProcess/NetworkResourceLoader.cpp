@@ -221,6 +221,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
         if (auto* session = m_connection->networkProcess().networkSession(sessionID())) {
             if (auto entry = session->prefetchCache().take(request.url())) {
+                // FIXME: Deal with credentials (https://bugs.webkit.org/show_bug.cgi?id=200000)
                 if (!entry->redirectRequest.isNull()) {
                     auto cacheEntry = m_cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
                     retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
@@ -499,13 +500,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         return completionHandler(PolicyAction::Use);
     }
 
-    if (isCrossOriginPrefetch()) {
-        if (response.httpHeaderField(HTTPHeaderName::Vary).contains("Cookie")) {
-            abort();
-            return completionHandler(PolicyAction::Ignore);
-        }
+    if (isCrossOriginPrefetch())
         return completionHandler(PolicyAction::Use);
-    }
 
     // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
     // a main resource because the embedding client must decide whether to allow the load.

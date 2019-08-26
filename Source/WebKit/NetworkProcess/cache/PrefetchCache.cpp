@@ -65,9 +65,7 @@ std::unique_ptr<PrefetchCache::Entry> PrefetchCache::take(const URL& url)
     m_sessionExpirationList.removeAllMatching([&url] (const auto& tuple) {
         return std::get<0>(tuple) == url;
     });
-    auto entry = resources->take(url);
-    ASSERT(!entry || !entry->response.httpHeaderField(WebCore::HTTPHeaderName::Vary).contains("Cookie"));
-    return entry;
+    return resources->take(url);
 }
 
 static const Seconds expirationTimeout { 5_s };
