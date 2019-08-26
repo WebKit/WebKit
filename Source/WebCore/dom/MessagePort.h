@@ -44,7 +44,7 @@ namespace WebCore {
 
 class Frame;
 
-class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MessagePort> {
+class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MessagePort, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_NONCOPYABLE(MessagePort);
     WTF_MAKE_ISO_ALLOCATED(MessagePort);
 public:
