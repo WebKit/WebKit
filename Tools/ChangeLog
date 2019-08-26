@@ -1,3 +1,22 @@
+2019-08-26  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Allow clicking on the tooltip arrow
+        https://bugs.webkit.org/show_bug.cgi?id=201103
+
+        Rubber-stamped by Aakash Jain.
+
+        By design, the arrow sits above the canvas and intercepts mouse events from it.
+        This will often make an element that has a tooltip unclickable.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale):
+        (TimelineFromEndpoint.prototype.render.onDotEnterFactory):
+        (TimelineFromEndpoint.prototype.render):
+        * resultsdbpy/resultsdbpy/view/static/js/tooltip.js:
+        (_ToolTip):
+        (_ToolTip.prototype.toString): Trigger onClick callback when the arrow is clicked.
+        (_ToolTip.prototype.set): Set the onClick callback.
+
 2019-08-26  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Do not append additional '(failure)' string at the end of custom failure message in EWS Buildbot

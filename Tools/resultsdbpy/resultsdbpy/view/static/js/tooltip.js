@@ -35,6 +35,7 @@ class _ToolTip {
     constructor() {
         this.ref = null;
         this.arrow = null;
+        this.onArrowClick = null;
     }
     toString() {
         const self = this;
@@ -99,7 +100,17 @@ class _ToolTip {
             onStateUpdate: (element, stateDiff, state) => {
                 if (!state.direction || !state.location) {
                     element.style.display = 'none';
+                    element.onclick = null;
+                    element.style.cursor = null;
                     return;
+                }
+
+                if (self.onArrowClick) {
+                    element.onclick = self.onArrowClick;
+                    element.style.cursor = 'pointer';
+                } else {
+                    element.onclick = null;
+                    element.style.cursor = null;
                 }
 
                 element.classList = [`tooltip arrow-${state.direction}`];
@@ -116,7 +127,7 @@ class _ToolTip {
             <div class="tooltip-content" ref="${this.ref}">
             </div>`;
     }
-    set(content, points) {
+    set(content, points, onArrowClick = null) {
         if (!this.ref) {
             console.error('Cannot set ToolTip content, no tooltip on the page');
             return;
@@ -125,7 +136,7 @@ class _ToolTip {
             console.error('Tool tips require a location');
             return;
         }
-        
+        this.onArrowClick = onArrowClick;
         this.ref.setState({content: content, points: points});
     }
     unset() {

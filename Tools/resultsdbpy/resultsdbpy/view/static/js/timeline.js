@@ -205,21 +205,23 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
         });
     }
 
+    function onScaleClick(node) {
+        if (!node.label.id)
+            return;
+        let params = {
+            branch: node.label.branch ? [node.label.branch] : queryToParams(document.URL.split('?')[1]).branch,
+            uuid: [node.label.uuid],
+        }
+        if (!params.branch)
+            delete params.branch;
+        const query = paramsToQuery(params);
+        window.open(`/commit?${query}`, '_blank');
+    }
+
     return Timeline.CanvasXAxisComponent(scaleForRepository(scale), {
         isTop: isTop,
         height: 130,
-        onScaleClick: (node) => {
-            if (!node.label.id)
-                return;
-            let params = {
-                branch: node.label.branch ? [node.label.branch] : queryToParams(document.URL.split('?')[1]).branch,
-                uuid: [node.label.uuid],
-            }
-            if (!params.branch)
-                delete params.branch;
-            const query = paramsToQuery(params);
-            window.open(`/commit?${query}`, '_blank');
-        },
+        onScaleClick: onScaleClick,
         onScaleEnter: (node, event, canvas) => {
             const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
             ToolTip.set(
@@ -230,7 +232,8 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
                 </div>`,
                 node.tipPoints.map((point) => {
                     return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
-                })
+                }),
+                (event) => {return onScaleClick(node);},
             );
         },
         onScaleLeave: (event, canvas) => {
@@ -620,7 +623,8 @@ class TimelineFromEndpoint {
                     </div>`,
                     data.tipPoints.map((point) => {
                         return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
-                    })
+                    }),
+                    (event) => {onDotClickFactory(configuration)(data);},
                 );
             }
         }
