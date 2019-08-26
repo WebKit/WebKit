@@ -1,3 +1,55 @@
+2019-08-26  Sam Weinig  <weinig@apple.com>
+
+        [WHLSL] TypeNamer can be simplified by replacing BaseTypeNameNode with uniqued AST::UnnamedTypes
+        https://bugs.webkit.org/show_bug.cgi?id=200632
+
+        Reviewed by Saam Barati.
+
+        There is no longer a reason to keep a parallel tree of the UnnamedType-like objects
+        BaseTypeNameNodes. Instead, we can store a single HashMap mapping from UnnamedTypeKeys
+        to MangledTypeName, and use the the UnnamedType stored in the UnnamedTypeKey while 
+        emitting the metal code. This removes the parallel BaseTypeNameNode type hierarchy
+        and removes an extra allocation for each UnnamedType. 
+
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedTypeHash.h:
+        Define HashTraits and DefaultHash specializations for UnnamedTypeKey to simplify
+        uses of UnnamedTypeKey as a key in HashMap/HashSet.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::insert): Deleted.
+        (WebCore::WHLSL::Metal::TypeNamer::generateUniquedTypeName):
+        Replace old insert function with generateUniquedTypeName, which uniques and generates
+        names for the UnnamedType and any 'parent' UnnamedTypes.
+
+        (WebCore::WHLSL::Metal::BaseTypeNameNode): Deleted.
+        Remove BaseTypeNameNode and subclasses.
+
+        (WebCore::WHLSL::Metal::TypeNamer::find): Deleted.
+        (WebCore::WHLSL::Metal::TypeNamer::createNameNode): Deleted.
+        We no longer need the find or createNameNode functions, as the UnnamedTypes can be now be
+        used directly everywhere.
+
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        Switch to directly using the UnnamedType and always have the caller pass in the mangled
+        name, since in the main emit loop, we always have access to the them. Also, inline the
+        the recursive calls to emitNamedTypeDefinition for 'parent' types to avoid unnecessary
+        extra switch over the kind getting the parent, and avoid it entirely for TypeReference
+        which never has a parent.
+        
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        Switches to now passing in the neighbors, since they are always available in the main 
+        emit loop. Also move to a switch statement rather than ifs for consistency. 
+        
+        (WebCore::WHLSL::Metal::TypeNamer::emitMetalTypeDefinitions):
+        Pass keys and values into the emit functions to avoid double lookups.
+
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForType):
+        Update to hash lookup.
+
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        Take advantage of default HashTraits and DefaultHash for UnnamedTypeKey.
+
 2019-08-26  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (18E140): “return streaming movie to real time” suggesting “resume real time streaming”

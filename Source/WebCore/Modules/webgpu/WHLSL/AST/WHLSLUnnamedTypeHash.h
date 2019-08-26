@@ -74,4 +74,13 @@ private:
 
 }
 
+namespace WTF {
+
+template<> struct HashTraits<WebCore::WHLSL::UnnamedTypeKey> : WebCore::WHLSL::UnnamedTypeKey::Traits { };
+template<> struct DefaultHash<WebCore::WHLSL::UnnamedTypeKey> {
+    typedef WebCore::WHLSL::UnnamedTypeKey::Hash Hash;
+};
+
+} // namespace WTF
+
 #endif

@@ -86,7 +86,7 @@ public:
         Visitor::visit(nativeTypeDeclaration);
     }
 
-    HashSet<UnnamedTypeKey, UnnamedTypeKey::Hash, UnnamedTypeKey::Traits> takeUnnamedTypes()
+    HashSet<UnnamedTypeKey> takeUnnamedTypes()
     {
         return WTFMove(m_unnamedTypes);
     }
@@ -107,7 +107,7 @@ private:
         m_namedTypes.append(type);
     }
 
-    HashSet<UnnamedTypeKey, UnnamedTypeKey::Hash, UnnamedTypeKey::Traits> m_unnamedTypes;
+    HashSet<UnnamedTypeKey> m_unnamedTypes;
     Vector<std::reference_wrapper<AST::NamedType>> m_namedTypes;
 };
 

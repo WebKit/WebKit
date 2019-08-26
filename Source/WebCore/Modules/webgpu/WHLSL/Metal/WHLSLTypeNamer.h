@@ -62,7 +62,7 @@ public:
 
     void emitMetalTypes(StringBuilder&);
 
-    // Must be called after calling metalTypes().
+    // Must be called after calling emitMetalTypes().
     String mangledNameForType(AST::NativeTypeDeclaration&);
     MangledTypeName mangledNameForType(AST::UnnamedType&);
     MangledOrNativeTypeName mangledNameForType(AST::NamedType&);
@@ -83,20 +83,17 @@ private:
 
     MangledEnumerationMemberName generateNextEnumerationMemberName() { return { m_enumerationMemberCount++ }; }
 
-    void emitNamedTypeDefinition(StringBuilder&, AST::NamedType&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
-    void emitUnnamedTypeDefinition(StringBuilder&, BaseTypeNameNode&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
+    void emitNamedTypeDefinition(StringBuilder&, AST::NamedType&, Vector<std::reference_wrapper<AST::UnnamedType>>&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes);
+    void emitUnnamedTypeDefinition(StringBuilder&, AST::UnnamedType&, MangledTypeName, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes);
     void emitMetalTypeDeclarations(StringBuilder&);
     void emitMetalTypeDefinitions(StringBuilder&);
 
-    std::unique_ptr<BaseTypeNameNode> createNameNode(AST::UnnamedType&, BaseTypeNameNode* parent);
-    BaseTypeNameNode* insert(AST::UnnamedType&);
-    BaseTypeNameNode& find(AST::UnnamedType&);
+    void generateUniquedTypeName(AST::UnnamedType&);
 
     Program& m_program;
-    HashMap<UnnamedTypeKey, std::unique_ptr<BaseTypeNameNode>, UnnamedTypeKey::Hash, UnnamedTypeKey::Traits> m_unnamedTypesUniquingMap;
-    HashMap<AST::UnnamedType*, BaseTypeNameNode*> m_unnamedTypeMapping;
+    HashMap<UnnamedTypeKey, MangledTypeName> m_unnamedTypeMapping;
     HashMap<AST::NamedType*, MangledTypeName> m_namedTypeMapping;
-    HashMap<AST::NamedType*, Vector<std::reference_wrapper<BaseTypeNameNode>>> m_dependencyGraph;
+    HashMap<AST::NamedType*, Vector<std::reference_wrapper<AST::UnnamedType>>> m_dependencyGraph;
     HashMap<AST::EnumerationMember*, MangledEnumerationMemberName> m_enumerationMemberMapping;
     HashMap<AST::StructureElement*, MangledStructureElementName> m_structureElementMapping;
     unsigned m_typeCount { 0 };
