@@ -33,7 +33,7 @@ from buildbot.util import identifiers as buildbot_identifiers
 from factories import (APITestsFactory, BindingsFactory, BuildFactory, Factory, GTKFactory,
                        JSCTestsFactory, StyleFactory, TestFactory, WPEFactory, WebKitPerlFactory,
                        WebKitPyFactory, WinCairoFactory, WindowsFactory, iOSBuildFactory, iOSTestsFactory,
-                       macOSBuildFactory, macOSWK1Factory, macOSWK2Factory, ServicesFactory)
+                       macOSBuildFactory, macOSWK1Factory, macOSWK2Factory, ServicesFactory, WatchListFactory)
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50

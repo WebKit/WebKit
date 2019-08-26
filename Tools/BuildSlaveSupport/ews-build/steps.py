@@ -1580,3 +1580,21 @@ class PrintConfiguration(steps.ShellSequence):
             xcode_version = match.group(1).strip()
             configuration += u', Xcode: {}'.format(xcode_version)
         return {u'step': configuration}
+
+
+class ApplyWatchList(shell.ShellCommand):
+    name = 'apply-watch-list'
+    description = ['applying watchilist']
+    descriptionDone = ['Applied WatchList']
+    bug_id = WithProperties('%(bug_id)s')
+    command = ['python', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', bug_id]
+    haltOnFailure = True
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to apply watchlist'}
+        return super(ApplyWatchList, self).getResultSummary()

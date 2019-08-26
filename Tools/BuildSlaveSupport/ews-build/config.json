@@ -287,6 +287,13 @@
       "workernames": ["ews151"]
     },
     {
+      "name": "Apply-WatchList-EWS",
+      "shortname": "watchlist",
+      "factory": "WatchListFactory",
+      "platform": "*",
+      "workernames": ["webkit-misc"]
+    },
+    {
       "name": "GTK-Webkit2-EWS",
       "shortname": "gtk",
       "factory": "GTKFactory",
@@ -453,7 +460,7 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
+      "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
                        "macOS-High-Sierra-Debug-Build-EWS", "macOS-High-Sierra-Release-Build-EWS",
                        "Services-EWS", "Style-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
     },

@@ -1,3 +1,20 @@
+2019-08-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add EWS queue for applying watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=201072
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ApplyWatchList): Build step to apply watchlist.
+        (ApplyWatchList.__init__): Set logEnviron to False.
+        (ApplyWatchList.getResultSummary): Updated the description in case of failure.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (WatchListFactory): Build factory for WatchList.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        * BuildSlaveSupport/ews-build/config.json:
+
 2019-08-26  Youenn Fablet  <youenn@apple.com>
 
         Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages
