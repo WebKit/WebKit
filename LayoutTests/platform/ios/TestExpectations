@@ -3332,10 +3332,6 @@ fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [
 platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html [ Timeout ]
 platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html [ Timeout ]
 
-# <rdar://problem/52699129> fast/forms/datalist/datalist-show-hide.html and fast/forms/datalist/datalist-textinput-suggestions-order.html are timing out on iOS 13
-fast/forms/datalist/datalist-show-hide.html [ Timeout ]
-fast/forms/datalist/datalist-textinput-suggestions-order.html [ Timeout ]
-
 # <rdar://problem/52594556> REGRESSION: Layout test fast/text/international/system-language/han-quotes.html is failing
 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 

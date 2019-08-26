@@ -1,5 +1,11 @@
 2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, unmark two datalist tests as timing out on iOS 13 after r249112
+
+        * platform/ios/TestExpectations:
+
+2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         REGRESSION (iOS 13): Tests that simulate multiple back-to-back single taps fail or time out
         https://bugs.webkit.org/show_bug.cgi?id=201129
         <rdar://problem/51857277>
