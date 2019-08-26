@@ -1,5 +1,20 @@
 2019-08-26  Youenn Fablet  <youenn@apple.com>
 
+        CacheStorageConnection::computeRealBodySize is not thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=201074
+
+        Reviewed by Chris Dumez.
+
+        In case of a form data, the size computation might require sync IPC to the network process which is not thread-safe
+        In that case, hop to the main thread to compute the size of the body.
+        Covered by existing service worker tests in Debug mode.
+
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::formDataSize):
+        (WebCore::CacheStorageConnection::computeRealBodySize):
+
+2019-08-26  Youenn Fablet  <youenn@apple.com>
+
         MessagePort should be WeakPtrFactoryInitialization::Eager
         https://bugs.webkit.org/show_bug.cgi?id=201073
 
