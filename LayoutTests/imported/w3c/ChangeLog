@@ -1,3 +1,15 @@
+2019-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/browsers/the-window-object from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201145
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/html/browsers/the-window-object from upstream 552bd3bf8bc1be.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/browsers/the-window-object/*:
+
 2019-08-26  Youenn Fablet  <youenn@apple.com>
 
         Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages

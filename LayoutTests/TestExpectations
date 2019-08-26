@@ -239,6 +239,10 @@ imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
 
+# Requires BroadcastChannel.
+imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.html [ Skip ]
+
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 

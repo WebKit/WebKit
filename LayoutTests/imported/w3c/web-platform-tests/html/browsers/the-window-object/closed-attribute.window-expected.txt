@@ -1,10 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS closed and same-origin nested browsing context 
 PASS closed/close() and same-origin auxiliary browsing context 
-TIMEOUT closed and cross-origin nested browsing context Test timed out
-TIMEOUT closed/close() and cross-origin auxiliary browsing context Test timed out
-TIMEOUT closed and cross-site nested browsing context Test timed out
-TIMEOUT closed/close() and cross-site auxiliary browsing context Test timed out
+PASS closed and cross-origin nested browsing context 
+PASS closed/close() and cross-origin auxiliary browsing context 
+PASS closed and cross-site nested browsing context 
+PASS closed/close() and cross-site auxiliary browsing context 
 

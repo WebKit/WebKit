@@ -24,10 +24,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/historical.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/length-attribute.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/name-attribute.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/self-et-al.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-aliases.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-defaults.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noreferrer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-properties.https.html
