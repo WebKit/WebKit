@@ -1,3 +1,15 @@
+2019-08-26  David Kilzer  <ddkilzer@apple.com>
+
+        Don't compute upconverted characters twice in buildQuery() in DataDetection.mm
+        <https://webkit.org/b/201144>
+        <rdar://problem/54689399>
+
+        Reviewed by Brent Fulgham.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::buildQuery): Extract common variables to prevent double
+        conversion for 8-bit strings.
+
 2019-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Go back to ID2D1Bitmap as our NativeImage type

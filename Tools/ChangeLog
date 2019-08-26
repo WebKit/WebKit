@@ -1,3 +1,16 @@
+2019-08-26  David Kilzer  <ddkilzer@apple.com>
+
+        Don't compute upconverted characters twice in buildQuery() in DataDetection.mm
+        <https://webkit.org/b/201144>
+        <rdar://problem/54689399>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add
+        DataDetectorsTestIOS.mm to the project.
+        * TestWebKitAPI/Tests/ios/DataDetectorsTestIOS.mm: Add a new
+        test for Data Detectors for phone numbers.
+
 2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (iOS 13): Tests that simulate multiple back-to-back single taps fail or time out
