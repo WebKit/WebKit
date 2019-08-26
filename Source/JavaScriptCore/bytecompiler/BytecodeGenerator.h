@@ -960,7 +960,8 @@ namespace JSC {
         void popFinallyControlFlowScope();
 
         void pushOptionalChainTarget();
-        void popOptionalChainTarget(RegisterID* dst, bool isDelete = false);
+        void popOptionalChainTarget();
+        void popOptionalChainTarget(RegisterID* dst, bool isDelete);
         void emitOptionalCheck(RegisterID* src);
 
         void pushIndexedForInScope(RegisterID* local, RegisterID* index);

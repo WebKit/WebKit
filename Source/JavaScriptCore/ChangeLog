@@ -1,3 +1,46 @@
+2019-08-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Ensure x?.y ?? z is fast
+        https://bugs.webkit.org/show_bug.cgi?id=200875
+
+        Reviewed by Yusuke Suzuki.
+
+        We anticipate `x?.y ?? z` to quickly become a common idiom in JS. With a little bytecode rearrangement,
+        we can avoid the "load undefined and check it" dance in the middle and just turn this into two jumps.
+
+        Before:
+                (get x)
+          ----- jundefined_or_null
+          |     (get y)
+          | --- jmp
+          > |   (load undefined)
+            > - jnundefined_or_null
+              | (get z)
+              > end
+
+        After:
+                (get x)
+            --- jundefined_or_null
+            |   (get y)
+            | - jnundefined_or_null
+            > | (get z)
+              > end
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::popOptionalChainTarget): Added specialization.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CoalesceNode::emitBytecode):
+        (JSC::OptionalChainNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeDeleteNode):
+        (JSC::ASTBuilder::makeCoalesceNode): Added.
+        (JSC::ASTBuilder::makeBinaryNode):
+        * parser/NodeConstructors.h:
+        (JSC::CoalesceNode::CoalesceNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isDeleteNode const): Added. (Replaces OptionalChainNode::m_isDelete.)
+
 2019-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Missing media controls when WebKit is built with Python3

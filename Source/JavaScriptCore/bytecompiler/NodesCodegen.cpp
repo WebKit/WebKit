@@ -2408,13 +2408,18 @@ void LogicalOpNode::emitBytecodeInConditionContext(BytecodeGenerator& generator,
 RegisterID* CoalesceNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> temp = generator.tempDestination(dst);
-    Ref<Label> target = generator.newLabel();
+    Ref<Label> endLabel = generator.newLabel();
 
+    if (m_hasAbsorbedOptionalChain)
+        generator.pushOptionalChainTarget();
     generator.emitNode(temp.get(), m_expr1);
-    generator.emitJumpIfFalse(generator.emitIsUndefinedOrNull(generator.newTemporary(), temp.get()), target.get());
-    generator.emitNodeInTailPosition(temp.get(), m_expr2);
-    generator.emitLabel(target.get());
+    generator.emitJumpIfFalse(generator.emitIsUndefinedOrNull(generator.newTemporary(), temp.get()), endLabel.get());
 
+    if (m_hasAbsorbedOptionalChain)
+        generator.popOptionalChainTarget();
+    generator.emitNodeInTailPosition(temp.get(), m_expr2);
+
+    generator.emitLabel(endLabel.get());
     return generator.move(dst, temp.get());
 }
 
@@ -2428,7 +2433,7 @@ RegisterID* OptionalChainNode::emitBytecode(BytecodeGenerator& generator, Regist
         generator.pushOptionalChainTarget();
     generator.emitNodeInTailPosition(finalDest.get(), m_expr);
     if (m_isOutermost)
-        generator.popOptionalChainTarget(finalDest.get(), m_isDelete);
+        generator.popOptionalChainTarget(finalDest.get(), m_expr->isDeleteNode());
 
     return finalDest.get();
 }

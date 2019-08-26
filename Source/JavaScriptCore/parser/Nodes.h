@@ -205,6 +205,7 @@ namespace JSC {
         virtual bool isBytecodeIntrinsicNode() const { return false; }
         virtual bool isBinaryOpNode() const { return false; }
         virtual bool isFunctionCall() const { return false; }
+        virtual bool isDeleteNode() const { return false; }
         virtual bool isOptionalChain() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label&, Label&, FallThroughMode);
@@ -994,6 +995,8 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
+        bool isDeleteNode() const final { return true; }
+
         const Identifier& m_ident;
     };
 
@@ -1003,6 +1006,8 @@ namespace JSC {
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        bool isDeleteNode() const final { return true; }
 
         ExpressionNode* m_base;
         ExpressionNode* m_subscript;
@@ -1015,6 +1020,8 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
+        bool isDeleteNode() const final { return true; }
+
         ExpressionNode* m_base;
         const Identifier& m_ident;
     };
@@ -1025,6 +1032,8 @@ namespace JSC {
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        bool isDeleteNode() const final { return true; }
 
         ExpressionNode* m_expr;
     };
@@ -1312,13 +1321,14 @@ namespace JSC {
 
     class CoalesceNode final : public ExpressionNode {
     public:
-        CoalesceNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2);
+        CoalesceNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
         ExpressionNode* m_expr1;
         ExpressionNode* m_expr2;
+        bool m_hasAbsorbedOptionalChain;
     };
 
     class OptionalChainNode final : public ExpressionNode {
@@ -1328,8 +1338,6 @@ namespace JSC {
         void setExpr(ExpressionNode* expr) { m_expr = expr; }
         ExpressionNode* expr() const { return m_expr; }
 
-        void setIsDelete() { m_isDelete = true; }
-
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
@@ -1337,7 +1345,6 @@ namespace JSC {
 
         ExpressionNode* m_expr;
         bool m_isOutermost;
-        bool m_isDelete { false };
     };
 
     // The ternary operator, "m_logical ? m_expr1 : m_expr2"
