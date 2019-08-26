@@ -1,3 +1,12 @@
+2019-08-26  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failure after r200971
+
+        * inspector/timeline/line-column-expected.txt:
+
+        * inspector/debugger/tail-deleted-frames-this-value.html:
+        Add messages to all `InspectorTest.assert` so we can know which one is firing on the bots.
+
 2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, unmark two datalist tests as timing out on iOS 13 after r249112
