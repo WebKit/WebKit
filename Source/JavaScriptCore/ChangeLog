@@ -1,3 +1,49 @@
+2019-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Missing media controls when WebKit is built with Python3
+        https://bugs.webkit.org/show_bug.cgi?id=194367
+
+        Reviewed by Carlos Garcia Campos.
+
+        The JavaScript minifier script jsmin.py expects a text stream
+        with text type as input, but the script make-js-file-arrays.py
+        was passing to it a FileIO() object. So, when the jsmin script
+        called read() over this object, python3 was returning a type of
+        bytes, but for python2 it returns type str.
+
+        This caused two problems: first that jsmin failed to do any minifying
+        because it was comparing strings with a variable of type bytes.
+        The second major problem was in the write() function, when the
+        jsmin script tried to convert a byte character to text by calling
+        str() on it. Because what this does is not to convert from byte
+        type to string, but to simply generate a string with the format b'c'.
+        So the jsmin script was returning back as minified JS complete
+        garbage in the form of "b't'b'h'b'h'b'i" for python3.
+
+        Therefore, when WebKit was built with python3 this broke everything
+        that depended on the embedded JS code that make-js-file-arrays.py
+        was supposed to generate, like the media controls and the WebDriver
+        atoms.
+
+        Fix this by reworking the code in make-js-file-arrays script to
+        read the data from the file using a TextIOWrapper in python 3
+        with decoding for 'utf-8'. This ensures that the jsmin receives
+        a text type. For python2 keep using the same FileIO class.
+
+        On the jsmin.py script remove the problematic call to str() inside
+        the write() function when running with python3.
+        On top of that, add an extra check in jsmin.py script to make it
+        fail if the character type read is not the one expected. This
+        will cause the build to fail instead of failing silently like
+        now. I did some tests and the runtime cost of this extra check
+        is almost zero.
+
+        * Scripts/jsmin.py:
+        (JavascriptMinify.minify.write):
+        (JavascriptMinify):
+        * Scripts/make-js-file-arrays.py:
+        (main):
+
 2019-08-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create additional command line api functions for other console methods

@@ -28,12 +28,14 @@ import sys
 is_3 = sys.version_info >= (3, 0)
 if is_3:
     import io
+    python_text_type = str
 else:
     import StringIO
     try:
         import cStringIO
     except ImportError:
         cStringIO = None
+    python_text_type = basestring
 
 
 __all__ = ['jsmin', 'JavascriptMinify']
@@ -82,14 +84,15 @@ class JavascriptMinify(object):
             if str(char) in 'return':
                 self.return_buf += char
                 self.is_return = self.return_buf == 'return'
-            if sys.version_info.major == 2:
-                self.outs.write(char)
-            else:
-                self.outs.write(str(char))
+            self.outs.write(char)
             if self.is_return:
                 self.return_buf = ''
 
-        read = self.ins.read
+        def read(n):
+            char = self.ins.read(n)
+            if not isinstance(char, python_text_type):
+                raise ValueError("ERROR: The script jsmin.py can only handle text input, but it received input of type %s" % type(char))
+            return char
 
         space_strings = "abcdefghijklmnopqrstuvwxyz"\
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$\\"
