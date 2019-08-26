@@ -55,17 +55,6 @@ http/tests/paymentrequest/payment-response-retry-method.https.html [ Skip ]
 http/tests/paymentrequest/rejects_if_not_active.https.html [ Skip ]
 http/tests/paymentrequest/updateWith-method-pmi-handling.https.html [ Skip ]
 
-# <rdar://problem/51857070> iOS 13 iPad: Many fast/text-autosizing layout tests consistently failing
-fast/text/line-height-minimumFontSize-autosize.html [ Failure ]
-fast/text-autosizing/ios/anonymous-block.html [ Failure ]
-fast/text-autosizing/ios/lists.html [ Failure ]
-fast/text-autosizing/ios/overflow.html [ Failure ]
-fast/text-autosizing/ios/percent-adjust-length-line-height.html [ Failure ]
-fast/text-autosizing/ios/percent-adjust-number-line-height.html [ Failure ]
-fast/text-autosizing/ios/percent-adjust-percent-line-height.html [ Failure ]
-fast/text-autosizing/ios/autosize-width.html [ ImageOnlyFailure ]
-fast/text-autosizing/ios/text-size-adjust-inline-style.html [ ImageOnlyFailure ]
-
 # <rdar://problem/51857277> iOS 13 iPad: editing/pasteboard/ios/dom-paste-* layout tests timing out
 editing/pasteboard/ios/dom-paste-confirmation.html [ Skip ]
 editing/pasteboard/ios/dom-paste-consecutive-confirmations.html [ Skip ]

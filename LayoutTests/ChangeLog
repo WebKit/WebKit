@@ -1,3 +1,12 @@
+2019-08-26  Russell Epstein  <repstein@apple.com>
+
+        rdar://51857070 (iPad: Many fast/text-autosizing layout tests are consistently failing)
+
+        Unreviewed Test Gardening.
+        Tests are no longer failing. Removing test expectations.
+
+        * platform/ipad/TestExpectations:
+
 2019-08-26  Youenn Fablet  <youenn@apple.com>
 
         Add a WebsiteDataStore delegate to handle AuthenticationChallenge that do not come from pages
