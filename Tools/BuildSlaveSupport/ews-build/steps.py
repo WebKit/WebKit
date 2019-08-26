@@ -500,13 +500,13 @@ class TestWithFailureCount(shell.Test):
     def getResultSummary(self):
         status = self.name
 
-        if self.results != SUCCESS and self.failedTestCount:
-            status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
-
         if self.results != SUCCESS:
-            status += u' ({})'.format(Results[self.results])
+            if self.failedTestCount:
+                status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
+            else:
+                status += u' ({})'.format(Results[self.results])
 
-        return {u'step': status}
+        return {u'step': unicode(status)}
 
 
 class CheckStyle(TestWithFailureCount):

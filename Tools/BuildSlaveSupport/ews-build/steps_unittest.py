@@ -258,7 +258,7 @@ ERROR: Source/WebCore/layout/Verification.cpp:88:  Missing space before ( in whi
 Total errors found: 8 in 48 files''')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='8 style errors (failure)')
+        self.expectOutcome(result=FAILURE, state_string='8 style errors')
         return self.runStep()
 
     def test_failures_no_style_issues(self):
@@ -1866,7 +1866,7 @@ Testing completed, Exit status: 3
 ''')
             + 1,
         )
-        self.expectOutcome(result=FAILURE, state_string='1 api test failed or timed out (failure)')
+        self.expectOutcome(result=FAILURE, state_string='1 api test failed or timed out')
         return self.runStep()
 
     def test_multiple_failures_and_timeouts(self):
@@ -1922,7 +1922,7 @@ Testing completed, Exit status: 3
 ''')
             + 4,
         )
-        self.expectOutcome(result=FAILURE, state_string='4 api tests failed or timed out (failure)')
+        self.expectOutcome(result=FAILURE, state_string='4 api tests failed or timed out')
         return self.runStep()
 
     def test_unexpected_failure(self):

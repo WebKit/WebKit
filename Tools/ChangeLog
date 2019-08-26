@@ -1,3 +1,14 @@
+2019-08-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Do not append additional '(failure)' string at the end of custom failure message in EWS Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=201140
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (TestWithFailureCount.getResultSummary): Do not append (failure) when in case of custom status.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests accordingly.
+
 2019-08-26  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests: Cap the number of automatically booted simulators at 12
