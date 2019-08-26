@@ -1,3 +1,18 @@
+2019-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize computation of AbsoluteClipRects clip rects
+        https://bugs.webkit.org/show_bug.cgi?id=201148
+
+        Reviewed by Zalan Bujtas.
+
+        When adding layers to the compositing overlap map, we compute AbsoluteClipRects for every
+        layer which is expensive. This was more expensive than necessary because we converted them
+        to TemporaryClipRects when crossing painting boundaries, but AbsoluteClipRects don't
+        care about painting boundaries, so don't do this.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2019-08-26  Chris Dumez  <cdumez@apple.com>
 
         Drop WEBCORE_EXPORT from ChromeClient class

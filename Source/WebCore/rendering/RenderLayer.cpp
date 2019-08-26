@@ -5631,7 +5631,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             ClipRectsContext parentContext(clipRectsContext);
             parentContext.overlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize; // FIXME: why?
             
-            if (parentContext.clipRectsType != TemporaryClipRects && clipCrossesPaintingBoundary())
+            if ((parentContext.clipRectsType != TemporaryClipRects && parentContext.clipRectsType != AbsoluteClipRects) && clipCrossesPaintingBoundary())
                 parentContext.clipRectsType = TemporaryClipRects;
 
             parentLayer->calculateClipRects(parentContext, clipRects);
@@ -5697,7 +5697,7 @@ Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsCon
     if (clipRectsContext.clipRectsType == TemporaryClipRects)
         return temporaryParentClipRects(clipRectsContext);
 
-    if (clipCrossesPaintingBoundary()) {
+    if (clipRectsContext.clipRectsType != AbsoluteClipRects && clipCrossesPaintingBoundary()) {
         ClipRectsContext tempClipRectsContext(clipRectsContext);
         tempClipRectsContext.clipRectsType = TemporaryClipRects;
         return temporaryParentClipRects(tempClipRectsContext);
