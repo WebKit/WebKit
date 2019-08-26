@@ -26,11 +26,8 @@ import io
 import os
 from optparse import OptionParser
 import sys
-if sys.version_info.major == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
-from jsmin import JavascriptMinify
+from jsmin import jsmin
+is_3 = sys.version_info >= (3, 0)
 
 
 def stringifyCodepoint(code):
@@ -71,25 +68,34 @@ def main():
     print('#include "{0:s}"'.format(os.path.basename(headerPath)), file=sourceFile)
     print('namespace {0:s} {{'.format(namespace), file=sourceFile)
 
-    jsm = JavascriptMinify()
-
     for inputFileName in inputPaths:
-        inputStream = io.FileIO(inputFileName)
-        outputStream = StringIO()
+
+        if is_3:
+            inputStream = io.open(inputFileName, encoding='utf-8')
+        else:
+            inputStream = io.FileIO(inputFileName)
+
+        data = inputStream.read()
 
         if not options.no_minify:
-            jsm.minify(inputStream, outputStream)
-            characters = outputStream.getvalue()
+            characters = jsmin(data)
         else:
-            characters = inputStream.read()
+            characters = data
 
-        size = len(characters)
+        if is_3:
+            codepoints = bytearray(characters, encoding='utf-8')
+        else:
+            codepoints = list(map(ord, characters))
+
+        # Use the size of codepoints instead of the characters
+        # because UTF-8 characters may need more than one byte.
+        size = len(codepoints)
+
         variableName = os.path.splitext(os.path.basename(inputFileName))[0]
 
         print('extern const char {0:s}JavaScript[{1:d}];'.format(variableName, size), file=headerFile)
         print('const char {0:s}JavaScript[{1:d}] = {{'.format(variableName, size), file=sourceFile)
 
-        codepoints = list(map(ord, characters))
         for codepointChunk in chunk(codepoints, 16):
             print('    {0:s},'.format(','.join(map(stringifyCodepoint, codepointChunk))), file=sourceFile)
 
