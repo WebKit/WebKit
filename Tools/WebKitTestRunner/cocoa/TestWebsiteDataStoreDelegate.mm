@@ -42,4 +42,23 @@
 {
     _shouldAllowRaisingQuota = shouldAllowRaisingQuota;
 }
+
+- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
+{
+    NSString *method = challenge.protectionSpace.authenticationMethod;
+    if ([method isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        if (_shouldAllowAnySSLCertificate)
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust: challenge.protectionSpace.serverTrust]);
+        else
+            completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+        return;
+    }
+    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
+- (void)setAllowAnySSLCertificate:(BOOL)shouldAllowAnySSLCertificate
+{
+    _shouldAllowAnySSLCertificate = shouldAllowAnySSLCertificate;
+}
+
 @end

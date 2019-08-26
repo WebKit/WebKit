@@ -1,4 +1,4 @@
-/*
+  /*
  * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,31 +25,11 @@
 
 #pragma once
 
-#include "AuthenticationChallengeDisposition.h"
-#include "AuthenticationChallengeProxy.h"
-#include "AuthenticationDecisionListener.h"
-#include <wtf/CompletionHandler.h>
-
-namespace WebCore {
-struct SecurityOriginData;
-}
+#import "AuthenticationChallengeDisposition.h"
+#import <Foundation/NSURLSession.h>
 
 namespace WebKit {
 
-class WebsiteDataStoreClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~WebsiteDataStoreClient() { }
-
-    virtual void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&& completionHandler)
-    {
-        completionHandler({ });
-    }
-
-    virtual void didReceiveAuthenticationChallenge(Ref<AuthenticationChallengeProxy>&& challenge)
-    {
-        challenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
-    }
-};
+AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
 
 } // namespace WebKit

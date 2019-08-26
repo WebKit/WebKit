@@ -44,11 +44,9 @@ def main(request, response):
       stashed_data['beacon_origin'] = request.headers.get("Origin", "")
       request.server.stash.put(test_id, stashed_data)
     return [("Content-Type", "text/plain")], ""
-  
+
   if command == "get":
-    if stashed_data is not None:
-      return [("Content-Type", "text/plain")], json.dumps(stashed_data)
-    return [("Content-Type", "text/plain")], ""
+    return [("Content-Type", "text/plain")], json.dumps(stashed_data)
 
   response.set_error(400, "Bad Command")
   return [("Content-Type", "text/plain")], "ERROR: Bad Command!"

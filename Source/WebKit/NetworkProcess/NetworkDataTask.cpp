@@ -150,4 +150,9 @@ String NetworkDataTask::description() const
     return emptyString();
 }
 
+PAL::SessionID NetworkDataTask::sessionID() const
+{
+    return m_session->sessionID();
+}
+
 } // namespace WebKit

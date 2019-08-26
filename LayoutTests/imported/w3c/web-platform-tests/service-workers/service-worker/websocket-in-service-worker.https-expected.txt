@@ -1,3 +1,3 @@
 
-FAIL Verify WebSockets can be created in a Service Worker assert_equals: expected "PASS" but got "FAIL: Got an error event"
+PASS Verify WebSockets can be created in a Service Worker 
 

@@ -201,7 +201,7 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Chall
     if (auto* pendingDownload = m_task->pendingDownload())
         m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
     else
-        m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
+        m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
 }
 
 void NetworkLoad::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

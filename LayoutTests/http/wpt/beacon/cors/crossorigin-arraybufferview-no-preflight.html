@@ -26,12 +26,33 @@ function pollResult(test, id) {
   });
 }
 
-function testCORSPreflightSuccess(what) {
-  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
-  var id = self.token();
-  var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+function testCORSPreflight(what) {
+  var testBase = get_host_info().HTTPS_REMOTE_ORIGIN + RESOURCES_DIR;
 
-  promise_test(function(test) {
+  promise_test(async function(test) {
+    var id = "ca33c073-1cf0-41e5-bbd4-55969fb1a6c7";
+    var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+    if (window.testRunner) {
+      window.testRunner.setAllowsAnySSLCertificate(false);
+      window.testRunner.terminateNetworkProcess();
+      await fetch("").then(() => { }, () => { });
+    }
+
+    assert_true(navigator.sendBeacon(testUrl, what), "sendBeacon succeeded");
+    const result = await pollResult(test, id);
+    assert_equals(result['preflight'], 0, "Did not receive CORS preflight")
+    assert_equals(result['beacon'], 0, "Did not receive beacon")
+  }, "Beacon load should not be sent if server is not trusted.");
+
+  promise_test(async function(test) {
+    var id = self.token();
+    var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+    if (window.testRunner) {
+      window.testRunner.setAllowsAnySSLCertificate(true);
+      window.testRunner.terminateNetworkProcess();
+      await fetch("").then(() => { }, () => { });
+    }
+
     assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
     return pollResult(test, id) .then(result => {
       assert_equals(result['preflight'], 0, "Did not receive CORS preflight")
@@ -51,7 +72,7 @@ function stringToArrayBufferView(input) {
   return view;
 }
 
-testCORSPreflightSuccess(stringToArrayBufferView("123"));
+testCORSPreflight(stringToArrayBufferView("123"));
     </script>
   </body>
 </html>

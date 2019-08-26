@@ -30,7 +30,9 @@
 @interface TestWebsiteDataStoreDelegate: NSObject <_WKWebsiteDataStoreDelegate> {
 @private
     BOOL _shouldAllowRaisingQuota;
+    BOOL _shouldAllowAnySSLCertificate;
 }
 - (instancetype)init;
 - (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota;
+- (void)setAllowAnySSLCertificate:(BOOL)shouldAllowAnySSLCertificate;
 @end

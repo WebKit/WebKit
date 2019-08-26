@@ -24,7 +24,6 @@ async function doTest()
     if (!window.testRunner.canDoServerTrustEvaluationInNetworkProcess)
         return;
 
-    window.testRunner.setAllowsAnySSLCertificate(false);
     // This should trigger network process server trust evaluation.
     window.testRunner.setCanHandleHTTPSServerTrustEvaluation(false);
 
