@@ -1,3 +1,10 @@
+2019-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, test gardening
+
+        * platform/mac-wk2/TestExpectations:
+        Skip WebAuthn tests for HighSierra and Mojave.
+
 2019-08-26  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r248961.

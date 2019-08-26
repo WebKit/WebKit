@@ -914,6 +914,13 @@ http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
 http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Skip ]
 http/wpt/webauthn/idl.https.html [ Skip ]
 
+# NFC support require Catalina+, therefore skip them for HighSierra and Mojave.
+[ HighSierra Mojave ] http/wpt/webauthn/ctap-nfc-failure.https.html [ Skip ]
+[ HighSierra Mojave ] http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html [ Skip ]
+[ HighSierra Mojave ] http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Skip ]
+[ HighSierra Mojave ] http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
+[ HighSierra Mojave ] http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
+
 webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html [ Pass Timeout ] 
 
 webkit.org/b/191658 [ Sierra Release ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
