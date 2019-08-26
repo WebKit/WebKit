@@ -82,6 +82,11 @@ bool isMainThreadIfInitialized()
     return isMainThread();
 }
 
+bool isMainThreadInitialized()
+{
+    return true;
+}
+
 void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(threadingWindowHandle);
