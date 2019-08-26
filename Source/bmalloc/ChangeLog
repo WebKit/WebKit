@@ -1,3 +1,29 @@
+2019-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Disable IsoHeap completely if DebugHeap is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=201154
+
+        Reviewed by Simon Fraser.
+
+        Previously we had the guarantee that IsoHeap is disabled when DebugHeap is enabled.
+        But this is guaranteed in a bit tricky way: when DebugHeap is enabled, Gigacage is disabled.
+        And IsoHeap is disabled when Gigacage is disabled. However r249065 enabled IsoHeap even if
+        Gigacage is disabled. This accidentally enabled IsoHeap even if DebugHeap is enabled.
+
+        Currently, this is incorrect. When DebugHeap is enabled, we do not start bmalloc::Scavenger.
+        So IsoHeap does not work. In addition, when DebugHeap is enabled, we want to investigate the Malloc data.
+        However IsoHeap wipes these information for IsoHeaped objects. Moreover enabling IsoHeap is not free
+        in terms of memory usage: bmalloc::Scavenger starts working.
+
+        So we should not enable IsoHeap in such an accidental way for DebugHeap environment. If we consider enabling
+        IsoHeap even if `Malloc=1` is specified, we should first examine how memory is used by this change because
+        the users of `Malloc=1` requires explicitly tight memory usage.
+
+        In this patch, we remove the accidental enabling of IsoHeap for DebugHeap by checking DebugHeap status in IsoTLS.
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::determineMallocFallbackState):
+
 2019-08-22  Mark Lam  <mark.lam@apple.com>
 
         Undo disabling of IsoHeaps when Gigacage is off.

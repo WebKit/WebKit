@@ -183,6 +183,11 @@ void IsoTLS::determineMallocFallbackState()
             if (s_mallocFallbackState != MallocFallbackState::Undecided)
                 return;
 
+            if (Environment::get()->isDebugHeapEnabled()) {
+                s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;
+                return;
+            }
+
             const char* env = getenv("bmalloc_IsoHeap");
             if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0")))
                 s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;
