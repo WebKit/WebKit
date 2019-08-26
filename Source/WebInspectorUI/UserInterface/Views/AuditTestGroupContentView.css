@@ -74,10 +74,6 @@
     display: none;
 }
 
-.content-view.audit-test-group > header > nav:not(:empty):before {
-    content: attr(data-prefix);
-}
-
 .content-view.audit-test-group > header > nav > .scope-bar > li {
     margin: 0 3px;
 }

@@ -47,7 +47,6 @@
 }
 
 .filter-bar > .navigation-bar > .item.scope-bar {
-    --scope-bar-padding-override: 4px;
     --scope-bar-margin-override: 0;
 }
 

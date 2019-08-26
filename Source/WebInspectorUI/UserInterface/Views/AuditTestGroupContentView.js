@@ -56,7 +56,6 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         }
 
         this._levelNavigationBar = new WI.NavigationBar(document.createElement("nav"));
-        this._levelNavigationBar.element.dataset.prefix = WI.UIString("Showing:");
         this.headerView.addSubview(this._levelNavigationBar);
 
         this._percentageContainer = this.headerView.element.appendChild(document.createElement("div"));

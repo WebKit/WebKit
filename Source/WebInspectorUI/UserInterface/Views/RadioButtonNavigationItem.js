@@ -28,8 +28,6 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
     constructor(identifier, toolTip, image, imageWidth, imageHeight)
     {
         super(identifier, toolTip, image, imageWidth, imageHeight, null, "tab");
-
-        this._initializedMinWidth = false;
     }
 
     // Public
@@ -58,34 +56,6 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
     set active(flag)
     {
         this.element.classList.toggle(WI.RadioButtonNavigationItem.ActiveStyleClassName, flag);
-    }
-
-    update(options = {})
-    {
-        super.update(options);
-
-        if (options.expandOnly)
-            return;
-
-        var isSelected = this.selected;
-
-        if (!isSelected) {
-            this.element.classList.add(WI.RadioButtonNavigationItem.SelectedStyleClassName);
-            this.element.setAttribute("aria-selected", "true");
-        }
-
-        if (!this._initializedMinWidth) {
-            var width = this.element.offsetWidth;
-            if (width) {
-                this._initializedMinWidth = true;
-                this.element.style.minWidth = width + "px";
-            }
-        }
-
-        if (!isSelected) {
-            this.element.classList.remove(WI.RadioButtonNavigationItem.SelectedStyleClassName);
-            this.element.setAttribute("aria-selected", "false");
-        }
     }
 
     // Protected

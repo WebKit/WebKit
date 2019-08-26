@@ -33,7 +33,7 @@
 
 .navigation-bar .item.radio.button.text-only {
     position: relative;
-    padding: 2px 9px 4px;
+    padding: 2px 4px 4px;
     border: none;
     z-index: 0;
 }

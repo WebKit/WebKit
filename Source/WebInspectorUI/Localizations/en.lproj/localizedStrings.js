@@ -1018,7 +1018,6 @@ localizedStrings["Show transparency grid"] = "Show transparency grid";
 localizedStrings["Show type information"] = "Show type information";
 localizedStrings["Show warnings logged to the Console"] = "Show warnings logged to the Console";
 localizedStrings["Show:"] = "Show:";
-localizedStrings["Showing:"] = "Showing:";
 localizedStrings["Site-specific Hacks"] = "Site-specific Hacks";
 localizedStrings["Size"] = "Size";
 localizedStrings["Size of current object plus all objects it keeps alive"] = "Size of current object plus all objects it keeps alive";
