@@ -1,3 +1,78 @@
+2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (iOS 13): Tests that simulate multiple back-to-back single taps fail or time out
+        https://bugs.webkit.org/show_bug.cgi?id=201129
+        <rdar://problem/51857277>
+
+        Reviewed by Tim Horton.
+
+        The tests in editing/pasteboard/ios were timing out on iOS 13 before this change. This is because they simulate
+        back-to-back single taps; while this is recognized as two single taps on iOS 12 and prior, only the first single
+        tap is recognized on iOS 13 (and the second is simply dropped on the floor). This occurs because the synthetic
+        single tap gesture is reset slightly later on iOS 13 compared to iOS 12, so when the second tap is dispatched,
+        the gesture recognizer is still in "ended" state after the first tap on iOS 13, which means the gesture isn't
+        capable of recognizing further touches yet.
+
+        In UIKit, a gesture recognizer is only reset once its UIGestureEnvironment's containing dependency subgraph no
+        longer contains gestures that are active. In iOS 12, the synthetic click gesture is a part of a dependency
+        subgraph that contains only itself and the normal (blocking) double tap gesture which requires the click to fail
+        before it can be recognized; immediately after simulating the tap, both these gestures are inactive, which
+        allows both of them to be reset.
+
+        However, in iOS 13, the synthetic click gesture is part of a gesture dependency graph that contains the double
+        tap for double click gesture, as well as the non-blocking double tap gesture, both of which are still active
+        immediately after sending the first tap. This change in dependencies is caused by the introduction of
+        UIUndoGestureInteraction's single and double three-finger tap gestures, which (in -[UIUndoGestureInteraction
+        gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:]) explicitly add all other taps as failure
+        requirements. This effectively links the synthetic single tap gesture to most of the other gestures in
+        WKContentView's dependency graph by way of these tap gestures for the undo interaction.
+
+        All this means that there is now a short (~50 ms) delay after the synthetic single tap gestures is recognized,
+        before it can be recognized again. To account for this new delay in our test infrastructure, simply wait for
+        single tap gestures that have ended to reset before attempting to send subsequent single taps. We do this by
+        introducing WebKit testing SPI to invoke a completion handler after resetting the synthetic click gesture (only
+        if necessary - i.e., if the gesture is in ended state when we are about to begin simulating the tap). This
+        allows calls to `UIScriptController::singleTapAtPoint` to be reliably recognized as single taps without
+        requiring arbitrary 120 ms "human speed" delays.
+
+        This fixes a number of flaky or failing layout tests, including the tests in editing/pasteboard/ios.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::doubleTapAtPoint):
+
+        Add a `delay` parameter to `doubleTapAtPoint`. A number of layout tests were actually simulating double click
+        gestures by simulating two back-to-back single taps; this is done for the purposes of being able to add a "human
+        speed" delay prior to the second single tap gesture. After the change to wait for the single tap gesture to
+        reset before attempting to simulate the next tap, this strategy no longer works, since the second gesture is
+        recognized only as a single tap instead of a double tap.
+
+        Instead, we add a delay parameter to `UIScriptController::doubleTapAtPoint`, which the "human speed" double tap
+        gestures use instead to wait after simulating the first tap.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator _waitFor:]):
+        (-[HIDEventGenerator sendTaps:location:withNumberOfTouches:delay:completionBlock:]):
+
+        Plumb the tap gesture delay through to this helper method.
+
+        (-[HIDEventGenerator tap:completionBlock:]):
+        (-[HIDEventGenerator doubleTap:delay:completionBlock:]):
+        (-[HIDEventGenerator twoFingerTap:completionBlock:]):
+        (-[HIDEventGenerator sendTaps:location:withNumberOfTouches:completionBlock:]): Deleted.
+        (-[HIDEventGenerator doubleTap:completionBlock:]): Deleted.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::waitForSingleTapToReset const):
+
+        Add a new helper to wait for the content view's single tap gesture to reset if needed; call this before
+        attempting to simulate single taps (either using a stylus, or with a regular touch).
+
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+        (WTR::UIScriptControllerIOS::doubleTapAtPoint):
+        (WTR::UIScriptControllerIOS::stylusTapAtPointWithModifiers):
+
 2019-08-26  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Allow clicking on the tooltip arrow

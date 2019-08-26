@@ -1,3 +1,58 @@
+2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (iOS 13): Tests that simulate multiple back-to-back single taps fail or time out
+        https://bugs.webkit.org/show_bug.cgi?id=201129
+        <rdar://problem/51857277>
+
+        Reviewed by Tim Horton.
+
+        Adjusts a few layout tests after changes to UIScriptController::doubleTapAtPoint and
+        UIScriptController::singleTapAtPoint.
+
+        * editing/selection/ios/change-selection-by-tapping.html:
+
+        Tweak this test to tap the page 12 times instead of 20 (which seems to cause occasional timeouts locally, when
+        running all layout tests with a dozen active simulators).
+
+        * fast/events/ios/double-tap-zoom.html:
+        * fast/events/ios/viewport-device-width-allows-double-tap-zoom-out.html:
+        * fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html:
+
+        Augment a few call sites of `doubleTapAtPoint` with a 0 delay. Ideally, these should just use ui-helper.js, but
+        we can refactor these tests as a part of folding basic-gestures.js into ui-helper.js.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+
+        Rebaseline these layout tests, due to change in line numbers.
+
+        * platform/ipad/TestExpectations:
+
+        Unskip these tests on iPad, now that they should pass.
+
+        * pointerevents/utils.js:
+        (const.ui.new.UIController.prototype.doubleTapToZoom):
+        * resources/basic-gestures.js:
+        (return.new.Promise.):
+        (return.new.Promise):
+
+        Adjust some more call sites of `doubleTapAtPoint`. Ideally, these should use just `ui-helper.js` too.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.doubleTapAt.return.new.Promise):
+        (window.UIHelper.doubleTapAt):
+        (window.UIHelper.humanSpeedDoubleTapAt):
+        (window.UIHelper.humanSpeedZoomByDoubleTappingAt):
+
+        Add a delay parameter to `doubleTapAt` to specify a delay after each simulated tap. By default, this is 0, but
+        the `humanSpeed*` helpers add a delay of 120 milliseconds. Additionally, these helpers were previously calling
+        `singleTapAtPoint` twice, with a timeout in between to add a delay. Instead, call `doubleTapAtPoint` with a
+        nonzero delay; otherwise, we'll end up waiting in `singleTapAtPoint` for the gesture subgraph containing both
+        the double tap gestures and the synthetic single tap gesture to reset, which causes these two single taps to no
+        longer be recognized as a double tap gesture.
+
+        (window.UIHelper.zoomByDoubleTappingAt):
+
 2019-08-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support HID authenticators on iOS

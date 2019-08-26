@@ -52,7 +52,7 @@ public:
     void liftUpAtPoint(long x, long y, long touchCount, JSValueRef) override;
     void singleTapAtPoint(long x, long y, JSValueRef) override;
     void singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef) override;
-    void doubleTapAtPoint(long x, long y, JSValueRef) override;
+    void doubleTapAtPoint(long x, long y, float delay, JSValueRef) override;
     void stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef) override;
     void stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef) override;
     void stylusUpAtPoint(long x, long y, JSValueRef) override;
@@ -139,6 +139,9 @@ public:
     void setDidDismissPopoverCallback(JSValueRef) override;
     void setDidEndScrollingCallback(JSValueRef) override;
     void clearAllCallbacks() override;
+
+private:
+    void waitForSingleTapToReset() const;
 };
 
 }

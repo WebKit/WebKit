@@ -126,7 +126,7 @@ const ui = new (class UIController {
     doubleTapToZoom(options)
     {
         const durationInSeconds = 0.35;
-        return new Promise(resolve => this._run(`uiController.doubleTapAtPoint(${options.x}, ${options.y})`).then(() =>
+        return new Promise(resolve => this._run(`uiController.doubleTapAtPoint(${options.x}, ${options.y}, 0)`).then(() =>
             setTimeout(resolve, durationInSeconds * 1000)
         ));
         return this._run();

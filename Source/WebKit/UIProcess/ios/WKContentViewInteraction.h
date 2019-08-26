@@ -385,6 +385,8 @@ struct WKAutoCorrectionData {
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     std::unique_ptr<WebKit::TextCheckingController> _textCheckingController;
 #endif
+
+    Vector<BlockPtr<void()>> _actionsToPerformAfterResettingSingleTapGestureRecognizer;
 }
 
 @end
@@ -555,6 +557,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
+- (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action;
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action;
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;

@@ -32,7 +32,7 @@ function doubleTapAtPoint(x, y)
     return new Promise(resolve => {
         testRunner.runUIScript(`
             (function() {
-                uiController.doubleTapAtPoint(${x}, ${y}, function() {
+                uiController.doubleTapAtPoint(${x}, ${y}, 0, function() {
                     uiController.uiScriptComplete();
                 });
             })();`, resolve);

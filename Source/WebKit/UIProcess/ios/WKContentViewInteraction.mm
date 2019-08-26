@@ -2450,6 +2450,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
             _page->touchWithIdentifierWasRemoved(pointerId);
     }
 #endif
+    auto actionsToPerform = std::exchange(_actionsToPerformAfterResettingSingleTapGestureRecognizer, { });
+    for (auto action : actionsToPerform)
+        action();
 }
 
 - (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer
@@ -7540,6 +7543,15 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 @end
 
 @implementation WKContentView (WKTesting)
+
+- (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action
+{
+    if ([_singleTapGestureRecognizer state] != UIGestureRecognizerStateEnded) {
+        action();
+        return;
+    }
+    _actionsToPerformAfterResettingSingleTapGestureRecognizer.append(makeBlockPtr(action));
+}
 
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
 {

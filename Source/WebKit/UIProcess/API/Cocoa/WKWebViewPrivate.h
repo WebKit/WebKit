@@ -481,6 +481,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_didShowForcePressPreview WK_API_AVAILABLE(ios(10.3));
 - (void)_didDismissForcePressPreview WK_API_AVAILABLE(ios(10.3));
 - (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock WK_API_AVAILABLE(ios(10.3));
+- (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSArray<NSValue *> *_uiTextSelectionRects WK_API_AVAILABLE(ios(10.3));
 @property (nonatomic, readonly) CGRect _uiTextCaretRect WK_API_AVAILABLE(ios(10.3));

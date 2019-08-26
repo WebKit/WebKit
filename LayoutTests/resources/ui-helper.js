@@ -50,7 +50,7 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static doubleTapAt(x, y)
+    static doubleTapAt(x, y, delay = 0)
     {
         console.assert(this.isIOSFamily());
 
@@ -68,7 +68,7 @@ window.UIHelper = class UIHelper {
 
         return new Promise((resolve) => {
             testRunner.runUIScript(`
-                uiController.doubleTapAtPoint(${x}, ${y}, function() {
+                uiController.doubleTapAtPoint(${x}, ${y}, ${delay}, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
         });
@@ -91,12 +91,7 @@ window.UIHelper = class UIHelper {
             return Promise.resolve();
         }
 
-        return new Promise(async (resolve) => {
-            await UIHelper.tapAt(x, y);
-            await new Promise(resolveAfterDelay => setTimeout(resolveAfterDelay, 120));
-            await UIHelper.tapAt(x, y);
-            resolve();
-        });
+        return UIHelper.doubleTapAt(x, y, 0.12);
     }
 
     static humanSpeedZoomByDoubleTappingAt(x, y)
@@ -117,17 +112,12 @@ window.UIHelper = class UIHelper {
         }
 
         return new Promise(async (resolve) => {
-            await UIHelper.tapAt(x, y);
-            await new Promise(resolveAfterDelay => setTimeout(resolveAfterDelay, 120));
-            await new Promise((resolveAfterZoom) => {
-                testRunner.runUIScript(`
-                    uiController.didEndZoomingCallback = () => {
-                        uiController.didEndZoomingCallback = null;
-                        uiController.uiScriptComplete(uiController.zoomScale);
-                    };
-                    uiController.singleTapAtPoint(${x}, ${y}, () => {});`, resolveAfterZoom);
-            });
-            resolve();
+            testRunner.runUIScript(`
+                uiController.didEndZoomingCallback = () => {
+                    uiController.didEndZoomingCallback = null;
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                };
+                uiController.doubleTapAtPoint(${x}, ${y}, 0.12, () => { });`, resolve);
         });
     }
 
@@ -153,7 +143,7 @@ window.UIHelper = class UIHelper {
                     uiController.didEndZoomingCallback = null;
                     uiController.uiScriptComplete(uiController.zoomScale);
                 };
-                uiController.doubleTapAtPoint(${x}, ${y}, () => {});`, resolve);
+                uiController.doubleTapAtPoint(${x}, ${y}, 0, () => { });`, resolve);
         });
     }
 

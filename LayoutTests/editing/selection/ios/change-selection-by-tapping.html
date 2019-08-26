@@ -40,7 +40,7 @@ addEventListener("load", async () => {
     description("Verifies that rapidly tapping to change selection doesn't hang due to IPC deadlock. To verify manually, focus the editable text and tap repeatedly in different parts of the editable area to change selection; check that this does not result in sporadic 1-second IPC hangs.");
 
     await UIHelper.activateElementAndWaitForInputSession(document.getElementById("editor"));
-    for (let i = 0; i < 5; ++i) {
+    for (let i = 0; i < 3; ++i) {
         for (const [x, y] of [[40, 40], [220, 40], [40, 240], [220, 240]])
             await tapAndWaitForSelectionChange(x, y);
     }
