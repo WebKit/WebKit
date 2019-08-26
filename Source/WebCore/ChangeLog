@@ -1,3 +1,14 @@
+2019-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop WEBCORE_EXPORT from ChromeClient class
+        https://bugs.webkit.org/show_bug.cgi?id=201146
+
+        Reviewed by Alex Christensen.
+
+        Drop WEBCORE_EXPORT from ChromeClient class. All its methods and either pure virtual or inlined in the header.
+
+        * page/ChromeClient.h:
+
 2019-08-26  David Kilzer  <ddkilzer@apple.com>
 
         Don't compute upconverted characters twice in buildQuery() in DataDetection.mm

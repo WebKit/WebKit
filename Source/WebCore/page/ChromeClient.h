@@ -117,7 +117,7 @@ struct WindowFeatures;
 
 enum class RouteSharingPolicy : uint8_t;
 
-class WEBCORE_EXPORT ChromeClient {
+class ChromeClient {
 public:
     virtual void chromeDestroyed() = 0;
 
