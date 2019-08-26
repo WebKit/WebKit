@@ -239,6 +239,9 @@ NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, Subsa
     if (!m_nativeDecoder)
         return nullptr;
 
+    if (!m_renderTarget)
+        return nullptr;
+
     COMPtr<IWICBitmapFrameDecode> frame;
     HRESULT hr = m_nativeDecoder->GetFrame(0, &frame);
     if (!SUCCEEDED(hr))
@@ -253,8 +256,13 @@ NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, Subsa
     if (!SUCCEEDED(hr))
         return nullptr;
 
-    COMPtr<IWICBitmap> bitmap;
-    hr = systemImagingFactory()->CreateBitmapFromSource(converter.get(), WICBitmapCacheOnDemand, &bitmap);
+    COMPtr<IWICBitmap> wicBitmap;
+    hr = systemImagingFactory()->CreateBitmapFromSource(converter.get(), WICBitmapCacheOnDemand, &wicBitmap);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    COMPtr<ID2D1Bitmap> bitmap;
+    hr = m_renderTarget->CreateBitmapFromWicBitmap(wicBitmap.get(), &bitmap);
     if (!SUCCEEDED(hr))
         return nullptr;
 
@@ -286,6 +294,7 @@ void ImageDecoderDirect2D::setData(SharedBuffer& data, bool allDataReceived)
 
     // Image was valid.
 }
+
 }
 
 #endif

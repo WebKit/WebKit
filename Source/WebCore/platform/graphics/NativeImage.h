@@ -55,7 +55,7 @@ class GraphicsContext;
 #if USE(CG)
 typedef RetainPtr<CGImageRef> NativeImagePtr;
 #elif USE(DIRECT2D)
-typedef COMPtr<IWICBitmap> NativeImagePtr;
+typedef COMPtr<ID2D1Bitmap> NativeImagePtr;
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> NativeImagePtr;
 #elif USE(WINGDI)

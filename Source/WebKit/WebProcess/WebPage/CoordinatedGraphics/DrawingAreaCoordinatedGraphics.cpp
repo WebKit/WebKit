@@ -754,7 +754,8 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     }
 
 #if USE(DIRECT2D)
-    bitmap->sync(*graphicsContext);
+    if (graphicsContext)
+        bitmap->sync(*graphicsContext);
 #endif
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them

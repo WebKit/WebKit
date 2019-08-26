@@ -146,8 +146,8 @@ private:
     static RetainPtr<CGImageRef> sinkIntoNativeImage(std::unique_ptr<ImageBuffer>);
     void flushContext() const;
 #elif USE(DIRECT2D)
-    COMPtr<IWICBitmap> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
-    static COMPtr<IWICBitmap> sinkIntoNativeImage(std::unique_ptr<ImageBuffer>);
+    COMPtr<ID2D1Bitmap> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
+    static COMPtr<ID2D1Bitmap> sinkIntoNativeImage(std::unique_ptr<ImageBuffer>);
     void flushContext() const;
 #endif
     

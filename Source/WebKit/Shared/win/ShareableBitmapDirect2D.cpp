@@ -35,6 +35,7 @@
 #include <WebCore/GraphicsContextImplDirect2D.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextDirect2D.h>
+#include <d2d1_1.h>
 #include <wincodec.h>
 #include <wtf/ProcessID.h>
 
@@ -42,11 +43,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static const auto bitmapFormat = GUID_WICPixelFormat32bppPBGRA;
-
 static unsigned strideForWidth(unsigned width)
 {
-    static unsigned bitsPerPixel = Direct2D::bitsPerPixel(bitmapFormat);
+    static unsigned bitsPerPixel = Direct2D::bitsPerPixel(Direct2D::wicBitmapFormat());
     return bitsPerPixel * width / 8;
 }
 
@@ -68,8 +67,12 @@ static inline COMPtr<IWICBitmap> createSurfaceFromData(void* data, const WebCore
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    m_bitmap = createDirect2DSurface();
-    COMPtr<ID2D1RenderTarget> bitmapContext = Direct2D::createRenderTargetFromWICBitmap(m_bitmap.get());
+    auto bitmapContext = Direct2D::createBitmapRenderTargetOfSize(m_size);
+    if (!bitmapContext)
+        return nullptr;
+
+    HRESULT hr = bitmapContext->GetBitmap(&m_bitmap);
+    RELEASE_ASSERT(SUCCEEDED(hr));
     return makeUnique<GraphicsContext>(GraphicsContextImplDirect2D::createFactory(bitmapContext.get()));
 }
 
@@ -80,13 +83,12 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    auto surface = createDirect2DSurface();
+    auto surface = createDirect2DSurface(context.platformContext()->renderTarget());
 
 #ifndef _NDEBUG
-    unsigned width, height;
-    HRESULT hr = surface->GetSize(&width, &height);
-    ASSERT(width == m_size.width());
-    ASSERT(height == m_size.height());
+    auto bitmapSize = surface->GetPixelSize();
+    ASSERT(bitmapSize.width == m_size.width());
+    ASSERT(bitmapSize.height == m_size.height());
 #endif
 
     FloatRect destRect(dstPoint, srcRect.size());
@@ -100,15 +102,22 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
     Direct2D::drawNativeImage(platformContext, surface.get(), m_size, destRect, srcRectScaled, state.compositeOperator, state.blendMode, ImageOrientation(), state.imageInterpolationQuality, state.alpha, Direct2D::ShadowState(state));
 }
 
-COMPtr<IWICBitmap> ShareableBitmap::createDirect2DSurface()
+COMPtr<ID2D1Bitmap> ShareableBitmap::createDirect2DSurface(ID2D1RenderTarget* renderTarget)
 {
-    m_bitmap = createSurfaceFromData(data(), m_size);
-    return m_bitmap;
+    auto bitmapProperties = Direct2D::bitmapProperties();
+
+    COMPtr<ID2D1Bitmap> bitmap;
+    uint32_t stride = 4 * m_size.width();
+    HRESULT hr = renderTarget->CreateBitmap(m_size, data(), stride, &bitmapProperties, &bitmap);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return bitmap;
 }
 
 RefPtr<Image> ShareableBitmap::createImage()
 {
-    auto surface = createDirect2DSurface();
+    auto surface = createDirect2DSurface(GraphicsContext::defaultRenderTarget());
     if (!surface)
         return nullptr;
 
@@ -121,20 +130,50 @@ void ShareableBitmap::sync(GraphicsContext& graphicsContext)
 
     graphicsContext.endDraw();
 
-    WICRect rcLock = { 0, 0, m_size.width(), m_size.height() };
+    COMPtr<ID2D1DeviceContext> d2dDeviceContext;
+    HRESULT hr = graphicsContext.platformContext()->renderTarget()->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&d2dDeviceContext));
+    ASSERT(SUCCEEDED(hr));
 
-    COMPtr<IWICBitmapLock> bitmapDataLock;
-    HRESULT hr = m_bitmap->Lock(&rcLock, WICBitmapLockRead, &bitmapDataLock);
-    if (SUCCEEDED(hr)) {
-        UINT bufferSize = 0;
-        WICInProcPointer dataPtr = nullptr;
-        hr = bitmapDataLock->GetDataPointer(&bufferSize, &dataPtr);
-        if (SUCCEEDED(hr))
-            memcpy(data(), reinterpret_cast<char*>(dataPtr), bufferSize);
+    const unsigned stride = strideForWidth(m_size.width());
+
+    COMPtr<ID2D1Bitmap1> cpuBitmap;
+    D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
+    hr = d2dDeviceContext->CreateBitmap(m_size, nullptr, stride, bitmapProperties, &cpuBitmap);
+    if (!SUCCEEDED(hr))
+        return;
+
+    hr = cpuBitmap->CopyFromBitmap(nullptr, m_bitmap.get(), nullptr);
+    if (!SUCCEEDED(hr))
+        return;
+
+    D2D1_MAPPED_RECT mappedData;
+    hr = cpuBitmap->Map(D2D1_MAP_OPTIONS_READ, &mappedData);
+    if (!SUCCEEDED(hr))
+        return;
+
+    if (mappedData.pitch == stride)
+        memcpy(data(), reinterpret_cast<char*>(mappedData.bits), stride * m_size.height());
+    else {
+        // Stride is different, so must do a rowwise copy:
+        Checked<int> height = m_size.height();
+        Checked<int> width = m_size.width();
+
+        const uint8_t* srcRows = mappedData.bits;
+        uint8_t* row = reinterpret_cast<uint8_t*>(data());
+
+        for (int y = 0; y < height.unsafeGet(); ++y) {
+            for (int x = 0; x < width.unsafeGet(); x++) {
+                int basex = x * 4;
+                reinterpret_cast<uint32_t*>(row + basex)[0] = reinterpret_cast<const uint32_t*>(srcRows + basex)[0];
+            }
+
+            srcRows += mappedData.pitch;
+            row += stride;
+        }
     }
 
-    // Once we are done modifying the data, unlock the bitmap
-    bitmapDataLock = nullptr;
+    hr = cpuBitmap->Unmap();
+    ASSERT(SUCCEEDED(hr));
 }
 
 } // namespace WebKit

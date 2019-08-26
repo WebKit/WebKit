@@ -37,6 +37,7 @@
 #include "DashArray.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <d2d1.h>
 
 namespace WebCore {
@@ -130,7 +131,7 @@ void drawGlyphs(PlatformContextDirect2D&, const FillSource&, const StrokeSource&
 void drawNativeImage(PlatformContextDirect2D&, IWICBitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&);
 void drawNativeImage(PlatformContextDirect2D&, ID2D1Bitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&);
 void drawPath(PlatformContextDirect2D&, const Path&, const StrokeSource&, const ShadowState&);
-void drawPattern(PlatformContextDirect2D&, IWICBitmap*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
+void drawPattern(PlatformContextDirect2D&, COMPtr<ID2D1Bitmap>&&, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 
 void drawWithoutShadow(PlatformContextDirect2D&, const FloatRect& boundingRect, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands);
 void drawWithShadow(PlatformContextDirect2D&, const FloatRect& boundingRect, const ShadowState&, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands);

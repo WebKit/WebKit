@@ -28,6 +28,7 @@
 
 #include "COMPtr.h"
 #include "Direct2DOperations.h"
+#include "Direct2DUtilities.h"
 #include "DisplayListRecorder.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContextPlatformPrivateDirect2D.h"
@@ -54,9 +55,7 @@ GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
 GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RECT rect, bool hasAlpha)
 {
     // Create a DC render target.
-    auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        0, 0, D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT);
+    auto targetProperties = Direct2D::renderTargetProperties();
 
     HRESULT hr = GraphicsContext::systemFactory()->CreateDCRenderTarget(&targetProperties, renderTarget);
     RELEASE_ASSERT(SUCCEEDED(hr));
@@ -99,6 +98,7 @@ ID2D1RenderTarget* GraphicsContext::defaultRenderTarget()
         auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(::GetDesktopWindow(), D2D1::SizeU(10, 10));
         HRESULT hr = systemFactory()->CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, reinterpret_cast<ID2D1HwndRenderTarget**>(&defaultRenderTarget));
         RELEASE_ASSERT(SUCCEEDED(hr));
+        defaultRenderTarget->AddRef();
     }
 
     return defaultRenderTarget;
@@ -113,8 +113,7 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
 
     DIBPixelData pixelData(bitmap);
 
-    auto targetProperties = D2D1::RenderTargetProperties();
-    targetProperties.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+    auto targetProperties = Direct2D::renderTargetProperties();
 
     COMPtr<ID2D1DCRenderTarget> renderTarget;
     HRESULT hr = systemFactory()->CreateDCRenderTarget(&targetProperties, &renderTarget);
@@ -208,7 +207,7 @@ void GraphicsContext::restorePlatformState()
     Direct2D::restore(*platformContext());
 }
 
-void GraphicsContext::drawNativeImage(const COMPtr<IWICBitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContext::drawNativeImage(const COMPtr<ID2D1Bitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
 {
     if (paintingDisabled())
         return;
@@ -240,7 +239,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     DIBPixelData pixelData(sourceBitmap.get());
     ASSERT(pixelData.bitsPerPixel() == 32);
 
-    auto bitmapProperties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+    auto bitmapProperties = Direct2D::bitmapProperties();
 
     ASSERT(hasPlatformContext());
     auto& platformContext = *this->platformContext();
@@ -435,8 +434,8 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     }
 
     ASSERT(hasPlatformContext());
-    if (auto tileImage = image.nativeImageForCurrentFrame())
-        Direct2D::drawPattern(*platformContext(), tileImage.get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
+    if (auto tileImage = image.nativeImageForCurrentFrame(this))
+        Direct2D::drawPattern(*platformContext(), WTFMove(tileImage), IntSize(image.size()), destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
 }
 
 void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)

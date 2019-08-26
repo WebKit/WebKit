@@ -59,13 +59,8 @@ ID2D1BitmapBrush* Pattern::createPlatformPattern(PlatformGraphicsContext& contex
     auto& patternImage = tileImage();
     auto nativeImage = patternImage.nativeImage(nullptr);
 
-    COMPtr<ID2D1Bitmap> bitmap;
-    HRESULT hr = context.renderTarget()->CreateBitmapFromWicBitmap(nativeImage.get(), &bitmap);
-    if (!SUCCEEDED(hr))
-        return nullptr;
-
     ID2D1BitmapBrush* patternBrush = nullptr;
-    hr = context.renderTarget()->CreateBitmapBrush(bitmap.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+    HRESULT hr = context.renderTarget()->CreateBitmapBrush(nativeImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
     ASSERT(SUCCEEDED(hr));
     return patternBrush;
 }

@@ -69,6 +69,7 @@
 #if USE(DIRECT2D)
 #include "COMPtr.h"
 #include "Direct2DUtilities.h"
+#include "GraphicsContext.h"
 #include "ImageDecoderDirect2D.h"
 #include "PlatformContextDirect2D.h"
 #include <d2d1.h>
@@ -235,12 +236,11 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     if (!m_page || !targetContext)
         return nullptr;
 
-    COMPtr<IWICBitmap> nativeImage;
-    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmap(rect().width(), rect().height(), GUID_WICPixelFormat32bppPRGBA, WICBitmapCacheOnLoad, &nativeImage);
-    if (!SUCCEEDED(hr))
-        return nullptr;
+    ASSERT(targetContext->hasPlatformContext());
+    auto* renderTarget = targetContext->platformContext()->renderTarget();
 
-    COMPtr<ID2D1RenderTarget> nativeImageTarget = Direct2D::createRenderTargetFromWICBitmap(nativeImage.get());
+    IntSize bitmapSize(size().width(), size().height());
+    auto nativeImageTarget = Direct2D::createBitmapRenderTargetOfSize(bitmapSize, renderTarget, 1.0);
     if (!nativeImageTarget)
         return nullptr;
 
@@ -248,6 +248,17 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     GraphicsContext localContext(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     draw(localContext, rect(), rect(), CompositeSourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None);
+
+    COMPtr<ID2D1Bitmap> nativeImage;
+    HRESULT hr = nativeImageTarget->GetBitmap(&nativeImage);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+#if !ASSERT_DISABLED
+    auto nativeImageSize = nativeImage->GetPixelSize();
+    ASSERT(nativeImageSize.height = rect().size().height());
+    ASSERT(nativeImageSize.width = rect().size().width());
+#endif
 
     return nativeImage;
 }

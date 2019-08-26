@@ -56,11 +56,7 @@ IntSize nativeImageSize(const NativeImagePtr& image)
     if (!image)
         return { };
 
-    HRESULT hr = image->GetSize(&width, &height);
-    if (!SUCCEEDED(hr))
-        return { };
-
-    return IntSize(width, height);
+    return image->GetPixelSize();
 }
 
 bool nativeImageHasAlpha(const NativeImagePtr& image)
@@ -68,28 +64,8 @@ bool nativeImageHasAlpha(const NativeImagePtr& image)
     if (!image)
         return false;
 
-    WICPixelFormatGUID pixelFormatGUID = { };
-    HRESULT hr = image->GetPixelFormat(&pixelFormatGUID);
-    if (!SUCCEEDED(hr))
-        return false;
-
-    // FIXME: Should we just check the pixelFormatGUID for relevant ID's we use?
-
-    COMPtr<IWICComponentInfo> componentInfo;
-    hr = imagingFactory()->CreateComponentInfo(pixelFormatGUID, &componentInfo);
-    if (!SUCCEEDED(hr))
-        return false;
-
-    COMPtr<IWICPixelFormatInfo> pixelFormatInfo(Query, componentInfo.get());
-    if (!pixelFormatInfo)
-        return false;
-
-    UINT channelCount = 0;
-    hr = pixelFormatInfo->GetChannelCount(&channelCount);
-    if (!SUCCEEDED(hr))
-        return false;
-
-    return channelCount > 3;
+    D2D1_PIXEL_FORMAT pixelFormat = image->GetPixelFormat();
+    return pixelFormat.alphaMode != D2D1_ALPHA_MODE_IGNORE;
 }
 
 Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
@@ -116,13 +92,7 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
 
     float opacity = 1.0f;
 
-    COMPtr<ID2D1Bitmap> bitmap;
-    HRESULT hr = platformContext->renderTarget()->CreateBitmapFromWicBitmap(image.get(), &bitmap);
-    if (!SUCCEEDED(hr))
-        return;
-
-    platformContext->renderTarget()->DrawBitmap(bitmap.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
-    context.flush();
+    platformContext->renderTarget()->DrawBitmap(image.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
 }
 
 void clearNativeImageSubimages(const NativeImagePtr& image)

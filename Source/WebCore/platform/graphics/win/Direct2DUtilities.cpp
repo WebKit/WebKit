@@ -115,7 +115,7 @@ COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize&
         return nullptr;
 
     COMPtr<IWICBitmap> surface;
-    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(size.width(), size.height(), GUID_WICPixelFormat32bppPBGRA, stride, static_cast<UINT>(numBytes.unsafeGet()), reinterpret_cast<BYTE*>(data), &surface);
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(size.width(), size.height(), wicBitmapFormat(), stride, static_cast<UINT>(numBytes.unsafeGet()), reinterpret_cast<BYTE*>(data), &surface);
     if (!SUCCEEDED(hr))
         return nullptr;
 
@@ -125,31 +125,58 @@ COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize&
 COMPtr<IWICBitmap> createWicBitmap(const IntSize& size)
 {
     COMPtr<IWICBitmap> surface;
-    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmap(size.width(), size.height(), GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &surface);
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmap(size.width(), size.height(), wicBitmapFormat(), WICBitmapCacheOnDemand, &surface);
     if (!SUCCEEDED(hr))
         return nullptr;
 
     return surface;
 }
 
+D2D1_PIXEL_FORMAT pixelFormatForSoftwareManipulation()
+{
+    return D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+}
+
+D2D1_PIXEL_FORMAT pixelFormat()
+{
+    // Since we need to interact with HDC from time-to-time, we are forced to use DXGI_FORMAT_B8G8R8A8_UNORM and D2D1_ALPHA_MODE_PREMULTIPLIED
+    return D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+}
+
+GUID wicBitmapFormat()
+{
+    // This is the WIC format compatible with DXGI_FORMAT_B8G8R8A8_UNORM. It is also supposedly the most efficient in-memory
+    // representation for WIC images.
+    return GUID_WICPixelFormat32bppPBGRA;
+}
+
+D2D1_BITMAP_PROPERTIES bitmapProperties()
+{
+    return D2D1::BitmapProperties(pixelFormat());
+}
+
 COMPtr<ID2D1Bitmap> createBitmap(ID2D1RenderTarget* renderTarget, const IntSize& size)
 {
-    auto bitmapProperties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+    auto bitmapCreateProperties = bitmapProperties();
 
     COMPtr<ID2D1Bitmap> bitmap;
     D2D1_SIZE_U bitmapSize = size;
-    HRESULT hr = renderTarget->CreateBitmap(bitmapSize, bitmapProperties, &bitmap);
+    HRESULT hr = renderTarget->CreateBitmap(bitmapSize, bitmapCreateProperties, &bitmap);
     if (!SUCCEEDED(hr))
         return nullptr;
 
     return bitmap;
 }
 
+D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties()
+{
+    return D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+        pixelFormat(), 0, 0, D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE, D2D1_FEATURE_LEVEL_DEFAULT);
+}
+
 COMPtr<ID2D1RenderTarget> createRenderTargetFromWICBitmap(IWICBitmap* bitmapSource)
 {
-    auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        0, 0, D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT);
+    auto targetProperties = renderTargetProperties();
 
     COMPtr<ID2D1RenderTarget> bitmapContext;
     HRESULT hr = GraphicsContext::systemFactory()->CreateWicBitmapRenderTarget(bitmapSource, &targetProperties, &bitmapContext);
@@ -161,9 +188,7 @@ COMPtr<ID2D1RenderTarget> createRenderTargetFromWICBitmap(IWICBitmap* bitmapSour
 
 COMPtr<ID2D1DCRenderTarget> createGDIRenderTarget()
 {
-    auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        0, 0, D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE, D2D1_FEATURE_LEVEL_DEFAULT);
+    auto targetProperties = renderTargetProperties();
 
     COMPtr<ID2D1DCRenderTarget> renderTarget;
     HRESULT hr = GraphicsContext::systemFactory()->CreateDCRenderTarget(&targetProperties, &renderTarget);
@@ -171,6 +196,36 @@ COMPtr<ID2D1DCRenderTarget> createGDIRenderTarget()
         return nullptr;
 
     return renderTarget;
+}
+
+COMPtr<ID2D1BitmapRenderTarget> createBitmapRenderTarget(ID2D1RenderTarget* renderTarget)
+{
+    if (!renderTarget)
+        renderTarget = GraphicsContext::defaultRenderTarget();
+
+    COMPtr<ID2D1BitmapRenderTarget> bitmapContext;
+    HRESULT hr = renderTarget->CreateCompatibleRenderTarget(nullptr, nullptr, nullptr, D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_GDI_COMPATIBLE, &bitmapContext);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return bitmapContext;
+}
+
+COMPtr<ID2D1BitmapRenderTarget> createBitmapRenderTargetOfSize(const IntSize& size, ID2D1RenderTarget* renderTarget, float deviceScaleFactor)
+{
+    UNUSED_PARAM(deviceScaleFactor);
+
+    if (!renderTarget)
+        renderTarget = GraphicsContext::defaultRenderTarget();
+
+    COMPtr<ID2D1BitmapRenderTarget> bitmapContext;
+    auto desiredSize = D2D1::SizeF(size.width(), size.height());
+    D2D1_SIZE_U pixelSize = size;
+    HRESULT hr = renderTarget->CreateCompatibleRenderTarget(&desiredSize, &pixelSize, nullptr, D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_GDI_COMPATIBLE, &bitmapContext);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return bitmapContext;
 }
 
 void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset)
@@ -199,7 +254,7 @@ void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const I
     ASSERT(SUCCEEDED(hr));
 }
 
-void writeImageToDiskAsPNG(ID2D1RenderTarget* renderTarget, ID2D1Bitmap* bitmap, LPCWSTR fileName)
+void writeDiagnosticPNGToPath(ID2D1RenderTarget* renderTarget, ID2D1Bitmap* bitmap, LPCWSTR fileName)
 {
     COMPtr<IWICBitmapEncoder> wicBitmapEncoder;
     HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateEncoder(GUID_ContainerFormatPng, nullptr, &wicBitmapEncoder);

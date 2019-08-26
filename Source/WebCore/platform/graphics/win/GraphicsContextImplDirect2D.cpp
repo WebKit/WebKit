@@ -291,8 +291,9 @@ void GraphicsContextImplDirect2D::drawNativeImage(const NativeImagePtr& image, c
 
 void GraphicsContextImplDirect2D::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, CompositeOperator compositeOperator, BlendMode blendMode)
 {
-    if (auto surface = image.nativeImageForCurrentFrame())
-        Direct2D::drawPattern(m_platformContext, surface.get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
+    auto* context = &graphicsContext();
+    if (auto surface = image.nativeImageForCurrentFrame(context))
+        Direct2D::drawPattern(m_platformContext, WTFMove(surface), IntSize(image.size()), destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
 }
 
 void GraphicsContextImplDirect2D::drawRect(const FloatRect& rect, float borderThickness)
@@ -421,8 +422,8 @@ void GraphicsContextImplDirect2D::clipToImageBuffer(ImageBuffer& buffer, const F
     if (!image)
         return;
 
-
-    if (auto surface = image->nativeImageForCurrentFrame())
+    auto* context = &graphicsContext();
+    if (auto surface = image->nativeImageForCurrentFrame(context))
         notImplemented();
 }
 

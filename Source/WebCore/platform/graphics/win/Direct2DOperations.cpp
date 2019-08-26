@@ -528,8 +528,6 @@ void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const 
         FloatRect contextRect(FloatPoint(), context->GetSize());
         drawWithoutShadow(platformContext, contextRect, drawFunction);
     }
-
-    flush(platformContext);
 }
 
 void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const Color& color, const ShadowState& shadowState)
@@ -554,8 +552,6 @@ void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const 
         FloatRect contextRect(FloatPoint(), context->GetSize());
         drawWithoutShadow(platformContext, contextRect, drawFunction);
     }
-
-    flush(platformContext);
 }
 
 void strokeRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, float lineWidth, const StrokeSource& strokeSource, const ShadowState& shadowState)
@@ -588,8 +584,6 @@ void strokePath(PlatformContextDirect2D& platformContext, const Path& path, cons
         drawWithShadow(platformContext, boundingRect, shadowState, drawFunction);
     else
         drawWithoutShadow(platformContext, boundingRect, drawFunction);
-
-    flush(platformContext);
 }
 
 void drawPath(PlatformContextDirect2D& platformContext, const Path& path, const StrokeSource& strokeSource, const ShadowState&)
@@ -640,13 +634,6 @@ void drawWithShadowHelper(ID2D1RenderTarget* context, ID2D1Bitmap* bitmap, const
     compositor->SetInputEffect(0, transformEffect.get());
     compositor->SetInput(1, bitmap);
 
-    // Flip the context
-    D2D1_MATRIX_3X2_F ctm;
-    deviceContext->GetTransform(&ctm);
-    auto translate = D2D1::Matrix3x2F::Translation(0.0f, deviceContext->GetSize().height);
-    auto flip = D2D1::Matrix3x2F::Scale(D2D1::SizeF(1.0f, -1.0f));
-    deviceContext->SetTransform(ctm * flip * translate);
-
     deviceContext->DrawImage(compositor.get(), D2D1_INTERPOLATION_MODE_LINEAR);
 }
 
@@ -655,13 +642,11 @@ void drawWithShadow(PlatformContextDirect2D& platformContext, const FloatRect& b
     auto context = platformContext.renderTarget();
 
     // Render the current geometry to a bitmap context
-    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget;
-    HRESULT hr = context->CreateCompatibleRenderTarget(&bitmapTarget);
-    RELEASE_ASSERT(SUCCEEDED(hr));
+    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget = createBitmapRenderTarget(context);
 
     bitmapTarget->BeginDraw();
     drawCommands(bitmapTarget.get());
-    hr = bitmapTarget->EndDraw();
+    HRESULT hr = bitmapTarget->EndDraw();
     RELEASE_ASSERT(SUCCEEDED(hr));
 
     COMPtr<ID2D1Bitmap> bitmap;
@@ -836,13 +821,11 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* imag
     else
         drawWithoutShadow(platformContext, adjustedDestRect, drawFunction);
 
-    flush(platformContext);
-
     if (!stateSaver.didSave())
         context->SetTransform(ctm);
 }
 
-void drawPattern(PlatformContextDirect2D& platformContext, IWICBitmap* tileImage, const IntSize& size, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator compositeOperator, BlendMode blendMode)
+void drawPattern(PlatformContextDirect2D& platformContext, COMPtr<ID2D1Bitmap>&& tileImage, const IntSize& size, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator compositeOperator, BlendMode blendMode)
 {
     auto context = platformContext.renderTarget();
     PlatformContextStateSaver stateSaver(platformContext);
@@ -866,8 +849,6 @@ void drawPattern(PlatformContextDirect2D& platformContext, IWICBitmap* tileImage
     // If we only want a subset of the bitmap, we need to create a cropped bitmap image. According to the documentation,
     // this does not allocate new bitmap memory.
     if (size.width() > destRect.width() || size.height() > destRect.height()) {
-        ASSERT(0);
-        /*
         float dpiX = 0;
         float dpiY = 0;
         tileImage->GetDpi(&dpiX, &dpiY);
@@ -880,16 +861,10 @@ void drawPattern(PlatformContextDirect2D& platformContext, IWICBitmap* tileImage
             if (SUCCEEDED(hr))
                 tileImage = subImage;
         }
-        */
     }
 
-    COMPtr<ID2D1Bitmap> bitmap;
-    HRESULT hr = context->CreateBitmapFromWicBitmap(tileImage, nullptr, &bitmap);
-    if (!SUCCEEDED(hr))
-        return;
-
     COMPtr<ID2D1BitmapBrush> patternBrush;
-    hr = context->CreateBitmapBrush(bitmap.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+    HRESULT hr = context->CreateBitmapBrush(tileImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
     ASSERT(SUCCEEDED(hr));
     if (!SUCCEEDED(hr))
         return;
@@ -1109,8 +1084,8 @@ void beginTransparencyLayer(PlatformContextDirect2D& platformContext, float opac
     PlatformContextDirect2D::TransparencyLayerState transparencyLayer;
     transparencyLayer.opacity = opacity;
 
-    HRESULT hr = platformContext.renderTarget()->CreateCompatibleRenderTarget(&transparencyLayer.renderTarget);
-    RELEASE_ASSERT(SUCCEEDED(hr));
+    transparencyLayer.renderTarget = createBitmapRenderTarget(platformContext.renderTarget());
+
     platformContext.m_transparencyLayerStack.append(WTFMove(transparencyLayer));
 
     platformContext.m_transparencyLayerStack.last().renderTarget->BeginDraw();
@@ -1222,7 +1197,20 @@ void clipToImageBuffer(PlatformContextDirect2D&, ID2D1RenderTarget*, const Float
     notImplemented();
 }
 
+
+void copyBits(const uint8_t* srcRows, unsigned rowCount, unsigned colCount, unsigned srcStride, unsigned destStride, uint8_t* destRows)
+{
+    for (unsigned y = 0; y < rowCount; ++y) {
+        // Source data may be power-of-two sized, so we need to only copy the bits that
+        // correspond to the rectangle supplied by the caller.
+        const uint32_t* srcRow = reinterpret_cast<const uint32_t*>(srcRows + srcStride * y);
+        uint32_t* destRow = reinterpret_cast<uint32_t*>(destRows + destStride * y);
+        memcpy(destRow, srcRow, colCount);
+    }
+}
+
 } // namespace Direct2D
+
 } // namespace WebCore
 
 #endif // USE(DIRECT2D)

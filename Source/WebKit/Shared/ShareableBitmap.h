@@ -40,7 +40,8 @@
 #endif
 
 #if USE(DIRECT2D)
-interface IWICBitmap;
+interface ID2D1Bitmap;
+interface ID2D1RenderTarget;
 
 #include <WebCore/COMPtr.h>
 #endif
@@ -131,7 +132,7 @@ public:
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     RefPtr<cairo_surface_t> createCairoSurface();
 #elif USE(DIRECT2D)
-    COMPtr<IWICBitmap> createDirect2DSurface();
+    COMPtr<ID2D1Bitmap> createDirect2DSurface(ID2D1RenderTarget*);
     void sync(WebCore::GraphicsContext&);
 #endif
 
@@ -162,14 +163,14 @@ private:
     Configuration m_configuration;
 
 #if USE(DIRECT2D)
-    COMPtr<IWICBitmap> m_bitmap;
+    COMPtr<ID2D1Bitmap> m_bitmap;
 #endif
 
     // If the shareable bitmap is backed by shared memory, this points to the shared memory object.
     RefPtr<SharedMemory> m_sharedMemory;
 
     // If the shareable bitmap is backed by fastMalloced memory, this points to the data.
-    void* m_data;
+    void* m_data { nullptr };
 };
 
 } // namespace WebKit

@@ -73,20 +73,7 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 
     IntPoint updateRectBoundsLocation = updateInfo.updateRectBounds.location();
 
-    auto updateWICBitmap = bitmap->createDirect2DSurface();
-
-    HRESULT hr = S_OK;
-#ifndef _NDEBUG
-    unsigned width, height;
-    hr = updateWICBitmap->GetSize(&width, &height);
-    ASSERT(width == updateInfo.updateRectBounds.width());
-    ASSERT(height == updateInfo.updateRectBounds.height());
-#endif
-
-    COMPtr<ID2D1Bitmap> deviceUpdateBitmap;
-    hr = m_backend->renderTarget()->CreateBitmapFromWicBitmap(updateWICBitmap.get(), &deviceUpdateBitmap);
-    if (!SUCCEEDED(hr))
-        return;
+    COMPtr<ID2D1Bitmap> deviceUpdateBitmap = bitmap->createDirect2DSurface(m_backend->renderTarget());
 
 #ifndef _NDEBUG
     auto deviceBitmapSize = deviceUpdateBitmap->GetPixelSize();

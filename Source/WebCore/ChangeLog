@@ -1,3 +1,39 @@
+2019-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Go back to ID2D1Bitmap as our NativeImage type
+        https://bugs.webkit.org/show_bug.cgi?id=201122
+
+        Reviewed by Alex Christensen.
+
+        In Bug 200093 I switched the OS type of NativeImagePtr from ID2D1Bitmap to IWICBitmap.
+        However, this was an ill-advised approach, because it dramatically harmed performance due
+        to the heavy use of software rendering.
+
+        I originally made this change because I thought this was the only way to get to the backing
+        bits of the bitmaps, but it turns out that a more recent Direct2D data type (ID2D1Bitmap1)
+        has the ability to map its memory to CPU-accessible memory, allowing software filter effects.
+
+        This patch switches back to the ID2D1Bitap data type, and hooks up the ID2D1Bitmap1 data type
+        to access the underlying memory of the bitmaps when software filter effects are used.
+
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/NativeImage.h:
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        * platform/graphics/win/Direct2DOperations.cpp:
+        * platform/graphics/win/Direct2DOperations.h:
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::writeDiagnosticPNGToPath):
+        (WebCore::Direct2D::writeImageToDiskAsPNG): Deleted.
+        * platform/graphics/win/Direct2DUtilities.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        * platform/graphics/win/ImageBufferDataDirect2D.h:
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        * platform/graphics/win/PatternDirect2D.cpp:
+        * svg/graphics/SVGImage.cpp:
+
 2019-08-26  Sam Weinig  <weinig@apple.com>
 
         [WHLSL] TypeNamer can be simplified by replacing BaseTypeNameNode with uniqued AST::UnnamedTypes
