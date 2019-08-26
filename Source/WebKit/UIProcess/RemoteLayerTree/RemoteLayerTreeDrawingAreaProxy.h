@@ -27,6 +27,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "RemoteLayerTreeHost.h"
+#include "TransactionID.h"
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
@@ -49,8 +50,8 @@ public:
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key);
 
-    uint64_t nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID + 1; }
-    uint64_t lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
+    TransactionID nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID.next(); }
+    TransactionID lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
 
     void didRefreshDisplay();
     
@@ -96,7 +97,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
-    void willCommitLayerTree(uint64_t transactionID);
+    void willCommitLayerTree(TransactionID);
     void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     
     void sendUpdateGeometry();
@@ -112,10 +113,10 @@ private:
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
-    uint64_t m_pendingLayerTreeTransactionID { 0 };
-    uint64_t m_lastVisibleTransactionID { 0 };
-    uint64_t m_transactionIDForPendingCACommit { 0 };
-    uint64_t m_transactionIDForUnhidingContent { 0 };
+    TransactionID m_pendingLayerTreeTransactionID;
+    TransactionID m_lastVisibleTransactionID;
+    TransactionID m_transactionIDForPendingCACommit;
+    TransactionID m_transactionIDForUnhidingContent;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     CallbackMap m_callbacks;

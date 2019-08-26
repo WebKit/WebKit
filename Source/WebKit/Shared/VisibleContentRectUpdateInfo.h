@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "TransactionID.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/VelocityData.h>
@@ -46,7 +47,7 @@ class VisibleContentRectUpdateInfo {
 public:
     VisibleContentRectUpdateInfo() = default;
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& customFixedPositionRect, const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, const WebCore::VelocityData& scrollVelocity, uint64_t lastLayerTreeTransactionId)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& customFixedPositionRect, const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId)
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
         , m_contentInsets(contentInsets)
@@ -82,7 +83,7 @@ public:
     bool isChangingObscuredInsetsInteractively() const { return m_isChangingObscuredInsetsInteractively; }
     bool allowShrinkToFit() const { return m_allowShrinkToFit; }
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
-    uint64_t lastLayerTreeTransactionID() const { return m_lastLayerTreeTransactionID; }
+    TransactionID lastLayerTreeTransactionID() const { return m_lastLayerTreeTransactionID; }
 
     MonotonicTime timestamp() const { return m_scrollVelocity.lastUpdateTime; }
 
@@ -101,7 +102,7 @@ private:
     WebCore::FloatBoxExtent m_obscuredInsets;
     WebCore::FloatBoxExtent m_unobscuredSafeAreaInsets;
     WebCore::VelocityData m_scrollVelocity;
-    uint64_t m_lastLayerTreeTransactionID { 0 };
+    TransactionID m_lastLayerTreeTransactionID;
     double m_scale { -1 };
     bool m_inStableState { false };
     bool m_isFirstUpdateForNewViewSize { false };

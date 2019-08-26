@@ -815,7 +815,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
 }
 
-void WebPage::handleTap(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
+void WebPage::handleTap(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId)
 {
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
@@ -835,7 +835,7 @@ void WebPage::handleTap(const IntPoint& point, OptionSet<WebEvent::Modifier> mod
         handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers);
 }
 
-void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
+void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId)
 {
     FloatPoint adjustedPoint;
     auto* nodeRespondingToDoubleClick = m_page->mainFrame().nodeRespondingToDoubleClickEvent(point, adjustedPoint);
@@ -1073,7 +1073,7 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
 #endif
 }
 
-void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId, WebCore::PointerID pointerId)
+void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId, WebCore::PointerID pointerId)
 {
     auto invalidTargetForSingleClick = !m_potentialTapNode;
     if (!invalidTargetForSingleClick) {

@@ -51,8 +51,8 @@ public:
     RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
 
-    uint64_t nextTransactionID() const { return m_currentTransactionID + 1; }
-    uint64_t lastCommittedTransactionID() const { return m_currentTransactionID; }
+    TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
+    TransactionID lastCommittedTransactionID() const { return m_currentTransactionID; }
 
 private:
     // DrawingArea
@@ -119,7 +119,7 @@ private:
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
 
-    uint64_t takeNextTransactionID() { return ++m_currentTransactionID; }
+    TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
 
     bool markLayersVolatileImmediatelyIfPossible() override;
 
@@ -169,7 +169,7 @@ private:
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*> m_displayRefreshMonitors;
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*>* m_displayRefreshMonitorsToNotify { nullptr };
 
-    uint64_t m_currentTransactionID { 0 };
+    TransactionID m_currentTransactionID;
     Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 

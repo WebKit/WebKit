@@ -909,7 +909,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_touchActionGestureRecognizer.get()];
 #endif
 
-    _layerTreeTransactionIdAtLastTouchStart = 0;
+    _layerTreeTransactionIdAtLastTouchStart = { };
 
 #if ENABLE(DATA_INTERACTION)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];

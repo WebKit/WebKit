@@ -1,3 +1,75 @@
+2019-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make a strongly-typed TransactionID to replace uint64_t transactionIDs
+        https://bugs.webkit.org/show_bug.cgi?id=199983
+
+        Reviewed by Dean Jackson.
+        
+        Add TransactionID which is a MonotonicObjectIdentifier<TransactionIDType>. This is modeled
+        after ObjectIdentifier<>, but we can't use that because it doesn't have a guarantee of
+        values always increasing by 1 (all derived classes share the same value source). Also, we
+        need a per-RemoteLayerTreeDrawingArea set of values, but a static seed would cause values to
+        be incremented by all RemoteLayerTreeDrawingAreas in a WebProcess.
+
+        Replace all the bare uint64_t with TransactionID, fixing message generation codegen.
+
+        * Scripts/webkit/messages.py:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::transactionID const):
+        (WebKit::RemoteLayerTreeTransaction::setTransactionID):
+        * Shared/TransactionID.h: Added.
+        (WebKit::MonotonicObjectIdentifier::MonotonicObjectIdentifier):
+        (WebKit::MonotonicObjectIdentifier::isHashTableDeletedValue const):
+        (WebKit::MonotonicObjectIdentifier::encode const):
+        (WebKit::MonotonicObjectIdentifier::decode):
+        (WebKit::MonotonicObjectIdentifier::operator== const):
+        (WebKit::MonotonicObjectIdentifier::operator> const):
+        (WebKit::MonotonicObjectIdentifier::operator>= const):
+        (WebKit::MonotonicObjectIdentifier::operator< const):
+        (WebKit::MonotonicObjectIdentifier::operator<= const):
+        (WebKit::MonotonicObjectIdentifier::operator!= const):
+        (WebKit::MonotonicObjectIdentifier::increment):
+        (WebKit::MonotonicObjectIdentifier::next const):
+        (WebKit::MonotonicObjectIdentifier::toUInt64 const):
+        (WebKit::MonotonicObjectIdentifier::operator bool const):
+        (WebKit::MonotonicObjectIdentifier::loggingString const):
+        (WebKit::MonotonicObjectIdentifier::hashTableDeletedValue):
+        (WebKit::MonotonicObjectIdentifier::isValidIdentifier):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::lastLayerTreeTransactionID const):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processWillSwapOrDidExit]):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::commitPotentialTap):
+        (WebKit::WebPageProxy::handleTap):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        (WebKit::RemoteLayerTreeDrawingArea::nextTransactionID const):
+        (WebKit::RemoteLayerTreeDrawingArea::lastCommittedTransactionID const):
+        (WebKit::RemoteLayerTreeDrawingArea::takeNextTransactionID):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::firstLayerTreeTransactionIDAfterDidCommitLoad const):
+        (WebKit::WebFrame::setFirstLayerTreeTransactionIDAfterDidCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::handlePotentialDoubleTapForDoubleClickAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+
 2019-08-24  Chris Dumez  <cdumez@apple.com>
 
         Make CacheStorageEngineCaches's decodeCachesNames() more robust against bad input data

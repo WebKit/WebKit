@@ -31,6 +31,7 @@
 #include "GenericCallback.h"
 #include "PlatformCAAnimationRemote.h"
 #include "RemoteLayerBackingStore.h"
+#include "TransactionID.h"
 #include <WebCore/Color.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
@@ -264,8 +265,8 @@ public:
     bool avoidsUnsafeArea() const { return m_avoidsUnsafeArea; }
     void setAvoidsUnsafeArea(bool avoidsUnsafeArea) { m_avoidsUnsafeArea = avoidsUnsafeArea; }
 
-    uint64_t transactionID() const { return m_transactionID; }
-    void setTransactionID(uint64_t transactionID) { m_transactionID = transactionID; }
+    TransactionID transactionID() const { return m_transactionID; }
+    void setTransactionID(TransactionID transactionID) { m_transactionID = transactionID; }
 
     ActivityStateChangeID activityStateChangeID() const { return m_activityStateChangeID; }
     void setActivityStateChangeID(ActivityStateChangeID activityStateChangeID) { m_activityStateChangeID = activityStateChangeID; }
@@ -309,7 +310,7 @@ private:
     double m_initialScaleFactor { 1 };
     double m_viewportMetaTagWidth { -1 };
     uint64_t m_renderTreeSize { 0 };
-    uint64_t m_transactionID { 0 };
+    TransactionID m_transactionID;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
     OptionSet<WebCore::LayoutMilestone> m_newlyReachedPaintingMilestones;
     bool m_scaleWasSetByUIProcess { false };

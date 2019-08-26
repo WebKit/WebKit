@@ -7043,8 +7043,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    m_firstLayerTreeTransactionIdAfterDidCommitLoad = 0;
-    m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+    m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
+    m_lastVisibleContentRectUpdate = { };
     m_hasNetworkRequestsOnSuspended = false;
     m_isKeyboardAnimatingIn = false;
     m_isScrollingOrZooming = false;

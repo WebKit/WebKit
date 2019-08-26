@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "DownloadID.h"
 #include "ShareableBitmap.h"
+#include "TransactionID.h"
 #include "WKBase.h"
 #include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -167,8 +168,8 @@ public:
     RefPtr<ShareableBitmap> createSelectionSnapshot() const;
 
 #if PLATFORM(IOS_FAMILY)
-    uint64_t firstLayerTreeTransactionIDAfterDidCommitLoad() const { return m_firstLayerTreeTransactionIDAfterDidCommitLoad; }
-    void setFirstLayerTreeTransactionIDAfterDidCommitLoad(uint64_t transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
+    TransactionID firstLayerTreeTransactionIDAfterDidCommitLoad() const { return m_firstLayerTreeTransactionIDAfterDidCommitLoad; }
+    void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
 
 private:
@@ -190,7 +191,7 @@ private:
     WebCore::FrameIdentifier m_frameID;
 
 #if PLATFORM(IOS_FAMILY)
-    uint64_t m_firstLayerTreeTransactionIDAfterDidCommitLoad { 0 };
+    TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;
 #endif
 };
 

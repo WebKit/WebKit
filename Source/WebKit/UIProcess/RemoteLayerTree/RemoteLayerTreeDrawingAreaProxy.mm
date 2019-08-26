@@ -183,7 +183,7 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     m_isWaitingForDidUpdateGeometry = true;
 }
 
-void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(uint64_t transactionID)
+void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
 {
     m_pendingLayerTreeTransactionID = transactionID;
 }
@@ -195,7 +195,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     LOG(RemoteLayerTree, "%s", layerTreeTransaction.description().data());
     LOG(RemoteLayerTree, "%s", scrollingTreeTransaction.description().data());
 
-    ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID + 1);
+    ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID.next());
     m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
     m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
 

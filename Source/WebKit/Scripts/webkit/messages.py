@@ -217,6 +217,7 @@ def forward_declarations_and_headers(receiver):
         'WebCore::SWServerConnectionIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::LayerHostingContextID',
+        'WebKit::TransactionID',
         'WebKit::StorageAreaIdentifier',
         'WebKit::StorageAreaImplIdentifier',
         'WebKit::StorageNamespaceIdentifier',

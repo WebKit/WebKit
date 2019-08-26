@@ -38,6 +38,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingController.h"
+#import "TransactionID.h"
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKAirPlayRoutePicker.h"
@@ -293,7 +294,7 @@ struct WKAutoCorrectionData {
     BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;
 
     CGPoint _lastInteractionLocation;
-    uint64_t _layerTreeTransactionIdAtLastTouchStart;
+    WebKit::TransactionID _layerTreeTransactionIdAtLastTouchStart;
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 

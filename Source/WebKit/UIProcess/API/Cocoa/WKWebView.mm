@@ -316,7 +316,7 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
 
     BOOL _hasCommittedLoadForMainFrame;
     BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
-    uint64_t _firstPaintAfterCommitLoadTransactionID;
+    WebKit::TransactionID _firstPaintAfterCommitLoadTransactionID;
     WebKit::DynamicViewportUpdateMode _dynamicViewportUpdateMode;
     WebKit::DynamicViewportSizeUpdateID _currentDynamicViewportSizeUpdateID;
     CATransform3D _resizeAnimationTransformAdjustments;
@@ -331,7 +331,7 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
 
     Optional<WebCore::FloatPoint> _unobscuredCenterToRestore;
-    Optional<uint64_t> _firstTransactionIDAfterPageRestore;
+    Optional<WebKit::TransactionID> _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
 
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
@@ -1883,7 +1883,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _frozenVisibleContentRect = WTF::nullopt;
     _frozenUnobscuredContentRect = WTF::nullopt;
 
-    _firstPaintAfterCommitLoadTransactionID = 0;
+    _firstPaintAfterCommitLoadTransactionID = { };
     _firstTransactionIDAfterPageRestore = WTF::nullopt;
 
     _hasScheduledVisibleRectUpdate = NO;

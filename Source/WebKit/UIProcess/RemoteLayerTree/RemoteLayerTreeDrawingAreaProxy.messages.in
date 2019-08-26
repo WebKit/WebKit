@@ -21,6 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy {
-    void WillCommitLayerTree(uint64_t transactionID)
+    void WillCommitLayerTree(WebKit::TransactionID transactionID)
     void CommitLayerTree(WebKit::RemoteLayerTreeTransaction layerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction scrollingTreeTransaction)
 }

@@ -815,7 +815,7 @@ void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, b
     process().send(Messages::WebPage::PotentialTapAtPosition(requestID, position, shouldRequestMagnificationInformation), m_pageID);
 }
 
-void WebPageProxy::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64_t layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID pointerId)
+void WebPageProxy::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID pointerId)
 {
     process().send(Messages::WebPage::CommitPotentialTap(modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId), m_pageID);
 }
@@ -830,7 +830,7 @@ void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, u
     process().send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
 }
 
-void WebPageProxy::handleTap(const FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, uint64_t layerTreeTransactionIdAtLastTouchStart)
+void WebPageProxy::handleTap(const FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
 {
     process().send(Messages::WebPage::HandleTap(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart), m_pageID);
 }
@@ -840,7 +840,7 @@ void WebPageProxy::didRecognizeLongPress()
     process().send(Messages::WebPage::DidRecognizeLongPress(), m_pageID);
 }
 
-void WebPageProxy::handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t layerTreeTransactionIdAtLastTouchStart)
+void WebPageProxy::handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
 {
     process().send(Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(point, modifiers, layerTreeTransactionIdAtLastTouchStart), m_pageID);
 }
