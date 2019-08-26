@@ -1,3 +1,15 @@
+2019-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove NPAPI Examples
+        https://bugs.webkit.org/show_bug.cgi?id=201089
+
+        Reviewed by Alexey Proskuryakov.
+
+        We are only supporting NPAPI for flash until its upcoming end of life.
+        We don't need to encourage the creation of new NPAPI plugins by having examples.
+
+        * Examples: Removed.
+
 2019-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Gtk-Doc fails with build options which need cooperation between CFLAGS and LDFLAGS
