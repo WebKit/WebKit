@@ -1,3 +1,22 @@
+2019-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Disabled devices should not be taken into account when searching for a capture device
+        https://bugs.webkit.org/show_bug.cgi?id=201183
+        <rdar://problem/54353440>
+
+        Reviewed by Jer Noble.
+
+        Manually tested.
+
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID):
+        We currently keep a list of devices, some of which might be disabled.
+        We should not take into account disabled devices, only enabled devices
+        when doing this search.
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        Improve logging.
+
 2019-08-26  Jer Noble  <jer.noble@apple.com>
 
         Removing fullscreen element in rAF() callback after requestFullscreen() can leave fullscreen in inconsistent state.
