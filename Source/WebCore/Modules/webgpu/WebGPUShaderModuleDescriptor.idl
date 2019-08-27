@@ -29,5 +29,4 @@
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUShaderModuleDescriptor {
     required /*ArrayBuffer*/ DOMString code; // FIXME: DOMString for MTL prototyping only.
-    boolean isWHLSL = false;
 };

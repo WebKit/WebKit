@@ -1,3 +1,129 @@
+2019-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Rewrite all tests to use WHLSL and delete the isWHLSL flag
+        https://bugs.webkit.org/show_bug.cgi?id=201162
+
+        Reviewed by Saam Barati.
+
+        * webgpu/bind-groups.html:
+        * webgpu/blend-color-triangle-strip.html:
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/color-write-mask-triangle-strip.html:
+        * webgpu/compute-pipeline-errors.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/draw-indexed-triangles.html:
+        * webgpu/msl-harness-test-expected.txt: Removed.
+        * webgpu/msl-harness-test.html: Removed.
+        * webgpu/render-command-encoding.html:
+        * webgpu/render-pipeline-errors.html:
+        * webgpu/render-pipelines.html:
+        * webgpu/shader-modules.html:
+        * webgpu/simple-triangle-strip.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/viewport-scissor-rect-triangle-strip.html:
+        * webgpu/whlsl/arbitrary-vertex-attribute-locations.html:
+        * webgpu/whlsl/buffer-fragment.html:
+        * webgpu/whlsl/buffer-length.html:
+        * webgpu/whlsl/buffer-vertex.html:
+        * webgpu/whlsl/checker-should-set-type-of-read-modify-write-variables.html:
+        * webgpu/whlsl/compute.html:
+        * webgpu/whlsl/dereference-pointer-should-type-check.html:
+        * webgpu/whlsl/device-proper-type-checker.html:
+        * webgpu/whlsl/do-while-loop-break.html:
+        * webgpu/whlsl/do-while-loop-continue.html:
+        * webgpu/whlsl/do-while-loop.html:
+        * webgpu/whlsl/dont-crash-parsing-enum.html:
+        * webgpu/whlsl/dot-expressions.html:
+        * webgpu/whlsl/duplicate-types-should-not-produce-duplicate-ctors.html:
+        * webgpu/whlsl/ensure-proper-variable-lifetime-2.html:
+        * webgpu/whlsl/ensure-proper-variable-lifetime-3.html:
+        * webgpu/whlsl/ensure-proper-variable-lifetime.html:
+        * webgpu/whlsl/huge-array.html:
+        * webgpu/whlsl/js/test-harness.js:
+        (convertTypeToArrayType):
+        (Data):
+        (Harness):
+        (Harness.prototype.async.callTypedFunction):
+        (Harness.prototype.callVoidFunction):
+        (Harness.prototype.async.checkCompileFail):
+        (Harness.prototype._setUpArguments):
+        (Harness.prototype.async._callFunction):
+        (Harness.prototype.set isWHLSL): Deleted.
+        (Harness.prototype.get isWHLSL): Deleted.
+        * webgpu/whlsl/loops-break.html:
+        * webgpu/whlsl/loops-continue.html:
+        * webgpu/whlsl/loops.html:
+        * webgpu/whlsl/make-array-reference.html:
+        * webgpu/whlsl/matrix-2.html:
+        * webgpu/whlsl/matrix-memory-layout.html:
+        * webgpu/whlsl/matrix.html:
+        * webgpu/whlsl/nested-dot-expression-rvalue.html:
+        * webgpu/whlsl/nested-loop.html:
+        * webgpu/whlsl/null-dereference.html:
+        * webgpu/whlsl/oob-access.html:
+        * webgpu/whlsl/propertyresolver/ander-abstract-lvalue.html:
+        * webgpu/whlsl/propertyresolver/ander-lvalue-3-levels.html:
+        * webgpu/whlsl/propertyresolver/ander-lvalue.html:
+        * webgpu/whlsl/propertyresolver/ander.html:
+        * webgpu/whlsl/propertyresolver/getter.html:
+        * webgpu/whlsl/propertyresolver/indexer-ander-abstract-lvalue.html:
+        * webgpu/whlsl/propertyresolver/indexer-ander-lvalue-3-levels.html:
+        * webgpu/whlsl/propertyresolver/indexer-ander-lvalue.html:
+        * webgpu/whlsl/propertyresolver/indexer-ander.html:
+        * webgpu/whlsl/propertyresolver/indexer-getter.html:
+        * webgpu/whlsl/propertyresolver/indexer-setter-abstract-lvalue-3-levels.html:
+        * webgpu/whlsl/propertyresolver/indexer-setter-abstract-lvalue.html:
+        * webgpu/whlsl/propertyresolver/indexer-setter-lvalue.html:
+        * webgpu/whlsl/propertyresolver/indexer-setter.html:
+        * webgpu/whlsl/propertyresolver/setter-abstract-lvalue-3-levels.html:
+        * webgpu/whlsl/propertyresolver/setter-abstract-lvalue.html:
+        * webgpu/whlsl/propertyresolver/setter-lvalue.html:
+        * webgpu/whlsl/read-modify-write-high-zombies.html:
+        * webgpu/whlsl/read-modify-write.html:
+        * webgpu/whlsl/return-local-variable.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-10.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-11.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-12.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-13.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-14.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-15.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-16.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-17.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-18.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-2.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-20.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-21.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-22.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-23.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-25.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-27.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-3.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-4.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-5.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-6.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-7.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-8.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-9.html:
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules.html:
+        * webgpu/whlsl/simple-arrays.html:
+        * webgpu/whlsl/store-to-property-updates-properly.html:
+        * webgpu/whlsl/textures-getdimensions.html:
+        * webgpu/whlsl/textures-load.html:
+        * webgpu/whlsl/textures-sample.html:
+        * webgpu/whlsl/two-dimensional-array.html:
+        * webgpu/whlsl/use-undefined-variable-2.html:
+        * webgpu/whlsl/use-undefined-variable.html:
+        * webgpu/whlsl/while-loop-break.html:
+        * webgpu/whlsl/while-loop-continue.html:
+        * webgpu/whlsl/whlsl.html:
+        * webgpu/whlsl/zero-initialize-values-2.html:
+        * webgpu/whlsl/zero-initialize-values.html:
+
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix test failure after r249127

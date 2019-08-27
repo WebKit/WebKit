@@ -24,13 +24,11 @@ function isScalar(type)
     }
 }
 
-function convertTypeToArrayType(isWHLSL, type)
+function convertTypeToArrayType(type)
 {
     switch(type) {
         case Types.BOOL:
-            if (isWHLSL)
-                return Int32Array;
-            return Uint8Array;
+            return Int32Array;
         case Types.INT:
             return Int32Array;
         case Types.UCHAR:
@@ -119,14 +117,14 @@ class Data {
         }
 
         this._type = type;
-        this._byteLength = (convertTypeToArrayType(harness.isWHLSL, type)).BYTES_PER_ELEMENT * values.length;
+        this._byteLength = (convertTypeToArrayType(type)).BYTES_PER_ELEMENT * values.length;
 
         const [buffer, arrayBuffer] = harness.device.createBufferMapped({
             size: this._byteLength,
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ
         });
 
-        const typedArray = new (convertTypeToArrayType(harness.isWHLSL, type))(arrayBuffer);
+        const typedArray = new (convertTypeToArrayType(type))(arrayBuffer);
         typedArray.set(values);
         buffer.unmap();
 
@@ -160,7 +158,6 @@ class Data {
 class Harness {
     constructor ()
     {
-        this.isWHLSL = true;
     }
 
     async requestDevice()
@@ -173,21 +170,6 @@ class Harness {
             // FIXME: Add support for GPUAdapterRequestOptions and GPUDeviceDescriptor,
             // and differentiate between descriptor validation errors and no WebGPU support.
         }
-    }
-
-    // Sets whether Harness generates WHLSL or MSL shaders.
-    set isWHLSL(value)
-    {
-        this._isWHLSL = value;
-        this._shaderHeader = value ? "" : `
-#include <metal_stdlib>
-using namespace metal;
-        `;
-    }
-
-    get isWHLSL()
-    {
-        return this._isWHLSL;
     }
 
     /**
@@ -228,31 +210,17 @@ using namespace metal;
         });
 
         let entryPointCode;
-        if (this._isWHLSL) {
-            argsDeclarations.unshift(`device ${whlslArgumentType(type)}[] result : register(u0)`);
-            let callCode = `${name}(${functionCallArgs.join(", ")})`;
-            callCode = convertToWHLSLOutputType(callCode, type);
-            entryPointCode = `
+        argsDeclarations.unshift(`device ${whlslArgumentType(type)}[] result : register(u0)`);
+        let callCode = `${name}(${functionCallArgs.join(", ")})`;
+        callCode = convertToWHLSLOutputType(callCode, type);
+        entryPointCode = `
 [numthreads(1, 1, 1)]
 compute void _compute_main(${argsDeclarations.join(", ")})
 {
     result[0] = ${callCode};
 }
 `;
-        } else {
-            argsDeclarations.unshift(`device ${convertTypeToWHLSLType(type)}* result [[id(0)]];`);
-            entryPointCode = `
-struct _compute_args {
-    ${argsDeclarations.join("\n")}
-};
-
-kernel void _compute_main(device _compute_args& args [[buffer(0)]]) 
-{
-    *args.result = ${name}(${functionCallArgs.join(", ")});
-}
-`;
-        }
-        const code = this._shaderHeader + functions + entryPointCode;
+        const code = functions + entryPointCode;
         await this._callFunction(code, argsLayouts, argsResourceBindings);
     
         try {
@@ -260,7 +228,7 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         } catch {
             throw new Error("Harness error: Unable to read results!");
         }
-        const array = new (convertTypeToArrayType(this._isWHLSL, type))(result);
+        const array = new (convertTypeToArrayType(type))(result);
         this._resultBuffer.unmap();
 
         return array;
@@ -279,27 +247,13 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
 
         const [argsLayouts, argsResourceBindings, argsDeclarations, functionCallArgs] = this._setUpArguments(args);
 
-        let entryPointCode;
-        if (this._isWHLSL) {
-            entryPointCode = `
+        let entryPointCode = `
 [numthreads(1, 1, 1)]
 compute void _compute_main(${argsDeclarations.join(", ")})
 {
     ${name}(${functionCallArgs.join(", ")});
 }`;
-        } else {
-            entryPointCode = `
-struct _compute_args {
-    ${argsDeclarations.join("\n")}
-};
-
-kernel void _compute_main(device _compute_args& args [[buffer(0)]])
-{
-    ${name}(${functionCallArgs.join(", ")});
-}
-`;
-        }
-        const code = this._shaderHeader + functions + entryPointCode;
+        const code = functions + entryPointCode;
         this._callFunction(code, argsLayouts, argsResourceBindings);
     }
 
@@ -312,21 +266,15 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         if (this._device === undefined)
             return;
         
-        let entryPointCode;
-        if (this.isWHLSL) {
-            entryPointCode = `
+        let entryPointCode = `
 [numthreads(1, 1, 1)]
 compute void _compute_main() { }`;
-        } else {
-            entryPointCode = `
-kernel void _compute_main() { }`;
-        }
 
-        const code = this._shaderHeader + source + entryPointCode;
+        const code = source + entryPointCode;
 
         this._device.pushErrorScope("validation");
         
-        const shaders = this._device.createShaderModule({ code: code, isWHLSL: this._isWHLSL });
+        const shaders = this._device.createShaderModule({ code: code });
     
         this._device.createComputePipeline({
             computeStage: {
@@ -372,13 +320,8 @@ kernel void _compute_main() { }`;
 
         for (let i = 1; i <= args.length; ++i) {
             const arg = args[i - 1];
-            if (this._isWHLSL) {
-                argsDeclarations.push(`device ${whlslArgumentType(arg.type)}[] arg${i} : register(u${i})`);
-                functionCallArgs.push(convertToWHLSLInputType(`arg${i}` + (arg.isBuffer ? "" : "[0]"), arg.type));
-            } else {
-                argsDeclarations.push(`device ${convertTypeToWHLSLType(arg.type)}* arg${i} [[id(${i})]];`);
-                functionCallArgs.push((arg.isBuffer ? "" : "*") + `args.arg${i}`);
-            }
+            argsDeclarations.push(`device ${whlslArgumentType(arg.type)}[] arg${i} : register(u${i})`);
+            functionCallArgs.push(convertToWHLSLInputType(`arg${i}` + (arg.isBuffer ? "" : "[0]"), arg.type));
             argsLayouts.push({
                 binding: i,
                 visibility: GPUShaderStageBit.COMPUTE,
@@ -411,7 +354,7 @@ kernel void _compute_main() { }`;
 
         this._device.pushErrorScope("validation");
 
-        const shaders = this._device.createShaderModule({ code: code, isWHLSL: this._isWHLSL });
+        const shaders = this._device.createShaderModule({ code: code });
     
         const pipeline = this._device.createComputePipeline({
             layout: pipelineLayout,

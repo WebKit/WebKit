@@ -44,7 +44,7 @@ RefPtr<GPUShaderModule> GPUShaderModule::tryCreate(const GPUDevice& device, cons
         return nullptr;
     }
     
-    if (descriptor.isWHLSL)
+    if (GPUDevice::useWHLSL)
         return adoptRef(new GPUShaderModule(WHLSL::createShaderModule(descriptor.code)));
 
     PlatformShaderModuleSmartPtr module;

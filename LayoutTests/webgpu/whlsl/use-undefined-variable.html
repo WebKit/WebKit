@@ -20,7 +20,7 @@ async function start() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
 
-    const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
+    const shaderModule = device.createShaderModule({code: shaderSource});
     const computeStage = {module: shaderModule, entryPoint: "computeShader"};
 
     const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}]};

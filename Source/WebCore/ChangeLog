@@ -1,3 +1,21 @@
+2019-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Rewrite all tests to use WHLSL and delete the isWHLSL flag
+        https://bugs.webkit.org/show_bug.cgi?id=201162
+
+        Reviewed by Saam Barati.
+
+        We want to keep the MSL codepath for debugging, so the codepath isn't deleted entirely, but it is no longer web exposed.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createShaderModule const):
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.h:
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl:
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUShaderModuleDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::tryCreate):
+
 2019-08-26  Chris Dumez  <cdumez@apple.com>
 
         Change default value of window.open()'s url argument

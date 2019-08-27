@@ -5,35 +5,27 @@
 <script src="../resources/testharnessreport.js"></script>
 <script>
 const shaderCode = `
-#include <metal_stdlib>
-    
-using namespace metal;
-
-struct Vertex
+vertex float4 vertex_main(uint vid [[vertex_id]]) : SV_Position
 {
-    float4 position [[position]];
-};
-
-vertex Vertex vertex_main(uint vid [[vertex_id]])
-{
-    Vertex v;
+    float4 v;
     switch (vid) {
     case 0:
-        v.position = float4(-1, 1, 0, 1);
+        v = float4(-1, 1, 0, 1);
         break;
     case 1:
-        v.position = float4(-1, -1, 0, 1);
+        v = float4(-1, -1, 0, 1);
         break;
     case 2:
-        v.position = float4(1, 1, 0, 1);
+        v = float4(1, 1, 0, 1);
         break;
     default:
-        v.position = float4(1, -1, 0, 1);
+        v = float4(1, -1, 0, 1);
+        break;
     }
     return v;
 }
 
-fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+fragment float4 fragment_main() : SV_Target 0
 {
     return float4(0.0, 1.0, 0.0, 1.0);
 }

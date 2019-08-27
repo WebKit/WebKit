@@ -13,32 +13,22 @@ if (window.testRunner)
 const positionAttributeNum = 0;
 
 const shaderCode = `
-#include <metal_stdlib>
-    
-using namespace metal;
-
-struct VertexIn
-{
-    float4 position [[attribute(${positionAttributeNum})]];
-};
-
 struct VertexOut
 {
-    float4 position [[position]];
-    float4 color;
+    float4 position : SV_Position;
+    float4 color : attribute(0);
 };
 
-vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
-{
+vertex VertexOut vertex_main(float4 position : attribute(${positionAttributeNum})) {
     VertexOut vOut;
-    vOut.position = vertexIn.position;
+    vOut.position = position;
     vOut.color = float4(0, 0.5, 0, 0.5);
     return vOut;
 }
 
-fragment float4 fragment_main(VertexOut v [[stage_in]])
+fragment float4 fragment_main(float4 color : attribute(0)) : SV_Target 0
 {
-    return v.color;
+    return color;
 }
 `;
 

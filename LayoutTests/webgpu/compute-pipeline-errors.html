@@ -14,7 +14,7 @@ tests["Compute compilation failed due to incorrect entry point string."] = async
 [numthreads(1, 1, 1)]
 compute void _compute_main() { }
 `;
-    goodModule = device.createShaderModule({ code: goodWHLSL, isWHLSL: true });
+    goodModule = device.createShaderModule({ code: goodWHLSL });
 
     device.pushErrorScope("validation");
 

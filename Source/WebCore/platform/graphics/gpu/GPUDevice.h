@@ -95,6 +95,8 @@ public:
     GPUSwapChain* swapChain() const { return m_swapChain.get(); }
     void setSwapChain(RefPtr<GPUSwapChain>&&);
 
+    static constexpr bool useWHLSL = true;
+
 private:
     explicit GPUDevice(PlatformDeviceSmartPtr&&);
 

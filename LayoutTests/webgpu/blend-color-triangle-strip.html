@@ -11,36 +11,26 @@ if (window.testRunner)
     testRunner.waitUntilDone();
 
 const shaderCode = `
-#include <metal_stdlib>
-    
-using namespace metal;
-
-struct Vertex
-{
-    float4 position [[position]];
-};
-
-vertex Vertex vertex_main(uint vid [[vertex_id]])
-{
-    Vertex v;
+vertex float4 vertex_main(uint vid : SV_VertexID) : SV_Position {
+    float4 result;
     switch (vid) {
     case 0:
-        v.position = float4(-1, 1, 0, 1);
+        result = float4(-1, 1, 0, 1);
         break;
     case 1:
-        v.position = float4(-1, -1, 0, 1);
+        result = float4(-1, -1, 0, 1);
         break;
     case 2:
-        v.position = float4(1, 1, 0, 1);
+        result = float4(1, 1, 0, 1);
         break;
     default:
-        v.position = float4(1, -1, 0, 1);
+        result = float4(1, -1, 0, 1);
+        break;
     }
-    return v;
+    return result;
 }
 
-fragment float4 fragment_main()
-{
+fragment float4 fragment_main() : SV_Target 0 {
     return float4(0, 1, 1, 1);
 }
 `;

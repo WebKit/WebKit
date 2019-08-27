@@ -153,7 +153,7 @@ Ref<WebGPUBindGroup> WebGPUDevice::createBindGroup(const WebGPUBindGroupDescript
 Ref<WebGPUShaderModule> WebGPUDevice::createShaderModule(const WebGPUShaderModuleDescriptor& descriptor) const
 {
     // FIXME: What can be validated here?
-    auto module = m_device->tryCreateShaderModule(GPUShaderModuleDescriptor { descriptor.code, descriptor.isWHLSL });
+    auto module = m_device->tryCreateShaderModule(GPUShaderModuleDescriptor { descriptor.code });
     return WebGPUShaderModule::create(WTFMove(module));
 }
 

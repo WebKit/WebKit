@@ -39,7 +39,7 @@ let goodRenderPipelineDescriptor, goodModule;
 let tests = {};
 
 tests["GPURenderPipeline creation succeeds with no errors."] = async device => {
-    goodModule = device.createShaderModule({ code: whlslSource, isWHLSL: true });
+    goodModule = device.createShaderModule({ code: whlslSource });
     
     goodRenderPipelineDescriptor = {
         vertexStage: { module: goodModule, entryPoint: "vertexMain" },
@@ -73,7 +73,7 @@ tests["GPURenderPipeline creation succeeds with no errors."] = async device => {
 
 tests["Invalid GPUShaderModule for vertex stage should fail."] = async device => {
     let badDescriptor = Object.assign({}, goodRenderPipelineDescriptor);
-    let badShaderModule = device.createShaderModule({ code: "Foo", isWHLSL: true });
+    let badShaderModule = device.createShaderModule({ code: "Foo" });
     badDescriptor.vertexStage = { module: badShaderModule, entryPoint: "vertexMain" };
 
     return createPipelineAndError(device, badDescriptor);
@@ -81,7 +81,7 @@ tests["Invalid GPUShaderModule for vertex stage should fail."] = async device =>
 
 tests["Invalid GPUShaderModule for fragment stage should fail."] = async device => {
     let badDescriptor = Object.assign({}, goodRenderPipelineDescriptor);
-    let badShaderModule = device.createShaderModule({ code: "Foo", isWHLSL: true  });
+    let badShaderModule = device.createShaderModule({ code: "Foo"  });
     badDescriptor.fragmentStage = { module: badShaderModule, entryPoint: "vertexMain" };
 
     return createPipelineAndError(device, badDescriptor);
@@ -89,7 +89,7 @@ tests["Invalid GPUShaderModule for fragment stage should fail."] = async device 
 
 tests["Empty entry point for vertex stage should fail."] = async device => {
     let badDescriptor = Object.assign({}, goodRenderPipelineDescriptor);
-    let badShaderModule = device.createShaderModule({ code: "Foo", isWHLSL: true  });
+    let badShaderModule = device.createShaderModule({ code: "Foo"  });
     badDescriptor.vertexStage = { module: badShaderModule, entryPoint: "" };
 
     return createPipelineAndError(device, badDescriptor);

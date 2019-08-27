@@ -20,7 +20,7 @@ compute void computeShader(Texture2D<float4> theTexture : register(t0), device u
 `;
 
 async function start(device) {
-    const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
+    const shaderModule = device.createShaderModule({code: shaderSource});
     const computeStage = {module: shaderModule, entryPoint: "computeShader"};
 
     const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "sampled-texture"}, {binding: 1, visibility: 7, type: "storage-buffer"}]};

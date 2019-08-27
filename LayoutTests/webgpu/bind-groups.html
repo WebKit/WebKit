@@ -35,7 +35,7 @@ tests["Create and use a basic GPUBindGroup."] = async device => {
 
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
-    const basicShaderModule = device.createShaderModule({ code: basicBufferShader, isWHLSL: true });
+    const basicShaderModule = device.createShaderModule({ code: basicBufferShader });
     basicPipeline = device.createComputePipeline({
         layout: pipelineLayout,
         computeStage: {
@@ -139,7 +139,7 @@ tests["Create and access a uniform-buffer in a GPUBindGroup."] = async device =>
 
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
-    const shaderModule = device.createShaderModule({ code: uniformBufferShader, isWHLSL: true });
+    const shaderModule = device.createShaderModule({ code: uniformBufferShader });
 
     const pipeline = device.createComputePipeline({
         layout: pipelineLayout,
@@ -216,7 +216,7 @@ tests["Create and access a sampled texture in a GPUBindGroup."] = async device =
         }]
     });
 
-    const shaderModule = device.createShaderModule({ code: sampledTextureShader, isWHLSL: true });
+    const shaderModule = device.createShaderModule({ code: sampledTextureShader });
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
     const pipeline = device.createComputePipeline({
@@ -341,7 +341,7 @@ tests["Create and use multiple GPUBindGroups in a single dispatch."] = async dev
         }]
     });
 
-    const shaderModule = device.createShaderModule({ code: comboShader, isWHLSL: true });
+    const shaderModule = device.createShaderModule({ code: comboShader });
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bgl0, bgl1, bgl2, bgl3] });
 
     const pipeline = device.createComputePipeline({
@@ -418,7 +418,7 @@ tests["Bind a single GPUBuffer with different offsets in different GPUBindGroups
 
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
-    const shaderModule = device.createShaderModule({ code: uniformBufferShader, isWHLSL: true });
+    const shaderModule = device.createShaderModule({ code: uniformBufferShader });
 
     const pipeline = device.createComputePipeline({
         layout: pipelineLayout,

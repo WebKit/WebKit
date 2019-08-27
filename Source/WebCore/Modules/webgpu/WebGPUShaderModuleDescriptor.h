@@ -33,7 +33,6 @@ namespace WebCore {
 
 struct WebGPUShaderModuleDescriptor {
     String code;
-    bool isWHLSL;
 };
 
 } // namespace WebCore

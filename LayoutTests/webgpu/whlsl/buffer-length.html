@@ -14,7 +14,7 @@ compute void computeShader(device uint[] buffer : register(u0), float3 threadID 
 `;
 
 async function start(device) {
-    const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
+    const shaderModule = device.createShaderModule({code: shaderSource});
     const computeStage = {module: shaderModule, entryPoint: "computeShader"};
 
     const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}]};

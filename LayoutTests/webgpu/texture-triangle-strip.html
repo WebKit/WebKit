@@ -19,39 +19,28 @@ const textureBindingNum = 0;
 const samplerBindingNum = 1;
 
 const shaderCode = `
-#include <metal_stdlib>
-    
-using namespace metal;
-
-struct VertexIn
-{
-    float4 position [[attribute(${positionAttributeNum})]];
-    float2 texCoords [[attribute(${texCoordsAttributeNum})]];
-};
-
 struct VertexOut
 {
-    float4 position [[position]];
-    float2 texCoords;
+    float4 position : SV_Position;
+    float2 texCoords : attribute(0);
 };
 
-vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
-{
+vertex VertexOut vertex_main(float4 position : attribute(${positionAttributeNum}), float2 texCoords : attribute(${texCoordsAttributeNum})) {
     VertexOut vOut;
-    vOut.position = vertexIn.position;
-    vOut.texCoords = vertexIn.texCoords;
+    vOut.position = position;
+    vOut.texCoords = texCoords;
     return vOut;
 }
 
 struct TextureSampler
 {
-    texture2d<float> t [[id(${textureBindingNum})]];
-    sampler s [[id(${samplerBindingNum})]];
+    Texture2D<float4> t : register(t${textureBindingNum}, space${bindGroupIndex});
+    sampler s : register(s${samplerBindingNum}, space${bindGroupIndex});
 };
 
-fragment float4 fragment_main(VertexOut v [[stage_in]], const device TextureSampler& args [[buffer(${bindGroupIndex})]])
+fragment float4 fragment_main(float2 texCoords : attribute(0), TextureSampler textureSampler) : SV_Target 0
 {
-    return args.t.sample(args.s, v.texCoords);
+    return Sample(textureSampler.t, textureSampler.s, texCoords);
 }
 `
 

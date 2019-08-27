@@ -33,7 +33,6 @@ namespace WebCore {
 
 struct GPUShaderModuleDescriptor {
     String code;
-    bool isWHLSL;
 };
 
 } // namespace WebCore

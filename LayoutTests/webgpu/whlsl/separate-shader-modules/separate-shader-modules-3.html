@@ -21,8 +21,8 @@ fragment float4 fragmentShader(float4 position : SV_Position) : SV_Target 0 {
 `;
 
 async function start(device) {
-    const vertexShaderModule = device.createShaderModule({code: vertexShaderSource, isWHLSL: true});
-    const fragmentShaderModule = device.createShaderModule({code: fragmentShaderSource, isWHLSL: true});
+    const vertexShaderModule = device.createShaderModule({code: vertexShaderSource});
+    const fragmentShaderModule = device.createShaderModule({code: fragmentShaderSource});
     const vertexStage = {module: vertexShaderModule, entryPoint: "vertexShader"};
     const fragmentStage = {module: fragmentShaderModule, entryPoint: "fragmentShader"};
     const primitiveTopology = "triangle-strip";

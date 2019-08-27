@@ -11,34 +11,22 @@ if (window.testRunner)
     testRunner.waitUntilDone();
 
 const shaderCode = `
-#include <metal_stdlib>
-    
-using namespace metal;
-
-struct VertexIn
-{
-    float2 xy [[attribute(0)]];
-    float3 rgb [[attribute(1)]];
-};
-
 struct VertexOut
 {
-    float4 position [[position]];
-    float4 color;
+    float4 position : SV_Position;
+    float4 color : attribute(0);
 };
 
-vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
-{
+vertex VertexOut vertex_main(float2 xy : attribute(0), float3 rgb : attribute(1)) {
     VertexOut vOut;
-    vOut.position = float4(vertexIn.xy, 0, 1);
-    vOut.color = float4(vertexIn.rgb, 1);
-
+    vOut.position = float4(xy, 0, 1);
+    vOut.color = float4(rgb, 1);
     return vOut;
 }
 
-fragment float4 fragment_main(VertexOut v [[stage_in]])
+fragment float4 fragment_main(float4 color : attribute(0)) : SV_Target 0
 {
-    return v.color;
+    return color;
 }
 `
 
