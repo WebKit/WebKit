@@ -1,3 +1,27 @@
+2019-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Image pasted from screenshot into Mail compose window via share sheet has the wrong aspect ratio
+        https://bugs.webkit.org/show_bug.cgi?id=201171
+        <rdar://problem/54671275>
+
+        Reviewed by Tim Horton.
+
+        Augments an existing app-specific hack to include the Mail composition service, in addition to Mail.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isMailCompositionService):
+
+        Add a new bundle checking method for the Mail composition service (com.apple.MailCompositionService).
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
+        Only plumb the preferred presentation height through to the web process if the application is neither Mail nor
+        the Mail composition service. In the future, we should consider putting this hack behind SPI, or maybe only
+        expose the preferred presentation width in all apps (it isn't difficult to imagine a use case where a "Mail-
+        compose-like" web app has `img { max-width: 100%; }` in their stylesheet).
+
 2019-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Origin header not included in WebSocket handshake request when using platform WebSocket API

@@ -202,6 +202,12 @@ bool IOSApplication::isMobileMail()
     return isMobileMail;
 }
 
+bool IOSApplication::isMailCompositionService()
+{
+    static bool isMailCompositionService = applicationBundleIsEqualTo("com.apple.MailCompositionService"_s);
+    return isMailCompositionService;
+}
+
 bool IOSApplication::isMobileSafari()
 {
     static bool isMobileSafari = applicationBundleIsEqualTo("com.apple.mobilesafari"_s);
