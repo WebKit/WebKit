@@ -1,0 +1,12 @@
+This test checks that when drawing an animated image to a canvas it draws the first frame and that the animation doesn't reset.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.imageFrameIndex(image) is 3
+PASS imgData.toString() is '255,0,0,255'
+PASS The GIF animation has completed playing and the Canvas has been drawn.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

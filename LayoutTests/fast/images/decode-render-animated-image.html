@@ -20,6 +20,7 @@
     <script>
         if (window.internals && window.testRunner) {
             internals.clearMemoryCache();
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
             internals.settings.setWebkitImageReadyEventEnabled(true);
             testRunner.waitUntilDone();
         }

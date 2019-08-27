@@ -1,3 +1,32 @@
+2019-08-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Drawing an animated image to a canvas via drawImage should draw the first frame
+        https://bugs.webkit.org/show_bug.cgi?id=74779
+        <rdar://problem/42282454>
+
+        Reviewed by Said Abou-Hallawa.
+
+        After this patch, when an animated image is drawn into a canvas via
+        drawImage, the actual image that the canvas will receive will be
+        a new Image object with the contents of the first frame of the animation.
+
+        It also adds an internal setting to keep the previous behaviour
+        (draw the current frame playing) because there are several layout
+        tests that rely on canvas.drawImage() to check that animated images
+        play properly.
+
+        Test: fast/canvas/drawImage-animated-gif-draws-first-frame-and-no-reset-image.html
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        * page/Settings.yaml:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setAnimatedImageDebugCanvasDrawingEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2019-08-27  Antti Koivisto  <antti@apple.com>
 
         InlineTextBox::end() should return first-past-end offset

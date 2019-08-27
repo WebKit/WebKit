@@ -33,8 +33,10 @@
         function loadImage(src, frameCount) {
             return new Promise((resolve) => {
                 image.onload = (() => {
-                    if (window.internals)
+                    if (window.internals) {
                         internals.setImageFrameDecodingDuration(image, 0.020);
+                        internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+                    }
                     drawImage(Math.ceil(frameCount / 2), 0).then(() => {
                         internals.resetImageAnimation(image);
                         debug("The animation of the image was reset.");

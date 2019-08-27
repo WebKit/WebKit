@@ -9,7 +9,10 @@
         description("Ensure the image frame is drawn when it finishes decoding even if it takes more than the previous frame duration.");
         jsTestIsAsync = true;
 
-        internals.clearMemoryCache();
+        if (window.internals) {
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            internals.clearMemoryCache();
+        }
 
         var image = new Image;
         image.onload = imageLoaded;

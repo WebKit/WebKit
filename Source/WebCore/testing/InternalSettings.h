@@ -105,6 +105,7 @@ public:
     ExceptionOr<void> setIncompleteImageBorderEnabled(bool);
     ExceptionOr<void> setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(bool);
     ExceptionOr<void> setShouldDispatchSyntheticMouseOutAfterSyntheticClick(bool);
+    ExceptionOr<void> setAnimatedImageDebugCanvasDrawingEnabled(bool);
 
     using FrameFlatteningValue = FrameFlattening;
     ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
@@ -203,6 +204,7 @@ private:
         bool m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection;
         bool m_shouldDispatchSyntheticMouseOutAfterSyntheticClick { false };
         bool m_shouldDeactivateAudioSession;
+        bool m_animatedImageDebugCanvasDrawingEnabled;
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;

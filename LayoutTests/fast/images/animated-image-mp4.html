@@ -5,6 +5,10 @@
     <script src="../../resources/js-test-pre.js"></script>
     <script>
         window.jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+
         var imageData;
 
         function loadImage(src) {

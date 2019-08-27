@@ -20,6 +20,7 @@
             if (!window.internals)
                 return;
             internals.setImageFrameDecodingDuration(image, 0.040);
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
             drawImage();
             drawLoop();
         }

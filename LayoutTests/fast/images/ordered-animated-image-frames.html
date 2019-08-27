@@ -9,11 +9,11 @@
 <body>
     <canvas id="canvas"></canvas>
     <script>
-        if (window.internals)
+        if (window.internals && window.testRunner) {
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
             internals.clearMemoryCache();
-
-        if (window.testRunner)
             testRunner.waitUntilDone();
+        }
 
         var image = new Image;
         image.onload = draw;

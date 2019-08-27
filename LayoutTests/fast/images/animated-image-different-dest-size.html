@@ -49,6 +49,7 @@
                 image.onload = (() => {
                     if (window.internals) {
                         internals.setImageFrameDecodingDuration(image, 0.030);
+                        internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
                         internals.settings.setWebkitImageReadyEventEnabled(true);
                     }
                     drawImage(image, canvasIds, frameCount).then(resolve);

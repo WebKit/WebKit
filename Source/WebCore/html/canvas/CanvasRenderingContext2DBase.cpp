@@ -57,6 +57,7 @@
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "StrokeStyleApplier.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -1570,8 +1571,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         image->setContainerSize(imageRect.size());
     }
 
-    if (image->isBitmapImage())
+    if (image->isBitmapImage()) {
+        // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
+        if (image->isAnimated() && !document.settings().animatedImageDebugCanvasDrawingEnabled())
+            image = BitmapImage::create(image->nativeImage());
         downcast<BitmapImage>(*image).updateFromSettings(document.settings());
+    }
 
     if (rectContainsCanvas(normalizedDstRect)) {
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));

@@ -67,8 +67,10 @@
         }
 
         (function() {
-            if (window.internals)
+            if (window.internals) {
                 internals.clearMemoryCache();
+                internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            }
 
             if (window.testRunner)
                 testRunner.waitUntilDone();

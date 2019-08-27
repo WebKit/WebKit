@@ -759,6 +759,8 @@ mediaTypeOverride:
   initial: '"screen"'
   onChange: mediaTypeOverrideChanged
 
+animatedImageDebugCanvasDrawingEnabled:
+  initial: false
 
 fontRenderingMode:
   type: FontRenderingMode
