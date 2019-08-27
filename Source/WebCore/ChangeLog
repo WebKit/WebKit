@@ -1,3 +1,51 @@
+2019-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WebCore] DataCue should not use gcProtect / gcUnprotect
+        https://bugs.webkit.org/show_bug.cgi?id=201170
+
+        Reviewed by Mark Lam.
+
+        JSC::gcProtect and JSC::gcUnprotect are designed for JavaScriptCore.framework and we should not use them in WebCore. It is
+        checking whether we are holding a JS API lock. But the caller of these API would be the C++ holder's destructor, and this should be
+        allowed since this destruction must happen in main thread or web thread, and this should not happen while other thread is taking JS API lock.
+        For example, we are destroying JSC::Strong<>, JSC::Weak<> without taking JS API lock. But since JSC::gcProtect and JSC::gcUnprotect are designed
+        for JavaScriptCore.framework, they are not accounting this condition, and we are hitting debug assertion in GC stress bot.
+
+        Ideally, we should convert this JSValue field to JSValueInWrappedObject. But JSValueInWrappedObject needs extra care. We should
+        know how the owner and JS wrapper are kept and used to use JSValueInWrappedObject correctly.
+
+        As a first step, this patch just replaces raw JSValue + gcProtect/gcUnprotect with JSC::Strong<>.
+
+        This change fixes LayoutTests/media/track/track-in-band-metadata-display-order.html crash in GC stress bot. The crash trace is the following.
+
+            Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
+            0   com.apple.JavaScriptCore          0x000000010ee3d980 WTFCrash + 16
+            1   com.apple.JavaScriptCore          0x000000010ee408ab WTFCrashWithInfo(int, char const*, char const*, int) + 27
+            2   com.apple.JavaScriptCore          0x000000010feb5327 JSC::Heap::unprotect(JSC::JSValue) + 215
+            3   com.apple.WebCore                 0x0000000120f33b53 JSC::gcUnprotect(JSC::JSCell*) + 51
+            4   com.apple.WebCore                 0x0000000120f329fc JSC::gcUnprotect(JSC::JSValue) + 76
+            5   com.apple.WebCore                 0x0000000120f32968 WebCore::DataCue::~DataCue() + 88
+            6   com.apple.WebCore                 0x0000000120f32ac5 WebCore::DataCue::~DataCue() + 21
+            7   com.apple.WebCore                 0x0000000120f32ae9 WebCore::DataCue::~DataCue() + 25
+            8   com.apple.WebCore                 0x0000000120f37ebf WTF::RefCounted<WebCore::TextTrackCue, std::__1::default_delete<WebCore::TextTrackCue> >::deref() const + 95
+            9   com.apple.WebCore                 0x000000012103a345 void WTF::derefIfNotNull<WebCore::TextTrackCue>(WebCore::TextTrackCue*) + 53
+            10  com.apple.WebCore                 0x000000012103a309 WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >::~RefPtr() + 41
+            11  com.apple.WebCore                 0x000000012102bfc5 WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >::~RefPtr() + 21
+            12  com.apple.WebCore                 0x00000001210e91df WTF::VectorDestructor<true, WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> > >::destruct(WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >*, WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >*) + 47
+            13  com.apple.WebCore                 0x00000001210e913d WTF::VectorTypeOperations<WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> > >::destruct(WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >*, WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >*) + 29
+            14  com.apple.WebCore                 0x00000001210e9100 WTF::Vector<WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >, 0ul, WTF::CrashOnOverflow, 16ul>::~Vector() + 64
+            15  com.apple.WebCore                 0x00000001210e7a25 WTF::Vector<WTF::RefPtr<WebCore::TextTrackCue, WTF::DumbPtrTraits<WebCore::TextTrackCue> >, 0ul, WTF::CrashOnOverflow, 16ul>::~Vector() + 21
+            16  com.apple.WebCore                 0x00000001210e93d3 WebCore::TextTrackCueList::~TextTrackCueList() + 51
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue):
+        (WebCore::DataCue::~DataCue):
+        (WebCore::DataCue::setData):
+        (WebCore::DataCue::value const):
+        (WebCore::DataCue::setValue):
+        (WebCore::DataCue::valueOrNull const):
+        * html/track/DataCue.h:
+
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: use more C++ keywords for defining agents

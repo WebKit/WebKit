@@ -102,7 +102,10 @@ private:
     RefPtr<ArrayBuffer> m_data;
     String m_type;
     RefPtr<SerializedPlatformRepresentation> m_platformValue;
-    JSC::JSValue m_value;
+    // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
+    // due to reference cycles; we should use JSValueInWrappedObject instead.
+    // https://bugs.webkit.org/show_bug.cgi?id=201173
+    JSC::Strong<JSC::Unknown> m_value;
 };
 
 DataCue* toDataCue(TextTrackCue*);
