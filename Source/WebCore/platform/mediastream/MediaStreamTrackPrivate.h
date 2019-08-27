@@ -31,6 +31,7 @@
 
 #include "RealtimeMediaSource.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class RealtimeMediaSourceCapabilities;
 class WebAudioSourceProvider;
 
 class MediaStreamTrackPrivate final
-    : public ThreadSafeRefCounted<MediaStreamTrackPrivate, WTF::DestructionThread::Main>
+    : public RefCounted<MediaStreamTrackPrivate>
     , public CanMakeWeakPtr<MediaStreamTrackPrivate, WeakPtrFactoryInitialization::Eager>
     , public RealtimeMediaSource::Observer
 #if !RELEASE_LOG_DISABLED
