@@ -1,3 +1,19 @@
+2019-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Change default value of window.open()'s url argument
+        https://bugs.webkit.org/show_bug.cgi?id=200882
+
+        Reviewed by Ryosuke Niwa.
+
+        Update default URL parameter value for window.open() to be "" instead of "about:blank", as per:
+        - https://github.com/whatwg/html/issues/4762
+
+        This aligns our behavior with other Web browser engines.
+
+        No new tests, rebaselined existing test.
+
+        * page/DOMWindow.idl:
+
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: unify agent command error messages

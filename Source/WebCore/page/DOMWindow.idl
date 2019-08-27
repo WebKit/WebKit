@@ -77,7 +77,7 @@ typedef USVString CSSOMString;
     [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
-    [CallWith=ActiveWindow&FirstWindow, MayThrowException] WindowProxy? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
+    [CallWith=ActiveWindow&FirstWindow, MayThrowException] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
 
     // The user agent.
     readonly attribute Navigator navigator;

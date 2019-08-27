@@ -1,5 +1,16 @@
 2019-08-26  Chris Dumez  <cdumez@apple.com>
 
+        Change default value of window.open()'s url argument
+        https://bugs.webkit.org/show_bug.cgi?id=200882
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/html/browsers/the-window-object/window-open-defaults.window-expected.txt:
+
+2019-08-26  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/html/browsers/the-window-object from upstream
         https://bugs.webkit.org/show_bug.cgi?id=201145
 
