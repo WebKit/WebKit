@@ -27,11 +27,18 @@ html, body {
     padding: 20px;
     background: linear-gradient(to bottom, red 0%, green 50%, blue 100%);
 }
+
+#target {
+    width: 100%;
+    height: 50px;
+    margin-top: 1em;
+}
 </style>
 <body onload="runTest()">
     <div id="scroller">
         <div id="content"></div>
     </div>
+    <div id="target"></div>
     <p id="description"></p>
     <p id="console"></p>
 </body>
@@ -62,7 +69,7 @@ async function observeScrollEvent() {
     reachedMinimumScrollPosition = true;
     testPassed(`scroller.scrollTop passed ${minimumExpectedScrollTop}`);
     removeEventListener("scroll", observeScrollEvent);
-    await UIHelper.activateAt(160, 350);
+    await UIHelper.activateElement(document.getElementById("target"));
     noteTestProgress();
 }
 
