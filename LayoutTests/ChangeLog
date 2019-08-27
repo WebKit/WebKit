@@ -1,3 +1,25 @@
+2019-08-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r249099. rdar://problem/51857070
+
+    rdar://51857070 (iPad: Many fast/text-autosizing layout tests are consistently failing)
+    
+    Unreviewed Test Gardening.
+    Tests are no longer failing. Removing test expectations.
+    
+    * platform/ipad/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@249099 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-26  Russell Epstein  <repstein@apple.com>
+
+            rdar://51857070 (iPad: Many fast/text-autosizing layout tests are consistently failing)
+
+            Unreviewed Test Gardening.
+            Tests are no longer failing. Removing test expectations.
+
+            * platform/ipad/TestExpectations:
+
 2019-08-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r249147. rdar://problem/54751753
