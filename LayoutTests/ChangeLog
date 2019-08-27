@@ -1,3 +1,17 @@
+2019-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::jsNotificationConstructorPermission
+        https://bugs.webkit.org/show_bug.cgi?id=201186
+        <rdar://problem/53962833>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/notifications/request-in-detached-frame-expected.txt: Added.
+        * http/tests/notifications/request-in-detached-frame.html: Added.
+        * http/tests/notifications/resources/request-in-detached-frame-subframe.html: Added.
+
 2019-08-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, land expectation for rdar://54317204.
