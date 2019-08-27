@@ -317,6 +317,12 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
+#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED < 130000)
+@interface AVSampleBufferDisplayLayer (WebCorePrivate)
+@property (assign, nonatomic) BOOL preventsDisplaySleepDuringVideoPlayback;
+@end
+#endif
+
 #if !USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
 #import <AVFoundation/AVAudioSession.h>
 
