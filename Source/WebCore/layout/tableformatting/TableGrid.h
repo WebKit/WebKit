@@ -101,6 +101,7 @@ public:
     ColumnsContext& columnsContext() { return m_columnsContext; }
 
     struct Row {
+        LayoutUnit offset;
         LayoutUnit height;
     };
     using RowList = WTF::Vector<Row>;

@@ -31,6 +31,8 @@
 #include "FloatingState.h"
 #include "FormattingState.h"
 #include "InlineFormattingState.h"
+#include "TableFormattingState.h"
+#include "TableGrid.h"
 
 namespace WebCore {
 namespace Layout {
@@ -101,7 +103,7 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
     // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
     // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
-        return 0;
+        return { };
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
@@ -121,7 +123,14 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
             top = firstDisplayBox.rectWithMargin().top();
             bottom = lastDisplayBox.rectWithMargin().bottom();
         }
-    }
+    } else if (formattingRootContainer.establishesTableFormattingContext()) {
+        auto& rowList = downcast<TableFormattingState>(layoutState.establishedFormattingState(formattingRootContainer)).tableGrid().rows();
+        ASSERT(!rowList.isEmpty());
+        top += rowList.first().offset;
+        auto& lastRow = rowList.last();
+        bottom += lastRow.offset + lastRow.height;
+    } else
+        ASSERT_NOT_REACHED();
 
     auto* formattingContextRoot = &layoutBox;
     // TODO: The document renderer is not a formatting context root by default at all. Need to find out what it is.

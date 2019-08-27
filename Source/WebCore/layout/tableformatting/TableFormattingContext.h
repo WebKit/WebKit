@@ -44,13 +44,11 @@ public:
 
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
+    LayoutUnit computedTableWidth() const;
 
     void ensureTableGrid() const;
     void computePreferredWidthForColumns() const;
-    void computeTableWidth() const;
     void distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const;
-    void computeTableHeight() const;
-    void distributeAvailableHeight() const;
 
     TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };

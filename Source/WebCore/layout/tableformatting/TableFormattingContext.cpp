@@ -37,6 +37,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingContext);
 
+// https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
 TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot, TableFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
@@ -44,24 +45,23 @@ TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot,
 
 void TableFormattingContext::layout() const
 {
-    // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
-    // To layout a table, user agents must apply the following actions:
+    ASSERT(!formattingState().tableGrid().cells().isEmpty());
+}
+
+FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints() const
+{
+    // Tables have a slighty different concept of shrink to fit. It's really only different with non-auto "width" values, where
+    // a generic shrink-to fit block level box like a float box would be just sized to the computed value of "width", tables
+    // can actually be streched way over.
 
     // 1. Ensure each cell slot is occupied by at least one cell.
     ensureTableGrid();
     // 2. Compute the minimum width of each column.
     computePreferredWidthForColumns();
     // 3. Compute the width of the table.
-    computeTableWidth();
-    // 4. Compute the height of the table.
-    computeTableHeight();
-    // 5. Distribute the height of the table among rows.
-    distributeAvailableHeight();
-}
-
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints() const
-{
-    return { };
+    auto width = computedTableWidth();
+    // This is the actual computed table width that we want to present as min/max width.
+    return { width, width };
 }
 
 void TableFormattingContext::ensureTableGrid() const
@@ -120,7 +120,7 @@ void TableFormattingContext::computePreferredWidthForColumns() const
     // FIXME: Take column group elements into account.
 }
 
-void TableFormattingContext::computeTableWidth() const
+LayoutUnit TableFormattingContext::computedTableWidth() const
 {
     // Column and caption widths influence the final table width as follows:
     // If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the greater of
@@ -164,8 +164,7 @@ void TableFormattingContext::computeTableWidth() const
         }
     }
 
-    auto& tableDisplayBox = layoutState().displayBoxForLayoutBox(tableWrapperBox);
-    tableDisplayBox.setContentBoxWidth(usedWidth);
+    return usedWidth;
 }
 
 void TableFormattingContext::distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const
@@ -177,14 +176,6 @@ void TableFormattingContext::distributeAvailableWidth(LayoutUnit extraHorizontal
     auto columnExtraSpace = extraHorizontalSpace / columns.size();
     for (auto& column : columns)
         column.setLogicalWidth(column.widthConstraints().minimum + columnExtraSpace);
-}
-
-void TableFormattingContext::computeTableHeight() const
-{
-}
-
-void TableFormattingContext::distributeAvailableHeight() const
-{
 }
 
 }

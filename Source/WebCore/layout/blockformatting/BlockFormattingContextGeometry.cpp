@@ -276,12 +276,18 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
     return heightAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedHorizontalValues usedValues)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(LayoutState& layoutState, const Box& layoutBox, UsedHorizontalValues usedValues)
 {
     ASSERT(layoutBox.isInFlow());
 
-    if (!layoutBox.replaced())
+    if (!layoutBox.replaced()) {
+        if (layoutBox.establishesTableFormattingContext()) {
+            // This is a special table "fit-content size" behavior handling. Not in the spec though.
+            // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
+            usedValues.width = Geometry::shrinkToFitWidth(layoutState, layoutBox, usedValues);
+        }
         return inFlowNonReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
+    }
     return inFlowReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
 }
 

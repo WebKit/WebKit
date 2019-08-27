@@ -76,7 +76,7 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inFlowHeightAndMargin(const LayoutState&, const Box&, UsedVerticalValues);
-        static WidthAndMargin inFlowWidthAndMargin(const LayoutState&, const Box&, UsedHorizontalValues);
+        static WidthAndMargin inFlowWidthAndMargin(LayoutState&, const Box&, UsedHorizontalValues);
 
         static Point staticPosition(const LayoutState&, const Box&);
         static LayoutUnit staticVerticalPosition(const LayoutState&, const Box&);
