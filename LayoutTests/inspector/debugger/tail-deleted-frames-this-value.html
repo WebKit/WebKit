@@ -42,7 +42,7 @@ function test()
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrames = targetData.callFrames;
 
-        InspectorTest.assert(callFrames.length >= expectedFrames.length, `Should have ${expectedFrames.length} frames.`);
+        InspectorTest.assert(callFrames.length >= expectedFrames.length, `Should have at least ${expectedFrames.length} frames, but have ${callFrame.length} instead.`);
 
         // Resolve a thisObject preview on each of the CallFrames.
         let promises = [];
@@ -60,12 +60,12 @@ function test()
                 let callFrame = callFrames[i];
                 let expectedFrame = expectedFrames[i];
                 InspectorTest.log("Expected frame: " + JSON.stringify(expectedFrame));
-                InspectorTest.assert(callFrame.functionName === expectedFrame.functionName, `Should have functionName of '${expectedFrame.functionName}'.`);
-                InspectorTest.assert(callFrame.isTailDeleted === expectedFrame.isTailDeleted, `Should have isTailDeleted of '${expectedFrame.isTailDeleted}.`);
+                InspectorTest.assert(callFrame.functionName === expectedFrame.functionName, `Should have functionName of '${expectedFrame.functionName}', but have '${callFrame.functionName}' instead.`);
+                InspectorTest.assert(callFrame.isTailDeleted === expectedFrame.isTailDeleted, `Should have isTailDeleted of '${expectedFrame.isTailDeleted}', but have '${callFrame.isTailDeleted}' instead.`);
 
                 let thisObject = callFrame.thisObject;
                 let properties = thisObject.preview.propertyPreviews;
-                InspectorTest.assert(properties.length === 1, "Should hvae one property.");
+                InspectorTest.assert(properties.length === 1, "Should have one property.");
                 let prop = properties[0];
                 InspectorTest.expectThat(expectedFrame.thisValue[0] === prop.name, `'this' value should have expected property: ${expectedFrame.thisValue[0]}`);
                 InspectorTest.assert('' + expectedFrame.thisValue[1] === prop.value, `'this' value object should have expected property value: ${expectedFrame.thisValue[1]}`);
