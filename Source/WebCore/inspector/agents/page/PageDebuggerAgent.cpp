@@ -65,6 +65,8 @@ PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context)
 {
 }
 
+PageDebuggerAgent::~PageDebuggerAgent() = default;
+
 void PageDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
 {
     auto& pageChromeClient = m_inspectedPage.chrome().client();

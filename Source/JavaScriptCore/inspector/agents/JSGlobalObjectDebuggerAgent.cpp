@@ -45,6 +45,8 @@ JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context
 {
 }
 
+JSGlobalObjectDebuggerAgent::~JSGlobalObjectDebuggerAgent() = default;
+
 InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (executionContextId) {

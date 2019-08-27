@@ -40,13 +40,11 @@ class JS_EXPORT_PRIVATE InspectorTargetAgent : public InspectorAgentBase, public
     WTF_MAKE_NONCOPYABLE(InspectorTargetAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
-    virtual ~InspectorTargetAgent() = default;
+    virtual ~InspectorTargetAgent();
 
+    // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
-
-    virtual FrontendChannel& frontendChannel() = 0;
 
     // TargetBackendDispatcherHandler
     void exists(ErrorString&) final;
@@ -58,6 +56,11 @@ public:
 
     // Target messages.
     void sendMessageFromTargetToFrontend(const String& targetId, const String& message);
+
+protected:
+    InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
+
+    virtual FrontendChannel& frontendChannel() = 0;
 
 private:
     void connectToTargets();

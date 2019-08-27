@@ -44,6 +44,8 @@ InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(PageAgentContext& context)
 {
 }
 
+InspectorCPUProfilerAgent::~InspectorCPUProfilerAgent() = default;
+
 void InspectorCPUProfilerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
     m_instrumentingAgents.setInspectorCPUProfilerAgent(this);

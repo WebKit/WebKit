@@ -44,6 +44,8 @@ JSGlobalObjectAuditAgent::JSGlobalObjectAuditAgent(JSAgentContext& context)
 {
 }
 
+JSGlobalObjectAuditAgent::~JSGlobalObjectAuditAgent() = default;
+
 InjectedScript JSGlobalObjectAuditAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (executionContextId) {

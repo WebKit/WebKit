@@ -52,6 +52,8 @@ PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
 {
 }
 
+PageConsoleAgent::~PageConsoleAgent() = default;
+
 void PageConsoleAgent::clearMessages(ErrorString& errorString)
 {
     if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent())

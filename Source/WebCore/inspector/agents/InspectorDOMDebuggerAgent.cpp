@@ -74,11 +74,7 @@ InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, I
     m_debuggerAgent->addListener(*this);
 }
 
-InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent()
-{
-    ASSERT(!m_debuggerAgent);
-    ASSERT(!m_instrumentingAgents.inspectorDOMDebuggerAgent());
-}
+InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent() = default;
 
 // Browser debugger agent enabled only when JS debugger is enabled.
 void InspectorDOMDebuggerAgent::debuggerWasEnabled()

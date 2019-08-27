@@ -1,3 +1,75 @@
+2019-08-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use more C++ keywords for defining agents
+        https://bugs.webkit.org/show_bug.cgi?id=200959
+
+        Reviewed by Joseph Pecoraro.
+
+         - make constructors `protected` when the agent isn't meant to be constructed directly
+         - add `virtual` destructors that are defined in the *.cpp so forward-declarations work
+         - use `final` wherever possible
+         - add comments to indicate where any virtual functions come from
+
+        * inspector/agents/InspectorApplicationCacheAgent.h:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorCPUProfilerAgent.h:
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        * inspector/agents/InspectorCSSAgent.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        * inspector/agents/InspectorDOMStorageAgent.h:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        * inspector/agents/InspectorDatabaseAgent.h:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        * inspector/agents/InspectorLayerTreeAgent.h:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        * inspector/agents/InspectorMemoryAgent.h:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        * inspector/agents/InspectorWorkerAgent.h:
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        * inspector/agents/WebConsoleAgent.h:
+        * inspector/agents/WebConsoleAgent.cpp:
+        * inspector/agents/WebDebuggerAgent.h:
+        * inspector/agents/WebDebuggerAgent.cpp:
+        * inspector/agents/WebHeapAgent.h:
+        * inspector/agents/WebHeapAgent.cpp:
+        * inspector/agents/page/PageAuditAgent.h:
+        * inspector/agents/page/PageAuditAgent.cpp:
+        * inspector/agents/page/PageConsoleAgent.h:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        * inspector/agents/page/PageHeapAgent.h:
+        * inspector/agents/page/PageHeapAgent.cpp:
+        * inspector/agents/page/PageNetworkAgent.h:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.h:
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        * inspector/agents/worker/ServiceWorkerAgent.h:
+        * inspector/agents/worker/ServiceWorkerAgent.cpp:
+        * inspector/agents/worker/WorkerAuditAgent.h:
+        * inspector/agents/worker/WorkerAuditAgent.cpp:
+        * inspector/agents/worker/WorkerConsoleAgent.h:
+        * inspector/agents/worker/WorkerConsoleAgent.cpp:
+        * inspector/agents/worker/WorkerDebuggerAgent.h:
+        * inspector/agents/worker/WorkerNetworkAgent.h:
+        * inspector/agents/worker/WorkerNetworkAgent.cpp:
+        * inspector/agents/worker/WorkerRuntimeAgent.h:
+        * inspector/agents/worker/WorkerRuntimeAgent.cpp:
+
 2019-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Rewrite all tests to use WHLSL and delete the isWHLSL flag

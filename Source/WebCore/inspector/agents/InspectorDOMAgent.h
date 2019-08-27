@@ -87,55 +87,66 @@ public:
     static String toErrorString(ExceptionCode);
     static String toErrorString(Exception&&);
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    static String documentURLString(Document*);
 
-    Vector<Document*> documents();
-    void reset();
+    // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
+    // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
+    static Node* innerFirstChild(Node*);
+    static Node* innerNextSibling(Node*);
+    static Node* innerPreviousSibling(Node*);
+    static unsigned innerChildNodeCount(Node*);
+    static Node* innerParentNode(Node*);
 
-    // Methods called from the frontend for DOM nodes inspection.
-    void querySelector(ErrorString&, int nodeId, const String& selectors, int* elementId) override;
-    void querySelectorAll(ErrorString&, int nodeId, const String& selectors, RefPtr<JSON::ArrayOf<int>>& result) override;
-    void getDocument(ErrorString&, RefPtr<Inspector::Protocol::DOM::Node>& root) override;
-    void requestChildNodes(ErrorString&, int nodeId, const int* depth) override;
-    void setAttributeValue(ErrorString&, int elementId, const String& name, const String& value) override;
-    void setAttributesAsText(ErrorString&, int elementId, const String& text, const String* name) override;
-    void removeAttribute(ErrorString&, int elementId, const String& name) override;
-    void removeNode(ErrorString&, int nodeId) override;
-    void setNodeName(ErrorString&, int nodeId, const String& name, int* newId) override;
-    void getOuterHTML(ErrorString&, int nodeId, WTF::String* outerHTML) override;
-    void setOuterHTML(ErrorString&, int nodeId, const String& outerHTML) override;
-    void insertAdjacentHTML(ErrorString&, int nodeId, const String& position, const String& html) override;
-    void setNodeValue(ErrorString&, int nodeId, const String& value) override;
-    void getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames) override;
-    void getDataBindingsForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& dataArray) override;
-    void getAssociatedDataForNode(ErrorString&, int nodeId, Optional<String>& associatedData) override;
-    void getEventListenersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
-    void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
-    void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;
-    void removeBreakpointForEventListener(ErrorString&, int eventListenerId) override;
-    void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
-    void performSearch(ErrorString&, const String& query, const JSON::Array* nodeIds, const bool* caseSensitive, String* searchId, int* resultCount) override;
-    void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<JSON::ArrayOf<int>>&) override;
-    void discardSearchResults(ErrorString&, const String& searchId) override;
-    void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
-    void getAttributes(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<String>>& result) override;
-    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers) override;
-    void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
-    void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
-    void hideHighlight(ErrorString&) override;
-    void highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates) override;
-    void highlightQuad(ErrorString&, const JSON::Array& quad, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates) override;
-    void highlightSelector(ErrorString&, const JSON::Object& highlightConfig, const String& selectorString, const String* frameId) override;
-    void highlightNode(ErrorString&, const JSON::Object& highlightConfig, const int* nodeId, const String* objectId) override;
-    void highlightNodeList(ErrorString&, const JSON::Array& nodeIds, const JSON::Object& highlightConfig) override;
-    void highlightFrame(ErrorString&, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor) override;
-    void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId) override;
-    void undo(ErrorString&) override;
-    void redo(ErrorString&) override;
-    void markUndoableState(ErrorString&) override;
-    void focus(ErrorString&, int nodeId) override;
-    void setInspectedNode(ErrorString&, int nodeId) override;
+    static Node* scriptValueAsNode(JSC::JSValue);
+    static JSC::JSValue nodeAsScriptValue(JSC::ExecState&, Node*);
+
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+
+    // DOMBackendDispatcherHandler
+    void querySelector(ErrorString&, int nodeId, const String& selectors, int* elementId);
+    void querySelectorAll(ErrorString&, int nodeId, const String& selectors, RefPtr<JSON::ArrayOf<int>>& result);
+    void getDocument(ErrorString&, RefPtr<Inspector::Protocol::DOM::Node>& root);
+    void requestChildNodes(ErrorString&, int nodeId, const int* depth);
+    void setAttributeValue(ErrorString&, int elementId, const String& name, const String& value);
+    void setAttributesAsText(ErrorString&, int elementId, const String& text, const String* name);
+    void removeAttribute(ErrorString&, int elementId, const String& name);
+    void removeNode(ErrorString&, int nodeId);
+    void setNodeName(ErrorString&, int nodeId, const String& name, int* newId);
+    void getOuterHTML(ErrorString&, int nodeId, WTF::String* outerHTML);
+    void setOuterHTML(ErrorString&, int nodeId, const String& outerHTML);
+    void insertAdjacentHTML(ErrorString&, int nodeId, const String& position, const String& html);
+    void setNodeValue(ErrorString&, int nodeId, const String& value);
+    void getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames);
+    void getDataBindingsForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& dataArray);
+    void getAssociatedDataForNode(ErrorString&, int nodeId, Optional<String>& associatedData);
+    void getEventListenersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray);
+    void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled);
+    void setBreakpointForEventListener(ErrorString&, int eventListenerId);
+    void removeBreakpointForEventListener(ErrorString&, int eventListenerId);
+    void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties);
+    void performSearch(ErrorString&, const String& query, const JSON::Array* nodeIds, const bool* caseSensitive, String* searchId, int* resultCount);
+    void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<JSON::ArrayOf<int>>&);
+    void discardSearchResults(ErrorString&, const String& searchId);
+    void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result);
+    void getAttributes(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<String>>& result);
+    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers);
+    void requestNode(ErrorString&, const String& objectId, int* nodeId);
+    void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId);
+    void hideHighlight(ErrorString&);
+    void highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates);
+    void highlightQuad(ErrorString&, const JSON::Array& quad, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates);
+    void highlightSelector(ErrorString&, const JSON::Object& highlightConfig, const String& selectorString, const String* frameId);
+    void highlightNode(ErrorString&, const JSON::Object& highlightConfig, const int* nodeId, const String* objectId);
+    void highlightNodeList(ErrorString&, const JSON::Array& nodeIds, const JSON::Object& highlightConfig);
+    void highlightFrame(ErrorString&, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor);
+    void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId);
+    void undo(ErrorString&);
+    void redo(ErrorString&);
+    void markUndoableState(ErrorString&);
+    void focus(ErrorString&, int nodeId);
+    void setInspectedNode(ErrorString&, int nodeId);
 
     // InspectorInstrumentation
     int identifierForNode(Node&);
@@ -170,8 +181,6 @@ public:
     Node* nodeForId(int nodeId);
     int boundNodeId(const Node*);
 
-    static String documentURLString(Document*);
-
     RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
@@ -179,21 +188,12 @@ public:
     void focusNode();
 
     InspectorHistory* history() { return m_history.get(); }
-
-    // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
-    // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
-    static Node* innerFirstChild(Node*);
-    static Node* innerNextSibling(Node*);
-    static Node* innerPreviousSibling(Node*);
-    static unsigned innerChildNodeCount(Node*);
-    static Node* innerParentNode(Node*);
+    Vector<Document*> documents();
+    void reset();
 
     Node* assertNode(ErrorString&, int nodeId);
     Element* assertElement(ErrorString&, int nodeId);
     Document* assertDocument(ErrorString&, int nodeId);
-
-    static Node* scriptValueAsNode(JSC::JSValue);
-    static JSC::JSValue nodeAsScriptValue(JSC::ExecState&, Node*);
 
     bool hasBreakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     int idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);

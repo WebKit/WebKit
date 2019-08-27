@@ -101,10 +101,7 @@ WebHeapAgent::WebHeapAgent(WebAgentContext& context)
 {
 }
 
-WebHeapAgent::~WebHeapAgent()
-{
-    m_sendGarbageCollectionEventsTask->reset();
-}
+WebHeapAgent::~WebHeapAgent() = default;
 
 void WebHeapAgent::enable(ErrorString& errorString)
 {

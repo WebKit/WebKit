@@ -71,9 +71,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
     clearBreakDetails();
 }
 
-InspectorDebuggerAgent::~InspectorDebuggerAgent()
-{
-}
+InspectorDebuggerAgent::~InspectorDebuggerAgent() = default;
 
 void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
@@ -81,8 +79,7 @@ void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendRouter*, Backen
 
 void InspectorDebuggerAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    bool skipRecompile = reason == DisconnectReason::InspectedTargetDestroyed;
-    disable(skipRecompile);
+    disable(reason == DisconnectReason::InspectedTargetDestroyed);
 }
 
 void InspectorDebuggerAgent::enable()

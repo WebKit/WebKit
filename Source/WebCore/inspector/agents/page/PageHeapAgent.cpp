@@ -37,6 +37,8 @@ PageHeapAgent::PageHeapAgent(PageAgentContext& context)
 {
 }
 
+PageHeapAgent::~PageHeapAgent() = default;
+
 void PageHeapAgent::enable(ErrorString& errorString)
 {
     WebHeapAgent::enable(errorString);

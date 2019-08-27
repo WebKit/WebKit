@@ -47,10 +47,13 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageDebuggerAgent(PageAgentContext&);
-    virtual ~PageDebuggerAgent() = default;
+    virtual ~PageDebuggerAgent();
 
     // DebuggerBackendDispatcherHandler
-    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) final;
+    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
+
+    // ScriptDebugListener
+    void breakpointActionLog(JSC::ExecState&, const String&);
 
     // InspectorInstrumentation
     void didClearMainFrameWindowObject();
@@ -68,22 +71,18 @@ public:
     void willDispatchPostMessage(const TimerBase&);
     void didDispatchPostMessage(const TimerBase&);
 
-protected:
-    void enable() override;
-    void disable(bool isBeingDestroyed) override;
-
-    String sourceMapURLForScript(const Script&) override;
-
-    void didClearAsyncStackTraceData() override;
-
 private:
-    void muteConsole() override;
-    void unmuteConsole() override;
+    void enable();
+    void disable(bool isBeingDestroyed);
 
-    // JSC::ScriptDebugListener
-    void breakpointActionLog(JSC::ExecState&, const String&) override;
+    String sourceMapURLForScript(const Script&);
 
-    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
+    void didClearAsyncStackTraceData();
+
+    void muteConsole();
+    void unmuteConsole();
+
+    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId);
 
     Page& m_inspectedPage;
 

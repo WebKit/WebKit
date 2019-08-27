@@ -52,20 +52,29 @@ class RegisteredEventListener;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspector::InspectorDebuggerAgent::Listener, public Inspector::DOMDebuggerBackendDispatcherHandler {
+class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMDebuggerAgent(WebAgentContext&, Inspector::InspectorDebuggerAgent*);
     virtual ~InspectorDOMDebuggerAgent();
 
-    // DOMDebugger API
-    void setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex) final;
-    void removeURLBreakpoint(ErrorString&, const String& url) final;
-    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
-    void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
-    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) final;
-    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) final;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void discardAgent();
+
+    // DOMDebuggerBackendDispatcherHandler
+    void setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex);
+    void removeURLBreakpoint(ErrorString&, const String& url);
+    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName);
+    void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName);
+    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type);
+    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type);
+
+    // InspectorDebuggerAgent::Listener
+    void debuggerWasEnabled();
+    void debuggerWasDisabled();
 
     // InspectorInstrumentation
     void willInsertDOMNode(Node& parent);
@@ -83,16 +92,9 @@ public:
     void willFireAnimationFrame();
     void mainFrameDOMContentLoaded();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
-    void discardAgent() final;
-
-private:
-    // Inspector::InspectorDebuggerAgent::Listener implementation.
-    void debuggerWasEnabled() final;
-    void debuggerWasDisabled() final;
     void disable();
 
+private:
     enum class URLBreakpointSource { Fetch, XHR };
     void breakOnURLIfNeeded(const String& url, URLBreakpointSource);
 

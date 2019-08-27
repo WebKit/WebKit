@@ -38,11 +38,13 @@ class PageHeapAgent final : public WebHeapAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageHeapAgent(PageAgentContext&);
-    virtual ~PageHeapAgent() = default;
+    virtual ~PageHeapAgent();
 
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
+    // HeapBackendDispatcherHandler
+    void enable(ErrorString&);
+    void disable(ErrorString&);
 
+    // InspectorInstrumentation
     void mainFrameNavigated();
 
 private:

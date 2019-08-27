@@ -49,14 +49,15 @@ class InjectedScriptManager;
 class ScriptDebugServer;
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public DebuggerBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, public DebuggerBackendDispatcherHandler, public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static const char* backtraceObjectGroup;
-
     virtual ~InspectorDebuggerAgent();
 
+    static const char* backtraceObjectGroup;
+
+    // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
@@ -83,6 +84,16 @@ public:
     void setPauseOnMicrotasks(ErrorString&, bool enabled) final;
     void setPauseForInternalScripts(ErrorString&, bool shouldPause) final;
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
+
+    // ScriptDebugListener
+    void didParseSource(JSC::SourceID, const Script&) final;
+    void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
+    void willRunMicrotask() final;
+    void didRunMicrotask() final;
+    void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue) final;
+    void didContinue() final;
+    void breakpointActionSound(int breakpointActionIdentifier) final;
+    void breakpointActionProbe(JSC::ExecState&, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
 
     bool isPaused() const;
     bool breakpointsActive() const;
@@ -131,7 +142,7 @@ protected:
     virtual void unmuteConsole() = 0;
 
     virtual void enable();
-    virtual void disable(bool skipRecompile);
+    virtual void disable(bool isBeingDestroyed);
 
     virtual String sourceMapURLForScript(const Script&);
 
@@ -140,16 +151,6 @@ protected:
 
 private:
     Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
-
-    // JSC::ScriptDebugListener
-    void didParseSource(JSC::SourceID, const Script&) final;
-    void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
-    void willRunMicrotask() final;
-    void didRunMicrotask() final;
-    void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue) final;
-    void didContinue() final;
-    void breakpointActionSound(int breakpointActionIdentifier) final;
-    void breakpointActionProbe(JSC::ExecState&, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
 
     void resolveBreakpoint(const Script&, JSC::Breakpoint&);
     void setBreakpoint(JSC::Breakpoint&, bool& existing);    

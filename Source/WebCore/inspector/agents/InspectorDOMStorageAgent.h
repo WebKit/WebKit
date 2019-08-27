@@ -52,24 +52,25 @@ class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspect
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMStorageAgent(PageAgentContext&);
-    virtual ~InspectorDOMStorageAgent() = default;
+    virtual ~InspectorDOMStorageAgent();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
-    // Called from the front-end.
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void getDOMStorageItems(ErrorString&, const JSON::Object& storageId, RefPtr<JSON::ArrayOf<JSON::ArrayOf<String>>>& items) override;
-    void setDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key, const String& value) override;
-    void removeDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key) override;
-
-    // Called from the injected script.
-    static String storageId(Storage&);
-    static RefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
+    // DOMStorageBackendDispatcherHandler
+    void enable(ErrorString&);
+    void disable(ErrorString&);
+    void getDOMStorageItems(ErrorString&, const JSON::Object& storageId, RefPtr<JSON::ArrayOf<JSON::ArrayOf<String>>>& items);
+    void setDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key, const String& value);
+    void removeDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key);
 
     // InspectorInstrumentation
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
+
+    // CommandLineAPI
+    static String storageId(Storage&);
+    static RefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
 
 private:
     RefPtr<StorageArea> findStorageArea(ErrorString&, const JSON::Object&, Frame*&);

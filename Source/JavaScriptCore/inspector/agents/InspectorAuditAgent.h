@@ -43,11 +43,11 @@ class JS_EXPORT_PRIVATE InspectorAuditAgent : public InspectorAgentBase, public 
     WTF_MAKE_NONCOPYABLE(InspectorAuditAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorAuditAgent() = default;
+    virtual ~InspectorAuditAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // AuditBackendDispatcherHandler
     void setup(ErrorString&, const int* executionContextId) final;
@@ -57,7 +57,7 @@ public:
     bool hasActiveAudit() const;
 
 protected:
-    explicit InspectorAuditAgent(AgentContext&);
+    InspectorAuditAgent(AgentContext&);
 
     InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
 

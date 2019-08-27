@@ -53,17 +53,21 @@ class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, publi
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorConsoleAgent(AgentContext&);
-    virtual ~InspectorConsoleAgent() = default;
+    virtual ~InspectorConsoleAgent();
 
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(DisconnectReason) override;
-    void discardValues() override;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void willDestroyFrontendAndBackend(DisconnectReason) final;
+    void discardValues() final;
+
+    // ConsoleBackendDispatcherHandler
+    void enable(ErrorString&) final;
+    void disable(ErrorString&) final;
+    void clearMessages(ErrorString&) override;
+    void getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Protocol::Console::Channel>>&) override;
+    void setLoggingChannelLevel(ErrorString&, const String& channel, const String& level) override;
 
     void setInspectorHeapAgent(InspectorHeapAgent* agent) { m_heapAgent = agent; }
-
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void clearMessages(ErrorString&) override;
 
     bool enabled() const { return m_enabled; }
     void reset();
@@ -76,9 +80,6 @@ public:
     void takeHeapSnapshot(const String& title);
     void count(JSC::ExecState*, const String& label);
     void countReset(JSC::ExecState*, const String& label);
-
-    void getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Protocol::Console::Channel>>&) override;
-    void setLoggingChannelLevel(ErrorString&, const String& channel, const String& level) override;
 
 protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);

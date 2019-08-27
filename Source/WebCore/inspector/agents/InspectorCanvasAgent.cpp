@@ -79,6 +79,8 @@ InspectorCanvasAgent::InspectorCanvasAgent(PageAgentContext& context)
 {
 }
 
+InspectorCanvasAgent::~InspectorCanvasAgent() = default;
+
 void InspectorCanvasAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
 }

@@ -33,16 +33,16 @@ namespace WebKit {
 class WebPageInspectorTargetAgent final : public Inspector::InspectorTargetAgent, public Inspector::FrontendChannel {
 public:
     WebPageInspectorTargetAgent(Inspector::FrontendRouter&, Inspector::BackendDispatcher&);
-    virtual ~WebPageInspectorTargetAgent() = default;
+    virtual ~WebPageInspectorTargetAgent();
+
+    // InspectorTargetAgent
+    Inspector::FrontendChannel& frontendChannel();
+
+    // FrontendChannel
+    Inspector::FrontendChannel::ConnectionType connectionType() const;
+    void sendMessageToFrontend(const String&);
 
 private:
-    // Inspector::InspectorTargetAgent
-    Inspector::FrontendChannel& frontendChannel() final;
-
-    // Inspector::FrontendChannel
-    Inspector::FrontendChannel::ConnectionType connectionType() const final;
-    void sendMessageToFrontend(const String&) final;
-
     Inspector::FrontendRouter& m_router;
 };
 

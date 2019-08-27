@@ -302,6 +302,8 @@ InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context)
 {
 }
 
+InspectorCSSAgent::~InspectorCSSAgent() = default;
+
 void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
 }

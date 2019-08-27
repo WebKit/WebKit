@@ -46,6 +46,8 @@ PageNetworkAgent::PageNetworkAgent(PageAgentContext& context)
 {
 }
 
+PageNetworkAgent::~PageNetworkAgent() = default;
+
 String PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader) {

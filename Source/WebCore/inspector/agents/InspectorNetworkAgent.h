@@ -68,7 +68,6 @@ class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::Netwo
     WTF_MAKE_NONCOPYABLE(InspectorNetworkAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorNetworkAgent(WebAgentContext&);
     virtual ~InspectorNetworkAgent();
 
     static bool shouldTreatAsText(const String& mimeType);
@@ -76,8 +75,19 @@ public:
     static Optional<String> textContentForCachedResource(CachedResource&);
     static bool cachedResourceContent(CachedResource&, String* result, bool* base64Encoded);
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
+
+    // NetworkBackendDispatcherHandler
+    void enable(ErrorString&) final;
+    void disable(ErrorString&) final;
+    void setExtraHTTPHeaders(ErrorString&, const JSON::Object& headers) final;
+    void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) final;
+    void setResourceCachingDisabled(ErrorString&, bool disabled) final;
+    void loadResource(const String& frameId, const String& url, Ref<LoadResourceCallback>&&) final;
+    void getSerializedCertificate(ErrorString&, const String& requestId, String* serializedCertificate) final;
+    void resolveWebSocket(ErrorString&, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) final;
 
     // InspectorInstrumentation
     void willRecalculateStyle();
@@ -108,15 +118,8 @@ public:
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
     void searchInRequest(ErrorString&, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
 
-    // Called from frontend.
-    void enable(ErrorString&) final;
-    void disable(ErrorString&) final;
-    void setExtraHTTPHeaders(ErrorString&, const JSON::Object& headers) final;
-    void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) final;
-    void setResourceCachingDisabled(ErrorString&, bool disabled) final;
-    void loadResource(const String& frameId, const String& url, Ref<LoadResourceCallback>&&) final;
-    void getSerializedCertificate(ErrorString&, const String& requestId, String* serializedCertificate) final;
-    void resolveWebSocket(ErrorString&, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) final;
+protected:
+    InspectorNetworkAgent(WebAgentContext&);
 
     virtual String loaderIdentifier(DocumentLoader*) = 0;
     virtual String frameIdentifier(DocumentLoader*) = 0;

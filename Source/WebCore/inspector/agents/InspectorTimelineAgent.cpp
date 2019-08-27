@@ -618,11 +618,6 @@ void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
         internalStop();
 }
 
-void InspectorTimelineAgent::didCommitLoad()
-{
-    clearRecordStack();
-}
-
 void InspectorTimelineAgent::didRequestAnimationFrame(int callbackId, Frame* frame)
 {
     appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::RequestAnimationFrame, true, frame);

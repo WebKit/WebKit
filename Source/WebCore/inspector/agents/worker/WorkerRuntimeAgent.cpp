@@ -49,6 +49,8 @@ WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
     ASSERT(context.workerGlobalScope.isContextThread());
 }
 
+WorkerRuntimeAgent::~WorkerRuntimeAgent() = default;
+
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (executionContextId) {

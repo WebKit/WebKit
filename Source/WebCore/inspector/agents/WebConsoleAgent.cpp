@@ -43,10 +43,12 @@ namespace WebCore {
 
 using namespace Inspector;
 
-WebConsoleAgent::WebConsoleAgent(AgentContext& context)
+WebConsoleAgent::WebConsoleAgent(WebAgentContext& context)
     : InspectorConsoleAgent(context)
 {
 }
+
+WebConsoleAgent::~WebConsoleAgent() = default;
 
 void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 {

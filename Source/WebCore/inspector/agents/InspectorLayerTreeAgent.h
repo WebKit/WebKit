@@ -48,23 +48,24 @@ class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspecto
     WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorLayerTreeAgent(WebAgentContext&);
+    InspectorLayerTreeAgent(WebAgentContext&);
     virtual ~InspectorLayerTreeAgent();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
-    void reset();
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+
+    // LayerTreeBackendDispatcherHandler
+    void enable(ErrorString&);
+    void disable(ErrorString&);
+    void layersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&);
+    void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&);
 
     // InspectorInstrumentation
     void layerTreeDidChange();
     void renderLayerDestroyed(const RenderLayer&);
     void pseudoElementDestroyed(PseudoElement&);
-
-    // Called from the front-end.
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void layersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&) override;
-    void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
+    void reset();
 
 private:
     // RenderLayer-related methods.

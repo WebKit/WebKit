@@ -37,6 +37,8 @@ InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, Backe
 {
 }
 
+InspectorTargetAgent::~InspectorTargetAgent() = default;
+
 void InspectorTargetAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
     m_isConnected = true;

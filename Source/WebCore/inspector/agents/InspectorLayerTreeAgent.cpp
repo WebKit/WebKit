@@ -53,10 +53,7 @@ InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
 {
 }
 
-InspectorLayerTreeAgent::~InspectorLayerTreeAgent()
-{
-    reset();
-}
+InspectorLayerTreeAgent::~InspectorLayerTreeAgent() = default;
 
 void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
@@ -85,6 +82,8 @@ void InspectorLayerTreeAgent::enable(ErrorString&)
 void InspectorLayerTreeAgent::disable(ErrorString&)
 {
     m_instrumentingAgents.setInspectorLayerTreeAgent(nullptr);
+
+    reset();
 }
 
 void InspectorLayerTreeAgent::layerTreeDidChange()

@@ -50,6 +50,8 @@ InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(PageAgentContext&
 {
 }
 
+InspectorApplicationCacheAgent::~InspectorApplicationCacheAgent() = default;
+
 void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
 }

@@ -222,6 +222,8 @@ InspectorDatabaseAgent::InspectorDatabaseAgent(WebAgentContext& context)
 {
 }
 
+InspectorDatabaseAgent::~InspectorDatabaseAgent() = default;
+
 void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
 }

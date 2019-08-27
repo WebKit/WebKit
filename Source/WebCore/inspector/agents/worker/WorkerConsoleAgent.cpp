@@ -38,4 +38,6 @@ WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context)
     ASSERT(context.workerGlobalScope.isContextThread());
 }
 
+WorkerConsoleAgent::~WorkerConsoleAgent() = default;
+
 } // namespace WebCore

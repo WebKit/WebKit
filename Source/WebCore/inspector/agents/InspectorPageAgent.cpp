@@ -341,6 +341,8 @@ InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorClien
 {
 }
 
+InspectorPageAgent::~InspectorPageAgent() = default;
+
 void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
 }

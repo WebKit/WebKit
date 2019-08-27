@@ -47,25 +47,25 @@ class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector
     WTF_MAKE_NONCOPYABLE(InspectorDatabaseAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorDatabaseAgent(WebAgentContext&);
-    virtual ~InspectorDatabaseAgent() = default;
+    InspectorDatabaseAgent(WebAgentContext&);
+    virtual ~InspectorDatabaseAgent();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
-
-    // Called from the front-end.
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names) override;
-    void executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
-
-    // Called from the injected script.
-    String databaseId(Database&);
+    // DatabaseBackendDispatcherHandler
+    void enable(ErrorString&);
+    void disable(ErrorString&);
+    void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names);
+    void executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&);
 
     // InspectorInstrumentation
     void didCommitLoad();
     void didOpenDatabase(Database&);
+
+    // CommandLineAPI
+    String databaseId(Database&);
 
 private:
     Database* databaseForId(const String& databaseId);

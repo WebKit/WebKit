@@ -64,6 +64,8 @@ PageRuntimeAgent::PageRuntimeAgent(PageAgentContext& context)
 {
 }
 
+PageRuntimeAgent::~PageRuntimeAgent() = default;
+
 void PageRuntimeAgent::enable(ErrorString& errorString)
 {
     bool enabled = m_instrumentingAgents.pageRuntimeAgent() == this;

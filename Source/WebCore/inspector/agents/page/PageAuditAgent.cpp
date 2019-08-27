@@ -54,6 +54,8 @@ PageAuditAgent::PageAuditAgent(PageAgentContext& context)
 {
 }
 
+PageAuditAgent::~PageAuditAgent() = default;
+
 InjectedScript PageAuditAgent::injectedScriptForEval(const int* executionContextId)
 {
     if (executionContextId)

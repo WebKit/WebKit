@@ -34,6 +34,8 @@ WebPageInspectorTargetAgent::WebPageInspectorTargetAgent(Inspector::FrontendRout
 {
 }
 
+WebPageInspectorTargetAgent::~WebPageInspectorTargetAgent() = default;
+
 Inspector::FrontendChannel& WebPageInspectorTargetAgent::frontendChannel()
 {
     return *this;

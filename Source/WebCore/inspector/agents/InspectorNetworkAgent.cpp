@@ -179,6 +179,8 @@ InspectorNetworkAgent::InspectorNetworkAgent(WebAgentContext& context)
 {
 }
 
+InspectorNetworkAgent::~InspectorNetworkAgent() = default;
+
 void InspectorNetworkAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
 }
@@ -388,15 +390,6 @@ Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildOb
         resourceObject->setSourceMapURL(sourceMappingURL);
 
     return resourceObject;
-}
-
-InspectorNetworkAgent::~InspectorNetworkAgent()
-{
-    if (m_enabled) {
-        ErrorString ignored;
-        disable(ignored);
-    }
-    ASSERT(!m_instrumentingAgents.inspectorNetworkAgent());
 }
 
 double InspectorNetworkAgent::timestamp()

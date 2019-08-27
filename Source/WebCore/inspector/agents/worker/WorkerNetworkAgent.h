@@ -33,16 +33,16 @@ class WorkerNetworkAgent final : public InspectorNetworkAgent {
     WTF_MAKE_NONCOPYABLE(WorkerNetworkAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerNetworkAgent(WorkerAgentContext&);
-    virtual ~WorkerNetworkAgent() = default;
+    WorkerNetworkAgent(WorkerAgentContext&);
+    virtual ~WorkerNetworkAgent();
 
 private:
-    String loaderIdentifier(DocumentLoader*) final;
-    String frameIdentifier(DocumentLoader*) final;
-    Vector<WebSocket*> activeWebSockets(const LockHolder&) final;
-    void setResourceCachingDisabled(bool) final;
-    ScriptExecutionContext* scriptExecutionContext(ErrorString&, const String& frameId) final;
-    bool shouldForceBufferingNetworkResourceData() const final { return true; }
+    String loaderIdentifier(DocumentLoader*);
+    String frameIdentifier(DocumentLoader*);
+    Vector<WebSocket*> activeWebSockets(const LockHolder&);
+    void setResourceCachingDisabled(bool);
+    ScriptExecutionContext* scriptExecutionContext(ErrorString&, const String& frameId);
+    bool shouldForceBufferingNetworkResourceData() const { return true; }
 
     WorkerGlobalScope& m_workerGlobalScope;
 };

@@ -42,6 +42,8 @@ InspectorWorkerAgent::InspectorWorkerAgent(PageAgentContext& context)
 {
 }
 
+InspectorWorkerAgent::~InspectorWorkerAgent() = default;
+
 void InspectorWorkerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
     m_instrumentingAgents.setInspectorWorkerAgent(this);

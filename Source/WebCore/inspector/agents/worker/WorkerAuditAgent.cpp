@@ -46,6 +46,8 @@ WorkerAuditAgent::WorkerAuditAgent(WorkerAgentContext& context)
     ASSERT(context.workerGlobalScope.isContextThread());
 }
 
+WorkerAuditAgent::~WorkerAuditAgent() = default;
+
 InjectedScript WorkerAuditAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (executionContextId) {

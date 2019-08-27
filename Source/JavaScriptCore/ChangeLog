@@ -1,5 +1,39 @@
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: use more C++ keywords for defining agents
+        https://bugs.webkit.org/show_bug.cgi?id=200959
+
+        Reviewed by Joseph Pecoraro.
+
+         - make constructors `protected` when the agent isn't meant to be constructed directly
+         - add `virtual` destructors that are defined in the *.cpp so forward-declarations work
+         - use `final` wherever possible
+         - add comments to indicate where any virtual functions come from
+
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorAgent.cpp:
+        * inspector/agents/InspectorAuditAgent.h:
+        * inspector/agents/InspectorAuditAgent.cpp:
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        * inspector/agents/InspectorTargetAgent.h:
+        * inspector/agents/InspectorTargetAgent.cpp:
+        * inspector/agents/JSGlobalObjectAuditAgent.h:
+        * inspector/agents/JSGlobalObjectAuditAgent.cpp:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+
+2019-08-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: unify agent command error messages
         https://bugs.webkit.org/show_bug.cgi?id=200950
 

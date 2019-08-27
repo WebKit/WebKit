@@ -41,6 +41,8 @@ WorkerNetworkAgent::WorkerNetworkAgent(WorkerAgentContext& context)
     ASSERT(context.workerGlobalScope.isContextThread());
 }
 
+WorkerNetworkAgent::~WorkerNetworkAgent() = default;
+
 String WorkerNetworkAgent::loaderIdentifier(DocumentLoader*)
 {
     return { };

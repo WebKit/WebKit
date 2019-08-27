@@ -81,34 +81,35 @@ enum class TimelineRecordType {
     ObserverCallback,
 };
 
-class InspectorTimelineAgent final
-    : public InspectorAgentBase
-    , public Inspector::TimelineBackendDispatcherHandler
-    , public Inspector::ScriptDebugListener {
+class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public Inspector::ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorTimelineAgent(PageAgentContext&);
     virtual ~InspectorTimelineAgent();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // TimelineBackendDispatcherHandler
-    void enable(ErrorString&) final;
-    void disable(ErrorString&) final;
-    void start(ErrorString&, const int* maxCallStackDepth = nullptr) final;
-    void stop(ErrorString&) final;
-    void setAutoCaptureEnabled(ErrorString&, bool) final;
-    void setInstruments(ErrorString&, const JSON::Array&) final;
+    void enable(ErrorString&);
+    void disable(ErrorString&);
+    void start(ErrorString&, const int* maxCallStackDepth = nullptr);
+    void stop(ErrorString&);
+    void setAutoCaptureEnabled(ErrorString&, bool);
+    void setInstruments(ErrorString&, const JSON::Array&);
 
-    int id() const { return m_id; }
-
-    void didCommitLoad();
-
-    // Methods called from WebCore.
-    void startFromConsole(JSC::ExecState*, const String& title);
-    void stopFromConsole(JSC::ExecState*, const String& title);
+    // ScriptDebugListener
+    void didParseSource(JSC::SourceID, const Script&) { }
+    void failedToParseSource(const String&, const String&, int, int, const String&) { }
+    void willRunMicrotask() { }
+    void didRunMicrotask() { }
+    void didPause(JSC::ExecState&, JSC::JSValue, JSC::JSValue) { }
+    void didContinue() { }
+    void breakpointActionLog(JSC::ExecState&, const String&) { }
+    void breakpointActionSound(int) { }
+    void breakpointActionProbe(JSC::ExecState&, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result);
 
     // InspectorInstrumentation
     void didInstallTimer(int timerId, Seconds timeout, bool singleShot, Frame*);
@@ -143,18 +144,13 @@ public:
     void mainFrameStartedLoading();
     void mainFrameNavigated();
 
-private:
-    // JSC::ScriptDebugListener
-    void didParseSource(JSC::SourceID, const Script&) final { }
-    void failedToParseSource(const String&, const String&, int, int, const String&) final { }
-    void willRunMicrotask() final { }
-    void didRunMicrotask() final { }
-    void didPause(JSC::ExecState&, JSC::JSValue, JSC::JSValue) final { }
-    void didContinue() final { }
-    void breakpointActionLog(JSC::ExecState&, const String&) final { }
-    void breakpointActionSound(int) final { }
-    void breakpointActionProbe(JSC::ExecState&, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) final;
+    // Console
+    void startFromConsole(JSC::ExecState*, const String& title);
+    void stopFromConsole(JSC::ExecState*, const String& title);
 
+    int id() const { return m_id; }
+
+private:
     void startProgrammaticCapture();
     void stopProgrammaticCapture();
 

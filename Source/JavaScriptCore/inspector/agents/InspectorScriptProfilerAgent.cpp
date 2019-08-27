@@ -45,9 +45,7 @@ InspectorScriptProfilerAgent::InspectorScriptProfilerAgent(AgentContext& context
 {
 }
 
-InspectorScriptProfilerAgent::~InspectorScriptProfilerAgent()
-{
-}
+InspectorScriptProfilerAgent::~InspectorScriptProfilerAgent() = default;
 
 void InspectorScriptProfilerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {

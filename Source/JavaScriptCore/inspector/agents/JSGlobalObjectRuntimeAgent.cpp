@@ -42,6 +42,8 @@ JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(JSAgentContext& context)
 {
 }
 
+JSGlobalObjectRuntimeAgent::~JSGlobalObjectRuntimeAgent() = default;
+
 InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     ASSERT_UNUSED(executionContextId, !executionContextId);

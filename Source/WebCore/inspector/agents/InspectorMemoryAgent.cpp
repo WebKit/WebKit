@@ -45,6 +45,8 @@ InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
 {
 }
 
+InspectorMemoryAgent::~InspectorMemoryAgent() = default;
+
 void InspectorMemoryAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
 }

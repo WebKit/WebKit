@@ -44,6 +44,8 @@ ServiceWorkerAgent::ServiceWorkerAgent(WorkerAgentContext& context)
     ASSERT(context.workerGlobalScope.isContextThread());
 }
 
+ServiceWorkerAgent::~ServiceWorkerAgent() = default;
+
 void ServiceWorkerAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
 }

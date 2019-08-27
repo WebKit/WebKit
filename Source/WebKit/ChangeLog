@@ -1,3 +1,18 @@
+2019-08-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use more C++ keywords for defining agents
+        https://bugs.webkit.org/show_bug.cgi?id=200959
+
+        Reviewed by Joseph Pecoraro.
+
+         - make constructors `protected` when the agent isn't meant to be constructed directly
+         - add `virtual` destructors that are defined in the *.cpp so forward-declarations work
+         - use `final` wherever possible
+         - add comments to indicate where any virtual functions come from
+
+        * UIProcess/WebPageInspectorTargetAgent.h:
+        * UIProcess/WebPageInspectorTargetAgent.cpp:
+
 2019-08-26  Chris Dumez  <cdumez@apple.com>
 
         Regression: ITP started doing a lot more IPC after its logic was moved to the network process

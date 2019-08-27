@@ -293,11 +293,7 @@ InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay
 {
 }
 
-InspectorDOMAgent::~InspectorDOMAgent()
-{
-    reset();
-    ASSERT(!m_searchingForNode);
-}
+InspectorDOMAgent::~InspectorDOMAgent() = default;
 
 void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {

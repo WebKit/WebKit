@@ -53,9 +53,11 @@ class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, publi
 public:
     virtual ~InspectorRuntimeAgent();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(DisconnectReason) override;
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
+    void willDestroyFrontendAndBackend(DisconnectReason) final;
 
+    // RuntimeBackendDispatcherHandler
     void enable(ErrorString&) override { m_enabled = true; }
     void disable(ErrorString&) override { m_enabled = false; }
     void parse(ErrorString&, const String& expression, Protocol::Runtime::SyntaxErrorType* result, Optional<String>& message, RefPtr<Protocol::Runtime::ErrorRange>&) final;
@@ -70,12 +72,12 @@ public:
     void saveResult(ErrorString&, const JSON::Object& callArgument, const int* executionContextId, Optional<int>& savedResultIndex) final;
     void setSavedResultAlias(ErrorString&, const String* alias) final;
     void releaseObjectGroup(ErrorString&, const String& objectGroup) final;
-    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>&) override;
-    void enableTypeProfiler(ErrorString&) override;
-    void disableTypeProfiler(ErrorString&) override;
-    void enableControlFlowProfiler(ErrorString&) override;
-    void disableControlFlowProfiler(ErrorString&) override;
-    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
+    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>&) final;
+    void enableTypeProfiler(ErrorString&) final;
+    void disableTypeProfiler(ErrorString&) final;
+    void enableControlFlowProfiler(ErrorString&) final;
+    void disableControlFlowProfiler(ErrorString&) final;
+    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>& out_basicBlocks) final;
 
 protected:
     InspectorRuntimeAgent(AgentContext&);

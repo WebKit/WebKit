@@ -39,6 +39,8 @@ WebDebuggerAgent::WebDebuggerAgent(WebAgentContext& context)
 {
 }
 
+WebDebuggerAgent::~WebDebuggerAgent() = default;
+
 void WebDebuggerAgent::enable()
 {
     InspectorDebuggerAgent::enable();

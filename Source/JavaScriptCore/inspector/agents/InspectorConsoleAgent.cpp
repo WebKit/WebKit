@@ -50,6 +50,8 @@ InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
 {
 }
 
+InspectorConsoleAgent::~InspectorConsoleAgent() = default;
+
 void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
 }
