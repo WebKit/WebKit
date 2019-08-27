@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: webkitgtk\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
 "product=WebKit&component=WebKitGTK\n"
-"POT-Creation-Date: 2019-06-25 15:29+0000\n"
-"PO-Revision-Date: 2019-08-25 18:18+0200\n"
+"POT-Creation-Date: 2019-08-27 14:04+0000\n"
+"PO-Revision-Date: 2019-08-27 16:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -764,8 +764,8 @@ msgid "seek movie back 30 seconds"
 msgstr "przewinięcie filmu do tyłu o 30 sekund"
 
 #: ../../LocalizedStrings.cpp:835
-msgid "return streaming movie to real time"
-msgstr "powrót pobieranego filmu do czasu rzeczywistego"
+msgid "resume real time streaming"
+msgstr "wznowienie odtwarzania strumieniowego w czasie rzeczywistym"
 
 #: ../../LocalizedStrings.cpp:837
 msgid "current movie time in seconds"
@@ -993,7 +993,7 @@ msgstr "ROK"
 msgid "Unacceptable TLS certificate"
 msgstr "Niedopuszczalny certyfikat TLS"
 
-#: ../../network/soup/NetworkStorageSessionSoup.cpp:266
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:236
 msgid "WebKitGTK password"
 msgstr "Hasło biblioteki WebKitGTK"
 
@@ -1271,8 +1271,8 @@ msgstr "Adres URI multimediów"
 #: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:96
 #: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1065
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:444
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1069
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:445
 msgid "URI"
 msgstr "Adres URI"
 
@@ -1367,7 +1367,7 @@ msgid "WebKit encountered an internal error"
 msgstr "Wystąpił wewnętrzny błąd biblioteki WebKit"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:98
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2095
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2099
 msgid "Load request cancelled"
 msgstr "Anulowano żądanie wczytania"
 
@@ -1387,11 +1387,11 @@ msgstr "Nieprawidłowy zakres stron"
 msgid "User cancelled the download"
 msgstr "Użytkownik anulował pobieranie"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:263
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:264
 msgid "Identifier"
 msgstr "Identyfikator"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:264
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:265
 msgid "The automation session identifier"
 msgstr "Identyfikator sesji automatycznej"
 
@@ -1584,7 +1584,7 @@ msgid "The unique id for the notification"
 msgstr "Unikalny identyfikator powiadomienia"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1018
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1022
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
 msgid "Title"
 msgstr "Tytuł"
@@ -2139,20 +2139,20 @@ msgstr ""
 "Czy urządzenie multimedialne, dla którego zażądano uprawnienia, może "
 "przechwytywać wideo."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:421
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:422
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:260
 msgid "Local Storage Directory"
 msgstr "Katalog lokalnie przechowywanych danych"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:422
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:423
 msgid "The directory where local storage data will be saved"
 msgstr "Katalog, do którego będą zapisywane lokalnie przechowywane dane"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:439
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:440
 msgid "Website Data Manager"
 msgstr "Menedżer danych stron"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:440
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:441
 msgid "The WebKitWebsiteDataManager associated with this context"
 msgstr "WebKitWebsiteDataManager powiązany z tym kontekstem"
 
@@ -2165,7 +2165,7 @@ msgid "The response of the resource"
 msgstr "Odpowiedź zasobu"
 
 #. This fails when the page is closed or frame is destroyed, so we can just cancel the operation.
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:350
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:349
 msgid "Operation was cancelled"
 msgstr "Anulowano działanie"
 
@@ -2231,31 +2231,31 @@ msgstr "Katalog, w którym będą przechowywane bazy danych WebSQL"
 msgid "Whether the WebKitWebsiteDataManager is ephemeral"
 msgstr "Czy WebKitWebsiteDataManager jest tymczasowy"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:682
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:686
 msgid "Acknowledge"
 msgstr "Potwierdź"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:938
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:942
 msgid "Backend"
 msgstr "Mechanizm"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:939
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:943
 msgid "The backend for the web view"
 msgstr "Mechanizm widoku WWW"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:952
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:956
 msgid "Web Context"
 msgstr "Kontekst WWW"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:953
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:957
 msgid "The web context for the view"
 msgstr "Kontekst WWW widoku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:970
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:974
 msgid "Related WebView"
 msgstr "Powiązane WebView"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:971
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:975
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -2263,83 +2263,83 @@ msgstr ""
 "Powiązane WebKitWebView używane podczas tworzenia widoku do współdzielenia "
 "tego samego procesu WWW"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:987
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:991
 msgid "WebView settings"
 msgstr "Ustawienia WebView"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:988
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:992
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings widoku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1004
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1008
 msgid "WebView user content manager"
 msgstr "Menedżer treści użytkownika WebView"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1005
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1009
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager widoku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1019
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1023
 msgid "Main frame document title"
 msgstr "Tytuł dokumentu w głównej ramce"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1037
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1041
 msgid "Estimated Load Progress"
 msgstr "Szacowany postęp wczytywania"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1038
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1042
 msgid "An estimate of the percent completion for a document load"
 msgstr "Szacowane procentowe ukończenie wczytywania dokumentu"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1051
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1055
 msgid "Favicon"
 msgstr "Favicon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1052
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1056
 msgid "The favicon associated to the view, if any"
 msgstr "Ikona favicon powiązana z widokiem, jeśli jakaś jest"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1066
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1070
 msgid "The current active URI of the view"
 msgstr "Obecnie aktywny adres URI widoku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1081
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1085
 msgid "Zoom level"
 msgstr "Poziom powiększenia"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1082
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1086
 msgid "The zoom level of the view content"
 msgstr "Poziom powiększenia treści widoku"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1101
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1105
 msgid "Is Loading"
 msgstr "Wczytuje"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1102
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1106
 msgid "Whether the view is loading a page"
 msgstr "Czy widok wczytuje stronę"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1122
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1126
 msgid "Whether the view is playing audio"
 msgstr "Czy widok odtwarza dźwięk"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1145
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1149
 msgid "Whether the web view is ephemeral"
 msgstr "Czy widok WWW jest tymczasowy"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1164
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1168
 msgid "Whether the web view is controlled by automation"
 msgstr "Czy widok WWW jest kontrolowany automatycznie"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1181
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1185
 msgid "Editable"
 msgstr "Modyfikowalne"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1186
 msgid "Whether the content can be modified by the user."
 msgstr "Czy treść może być modyfikowana przez użytkownika."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:3930
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:3935
 msgid "There was an error creating the snapshot"
 msgstr "Wystąpił błąd podczas tworzenia migawki"
 
@@ -2587,7 +2587,7 @@ msgstr ""
 "Czy inspektor może być dołączany do tego samego okna, które zawiera badany "
 "widok"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:1526
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:1533
 msgid "Website running in fullscreen mode"
 msgstr "Strona działająca w trybie pełnoekranowym"
 
@@ -2630,6 +2630,6 @@ msgstr "Węzeł"
 msgid "The WebKitDOMNode"
 msgstr "WebKitDOMNode"
 
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:445
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:446
 msgid "The current active URI of the web page"
 msgstr "Obecnie aktywny adres URI strony"

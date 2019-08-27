@@ -1,3 +1,12 @@
+2019-08-27  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][l10n] Updated Polish translation of WebKitGTK for 2.26
+        https://bugs.webkit.org/show_bug.cgi?id=201125
+
+        Rubber-stamped by Adrian Perez de Castro. One more string updated.
+
+        * pl.po:
+
 2019-08-27  Yuri Chornoivan  <yurchor@ukr.net>
 
         [GTK] [l10n] Updated Ukrainian translation of WebKitGTK+
