@@ -42,7 +42,7 @@ function test()
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrames = targetData.callFrames;
 
-        InspectorTest.assert(callFrames.length >= expectedFrames.length, `Should have at least ${expectedFrames.length} frames, but have ${callFrame.length} instead.`);
+        InspectorTest.assert(callFrames.length >= expectedFrames.length, `Should have at least ${expectedFrames.length} frames, but have ${callFrames.length} instead.`);
 
         // Resolve a thisObject preview on each of the CallFrames.
         let promises = [];
