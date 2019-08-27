@@ -1,3 +1,69 @@
+2019-08-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r249074. rdar://problem/54735492
+
+    [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing
+    https://bugs.webkit.org/show_bug.cgi?id=201085
+    <rdar://problem/53056118>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Exposes an existing quote folding function as a helper on TextIterator, and also adjusts foldQuoteMarks to take
+    a const String& rather than a String. See WebKit ChangeLog for more details.
+    
+    * editing/TextIterator.cpp:
+    (WebCore::foldQuoteMarks):
+    (WebCore::SearchBuffer::SearchBuffer):
+    * editing/TextIterator.h:
+    
+    Source/WebKit:
+    
+    Currently, logic in applyAutocorrectionInternal only selects the range to autocorrect if the text of the range
+    matches the string to replace (delivered to us from UIKit). In the case of changing "I’" to "I’m", the string to
+    replace is "I'" (with a straight quote rather than an apostrophe), even though the DOM contains an apostrophe.
+    
+    This is because kbd believes that the document context contains straight quotes (rather than apostrophes). For
+    native text views, this works out because UIKit uses relative UITextPositions to determine the replacement
+    range rather than by checking against the contents of the document. However, WKWebView does not have the ability
+    to synchronously compute and reason about arbitrary UITextPositions relative to the selection, so we instead
+    search for the string near the current selection when applying autocorrections.
+    
+    Of course, this doesn't work in this scenario because the replacement string contains a straight quote, yet the
+    text node contains an apostrophe, so we bail and don't end up replacing any text. To address this, we repurpose
+    TextIterator helpers currently used to allow find-in-page to match straight quotes against apostrophes; instead
+    of matching the replacement string exactly, we instead match the quote-folded versions of these strings when
+    finding the range to replace.
+    
+    Test: fast/events/ios/autocorrect-with-apostrophe.html
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::applyAutocorrectionInternal):
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that "I’" can be autocorrected to "I’m".
+    
+    * fast/events/ios/autocorrect-with-apostrophe-expected.txt: Added.
+    * fast/events/ios/autocorrect-with-apostrophe.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249074 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] [WebKit2] Tapping on the “I’m” text suggestion after typing “i’” does nothing
+            https://bugs.webkit.org/show_bug.cgi?id=201085
+            <rdar://problem/53056118>
+
+            Reviewed by Tim Horton.
+
+            Add a new layout test to verify that "I’" can be autocorrected to "I’m".
+
+            * fast/events/ios/autocorrect-with-apostrophe-expected.txt: Added.
+            * fast/events/ios/autocorrect-with-apostrophe.html: Added.
+
 2019-08-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r249042. rdar://problem/54622280

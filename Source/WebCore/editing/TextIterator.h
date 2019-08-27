@@ -54,6 +54,7 @@ Ref<Range> findPlainText(const Range&, const String&, FindOptions);
 WEBCORE_EXPORT Ref<Range> findClosestPlainText(const Range&, const String&, FindOptions, unsigned);
 WEBCORE_EXPORT bool hasAnyPlainText(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);
 bool findPlainText(const String& document, const String&, FindOptions); // Lets us use the search algorithm on a string.
+WEBCORE_EXPORT String foldQuoteMarks(const String&);
 
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
 bool isRendererReplacedElement(RenderObject*);
