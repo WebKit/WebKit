@@ -1,3 +1,29 @@
+2019-08-26  Jer Noble  <jer.noble@apple.com>
+
+        Removing fullscreen element in rAF() callback after requestFullscreen() can leave fullscreen in inconsistent state.
+        https://bugs.webkit.org/show_bug.cgi?id=201101
+        <rdar://problem/54164587>
+
+        Reviewed by Eric Carlson.
+
+        Test: fullscreen/full-screen-request-removed-with-raf.html
+
+        Add a new state variable, m_pendingFullscreenElement, to track which element is about to
+        become the fullscreen element, so that when elements are removed or cancelFullscreen() is
+        called, the state machine inside the fullscreen algorithm can cancel effectively.
+
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::requestFullscreenForElement):
+        (WebCore::FullscreenManager::cancelFullscreen):
+        (WebCore::FullscreenManager::exitFullscreen):
+        (WebCore::FullscreenManager::willEnterFullscreen):
+        (WebCore::FullscreenManager::willExitFullscreen):
+        (WebCore::FullscreenManager::didExitFullscreen):
+        (WebCore::FullscreenManager::adjustFullscreenElementOnNodeRemoval):
+        (WebCore::FullscreenManager::clear):
+        (WebCore::FullscreenManager::fullscreenElementRemoved): Deleted.
+        * dom/FullscreenManager.h:
+
 2019-08-27  Peng Liu  <peng.liu6@apple.com>
 
         webkitpresentationmodechanged is fired twice when exiting picture in picture

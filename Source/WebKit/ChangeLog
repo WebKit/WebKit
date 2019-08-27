@@ -1,3 +1,30 @@
+2019-08-26  Jer Noble  <jer.noble@apple.com>
+
+        Removing fullscreen element in rAF() callback after requestFullscreen() can leave fullscreen in inconsistent state.
+        https://bugs.webkit.org/show_bug.cgi?id=201101
+        <rdar://problem/54164587>
+
+        Reviewed by Eric Carlson.
+
+        Add more state to track in which direction the animation is flowing to allow in-process
+        animations to be cancelled more gracefully.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController requestExitFullScreen]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        (WebKit::VideoFullscreenInterfaceContext::animationState const):
+        (WebKit::VideoFullscreenInterfaceContext::setAnimationState):
+        (WebKit::VideoFullscreenInterfaceContext::isAnimating const): Deleted.
+        (WebKit::VideoFullscreenInterfaceContext::setIsAnimating): Deleted.
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+
 2019-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not clear the pending api request when there's no navigation ID

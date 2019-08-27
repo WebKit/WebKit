@@ -447,6 +447,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     RetainPtr<NSString> _EVOrganizationName;
     BOOL _EVOrganizationNameIsValid;
     BOOL _inInteractiveDismiss;
+    BOOL _exitRequested;
 
     RetainPtr<id> _notificationListener;
 }
@@ -597,6 +598,13 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 
         _repaintCallback = WebKit::VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
             _repaintCallback = nullptr;
+
+            if (_exitRequested) {
+                _exitRequested = NO;
+                [self _exitFullscreenImmediately];
+                return;
+            }
+
             if (auto* manager = [protectedSelf _manager]) {
                 manager->willEnterFullScreen();
                 return;
@@ -640,6 +648,12 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     [_rootViewController presentViewController:_fullscreenViewController.get() animated:YES completion:^{
         _fullScreenState = WebKit::InFullScreen;
 
+        if (_exitRequested) {
+            _exitRequested = NO;
+            [self _exitFullscreenImmediately];
+            return;
+        }
+
         auto* page = [self._webView _page];
         auto* manager = self._manager;
         if (page && manager) {
@@ -657,6 +671,11 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 
 - (void)requestExitFullScreen
 {
+    if (_fullScreenState != WebKit::InFullScreen) {
+        _exitRequested = YES;
+        return;
+    }
+
     if (auto* manager = self._manager) {
         manager->requestExitFullScreen();
         return;
@@ -668,8 +687,10 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 
 - (void)exitFullScreen
 {
-    if (!self.isFullScreen)
+    if (_fullScreenState < WebKit::InFullScreen) {
+        _exitRequested = YES;
         return;
+    }
     _fullScreenState = WebKit::WaitingToExitFullScreen;
 
     if (auto* manager = self._manager) {
