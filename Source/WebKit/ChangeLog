@@ -1,3 +1,43 @@
+2019-08-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Delay LayerTreeHost creation in always-on AC until DrawingArea painting is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=201178
+
+        Reviewed by Carlos Garcia Campos.
+
+        When in always-on AC mode, the LayerTreeHost spawning should be delayed
+        until the WebPage construction (which sets up the LayerTreeHost-owning
+        DrawingArea implementation) is further done with initializing relevant
+        state, and not immediately after the DrawingArea is done with preference
+        updates.
+
+        This is necessary in order to enable the LayerTreeHost instance to take
+        into account additional WebPage-creation attributes like the correct
+        device scale factor. Until now, when the LayerTreeHost was spawned in
+        always-on AC mode, the device scale factor was not yet updated in the
+        WebPage construction to the appropriate value, leaving the LayerTreeHost
+        with the default 1.0 value instead of the intended one.
+
+        DrawingArea::setPaintingEnabled() is repurposed into enablePainting()
+        that is to be called once everything should be set for painting (i.e.
+        when setPaintingEnabled(true) was being called until now). Inside the
+        DrawingAreaProxyCoordinatedGraphics class (only one to provide an
+        implementation for this method), the LayerTreeHost is now spawned if
+        in always-on AC mode. At this point, all relevant state coming from
+        the owning WebPage object should be readily available for the host
+        to correctly set up initial graphics scene.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::updatePreferences):
+        (WebKit::DrawingAreaCoordinatedGraphics::enablePainting):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::enablePainting):
+        (WebKit::DrawingArea::setPaintingEnabled): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        (WebKit::WebPage::reinitializeWebPage):
+
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: use more C++ keywords for defining agents

@@ -236,6 +236,12 @@ void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore
     settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
 
     m_alwaysUseCompositing = settings.acceleratedCompositingEnabled() && settings.forceCompositingMode();
+}
+
+void DrawingAreaCoordinatedGraphics::enablePainting()
+{
+    m_isPaintingEnabled = true;
+
     if (m_alwaysUseCompositing && !m_layerTreeHost)
         enterAcceleratedCompositingMode(nullptr);
 }

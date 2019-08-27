@@ -509,7 +509,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_backgroundColor = parameters.backgroundColor;
 
     m_drawingArea = DrawingArea::create(*this, parameters);
-    m_drawingArea->setPaintingEnabled(false);
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
     if (parameters.isProcessSwap)
@@ -598,7 +597,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (!parameters.itemStates.isEmpty())
         restoreSessionInternal(parameters.itemStates, WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::Yes);
 
-    m_drawingArea->setPaintingEnabled(true);
+    m_drawingArea->enablePainting();
     
     setMediaVolume(parameters.mediaVolume);
 
@@ -757,10 +756,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         oldDrawingArea->removeMessageReceiverIfNeeded();
 
         m_drawingArea = DrawingArea::create(*this, parameters);
-        m_drawingArea->setPaintingEnabled(false);
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
         m_drawingArea->updatePreferences(parameters.store);
-        m_drawingArea->setPaintingEnabled(true);
+        m_drawingArea->enablePainting();
 
         m_drawingArea->adoptLayersFromDrawingArea(*oldDrawingArea);
 

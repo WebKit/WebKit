@@ -87,8 +87,8 @@ public:
     virtual bool layerTreeStateIsFrozen() const { return false; }
     virtual bool layerFlushThrottlingIsActive() const { return false; }
 
-    virtual void setPaintingEnabled(bool) { }
     virtual void updatePreferences(const WebPreferencesStore&) { }
+    virtual void enablePainting() { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
 #if PLATFORM(COCOA)
