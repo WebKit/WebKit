@@ -1,3 +1,7 @@
+2019-08-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Revert r249166. rdar://problem/53829560
+
 2019-08-27  Alan Coon  <alancoon@apple.com>
 
         Revert r249147. rdar://problem/54751753
