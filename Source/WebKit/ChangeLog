@@ -1,5 +1,11 @@
 2019-08-27  Adrian Perez de Castro  <aperez@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.24.3 release
+
+        * wpe/NEWS: Add release noes for 2.24.3
+
+2019-08-27  Adrian Perez de Castro  <aperez@igalia.com>
+
         Unreviewed. Update OptionsGTK.cmake and NEWS for the 2.24.4 release
 
         * gtk/NEWS: Add release notes for 2.24.4
