@@ -29,8 +29,8 @@
 
 #include "GPUBuffer.h"
 #include "GPUBufferUsage.h"
+#include "GPUObjectBase.h"
 #include "JSDOMPromiseDeferred.h"
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -41,9 +41,9 @@ namespace WebCore {
 
 struct GPUBufferDescriptor;
 
-class WebGPUBuffer : public RefCounted<WebGPUBuffer> {
+class WebGPUBuffer : public GPUObjectBase {
 public:
-    static Ref<WebGPUBuffer> create(RefPtr<GPUBuffer>&&);
+    static Ref<WebGPUBuffer> create(RefPtr<GPUBuffer>&&, GPUErrorScopes&);
 
     GPUBuffer* buffer() { return m_buffer.get(); }
     const GPUBuffer* buffer() const { return m_buffer.get(); }
@@ -55,7 +55,7 @@ public:
     void destroy();
 
 private:
-    explicit WebGPUBuffer(RefPtr<GPUBuffer>&&);
+    explicit WebGPUBuffer(RefPtr<GPUBuffer>&&, GPUErrorScopes&);
 
     void rejectOrRegisterPromiseCallback(BufferMappingPromise&&, bool);
 

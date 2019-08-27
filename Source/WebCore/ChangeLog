@@ -1,3 +1,39 @@
+2019-08-27  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUErrors for and relax GPUBuffer validation rules
+        https://bugs.webkit.org/show_bug.cgi?id=200852
+
+        Reviewed by Dean Jackson.
+
+        Fix incorrect usage validation during GPUBuffer creation.
+        Implement GPUError reporting for GPUBuffer creation and methods.
+
+        Test: webgpu/buffer-errors.html
+
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::create):
+        (WebCore::WebGPUBuffer::WebGPUBuffer):
+        (WebCore::WebGPUBuffer::unmap):
+        (WebCore::WebGPUBuffer::destroy):
+        (WebCore::WebGPUBuffer::rejectOrRegisterPromiseCallback):
+        * Modules/webgpu/WebGPUBuffer.h: Now inherits from GPUObjectBase.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBuffer const):
+        (WebCore::WebGPUDevice::createBufferMapped const):
+        * platform/graphics/gpu/GPUBuffer.h: No longer inherits from GPUObjectBase.
+        * platform/graphics/gpu/GPUObjectBase.h:
+        (WebCore::GPUObjectBase::errorScopes):
+        (WebCore::GPUObjectBase::generateError): Deleted.
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage):
+        (WebCore::GPUBuffer::tryCreate): Alignment issue should be general WebGPU requirement.
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::~GPUBuffer): Must do cleanup without generating errors.
+        (WebCore::GPUBuffer::registerMappingCallback):
+        (WebCore::GPUBuffer::copyStagingBufferToGPU):
+        (WebCore::GPUBuffer::unmap):
+        (WebCore::GPUBuffer::destroy):
+
 2019-08-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Layout and position the cell boxes

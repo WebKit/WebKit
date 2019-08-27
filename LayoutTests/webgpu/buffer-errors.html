@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Test GPUBuffer Errors.</title>
+<body>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+let tests = {};
+
+tests["GPUBuffers can be created with both read-only and STORAGE usages."] = async device => {
+    device.pushErrorScope("validation");
+    device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.INDEX | GPUBufferUsage.TRANSFER_SRC | GPUBufferUsage.UNIFORM | GPUBufferUsage.STORAGE
+    });
+    return popNullError(device);
+};
+
+tests["unmap on already unmapped, mappable GPUBuffer should not generate error."] = async device => {
+    const buffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.MAP_READ |
+            GPUBufferUsage.TRANSFER_SRC |
+            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.VERTEX |
+            GPUBufferUsage.INDEX |
+            GPUBufferUsage.UNIFORM |
+            GPUBufferUsage.STORAGE
+    });
+
+    device.pushErrorScope("validation");
+    buffer.unmap();
+    return popNullError(device);
+};
+
+tests["GPUBuffer created via createBufferMapped cannot be remapped."] = async device => {
+    device.pushErrorScope("validation");
+    const [buffer, _] = device.createBufferMapped({ size: 4, usage: 0 });
+    // Should not fail.
+    buffer.unmap();
+    await popNullError(device);
+
+    device.pushErrorScope("validation");
+    // Should fail.
+    buffer.unmap();
+    await popValidationError(device);
+
+    device.pushErrorScope("validation");
+    // Should fail.
+    buffer.mapReadAsync().then(() => { assert_unreached(); }).catch(e => {});
+    return popValidationError(device);
+};
+
+tests["GPUBufferDescriptor with both MAP_READ and MAP_WRITE usage should fail."] = async device => {
+    device.pushErrorScope("validation");
+    device.createBuffer({ size: 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.MAP_WRITE });
+    return popValidationError(device);
+};
+
+tests["Too-large GPUBufferDescriptor size should fail with out-of-memory error."] = async device => {
+    device.pushErrorScope("out-of-memory");
+    device.createBuffer({ size: 99999999999, usage: GPUBufferUsage.NONE });
+    return popMemoryError(device);
+};
+
+tests["mapReadAsync on non-MAP_READ GPUBuffer should fail."] = async device => {
+    const buffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.MAP_WRITE |
+            GPUBufferUsage.TRANSFER_SRC |
+            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.VERTEX |
+            GPUBufferUsage.INDEX |
+            GPUBufferUsage.UNIFORM |
+            GPUBufferUsage.STORAGE
+    });
+
+    device.pushErrorScope("validation");
+    buffer.mapReadAsync().then(() => { assert_unreached(); }).catch(e => {});
+    return popValidationError(device);
+};
+
+tests["mapWriteAsync on non-MAP_WRITE GPUBuffer should fail."] = async device => {
+    const buffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.MAP_READ |
+            GPUBufferUsage.TRANSFER_SRC |
+            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.VERTEX |
+            GPUBufferUsage.INDEX |
+            GPUBufferUsage.UNIFORM |
+            GPUBufferUsage.STORAGE
+    });
+
+    device.pushErrorScope("validation");
+    buffer.mapWriteAsync().then(() => { assert_unreached(); }).catch(e => {});
+    return popValidationError(device);
+};
+
+tests["unmap on non-mappable GPUBuffer should fail."] = async device => {
+    const buffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.TRANSFER_SRC |
+            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.VERTEX |
+            GPUBufferUsage.INDEX |
+            GPUBufferUsage.UNIFORM |
+            GPUBufferUsage.STORAGE
+    });
+
+    device.pushErrorScope("validation");
+    buffer.unmap();
+    return popValidationError(device);
+};
+
+tests["createBufferMapped: non-4-byte-aligned GPUBufferDesriptor size should fail."] = async device => {
+    device.pushErrorScope("validation");
+    device.createBufferMapped({ size: 5, usage: 0 });
+    return popValidationError(device);
+};
+
+tests["Any method call on an invalid GPUBuffer should fail."] = async device => {
+    const buffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.MAP_WRITE });
+    return assertAllBufferMethodsFail(device, buffer);
+};
+
+tests["Any method call on a destroyed GPUBuffer should fail."] = async device => {
+    const buffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.MAP_READ });
+
+    device.pushErrorScope("validation");
+    buffer.destroy();
+    await popNullError(device);
+
+    return assertAllBufferMethodsFail(device, buffer);
+};
+
+const assertAllBufferMethodsFail = async (device, buffer) => {
+    device.pushErrorScope("validation");
+    buffer.mapReadAsync().then(() => { assert_unreached(); }).catch(e => {});
+    await popValidationError(device);
+
+    device.pushErrorScope("validation");
+    buffer.mapWriteAsync().then(() => { assert_unreached(); }).catch(e => {});
+    await popValidationError(device);
+
+    device.pushErrorScope("validation");
+    buffer.unmap();
+    await popValidationError(device);
+
+    device.pushErrorScope("validation");
+    buffer.destroy();
+    return popValidationError(device);
+};
+
+runTestsWithDevice(tests);
+</script>
+</body>

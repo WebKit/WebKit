@@ -91,7 +91,7 @@ Ref<WebGPUBuffer> WebGPUDevice::createBuffer(const GPUBufferDescriptor& descript
     m_errorScopes->setErrorPrefix("GPUDevice.createBuffer(): ");
 
     auto buffer = m_device->tryCreateBuffer(descriptor, GPUBufferMappedOption::NotMapped, m_errorScopes);
-    return WebGPUBuffer::create(WTFMove(buffer));
+    return WebGPUBuffer::create(WTFMove(buffer), m_errorScopes);
 }
 
 Vector<JSC::JSValue> WebGPUDevice::createBufferMapped(JSC::ExecState& state, const GPUBufferDescriptor& descriptor) const
@@ -106,7 +106,7 @@ Vector<JSC::JSValue> WebGPUDevice::createBufferMapped(JSC::ExecState& state, con
         wrappedArrayBuffer = toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), arrayBuffer);
     }
 
-    auto webBuffer = WebGPUBuffer::create(WTFMove(buffer));
+    auto webBuffer = WebGPUBuffer::create(WTFMove(buffer), m_errorScopes);
     auto wrappedWebBuffer = toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), webBuffer);
 
     return { wrappedWebBuffer, wrappedArrayBuffer };

@@ -29,7 +29,6 @@
 
 #include "DeferrableTask.h"
 #include "GPUBufferUsage.h"
-#include "GPUObjectBase.h"
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -49,6 +48,7 @@ class ArrayBuffer;
 namespace WebCore {
 
 class GPUDevice;
+class GPUErrorScopes;
 
 struct GPUBufferDescriptor;
 
@@ -61,7 +61,7 @@ using PlatformBuffer = void;
 #endif
 using PlatformBufferSmartPtr = RetainPtr<PlatformBuffer>;
 
-class GPUBuffer : public GPUObjectBase {
+class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
     enum class State {
         Mapped,
@@ -94,9 +94,9 @@ public:
 #endif
 
     using MappingCallback = WTF::Function<void(JSC::ArrayBuffer*)>;
-    void registerMappingCallback(MappingCallback&&, bool);
-    void unmap();
-    void destroy();
+    void registerMappingCallback(MappingCallback&&, bool, GPUErrorScopes&);
+    void unmap(GPUErrorScopes*);
+    void destroy(GPUErrorScopes*);
 
 private:
     struct PendingMappingCallback : public RefCounted<PendingMappingCallback> {
@@ -111,13 +111,13 @@ private:
         PendingMappingCallback(MappingCallback&&);
     };
 
-    GPUBuffer(PlatformBufferSmartPtr&&, GPUDevice&, size_t, OptionSet<GPUBufferUsage::Flags>, GPUBufferMappedOption, GPUErrorScopes&);
+    GPUBuffer(PlatformBufferSmartPtr&&, GPUDevice&, size_t, OptionSet<GPUBufferUsage::Flags>, GPUBufferMappedOption);
     static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>, GPUErrorScopes&);
 
     JSC::ArrayBuffer* stagingBufferForRead();
     JSC::ArrayBuffer* stagingBufferForWrite();
     void runMappingCallback();
-    void copyStagingBufferToGPU();
+    void copyStagingBufferToGPU(GPUErrorScopes*);
 
     bool isMapWrite() const { return m_usage.contains(GPUBufferUsage::Flags::MapWrite); }
     bool isMapRead() const { return m_usage.contains(GPUBufferUsage::Flags::MapRead); }

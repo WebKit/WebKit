@@ -28,17 +28,19 @@
 
 #if ENABLE(WEBGPU)
 
-#include "Logging.h"
+#include "GPUErrorScopes.h"
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
-Ref<WebGPUBuffer> WebGPUBuffer::create(RefPtr<GPUBuffer>&& buffer)
+Ref<WebGPUBuffer> WebGPUBuffer::create(RefPtr<GPUBuffer>&& buffer, GPUErrorScopes& errorScopes)
 {
-    return adoptRef(*new WebGPUBuffer(WTFMove(buffer)));
+    return adoptRef(*new WebGPUBuffer(WTFMove(buffer), errorScopes));
 }
 
-WebGPUBuffer::WebGPUBuffer(RefPtr<GPUBuffer>&& buffer)
-    : m_buffer(WTFMove(buffer))
+WebGPUBuffer::WebGPUBuffer(RefPtr<GPUBuffer>&& buffer, GPUErrorScopes& errorScopes)
+    : GPUObjectBase(makeRef(errorScopes))
+    , m_buffer(WTFMove(buffer))
 {
 }
 
@@ -54,36 +56,44 @@ void WebGPUBuffer::mapWriteAsync(BufferMappingPromise&& promise)
 
 void WebGPUBuffer::unmap()
 {
+    errorScopes().setErrorPrefix("GPUBuffer.unmap(): ");
+
     if (!m_buffer)
-        LOG(WebGPU, "GPUBuffer::unmap(): Invalid operation!");
+        errorScopes().generatePrefixedError("Invalid operation: invalid GPUBuffer!");
     else
-        m_buffer->unmap();
+        m_buffer->unmap(&errorScopes());
 }
 
 void WebGPUBuffer::destroy()
 {
+    errorScopes().setErrorPrefix("GPUBuffer.destroy(): ");
+
     if (!m_buffer)
-        LOG(WebGPU, "GPUBuffer::destroy(): Invalid operation!");
+        errorScopes().generatePrefixedError("Invalid operation!");
     else {
-        m_buffer->destroy();
+        m_buffer->destroy(&errorScopes());
         m_buffer = nullptr;
     }
 }
 
 void WebGPUBuffer::rejectOrRegisterPromiseCallback(BufferMappingPromise&& promise, bool isRead)
 {
+    errorScopes().setErrorPrefix(makeString("GPUBuffer.map", isRead ? "Read" : "Write", "Async(): "));
+
     if (!m_buffer) {
-        LOG(WebGPU, "GPUBuffer::map%sAsync(): Invalid operation!", isRead ? "Read" : "Write");
+        errorScopes().generatePrefixedError("Invalid operation: invalid GPUBuffer!");
         promise.reject();
         return;
     }
 
-    m_buffer->registerMappingCallback([promise = WTFMove(promise)] (JSC::ArrayBuffer* arrayBuffer) mutable {
+    m_buffer->registerMappingCallback([promise = WTFMove(promise), protectedErrorScopes = makeRef(errorScopes())] (JSC::ArrayBuffer* arrayBuffer) mutable {
         if (arrayBuffer)
             promise.resolve(*arrayBuffer);
-        else
+        else {
+            protectedErrorScopes->generateError("", GPUErrorFilter::OutOfMemory);
             promise.reject();
-    }, isRead);
+        }
+    }, isRead, errorScopes());
 }
 
 } // namespace WebCore

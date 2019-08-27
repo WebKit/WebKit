@@ -1,3 +1,15 @@
+2019-08-27  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUErrors for and relax GPUBuffer validation rules
+        https://bugs.webkit.org/show_bug.cgi?id=200852
+
+        Reviewed by Dean Jackson.
+
+        Add a test to ensure GPUBuffer errors are generated properly.
+
+        * webgpu/buffer-errors-expected.txt: Added.
+        * webgpu/buffer-errors.html: Added.
+
 2019-08-27  Russell Epstein  <repstein@apple.com>
 
         Test Gardening for scrollingcoordinator/ios/scroll-position-after-reattach.html

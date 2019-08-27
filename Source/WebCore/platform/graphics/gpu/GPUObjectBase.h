@@ -33,15 +33,11 @@
 namespace WebCore {
 
 class GPUObjectBase : public RefCounted<GPUObjectBase> {
-public:
-    void generateError(const String& message, GPUErrorFilter filter = GPUErrorFilter::Validation)
-    {
-        m_errorScopes->generateError(message, filter);
-    }
-
 protected:
     GPUObjectBase(Ref<GPUErrorScopes>&& reporter)
         : m_errorScopes(WTFMove(reporter)) { }
+
+    GPUErrorScopes& errorScopes() { return m_errorScopes; }
 
 private:
     Ref<GPUErrorScopes> m_errorScopes;
