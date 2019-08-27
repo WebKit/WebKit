@@ -1990,3 +1990,5 @@ webkit.org/b/200258 [ Debug ] imported/w3c/web-platform-tests/wasm/jsapi/interfa
 [ Catalina+ ] fast/css/paint-order.html [ ImageOnlyFailure ]
 [ Catalina+ ] fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 
+# rdar://54317204 (fast/text/font-cursive-italic-cjk-2.html is failing)
+[ Catalina+ ] fast/text/font-cursive-italic-cjk-2.html [ ImageOnlyFailure ]

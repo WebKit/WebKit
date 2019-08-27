@@ -1,3 +1,9 @@
+2019-08-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, land expectation for rdar://54317204.
+
+        * platform/mac/TestExpectations:
+
 2019-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html times out on iPad
