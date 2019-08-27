@@ -1,3 +1,10 @@
+2019-08-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, remove failure expectations for tests that are now passing.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-27  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::jsNotificationConstructorPermission

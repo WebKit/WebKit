@@ -3341,19 +3341,6 @@ storage/websql/test-authorizer.html [ Failure ]
 # rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13)
 editing/pasteboard/paste-and-sanitize.html [ Pass Failure ]
 
-# rdar://53866783 (REGRESSION: Layout Test fast/shadow-dom/click-text-inside-linked-slot.html is Failing)
-fast/shadow-dom/click-text-inside-linked-slot.html [ Pass Failure ]
-
-# rdar://53946482 (REGRESSION: Multiple Layout Tests (*-using-open-panel.html) are Timing Out)
-fast/files/apply-blob-url-to-xhr-using-open-panel.html [ Pass Timeout ]
-fast/files/file-reader-abort-using-open-panel.html [ Pass Timeout ]
-http/tests/local/formdata/send-form-data-with-empty-file-filename-using-open-panel.html [ Pass Timeout ]
-http/tests/local/fileapi/file-last-modified-using-open-panel.html [ Pass Timeout ]
-
-# rdar://53957264 (REGRESSION: Layout Tests http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html and http/tests/misc/iframe-beforeunload-dialog-block-modals.html Timing Out)
-http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html [ Pass Timeout ]
-http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass Timeout ]
-
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]
 
