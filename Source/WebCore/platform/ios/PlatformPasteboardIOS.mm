@@ -158,7 +158,7 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
 #endif
     if (!CGSizeEqualToSize(itemProvider.preferredPresentationSize, CGSizeZero)) {
         auto adjustedPreferredPresentationHeight = [](auto height) -> Optional<double> {
-            if (!IOSApplication::isMobileMail())
+            if (!IOSApplication::isMobileMail() && !IOSApplication::isMailCompositionService())
                 return { height };
             // Mail's max-width: 100%; default style is in conflict with the preferred presentation size and can lead to unexpectedly stretched images. Not setting the height forces layout to preserve the aspect ratio.
             return { };
