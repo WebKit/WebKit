@@ -1,7 +1,0 @@
-Tests that fullscreen is not entered if the fullscreen element ancestor is removed with rAF while entering fullscreen.
-
-Removed child element.
-
-SUCCESS
-END OF TEST
-

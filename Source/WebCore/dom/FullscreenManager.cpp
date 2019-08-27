@@ -120,16 +120,7 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
         }
     }
 
-    m_pendingFullscreenElement = element;
-
     m_fullscreenTaskQueue.enqueueTask([this, element = makeRefPtr(element), checkType, hasKeyboardAccess, failedPreflights] () mutable {
-        // Don't allow fullscreen if it has been cancelled or a different fullscreen element
-        // has requested fullscreen.
-        if (m_pendingFullscreenElement != element) {
-            failedPreflights(WTFMove(element));
-            return;
-        }
-
         // Don't allow fullscreen if document is hidden.
         if (document().hidden()) {
             failedPreflights(WTFMove(element));
@@ -218,13 +209,9 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
         m_areKeysEnabledInFullscreen = hasKeyboardAccess;
-        m_fullscreenTaskQueue.enqueueTask([this, element = WTFMove(element), failedPreflights = WTFMove(failedPreflights)] () mutable {
-            auto page = this->page();
-            if (!page || document().hidden() || m_pendingFullscreenElement != element || !element->isConnected()) {
-                failedPreflights(element);
-                return;
-            }
-            page->chrome().client().enterFullScreenForElement(*element.get());
+        m_fullscreenTaskQueue.enqueueTask([this, element = WTFMove(element)] {
+            if (auto page = this->page())
+                page->chrome().client().enterFullScreenForElement(*element.get());
         });
 
         // 7. Optionally, display a message indicating how the user can exit displaying the context object fullscreen.
@@ -238,13 +225,8 @@ void FullscreenManager::cancelFullscreen()
     // "To fully exit fullscreen act as if the exitFullscreen() method was invoked on the top-level browsing
     // context's document and subsequently empty that document's fullscreen element stack."
     Document& topDocument = document().topDocument();
-    if (!topDocument.fullscreenManager().fullscreenElement()) {
-        // If there is a pending fullscreen element but no top document fullscreen element,
-        // there is a pending task in enterFullscreen(). Cause it to cancel and fire an error
-        // by clearing the pending fullscreen element.
-        m_pendingFullscreenElement = nullptr;
+    if (!topDocument.fullscreenManager().fullscreenElement())
         return;
-    }
 
     // To achieve that aim, remove all the elements from the top document's stack except for the first before
     // calling webkitExitFullscreen():
@@ -263,13 +245,8 @@ void FullscreenManager::exitFullscreen()
     Document* currentDoc = &document();
 
     // 2. If doc's fullscreen element stack is empty, terminate these steps.
-    if (m_fullscreenElementStack.isEmpty()) {
-        // If there is a pending fullscreen element but an empty fullscreen element stack,
-        // there is a pending task in requestFullscreenForElement(). Cause it to cancel and fire an error
-        // by clearing the pending fullscreen element.
-        m_pendingFullscreenElement = nullptr;
+    if (m_fullscreenElementStack.isEmpty())
         return;
-    }
 
     // 3. Let descendants be all the doc's descendant browsing context's documents with a non-empty fullscreen
     // element stack (if any), ordered so that the child of the doc is last and the document furthest
@@ -321,14 +298,6 @@ void FullscreenManager::exitFullscreen()
         if (!page)
             return;
 
-        // If there is a pending fullscreen element but no fullscreen element
-        // there is a pending task in requestFullscreenForElement(). Cause it to cancel and fire an error
-        // by clearing the pending fullscreen element.
-        if (!fullscreenElement && m_pendingFullscreenElement) {
-            m_pendingFullscreenElement = nullptr;
-            return;
-        }
-
         // Only exit out of full screen window mode if there are no remaining elements in the
         // full screen stack.
         if (!newTop) {
@@ -370,21 +339,12 @@ void FullscreenManager::willEnterFullscreen(Element& element)
     if (!page())
         return;
 
-    // If pending fullscreen element is unset or another element's was requested,
-    // issue a cancel fullscreen request to the client
-    if (m_pendingFullscreenElement != &element) {
-        page()->chrome().client().exitFullScreenForElement(&element);
-        return;
-    }
-
     ASSERT(page()->settings().fullScreenEnabled());
 
     unwrapFullscreenRenderer(m_fullscreenRenderer.get(), m_fullscreenElement.get());
 
     element.willBecomeFullscreenElement();
 
-    ASSERT(&element == m_pendingFullscreenElement);
-    m_pendingFullscreenElement = nullptr;
     m_fullscreenElement = &element;
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
@@ -425,32 +385,30 @@ void FullscreenManager::didEnterFullscreen()
 
 void FullscreenManager::willExitFullscreen()
 {
-    auto fullscreenElement = fullscreenOrPendingElement();
-    if (!fullscreenElement)
+    if (!m_fullscreenElement)
         return;
 
     if (!hasLivingRenderTree() || pageCacheState() != Document::NotInPageCache)
         return;
 
-    fullscreenElement->willStopBeingFullscreenElement();
+    m_fullscreenElement->willStopBeingFullscreenElement();
 }
 
 void FullscreenManager::didExitFullscreen()
 {
-    auto fullscreenElement = fullscreenOrPendingElement();
-    if (!fullscreenElement)
+    if (!m_fullscreenElement)
         return;
 
     if (!hasLivingRenderTree() || pageCacheState() != Document::NotInPageCache)
         return;
-    fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
+
+    m_fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 
     m_areKeysEnabledInFullscreen = false;
 
     unwrapFullscreenRenderer(m_fullscreenRenderer.get(), m_fullscreenElement.get());
 
     m_fullscreenElement = nullptr;
-    m_pendingFullscreenElement = nullptr;
     scheduleFullStyleRebuild();
 
     // When webkitCancelFullscreen is called, we call webkitExitFullscreen on the topDocument(). That
@@ -525,22 +483,25 @@ void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>
     }
 }
 
+void FullscreenManager::fullscreenElementRemoved()
+{
+    m_fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
+    cancelFullscreen();
+}
+
 void FullscreenManager::adjustFullscreenElementOnNodeRemoval(Node& node, Document::NodeRemoval nodeRemoval)
 {
-    auto fullscreenElement = fullscreenOrPendingElement();
-    if (!fullscreenElement)
+    if (!m_fullscreenElement)
         return;
 
     bool elementInSubtree = false;
     if (nodeRemoval == Document::NodeRemoval::ChildrenOfNode)
-        elementInSubtree = fullscreenElement->isDescendantOf(node);
+        elementInSubtree = m_fullscreenElement->isDescendantOf(node);
     else
-        elementInSubtree = (fullscreenElement == &node) || fullscreenElement->isDescendantOf(node);
+        elementInSubtree = (m_fullscreenElement == &node) || m_fullscreenElement->isDescendantOf(node);
 
-    if (elementInSubtree) {
-        fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
-        cancelFullscreen();
-    }
+    if (elementInSubtree)
+        fullscreenElementRemoved();
 }
 
 bool FullscreenManager::isAnimatingFullscreen() const
@@ -580,7 +541,6 @@ void FullscreenManager::setFullscreenControlsHidden(bool flag)
 void FullscreenManager::clear()
 {
     m_fullscreenElement = nullptr;
-    m_pendingFullscreenElement = nullptr;
     m_fullscreenElementStack.clear();
 }
 
