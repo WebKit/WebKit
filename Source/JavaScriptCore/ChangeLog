@@ -1,3 +1,14 @@
+2019-08-27  Mark Lam  <mark.lam@apple.com>
+
+        constructFunctionSkippingEvalEnabledCheck() should use tryMakeString() and check for OOM.
+        https://bugs.webkit.org/show_bug.cgi?id=201196
+        <rdar://problem/54703775>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+
 2019-08-27  Keith Miller  <keith_miller@apple.com>
 
         When dumping Air Graphs BBQ should dump patchpoints.
