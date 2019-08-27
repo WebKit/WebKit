@@ -44,7 +44,7 @@ void WeakObjectRefPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     // FIXME: It wouldn't be hard to make this an intrinsic.
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deref, protoFuncWeakRefDeref, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakRef"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "WeakRef"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(CallFrame* callFrame, JSValue value)

@@ -666,7 +666,7 @@ template<> JSValue JSTestGlobalObjectConstructor::prototypeForStructure(JSC::VM&
 template<> void JSTestGlobalObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String("TestGlobalObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestGlobalObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestGlobalObject::info(), JSTestGlobalObjectConstructorTableValues, *this);
 }
@@ -803,6 +803,7 @@ EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSVal
 
 static inline bool setJSTestGlobalObjectRegularAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -834,6 +835,7 @@ EncodedJSValue jsTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, Enc
 
 static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -869,6 +871,7 @@ EncodedJSValue jsTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState*
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -906,6 +909,7 @@ EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, Enc
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -937,9 +941,10 @@ EncodedJSValue jsTestGlobalObjectTestCEReactionsConstructor(ExecState* state, En
 
 static inline bool setJSTestGlobalObjectTestCEReactionsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestCEReactions"), strlen("TestCEReactions")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestCEReactions"), strlen("TestCEReactions")), value);
 }
 
 bool setJSTestGlobalObjectTestCEReactionsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -961,9 +966,10 @@ EncodedJSValue jsTestGlobalObjectTestCEReactionsStringifierConstructor(ExecState
 
 static inline bool setJSTestGlobalObjectTestCEReactionsStringifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestCEReactionsStringifier"), strlen("TestCEReactionsStringifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestCEReactionsStringifier"), strlen("TestCEReactionsStringifier")), value);
 }
 
 bool setJSTestGlobalObjectTestCEReactionsStringifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -985,9 +991,10 @@ EncodedJSValue jsTestGlobalObjectTestCallTracerConstructor(ExecState* state, Enc
 
 static inline bool setJSTestGlobalObjectTestCallTracerConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestCallTracer"), strlen("TestCallTracer")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestCallTracer"), strlen("TestCallTracer")), value);
 }
 
 bool setJSTestGlobalObjectTestCallTracerConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1013,9 +1020,10 @@ EncodedJSValue jsTestGlobalObjectTestCallbackInterfaceConstructor(ExecState* sta
 #if ENABLE(TEST_CONDITIONAL)
 static inline bool setJSTestGlobalObjectTestCallbackInterfaceConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestCallbackInterface"), strlen("TestCallbackInterface")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestCallbackInterface"), strlen("TestCallbackInterface")), value);
 }
 
 bool setJSTestGlobalObjectTestCallbackInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1039,9 +1047,10 @@ EncodedJSValue jsTestGlobalObjectTestClassWithJSBuiltinConstructorConstructor(Ex
 
 static inline bool setJSTestGlobalObjectTestClassWithJSBuiltinConstructorConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestClassWithJSBuiltinConstructor"), strlen("TestClassWithJSBuiltinConstructor")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestClassWithJSBuiltinConstructor"), strlen("TestClassWithJSBuiltinConstructor")), value);
 }
 
 bool setJSTestGlobalObjectTestClassWithJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1063,9 +1072,10 @@ EncodedJSValue jsTestGlobalObjectTestDOMJITConstructor(ExecState* state, Encoded
 
 static inline bool setJSTestGlobalObjectTestDOMJITConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestDOMJIT"), strlen("TestDOMJIT")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestDOMJIT"), strlen("TestDOMJIT")), value);
 }
 
 bool setJSTestGlobalObjectTestDOMJITConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1087,9 +1097,10 @@ EncodedJSValue jsTestGlobalObjectTestDomainSecurityConstructor(ExecState* state,
 
 static inline bool setJSTestGlobalObjectTestDomainSecurityConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestDomainSecurity"), strlen("TestDomainSecurity")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestDomainSecurity"), strlen("TestDomainSecurity")), value);
 }
 
 bool setJSTestGlobalObjectTestDomainSecurityConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1111,9 +1122,10 @@ EncodedJSValue jsTestGlobalObjectTestEnabledBySettingConstructor(ExecState* stat
 
 static inline bool setJSTestGlobalObjectTestEnabledBySettingConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestEnabledBySetting"), strlen("TestEnabledBySetting")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestEnabledBySetting"), strlen("TestEnabledBySetting")), value);
 }
 
 bool setJSTestGlobalObjectTestEnabledBySettingConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1135,9 +1147,10 @@ EncodedJSValue jsTestGlobalObjectTestEnabledForContextConstructor(ExecState* sta
 
 static inline bool setJSTestGlobalObjectTestEnabledForContextConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestEnabledForContext"), strlen("TestEnabledForContext")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestEnabledForContext"), strlen("TestEnabledForContext")), value);
 }
 
 bool setJSTestGlobalObjectTestEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1159,9 +1172,10 @@ EncodedJSValue jsTestGlobalObjectTestEventConstructorConstructor(ExecState* stat
 
 static inline bool setJSTestGlobalObjectTestEventConstructorConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestEventConstructor"), strlen("TestEventConstructor")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestEventConstructor"), strlen("TestEventConstructor")), value);
 }
 
 bool setJSTestGlobalObjectTestEventConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1183,9 +1197,10 @@ EncodedJSValue jsTestGlobalObjectTestEventTargetConstructor(ExecState* state, En
 
 static inline bool setJSTestGlobalObjectTestEventTargetConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestEventTarget"), strlen("TestEventTarget")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestEventTarget"), strlen("TestEventTarget")), value);
 }
 
 bool setJSTestGlobalObjectTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1207,9 +1222,10 @@ EncodedJSValue jsTestGlobalObjectTestExceptionConstructor(ExecState* state, Enco
 
 static inline bool setJSTestGlobalObjectTestExceptionConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestException"), strlen("TestException")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestException"), strlen("TestException")), value);
 }
 
 bool setJSTestGlobalObjectTestExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1231,9 +1247,10 @@ EncodedJSValue jsTestGlobalObjectTestGenerateIsReachableConstructor(ExecState* s
 
 static inline bool setJSTestGlobalObjectTestGenerateIsReachableConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestGenerateIsReachable"), strlen("TestGenerateIsReachable")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestGenerateIsReachable"), strlen("TestGenerateIsReachable")), value);
 }
 
 bool setJSTestGlobalObjectTestGenerateIsReachableConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1255,9 +1272,10 @@ EncodedJSValue jsTestGlobalObjectTestGlobalObjectConstructor(ExecState* state, E
 
 static inline bool setJSTestGlobalObjectTestGlobalObjectConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestGlobalObject"), strlen("TestGlobalObject")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestGlobalObject"), strlen("TestGlobalObject")), value);
 }
 
 bool setJSTestGlobalObjectTestGlobalObjectConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1279,9 +1297,10 @@ EncodedJSValue jsTestGlobalObjectTestIndexedSetterNoIdentifierConstructor(ExecSt
 
 static inline bool setJSTestGlobalObjectTestIndexedSetterNoIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestIndexedSetterNoIdentifier"), strlen("TestIndexedSetterNoIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestIndexedSetterNoIdentifier"), strlen("TestIndexedSetterNoIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestIndexedSetterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1303,9 +1322,10 @@ EncodedJSValue jsTestGlobalObjectTestIndexedSetterThrowingExceptionConstructor(E
 
 static inline bool setJSTestGlobalObjectTestIndexedSetterThrowingExceptionConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestIndexedSetterThrowingException"), strlen("TestIndexedSetterThrowingException")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestIndexedSetterThrowingException"), strlen("TestIndexedSetterThrowingException")), value);
 }
 
 bool setJSTestGlobalObjectTestIndexedSetterThrowingExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1327,9 +1347,10 @@ EncodedJSValue jsTestGlobalObjectTestIndexedSetterWithIdentifierConstructor(Exec
 
 static inline bool setJSTestGlobalObjectTestIndexedSetterWithIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestIndexedSetterWithIdentifier"), strlen("TestIndexedSetterWithIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestIndexedSetterWithIdentifier"), strlen("TestIndexedSetterWithIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestIndexedSetterWithIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1355,9 +1376,10 @@ EncodedJSValue jsTestGlobalObjectTestInterfaceConstructor(ExecState* state, Enco
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static inline bool setJSTestGlobalObjectTestInterfaceConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestInterface"), strlen("TestInterface")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestInterface"), strlen("TestInterface")), value);
 }
 
 bool setJSTestGlobalObjectTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1381,9 +1403,10 @@ EncodedJSValue jsTestGlobalObjectTestInterfaceLeadingUnderscoreConstructor(ExecS
 
 static inline bool setJSTestGlobalObjectTestInterfaceLeadingUnderscoreConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestInterfaceLeadingUnderscore"), strlen("TestInterfaceLeadingUnderscore")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestInterfaceLeadingUnderscore"), strlen("TestInterfaceLeadingUnderscore")), value);
 }
 
 bool setJSTestGlobalObjectTestInterfaceLeadingUnderscoreConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1405,9 +1428,10 @@ EncodedJSValue jsTestGlobalObjectTestIterableConstructor(ExecState* state, Encod
 
 static inline bool setJSTestGlobalObjectTestIterableConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestIterable"), strlen("TestIterable")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestIterable"), strlen("TestIterable")), value);
 }
 
 bool setJSTestGlobalObjectTestIterableConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1429,9 +1453,10 @@ EncodedJSValue jsTestGlobalObjectTestJSBuiltinConstructorConstructor(ExecState* 
 
 static inline bool setJSTestGlobalObjectTestJSBuiltinConstructorConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestJSBuiltinConstructor"), strlen("TestJSBuiltinConstructor")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestJSBuiltinConstructor"), strlen("TestJSBuiltinConstructor")), value);
 }
 
 bool setJSTestGlobalObjectTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1453,9 +1478,10 @@ EncodedJSValue jsTestGlobalObjectTestMapLikeConstructor(ExecState* state, Encode
 
 static inline bool setJSTestGlobalObjectTestMapLikeConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestMapLike"), strlen("TestMapLike")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestMapLike"), strlen("TestMapLike")), value);
 }
 
 bool setJSTestGlobalObjectTestMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1477,9 +1503,10 @@ EncodedJSValue jsTestGlobalObjectTestMediaQueryListListenerConstructor(ExecState
 
 static inline bool setJSTestGlobalObjectTestMediaQueryListListenerConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestMediaQueryListListener"), strlen("TestMediaQueryListListener")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestMediaQueryListListener"), strlen("TestMediaQueryListListener")), value);
 }
 
 bool setJSTestGlobalObjectTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1501,9 +1528,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructo
 
 static inline bool setJSTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedAndIndexedSetterNoIdentifier"), strlen("TestNamedAndIndexedSetterNoIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedAndIndexedSetterNoIdentifier"), strlen("TestNamedAndIndexedSetterNoIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1525,9 +1553,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConst
 
 static inline bool setJSTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedAndIndexedSetterThrowingException"), strlen("TestNamedAndIndexedSetterThrowingException")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedAndIndexedSetterThrowingException"), strlen("TestNamedAndIndexedSetterThrowingException")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1549,9 +1578,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstruc
 
 static inline bool setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedAndIndexedSetterWithIdentifier"), strlen("TestNamedAndIndexedSetterWithIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedAndIndexedSetterWithIdentifier"), strlen("TestNamedAndIndexedSetterWithIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1573,9 +1603,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedConstructorConstructor(ExecState* stat
 
 static inline bool setJSTestGlobalObjectTestNamedConstructorConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedConstructor"), strlen("TestNamedConstructor")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedConstructor"), strlen("TestNamedConstructor")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1597,9 +1628,10 @@ EncodedJSValue jsTestGlobalObjectAudioConstructor(ExecState* state, EncodedJSVal
 
 static inline bool setJSTestGlobalObjectAudioConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("Audio"), strlen("Audio")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("Audio"), strlen("Audio")), value);
 }
 
 bool setJSTestGlobalObjectAudioConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1621,9 +1653,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedDeleterNoIdentifierConstructor(ExecSta
 
 static inline bool setJSTestGlobalObjectTestNamedDeleterNoIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedDeleterNoIdentifier"), strlen("TestNamedDeleterNoIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedDeleterNoIdentifier"), strlen("TestNamedDeleterNoIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedDeleterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1645,9 +1678,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor(Ex
 
 static inline bool setJSTestGlobalObjectTestNamedDeleterThrowingExceptionConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedDeleterThrowingException"), strlen("TestNamedDeleterThrowingException")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedDeleterThrowingException"), strlen("TestNamedDeleterThrowingException")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1669,9 +1703,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedDeleterWithIdentifierConstructor(ExecS
 
 static inline bool setJSTestGlobalObjectTestNamedDeleterWithIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedDeleterWithIdentifier"), strlen("TestNamedDeleterWithIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedDeleterWithIdentifier"), strlen("TestNamedDeleterWithIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedDeleterWithIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1693,9 +1728,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedDeleterWithIndexedGetterConstructor(Ex
 
 static inline bool setJSTestGlobalObjectTestNamedDeleterWithIndexedGetterConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedDeleterWithIndexedGetter"), strlen("TestNamedDeleterWithIndexedGetter")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedDeleterWithIndexedGetter"), strlen("TestNamedDeleterWithIndexedGetter")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedDeleterWithIndexedGetterConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1717,9 +1753,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedGetterCallWithConstructor(ExecState* s
 
 static inline bool setJSTestGlobalObjectTestNamedGetterCallWithConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedGetterCallWith"), strlen("TestNamedGetterCallWith")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedGetterCallWith"), strlen("TestNamedGetterCallWith")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedGetterCallWithConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1741,9 +1778,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedGetterNoIdentifierConstructor(ExecStat
 
 static inline bool setJSTestGlobalObjectTestNamedGetterNoIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedGetterNoIdentifier"), strlen("TestNamedGetterNoIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedGetterNoIdentifier"), strlen("TestNamedGetterNoIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedGetterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1765,9 +1803,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedGetterWithIdentifierConstructor(ExecSt
 
 static inline bool setJSTestGlobalObjectTestNamedGetterWithIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedGetterWithIdentifier"), strlen("TestNamedGetterWithIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedGetterWithIdentifier"), strlen("TestNamedGetterWithIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedGetterWithIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1789,9 +1828,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterNoIdentifierConstructor(ExecStat
 
 static inline bool setJSTestGlobalObjectTestNamedSetterNoIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterNoIdentifier"), strlen("TestNamedSetterNoIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterNoIdentifier"), strlen("TestNamedSetterNoIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1813,9 +1853,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterThrowingExceptionConstructor(Exe
 
 static inline bool setJSTestGlobalObjectTestNamedSetterThrowingExceptionConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterThrowingException"), strlen("TestNamedSetterThrowingException")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterThrowingException"), strlen("TestNamedSetterThrowingException")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterThrowingExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1837,9 +1878,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterWithIdentifierConstructor(ExecSt
 
 static inline bool setJSTestGlobalObjectTestNamedSetterWithIdentifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterWithIdentifier"), strlen("TestNamedSetterWithIdentifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterWithIdentifier"), strlen("TestNamedSetterWithIdentifier")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterWithIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1861,9 +1903,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterWithIndexedGetterConstructor(Exe
 
 static inline bool setJSTestGlobalObjectTestNamedSetterWithIndexedGetterConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterWithIndexedGetter"), strlen("TestNamedSetterWithIndexedGetter")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterWithIndexedGetter"), strlen("TestNamedSetterWithIndexedGetter")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterWithIndexedGetterConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1885,9 +1928,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterWithIndexedGetterAndSetterConstr
 
 static inline bool setJSTestGlobalObjectTestNamedSetterWithIndexedGetterAndSetterConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterWithIndexedGetterAndSetter"), strlen("TestNamedSetterWithIndexedGetterAndSetter")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterWithIndexedGetterAndSetter"), strlen("TestNamedSetterWithIndexedGetterAndSetter")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterWithIndexedGetterAndSetterConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1909,9 +1953,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterWithOverrideBuiltinsConstructor(
 
 static inline bool setJSTestGlobalObjectTestNamedSetterWithOverrideBuiltinsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterWithOverrideBuiltins"), strlen("TestNamedSetterWithOverrideBuiltins")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterWithOverrideBuiltins"), strlen("TestNamedSetterWithOverrideBuiltins")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterWithOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1933,9 +1978,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterWithUnforgablePropertiesConstruc
 
 static inline bool setJSTestGlobalObjectTestNamedSetterWithUnforgablePropertiesConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterWithUnforgableProperties"), strlen("TestNamedSetterWithUnforgableProperties")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterWithUnforgableProperties"), strlen("TestNamedSetterWithUnforgableProperties")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterWithUnforgablePropertiesConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1957,9 +2003,10 @@ EncodedJSValue jsTestGlobalObjectTestNamedSetterWithUnforgablePropertiesAndOverr
 
 static inline bool setJSTestGlobalObjectTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins"), strlen("TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins"), strlen("TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins")), value);
 }
 
 bool setJSTestGlobalObjectTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -1981,9 +2028,10 @@ EncodedJSValue jsTestGlobalObjectTestOverloadedConstructorsConstructor(ExecState
 
 static inline bool setJSTestGlobalObjectTestOverloadedConstructorsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestOverloadedConstructors"), strlen("TestOverloadedConstructors")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestOverloadedConstructors"), strlen("TestOverloadedConstructors")), value);
 }
 
 bool setJSTestGlobalObjectTestOverloadedConstructorsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2005,9 +2053,10 @@ EncodedJSValue jsTestGlobalObjectTestOverloadedConstructorsWithSequenceConstruct
 
 static inline bool setJSTestGlobalObjectTestOverloadedConstructorsWithSequenceConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestOverloadedConstructorsWithSequence"), strlen("TestOverloadedConstructorsWithSequence")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestOverloadedConstructorsWithSequence"), strlen("TestOverloadedConstructorsWithSequence")), value);
 }
 
 bool setJSTestGlobalObjectTestOverloadedConstructorsWithSequenceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2029,9 +2078,10 @@ EncodedJSValue jsTestGlobalObjectTestOverrideBuiltinsConstructor(ExecState* stat
 
 static inline bool setJSTestGlobalObjectTestOverrideBuiltinsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestOverrideBuiltins"), strlen("TestOverrideBuiltins")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestOverrideBuiltins"), strlen("TestOverrideBuiltins")), value);
 }
 
 bool setJSTestGlobalObjectTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2053,9 +2103,10 @@ EncodedJSValue jsTestGlobalObjectTestPluginInterfaceConstructor(ExecState* state
 
 static inline bool setJSTestGlobalObjectTestPluginInterfaceConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestPluginInterface"), strlen("TestPluginInterface")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestPluginInterface"), strlen("TestPluginInterface")), value);
 }
 
 bool setJSTestGlobalObjectTestPluginInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2077,9 +2128,10 @@ EncodedJSValue jsTestGlobalObjectTestReadOnlyMapLikeConstructor(ExecState* state
 
 static inline bool setJSTestGlobalObjectTestReadOnlyMapLikeConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestReadOnlyMapLike"), strlen("TestReadOnlyMapLike")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestReadOnlyMapLike"), strlen("TestReadOnlyMapLike")), value);
 }
 
 bool setJSTestGlobalObjectTestReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2101,9 +2153,10 @@ EncodedJSValue jsTestGlobalObjectTestReportExtraMemoryCostConstructor(ExecState*
 
 static inline bool setJSTestGlobalObjectTestReportExtraMemoryCostConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestReportExtraMemoryCost"), strlen("TestReportExtraMemoryCost")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestReportExtraMemoryCost"), strlen("TestReportExtraMemoryCost")), value);
 }
 
 bool setJSTestGlobalObjectTestReportExtraMemoryCostConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2125,9 +2178,10 @@ EncodedJSValue jsTestGlobalObjectTestSerializationConstructor(ExecState* state, 
 
 static inline bool setJSTestGlobalObjectTestSerializationConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSerialization"), strlen("TestSerialization")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSerialization"), strlen("TestSerialization")), value);
 }
 
 bool setJSTestGlobalObjectTestSerializationConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2149,9 +2203,10 @@ EncodedJSValue jsTestGlobalObjectTestSerializationIndirectInheritanceConstructor
 
 static inline bool setJSTestGlobalObjectTestSerializationIndirectInheritanceConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSerializationIndirectInheritance"), strlen("TestSerializationIndirectInheritance")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSerializationIndirectInheritance"), strlen("TestSerializationIndirectInheritance")), value);
 }
 
 bool setJSTestGlobalObjectTestSerializationIndirectInheritanceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2173,9 +2228,10 @@ EncodedJSValue jsTestGlobalObjectTestSerializationInheritConstructor(ExecState* 
 
 static inline bool setJSTestGlobalObjectTestSerializationInheritConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSerializationInherit"), strlen("TestSerializationInherit")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSerializationInherit"), strlen("TestSerializationInherit")), value);
 }
 
 bool setJSTestGlobalObjectTestSerializationInheritConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2197,9 +2253,10 @@ EncodedJSValue jsTestGlobalObjectTestSerializationInheritFinalConstructor(ExecSt
 
 static inline bool setJSTestGlobalObjectTestSerializationInheritFinalConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSerializationInheritFinal"), strlen("TestSerializationInheritFinal")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSerializationInheritFinal"), strlen("TestSerializationInheritFinal")), value);
 }
 
 bool setJSTestGlobalObjectTestSerializationInheritFinalConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2225,9 +2282,10 @@ EncodedJSValue jsTestGlobalObjectTestSerializedScriptValueInterfaceConstructor(E
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static inline bool setJSTestGlobalObjectTestSerializedScriptValueInterfaceConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSerializedScriptValueInterface"), strlen("TestSerializedScriptValueInterface")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSerializedScriptValueInterface"), strlen("TestSerializedScriptValueInterface")), value);
 }
 
 bool setJSTestGlobalObjectTestSerializedScriptValueInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2251,9 +2309,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierConstructor(ExecState* state, En
 
 static inline bool setJSTestGlobalObjectTestStringifierConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifier"), strlen("TestStringifier")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifier"), strlen("TestStringifier")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2275,9 +2334,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierAnonymousOperationConstructor(Ex
 
 static inline bool setJSTestGlobalObjectTestStringifierAnonymousOperationConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifierAnonymousOperation"), strlen("TestStringifierAnonymousOperation")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifierAnonymousOperation"), strlen("TestStringifierAnonymousOperation")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierAnonymousOperationConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2299,9 +2359,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierNamedOperationConstructor(ExecSt
 
 static inline bool setJSTestGlobalObjectTestStringifierNamedOperationConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifierNamedOperation"), strlen("TestStringifierNamedOperation")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifierNamedOperation"), strlen("TestStringifierNamedOperation")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierNamedOperationConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2323,9 +2384,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierOperationImplementedAsConstructo
 
 static inline bool setJSTestGlobalObjectTestStringifierOperationImplementedAsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifierOperationImplementedAs"), strlen("TestStringifierOperationImplementedAs")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifierOperationImplementedAs"), strlen("TestStringifierOperationImplementedAs")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierOperationImplementedAsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2347,9 +2409,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierOperationNamedToStringConstructo
 
 static inline bool setJSTestGlobalObjectTestStringifierOperationNamedToStringConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifierOperationNamedToString"), strlen("TestStringifierOperationNamedToString")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifierOperationNamedToString"), strlen("TestStringifierOperationNamedToString")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierOperationNamedToStringConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2371,9 +2434,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierReadOnlyAttributeConstructor(Exe
 
 static inline bool setJSTestGlobalObjectTestStringifierReadOnlyAttributeConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifierReadOnlyAttribute"), strlen("TestStringifierReadOnlyAttribute")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifierReadOnlyAttribute"), strlen("TestStringifierReadOnlyAttribute")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierReadOnlyAttributeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2395,9 +2459,10 @@ EncodedJSValue jsTestGlobalObjectTestStringifierReadWriteAttributeConstructor(Ex
 
 static inline bool setJSTestGlobalObjectTestStringifierReadWriteAttributeConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestStringifierReadWriteAttribute"), strlen("TestStringifierReadWriteAttribute")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestStringifierReadWriteAttribute"), strlen("TestStringifierReadWriteAttribute")), value);
 }
 
 bool setJSTestGlobalObjectTestStringifierReadWriteAttributeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -2419,9 +2484,10 @@ EncodedJSValue jsTestGlobalObjectTestTypedefsConstructor(ExecState* state, Encod
 
 static inline bool setJSTestGlobalObjectTestTypedefsConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestTypedefs"), strlen("TestTypedefs")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestTypedefs"), strlen("TestTypedefs")), value);
 }
 
 bool setJSTestGlobalObjectTestTypedefsConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)

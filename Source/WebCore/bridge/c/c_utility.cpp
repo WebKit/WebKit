@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -146,7 +146,8 @@ String convertNPStringToUTF16(const NPString* string)
 
 Identifier identifierFromNPIdentifier(ExecState* exec, const NPUTF8* name)
 {
-    return Identifier::fromString(exec, convertUTF8ToUTF16WithLatin1Fallback(name, -1));
+    VM& vm = exec->vm();
+    return Identifier::fromString(vm, convertUTF8ToUTF16WithLatin1Fallback(name, -1));
 }
 
 } }

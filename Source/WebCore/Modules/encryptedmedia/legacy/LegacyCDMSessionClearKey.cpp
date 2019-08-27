@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             break;
         }
 
-        auto keysArrayValue = asObject(keysDataValue)->get(&state, Identifier::fromString(&state, "keys"));
+        auto keysArrayValue = asObject(keysDataValue)->get(&state, Identifier::fromString(vm, "keys"));
         if (scope.exception() || !isJSArray(keysArrayValue)) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;
@@ -133,8 +133,8 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
 
             auto keyObject = asObject(keyValue);
 
-            auto getStringProperty = [&scope, &state, &keyObject](const char* name) -> String {
-                auto value = keyObject->get(&state, Identifier::fromString(&state, name));
+            auto getStringProperty = [&scope, &state, &keyObject, &vm](const char* name) -> String {
+                auto value = keyObject->get(&state, Identifier::fromString(vm, name));
                 if (scope.exception() || !value.isString())
                     return { };
 

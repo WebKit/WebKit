@@ -116,7 +116,7 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
 
     auto result = computeValidImportSpecifier(base, name);
     if (result)
-        return Identifier::fromString(&vm, result.value());
+        return Identifier::fromString(vm, result.value());
 
     throwVMError(exec, scope, createError(exec, result.error()));
     return { };
@@ -134,7 +134,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
     };
 
     auto import = [&] (URL& url) {
-        auto result = importModule(exec, Identifier::fromString(&vm, url), jsUndefined(), jsUndefined());
+        auto result = importModule(exec, Identifier::fromString(vm, url), jsUndefined(), jsUndefined());
         if (UNLIKELY(scope.exception()))
             return reject(scope.exception());
         return result;
@@ -202,7 +202,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
 
         NSURL *sourceURL = [jsScript sourceURL];
         String oldModuleKey { [sourceURL absoluteString] };
-        if (UNLIKELY(Identifier::fromString(&vm, oldModuleKey) != moduleKey))
+        if (UNLIKELY(Identifier::fromString(vm, oldModuleKey) != moduleKey))
             return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
 
         args.append(source);
@@ -234,7 +234,7 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     JSObject* metaProperties = constructEmptyObject(exec, globalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    metaProperties->putDirect(vm, Identifier::fromString(&vm, "filename"), key);
+    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"), key);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
@@ -274,7 +274,7 @@ JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JS
     ExecState* exec = globalExec();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier key = Identifier::fromString(exec, String { [[script sourceURL] absoluteString] });
+    Identifier key = Identifier::fromString(vm, String { [[script sourceURL] absoluteString] });
     JSInternalPromise* promise = importModule(exec, key, jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
     auto result = JSPromiseDeferred::tryCreate(exec, this);

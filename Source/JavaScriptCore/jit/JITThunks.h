@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,19 +51,19 @@ public:
     JITThunks();
     virtual ~JITThunks();
 
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM*);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM*);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCall(VM*);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM*);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM*);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
 
-    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM*, ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> existingCTIStub(ThunkGenerator);
 
-    NativeExecutable* hostFunctionStub(VM*, TaggedNativeFunction, TaggedNativeFunction constructor, const String& name);
-    NativeExecutable* hostFunctionStub(VM*, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
-    NativeExecutable* hostFunctionStub(VM*, TaggedNativeFunction, ThunkGenerator, Intrinsic, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, Intrinsic, const String& name);
 
     void clearHostFunctionStubs();
 

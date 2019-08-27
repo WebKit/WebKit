@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2090,7 +2090,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
     // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
-    JSC::VM& vm = *globalObjectObj->vm();
+    JSC::VM& vm = globalObjectObj->vm();
     if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSWindowProxy"))
         anyWorldGlobalObject = JSC::jsDynamicCast<JSDOMWindow*>(vm, static_cast<JSWindowProxy*>(globalObjectObj)->window());
 

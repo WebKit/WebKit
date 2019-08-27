@@ -99,7 +99,7 @@ public:
             if (frameIndex++ != requestedFrameIndex)
                 return StackVisitor::Continue;
 
-            addProperty(vm, "name", jsString(&vm, visitor->functionName()));
+            addProperty(vm, "name", jsString(vm, visitor->functionName()));
 
             if (visitor->callee().isCell())
                 addProperty(vm, "callee", visitor->callee().asCell());
@@ -123,7 +123,7 @@ public:
 private:
     void addProperty(VM& vm, const char* name, JSValue value)
     {
-        Identifier identifier = Identifier::fromString(&vm, name);
+        Identifier identifier = Identifier::fromString(vm, name);
         putDirect(vm, identifier, value);
     }
 };
@@ -369,13 +369,14 @@ public:
 
     static bool getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
     {
+        VM& vm = exec->vm();
         CustomGetter* thisObject = jsCast<CustomGetter*>(object);
-        if (propertyName == PropertyName(Identifier::fromString(exec, "customGetter"))) {
+        if (propertyName == PropertyName(Identifier::fromString(vm, "customGetter"))) {
             slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, thisObject->customGetter);
             return true;
         }
         
-        if (propertyName == PropertyName(Identifier::fromString(exec, "customGetterAccessor"))) {
+        if (propertyName == PropertyName(Identifier::fromString(vm, "customGetterAccessor"))) {
             slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, thisObject->customGetterAcessor);
             return true;
         }
@@ -392,7 +393,7 @@ private:
         CustomGetter* thisObject = jsDynamicCast<CustomGetter*>(vm, JSValue::decode(thisValue));
         if (!thisObject)
             return throwVMTypeError(exec, scope);
-        bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
+        bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(vm, "shouldThrow"))).toBoolean(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (shouldThrow)
             return throwVMTypeError(exec, scope);
@@ -407,7 +408,7 @@ private:
         JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
         if (!thisObject)
             return throwVMTypeError(exec, scope);
-        bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
+        bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(vm, "shouldThrow"))).toBoolean(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (shouldThrow)
             return throwVMTypeError(exec, scope);
@@ -612,7 +613,7 @@ public:
         static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
         {
             VM& vm = exec->vm();
-            NativeCallFrameTracer tracer(&vm, exec);
+            NativeCallFrameTracer tracer(vm, exec);
             return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
         }
 
@@ -651,7 +652,7 @@ void DOMJITGetter::finishCreation(VM& vm)
     Base::finishCreation(vm);
     const DOMJIT::GetterSetter* domJIT = &DOMJITGetterDOMJIT;
     auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { DOMJITNode::info(), domJIT });
-    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
 }
 
 class DOMJITGetterComplex : public DOMJITNode {
@@ -695,7 +696,7 @@ public:
         static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
         {
             VM& vm = exec->vm();
-            NativeCallFrameTracer tracer(&vm, exec);
+            NativeCallFrameTracer tracer(vm, exec);
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto* object = static_cast<DOMJITNode*>(pointer);
             auto* domjitGetterComplex = jsDynamicCast<DOMJITGetterComplex*>(vm, object);
@@ -761,8 +762,8 @@ void DOMJITGetterComplex::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     const DOMJIT::GetterSetter* domJIT = &DOMJITGetterComplexDOMJIT;
     auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { DOMJITGetterComplex::info(), domJIT });
-    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "enableException"), 0, functionEnableException, NoIntrinsic, 0);
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "enableException"), 0, functionEnableException, NoIntrinsic, 0);
 }
 
 class DOMJITFunctionObject : public DOMJITNode {
@@ -803,7 +804,7 @@ public:
     static EncodedJSValue JIT_OPERATION functionWithoutTypeCheck(ExecState* exec, DOMJITNode* node)
     {
         VM& vm = exec->vm();
-        NativeCallFrameTracer tracer(&vm, exec);
+        NativeCallFrameTracer tracer(vm, exec);
         return JSValue::encode(jsNumber(node->value()));
     }
 
@@ -833,7 +834,7 @@ static const DOMJIT::Signature DOMJITFunctionObjectSignature(DOMJITFunctionObjec
 void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITFunctionObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITFunctionObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
 }
 
 class DOMJITCheckSubClassObject : public DOMJITNode {
@@ -874,7 +875,7 @@ public:
     static EncodedJSValue JIT_OPERATION functionWithoutTypeCheck(ExecState* exec, DOMJITNode* node)
     {
         VM& vm = exec->vm();
-        NativeCallFrameTracer tracer(&vm, exec);
+        NativeCallFrameTracer tracer(vm, exec);
         return JSValue::encode(jsNumber(node->value()));
     }
 
@@ -887,7 +888,7 @@ static const DOMJIT::Signature DOMJITCheckSubClassObjectSignature(DOMJITCheckSub
 void DOMJITCheckSubClassObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITCheckSubClassObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITCheckSubClassObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
 }
 
 class DOMJITGetterBaseJSObject : public DOMJITNode {
@@ -931,7 +932,7 @@ public:
         static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
         {
             VM& vm = exec->vm();
-            NativeCallFrameTracer tracer(&vm, exec);
+            NativeCallFrameTracer tracer(vm, exec);
             JSObject* object = static_cast<JSObject*>(pointer);
             return JSValue::encode(object->getPrototypeDirect(vm));
         }
@@ -971,7 +972,7 @@ void DOMJITGetterBaseJSObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     const DOMJIT::GetterSetter* domJIT = &DOMJITGetterBaseJSObjectDOMJIT;
     auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { JSObject::info(), domJIT });
-    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
 }
 
 class Message : public ThreadSafeRefCounted<Message> {
@@ -1035,7 +1036,7 @@ static bool customSetAccessor(ExecState* exec, EncodedJSValue thisObject, Encode
     RELEASE_ASSERT(value.isObject());
     JSObject* object = asObject(value);
     PutPropertySlot slot(object);
-    object->put(object, exec, Identifier::fromString(&vm, "result"), JSValue::decode(thisObject), slot);
+    object->put(object, exec, Identifier::fromString(vm, "result"), JSValue::decode(thisObject), slot);
 
     return true;
 }
@@ -1050,7 +1051,7 @@ static bool customSetValue(ExecState* exec, EncodedJSValue slotValue, EncodedJSV
     RELEASE_ASSERT(value.isObject());
     JSObject* object = asObject(value);
     PutPropertySlot slot(object);
-    object->put(object, exec, Identifier::fromString(&vm, "result"), JSValue::decode(slotValue), slot);
+    object->put(object, exec, Identifier::fromString(vm, "result"), JSValue::decode(slotValue), slot);
 
     return true;
 }
@@ -1059,9 +1060,9 @@ void JSTestCustomGetterSetter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
 
-    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customValue"),
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customValue"),
         CustomGetterSetter::create(vm, customGetValue, customSetValue), 0);
-    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customAccessor"),
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customAccessor"),
         CustomGetterSetter::create(vm, customGetAccessor, customSetAccessor), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
 }
 
@@ -1138,8 +1139,8 @@ public:
         Base::finishCreation(vm);
 
         JSGlobalObject* globalObject = this->globalObject(vm);
-        putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "addBytes"), 0, functionWasmStreamingParserAddBytes, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-        putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "finalize"), 0, functionWasmStreamingParserFinalize, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "addBytes"), 0, functionWasmStreamingParserAddBytes, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "finalize"), 0, functionWasmStreamingParserFinalize, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 
     DECLARE_INFO;
@@ -1330,7 +1331,7 @@ static FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
     if (!theFunctionValue.isCell())
         return nullptr;
     
-    VM& vm = *theFunctionValue.asCell()->vm();
+    VM& vm = theFunctionValue.asCell()->vm();
     JSFunction* theFunction = jsDynamicCast<JSFunction*>(vm, theFunctionValue);
     if (!theFunction)
         return nullptr;
@@ -1498,7 +1499,7 @@ static EncodedJSValue JSC_HOST_CALL functionCodeBlockFor(ExecState* exec)
     WTF::StringPrintStream stream;
     if (codeBlock) {
         stream.print(*codeBlock);
-        return JSValue::encode(jsString(exec, stream.toString()));
+        return JSValue::encode(jsString(exec->vm(), stream.toString()));
     }
     return JSValue::encode(jsUndefined());
 }
@@ -1631,7 +1632,7 @@ static EncodedJSValue JSC_HOST_CALL functionIndexingMode(ExecState* exec)
 
     WTF::StringPrintStream stream;
     stream.print(IndexingTypeDump(exec->uncheckedArgument(0).getObject()->indexingMode()));
-    return JSValue::encode(jsString(exec, stream.toString()));
+    return JSValue::encode(jsString(exec->vm(), stream.toString()));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionInlineCapacity(ExecState* exec)
@@ -1654,7 +1655,7 @@ static EncodedJSValue JSC_HOST_CALL functionValue(ExecState* exec)
         stream.print(exec->uncheckedArgument(i));
     }
     
-    return JSValue::encode(jsString(exec, stream.toString()));
+    return JSValue::encode(jsString(exec->vm(), stream.toString()));
 }
 
 // Gets the pid of the current process.
@@ -1860,7 +1861,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const SourceCode& source = makeSource(functionText, { });
-    JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, nullptr, source), exec->lexicalGlobalObject());
+    JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, nullptr, source), exec->lexicalGlobalObject());
 
     return JSValue::encode(func);
 }
@@ -1875,7 +1876,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetPrivateProperty(ExecState* exec)
 
     String str = asString(exec->argument(1))->value(exec);
 
-    SymbolImpl* symbol = vm.propertyNames->lookUpPrivateName(Identifier::fromString(exec, str));
+    SymbolImpl* symbol = vm.propertyNames->lookUpPrivateName(Identifier::fromString(vm, str));
     if (!symbol)
         return throwVMError(exec, scope, "Unknown private name.");
 
@@ -2229,13 +2230,13 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "crash", functionCrash, 0);
     addFunction(vm, "breakpoint", functionBreakpoint, 0);
 
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "dfgTrue"), 0, functionDFGTrue, DFGTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "ftlTrue"), 0, functionFTLTrue, FTLTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"), 0, functionDFGTrue, DFGTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "ftlTrue"), 0, functionFTLTrue, FTLTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuMfence"), 0, functionCpuMfence, CPUMfenceIntrinsic, 0);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuRdtsc"), 0, functionCpuRdtsc, CPURdtscIntrinsic, 0);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuCpuid"), 0, functionCpuCpuid, CPUCpuidIntrinsic, 0);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuPause"), 0, functionCpuPause, CPUPauseIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuMfence"), 0, functionCpuMfence, CPUMfenceIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuRdtsc"), 0, functionCpuRdtsc, CPURdtscIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuCpuid"), 0, functionCpuCpuid, CPUCpuidIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuPause"), 0, functionCpuPause, CPUPauseIntrinsic, 0);
     addFunction(vm, "cpuClflush", functionCpuClflush, 2);
 
     addFunction(vm, "llintTrue", functionLLintTrue, 0);
@@ -2334,13 +2335,13 @@ void JSDollarVM::finishCreation(VM& vm)
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)
 {
-    Identifier identifier = Identifier::fromString(&vm, name);
+    Identifier identifier = Identifier::fromString(vm, name);
     putDirect(vm, identifier, JSFunction::create(vm, globalObject, arguments, identifier.string(), function));
 }
 
 void JSDollarVM::addConstructibleFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)
 {
-    Identifier identifier = Identifier::fromString(&vm, name);
+    Identifier identifier = Identifier::fromString(vm, name);
     putDirect(vm, identifier, JSFunction::create(vm, globalObject, arguments, identifier.string(), function, NoIntrinsic, function));
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,15 +114,15 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleImports(ExecState* exec)
 
     const auto& imports = module->moduleInformation().imports;
     if (imports.size()) {
-        Identifier module = Identifier::fromString(exec, "module");
-        Identifier name = Identifier::fromString(exec, "name");
-        Identifier kind = Identifier::fromString(exec, "kind");
+        Identifier module = Identifier::fromString(vm, "module");
+        Identifier name = Identifier::fromString(vm, "name");
+        Identifier kind = Identifier::fromString(vm, "kind");
         for (const Wasm::Import& imp : imports) {
             JSObject* obj = constructEmptyObject(exec);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, module, jsString(exec, String::fromUTF8(imp.module)));
-            obj->putDirect(vm, name, jsString(exec, String::fromUTF8(imp.field)));
-            obj->putDirect(vm, kind, jsString(exec, String(makeString(imp.kind))));
+            obj->putDirect(vm, module, jsString(vm, String::fromUTF8(imp.module)));
+            obj->putDirect(vm, name, jsString(vm, String::fromUTF8(imp.field)));
+            obj->putDirect(vm, kind, jsString(vm, String(makeString(imp.kind))));
             result->push(exec, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
         }
@@ -146,13 +146,13 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleExports(ExecState* exec)
 
     const auto& exports = module->moduleInformation().exports;
     if (exports.size()) {
-        Identifier name = Identifier::fromString(exec, "name");
-        Identifier kind = Identifier::fromString(exec, "kind");
+        Identifier name = Identifier::fromString(vm, "name");
+        Identifier kind = Identifier::fromString(vm, "kind");
         for (const Wasm::Export& exp : exports) {
             JSObject* obj = constructEmptyObject(exec);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, name, jsString(exec, String::fromUTF8(exp.field)));
-            obj->putDirect(vm, kind, jsString(exec, String(makeString(exp.kind))));
+            obj->putDirect(vm, name, jsString(vm, String::fromUTF8(exp.field)));
+            obj->putDirect(vm, kind, jsString(vm, String(makeString(exp.kind))));
             result->push(exec, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
         }

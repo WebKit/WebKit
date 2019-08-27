@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -295,8 +295,9 @@ bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, PropertyName)
 
 JSValue ObjcFallbackObjectImp::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType)
 {
+    VM& vm = exec->vm();
     const ObjcFallbackObjectImp* thisObject = jsCast<const ObjcFallbackObjectImp*>(object);
-    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier::fromString(exec, thisObject->m_item));
+    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier::fromString(vm, thisObject->m_item));
 }
 
 bool ObjcFallbackObjectImp::toBoolean(ExecState *) const

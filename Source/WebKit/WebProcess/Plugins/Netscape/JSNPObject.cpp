@@ -451,9 +451,9 @@ void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
             const char* string = identifierRep->string();
             int length = strlen(string);
             
-            identifier = Identifier::fromString(exec, String::fromUTF8WithLatin1Fallback(string, length));
+            identifier = Identifier::fromString(vm, String::fromUTF8WithLatin1Fallback(string, length));
         } else
-            identifier = Identifier::from(exec, identifierRep->number());
+            identifier = Identifier::from(vm, identifierRep->number());
 
         propertyNameArray.add(identifier);
     }

@@ -374,7 +374,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
         dataLog("Dumping host frame registers not supported.\n");
         return;
     }
-    VM& vm = *codeBlock->vm();
+    VM& vm = codeBlock->vm();
     auto valueAsString = [&] (JSValue v) -> CString {
         if (!v.isCell() || VMInspector::isValidCell(&vm.heap, reinterpret_cast<JSCell*>(JSValue::encode(v))))
             return toCString(v);
@@ -497,7 +497,7 @@ private:
 
 void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
 {
-    VM& vm = *cell->vm();
+    VM& vm = cell->vm();
     StructureID structureID = cell->structureID();
     Structure* structure = cell->structure(vm);
     IndexingType indexingTypeAndMisc = cell->indexingTypeAndMisc();

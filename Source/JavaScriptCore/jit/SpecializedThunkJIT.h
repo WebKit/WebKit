@@ -37,8 +37,8 @@ namespace JSC {
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
         static const int ThisArgument = -1;
-        SpecializedThunkJIT(VM* vm, int expectedArgCount)
-            : JSInterfaceJIT(vm)
+        SpecializedThunkJIT(VM& vm, int expectedArgCount)
+            : JSInterfaceJIT(&vm)
         {
             emitFunctionPrologue();
             emitSaveThenMaterializeTagRegisters();
@@ -46,8 +46,8 @@ namespace JSC {
             m_failures.append(branch32(NotEqual, payloadFor(CallFrameSlot::argumentCount), TrustedImm32(expectedArgCount + 1)));
         }
         
-        explicit SpecializedThunkJIT(VM* vm)
-            : JSInterfaceJIT(vm)
+        explicit SpecializedThunkJIT(VM& vm)
+            : JSInterfaceJIT(&vm)
         {
             emitFunctionPrologue();
             emitSaveThenMaterializeTagRegisters();

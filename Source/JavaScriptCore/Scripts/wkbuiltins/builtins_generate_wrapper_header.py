@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2016 Apple Inc. All rights reserved.
+# Copyright (c) 2016-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -92,7 +92,7 @@ class BuiltinsWrapperHeaderGenerator(BuiltinsGenerator):
         lines = ["    explicit JSBuiltinFunctions(JSC::VM& vm)",
                  "        : m_vm(vm)"]
         for object in self.model().objects:
-            member_init = "        , %s(&m_vm)" % self.member_name(object)
+            member_init = "        , %s(m_vm)" % self.member_name(object)
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), member_init))
         lines.append("    {")
         for object in self.model().objects:

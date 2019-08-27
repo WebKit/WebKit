@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -144,12 +144,12 @@ void HeapVerifier::printVerificationHeader()
     CollectionScope scope = currentCycle().scope;
     MonotonicTime gcCycleTimestamp = currentCycle().timestamp;
     dataLog("Verifying heap in [p", getCurrentProcessID(), ", ", Thread::current(), "] vm ",
-        RawPointer(m_heap->vm()), " on ", scope, " GC @ ", gcCycleTimestamp, "\n");
+        RawPointer(&m_heap->vm()), " on ", scope, " GC @ ", gcCycleTimestamp, "\n");
 }
 
 bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
 {
-    VM& vm = *m_heap->vm();
+    VM& vm = m_heap->vm();
     auto& liveCells = list.cells();
 
     bool listNamePrinted = false;
@@ -222,7 +222,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
     if (expectedVM) {
         VM& vm = *expectedVM;
 
-        VM* cellVM = cell->vm();
+        VM* cellVM = &cell->vm();
         if (cellVM != expectedVM) {
             printHeaderAndCell();
             dataLog(" is from a different VM: expected:", RawPointer(expectedVM), " actual:", RawPointer(cellVM), "\n");
@@ -255,7 +255,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
             return false;
         }
 
-        VM* structureVM = structure->vm();
+        VM* structureVM = &structure->vm();
         if (structureVM != expectedVM) {
             printHeaderAndCell();
             dataLog(" has structure ", RawPointer(structure), " from a different VM: expected:", RawPointer(expectedVM), " actual:", RawPointer(structureVM), "\n");
@@ -305,7 +305,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
             return false;
         }
         
-        VM* structureStructureVM = structureStructure->vm();
+        VM* structureStructureVM = &structureStructure->vm();
         if (structureStructureVM != expectedVM) {
             printHeaderAndCell();
             dataLog(" has structure ", RawPointer(structure), " whose structure ", RawPointer(structureStructure), " is from a different VM: expected:", RawPointer(expectedVM), " actual:", RawPointer(structureStructureVM), "\n");
@@ -365,7 +365,7 @@ void HeapVerifier::verify(HeapVerifier::Phase phase)
 void HeapVerifier::reportCell(CellProfile& profile, int cycleIndex, HeapVerifier::GCCycle& cycle, CellList& list, const char* prefix)
 {
     HeapCell* cell = profile.cell();
-    VM* vm = m_heap->vm();
+    VM& vm = m_heap->vm();
 
     if (prefix)
         dataLog(prefix);
@@ -387,7 +387,7 @@ void HeapVerifier::reportCell(CellProfile& profile, int cycleIndex, HeapVerifier
 
     if (profile.isLive() && profile.isJSCell()) {
         JSCell* jsCell = profile.jsCell();
-        Structure* structure = jsCell->structure(*vm);
+        Structure* structure = jsCell->structure(vm);
         dataLog(" structure:", RawPointer(structure));
         if (jsCell->isObject()) {
             JSObject* obj = static_cast<JSObject*>(cell);
@@ -399,7 +399,7 @@ void HeapVerifier::reportCell(CellProfile& profile, int cycleIndex, HeapVerifier
     }
 
     dataLog(" in ", cycle.scope, " GC[", cycleIndex, "] in '", list.name(), "' list in VM ",
-        RawPointer(vm), " recorded at time ", profile.timestamp(), "\n");
+        RawPointer(&vm), " recorded at time ", profile.timestamp(), "\n");
     if (profile.stackTrace())
         dataLog(*profile.stackTrace());
 }

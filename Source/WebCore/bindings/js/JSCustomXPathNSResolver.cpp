@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2013 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +73,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     ExecState* exec = m_globalObject->globalExec();
     VM& vm = exec->vm();
         
-    JSValue function = m_customResolver->get(exec, Identifier::fromString(exec, "lookupNamespaceURI"));
+    JSValue function = m_customResolver->get(exec, Identifier::fromString(vm, "lookupNamespaceURI"));
     CallData callData;
     CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None) {

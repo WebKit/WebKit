@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2012 Sony Network Entertainment. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -144,7 +144,7 @@ class Trie:
             print(str + "if (!isIdentPartIncludingEscape(code + %d, m_codeEnd)) {" % (len(self.fullPrefix)))
             print(str + "    internalShift<%d>();" % len(self.fullPrefix))
             print(str + "    if (shouldCreateIdentifier)")
-            print(str + ("        data->ident = &m_vm->propertyNames->%sKeyword;" % self.fullPrefix))
+            print(str + ("        data->ident = &m_vm.propertyNames->%sKeyword;" % self.fullPrefix))
             print(str + "    return " + self.value + ";")
             print(str + "}")
         rootIndex = len(self.fullPrefix)

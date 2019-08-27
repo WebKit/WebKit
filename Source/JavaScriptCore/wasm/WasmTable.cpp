@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,7 @@ void Table::set(uint32_t index, JSValue value)
     RELEASE_ASSERT(isAnyrefTable());
     RELEASE_ASSERT(m_owner);
     clear(index);
-    m_jsValues.get()[index & m_mask].set(*m_owner->vm(), m_owner, value);
+    m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, value);
 }
 
 JSValue Table::get(uint32_t index) const
@@ -193,7 +193,7 @@ void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmTo
     RELEASE_ASSERT(m_owner);
     clear(index);
     if (optionalWrapper)
-        m_jsValues.get()[index & m_mask].set(*m_owner->vm(), m_owner, optionalWrapper);
+        m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, optionalWrapper);
     m_importableFunctions.get()[index & m_mask] = function;
     m_instances.get()[index & m_mask] = instance;
 }

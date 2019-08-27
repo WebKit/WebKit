@@ -41,26 +41,21 @@ class JSString;
 class JSRopeString;
 class LLIntOffsetsExtractor;
 
-JSString* jsEmptyString(VM*);
-JSString* jsEmptyString(ExecState*);
-JSString* jsString(VM*, const String&); // returns empty string if passed null string
-JSString* jsString(ExecState*, const String&); // returns empty string if passed null string
+JSString* jsEmptyString(VM&);
+JSString* jsString(VM&, const String&); // returns empty string if passed null string
 
-JSString* jsSingleCharacterString(VM*, UChar);
-JSString* jsSingleCharacterString(ExecState*, UChar);
-JSString* jsSubstring(VM*, const String&, unsigned offset, unsigned length);
+JSString* jsSingleCharacterString(VM&, UChar);
+JSString* jsSubstring(VM&, const String&, unsigned offset, unsigned length);
 
 // Non-trivial strings are two or more characters long.
 // These functions are faster than just calling jsString.
-JSString* jsNontrivialString(VM*, const String&);
-JSString* jsNontrivialString(ExecState*, const String&);
-JSString* jsNontrivialString(ExecState*, String&&);
+JSString* jsNontrivialString(VM&, const String&);
+JSString* jsNontrivialString(VM&, String&&);
 
 // Should be used for strings that are owned by an object that will
 // likely outlive the JSValue this makes, such as the parse tree or a
 // DOM object that contains a String
-JSString* jsOwnedString(VM*, const String&);
-JSString* jsOwnedString(ExecState*, const String&);
+JSString* jsOwnedString(VM&, const String&);
 
 bool isJSString(JSCell*);
 bool isJSString(JSValue);
@@ -238,20 +233,20 @@ private:
 
     StringView unsafeView(ExecState*) const;
 
-    friend JSString* jsString(VM*, const String&);
+    friend JSString* jsString(VM&, const String&);
     friend JSString* jsString(ExecState*, JSString*, JSString*);
     friend JSString* jsString(ExecState*, const String&, JSString*);
     friend JSString* jsString(ExecState*, JSString*, const String&);
     friend JSString* jsString(ExecState*, const String&, const String&);
     friend JSString* jsString(ExecState*, JSString*, JSString*, JSString*);
     friend JSString* jsString(ExecState*, const String&, const String&, const String&);
-    friend JSString* jsSingleCharacterString(VM*, UChar);
-    friend JSString* jsNontrivialString(VM*, const String&);
-    friend JSString* jsNontrivialString(VM*, String&&);
-    friend JSString* jsSubstring(VM*, const String&, unsigned, unsigned);
+    friend JSString* jsSingleCharacterString(VM&, UChar);
+    friend JSString* jsNontrivialString(VM&, const String&);
+    friend JSString* jsNontrivialString(VM&, String&&);
+    friend JSString* jsSubstring(VM&, const String&, unsigned, unsigned);
     friend JSString* jsSubstring(VM&, ExecState*, JSString*, unsigned, unsigned);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
-    friend JSString* jsOwnedString(VM*, const String&);
+    friend JSString* jsOwnedString(VM&, const String&);
 };
 
 // NOTE: This class cannot override JSString's destructor. JSString's destructor is called directly
@@ -402,7 +397,7 @@ public:
             switch (m_strings.size()) {
             case 0: {
                 ASSERT(!m_length);
-                result = jsEmptyString(&m_vm);
+                result = jsEmptyString(m_vm);
                 break;
             }
             case 1: {
@@ -719,41 +714,45 @@ inline JSString* asString(JSValue value)
 }
 
 // This MUST NOT GC.
-inline JSString* jsEmptyString(VM* vm)
+inline JSString* jsEmptyString(VM& vm)
 {
-    return vm->smallStrings.emptyString();
+    return vm.smallStrings.emptyString();
 }
 
-ALWAYS_INLINE JSString* jsSingleCharacterString(VM* vm, UChar c)
+ALWAYS_INLINE JSString* jsSingleCharacterString(VM& vm, UChar c)
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm->heap.expectDoesGC());
+        RELEASE_ASSERT(vm.heap.expectDoesGC());
     if (c <= maxSingleCharacterString)
-        return vm->smallStrings.singleCharacterString(c);
-    return JSString::create(*vm, StringImpl::create(&c, 1));
+        return vm.smallStrings.singleCharacterString(c);
+    return JSString::create(vm, StringImpl::create(&c, 1));
 }
 
-inline JSString* jsNontrivialString(VM* vm, const String& s)
+inline JSString* jsNontrivialString(VM& vm, const String& s)
 {
     ASSERT(s.length() > 1);
-    return JSString::create(*vm, *s.impl());
+    return JSString::create(vm, *s.impl());
 }
 
-inline JSString* jsNontrivialString(VM* vm, String&& s)
+inline JSString* jsNontrivialString(VM& vm, String&& s)
 {
     ASSERT(s.length() > 1);
-    return JSString::create(*vm, s.releaseImpl().releaseNonNull());
+    return JSString::create(vm, s.releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
 {
-    return Identifier::fromString(exec, toAtomString(exec));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    AtomString atomString = toAtomString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    return Identifier::fromString(vm, atomString);
 }
 
 ALWAYS_INLINE AtomString JSString::toAtomString(ExecState* exec) const
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        RELEASE_ASSERT(vm().heap.expectDoesGC());
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRopeToAtomString(exec);
     return AtomString(valueInternal());
@@ -762,7 +761,7 @@ ALWAYS_INLINE AtomString JSString::toAtomString(ExecState* exec) const
 ALWAYS_INLINE RefPtr<AtomStringImpl> JSString::toExistingAtomString(ExecState* exec) const
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        RELEASE_ASSERT(vm().heap.expectDoesGC());
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomString(exec);
     if (valueInternal().impl()->isAtom())
@@ -773,7 +772,7 @@ ALWAYS_INLINE RefPtr<AtomStringImpl> JSString::toExistingAtomString(ExecState* e
 inline const String& JSString::value(ExecState* exec) const
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        RELEASE_ASSERT(vm().heap.expectDoesGC());
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRope(exec);
     return valueInternal();
@@ -783,7 +782,7 @@ inline const String& JSString::tryGetValue(bool allocationAllowed) const
 {
     if (allocationAllowed) {
         if (validateDFGDoesGC)
-            RELEASE_ASSERT(vm()->heap.expectDoesGC());
+            RELEASE_ASSERT(vm().heap.expectDoesGC());
         if (isRope()) {
             // Pass nullptr for the ExecState so that resolveRope does not throw in the event of an OOM error.
             return static_cast<const JSRopeString*>(this)->resolveRope(nullptr);
@@ -800,20 +799,20 @@ inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
     ASSERT(canGetIndex(i));
     StringView view = unsafeView(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsSingleCharacterString(exec, view[i]);
+    return jsSingleCharacterString(vm, view[i]);
 }
 
-inline JSString* jsString(VM* vm, const String& s)
+inline JSString* jsString(VM& vm, const String& s)
 {
     int size = s.length();
     if (!size)
-        return vm->smallStrings.emptyString();
+        return vm.smallStrings.emptyString();
     if (size == 1) {
         UChar c = s.characterAt(0);
         if (c <= maxSingleCharacterString)
-            return vm->smallStrings.singleCharacterString(c);
+            return vm.smallStrings.singleCharacterString(c);
     }
-    return JSString::create(*vm, *s.impl());
+    return JSString::create(vm, *s.impl());
 }
 
 inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
@@ -872,50 +871,43 @@ inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsi
     return jsSubstring(exec->vm(), exec, s, offset, length);
 }
 
-inline JSString* jsSubstring(VM* vm, const String& s, unsigned offset, unsigned length)
+inline JSString* jsSubstring(VM& vm, const String& s, unsigned offset, unsigned length)
 {
     ASSERT(offset <= s.length());
     ASSERT(length <= s.length());
     ASSERT(offset + length <= s.length());
     if (!length)
-        return vm->smallStrings.emptyString();
+        return vm.smallStrings.emptyString();
     if (length == 1) {
         UChar c = s.characterAt(offset);
         if (c <= maxSingleCharacterString)
-            return vm->smallStrings.singleCharacterString(c);
+            return vm.smallStrings.singleCharacterString(c);
     }
     auto impl = StringImpl::createSubstringSharingImpl(*s.impl(), offset, length);
     if (impl->isSubString())
-        return JSString::createHasOtherOwner(*vm, WTFMove(impl));
-    return JSString::create(*vm, WTFMove(impl));
+        return JSString::createHasOtherOwner(vm, WTFMove(impl));
+    return JSString::create(vm, WTFMove(impl));
 }
 
-inline JSString* jsOwnedString(VM* vm, const String& s)
+inline JSString* jsOwnedString(VM& vm, const String& s)
 {
     int size = s.length();
     if (!size)
-        return vm->smallStrings.emptyString();
+        return vm.smallStrings.emptyString();
     if (size == 1) {
         UChar c = s.characterAt(0);
         if (c <= maxSingleCharacterString)
-            return vm->smallStrings.singleCharacterString(c);
+            return vm.smallStrings.singleCharacterString(c);
     }
-    return JSString::createHasOtherOwner(*vm, *s.impl());
+    return JSString::createHasOtherOwner(vm, *s.impl());
 }
-
-inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->vm()); }
-inline JSString* jsString(ExecState* exec, const String& s) { return jsString(&exec->vm(), s); }
-inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->vm(), c); }
-inline JSString* jsNontrivialString(ExecState* exec, const String& s) { return jsNontrivialString(&exec->vm(), s); }
-inline JSString* jsNontrivialString(ExecState* exec, String&& s) { return jsNontrivialString(&exec->vm(), WTFMove(s)); }
-inline JSString* jsOwnedString(ExecState* exec, const String& s) { return jsOwnedString(&exec->vm(), s); }
 
 ALWAYS_INLINE JSString* jsStringWithCache(ExecState* exec, const String& s)
 {
     VM& vm = exec->vm();
     StringImpl* stringImpl = s.impl();
     if (!stringImpl || !stringImpl->length())
-        return jsEmptyString(&vm);
+        return jsEmptyString(vm);
 
     if (stringImpl->length() == 1) {
         UChar singleCharacter = (*stringImpl)[0u];
@@ -980,7 +972,7 @@ inline bool isJSString(JSValue v)
 ALWAYS_INLINE StringView JSRopeString::unsafeView(ExecState* exec) const
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        RELEASE_ASSERT(vm().heap.expectDoesGC());
     if (isSubstring()) {
         auto& base = substringBase()->valueInternal();
         if (base.is8Bit())
@@ -993,7 +985,7 @@ ALWAYS_INLINE StringView JSRopeString::unsafeView(ExecState* exec) const
 ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingString(ExecState* exec) const
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        RELEASE_ASSERT(vm().heap.expectDoesGC());
     if (isSubstring()) {
         auto& base = substringBase()->valueInternal();
         if (base.is8Bit())
@@ -1007,7 +999,7 @@ ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingStr
 ALWAYS_INLINE StringView JSString::unsafeView(ExecState* exec) const
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        RELEASE_ASSERT(vm().heap.expectDoesGC());
     if (isRope())
         return static_cast<const JSRopeString*>(this)->unsafeView(exec);
     return valueInternal();

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -344,7 +344,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
     auto flags = flagsString(exec, asObject(thisValue));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(jsString(exec, flags.data()));
+    return JSValue::encode(jsString(vm, flags.data()));
 }
 
 template <typename CharacterType>
@@ -375,6 +375,7 @@ inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar line
 template <typename CharacterType>
 static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const String& pattern, const CharacterType* characters, unsigned length)
 {
+    VM& vm = exec->vm();
     bool previousCharacterWasBackslash = false;
     bool inBrackets = false;
     bool shouldEscape = false;
@@ -385,7 +386,7 @@ static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const Str
     // source cannot ever validly be "". If the source is empty, return a different Pattern
     // that would match the same thing.
     if (!length)
-        return jsNontrivialString(exec, "(?:)"_s);
+        return jsNontrivialString(vm, "(?:)"_s);
 
     // early return for strings that don't contain a forwards slash and LineTerminator
     for (unsigned i = 0; i < length; ++i) {
@@ -416,7 +417,7 @@ static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const Str
     }
 
     if (!shouldEscape)
-        return jsString(exec, pattern);
+        return jsString(vm, pattern);
 
     previousCharacterWasBackslash = false;
     inBrackets = false;
@@ -450,7 +451,7 @@ static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const Str
             previousCharacterWasBackslash = ch == '\\';
     }
 
-    return jsString(exec, result.toString());
+    return jsString(vm, result.toString());
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState* exec)
@@ -462,7 +463,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState* exec)
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
-            return JSValue::encode(jsString(exec, "(?:)"_s));
+            return JSValue::encode(jsString(vm, "(?:)"_s));
         return throwVMTypeError(exec, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
     }
 

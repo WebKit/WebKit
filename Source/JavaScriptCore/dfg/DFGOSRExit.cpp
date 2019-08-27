@@ -1021,17 +1021,17 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
 
 void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
 {
-    VM* vm = &exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(*vm);
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
         // code running that expects no GC.
-        vm->heap.setExpectDoesGC(true);
+        vm.heap.setExpectDoesGC(true);
     }
 
-    if (vm->callFrameForCatch)
-        RELEASE_ASSERT(vm->callFrameForCatch == exec);
+    if (vm.callFrameForCatch)
+        RELEASE_ASSERT(vm.callFrameForCatch == exec);
 
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock);
@@ -1039,12 +1039,12 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
 
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
-    DeferGCForAWhile deferGC(vm->heap);
+    DeferGCForAWhile deferGC(vm.heap);
 
-    uint32_t exitIndex = vm->osrExitIndex;
+    uint32_t exitIndex = vm.osrExitIndex;
     OSRExit& exit = codeBlock->jitCode()->dfg()->osrExit[exitIndex];
 
-    ASSERT(!vm->callFrameForCatch || exit.m_kind == GenericUnwind);
+    ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
     EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() || !exit.isExceptionHandler());
     
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
@@ -1063,8 +1063,8 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
         if (exit.m_kind == GenericUnwind) {
             // We are acting as a defacto op_catch because we arrive here from genericUnwind().
             // So, we must restore our call frame and stack pointer.
-            jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
-            jit.loadPtr(vm->addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
+            jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+            jit.loadPtr(vm.addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
         }
         jit.addPtr(
             CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
@@ -1072,8 +1072,8 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
 
         jit.jitAssertHasValidCallFrame();
 
-        if (UNLIKELY(vm->m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation)) {
-            Profiler::Database& database = *vm->m_perBytecodeProfiler;
+        if (UNLIKELY(vm.m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation)) {
+            Profiler::Database& database = *vm.m_perBytecodeProfiler;
             Profiler::Compilation* compilation = codeBlock->jitCode()->dfgCommon()->compilation.get();
 
             Profiler::OSRExit* profilerExit = compilation->addOSRExit(
@@ -1082,7 +1082,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
             jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(profilerExit->counterAddress()));
         }
 
-        compileExit(jit, *vm, exit, operands, recovery);
+        compileExit(jit, vm, exit, operands, recovery);
 
         LinkBuffer patchBuffer(jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
@@ -1096,7 +1096,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
 
     MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exit.m_code.code()));
 
-    vm->osrExitJumpDestination = exit.m_code.code().executableAddress();
+    vm.osrExitJumpDestination = exit.m_code.code().executableAddress();
 }
 
 void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
@@ -1647,14 +1647,14 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
 void JIT_OPERATION OSRExit::debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw, void* scratch)
 {
-    VM* vm = &exec->vm();
+    VM& vm = exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
     dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", vm->osrExitIndex, " (bc#", debugInfo->bytecodeOffset, ", ", exitKindToString(debugInfo->kind), ") with ");
+    dataLog(" @ exit #", vm.osrExitIndex, " (bc#", debugInfo->bytecodeOffset, ", ", exitKindToString(debugInfo->kind), ") with ");
     if (alternative) {
         dataLog(
             "executeCounter = ", alternative->jitExecuteCounter(),

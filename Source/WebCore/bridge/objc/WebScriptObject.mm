@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -347,7 +347,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = globalObject->globalExec();
     UNUSED_PARAM(scope);
 
-    JSC::JSValue function = [self _imp]->get(exec, Identifier::fromString(exec, String(name)));
+    JSC::JSValue function = [self _imp]->get(exec, Identifier::fromString(vm, String(name)));
     CallData callData;
     CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
@@ -406,7 +406,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSObject* object = JSC::jsDynamicCast<JSObject*>(vm, [self _imp]);
     PutPropertySlot slot(object);
-    object->methodTable(vm)->put(object, exec, Identifier::fromString(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
+    object->methodTable(vm)->put(object, exec, Identifier::fromString(vm, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(exec);
@@ -432,7 +432,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         auto scope = DECLARE_CATCH_SCOPE(vm);
         ExecState* exec = globalObject->globalExec();
 
-        JSC::JSValue result = [self _imp]->get(exec, Identifier::fromString(exec, String(key)));
+        JSC::JSValue result = [self _imp]->get(exec, Identifier::fromString(vm, String(key)));
         
         if (UNLIKELY(scope.exception())) {
             addExceptionToConsole(exec);
@@ -460,7 +460,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = globalObject->globalExec();
 
-    [self _imp]->methodTable(vm)->deleteProperty([self _imp], exec, Identifier::fromString(exec, String(key)));
+    [self _imp]->methodTable(vm)->deleteProperty([self _imp], exec, Identifier::fromString(vm, String(key)));
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(exec);
@@ -479,7 +479,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = globalObject->globalExec();
 
-    BOOL result = [self _imp]->hasProperty(exec, Identifier::fromString(exec, String(key)));
+    BOOL result = [self _imp]->hasProperty(exec, Identifier::fromString(vm, String(key)));
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(exec);

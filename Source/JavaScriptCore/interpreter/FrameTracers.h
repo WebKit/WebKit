@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,13 +83,13 @@ ALWAYS_INLINE static void assertStackPointerIsAligned()
 
 class NativeCallFrameTracer {
 public:
-    ALWAYS_INLINE NativeCallFrameTracer(VM* vm, CallFrame* callFrame)
+    ALWAYS_INLINE NativeCallFrameTracer(VM& vm, CallFrame* callFrame)
     {
-        ASSERT(vm);
+        ASSERT(&vm);
         ASSERT(callFrame);
-        ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm->topEntryFrame));
+        ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm.topEntryFrame));
         assertStackPointerIsAligned();
-        vm->topCallFrame = callFrame;
+        vm.topCallFrame = callFrame;
     }
 };
 

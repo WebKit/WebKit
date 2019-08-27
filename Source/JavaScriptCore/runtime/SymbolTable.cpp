@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,7 +213,7 @@ void SymbolTable::setRareDataCodeBlock(CodeBlock* codeBlock)
         m_rareData = makeUnique<SymbolTableRareData>();
 
     ASSERT(!m_rareData->m_codeBlock);
-    m_rareData->m_codeBlock.set(*codeBlock->vm(), this, codeBlock);
+    m_rareData->m_codeBlock.set(codeBlock->vm(), this, codeBlock);
 }
 
 GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJSLocker&, UniquedStringImpl* key, VM& vm)

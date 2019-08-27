@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -152,7 +152,7 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const Cha
 
     if (UNLIKELY(builder.hasOverflowed()))
         return throwOutOfMemoryError(exec, scope);
-    return jsString(exec, builder.toString());
+    return jsString(vm, builder.toString());
 }
 
 static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape)
@@ -241,7 +241,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
     }
     if (UNLIKELY(builder.hasOverflowed()))
         return throwOutOfMemoryError(exec, scope);
-    RELEASE_AND_RETURN(scope, jsString(&vm, builder.toString()));
+    RELEASE_AND_RETURN(scope, jsString(vm, builder.toString()));
 }
 
 static JSValue decode(ExecState* exec, const Bitmap<256>& doNotUnescape, bool strict)
@@ -601,6 +601,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
     );
 
     return JSValue::encode(toStringView(exec, exec->argument(0), [&] (StringView view) {
+        VM& vm = exec->vm();
         StringBuilder builder;
         if (view.is8Bit()) {
             const LChar* c = view.characters8();
@@ -613,7 +614,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
                     appendByteAsHex(u, builder);
                 }
             }
-            return jsString(exec, builder.toString());
+            return jsString(vm, builder.toString());
         }
 
         const UChar* c = view.characters16();
@@ -631,7 +632,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
             }
         }
 
-        return jsString(exec, builder.toString());
+        return jsString(vm, builder.toString());
     }));
 }
 
@@ -687,7 +688,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
             }
         }
 
-        return jsString(exec, builder.toString());
+        return jsString(exec->vm(), builder.toString());
     }));
 }
 
@@ -804,7 +805,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(ExecState* exec)
 {
-    return JSValue::encode(jsString(exec, toString(exec->argument(0))));
+    return JSValue::encode(jsString(exec->vm(), toString(exec->argument(0))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)

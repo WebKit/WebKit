@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -159,7 +159,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
             String groupName = regExp->getCaptureGroupName(i);
             if (!groupName.isEmpty())
-                groups->putDirect(vm, Identifier::fromString(&vm, groupName), array->getIndexQuickly(i));
+                groups->putDirect(vm, Identifier::fromString(vm, groupName), array->getIndexQuickly(i));
         }
     }
     return array;

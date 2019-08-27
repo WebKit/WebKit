@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ size_t Instance::extraMemoryAllocated() const
 void Instance::setGlobal(unsigned i, JSValue value)
 {
     ASSERT(m_owner);
-    m_globals.get()[i].anyref.set(*owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
+    m_globals.get()[i].anyref.set(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
 }
 
 JSValue Instance::getFunctionWrapper(unsigned i) const
@@ -93,10 +93,10 @@ JSValue Instance::getFunctionWrapper(unsigned i) const
 void Instance::setFunctionWrapper(unsigned i, JSValue value)
 {
     ASSERT(m_owner);
-    ASSERT(value.isFunction(*owner<JSWebAssemblyInstance>()->vm()));
+    ASSERT(value.isFunction(owner<JSWebAssemblyInstance>()->vm()));
     ASSERT(!m_functionWrappers.contains(i));
     auto locker = holdLock(owner<JSWebAssemblyInstance>()->cellLock());
-    m_functionWrappers.set(i, WriteBarrier<Unknown>(*owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value));
+    m_functionWrappers.set(i, WriteBarrier<Unknown>(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value));
     ASSERT(getFunctionWrapper(i) == value);
 }
 
@@ -143,7 +143,7 @@ bool setWasmTableElement(Instance* instance, unsigned tableIndex, int32_t signed
         WebAssemblyFunction* wasmFunction;
         WebAssemblyWrapperFunction* wasmWrapperFunction;
 
-        if (isWebAssemblyHostFunction(*instance->owner<JSObject>()->vm(), value, wasmFunction, wasmWrapperFunction)) {
+        if (isWebAssemblyHostFunction(instance->owner<JSObject>()->vm(), value, wasmFunction, wasmWrapperFunction)) {
             ASSERT(!!wasmFunction || !!wasmWrapperFunction);
             if (wasmFunction)
                 instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
@@ -196,7 +196,7 @@ bool doWasmTableFill(Instance* instance, unsigned tableIndex, int32_t unsafeOffs
 EncodedJSValue doWasmRefFunc(Instance* instance, uint32_t index)
 {
     JSValue value = instance->getFunctionWrapper(index);
-    ASSERT(value.isFunction(*instance->owner<JSObject>()->vm()));
+    ASSERT(value.isFunction(instance->owner<JSObject>()->vm()));
     return JSValue::encode(value);
 }
 

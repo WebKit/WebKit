@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     
 #define PUT_DIRECT_NATIVE_FUNC(lowerName, upperName, count) \
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, #lowerName), count, atomicsFunc ## upperName, Atomics ## upperName ## Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, #lowerName), count, atomicsFunc ## upperName, Atomics ## upperName ## Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     FOR_EACH_ATOMICS_FUNC(PUT_DIRECT_NATIVE_FUNC)
 #undef PUT_DIRECT_NATIVE_FUNC
 }
@@ -425,7 +425,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
         resultString = "timed-out";
     else
         resultString = "ok";
-    return JSValue::encode(jsString(exec, resultString));
+    return JSValue::encode(jsString(vm, resultString));
 }
 
 EncodedJSValue JSC_HOST_CALL atomicsFuncWake(ExecState* exec)
@@ -468,7 +468,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncXor(ExecState* exec)
 EncodedJSValue JIT_OPERATION operationAtomicsAdd(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, AddFunc());
 }
@@ -476,7 +476,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsAdd(ExecState* exec, EncodedJSValue
 EncodedJSValue JIT_OPERATION operationAtomicsAnd(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, AndFunc());
 }
@@ -484,7 +484,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsAnd(ExecState* exec, EncodedJSValue
 EncodedJSValue JIT_OPERATION operationAtomicsCompareExchange(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue expected, EncodedJSValue newValue)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(expected), JSValue::decode(newValue)};
     return atomicOperationWithArgs(vm, exec, args, CompareExchangeFunc());
 }
@@ -492,7 +492,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsCompareExchange(ExecState* exec, En
 EncodedJSValue JIT_OPERATION operationAtomicsExchange(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, ExchangeFunc());
 }
@@ -500,14 +500,14 @@ EncodedJSValue JIT_OPERATION operationAtomicsExchange(ExecState* exec, EncodedJS
 EncodedJSValue JIT_OPERATION operationAtomicsIsLockFree(ExecState* exec, EncodedJSValue size)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     return isLockFree(exec, JSValue::decode(size));
 }
 
 EncodedJSValue JIT_OPERATION operationAtomicsLoad(ExecState* exec, EncodedJSValue base, EncodedJSValue index)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index)};
     return atomicOperationWithArgs(vm, exec, args, LoadFunc());
 }
@@ -515,7 +515,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsLoad(ExecState* exec, EncodedJSValu
 EncodedJSValue JIT_OPERATION operationAtomicsOr(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, OrFunc());
 }
@@ -523,7 +523,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsOr(ExecState* exec, EncodedJSValue 
 EncodedJSValue JIT_OPERATION operationAtomicsStore(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, StoreFunc());
 }
@@ -531,7 +531,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsStore(ExecState* exec, EncodedJSVal
 EncodedJSValue JIT_OPERATION operationAtomicsSub(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, SubFunc());
 }
@@ -539,7 +539,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsSub(ExecState* exec, EncodedJSValue
 EncodedJSValue JIT_OPERATION operationAtomicsXor(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)
 {
     VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, exec, args, XorFunc());
 }

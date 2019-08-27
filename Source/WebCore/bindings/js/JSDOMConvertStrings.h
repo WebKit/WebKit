@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,12 +68,12 @@ template<> struct JSConverter<IDLDOMString> {
 
     static JSC::JSValue convert(JSC::ExecState& state, const UncachedString& value)
     {
-        return JSC::jsString(&state, value.string);
+        return JSC::jsString(state.vm(), value.string);
     }
 
     static JSC::JSValue convert(JSC::ExecState& state, const OwnedString& value)
     {
-        return JSC::jsOwnedString(&state, value.string);
+        return JSC::jsOwnedString(state.vm(), value.string);
     }
 };
 
@@ -95,12 +95,12 @@ template<> struct JSConverter<IDLByteString> {
 
     static JSC::JSValue convert(JSC::ExecState& state, const UncachedString& value)
     {
-        return JSC::jsString(&state, value.string);
+        return JSC::jsString(state.vm(), value.string);
     }
 
     static JSC::JSValue convert(JSC::ExecState& state, const OwnedString& value)
     {
-        return JSC::jsOwnedString(&state, value.string);
+        return JSC::jsOwnedString(state.vm(), value.string);
     }
 };
 
@@ -122,12 +122,12 @@ template<> struct JSConverter<IDLUSVString> {
 
     static JSC::JSValue convert(JSC::ExecState& state, const UncachedString& value)
     {
-        return JSC::jsString(&state, value.string);
+        return JSC::jsString(state.vm(), value.string);
     }
 
     static JSC::JSValue convert(JSC::ExecState& state, const OwnedString& value)
     {
-        return JSC::jsOwnedString(&state, value.string);
+        return JSC::jsOwnedString(state.vm(), value.string);
     }
 };
 

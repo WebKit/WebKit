@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,7 +104,8 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, ExecState* stat
 
 bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
-    return getOwnPropertySlot(object, state, Identifier::from(state, index), slot);
+    VM& vm = state->vm();
+    return getOwnPropertySlot(object, state, Identifier::from(vm, index), slot);
 }
 
 } // namespace WebCore

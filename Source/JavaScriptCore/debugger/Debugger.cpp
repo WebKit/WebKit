@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -56,7 +56,7 @@ struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
         
         JSCell* cell = static_cast<JSCell*>(heapCell);
         
-        JSFunction* function = jsDynamicCast<JSFunction*>(*cell->vm(), cell);
+        JSFunction* function = jsDynamicCast<JSFunction*>(cell->vm(), cell);
         if (!function)
             return IterationStatus::Continue;
 

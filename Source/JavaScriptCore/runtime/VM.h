@@ -674,7 +674,7 @@ public:
     std::unique_ptr<JITThunks> jitStubs;
     MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator generator)
     {
-        return jitStubs->ctiStub(this, generator);
+        return jitStubs->ctiStub(*this, generator);
     }
 
 #endif // ENABLE(JIT)
@@ -1108,14 +1108,14 @@ inline void VM::setInitializingObjectClass(const ClassInfo* initializingObjectCl
 
 inline Heap* WeakSet::heap() const
 {
-    return &m_vm->heap;
+    return &m_vm.heap;
 }
 
 #if !ENABLE(C_LOOP)
 extern "C" void sanitizeStackForVMImpl(VM*);
 #endif
 
-JS_EXPORT_PRIVATE void sanitizeStackForVM(VM*);
-void logSanitizeStack(VM*);
+JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);
+void logSanitizeStack(VM&);
 
 } // namespace JSC

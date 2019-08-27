@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -416,13 +416,14 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName prope
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyName) const
 {
+    VM& vm = exec->vm();
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
         return functionGetter(exec);
     if (m_propertyType == TypeCustomAccessor)
-        return customAccessorGetter(exec, Identifier::from(exec, propertyName));
-    return customGetter(exec, Identifier::from(exec, propertyName));
+        return customAccessorGetter(exec, Identifier::from(vm, propertyName));
+    return customGetter(exec, Identifier::from(vm, propertyName));
 }
 
 } // namespace JSC

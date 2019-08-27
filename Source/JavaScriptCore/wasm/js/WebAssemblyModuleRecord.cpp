@@ -73,7 +73,7 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
     Base::finishCreation(exec, vm);
     ASSERT(inherits(vm, info()));
     for (const auto& exp : moduleInformation.exports) {
-        Identifier field = Identifier::fromString(&vm, String::fromUTF8(exp.field));
+        Identifier field = Identifier::fromString(vm, String::fromUTF8(exp.field));
         addExportEntry(ExportEntry::createLocal(field, field));
     }
 }
@@ -126,8 +126,8 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             continue;
         }
 
-        Identifier moduleName = Identifier::fromString(&vm, String::fromUTF8(import.module));
-        Identifier fieldName = Identifier::fromString(&vm, String::fromUTF8(import.field));
+        Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
+        Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
         JSValue value;
         if (creationMode == Wasm::CreationMode::FromJS) {
             // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
@@ -441,7 +441,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
-        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromString(&vm, String::fromUTF8(exp.field)), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromString(vm, String::fromUTF8(exp.field)), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
         scope.assertNoException();
         RELEASE_ASSERT(putResult);
     }

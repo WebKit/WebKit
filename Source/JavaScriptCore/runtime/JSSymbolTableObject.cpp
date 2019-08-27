@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@ bool JSSymbolTableObject::deleteProperty(JSCell* cell, ExecState* exec, Property
 
 void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
     {
         ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
@@ -63,7 +64,7 @@ void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecStat
             if (!(it->value.getAttributes() & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties()) {
                 if (it->key->isSymbol() && !propertyNames.includeSymbolProperties())
                     continue;
-                propertyNames.add(Identifier::fromUid(exec, it->key.get()));
+                propertyNames.add(Identifier::fromUid(vm, it->key.get()));
             }
         }
     }

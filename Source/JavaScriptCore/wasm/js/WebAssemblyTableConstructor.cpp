@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
 
     Wasm::TableElementType type;
     {
-        Identifier elementIdent = Identifier::fromString(&vm, "element");
+        Identifier elementIdent = Identifier::fromString(vm, "element");
         JSValue elementValue = memoryDescriptor->get(exec, elementIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(exec);
@@ -73,7 +73,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
             return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'anyref'"_s)));
     }
 
-    Identifier initialIdent = Identifier::fromString(&vm, "initial");
+    Identifier initialIdent = Identifier::fromString(vm, "initial");
     JSValue initialSizeValue = memoryDescriptor->get(exec, initialIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     uint32_t initial = toNonWrappingUint32(exec, initialSizeValue);
@@ -82,7 +82,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
     // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
     // https://heycam.github.io/webidl/#idl-dictionaries
     Optional<uint32_t> maximum;
-    Identifier maximumIdent = Identifier::fromString(&vm, "maximum");
+    Identifier maximumIdent = Identifier::fromString(vm, "maximum");
     JSValue maxSizeValue = memoryDescriptor->get(exec, maximumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!maxSizeValue.isUndefined()) {

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -71,7 +71,7 @@ void JSString::destroy(JSCell* cell)
 
 void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    VM& vm = *cell->vm();
+    VM& vm = cell->vm();
     const JSString* thisObject = jsCast<const JSString*>(cell);
     out.printf("<%p, %s, [%u], ", thisObject, thisObject->className(vm), thisObject->length());
     uintptr_t pointer = thisObject->m_fiber;
@@ -294,7 +294,7 @@ const String& JSRopeString::resolveRopeWithFunction(ExecState* nullOrExecForOOM,
 {
     ASSERT(isRope());
     
-    VM& vm = *this->vm();
+    VM& vm = this->vm();
     if (isSubstring()) {
         ASSERT(!substringBase()->isRope());
         auto newImpl = substringBase()->valueInternal().substringSharingImpl(substringOffset(), length());
@@ -502,7 +502,7 @@ JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
     if (JSString* string = vm.stringCache.get(&stringImpl))
         return string;
 
-    JSString* string = jsString(&vm, String(stringImpl));
+    JSString* string = jsString(vm, String(stringImpl));
     vm.lastCachedString.set(vm, string);
     return string;
 }

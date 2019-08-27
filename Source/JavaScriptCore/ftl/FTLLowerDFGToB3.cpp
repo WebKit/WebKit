@@ -6869,7 +6869,7 @@ private:
         m_out.branch(m_out.isZero32(flagsAndLength.length), rarely(emptyCase), usually(continuation));
 
         LBasicBlock lastNext = m_out.appendTo(emptyCase, slowPath);
-        ValueFromBlock emptyResult = m_out.anchor(weakPointer(jsEmptyString(&m_graph.m_vm)));
+        ValueFromBlock emptyResult = m_out.anchor(weakPointer(jsEmptyString(m_graph.m_vm)));
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);
@@ -12282,7 +12282,7 @@ private:
         Vector<ValueFromBlock, 5> results;
 
         m_out.appendTo(emptyCase, notEmptyCase);
-        results.append(m_out.anchor(weakPointer(jsEmptyString(&vm()))));
+        results.append(m_out.anchor(weakPointer(jsEmptyString(vm()))));
         m_out.jump(continuation);
 
         m_out.appendTo(notEmptyCase, oneCharCase);
@@ -13880,7 +13880,7 @@ private:
                     edge, CellCaseSpeculatesObject, SpeculateNullOrUndefined,
                     ManualOperandSpeculation));
         case StringUse:
-            return m_out.notEqual(lowString(edge), weakPointer(jsEmptyString(&m_graph.m_vm)));
+            return m_out.notEqual(lowString(edge), weakPointer(jsEmptyString(m_graph.m_vm)));
         case StringOrOtherUse: {
             LValue value = lowJSValue(edge, ManualOperandSpeculation);
 
@@ -13892,7 +13892,7 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
             FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCellCheck) | SpecString, isNotString(value));
-            ValueFromBlock stringResult = m_out.anchor(m_out.notEqual(value, weakPointer(jsEmptyString(&m_graph.m_vm))));
+            ValueFromBlock stringResult = m_out.anchor(m_out.notEqual(value, weakPointer(jsEmptyString(m_graph.m_vm))));
             m_out.jump(continuation);
 
             m_out.appendTo(notCellCase, continuation);
@@ -13949,7 +13949,7 @@ private:
                 unsure(bigIntCase), unsure(notStringOrBigIntCase));
 
             m_out.appendTo(stringCase, bigIntCase);
-            results.append(m_out.anchor(m_out.notEqual(value, weakPointer(jsEmptyString(&m_graph.m_vm)))));
+            results.append(m_out.anchor(m_out.notEqual(value, weakPointer(jsEmptyString(m_graph.m_vm)))));
             m_out.jump(continuation);
 
             m_out.appendTo(bigIntCase, notStringOrBigIntCase);

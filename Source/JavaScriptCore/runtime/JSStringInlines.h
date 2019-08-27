@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,9 @@ bool JSString::equal(ExecState* exec, JSString* other) const
 }
 
 template<typename StringType>
-inline JSValue jsMakeNontrivialString(ExecState* exec, StringType&& string)
+inline JSValue jsMakeNontrivialString(VM& vm, StringType&& string)
 {
-    return jsNontrivialString(exec, std::forward<StringType>(string));
+    return jsNontrivialString(vm, std::forward<StringType>(string));
 }
 
 template<typename StringType, typename... StringTypes>
@@ -58,7 +58,7 @@ inline JSValue jsMakeNontrivialString(ExecState* exec, StringType&& string, Stri
     if (UNLIKELY(!result))
         return throwOutOfMemoryError(exec, scope);
     ASSERT(result.length() <= JSString::MaxLength);
-    return jsNontrivialString(exec, WTFMove(result));
+    return jsNontrivialString(vm, WTFMove(result));
 }
 
 template <typename CharacterType>
@@ -76,7 +76,7 @@ inline JSString* repeatCharacter(ExecState& exec, CharacterType character, unsig
 
     std::fill_n(buffer, repeatCount, character);
 
-    RELEASE_AND_RETURN(scope, jsString(&exec, WTFMove(impl)));
+    RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(impl)));
 }
 
 } // namespace JSC

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -98,7 +98,7 @@ bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, u
     auto* thisObject = jsCast<JSLocation*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    bool result = getOwnPropertySlotCommon(*thisObject, *state, Identifier::from(state, index), slot);
+    bool result = getOwnPropertySlotCommon(*thisObject, *state, Identifier::from(vm, index), slot);
     EXCEPTION_ASSERT(!scope.exception() || !result);
     RETURN_IF_EXCEPTION(scope, false);
     if (result)
@@ -156,10 +156,11 @@ bool JSLocation::put(JSCell* cell, ExecState* state, PropertyName propertyName, 
 
 bool JSLocation::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
 {
+    VM& vm = state->vm();
     auto* thisObject = jsCast<JSLocation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (putCommon(*thisObject, *state, Identifier::from(state, index)))
+    if (putCommon(*thisObject, *state, Identifier::from(vm, index)))
         return false;
 
     return JSObject::putByIndex(cell, state, index, value, shouldThrow);

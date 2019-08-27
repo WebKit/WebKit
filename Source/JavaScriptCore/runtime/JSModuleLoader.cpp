@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,7 @@ void JSModuleLoader::finishCreation(ExecState* exec, VM& vm, JSGlobalObject* glo
     ASSERT(inherits(vm, info()));
     JSMap* map = JSMap::create(exec, vm, globalObject->mapStructure());
     scope.releaseAssertNoException();
-    putDirect(vm, Identifier::fromString(&vm, "registry"), map);
+    putDirect(vm, Identifier::fromString(vm, "registry"), map);
 }
 
 // ------------------------------ Functions --------------------------------
@@ -241,7 +241,7 @@ JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Id
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
-    arguments.append(jsString(exec, moduleKey.impl()));
+    arguments.append(jsString(vm, moduleKey.impl()));
     arguments.append(parameters);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
@@ -420,7 +420,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(ExecState* exec)
 
     ParserError error;
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
-        &vm, sourceCode, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        vm, sourceCode, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
     if (error.isValid())
         return reject(error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));
@@ -447,7 +447,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderRequestedModules(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     size_t i = 0;
     for (auto& key : moduleRecord->requestedModules()) {
-        result->putDirectIndex(exec, i++, jsString(exec, key.get()));
+        result->putDirectIndex(exec, i++, jsString(vm, key.get()));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(result);

@@ -150,5 +150,5 @@ WebKitDOMNode* webkit_dom_node_for_js_value(JSCValue* value)
     g_return_val_if_fail(jsc_value_is_object(value), nullptr);
 
     auto* jsObject = JSValueToObject(jscContextGetJSContext(jsc_value_get_context(value)), jscValueGetJSValue(value), nullptr);
-    return jsObject ? WebKit::kit(WebCore::JSNode::toWrapped(*toJS(jsObject)->vm(), toJS(jsObject))) : nullptr;
+    return jsObject ? WebKit::kit(WebCore::JSNode::toWrapped(toJS(jsObject)->vm(), toJS(jsObject))) : nullptr;
 }

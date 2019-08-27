@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,7 +112,7 @@ public:
             return *this;
         }
 
-        set(*HandleSet::heapFor(other.slot())->vm(), other.get());
+        set(HandleSet::heapFor(other.slot())->vm(), other.get());
         return *this;
     }
 

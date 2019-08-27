@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ namespace JSC {
 template <class Parent>
 inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), info()));
+    ASSERT(asObject(value)->inherits(value.getObject()->vm(), info()));
     return jsCast<JSCallbackObject*>(asObject(value));
 }
 
@@ -51,7 +51,7 @@ template <class Parent>
 inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
-    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), info()));
+    ASSERT(asObject(value)->inherits(value.getObject()->vm(), info()));
     return jsCast<JSCallbackObject*>(asObject(value));
 }
 
@@ -74,17 +74,17 @@ JSCallbackObject<Parent>::JSCallbackObject(VM& vm, JSClassRef jsClass, Structure
 template <class Parent>
 JSCallbackObject<Parent>::~JSCallbackObject()
 {
-    VM* vm = this->HeapCell::vm();
-    vm->currentlyDestructingCallbackObject = this;
+    VM& vm = this->HeapCell::vm();
+    vm.currentlyDestructingCallbackObject = this;
     ASSERT(m_classInfo);
-    vm->currentlyDestructingCallbackObjectClassInfo = m_classInfo;
+    vm.currentlyDestructingCallbackObjectClassInfo = m_classInfo;
     JSObjectRef thisRef = toRef(static_cast<JSObject*>(this));
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectFinalizeCallback finalize = jsClass->finalize)
             finalize(thisRef);
     }
-    vm->currentlyDestructingCallbackObject = nullptr;
-    vm->currentlyDestructingCallbackObjectClassInfo = nullptr;
+    vm.currentlyDestructingCallbackObject = nullptr;
+    vm.currentlyDestructingCallbackObjectClassInfo = nullptr;
 }
     
 template <class Parent>
@@ -215,7 +215,8 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
 template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return object->methodTable(exec->vm())->getOwnPropertySlot(object, exec, Identifier::from(exec, propertyName), slot);
+    VM& vm = exec->vm();
+    return object->methodTable(vm)->getOwnPropertySlot(object, exec, Identifier::from(vm, propertyName), slot);
 }
 
 template <class Parent>
@@ -320,7 +321,7 @@ bool JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
     JSValueRef valueRef = toRef(exec, value);
-    Identifier propertyName = Identifier::from(exec, propertyIndex);
+    Identifier propertyName = Identifier::from(vm, propertyIndex);
 
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
@@ -421,8 +422,9 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, Pro
 template <class Parent>
 bool JSCallbackObject<Parent>::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
+    VM& vm = exec->vm();
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
-    return thisObject->methodTable(exec->vm())->deleteProperty(thisObject, exec, Identifier::from(exec, propertyName));
+    return thisObject->methodTable(vm)->deleteProperty(thisObject, exec, Identifier::from(vm, propertyName));
 }
 
 template <class Parent>
@@ -547,6 +549,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
 template <class Parent>
 void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
     JSContextRef execRef = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
@@ -565,7 +568,7 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, Exe
                 StaticValueEntry* entry = it->value.get();
                 if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || mode.includeDontEnumProperties())) {
                     ASSERT(!name->isSymbol());
-                    propertyNames.add(Identifier::fromString(exec, String(name)));
+                    propertyNames.add(Identifier::fromString(vm, String(name)));
                 }
             }
         }
@@ -578,7 +581,7 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, Exe
                 StaticFunctionEntry* entry = it->value.get();
                 if (!(entry->attributes & kJSPropertyAttributeDontEnum) || mode.includeDontEnumProperties()) {
                     ASSERT(!name->isSymbol());
-                    propertyNames.add(Identifier::fromString(exec, String(name)));
+                    propertyNames.add(Identifier::fromString(vm, String(name)));
                 }
             }
         }

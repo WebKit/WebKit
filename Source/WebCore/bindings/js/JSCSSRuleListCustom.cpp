@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All right reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ using namespace JSC;
 bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
 {
     JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.slot()->asCell());
-    if (!jsCSSRuleList->hasCustomProperties(*jsCSSRuleList->vm()))
+    if (!jsCSSRuleList->hasCustomProperties(jsCSSRuleList->vm()))
         return false;
 
     if (CSSStyleSheet* styleSheet = jsCSSRuleList->wrapped().styleSheet()) {

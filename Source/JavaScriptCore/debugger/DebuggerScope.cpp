@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -163,7 +163,7 @@ DebuggerScope* DebuggerScope::next()
 {
     ASSERT(isValid());
     if (!m_next && m_scope->next()) {
-        VM& vm = *m_scope->vm();
+        VM& vm = m_scope->vm();
         DebuggerScope* nextScope = create(vm, m_scope->next());
         m_next.set(vm, this, nextScope);
     }
@@ -224,7 +224,7 @@ bool DebuggerScope::isNestedLexicalScope() const
 
 String DebuggerScope::name() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable(*vm());
+    SymbolTable* symbolTable = m_scope->symbolTable(vm());
     if (!symbolTable)
         return String();
 
@@ -237,7 +237,7 @@ String DebuggerScope::name() const
 
 DebuggerLocation DebuggerScope::location() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable(*vm());
+    SymbolTable* symbolTable = m_scope->symbolTable(vm());
     if (!symbolTable)
         return DebuggerLocation();
 

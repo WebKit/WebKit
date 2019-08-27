@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@ SymbolPrototype::SymbolPrototype(VM& vm, Structure* structure)
 void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Symbol"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "Symbol"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     ASSERT(inherits(vm, info()));
 
     JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, symbolProtoFuncValueOf, NoIntrinsic);
@@ -98,7 +98,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(ExecState* exec)
         return throwVMTypeError(exec, scope, SymbolDescriptionTypeError);
     scope.release();
     const auto description = symbol->description();
-    return JSValue::encode(description.isNull() ? jsUndefined() : jsString(&vm, description));
+    return JSValue::encode(description.isNull() ? jsUndefined() : jsString(vm, description));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
@@ -109,7 +109,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
     Symbol* symbol = tryExtractSymbol(vm, exec->thisValue());
     if (!symbol)
         return throwVMTypeError(exec, scope, SymbolToStringTypeError);
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsNontrivialString(&vm, symbol->descriptiveString())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNontrivialString(vm, symbol->descriptiveString())));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)

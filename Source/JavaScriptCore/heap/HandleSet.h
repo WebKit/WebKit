@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,10 +65,10 @@ class HandleSet {
 public:
     static HandleSet* heapFor(HandleSlot);
 
-    HandleSet(VM*);
+    HandleSet(VM&);
     ~HandleSet();
 
-    VM* vm();
+    VM& vm();
 
     HandleSlot allocate();
     void deallocate(HandleSlot);
@@ -92,7 +92,7 @@ private:
     bool isLiveNode(Node*);
 #endif
 
-    VM* m_vm;
+    VM& m_vm;
     DoublyLinkedList<HandleBlock> m_blockList;
 
     SentinelLinkedList<Node> m_strongList;
@@ -105,7 +105,7 @@ inline HandleSet* HandleSet::heapFor(HandleSlot handle)
     return toNode(handle)->handleSet();
 }
 
-inline VM* HandleSet::vm()
+inline VM& HandleSet::vm()
 {
     return m_vm;
 }

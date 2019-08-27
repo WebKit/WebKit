@@ -58,7 +58,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         boolMemberValue = jsUndefined();
     else {
-        boolMemberValue = object->get(&state, Identifier::fromString(&state, "boolMember"));
+        boolMemberValue = object->get(&state, Identifier::fromString(vm, "boolMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!boolMemberValue.isUndefined()) {
@@ -69,7 +69,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         callbackMemberValue = jsUndefined();
     else {
-        callbackMemberValue = object->get(&state, Identifier::fromString(&state, "callbackMember"));
+        callbackMemberValue = object->get(&state, Identifier::fromString(vm, "callbackMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!callbackMemberValue.isUndefined()) {
@@ -80,7 +80,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         enumMemberValue = jsUndefined();
     else {
-        enumMemberValue = object->get(&state, Identifier::fromString(&state, "enumMember"));
+        enumMemberValue = object->get(&state, Identifier::fromString(vm, "enumMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumMemberValue.isUndefined()) {
@@ -92,7 +92,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialBooleanMemberValue = jsUndefined();
     else {
-        partialBooleanMemberValue = object->get(&state, Identifier::fromString(&state, "partialBooleanMember"));
+        partialBooleanMemberValue = object->get(&state, Identifier::fromString(vm, "partialBooleanMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialBooleanMemberValue.isUndefined()) {
@@ -105,7 +105,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialBooleanMemberWithIgnoredConditionalValue = jsUndefined();
     else {
-        partialBooleanMemberWithIgnoredConditionalValue = object->get(&state, Identifier::fromString(&state, "partialBooleanMemberWithIgnoredConditional"));
+        partialBooleanMemberWithIgnoredConditionalValue = object->get(&state, Identifier::fromString(vm, "partialBooleanMemberWithIgnoredConditional"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialBooleanMemberWithIgnoredConditionalValue.isUndefined()) {
@@ -118,7 +118,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialCallbackMemberValue = jsUndefined();
     else {
-        partialCallbackMemberValue = object->get(&state, Identifier::fromString(&state, "partialCallbackMember"));
+        partialCallbackMemberValue = object->get(&state, Identifier::fromString(vm, "partialCallbackMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialCallbackMemberValue.isUndefined()) {
@@ -131,7 +131,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialEnumMemberValue = jsUndefined();
     else {
-        partialEnumMemberValue = object->get(&state, Identifier::fromString(&state, "partialEnumMember"));
+        partialEnumMemberValue = object->get(&state, Identifier::fromString(vm, "partialEnumMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialEnumMemberValue.isUndefined()) {
@@ -144,7 +144,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialRequiredLongMemberValue = jsUndefined();
     else {
-        partialRequiredLongMemberValue = object->get(&state, Identifier::fromString(&state, "partialRequiredLongMember"));
+        partialRequiredLongMemberValue = object->get(&state, Identifier::fromString(vm, "partialRequiredLongMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialRequiredLongMemberValue.isUndefined()) {
@@ -160,7 +160,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialStringMemberValue = jsUndefined();
     else {
-        partialStringMemberValue = object->get(&state, Identifier::fromString(&state, "partialStringMember"));
+        partialStringMemberValue = object->get(&state, Identifier::fromString(vm, "partialStringMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialStringMemberValue.isUndefined()) {
@@ -173,7 +173,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialStringMemberWithEnabledBySettingValue = jsUndefined();
     else {
-        partialStringMemberWithEnabledBySettingValue = object->get(&state, Identifier::fromString(&state, "partialStringMemberWithEnabledBySetting"));
+        partialStringMemberWithEnabledBySettingValue = object->get(&state, Identifier::fromString(vm, "partialStringMemberWithEnabledBySetting"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialStringMemberWithEnabledBySettingValue.isUndefined()) {
@@ -186,7 +186,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         partialUnsignedLongMemberWithImplementedAsValue = jsUndefined();
     else {
-        partialUnsignedLongMemberWithImplementedAsValue = object->get(&state, Identifier::fromString(&state, "partialUnsignedLongMemberWithImplementedAs"));
+        partialUnsignedLongMemberWithImplementedAsValue = object->get(&state, Identifier::fromString(vm, "partialUnsignedLongMemberWithImplementedAs"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialUnsignedLongMemberWithImplementedAsValue.isUndefined()) {
@@ -198,7 +198,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     if (isNullOrUndefined)
         stringMemberValue = jsUndefined();
     else {
-        stringMemberValue = object->get(&state, Identifier::fromString(&state, "stringMember"));
+        stringMemberValue = object->get(&state, Identifier::fromString(vm, "stringMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringMemberValue.isUndefined()) {
@@ -216,67 +216,67 @@ JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& g
 
     if (!IDLBoolean::isNullValue(dictionary.boolMember)) {
         auto boolMemberValue = toJS<IDLBoolean>(IDLBoolean::extractValueFromNullable(dictionary.boolMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "boolMember"), boolMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "boolMember"), boolMemberValue);
     }
     if (!IDLCallbackFunction<JSVoidCallback>::isNullValue(dictionary.callbackMember)) {
         auto callbackMemberValue = toJS<IDLCallbackFunction<JSVoidCallback>>(state, globalObject, IDLCallbackFunction<JSVoidCallback>::extractValueFromNullable(dictionary.callbackMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "callbackMember"), callbackMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "callbackMember"), callbackMemberValue);
     }
     if (!IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>::isNullValue(dictionary.enumMember)) {
         auto enumMemberValue = toJS<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(state, IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>::extractValueFromNullable(dictionary.enumMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumMember"), enumMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "enumMember"), enumMemberValue);
     }
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLBoolean::isNullValue(dictionary.partialBooleanMember)) {
         auto partialBooleanMemberValue = toJS<IDLBoolean>(IDLBoolean::extractValueFromNullable(dictionary.partialBooleanMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialBooleanMember"), partialBooleanMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "partialBooleanMember"), partialBooleanMemberValue);
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLBoolean::isNullValue(dictionary.partialBooleanMemberWithIgnoredConditional)) {
         auto partialBooleanMemberWithIgnoredConditionalValue = toJS<IDLBoolean>(IDLBoolean::extractValueFromNullable(dictionary.partialBooleanMemberWithIgnoredConditional));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialBooleanMemberWithIgnoredConditional"), partialBooleanMemberWithIgnoredConditionalValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "partialBooleanMemberWithIgnoredConditional"), partialBooleanMemberWithIgnoredConditionalValue);
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLCallbackFunction<JSVoidCallback>::isNullValue(dictionary.partialCallbackMember)) {
         auto partialCallbackMemberValue = toJS<IDLCallbackFunction<JSVoidCallback>>(state, globalObject, IDLCallbackFunction<JSVoidCallback>::extractValueFromNullable(dictionary.partialCallbackMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialCallbackMember"), partialCallbackMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "partialCallbackMember"), partialCallbackMemberValue);
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>::isNullValue(dictionary.partialEnumMember)) {
         auto partialEnumMemberValue = toJS<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(state, IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>::extractValueFromNullable(dictionary.partialEnumMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialEnumMember"), partialEnumMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "partialEnumMember"), partialEnumMemberValue);
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     auto partialRequiredLongMemberValue = toJS<IDLLong>(dictionary.partialRequiredLongMember);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialRequiredLongMember"), partialRequiredLongMemberValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "partialRequiredLongMember"), partialRequiredLongMemberValue);
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLDOMString::isNullValue(dictionary.partialStringMember)) {
         auto partialStringMemberValue = toJS<IDLDOMString>(state, IDLDOMString::extractValueFromNullable(dictionary.partialStringMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialStringMember"), partialStringMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "partialStringMember"), partialStringMemberValue);
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settings().testSettingEnabled()) {
         if (!IDLDOMString::isNullValue(dictionary.partialStringMemberWithEnabledBySetting)) {
             auto partialStringMemberWithEnabledBySettingValue = toJS<IDLDOMString>(state, IDLDOMString::extractValueFromNullable(dictionary.partialStringMemberWithEnabledBySetting));
-            result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialStringMemberWithEnabledBySetting"), partialStringMemberWithEnabledBySettingValue);
+            result->putDirect(vm, JSC::Identifier::fromString(vm, "partialStringMemberWithEnabledBySetting"), partialStringMemberWithEnabledBySettingValue);
         }
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLUnsignedLong::isNullValue(dictionary.partialUnsignedLongMember)) {
         auto partialUnsignedLongMemberWithImplementedAsValue = toJS<IDLUnsignedLong>(IDLUnsignedLong::extractValueFromNullable(dictionary.partialUnsignedLongMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "partialUnsignedLongMemberWithImplementedAs"), partialUnsignedLongMemberWithImplementedAsValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "partialUnsignedLongMemberWithImplementedAs"), partialUnsignedLongMemberWithImplementedAsValue);
     }
 #endif
     if (!IDLDOMString::isNullValue(dictionary.stringMember)) {
         auto stringMemberValue = toJS<IDLDOMString>(state, IDLDOMString::extractValueFromNullable(dictionary.stringMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringMember"), stringMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringMember"), stringMemberValue);
     }
     return result;
 }

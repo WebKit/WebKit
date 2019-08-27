@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -80,7 +80,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
         scope.release();
         unsigned code = exec->uncheckedArgument(0).toUInt32(exec);
         // Not checking for an exception here is ok because jsSingleCharacterString will just fetch an unused string if there's an exception.
-        return JSValue::encode(jsSingleCharacterString(exec, code));
+        return JSValue::encode(jsSingleCharacterString(vm, code));
     }
 
     LChar* buf8Bit;
@@ -98,16 +98,16 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
                 buf16Bit[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, WTFMove(impl16Bit))));
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(impl16Bit))));
         }
         buf8Bit[i] = static_cast<LChar>(character);
     }
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, WTFMove(impl8Bit))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(impl8Bit))));
 }
 
 JSString* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
 {
-    return jsSingleCharacterString(exec, arg);
+    return jsSingleCharacterString(exec->vm(), arg);
 }
 
 static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
@@ -136,7 +136,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
         }
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, builder.toString())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, builder.toString())));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
@@ -157,15 +157,17 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
 
 JSString* stringConstructor(ExecState* exec, JSValue argument)
 {
+    VM& vm = exec->vm();
     if (argument.isSymbol())
-        return jsNontrivialString(exec, asSymbol(argument)->descriptiveString());
+        return jsNontrivialString(vm, asSymbol(argument)->descriptiveString());
     return argument.toString(exec);
 }
 
 static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
+    VM& vm = exec->vm();
     if (!exec->argumentCount())
-        return JSValue::encode(jsEmptyString(exec));
+        return JSValue::encode(jsEmptyString(vm));
     return JSValue::encode(stringConstructor(exec, exec->uncheckedArgument(0)));
 }
 

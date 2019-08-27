@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,9 +121,9 @@ static JSValue valueForScopeLocation(ExecState* exec, const DebuggerLocation& lo
     // Debugger.Location protocol object.
     VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(vm, Identifier::fromString(exec, "scriptId"), jsString(exec, String::number(location.sourceID)));
-    result->putDirect(vm, Identifier::fromString(exec, "lineNumber"), jsNumber(location.line));
-    result->putDirect(vm, Identifier::fromString(exec, "columnNumber"), jsNumber(location.column));
+    result->putDirect(vm, Identifier::fromString(vm, "scriptId"), jsString(vm, String::number(location.sourceID)));
+    result->putDirect(vm, Identifier::fromString(vm, "lineNumber"), jsNumber(location.line));
+    result->putDirect(vm, Identifier::fromString(vm, "columnNumber"), jsNumber(location.column));
     return result;
 }
 
@@ -143,9 +143,9 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(ExecState* exec)
     for (DebuggerScope::iterator iter = scopeChain->begin(); iter != end; ++iter) {
         DebuggerScope* scope = iter.get();
         JSObject* description = constructEmptyObject(exec);
-        description->putDirect(vm, Identifier::fromString(exec, "type"), valueForScopeType(scope));
-        description->putDirect(vm, Identifier::fromString(exec, "name"), jsString(exec, scope->name()));
-        description->putDirect(vm, Identifier::fromString(exec, "location"), valueForScopeLocation(exec, scope->location()));
+        description->putDirect(vm, Identifier::fromString(vm, "type"), valueForScopeType(scope));
+        description->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, scope->name()));
+        description->putDirect(vm, Identifier::fromString(vm, "location"), valueForScopeLocation(exec, scope->location()));
         array->putDirectIndex(exec, index++, description);
         RETURN_IF_EXCEPTION(throwScope, JSValue());
     }
@@ -175,7 +175,7 @@ JSValue JSJavaScriptCallFrame::column(ExecState*) const
 
 JSValue JSJavaScriptCallFrame::functionName(ExecState* exec) const
 {
-    return jsString(exec, impl().functionName());
+    return jsString(exec->vm(), impl().functionName());
 }
 
 JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
@@ -218,11 +218,12 @@ JSValue JSJavaScriptCallFrame::isTailDeleted(JSC::ExecState*) const
 
 JSValue JSJavaScriptCallFrame::type(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     switch (impl().type()) {
     case DebuggerCallFrame::FunctionType:
-        return jsNontrivialString(exec, "function"_s);
+        return jsNontrivialString(vm, "function"_s);
     case DebuggerCallFrame::ProgramType:
-        return jsNontrivialString(exec, "program"_s);
+        return jsNontrivialString(vm, "program"_s);
     }
 
     ASSERT_NOT_REACHED();

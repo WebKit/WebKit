@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,13 +150,13 @@ public:
 
     void exceptionCheckWithCallFrameRollback()
     {
-        m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(*vm()));
+        m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(vm()));
     }
 
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
     void fastExceptionCheck()
     {
-        callExceptionFuzz(*vm());
+        callExceptionFuzz(vm());
         m_exceptionChecks.append(branchTestPtr(Zero, GPRInfo::returnValueGPR));
     }
     
@@ -254,7 +254,7 @@ public:
 
     PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder() { return m_pcToCodeOriginMapBuilder; }
 
-    VM* vm() { return &m_graph.m_vm; }
+    VM& vm() { return m_graph.m_vm; }
 
 private:
     friend class OSRExitJumpPlaceholder;

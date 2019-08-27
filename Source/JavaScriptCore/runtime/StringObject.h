@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ public:
 
     static StringObject* create(VM& vm, Structure* structure)
     {
-        JSString* string = jsEmptyString(&vm);
+        JSString* string = jsEmptyString(vm);
         StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
         object->finishCreation(vm, string);
         return object;
@@ -85,7 +85,7 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
         ASSERT(asString(originalValue)->value(exec) == string);
         return asString(originalValue);
     }
-    return jsString(&exec->vm(), string);
+    return jsString(exec->vm(), string);
 }
 
 // Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
@@ -99,7 +99,7 @@ static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, cons
         ASSERT(asString(originalValue)->value(exec) == string);
         return jsSubstring(exec, asString(originalValue), offset, length);
     }
-    return jsSubstring(&exec->vm(), string, offset, length);
+    return jsSubstring(exec->vm(), string, offset, length);
 }
 
 } // namespace JSC

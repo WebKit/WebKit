@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -302,13 +302,14 @@ static Optional<String> snapshotCanvas(HTMLCanvasElement& canvasElement, CanvasR
 
 void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
+    JSC::VM& vm = state->vm();
     String dataURL;
     JSC::JSValue target;
 
     if (arguments->argumentCount()) {
         auto possibleTarget = arguments->argumentAt(0);
 
-        if (auto* node = JSNode::toWrapped(state->vm(), possibleTarget)) {
+        if (auto* node = JSNode::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
                 std::unique_ptr<ImageBuffer> snapshot;
@@ -357,7 +358,7 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
                         dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
                 }
             }
-        } else if (auto* imageData = JSImageData::toWrapped(state->vm(), possibleTarget)) {
+        } else if (auto* imageData = JSImageData::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
                 auto sourceSize = imageData->size();
@@ -367,13 +368,13 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
                     dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
                 }
             }
-        } else if (auto* imageBitmap = JSImageBitmap::toWrapped(state->vm(), possibleTarget)) {
+        } else if (auto* imageBitmap = JSImageBitmap::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
                 if (auto* imageBuffer = imageBitmap->buffer())
                     dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
             }
-        } else if (auto* context = canvasRenderingContext(state->vm(), possibleTarget)) {
+        } else if (auto* context = canvasRenderingContext(vm, possibleTarget)) {
             auto& canvas = context->canvasBase();
             if (is<HTMLCanvasElement>(canvas)) {
                 target = possibleTarget;
@@ -408,9 +409,9 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
     }
 
     Vector<JSC::Strong<JSC::Unknown>> adjustedArguments;
-    adjustedArguments.append({ state->vm(), target ? target : JSC::jsNontrivialString(state, "Viewport"_s) });
+    adjustedArguments.append({ vm, target ? target : JSC::jsNontrivialString(vm, "Viewport"_s) });
     for (size_t i = (!target ? 0 : 1); i < arguments->argumentCount(); ++i)
-        adjustedArguments.append({ state->vm(), arguments->argumentAt(i) });
+        adjustedArguments.append({ vm, arguments->argumentAt(i) });
     arguments = ScriptArguments::create(*state, WTFMove(adjustedArguments));
     addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, WTFMove(arguments)));
 }

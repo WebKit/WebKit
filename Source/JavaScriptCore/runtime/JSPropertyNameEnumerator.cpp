@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, RefPtr<PropertyNameArrayDa
     ASSERT(m_endGenericPropertyIndex == vector.size());
     for (unsigned i = 0; i < vector.size(); ++i) {
         const Identifier& identifier = vector[i];
-        m_propertyNames.get()[i].set(vm, this, jsString(&vm, identifier.string()));
+        m_propertyNames.get()[i].set(vm, this, jsString(vm, identifier.string()));
     }
 }
 

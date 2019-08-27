@@ -166,7 +166,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(vm, propertyName.uid())));
     arguments.append(receiver);
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, getHandler, callType, callData, handler, arguments);
@@ -238,7 +238,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(vm, propertyName.uid())));
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, getOwnPropertyDescriptorMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
@@ -347,7 +347,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(vm, propertyName.uid())));
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, hasMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
@@ -413,8 +413,9 @@ bool ProxyObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
 
 bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
     ProxyObject* thisObject = jsCast<ProxyObject*>(object);
-    Identifier ident = Identifier::from(exec, propertyName); 
+    Identifier ident = Identifier::from(vm, propertyName);
     return thisObject->getOwnPropertySlotCommon(exec, ident.impl(), slot);
 }
 
@@ -450,7 +451,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(vm, propertyName.uid())));
     arguments.append(putValue);
     arguments.append(thisValue);
     ASSERT(!arguments.hasOverflowed());
@@ -498,7 +499,7 @@ bool ProxyObject::putByIndexCommon(ExecState* exec, JSValue thisValue, unsigned 
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Identifier ident = Identifier::from(exec, propertyName);
+    Identifier ident = Identifier::from(vm, propertyName);
     RETURN_IF_EXCEPTION(scope, false);
     auto performDefaultPut = [&] () {
         JSObject* target = this->target();
@@ -653,7 +654,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(vm, propertyName.uid())));
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, deletePropertyMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
@@ -697,11 +698,12 @@ bool ProxyObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pro
 
 bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
+    VM& vm = exec->vm();
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
-    Identifier ident = Identifier::from(exec, propertyName); 
+    Identifier ident = Identifier::from(vm, propertyName);
     auto performDefaultDelete = [&] () -> bool {
         JSObject* target = thisObject->target();
-        return target->methodTable(exec->vm())->deletePropertyByIndex(target, exec, propertyName);
+        return target->methodTable(vm)->deletePropertyByIndex(target, exec, propertyName);
     };
     return thisObject->performDelete(exec, ident.impl(), performDefaultDelete);
 }
@@ -855,7 +857,7 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(vm, propertyName.uid())));
     arguments.append(descriptorObject);
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, definePropertyMethod, callType, callData, handler, arguments);
@@ -952,7 +954,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameArray trapResult(&vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
+    PropertyNameArray trapResult(vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
     HashSet<UniquedStringImpl*> uncheckedResultKeys;
     {
         HashSet<RefPtr<UniquedStringImpl>> seenKeys;
@@ -1006,7 +1008,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     bool targetIsExensible = target->isExtensible(exec);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameArray targetKeys(&vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
+    PropertyNameArray targetKeys(vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
     target->methodTable(vm)->getOwnPropertyNames(target, exec, targetKeys, enumerationMode);
     RETURN_IF_EXCEPTION(scope, void());
     Vector<UniquedStringImpl*> targetConfigurableKeys;

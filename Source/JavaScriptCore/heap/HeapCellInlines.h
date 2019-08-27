@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,10 +56,10 @@ ALWAYS_INLINE LargeAllocation& HeapCell::largeAllocation() const
 
 ALWAYS_INLINE Heap* HeapCell::heap() const
 {
-    return &vm()->heap;
+    return &vm().heap;
 }
 
-ALWAYS_INLINE VM* HeapCell::vm() const
+ALWAYS_INLINE VM& HeapCell::vm() const
 {
     if (isLargeAllocation())
         return largeAllocation().vm();

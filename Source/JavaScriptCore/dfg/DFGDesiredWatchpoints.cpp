@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 void ArrayBufferViewWatchpointAdaptor::add(
     CodeBlock* codeBlock, JSArrayBufferView* view, CommonData& common)
 {
-    VM& vm = *codeBlock->vm();
+    VM& vm = codeBlock->vm();
     Watchpoint* watchpoint = common.watchpoints.add(codeBlock);
     ArrayBufferNeuteringWatchpointSet* neuteringWatchpoint =
         ArrayBufferNeuteringWatchpointSet::create(vm);
@@ -66,7 +66,7 @@ void FunctionExecutableAdaptor::add(
 void AdaptiveStructureWatchpointAdaptor::add(
     CodeBlock* codeBlock, const ObjectPropertyCondition& key, CommonData& common)
 {
-    VM& vm = *codeBlock->vm();
+    VM& vm = codeBlock->vm();
     switch (key.kind()) {
     case PropertyCondition::Equivalence:
         common.adaptiveInferredPropertyValueWatchpoints.add(key, codeBlock)->install(vm);

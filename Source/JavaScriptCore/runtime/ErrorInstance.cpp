@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -80,8 +80,8 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
         return;
     
-    VM* vm = &callFrame->vm();
-    JSValue jsMessage = exception->getDirect(*vm, vm->propertyNames->message);
+    VM& vm = callFrame->vm();
+    JSValue jsMessage = exception->getDirect(vm, vm.propertyNames->message);
     if (!jsMessage || !jsMessage.isString())
         return;
     
@@ -105,7 +105,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
             stop--;
         message = appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
     }
-    exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
+    exception->putDirect(vm, vm.propertyNames->message, jsString(vm, message));
 
 }
 
@@ -114,7 +114,7 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     if (!message.isNull())
-        putDirect(vm, vm.propertyNames->message, jsString(&vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(exec, vm, this, useCurrentFrame);
     {
@@ -241,9 +241,9 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
         putDirect(vm, vm.propertyNames->line, jsNumber(m_line));
         putDirect(vm, vm.propertyNames->column, jsNumber(m_column));
         if (!m_sourceURL.isEmpty())
-            putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, WTFMove(m_sourceURL)));
+            putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)));
 
-        putDirect(vm, vm.propertyNames->stack, jsString(&vm, WTFMove(m_stackString)), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirect(vm, vm.propertyNames->stack, jsString(vm, WTFMove(m_stackString)), static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 
     m_errorInfoMaterialized = true;

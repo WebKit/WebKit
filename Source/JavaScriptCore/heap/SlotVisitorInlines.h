@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,12 +176,12 @@ inline Heap* SlotVisitor::heap() const
 
 inline VM& SlotVisitor::vm()
 {
-    return *m_heap.vm();
+    return m_heap.vm();
 }
 
 inline const VM& SlotVisitor::vm() const
 {
-    return *m_heap.vm();
+    return m_heap.vm();
 }
 
 template<typename Func>

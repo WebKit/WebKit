@@ -179,7 +179,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     for (auto& entry : variableDeclarations) {
         ASSERT(entry.value.isVar());
-        globalObject->addVar(callFrame, Identifier::fromUid(&vm, entry.key.get()));
+        globalObject->addVar(callFrame, Identifier::fromUid(vm, entry.key.get()));
         throwScope.assertNoException();
     }
 

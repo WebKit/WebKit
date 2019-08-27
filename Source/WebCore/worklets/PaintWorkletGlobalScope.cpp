@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomString& name
 // https://drafts.css-houdini.org/css-paint-api/#registering-custom-paint
 ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const String& name, Strong<JSObject> paintConstructor)
 {
-    auto& vm = *paintConstructor->vm();
+    auto& vm = paintConstructor->vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -91,7 +91,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
 
         Vector<String> inputProperties;
 
-        JSValue inputPropertiesIterableValue = paintConstructor->get(&state, Identifier::fromString(&vm, "inputProperties"));
+        JSValue inputPropertiesIterableValue = paintConstructor->get(&state, Identifier::fromString(vm, "inputProperties"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputPropertiesIterableValue.isUndefined())
@@ -102,7 +102,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
 
         Vector<String> inputArguments;
 
-        JSValue inputArgumentsIterableValue = paintConstructor->get(&state, Identifier::fromString(&vm, "inputArguments"));
+        JSValue inputArgumentsIterableValue = paintConstructor->get(&state, Identifier::fromString(vm, "inputArguments"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputArgumentsIterableValue.isUndefined())
@@ -111,7 +111,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
 
         // FIXME: Parse syntax for inputArguments here (steps 11 and 12).
 
-        JSValue contextOptionsValue = paintConstructor->get(&state, Identifier::fromString(&vm, "contextOptions"));
+        JSValue contextOptionsValue = paintConstructor->get(&state, Identifier::fromString(vm, "contextOptions"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
         UNUSED_PARAM(contextOptionsValue);
 
@@ -126,7 +126,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
         if (!prototypeValue.isObject())
             return Exception { TypeError, "The second argument must have a prototype that is an object" };
 
-        JSValue paintValue = prototypeValue.get(&state, Identifier::fromString(&vm, "paint"));
+        JSValue paintValue = prototypeValue.get(&state, Identifier::fromString(vm, "paint"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (paintValue.isUndefined())

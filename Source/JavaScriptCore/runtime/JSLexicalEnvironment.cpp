@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,6 +73,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
     {
         ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+        VM& vm = exec->vm();
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
             if (it->value.getAttributes() & PropertyAttribute::DontEnum && !mode.includeDontEnumProperties())
                 continue;
@@ -80,7 +81,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
                 continue;
             if (it->key->isSymbol() && !propertyNames.includeSymbolProperties())
                 continue;
-            propertyNames.add(Identifier::fromUid(exec, it->key.get()));
+            propertyNames.add(Identifier::fromUid(vm, it->key.get()));
         }
     }
     // Skip the JSSymbolTableObject's implementation of getOwnNonIndexPropertyNames

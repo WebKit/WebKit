@@ -147,12 +147,12 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
-    Identifier nameID = name ? name->identifier(&vm) : Identifier::fromString(exec, "anonymous");
+    Identifier nameID = name ? name->identifier(&vm) : Identifier::fromString(vm, "anonymous");
     
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < parameterCount; i++)
-        args.append(jsString(exec, parameterNames[i]->string()));
-    args.append(jsString(exec, body->string()));
+        args.append(jsString(vm, parameterNames[i]->string()));
+    args.append(jsString(vm, body->string()));
     if (UNLIKELY(args.hasOverflowed())) {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         throwOutOfMemoryError(exec, throwScope);
@@ -546,7 +546,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 // during destruction.
 static const ClassInfo* classInfoPrivate(JSObject* jsObject)
 {
-    VM& vm = *jsObject->vm();
+    VM& vm = jsObject->vm();
     
     if (vm.currentlyDestructingCallbackObject != jsObject)
         return jsObject->classInfo(vm);
@@ -557,7 +557,7 @@ static const ClassInfo* classInfoPrivate(JSObject* jsObject)
 void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = uncheckedToJS(object);
-    VM& vm = *jsObject->vm();
+    VM& vm = jsObject->vm();
 
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
@@ -582,7 +582,7 @@ void* JSObjectGetPrivate(JSObjectRef object)
 bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
     JSObject* jsObject = uncheckedToJS(object);
-    VM& vm = *jsObject->vm();
+    VM& vm = jsObject->vm();
 
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
@@ -810,12 +810,12 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    VM* vm = &exec->vm();
+    VM& vm = exec->vm();
 
     JSObject* jsObject = toJS(object);
-    JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(vm);
+    JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(&vm);
     PropertyNameArray array(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    jsObject->methodTable(*vm)->getPropertyNames(jsObject, exec, array, EnumerationMode());
+    jsObject->methodTable(vm)->getPropertyNames(jsObject, exec, array, EnumerationMode());
 
     size_t size = array.size();
     propertyNames->array.reserveInitialCapacity(size);
@@ -852,9 +852,9 @@ JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size
 void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStringRef propertyName)
 {
     PropertyNameArray* propertyNames = toJS(array);
-    VM* vm = propertyNames->vm();
+    VM& vm = propertyNames->vm();
     JSLockHolder locker(vm);
-    propertyNames->add(propertyName->identifier(vm));
+    propertyNames->add(propertyName->identifier(&vm));
 }
 
 JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
@@ -862,7 +862,7 @@ JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
     JSObject* object = toJS(objectRef);
     if (!object)
         return nullptr;
-    VM& vm = *object->vm();
+    VM& vm = object->vm();
     JSLockHolder locker(vm);
     JSObject* result = nullptr;
     if (JSProxy* proxy = jsDynamicCast<JSProxy*>(vm, object))

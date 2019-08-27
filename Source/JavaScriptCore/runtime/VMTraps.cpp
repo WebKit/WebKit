@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -215,7 +215,7 @@ public:
                     return SignalAction::NotHandled;
                 }
                 ASSERT(currentCodeBlock->hasInstalledVMTrapBreakpoints());
-                VM& vm = *currentCodeBlock->vm();
+                VM& vm = currentCodeBlock->vm();
 
                 // We are in JIT code so it's safe to acquire this lock.
                 auto codeBlockSetLocker = holdLock(vm.heap.codeBlockSet().getLock());

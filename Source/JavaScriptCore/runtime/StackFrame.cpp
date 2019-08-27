@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,7 +114,7 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
     m_codeBlock->expressionRangeForBytecodeOffset(m_bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
 
     ScriptExecutable* executable = m_codeBlock->ownerExecutable();
-    if (Optional<int> overrideLineNumber = executable->overrideLineNumber(*m_codeBlock->vm()))
+    if (Optional<int> overrideLineNumber = executable->overrideLineNumber(m_codeBlock->vm()))
         line = overrideLineNumber.value();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -295,7 +295,7 @@ JSValue CInstance::stringValue(ExecState* exec) const
         return value;
 
     // Fallback to default implementation.
-    return jsNontrivialString(exec, "NPObject"_s);
+    return jsNontrivialString(exec->vm(), "NPObject"_s);
 }
 
 JSValue CInstance::numberValue(ExecState*) const
@@ -366,13 +366,14 @@ void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
             return;
     }
 
+    VM& vm = exec->vm();
     for (uint32_t i = 0; i < count; i++) {
         IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
 
         if (identifier->isString())
             nameArray.add(identifierFromNPIdentifier(exec, identifier->string()));
         else
-            nameArray.add(Identifier::from(exec, identifier->number()));
+            nameArray.add(Identifier::from(vm, identifier->number()));
     }
 
     // FIXME: This should really call NPN_MemFree but that's in WebKit

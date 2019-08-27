@@ -379,9 +379,9 @@ namespace JSC {
 
         ~BytecodeGenerator();
         
-        VM* vm() const { return m_vm; }
+        VM& vm() const { return m_vm; }
         ParserArena& parserArena() const { return m_scopeNode->parserArena(); }
-        const CommonIdentifiers& propertyNames() const { return *m_vm->propertyNames; }
+        const CommonIdentifiers& propertyNames() const { return *m_vm.propertyNames; }
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
         DerivedContextType derivedContextType() const { return m_derivedContextType; }
@@ -500,7 +500,7 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            if (UNLIKELY(!m_vm->isSafeToRecurse())) {
+            if (UNLIKELY(!m_vm.isSafeToRecurse())) {
                 emitThrowExpressionTooDeepException();
                 return;
             }
@@ -536,7 +536,7 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            if (UNLIKELY(!m_vm->isSafeToRecurse()))
+            if (UNLIKELY(!m_vm.isSafeToRecurse()))
                 return emitThrowExpressionTooDeepException();
             if (UNLIKELY(n->needsDebugHook()))
                 emitDebugHook(n);
@@ -556,7 +556,7 @@ namespace JSC {
         RegisterID* emitDefineClassElements(PropertyListNode* n, RegisterID* constructor, RegisterID* prototype)
         {
             ASSERT(constructor->refCount() && prototype->refCount());
-            if (UNLIKELY(!m_vm->isSafeToRecurse()))
+            if (UNLIKELY(!m_vm.isSafeToRecurse()))
                 return emitThrowExpressionTooDeepException();
             if (UNLIKELY(n->needsDebugHook()))
                 emitDebugHook(n);
@@ -579,7 +579,7 @@ namespace JSC {
 
         void emitNodeInConditionContext(ExpressionNode* n, Label& trueTarget, Label& falseTarget, FallThroughMode fallThroughMode)
         {
-            if (UNLIKELY(!m_vm->isSafeToRecurse())) {
+            if (UNLIKELY(!m_vm.isSafeToRecurse())) {
                 emitThrowExpressionTooDeepException();
                 return;
             }
@@ -1290,7 +1290,7 @@ namespace JSC {
 
         StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 
-        VM* m_vm;
+        VM& m_vm;
 
         OpcodeID m_lastOpcodeID = op_end;
         InstructionStream::MutableRef m_lastInstruction { m_writer.ref() };

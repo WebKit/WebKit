@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -87,7 +87,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
             if (!(iter->attributes() & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties())
-                propertyNames.add(Identifier::fromString(&vm, iter.key()));
+                propertyNames.add(Identifier::fromString(vm, iter.key()));
         }
     }
 }
@@ -598,12 +598,14 @@ String JSObject::calculatedClassName(JSObject* object)
 
 bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, unsigned i, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
+
     // NB. The fact that we're directly consulting our indexed storage implies that it is not
     // legal for anyone to override getOwnPropertySlot() without also overriding
     // getOwnPropertySlotByIndex().
     
     if (i > MAX_ARRAY_INDEX)
-        return thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
+        return thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, Identifier::from(vm, i), slot);
     
     switch (thisObject->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -862,7 +864,7 @@ bool JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(cell, shouldThrow);
-        return thisObject->methodTable(vm)->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
+        return thisObject->methodTable(vm)->put(thisObject, exec, Identifier::from(vm, propertyName), value, slot);
     }
 
     thisObject->ensureWritable(vm);
@@ -2022,7 +2024,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     JSObject* thisObject = jsCast<JSObject*>(cell);
     
     if (i > MAX_ARRAY_INDEX)
-        return thisObject->methodTable(vm)->deleteProperty(thisObject, exec, Identifier::from(exec, i));
+        return thisObject->methodTable(vm)->deleteProperty(thisObject, exec, Identifier::from(vm, i));
     
     switch (thisObject->indexingMode()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -2446,7 +2448,7 @@ JSString* JSObject::toString(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue primitive = toPrimitive(exec, PreferString);
-    RETURN_IF_EXCEPTION(scope, jsEmptyString(exec));
+    RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
     RELEASE_AND_RETURN(scope, primitive.toString(exec));
 }
 
@@ -2519,7 +2521,7 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
 
         for (auto& value : *hashTable) {
             unsigned attributes;
-            auto key = Identifier::fromString(&vm, value.m_key);
+            auto key = Identifier::fromString(vm, value.m_key);
             PropertyOffset offset = getDirectOffset(vm, key, attributes);
             if (!isValidOffset(offset))
                 reifyStaticProperty(vm, hashTable->classForThis, key, value, *this);
@@ -3064,7 +3066,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned 
     if (!canDoFastPutDirectIndex(vm, this)) {
         PropertyDescriptor descriptor;
         descriptor.setDescriptor(value, attributes);
-        return methodTable(vm)->defineOwnProperty(this, exec, Identifier::from(exec, i), descriptor, mode == PutDirectIndexShouldThrow);
+        return methodTable(vm)->defineOwnProperty(this, exec, Identifier::from(vm, i), descriptor, mode == PutDirectIndexShouldThrow);
     }
 
     // i should be a valid array index that is outside of the current vector.

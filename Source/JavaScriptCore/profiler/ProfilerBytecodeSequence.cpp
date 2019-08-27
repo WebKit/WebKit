@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ void BytecodeSequence::addSequenceProperties(ExecState* exec, JSObject* result) 
     JSArray* header = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, void());
     for (unsigned i = 0; i < m_header.size(); ++i) {
-        header->putDirectIndex(exec, i, jsString(exec, String::fromUTF8(m_header[i])));
+        header->putDirectIndex(exec, i, jsString(vm, String::fromUTF8(m_header[i])));
         RETURN_IF_EXCEPTION(scope, void());
     }
     result->putDirect(vm, vm.propertyNames->header, header);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,12 +74,12 @@ void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr<CFu
         newCalleeFunction.retagged<OperationPtrTag>());
 }
 
-JIT::JIT(VM* vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
-    : JSInterfaceJIT(vm, codeBlock)
-    , m_interpreter(vm->interpreter)
+JIT::JIT(VM& vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
+    : JSInterfaceJIT(&vm, codeBlock)
+    , m_interpreter(vm.interpreter)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
     , m_bytecodeOffset(std::numeric_limits<unsigned>::max())
-    , m_pcToCodeOriginMapBuilder(*vm)
+    , m_pcToCodeOriginMapBuilder(vm)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
     , m_shouldUseIndexMasking(Options::enableSpectreMitigations())
@@ -102,7 +102,7 @@ void JIT::emitEnterOptimizationCheck()
     skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     ASSERT(!m_bytecodeOffset);
 
-    copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
+    copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
@@ -191,7 +191,7 @@ void JIT::privateCompileMainPass()
 
     m_callLinkInfoIndex = 0;
 
-    VM& vm = *m_codeBlock->vm();
+    VM& vm = m_codeBlock->vm();
     unsigned startBytecodeOffset = 0;
     if (m_loopOSREntryBytecodeOffset && (m_codeBlock->inherits<ProgramCodeBlock>(vm) || m_codeBlock->inherits<ModuleProgramCodeBlock>(vm))) {
         // We can only do this optimization because we execute ProgramCodeBlock's exactly once.
@@ -933,11 +933,11 @@ void JIT::privateCompileExceptionHandlers()
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
-        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
+        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
         // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
 
-        move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+        move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
 
 #if CPU(X86)
@@ -946,17 +946,17 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR1, 1);
 #endif
         m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame)));
-        jumpToExceptionHandler(*vm());
+        jumpToExceptionHandler(vm());
     }
 
     if (!m_exceptionChecks.empty() || m_byValCompilationInfo.size()) {
         m_exceptionHandler = label();
         m_exceptionChecks.link(this);
 
-        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
+        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
         // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
-        move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+        move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
 
 #if CPU(X86)
@@ -965,7 +965,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR1, 1);
 #endif
         m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandler)));
-        jumpToExceptionHandler(*vm());
+        jumpToExceptionHandler(vm());
     }
 }
 

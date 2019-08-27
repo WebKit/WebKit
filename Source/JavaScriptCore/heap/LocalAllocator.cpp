@@ -114,7 +114,7 @@ void* LocalAllocator::allocateSlowCase(GCDeferralContext* deferralContext, Alloc
 {
     SuperSamplerScope superSamplerScope(false);
     Heap& heap = *m_directory->m_heap;
-    ASSERT(heap.vm()->currentThreadIsHoldingAPILock());
+    ASSERT(heap.vm().currentThreadIsHoldingAPILock());
     doTestCollectionsIfNeeded(deferralContext);
 
     ASSERT(!m_directory->markedSpace().isIterating());

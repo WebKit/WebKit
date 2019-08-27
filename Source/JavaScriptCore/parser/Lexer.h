@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *
  *  This library is free software; you can redistribute it and/or
@@ -50,7 +50,7 @@ class Lexer {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Lexer(VM*, JSParserBuiltinMode, JSParserScriptMode);
+    Lexer(VM&, JSParserBuiltinMode, JSParserScriptMode);
     ~Lexer();
 
     // Character manipulation functions.
@@ -227,7 +227,7 @@ private:
 
     IdentifierArena* m_arena;
 
-    VM* m_vm;
+    VM& m_vm;
     bool m_parsingBuiltinFunction;
     JSParserScriptMode m_scriptMode;
 };
@@ -392,7 +392,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, un
     tokenRecord->m_endPosition = currentPosition();
 #if !ASSERT_DISABLED
     if (m_parsingBuiltinFunction) {
-        if (!isSafeBuiltinIdentifier(*m_vm, tokenData->ident))
+        if (!isSafeBuiltinIdentifier(m_vm, tokenData->ident))
             return ERRORTOK;
     }
 #endif

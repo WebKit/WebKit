@@ -60,7 +60,7 @@ static void validate(JSCell* cell)
 
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
-    VM& vm = *cell->vm();
+    VM& vm = cell->vm();
     if (cell->structure()->structure()->JSCell::classInfo(vm) != cell->structure()->JSCell::classInfo(vm)) {
         const char* parentClassName = 0;
         const char* ourClassName = 0;

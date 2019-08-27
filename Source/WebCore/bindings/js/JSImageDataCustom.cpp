@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<
     VM& vm = state->vm();
     auto* data = imageData->data();
     auto* wrapper = createWrapper<ImageData>(globalObject, WTFMove(imageData));
-    Identifier dataName = Identifier::fromString(state, "data");
+    Identifier dataName = Identifier::fromString(vm, "data");
     wrapper->putDirect(vm, dataName, toJS(state, globalObject, data), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595

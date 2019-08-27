@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -215,7 +215,7 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(*this, shouldThrow);
-        return putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
+        return putToPrimitive(exec, Identifier::from(vm, propertyName), value, slot);
     }
     
     JSObject* prototype = synthesizePrototype(exec);
@@ -315,7 +315,7 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
     else if (isDouble())
         out.printf("%lf", asDouble());
     else if (isCell()) {
-        VM& vm = *asCell()->vm();
+        VM& vm = asCell()->vm();
         if (asCell()->inherits<JSString>(vm)) {
             JSString* string = asString(asCell());
             const StringImpl* impl = string->tryGetValueImpl();
@@ -360,7 +360,7 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
 
     auto errorValue = [&] () -> JSString* {
         if (returnEmptyStringOnError)
-            return jsEmptyString(exec);
+            return jsEmptyString(vm);
         return nullptr;
     };
     
@@ -369,10 +369,10 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
         auto integer = asInt32();
         if (static_cast<unsigned>(integer) <= 9)
             return vm.smallStrings.singleCharacterString(integer + '0');
-        return jsNontrivialString(&vm, vm.numericStrings.add(integer));
+        return jsNontrivialString(vm, vm.numericStrings.add(integer));
     }
     if (isDouble())
-        return jsString(&vm, vm.numericStrings.add(asDouble()));
+        return jsString(vm, vm.numericStrings.add(asDouble()));
     if (isTrue())
         return vm.smallStrings.trueString();
     if (isFalse())
@@ -389,7 +389,7 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
         JSBigInt* bigInt = asBigInt(*this);
         if (auto digit = bigInt->singleDigitValueForString())
             return vm.smallStrings.singleCharacterString(*digit + '0');
-        JSString* returnString = jsNontrivialString(&vm, bigInt->toString(exec, 10));
+        JSString* returnString = jsNontrivialString(vm, bigInt->toString(exec, 10));
         RETURN_IF_EXCEPTION(scope, errorValue());
         return returnString;
     }

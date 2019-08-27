@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Michael Pruett <michael@68k.org>
- * Copyright (C) 2014, 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,9 +66,9 @@ static bool get(ExecState& exec, JSValue object, const String& keyPathElement, J
     if (!object.isObject())
         return false;
 
+    VM& vm = exec.vm();
     auto* obj = asObject(object);
-    Identifier identifier = Identifier::fromString(&exec.vm(), keyPathElement);
-    auto& vm = exec.vm();
+    Identifier identifier = Identifier::fromString(vm, keyPathElement);
     if (obj->inherits<JSArray>(vm) && keyPathElement == "length") {
         result = obj->get(&exec, identifier);
         return true;
@@ -79,13 +79,13 @@ static bool get(ExecState& exec, JSValue object, const String& keyPathElement, J
             return true;
         }
         if (keyPathElement == "type") {
-            result = jsString(&vm, jsCast<JSBlob*>(obj)->wrapped().type());
+            result = jsString(vm, jsCast<JSBlob*>(obj)->wrapped().type());
             return true;
         }
     }
     if (obj->inherits<JSFile>(vm)) {
         if (keyPathElement == "name") {
-            result = jsString(&vm, jsCast<JSFile*>(obj)->wrapped().name());
+            result = jsString(vm, jsCast<JSFile*>(obj)->wrapped().name());
             return true;
         }
         if (keyPathElement == "lastModified") {
@@ -118,8 +118,9 @@ static bool set(ExecState& exec, JSValue& object, const String& keyPathElement, 
 {
     if (!canSet(object, keyPathElement))
         return false;
-    Identifier identifier = Identifier::fromString(&exec.vm(), keyPathElement);
-    asObject(object)->putDirect(exec.vm(), identifier, jsValue);
+    VM& vm = exec.vm();
+    Identifier identifier = Identifier::fromString(vm, keyPathElement);
+    asObject(object)->putDirect(vm, identifier, jsValue);
     return true;
 }
 

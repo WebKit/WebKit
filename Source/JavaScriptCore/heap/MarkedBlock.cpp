@@ -66,7 +66,7 @@ MarkedBlock::Handle::Handle(Heap& heap, AlignedMemoryAllocator* alignedMemoryAll
     : m_alignedMemoryAllocator(alignedMemoryAllocator)
     , m_weakSet(heap.vm(), CellContainer())
 {
-    m_block = new (NotNull, blockSpace) MarkedBlock(*heap.vm(), *this);
+    m_block = new (NotNull, blockSpace) MarkedBlock(heap.vm(), *this);
     
     m_weakSet.setContainer(*m_block);
     
@@ -207,7 +207,7 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 
 void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
 {
-    ASSERT(vm()->heap.objectSpace().isMarking());
+    ASSERT(vm().heap.objectSpace().isMarking());
     auto locker = holdLock(footer().m_lock);
     
     if (!areMarksStale(markingVersion))
@@ -275,13 +275,13 @@ void MarkedBlock::resetMarks()
 #if !ASSERT_DISABLED
 void MarkedBlock::assertMarksNotStale()
 {
-    ASSERT(footer().m_markingVersion == vm()->heap.objectSpace().markingVersion());
+    ASSERT(footer().m_markingVersion == vm().heap.objectSpace().markingVersion());
 }
 #endif // !ASSERT_DISABLED
 
 bool MarkedBlock::areMarksStale()
 {
-    return areMarksStale(vm()->heap.objectSpace().markingVersion());
+    return areMarksStale(vm().heap.objectSpace().markingVersion());
 }
 
 bool MarkedBlock::Handle::areMarksStale()
@@ -291,7 +291,7 @@ bool MarkedBlock::Handle::areMarksStale()
 
 bool MarkedBlock::isMarked(const void* p)
 {
-    return isMarked(vm()->heap.objectSpace().markingVersion(), p);
+    return isMarked(vm().heap.objectSpace().markingVersion(), p);
 }
 
 void MarkedBlock::Handle::didConsumeFreeList()
@@ -371,7 +371,7 @@ void MarkedBlock::Handle::didRemoveFromDirectory()
 #if !ASSERT_DISABLED
 void MarkedBlock::assertValidCell(VM& vm, HeapCell* cell) const
 {
-    RELEASE_ASSERT(&vm == this->vm());
+    RELEASE_ASSERT(&vm == &this->vm());
     RELEASE_ASSERT(const_cast<MarkedBlock*>(this)->handle().cellAlign(cell) == cell);
 }
 #endif

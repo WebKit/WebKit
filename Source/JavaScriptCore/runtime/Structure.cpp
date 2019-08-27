@@ -1026,9 +1026,9 @@ void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchp
 
     if (deferred) {
         ASSERT(deferred->structure() == this);
-        m_transitionWatchpointSet.fireAll(*vm(), deferred);
+        m_transitionWatchpointSet.fireAll(vm(), deferred);
     } else
-        m_transitionWatchpointSet.fireAll(*vm(), StructureFireDetail(this));
+        m_transitionWatchpointSet.fireAll(vm(), StructureFireDetail(this));
 }
 
 void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)

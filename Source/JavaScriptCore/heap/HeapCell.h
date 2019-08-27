@@ -73,7 +73,7 @@ public:
     // recommended to use it for too many other things, since the large allocation cutoff is
     // a runtime option and its default value is small (400 bytes).
     Heap* heap() const;
-    VM* vm() const;
+    VM& vm() const;
     
     size_t cellSize() const;
     CellAttributes cellAttributes() const;

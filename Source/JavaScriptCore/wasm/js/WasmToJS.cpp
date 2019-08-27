@@ -92,18 +92,18 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
         jit.jumpToExceptionHandler(*vm);
 
         void (*throwBadI64)(ExecState*, JSWebAssemblyInstance*) = [] (ExecState* exec, JSWebAssemblyInstance* instance) -> void {
-            VM* vm = &exec->vm();
+            VM& vm = exec->vm();
             NativeCallFrameTracer tracer(vm, exec);
 
             {
-                auto throwScope = DECLARE_THROW_SCOPE(*vm);
-                JSGlobalObject* globalObject = instance->globalObject(*vm);
-                auto* error = ErrorInstance::create(exec, *vm, globalObject->errorStructure(ErrorType::TypeError), "i64 not allowed as return type or argument to an imported function"_s);
+                auto throwScope = DECLARE_THROW_SCOPE(vm);
+                JSGlobalObject* globalObject = instance->globalObject(vm);
+                auto* error = ErrorInstance::create(exec, vm, globalObject->errorStructure(ErrorType::TypeError), "i64 not allowed as return type or argument to an imported function"_s);
                 throwException(exec, throwScope, error);
             }
 
             genericUnwind(vm, exec);
-            ASSERT(!!vm->callFrameForCatch);
+            ASSERT(!!vm.callFrameForCatch);
         };
 
         LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
@@ -226,9 +226,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
 
         uint64_t (*callFunc)(ExecState*, JSObject*, SignatureIndex, uint64_t*) =
             [] (ExecState* exec, JSObject* callee, SignatureIndex signatureIndex, uint64_t* buffer) -> uint64_t { 
-                VM* vm = &exec->vm();
+                VM& vm = exec->vm();
                 NativeCallFrameTracer tracer(vm, exec);
-                auto throwScope = DECLARE_THROW_SCOPE(*vm);
+                auto throwScope = DECLARE_THROW_SCOPE(vm);
                 const Signature& signature = SignatureInformation::get(signatureIndex);
                 MarkedArgumentBuffer args;
                 for (unsigned argNum = 0; argNum < signature.argumentCount(); ++argNum) {
@@ -244,7 +244,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                         break;
                     case Funcref: {
                         arg = JSValue::decode(buffer[argNum]);
-                        ASSERT(isWebAssemblyHostFunction(*vm, arg) || arg.isNull());
+                        ASSERT(isWebAssemblyHostFunction(vm, arg) || arg.isNull());
                         break;
                     }
                     case Anyref:
@@ -263,7 +263,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                 }
 
                 CallData callData;
-                CallType callType = callee->methodTable(*vm)->getCallData(callee, callData);
+                CallType callType = callee->methodTable(vm)->getCallData(callee, callData);
                 RELEASE_ASSERT(callType != CallType::None);
                 JSValue result = call(exec, callee, callType, callData, jsUndefined(), args);
                 RETURN_IF_EXCEPTION(throwScope, 0);
@@ -282,7 +282,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                 }
                 case Funcref: {
                     realResult = JSValue::encode(result);
-                    ASSERT(result.isFunction(*vm) || result.isNull());
+                    ASSERT(result.isFunction(vm) || result.isNull());
                     break;
                 }
                 case Anyref: {
@@ -317,10 +317,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         void (*doUnwinding)(ExecState*) = [] (ExecState* exec) -> void {
-            VM* vm = &exec->vm();
+            VM& vm = exec->vm();
             NativeCallFrameTracer tracer(vm, exec);
             genericUnwind(vm, exec);
-            ASSERT(!!vm->callFrameForCatch);
+            ASSERT(!!vm.callFrameForCatch);
         };
         auto exceptionCall = jit.call(OperationPtrTag);
         jit.jumpToExceptionHandler(*vm);
@@ -536,7 +536,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         CCallHelpers::JumpList slowPath;
 
         int32_t (*convertToI32)(ExecState*, JSValue) = [] (ExecState* exec, JSValue v) -> int32_t {
-            VM* vm = &exec->vm();
+            VM& vm = exec->vm();
             NativeCallFrameTracer tracer(vm, exec);
             return v.toInt32(exec);
         };
@@ -565,7 +565,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         CCallHelpers::JumpList done;
 
         float (*convertToF32)(ExecState*, JSValue) = [] (ExecState* exec, JSValue v) -> float {
-            VM* vm = &exec->vm();
+            VM& vm = exec->vm();
             NativeCallFrameTracer tracer(vm, exec);
             return static_cast<float>(v.toNumber(exec));
         };
@@ -600,7 +600,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         CCallHelpers::JumpList done;
 
         double (*convertToF64)(ExecState*, JSValue) = [] (ExecState* exec, JSValue v) -> double {
-            VM* vm = &exec->vm();
+            VM& vm = exec->vm();
             NativeCallFrameTracer tracer(vm, exec);
             return v.toNumber(exec);
         };
@@ -643,10 +643,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         jit.jumpToExceptionHandler(*vm);
 
         void (*doUnwinding)(ExecState*) = [] (ExecState* exec) -> void {
-            VM* vm = &exec->vm();
+            VM& vm = exec->vm();
             NativeCallFrameTracer tracer(vm, exec);
             genericUnwind(vm, exec);
-            ASSERT(!!vm->callFrameForCatch);
+            ASSERT(!!vm.callFrameForCatch);
         };
 
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -687,7 +687,7 @@ void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* was
         throwException(exec, throwScope, error);
     }
 
-    genericUnwind(&vm, exec);
+    genericUnwind(vm, exec);
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
     // FIXME: We could make this better:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,7 +154,7 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
     
-    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
+    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(vm, "createPluginReplacement"));
     if (replacementFunction.isFunction(vm))
         return true;
     
@@ -185,7 +185,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     JSC::ExecState* exec = globalObject->globalExec();
 
     // Lookup the "createPluginReplacement" function.
-    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
+    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(vm, "createPluginReplacement"));
     if (replacementFunction.isUndefinedOrNull())
         return false;
     JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
@@ -209,7 +209,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     }
 
     // Get the <video> created to replace the plug-in.
-    JSC::JSValue value = replacement.get(exec, JSC::Identifier::fromString(exec, "video"));
+    JSC::JSValue value = replacement.get(exec, JSC::Identifier::fromString(vm, "video"));
     if (!scope.exception() && !value.isUndefinedOrNull())
         m_mediaElement = JSHTMLVideoElement::toWrapped(vm, value);
 
@@ -220,7 +220,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     }
 
     // Get the scripting interface.
-    value = replacement.get(exec, JSC::Identifier::fromString(exec, "scriptObject"));
+    value = replacement.get(exec, JSC::Identifier::fromString(vm, "scriptObject"));
     if (!scope.exception() && !value.isUndefinedOrNull()) {
         m_scriptObject = value.toObject(exec);
         scope.assertNoException();

@@ -200,8 +200,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
 
     // For each import i in module.imports:
     for (auto& import : moduleInformation.imports) {
-        Identifier moduleName = Identifier::fromString(&vm, String::fromUTF8(import.module));
-        Identifier fieldName = Identifier::fromString(&vm, String::fromUTF8(import.field));
+        Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
+        Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
         moduleRecord->appendRequestedModule(moduleName);
         moduleRecord->addImportEntry(WebAssemblyModuleRecord::ImportEntry {
             WebAssemblyModuleRecord::ImportEntryType::Single,

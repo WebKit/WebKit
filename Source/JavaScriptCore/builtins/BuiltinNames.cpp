@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +73,7 @@ SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PolyProto", SymbolImpl::s_f
 
 // We treat the dollarVM name as a special case below for $vm (because CommonIdentifiers does not
 // yet support the $ character).
-BuiltinNames::BuiltinNames(VM* vm, CommonIdentifiers* commonIdentifiers)
+BuiltinNames::BuiltinNames(VM& vm, CommonIdentifiers* commonIdentifiers)
     : m_emptyIdentifier(commonIdentifiers->emptyIdentifier)
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES_IN_JSC)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_NAMES_IN_JSC)

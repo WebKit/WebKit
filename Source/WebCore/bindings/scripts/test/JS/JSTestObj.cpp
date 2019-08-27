@@ -435,7 +435,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         annotatedTypeInSequenceMemberValue = jsUndefined();
     else {
-        annotatedTypeInSequenceMemberValue = object->get(&state, Identifier::fromString(&state, "annotatedTypeInSequenceMember"));
+        annotatedTypeInSequenceMemberValue = object->get(&state, Identifier::fromString(vm, "annotatedTypeInSequenceMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!annotatedTypeInSequenceMemberValue.isUndefined()) {
@@ -446,7 +446,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         annotatedTypeInUnionMemberValue = jsUndefined();
     else {
-        annotatedTypeInUnionMemberValue = object->get(&state, Identifier::fromString(&state, "annotatedTypeInUnionMember"));
+        annotatedTypeInUnionMemberValue = object->get(&state, Identifier::fromString(vm, "annotatedTypeInUnionMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!annotatedTypeInUnionMemberValue.isUndefined()) {
@@ -457,7 +457,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         anyTypedefValueValue = jsUndefined();
     else {
-        anyTypedefValueValue = object->get(&state, Identifier::fromString(&state, "anyTypedefValue"));
+        anyTypedefValueValue = object->get(&state, Identifier::fromString(vm, "anyTypedefValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!anyTypedefValueValue.isUndefined()) {
@@ -469,7 +469,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         anyValueValue = jsUndefined();
     else {
-        anyValueValue = object->get(&state, Identifier::fromString(&state, "anyValue"));
+        anyValueValue = object->get(&state, Identifier::fromString(vm, "anyValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!anyValueValue.isUndefined()) {
@@ -481,7 +481,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         anyValueWithNullDefaultValue = jsUndefined();
     else {
-        anyValueWithNullDefaultValue = object->get(&state, Identifier::fromString(&state, "anyValueWithNullDefault"));
+        anyValueWithNullDefaultValue = object->get(&state, Identifier::fromString(vm, "anyValueWithNullDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!anyValueWithNullDefaultValue.isUndefined()) {
@@ -493,7 +493,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         booleanWithDefaultValue = jsUndefined();
     else {
-        booleanWithDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithDefault"));
+        booleanWithDefaultValue = object->get(&state, Identifier::fromString(vm, "booleanWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithDefaultValue.isUndefined()) {
@@ -505,7 +505,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "booleanWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -516,7 +516,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         bufferSourceValueValue = jsUndefined();
     else {
-        bufferSourceValueValue = object->get(&state, Identifier::fromString(&state, "bufferSourceValue"));
+        bufferSourceValueValue = object->get(&state, Identifier::fromString(vm, "bufferSourceValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bufferSourceValueValue.isUndefined()) {
@@ -527,7 +527,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         dictionaryMemberValue = jsUndefined();
     else {
-        dictionaryMemberValue = object->get(&state, Identifier::fromString(&state, "dictionaryMember"));
+        dictionaryMemberValue = object->get(&state, Identifier::fromString(vm, "dictionaryMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!dictionaryMemberValue.isUndefined()) {
@@ -538,7 +538,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         enumerationValueWithDefaultValue = jsUndefined();
     else {
-        enumerationValueWithDefaultValue = object->get(&state, Identifier::fromString(&state, "enumerationValueWithDefault"));
+        enumerationValueWithDefaultValue = object->get(&state, Identifier::fromString(vm, "enumerationValueWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueWithDefaultValue.isUndefined()) {
@@ -550,7 +550,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         enumerationValueWithEmptyStringDefaultValue = jsUndefined();
     else {
-        enumerationValueWithEmptyStringDefaultValue = object->get(&state, Identifier::fromString(&state, "enumerationValueWithEmptyStringDefault"));
+        enumerationValueWithEmptyStringDefaultValue = object->get(&state, Identifier::fromString(vm, "enumerationValueWithEmptyStringDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueWithEmptyStringDefaultValue.isUndefined()) {
@@ -562,7 +562,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         enumerationValueWithoutDefaultValue = jsUndefined();
     else {
-        enumerationValueWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault"));
+        enumerationValueWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "enumerationValueWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueWithoutDefaultValue.isUndefined()) {
@@ -573,7 +573,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         fooAliasValue = jsUndefined();
     else {
-        fooAliasValue = object->get(&state, Identifier::fromString(&state, "fooAlias"));
+        fooAliasValue = object->get(&state, Identifier::fromString(vm, "fooAlias"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!fooAliasValue.isUndefined()) {
@@ -585,7 +585,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         fooWithDefaultAliasValue = jsUndefined();
     else {
-        fooWithDefaultAliasValue = object->get(&state, Identifier::fromString(&state, "fooWithDefaultAlias"));
+        fooWithDefaultAliasValue = object->get(&state, Identifier::fromString(vm, "fooWithDefaultAlias"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!fooWithDefaultAliasValue.isUndefined()) {
@@ -597,7 +597,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         integerValue = jsUndefined();
     else {
-        integerValue = object->get(&state, Identifier::fromString(&state, "integer"));
+        integerValue = object->get(&state, Identifier::fromString(vm, "integer"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!integerValue.isUndefined()) {
@@ -608,7 +608,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         integerWithDefaultValue = jsUndefined();
     else {
-        integerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "integerWithDefault"));
+        integerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "integerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!integerWithDefaultValue.isUndefined()) {
@@ -620,7 +620,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         largeIntegerValue = jsUndefined();
     else {
-        largeIntegerValue = object->get(&state, Identifier::fromString(&state, "largeInteger"));
+        largeIntegerValue = object->get(&state, Identifier::fromString(vm, "largeInteger"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!largeIntegerValue.isUndefined()) {
@@ -631,7 +631,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         largeIntegerWithDefaultValue = jsUndefined();
     else {
-        largeIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault"));
+        largeIntegerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "largeIntegerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!largeIntegerWithDefaultValue.isUndefined()) {
@@ -643,7 +643,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         nullableEnumValue = jsUndefined();
     else {
-        nullableEnumValue = object->get(&state, Identifier::fromString(&state, "nullableEnum"));
+        nullableEnumValue = object->get(&state, Identifier::fromString(vm, "nullableEnum"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableEnumValue.isUndefined()) {
@@ -655,7 +655,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         nullableIntegerWithDefaultValue = jsUndefined();
     else {
-        nullableIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "nullableIntegerWithDefault"));
+        nullableIntegerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "nullableIntegerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableIntegerWithDefaultValue.isUndefined()) {
@@ -667,7 +667,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         nullableNodeValue = jsUndefined();
     else {
-        nullableNodeValue = object->get(&state, Identifier::fromString(&state, "nullableNode"));
+        nullableNodeValue = object->get(&state, Identifier::fromString(vm, "nullableNode"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableNodeValue.isUndefined()) {
@@ -679,7 +679,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         nullableStringWithDefaultValue = jsUndefined();
     else {
-        nullableStringWithDefaultValue = object->get(&state, Identifier::fromString(&state, "nullableStringWithDefault"));
+        nullableStringWithDefaultValue = object->get(&state, Identifier::fromString(vm, "nullableStringWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableStringWithDefaultValue.isUndefined()) {
@@ -691,7 +691,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         nullableUnionMemberValue = jsUndefined();
     else {
-        nullableUnionMemberValue = object->get(&state, Identifier::fromString(&state, "nullableUnionMember"));
+        nullableUnionMemberValue = object->get(&state, Identifier::fromString(vm, "nullableUnionMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableUnionMemberValue.isUndefined()) {
@@ -703,7 +703,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         requiredBufferSourceValueValue = jsUndefined();
     else {
-        requiredBufferSourceValueValue = object->get(&state, Identifier::fromString(&state, "requiredBufferSourceValue"));
+        requiredBufferSourceValueValue = object->get(&state, Identifier::fromString(vm, "requiredBufferSourceValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!requiredBufferSourceValueValue.isUndefined()) {
@@ -717,7 +717,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         restrictedDoubleValue = jsUndefined();
     else {
-        restrictedDoubleValue = object->get(&state, Identifier::fromString(&state, "restrictedDouble"));
+        restrictedDoubleValue = object->get(&state, Identifier::fromString(vm, "restrictedDouble"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedDoubleValue.isUndefined()) {
@@ -728,7 +728,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         restrictedDoubleWithDefaultValue = jsUndefined();
     else {
-        restrictedDoubleWithDefaultValue = object->get(&state, Identifier::fromString(&state, "restrictedDoubleWithDefault"));
+        restrictedDoubleWithDefaultValue = object->get(&state, Identifier::fromString(vm, "restrictedDoubleWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedDoubleWithDefaultValue.isUndefined()) {
@@ -740,7 +740,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         restrictedFloatValue = jsUndefined();
     else {
-        restrictedFloatValue = object->get(&state, Identifier::fromString(&state, "restrictedFloat"));
+        restrictedFloatValue = object->get(&state, Identifier::fromString(vm, "restrictedFloat"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedFloatValue.isUndefined()) {
@@ -751,7 +751,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         restrictedFloatWithDefaultValue = jsUndefined();
     else {
-        restrictedFloatWithDefaultValue = object->get(&state, Identifier::fromString(&state, "restrictedFloatWithDefault"));
+        restrictedFloatWithDefaultValue = object->get(&state, Identifier::fromString(vm, "restrictedFloatWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedFloatWithDefaultValue.isUndefined()) {
@@ -763,7 +763,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         sequenceOfStringsValue = jsUndefined();
     else {
-        sequenceOfStringsValue = object->get(&state, Identifier::fromString(&state, "sequenceOfStrings"));
+        sequenceOfStringsValue = object->get(&state, Identifier::fromString(vm, "sequenceOfStrings"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!sequenceOfStringsValue.isUndefined()) {
@@ -774,7 +774,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         smallIntegerClampedValue = jsUndefined();
     else {
-        smallIntegerClampedValue = object->get(&state, Identifier::fromString(&state, "smallIntegerClamped"));
+        smallIntegerClampedValue = object->get(&state, Identifier::fromString(vm, "smallIntegerClamped"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallIntegerClampedValue.isUndefined()) {
@@ -785,7 +785,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         smallIntegerWithDefaultValue = jsUndefined();
     else {
-        smallIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "smallIntegerWithDefault"));
+        smallIntegerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "smallIntegerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallIntegerWithDefaultValue.isUndefined()) {
@@ -796,7 +796,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         smallUnsignedIntegerEnforcedRangeValue = jsUndefined();
     else {
-        smallUnsignedIntegerEnforcedRangeValue = object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerEnforcedRange"));
+        smallUnsignedIntegerEnforcedRangeValue = object->get(&state, Identifier::fromString(vm, "smallUnsignedIntegerEnforcedRange"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallUnsignedIntegerEnforcedRangeValue.isUndefined()) {
@@ -807,7 +807,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         smallUnsignedIntegerWithDefaultValue = jsUndefined();
     else {
-        smallUnsignedIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerWithDefault"));
+        smallUnsignedIntegerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "smallUnsignedIntegerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallUnsignedIntegerWithDefaultValue.isUndefined()) {
@@ -819,7 +819,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         stringTreatNullAsEmptyStringValue = jsUndefined();
     else {
-        stringTreatNullAsEmptyStringValue = object->get(&state, Identifier::fromString(&state, "stringTreatNullAsEmptyString"));
+        stringTreatNullAsEmptyStringValue = object->get(&state, Identifier::fromString(vm, "stringTreatNullAsEmptyString"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringTreatNullAsEmptyStringValue.isUndefined()) {
@@ -830,7 +830,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         stringWithDefaultValue = jsUndefined();
     else {
-        stringWithDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithDefault"));
+        stringWithDefaultValue = object->get(&state, Identifier::fromString(vm, "stringWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithDefaultValue.isUndefined()) {
@@ -842,7 +842,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "stringWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -853,7 +853,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unionMemberValue = jsUndefined();
     else {
-        unionMemberValue = object->get(&state, Identifier::fromString(&state, "unionMember"));
+        unionMemberValue = object->get(&state, Identifier::fromString(vm, "unionMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unionMemberValue.isUndefined()) {
@@ -864,7 +864,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unrestrictedDoubleValue = jsUndefined();
     else {
-        unrestrictedDoubleValue = object->get(&state, Identifier::fromString(&state, "unrestrictedDouble"));
+        unrestrictedDoubleValue = object->get(&state, Identifier::fromString(vm, "unrestrictedDouble"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedDoubleValue.isUndefined()) {
@@ -875,7 +875,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unrestrictedDoubleWithDefaultValue = jsUndefined();
     else {
-        unrestrictedDoubleWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault"));
+        unrestrictedDoubleWithDefaultValue = object->get(&state, Identifier::fromString(vm, "unrestrictedDoubleWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedDoubleWithDefaultValue.isUndefined()) {
@@ -887,7 +887,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unrestrictedFloatValue = jsUndefined();
     else {
-        unrestrictedFloatValue = object->get(&state, Identifier::fromString(&state, "unrestrictedFloat"));
+        unrestrictedFloatValue = object->get(&state, Identifier::fromString(vm, "unrestrictedFloat"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedFloatValue.isUndefined()) {
@@ -898,7 +898,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unrestrictedFloatWithDefaultValue = jsUndefined();
     else {
-        unrestrictedFloatWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault"));
+        unrestrictedFloatWithDefaultValue = object->get(&state, Identifier::fromString(vm, "unrestrictedFloatWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedFloatWithDefaultValue.isUndefined()) {
@@ -910,7 +910,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unsignedIntegerValue = jsUndefined();
     else {
-        unsignedIntegerValue = object->get(&state, Identifier::fromString(&state, "unsignedInteger"));
+        unsignedIntegerValue = object->get(&state, Identifier::fromString(vm, "unsignedInteger"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedIntegerValue.isUndefined()) {
@@ -921,7 +921,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unsignedIntegerWithDefaultValue = jsUndefined();
     else {
-        unsignedIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unsignedIntegerWithDefault"));
+        unsignedIntegerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "unsignedIntegerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedIntegerWithDefaultValue.isUndefined()) {
@@ -933,7 +933,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unsignedLargeIntegerValue = jsUndefined();
     else {
-        unsignedLargeIntegerValue = object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger"));
+        unsignedLargeIntegerValue = object->get(&state, Identifier::fromString(vm, "unsignedLargeInteger"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedLargeIntegerValue.isUndefined()) {
@@ -944,7 +944,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     if (isNullOrUndefined)
         unsignedLargeIntegerWithDefaultValue = jsUndefined();
     else {
-        unsignedLargeIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unsignedLargeIntegerWithDefault"));
+        unsignedLargeIntegerWithDefaultValue = object->get(&state, Identifier::fromString(vm, "unsignedLargeIntegerWithDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedLargeIntegerWithDefaultValue.isUndefined()) {
@@ -963,136 +963,136 @@ JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& g
 
     if (!IDLSequence<IDLClampAdaptor<IDLLong>>::isNullValue(dictionary.annotatedTypeInSequenceMember)) {
         auto annotatedTypeInSequenceMemberValue = toJS<IDLSequence<IDLClampAdaptor<IDLLong>>>(state, globalObject, IDLSequence<IDLClampAdaptor<IDLLong>>::extractValueFromNullable(dictionary.annotatedTypeInSequenceMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "annotatedTypeInSequenceMember"), annotatedTypeInSequenceMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "annotatedTypeInSequenceMember"), annotatedTypeInSequenceMemberValue);
     }
     if (!IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>::isNullValue(dictionary.annotatedTypeInUnionMember)) {
         auto annotatedTypeInUnionMemberValue = toJS<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(state, globalObject, IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>::extractValueFromNullable(dictionary.annotatedTypeInUnionMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "annotatedTypeInUnionMember"), annotatedTypeInUnionMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "annotatedTypeInUnionMember"), annotatedTypeInUnionMemberValue);
     }
     auto anyTypedefValueValue = toJS<IDLAny>(dictionary.anyTypedefValue);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyTypedefValue"), anyTypedefValueValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyTypedefValue"), anyTypedefValueValue);
     auto anyValueValue = toJS<IDLAny>(dictionary.anyValue);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyValue"), anyValueValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyValue"), anyValueValue);
     auto anyValueWithNullDefaultValue = toJS<IDLAny>(dictionary.anyValueWithNullDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyValueWithNullDefault"), anyValueWithNullDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyValueWithNullDefault"), anyValueWithNullDefaultValue);
     auto booleanWithDefaultValue = toJS<IDLBoolean>(dictionary.booleanWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "booleanWithDefault"), booleanWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithDefault"), booleanWithDefaultValue);
     if (!IDLBoolean::isNullValue(dictionary.booleanWithoutDefault)) {
         auto booleanWithoutDefaultValue = toJS<IDLBoolean>(IDLBoolean::extractValueFromNullable(dictionary.booleanWithoutDefault));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "booleanWithoutDefault"), booleanWithoutDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithoutDefault"), booleanWithoutDefaultValue);
     }
     if (!IDLUnion<IDLArrayBufferView, IDLArrayBuffer>::isNullValue(dictionary.bufferSourceValue)) {
         auto bufferSourceValueValue = toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, globalObject, IDLUnion<IDLArrayBufferView, IDLArrayBuffer>::extractValueFromNullable(dictionary.bufferSourceValue));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "bufferSourceValue"), bufferSourceValueValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "bufferSourceValue"), bufferSourceValueValue);
     }
     if (!IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>::isNullValue(dictionary.dictionaryMember)) {
         auto dictionaryMemberValue = toJS<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(state, globalObject, IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>::extractValueFromNullable(dictionary.dictionaryMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "dictionaryMember"), dictionaryMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "dictionaryMember"), dictionaryMemberValue);
     }
     auto enumerationValueWithDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, dictionary.enumerationValueWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithDefault"), enumerationValueWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithDefault"), enumerationValueWithDefaultValue);
     auto enumerationValueWithEmptyStringDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, dictionary.enumerationValueWithEmptyStringDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithEmptyStringDefault"), enumerationValueWithEmptyStringDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithEmptyStringDefault"), enumerationValueWithEmptyStringDefaultValue);
     if (!IDLEnumeration<TestObj::EnumType>::isNullValue(dictionary.enumerationValueWithoutDefault)) {
         auto enumerationValueWithoutDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, IDLEnumeration<TestObj::EnumType>::extractValueFromNullable(dictionary.enumerationValueWithoutDefault));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithoutDefault"), enumerationValueWithoutDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithoutDefault"), enumerationValueWithoutDefaultValue);
     }
     auto fooAliasValue = toJS<IDLAny>(dictionary.foo);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "fooAlias"), fooAliasValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "fooAlias"), fooAliasValue);
     auto fooWithDefaultAliasValue = toJS<IDLAny>(dictionary.fooWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "fooWithDefaultAlias"), fooWithDefaultAliasValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "fooWithDefaultAlias"), fooWithDefaultAliasValue);
     if (!IDLLong::isNullValue(dictionary.integer)) {
         auto integerValue = toJS<IDLLong>(IDLLong::extractValueFromNullable(dictionary.integer));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "integer"), integerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "integer"), integerValue);
     }
     auto integerWithDefaultValue = toJS<IDLLong>(dictionary.integerWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "integerWithDefault"), integerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "integerWithDefault"), integerWithDefaultValue);
     if (!IDLLongLong::isNullValue(dictionary.largeInteger)) {
         auto largeIntegerValue = toJS<IDLLongLong>(IDLLongLong::extractValueFromNullable(dictionary.largeInteger));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "largeInteger"), largeIntegerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "largeInteger"), largeIntegerValue);
     }
     auto largeIntegerWithDefaultValue = toJS<IDLLongLong>(dictionary.largeIntegerWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "largeIntegerWithDefault"), largeIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "largeIntegerWithDefault"), largeIntegerWithDefaultValue);
     auto nullableEnumValue = toJS<IDLNullable<IDLEnumeration<TestObj::EnumType>>>(state, dictionary.nullableEnum);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableEnum"), nullableEnumValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableEnum"), nullableEnumValue);
     auto nullableIntegerWithDefaultValue = toJS<IDLNullable<IDLLong>>(dictionary.nullableIntegerWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableIntegerWithDefault"), nullableIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableIntegerWithDefault"), nullableIntegerWithDefaultValue);
     auto nullableNodeValue = toJS<IDLNullable<IDLInterface<Node>>>(state, globalObject, dictionary.nullableNode);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableNode"), nullableNodeValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableNode"), nullableNodeValue);
     auto nullableStringWithDefaultValue = toJS<IDLNullable<IDLDOMString>>(state, dictionary.nullableStringWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableStringWithDefault"), nullableStringWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableStringWithDefault"), nullableStringWithDefaultValue);
     auto nullableUnionMemberValue = toJS<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(state, globalObject, dictionary.nullableUnionMember);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableUnionMember"), nullableUnionMemberValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableUnionMember"), nullableUnionMemberValue);
     auto requiredBufferSourceValueValue = toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, globalObject, dictionary.requiredBufferSourceValue);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "requiredBufferSourceValue"), requiredBufferSourceValueValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "requiredBufferSourceValue"), requiredBufferSourceValueValue);
     if (!IDLDouble::isNullValue(dictionary.restrictedDouble)) {
         auto restrictedDoubleValue = toJS<IDLDouble>(IDLDouble::extractValueFromNullable(dictionary.restrictedDouble));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedDouble"), restrictedDoubleValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedDouble"), restrictedDoubleValue);
     }
     auto restrictedDoubleWithDefaultValue = toJS<IDLDouble>(dictionary.restrictedDoubleWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedDoubleWithDefault"), restrictedDoubleWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedDoubleWithDefault"), restrictedDoubleWithDefaultValue);
     if (!IDLFloat::isNullValue(dictionary.restrictedFloat)) {
         auto restrictedFloatValue = toJS<IDLFloat>(IDLFloat::extractValueFromNullable(dictionary.restrictedFloat));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedFloat"), restrictedFloatValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedFloat"), restrictedFloatValue);
     }
     auto restrictedFloatWithDefaultValue = toJS<IDLFloat>(dictionary.restrictedFloatWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedFloatWithDefault"), restrictedFloatWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedFloatWithDefault"), restrictedFloatWithDefaultValue);
     if (!IDLSequence<IDLDOMString>::isNullValue(dictionary.sequenceOfStrings)) {
         auto sequenceOfStringsValue = toJS<IDLSequence<IDLDOMString>>(state, globalObject, IDLSequence<IDLDOMString>::extractValueFromNullable(dictionary.sequenceOfStrings));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "sequenceOfStrings"), sequenceOfStringsValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "sequenceOfStrings"), sequenceOfStringsValue);
     }
     if (!IDLClampAdaptor<IDLByte>::isNullValue(dictionary.smallIntegerClamped)) {
         auto smallIntegerClampedValue = toJS<IDLClampAdaptor<IDLByte>>(IDLClampAdaptor<IDLByte>::extractValueFromNullable(dictionary.smallIntegerClamped));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallIntegerClamped"), smallIntegerClampedValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallIntegerClamped"), smallIntegerClampedValue);
     }
     if (!IDLByte::isNullValue(dictionary.smallIntegerWithDefault)) {
         auto smallIntegerWithDefaultValue = toJS<IDLByte>(IDLByte::extractValueFromNullable(dictionary.smallIntegerWithDefault));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallIntegerWithDefault"), smallIntegerWithDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallIntegerWithDefault"), smallIntegerWithDefaultValue);
     }
     if (!IDLEnforceRangeAdaptor<IDLOctet>::isNullValue(dictionary.smallUnsignedIntegerEnforcedRange)) {
         auto smallUnsignedIntegerEnforcedRangeValue = toJS<IDLEnforceRangeAdaptor<IDLOctet>>(IDLEnforceRangeAdaptor<IDLOctet>::extractValueFromNullable(dictionary.smallUnsignedIntegerEnforcedRange));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallUnsignedIntegerEnforcedRange"), smallUnsignedIntegerEnforcedRangeValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallUnsignedIntegerEnforcedRange"), smallUnsignedIntegerEnforcedRangeValue);
     }
     auto smallUnsignedIntegerWithDefaultValue = toJS<IDLOctet>(dictionary.smallUnsignedIntegerWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallUnsignedIntegerWithDefault"), smallUnsignedIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "smallUnsignedIntegerWithDefault"), smallUnsignedIntegerWithDefaultValue);
     if (!IDLTreatNullAsEmptyAdaptor<IDLDOMString>::isNullValue(dictionary.stringTreatNullAsEmptyString)) {
         auto stringTreatNullAsEmptyStringValue = toJS<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, IDLTreatNullAsEmptyAdaptor<IDLDOMString>::extractValueFromNullable(dictionary.stringTreatNullAsEmptyString));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringTreatNullAsEmptyString"), stringTreatNullAsEmptyStringValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringTreatNullAsEmptyString"), stringTreatNullAsEmptyStringValue);
     }
     auto stringWithDefaultValue = toJS<IDLDOMString>(state, dictionary.stringWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringWithDefault"), stringWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "stringWithDefault"), stringWithDefaultValue);
     if (!IDLDOMString::isNullValue(dictionary.stringWithoutDefault)) {
         auto stringWithoutDefaultValue = toJS<IDLDOMString>(state, IDLDOMString::extractValueFromNullable(dictionary.stringWithoutDefault));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringWithoutDefault"), stringWithoutDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringWithoutDefault"), stringWithoutDefaultValue);
     }
     if (!IDLUnion<IDLLong, IDLInterface<Node>>::isNullValue(dictionary.unionMember)) {
         auto unionMemberValue = toJS<IDLUnion<IDLLong, IDLInterface<Node>>>(state, globalObject, IDLUnion<IDLLong, IDLInterface<Node>>::extractValueFromNullable(dictionary.unionMember));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unionMember"), unionMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unionMember"), unionMemberValue);
     }
     if (!IDLUnrestrictedDouble::isNullValue(dictionary.unrestrictedDouble)) {
         auto unrestrictedDoubleValue = toJS<IDLUnrestrictedDouble>(IDLUnrestrictedDouble::extractValueFromNullable(dictionary.unrestrictedDouble));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedDouble"), unrestrictedDoubleValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedDouble"), unrestrictedDoubleValue);
     }
     auto unrestrictedDoubleWithDefaultValue = toJS<IDLUnrestrictedDouble>(dictionary.unrestrictedDoubleWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedDoubleWithDefault"), unrestrictedDoubleWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedDoubleWithDefault"), unrestrictedDoubleWithDefaultValue);
     if (!IDLUnrestrictedFloat::isNullValue(dictionary.unrestrictedFloat)) {
         auto unrestrictedFloatValue = toJS<IDLUnrestrictedFloat>(IDLUnrestrictedFloat::extractValueFromNullable(dictionary.unrestrictedFloat));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedFloat"), unrestrictedFloatValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedFloat"), unrestrictedFloatValue);
     }
     auto unrestrictedFloatWithDefaultValue = toJS<IDLUnrestrictedFloat>(dictionary.unrestrictedFloatWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedFloatWithDefault"), unrestrictedFloatWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedFloatWithDefault"), unrestrictedFloatWithDefaultValue);
     if (!IDLUnsignedLong::isNullValue(dictionary.unsignedInteger)) {
         auto unsignedIntegerValue = toJS<IDLUnsignedLong>(IDLUnsignedLong::extractValueFromNullable(dictionary.unsignedInteger));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedInteger"), unsignedIntegerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedInteger"), unsignedIntegerValue);
     }
     auto unsignedIntegerWithDefaultValue = toJS<IDLUnsignedLong>(dictionary.unsignedIntegerWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedIntegerWithDefault"), unsignedIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedIntegerWithDefault"), unsignedIntegerWithDefaultValue);
     if (!IDLUnsignedLongLong::isNullValue(dictionary.unsignedLargeInteger)) {
         auto unsignedLargeIntegerValue = toJS<IDLUnsignedLongLong>(IDLUnsignedLongLong::extractValueFromNullable(dictionary.unsignedLargeInteger));
-        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedLargeInteger"), unsignedLargeIntegerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedLargeInteger"), unsignedLargeIntegerValue);
     }
     auto unsignedLargeIntegerWithDefaultValue = toJS<IDLUnsignedLongLong>(dictionary.unsignedLargeIntegerWithDefault);
-    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedLargeIntegerWithDefault"), unsignedLargeIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedLargeIntegerWithDefault"), unsignedLargeIntegerWithDefaultValue);
     return result;
 }
 
@@ -1111,7 +1111,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "booleanWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -1122,7 +1122,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         nonNullableNodeValue = jsUndefined();
     else {
-        nonNullableNodeValue = object->get(&state, Identifier::fromString(&state, "nonNullableNode"));
+        nonNullableNodeValue = object->get(&state, Identifier::fromString(vm, "nonNullableNode"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nonNullableNodeValue.isUndefined()) {
@@ -1136,7 +1136,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         requiredDictionaryMemberValue = jsUndefined();
     else {
-        requiredDictionaryMemberValue = object->get(&state, Identifier::fromString(&state, "requiredDictionaryMember"));
+        requiredDictionaryMemberValue = object->get(&state, Identifier::fromString(vm, "requiredDictionaryMember"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!requiredDictionaryMemberValue.isUndefined()) {
@@ -1150,7 +1150,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         requiredEnumerationValueValue = jsUndefined();
     else {
-        requiredEnumerationValueValue = object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue"));
+        requiredEnumerationValueValue = object->get(&state, Identifier::fromString(vm, "requiredEnumerationValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!requiredEnumerationValueValue.isUndefined()) {
@@ -1178,7 +1178,7 @@ template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "booleanWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -1189,7 +1189,7 @@ template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::
     if (isNullOrUndefined)
         enumerationValueValue = jsUndefined();
     else {
-        enumerationValueValue = object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+        enumerationValueValue = object->get(&state, Identifier::fromString(vm, "enumerationValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueValue.isUndefined()) {
@@ -1214,7 +1214,7 @@ template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(Ex
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "booleanWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -1225,7 +1225,7 @@ template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(Ex
     if (isNullOrUndefined)
         enumerationValueValue = jsUndefined();
     else {
-        enumerationValueValue = object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+        enumerationValueValue = object->get(&state, Identifier::fromString(vm, "enumerationValue"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueValue.isUndefined()) {
@@ -1250,7 +1250,7 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
     if (isNullOrUndefined)
         parentMember1Value = jsUndefined();
     else {
-        parentMember1Value = object->get(&state, Identifier::fromString(&state, "parentMember1"));
+        parentMember1Value = object->get(&state, Identifier::fromString(vm, "parentMember1"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember1Value.isUndefined()) {
@@ -1261,7 +1261,7 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
     if (isNullOrUndefined)
         parentMember2Value = jsUndefined();
     else {
-        parentMember2Value = object->get(&state, Identifier::fromString(&state, "parentMember2"));
+        parentMember2Value = object->get(&state, Identifier::fromString(vm, "parentMember2"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember2Value.isUndefined()) {
@@ -1286,7 +1286,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         parentMember1Value = jsUndefined();
     else {
-        parentMember1Value = object->get(&state, Identifier::fromString(&state, "parentMember1"));
+        parentMember1Value = object->get(&state, Identifier::fromString(vm, "parentMember1"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember1Value.isUndefined()) {
@@ -1297,7 +1297,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         parentMember2Value = jsUndefined();
     else {
-        parentMember2Value = object->get(&state, Identifier::fromString(&state, "parentMember2"));
+        parentMember2Value = object->get(&state, Identifier::fromString(vm, "parentMember2"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember2Value.isUndefined()) {
@@ -1308,7 +1308,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         childMember1Value = jsUndefined();
     else {
-        childMember1Value = object->get(&state, Identifier::fromString(&state, "childMember1"));
+        childMember1Value = object->get(&state, Identifier::fromString(vm, "childMember1"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!childMember1Value.isUndefined()) {
@@ -1319,7 +1319,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         childMember2Value = jsUndefined();
     else {
-        childMember2Value = object->get(&state, Identifier::fromString(&state, "childMember2"));
+        childMember2Value = object->get(&state, Identifier::fromString(vm, "childMember2"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!childMember2Value.isUndefined()) {
@@ -1346,7 +1346,7 @@ template<> TestObj::ConditionalDictionaryA convertDictionary<TestObj::Conditiona
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "stringWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -1375,7 +1375,7 @@ template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::Conditiona
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "stringWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -1404,7 +1404,7 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(vm, "stringWithoutDefault"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -1968,19 +1968,19 @@ template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, cons
 template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestObj::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String("TestObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestObj::info(), JSTestObjConstructorTableValues, *this);
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttributeStatic"), strlen("enabledAtRuntimeAttributeStatic"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttributeStatic"), strlen("enabledAtRuntimeAttributeStatic"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);
     }
 #endif
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperationStatic"), strlen("enabledAtRuntimeOperationStatic"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperationStatic"), strlen("enabledAtRuntimeOperationStatic"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);
     }
@@ -2334,84 +2334,84 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperation"), strlen("enabledAtRuntimeOperation"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperation"), strlen("enabledAtRuntimeOperation"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
     if (!(worldForDOMObject(*this).someWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledInSpecificWorldWhenRuntimeFeatureEnabled"), strlen("enabledInSpecificWorldWhenRuntimeFeatureEnabled"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledInSpecificWorldWhenRuntimeFeatureEnabled"), strlen("enabledInSpecificWorldWhenRuntimeFeatureEnabled"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!worldForDOMObject(*this).someWorld()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("calculateSecretResult"), strlen("calculateSecretResult"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("calculateSecretResult"), strlen("calculateSecretResult"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("getSecretBoolean"), strlen("getSecretBoolean"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("getSecretBoolean"), strlen("getSecretBoolean"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #if ENABLE(TEST_FEATURE)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("testFeatureGetSecretBoolean"), strlen("testFeatureGetSecretBoolean"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("testFeatureGetSecretBoolean"), strlen("testFeatureGetSecretBoolean"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("conditionallyExposedToWindowFunction"), strlen("conditionallyExposedToWindowFunction"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWindowFunction"), strlen("conditionallyExposedToWindowFunction"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("conditionallyExposedToWorkerFunction"), strlen("conditionallyExposedToWorkerFunction"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWorkerFunction"), strlen("conditionallyExposedToWorkerFunction"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->allowsMediaDevices())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("mediaDevices"), strlen("mediaDevices"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mediaDevices"), strlen("mediaDevices"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->hasServiceWorkerScheme())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("serviceWorkers"), strlen("serviceWorkers"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("serviceWorkers"), strlen("serviceWorkers"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #if ENABLE(TEST_FEATURE)
     if (!(RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled() && RuntimeEnabledFeatures::sharedFeatures().testFeature1Enabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("conditionallyExposedToWindowAttribute"), strlen("conditionallyExposedToWindowAttribute"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWindowAttribute"), strlen("conditionallyExposedToWindowAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("conditionallyExposedToWorkerAttribute"), strlen("conditionallyExposedToWorkerAttribute"));
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWorkerAttribute"), strlen("conditionallyExposedToWorkerAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
@@ -2422,8 +2422,8 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     addValueIterableMethods(*globalObject(), *this);
     JSObject& unscopables = *constructEmptyObject(globalObject()->globalExec(), globalObject()->nullPrototypeObjectStructure());
-    unscopables.putDirect(vm, Identifier::fromString(&vm, "voidMethod"), jsBoolean(true));
-    unscopables.putDirect(vm, Identifier::fromString(&vm, "shortAttr"), jsBoolean(true));
+    unscopables.putDirect(vm, Identifier::fromString(vm, "voidMethod"), jsBoolean(true));
+    unscopables.putDirect(vm, Identifier::fromString(vm, "shortAttr"), jsBoolean(true));
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
 }
 
@@ -2492,10 +2492,11 @@ bool JSTestObj::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, un
 
 void JSTestObj::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = state->vm();
     auto* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
-        propertyNames.add(Identifier::from(state, i));
+        propertyNames.add(Identifier::from(vm, i));
     JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
@@ -2665,6 +2666,7 @@ EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSV
 
 static inline bool setJSTestObjConstructorStaticStringAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -2725,6 +2727,7 @@ EncodedJSValue jsTestObjEnumAttr(ExecState* state, EncodedJSValue thisValue, Pro
 
 static inline bool setJSTestObjEnumAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto optionalNativeValue = parseEnumeration<TestObj::EnumType>(state, value);
@@ -2759,6 +2762,7 @@ EncodedJSValue jsTestObjByteAttr(ExecState* state, EncodedJSValue thisValue, Pro
 
 static inline bool setJSTestObjByteAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLByte>(state, value);
@@ -2790,6 +2794,7 @@ EncodedJSValue jsTestObjOctetAttr(ExecState* state, EncodedJSValue thisValue, Pr
 
 static inline bool setJSTestObjOctetAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLOctet>(state, value);
@@ -2821,6 +2826,7 @@ EncodedJSValue jsTestObjShortAttr(ExecState* state, EncodedJSValue thisValue, Pr
 
 static inline bool setJSTestObjShortAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLShort>(state, value);
@@ -2852,6 +2858,7 @@ EncodedJSValue jsTestObjClampedShortAttr(ExecState* state, EncodedJSValue thisVa
 
 static inline bool setJSTestObjClampedShortAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLClampAdaptor<IDLShort>>(state, value);
@@ -2883,6 +2890,7 @@ EncodedJSValue jsTestObjEnforceRangeShortAttr(ExecState* state, EncodedJSValue t
 
 static inline bool setJSTestObjEnforceRangeShortAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLEnforceRangeAdaptor<IDLShort>>(state, value);
@@ -2914,6 +2922,7 @@ EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* state, EncodedJSValue thisV
 
 static inline bool setJSTestObjUnsignedShortAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedShort>(state, value);
@@ -2945,6 +2954,7 @@ EncodedJSValue jsTestObjLongAttr(ExecState* state, EncodedJSValue thisValue, Pro
 
 static inline bool setJSTestObjLongAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -2976,6 +2986,7 @@ EncodedJSValue jsTestObjLongLongAttr(ExecState* state, EncodedJSValue thisValue,
 
 static inline bool setJSTestObjLongLongAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLongLong>(state, value);
@@ -3007,6 +3018,7 @@ EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* state, EncodedJSValue th
 
 static inline bool setJSTestObjUnsignedLongLongAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedLongLong>(state, value);
@@ -3038,6 +3050,7 @@ EncodedJSValue jsTestObjStringAttr(ExecState* state, EncodedJSValue thisValue, P
 
 static inline bool setJSTestObjStringAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -3069,6 +3082,7 @@ EncodedJSValue jsTestObjUsvstringAttr(ExecState* state, EncodedJSValue thisValue
 
 static inline bool setJSTestObjUsvstringAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
@@ -3100,6 +3114,7 @@ EncodedJSValue jsTestObjTestObjAttr(ExecState* state, EncodedJSValue thisValue, 
 
 static inline bool setJSTestObjTestObjAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "testObjAttr", "TestObj"); });
@@ -3131,6 +3146,7 @@ EncodedJSValue jsTestObjTestNullableObjAttr(ExecState* state, EncodedJSValue thi
 
 static inline bool setJSTestObjTestNullableObjAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLInterface<TestObj>>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "testNullableObjAttr", "TestObj"); });
@@ -3162,6 +3178,7 @@ EncodedJSValue jsTestObjLenientTestObjAttr(ExecState* state, EncodedJSValue this
 
 static inline bool setJSTestObjLenientTestObjAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "lenientTestObjAttr", "TestObj"); });
@@ -3207,6 +3224,7 @@ EncodedJSValue jsTestObjStringAttrTreatingNullAsEmptyString(ExecState* state, En
 
 static inline bool setJSTestObjStringAttrTreatingNullAsEmptyStringSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, value);
@@ -3238,6 +3256,7 @@ EncodedJSValue jsTestObjUsvstringAttrTreatingNullAsEmptyString(ExecState* state,
 
 static inline bool setJSTestObjUsvstringAttrTreatingNullAsEmptyStringSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLTreatNullAsEmptyAdaptor<IDLUSVString>>(state, value);
@@ -3269,6 +3288,7 @@ EncodedJSValue jsTestObjByteStringAttrTreatingNullAsEmptyString(ExecState* state
 
 static inline bool setJSTestObjByteStringAttrTreatingNullAsEmptyStringSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLTreatNullAsEmptyAdaptor<IDLByteString>>(state, value);
@@ -3300,6 +3320,7 @@ EncodedJSValue jsTestObjStringLongRecordAttr(ExecState* state, EncodedJSValue th
 
 static inline bool setJSTestObjStringLongRecordAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLDOMString, IDLLong>>(state, value);
@@ -3331,6 +3352,7 @@ EncodedJSValue jsTestObjUsvstringLongRecordAttr(ExecState* state, EncodedJSValue
 
 static inline bool setJSTestObjUsvstringLongRecordAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLUSVString, IDLLong>>(state, value);
@@ -3362,6 +3384,7 @@ EncodedJSValue jsTestObjUsvstringLongRecordAttr(ExecState* state, EncodedJSValue
 
 static inline bool setJSTestObjUsvstringLongRecordAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLByteString, IDLLong>>(state, value);
@@ -3393,6 +3416,7 @@ EncodedJSValue jsTestObjStringObjRecordAttr(ExecState* state, EncodedJSValue thi
 
 static inline bool setJSTestObjStringObjRecordAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLDOMString, IDLInterface<TestObj>>>(state, value);
@@ -3424,6 +3448,7 @@ EncodedJSValue jsTestObjStringNullableObjRecordAttr(ExecState* state, EncodedJSV
 
 static inline bool setJSTestObjStringNullableObjRecordAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLDOMString, IDLNullable<IDLInterface<TestObj>>>>(state, value);
@@ -3455,6 +3480,7 @@ EncodedJSValue jsTestObjDictionaryAttr(ExecState* state, EncodedJSValue thisValu
 
 static inline bool setJSTestObjDictionaryAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDictionary<TestObj::Dictionary>>(state, value);
@@ -3486,6 +3512,7 @@ EncodedJSValue jsTestObjNullableDictionaryAttr(ExecState* state, EncodedJSValue 
 
 static inline bool setJSTestObjNullableDictionaryAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLDictionary<TestObj::Dictionary>>>(state, value);
@@ -3517,6 +3544,7 @@ EncodedJSValue jsTestObjAnnotatedTypeInUnionAttr(ExecState* state, EncodedJSValu
 
 static inline bool setJSTestObjAnnotatedTypeInUnionAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(state, value);
@@ -3548,6 +3576,7 @@ EncodedJSValue jsTestObjAnnotatedTypeInSequenceAttr(ExecState* state, EncodedJSV
 
 static inline bool setJSTestObjAnnotatedTypeInSequenceAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSequence<IDLClampAdaptor<IDLLong>>>(state, value);
@@ -3579,6 +3608,7 @@ EncodedJSValue jsTestObjImplementationEnumAttr(ExecState* state, EncodedJSValue 
 
 static inline bool setJSTestObjImplementationEnumAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto optionalNativeValue = parseEnumeration<AlternateEnumName>(state, value);
@@ -3641,6 +3671,7 @@ EncodedJSValue jsTestObjXMLObjAttr(ExecState* state, EncodedJSValue thisValue, P
 
 static inline bool setJSTestObjXMLObjAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "XMLObjAttr", "TestObj"); });
@@ -3672,6 +3703,7 @@ EncodedJSValue jsTestObjCreate(ExecState* state, EncodedJSValue thisValue, Prope
 
 static inline bool setJSTestObjCreateSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
@@ -3703,6 +3735,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thi
 
 static inline bool setJSTestObjReflectedStringAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -3734,6 +3767,7 @@ EncodedJSValue jsTestObjReflectedUSVStringAttr(ExecState* state, EncodedJSValue 
 
 static inline bool setJSTestObjReflectedUSVStringAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
@@ -3765,6 +3799,7 @@ EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* state, EncodedJSValue t
 
 static inline bool setJSTestObjReflectedIntegralAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -3796,6 +3831,7 @@ EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* state, EncodedJ
 
 static inline bool setJSTestObjReflectedUnsignedIntegralAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedLong>(state, value);
@@ -3827,6 +3863,7 @@ EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* state, EncodedJSValue th
 
 static inline bool setJSTestObjReflectedBooleanAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
@@ -3858,6 +3895,7 @@ EncodedJSValue jsTestObjReflectedURLAttr(ExecState* state, EncodedJSValue thisVa
 
 static inline bool setJSTestObjReflectedURLAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -3889,6 +3927,7 @@ EncodedJSValue jsTestObjReflectedUSVURLAttr(ExecState* state, EncodedJSValue thi
 
 static inline bool setJSTestObjReflectedUSVURLAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
@@ -3920,6 +3959,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thi
 
 static inline bool setJSTestObjReflectedStringAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -3951,6 +3991,7 @@ EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* state, EncodedJSV
 
 static inline bool setJSTestObjReflectedCustomIntegralAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -3982,6 +4023,7 @@ EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* state, EncodedJSVa
 
 static inline bool setJSTestObjReflectedCustomBooleanAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
@@ -4013,6 +4055,7 @@ EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* state, EncodedJSValue 
 
 static inline bool setJSTestObjReflectedCustomURLAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -4048,6 +4091,7 @@ EncodedJSValue jsTestObjEnabledAtRuntimeAttribute(ExecState* state, EncodedJSVal
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestObjEnabledAtRuntimeAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
@@ -4084,6 +4128,7 @@ EncodedJSValue jsTestObjConstructorEnabledAtRuntimeAttributeStatic(ExecState* st
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestObjConstructorEnabledAtRuntimeAttributeStaticSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -4116,6 +4161,7 @@ EncodedJSValue jsTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValu
 
 static inline bool setJSTestObjTypedArrayAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLFloat32Array>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "typedArrayAttr", "Float32Array"); });
@@ -4145,6 +4191,7 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* state, EncodedJSValue thisValue, P
 
 static inline bool setJSTestObjCustomAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     thisObject.setCustomAttr(state, value);
     return true;
@@ -4169,6 +4216,7 @@ EncodedJSValue jsTestObjOnfoo(ExecState* state, EncodedJSValue thisValue, Proper
 
 static inline bool setJSTestObjOnfooSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     setEventHandlerAttribute(state, thisObject, thisObject.wrapped(), eventNames().fooEvent, value);
     return true;
@@ -4193,6 +4241,7 @@ EncodedJSValue jsTestObjOnwebkitfoo(ExecState* state, EncodedJSValue thisValue, 
 
 static inline bool setJSTestObjOnwebkitfooSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     setEventHandlerAttribute(state, thisObject, thisObject.wrapped(), eventNames().fooEvent, value);
     return true;
@@ -4219,6 +4268,7 @@ EncodedJSValue jsTestObjWithExecStateAttribute(ExecState* state, EncodedJSValue 
 
 static inline bool setJSTestObjWithExecStateAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4250,6 +4300,7 @@ EncodedJSValue jsTestObjWithCallWithAndSetterCallWithAttribute(ExecState* state,
 
 static inline bool setJSTestObjWithCallWithAndSetterCallWithAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4284,6 +4335,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* state, En
 
 static inline bool setJSTestObjWithScriptExecutionContextAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAttribute", "TestObj"); });
@@ -4321,6 +4373,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndExecStateAttribute(ExecStat
 
 static inline bool setJSTestObjWithScriptExecutionContextAndExecStateAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAndExecStateAttribute", "TestObj"); });
@@ -4358,6 +4411,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribut
 
 static inline bool setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAndExecStateWithSpacesAttribute", "TestObj"); });
@@ -4396,6 +4450,7 @@ EncodedJSValue jsTestObjConditionalAttr1(ExecState* state, EncodedJSValue thisVa
 #if ENABLE(Condition1)
 static inline bool setJSTestObjConditionalAttr1Setter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4433,6 +4488,7 @@ EncodedJSValue jsTestObjConditionalAttr2(ExecState* state, EncodedJSValue thisVa
 #if ENABLE(Condition1) && ENABLE(Condition2)
 static inline bool setJSTestObjConditionalAttr2Setter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4470,6 +4526,7 @@ EncodedJSValue jsTestObjConditionalAttr3(ExecState* state, EncodedJSValue thisVa
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static inline bool setJSTestObjConditionalAttr3Setter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4505,9 +4562,10 @@ EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* state, EncodedJSV
 #if ENABLE(Condition1)
 static inline bool setJSTestObjConditionalAttr4ConstructorSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("conditionalAttr4"), strlen("conditionalAttr4")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr4"), strlen("conditionalAttr4")), value);
 }
 
 bool setJSTestObjConditionalAttr4Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4535,9 +4593,10 @@ EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* state, EncodedJSV
 #if ENABLE(Condition1) && ENABLE(Condition2)
 static inline bool setJSTestObjConditionalAttr5ConstructorSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("conditionalAttr5"), strlen("conditionalAttr5")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr5"), strlen("conditionalAttr5")), value);
 }
 
 bool setJSTestObjConditionalAttr5Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4565,9 +4624,10 @@ EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* state, EncodedJSV
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static inline bool setJSTestObjConditionalAttr6ConstructorSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("conditionalAttr6"), strlen("conditionalAttr6")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr6"), strlen("conditionalAttr6")), value);
 }
 
 bool setJSTestObjConditionalAttr6Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4647,6 +4707,7 @@ EncodedJSValue jsTestObjAnyAttribute(ExecState* state, EncodedJSValue thisValue,
 
 static inline bool setJSTestObjAnyAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLAny>(state, value);
@@ -4678,6 +4739,7 @@ EncodedJSValue jsTestObjObjectAttribute(ExecState* state, EncodedJSValue thisVal
 
 static inline bool setJSTestObjObjectAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLObject>(state, value);
@@ -4723,6 +4785,7 @@ EncodedJSValue jsTestObjMutablePoint(ExecState* state, EncodedJSValue thisValue,
 
 static inline bool setJSTestObjMutablePointSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<SVGPoint>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "mutablePoint", "SVGPoint"); });
@@ -4754,6 +4817,7 @@ EncodedJSValue jsTestObjStrawberry(ExecState* state, EncodedJSValue thisValue, P
 
 static inline bool setJSTestObjStrawberrySetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4799,6 +4863,7 @@ EncodedJSValue jsTestObjId(ExecState* state, EncodedJSValue thisValue, PropertyN
 
 static inline bool setJSTestObjIdSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -4844,9 +4909,10 @@ EncodedJSValue jsTestObjReplaceableAttribute(ExecState* state, EncodedJSValue th
 
 static inline bool setJSTestObjReplaceableAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
     // Shadowing a built-in property.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("replaceableAttribute"), strlen("replaceableAttribute")), value);
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("replaceableAttribute"), strlen("replaceableAttribute")), value);
 }
 
 bool setJSTestObjReplaceableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4926,6 +4992,7 @@ EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* state, EncodedJ
 
 static inline bool setJSTestObjNullableLongSettableAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLLong>>(state, value);
@@ -4957,6 +5024,7 @@ EncodedJSValue jsTestObjNullableStringSettableAttribute(ExecState* state, Encode
 
 static inline bool setJSTestObjNullableStringSettableAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLDOMString>>(state, value);
@@ -4988,6 +5056,7 @@ EncodedJSValue jsTestObjNullableUSVStringSettableAttribute(ExecState* state, Enc
 
 static inline bool setJSTestObjNullableUSVStringSettableAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLUSVString>>(state, value);
@@ -5019,6 +5088,7 @@ EncodedJSValue jsTestObjNullableByteStringSettableAttribute(ExecState* state, En
 
 static inline bool setJSTestObjNullableByteStringSettableAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLByteString>>(state, value);
@@ -5064,6 +5134,7 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJ
 
 static inline bool setJSTestObjAttributeWithReservedEnumTypeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto optionalNativeValue = parseEnumeration<TestObj::Optional>(state, value);
@@ -5126,17 +5197,18 @@ EncodedJSValue jsTestObjPutForwardsAttribute(ExecState* state, EncodedJSValue th
 
 static inline bool setJSTestObjPutForwardsAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
-    auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("putForwardsAttribute"), strlen("putForwardsAttribute"));
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
+    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>("putForwardsAttribute"), strlen("putForwardsAttribute"));
     auto valueToForwardTo = thisObject.get(&state, id);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!valueToForwardTo.isObject())) {
         throwTypeError(&state, throwScope);
         return false;
     }
-    auto forwardId = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("name"), strlen("name"));
+    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>("name"), strlen("name"));
     PutPropertySlot slot(valueToForwardTo, false);
-    asObject(valueToForwardTo)->methodTable(state.vm())->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
+    asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
@@ -5162,17 +5234,18 @@ EncodedJSValue jsTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJS
 
 static inline bool setJSTestObjPutForwardsNullableAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(throwScope);
-    auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("putForwardsNullableAttribute"), strlen("putForwardsNullableAttribute"));
+    UNUSED_PARAM(state);
+    VM& vm = throwScope.vm();
+    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>("putForwardsNullableAttribute"), strlen("putForwardsNullableAttribute"));
     auto valueToForwardTo = thisObject.get(&state, id);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!valueToForwardTo.isObject())) {
         throwTypeError(&state, throwScope);
         return false;
     }
-    auto forwardId = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("name"), strlen("name"));
+    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>("name"), strlen("name"));
     PutPropertySlot slot(valueToForwardTo, false);
-    asObject(valueToForwardTo)->methodTable(state.vm())->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
+    asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
@@ -5198,6 +5271,7 @@ EncodedJSValue jsTestObjStringifierAttribute(ExecState* state, EncodedJSValue th
 
 static inline bool setJSTestObjStringifierAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
@@ -5230,6 +5304,7 @@ EncodedJSValue jsTestObjConditionallyReadWriteAttribute(ExecState* state, Encode
 #if ENABLE(CONDITION)
 static inline bool setJSTestObjConditionallyReadWriteAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "conditionallyReadWriteAttribute", "Node"); });
@@ -5268,6 +5343,7 @@ EncodedJSValue jsTestObjConditionalAndConditionallyReadWriteAttribute(ExecState*
 #if ENABLE(CONDITION)
 static inline bool setJSTestObjConditionalAndConditionallyReadWriteAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "conditionalAndConditionallyReadWriteAttribute", "Node"); });
@@ -5303,6 +5379,7 @@ EncodedJSValue jsTestObjConditionallyExposedToWindowAttribute(ExecState* state, 
 
 static inline bool setJSTestObjConditionallyExposedToWindowAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -5334,6 +5411,7 @@ EncodedJSValue jsTestObjConditionallyExposedToWorkerAttribute(ExecState* state, 
 
 static inline bool setJSTestObjConditionallyExposedToWorkerAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -5365,6 +5443,7 @@ EncodedJSValue jsTestObjConditionallyExposedToWindowAndWorkerAttribute(ExecState
 
 static inline bool setJSTestObjConditionallyExposedToWindowAndWorkerAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
@@ -8548,19 +8627,19 @@ JSC::JSObject* JSTestObj::serialize(ExecState& state, JSTestObj& thisObject, JSD
 
     auto createValue = jsTestObjCreateGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(&vm, "create"), createValue);
+    result->putDirect(vm, Identifier::fromString(vm, "create"), createValue);
 
     auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttrGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(&vm, "readOnlyStringAttr"), readOnlyStringAttrValue);
+    result->putDirect(vm, Identifier::fromString(vm, "readOnlyStringAttr"), readOnlyStringAttrValue);
 
     auto enumAttrValue = jsTestObjEnumAttrGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(&vm, "enumAttr"), enumAttrValue);
+    result->putDirect(vm, Identifier::fromString(vm, "enumAttr"), enumAttrValue);
 
     auto longAttrValue = jsTestObjLongAttrGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(&vm, "longAttr"), longAttrValue);
+    result->putDirect(vm, Identifier::fromString(vm, "longAttr"), longAttrValue);
 
     return result;
 }

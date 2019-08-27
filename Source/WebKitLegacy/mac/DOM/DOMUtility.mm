@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,7 @@
 
 static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
 {
-    JSC::VM& vm = *jsWrapper.vm();
+    JSC::VM& vm = jsWrapper.vm();
     #define WRAP(className) \
         if (auto* wrapped = WebCore::JS##className::toWrapped(vm, &jsWrapper)) \
             return kit(wrapped);

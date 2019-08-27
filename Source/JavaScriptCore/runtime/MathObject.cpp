@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2008, 2013, 2015-2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2007-2019 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -78,51 +78,51 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "E"), jsNumber(Math::exp(1.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "LN2"), jsNumber(Math::log(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "LN10"), jsNumber(Math::log(10.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "LOG2E"), jsNumber(1.0 / Math::log(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "LOG10E"), jsNumber(0.4342944819032518), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "PI"), jsNumber(piDouble), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "SQRT1_2"), jsNumber(sqrt(0.5)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "SQRT2"), jsNumber(sqrt(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Math"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "E"), jsNumber(Math::exp(1.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LN2"), jsNumber(Math::log(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LN10"), jsNumber(Math::log(10.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LOG2E"), jsNumber(1.0 / Math::log(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "LOG10E"), jsNumber(0.4342944819032518), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "PI"), jsNumber(piDouble), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "SQRT1_2"), jsNumber(sqrt(0.5)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "SQRT2"), jsNumber(sqrt(2.0)), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "Math"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "abs"), 1, mathProtoFuncAbs, AbsIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "acos"), 1, mathProtoFuncACos, ACosIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "asin"), 1, mathProtoFuncASin, ASinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "atan"), 1, mathProtoFuncATan, ATanIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "acosh"), 1, mathProtoFuncACosh, ACoshIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "asinh"), 1, mathProtoFuncASinh, ASinhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "atanh"), 1, mathProtoFuncATanh, ATanhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "cbrt"), 1, mathProtoFuncCbrt, CbrtIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "clz32"), 1, mathProtoFuncClz32, Clz32Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "cos"), 1, mathProtoFuncCos, CosIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "cosh"), 1, mathProtoFuncCosh, CoshIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "expm1"), 1, mathProtoFuncExpm1, Expm1Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "fround"), 1, mathProtoFuncFround, FRoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "hypot"), 2, mathProtoFuncHypot, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "log"), 1, mathProtoFuncLog, LogIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "log10"), 1, mathProtoFuncLog10, Log10Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "log1p"), 1, mathProtoFuncLog1p, Log1pIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "log2"), 1, mathProtoFuncLog2, Log2Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "max"), 2, mathProtoFuncMax, MaxIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "min"), 2, mathProtoFuncMin, MinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "random"), 0, mathProtoFuncRandom, RandomIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sign"), 1, mathProtoFuncSign, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sin"), 1, mathProtoFuncSin, SinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sinh"), 1, mathProtoFuncSinh, SinhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "tan"), 1, mathProtoFuncTan, TanIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "tanh"), 1, mathProtoFuncTanh, TanhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "trunc"), 1, mathProtoFuncTrunc, TruncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "imul"), 2, mathProtoFuncIMul, IMulIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "abs"), 1, mathProtoFuncAbs, AbsIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "acos"), 1, mathProtoFuncACos, ACosIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "asin"), 1, mathProtoFuncASin, ASinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "atan"), 1, mathProtoFuncATan, ATanIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "acosh"), 1, mathProtoFuncACosh, ACoshIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "asinh"), 1, mathProtoFuncASinh, ASinhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "atanh"), 1, mathProtoFuncATanh, ATanhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "cbrt"), 1, mathProtoFuncCbrt, CbrtIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "clz32"), 1, mathProtoFuncClz32, Clz32Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "cos"), 1, mathProtoFuncCos, CosIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "cosh"), 1, mathProtoFuncCosh, CoshIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "expm1"), 1, mathProtoFuncExpm1, Expm1Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "fround"), 1, mathProtoFuncFround, FRoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "hypot"), 2, mathProtoFuncHypot, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "log"), 1, mathProtoFuncLog, LogIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "log10"), 1, mathProtoFuncLog10, Log10Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "log1p"), 1, mathProtoFuncLog1p, Log1pIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "log2"), 1, mathProtoFuncLog2, Log2Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "max"), 2, mathProtoFuncMax, MaxIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "min"), 2, mathProtoFuncMin, MinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "random"), 0, mathProtoFuncRandom, RandomIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sign"), 1, mathProtoFuncSign, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sin"), 1, mathProtoFuncSin, SinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sinh"), 1, mathProtoFuncSinh, SinhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "tan"), 1, mathProtoFuncTan, TanIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "tanh"), 1, mathProtoFuncTanh, TanhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "trunc"), 1, mathProtoFuncTrunc, TruncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "imul"), 2, mathProtoFuncIMul, IMulIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // ------------------------------ Functions --------------------------------

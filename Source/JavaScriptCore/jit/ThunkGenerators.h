@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,39 +35,39 @@ class CallLinkInfo;
 template<PtrTag> class MacroAssemblerCodeRef;
 class VM;
 
-MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunk(VM*, CallLinkInfo&, CodeSpecializationKind);
-MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM&);
 
-MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM*, CallLinkInfo&);
+MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM&, CallLinkInfo&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> logThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> sqrtThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM*);
-MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> logThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> sqrtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM&);
 }
 #endif // ENABLE(JIT)

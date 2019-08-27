@@ -549,7 +549,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             };
 
             if (calleeCell->type() != JSFunctionType) {
-                if (JSObject* object = jsDynamicCast<JSObject*>(*calleeCell->vm(), calleeCell))
+                if (JSObject* object = jsDynamicCast<JSObject*>(calleeCell->vm(), calleeCell))
                     addCallee(object);
 
                 if (!alreadyHasExecutable)

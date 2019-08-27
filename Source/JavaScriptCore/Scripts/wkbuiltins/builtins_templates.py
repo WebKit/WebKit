@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2015 Canon Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -129,8 +129,8 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
     SeparateHeaderWrapperBoilerplate = (
     """class ${objectName}BuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
-    explicit ${objectName}BuiltinsWrapper(JSC::VM* vm)
-        : m_vm(*vm)
+    explicit ${objectName}BuiltinsWrapper(JSC::VM& vm)
+        : m_vm(vm)
         ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
 #define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
         ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
@@ -167,7 +167,7 @@ inline JSC::UnlinkedFunctionExecutable* ${objectName}BuiltinsWrapper::name##Exec
     if (!m_##name##Executable) {\\
         JSC::Identifier executableName = functionName##PublicName();\\
         if (overriddenName)\\
-            executableName = JSC::Identifier::fromString(&m_vm, overriddenName);\\
+            executableName = JSC::Identifier::fromString(m_vm, overriddenName);\\
         m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ConstructAbility), this, &m_##name##Executable);\\
     }\\
     return m_##name##Executable.get();\\

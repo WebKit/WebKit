@@ -134,34 +134,34 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
         return;
     }
 
-    String typeString = intlStringOption(exec, options, Identifier::fromString(&vm, "type"), { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
+    String typeString = intlStringOption(exec, options, Identifier::fromString(vm, "type"), { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
     RETURN_IF_EXCEPTION(scope, void());
     m_type = typeString == "ordinal" ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL;
 
-    unsigned minimumIntegerDigits = intlNumberOption(exec, options, Identifier::fromString(&vm, "minimumIntegerDigits"), 1, 21, 1);
+    unsigned minimumIntegerDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumIntegerDigits = minimumIntegerDigits;
 
     unsigned minimumFractionDigitsDefault = 0;
-    unsigned minimumFractionDigits = intlNumberOption(exec, options, Identifier::fromString(&vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
+    unsigned minimumFractionDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumFractionDigits = minimumFractionDigits;
 
     unsigned maximumFractionDigitsDefault = std::max(minimumFractionDigits, 3u);
-    unsigned maximumFractionDigits = intlNumberOption(exec, options, Identifier::fromString(&vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
+    unsigned maximumFractionDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_maximumFractionDigits = maximumFractionDigits;
 
-    JSValue minimumSignificantDigitsValue = options->get(&exec, Identifier::fromString(&vm, "minimumSignificantDigits"));
+    JSValue minimumSignificantDigitsValue = options->get(&exec, Identifier::fromString(vm, "minimumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumSignificantDigitsValue = options->get(&exec, Identifier::fromString(&vm, "maximumSignificantDigits"));
+    JSValue maximumSignificantDigitsValue = options->get(&exec, Identifier::fromString(vm, "maximumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
-        unsigned minimumSignificantDigits = intlNumberOption(exec, options, Identifier::fromString(&vm, "minimumSignificantDigits"), 1, 21, 1);
+        unsigned minimumSignificantDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumSignificantDigits = intlNumberOption(exec, options, Identifier::fromString(&vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
+        unsigned maximumSignificantDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
         RETURN_IF_EXCEPTION(scope, void());
         m_minimumSignificantDigits = minimumSignificantDigits;
         m_maximumSignificantDigits = maximumSignificantDigits;
@@ -207,14 +207,14 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     }
 
     JSObject* options = constructEmptyObject(&exec);
-    options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(&exec, m_locale));
-    options->putDirect(vm, Identifier::fromString(&vm, "type"), jsNontrivialString(&exec, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
-    options->putDirect(vm, Identifier::fromString(&vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
-    options->putDirect(vm, Identifier::fromString(&vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
-    options->putDirect(vm, Identifier::fromString(&vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));
+    options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
+    options->putDirect(vm, Identifier::fromString(vm, "type"), jsNontrivialString(vm, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
+    options->putDirect(vm, Identifier::fromString(vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
+    options->putDirect(vm, Identifier::fromString(vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
+    options->putDirect(vm, Identifier::fromString(vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));
     if (m_minimumSignificantDigits) {
-        options->putDirect(vm, Identifier::fromString(&vm, "minimumSignificantDigits"), jsNumber(m_minimumSignificantDigits.value()));
-        options->putDirect(vm, Identifier::fromString(&vm, "maximumSignificantDigits"), jsNumber(m_maximumSignificantDigits.value()));
+        options->putDirect(vm, Identifier::fromString(vm, "minimumSignificantDigits"), jsNumber(m_minimumSignificantDigits.value()));
+        options->putDirect(vm, Identifier::fromString(vm, "maximumSignificantDigits"), jsNumber(m_maximumSignificantDigits.value()));
     }
 
 #if HAVE(ICU_PLURALRULES_KEYWORDS)
@@ -234,10 +234,10 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     unsigned index = 0;
     while (const char* result = uenum_next(keywords.get(), &resultLength, &status)) {
         ASSERT(U_SUCCESS(status));
-        categories->putDirectIndex(&exec, index++, jsNontrivialString(&exec, String(result, resultLength)));
+        categories->putDirectIndex(&exec, index++, jsNontrivialString(vm, String(result, resultLength)));
         RETURN_IF_EXCEPTION(scope, { });
     }
-    options->putDirect(vm, Identifier::fromString(&vm, "pluralCategories"), categories);
+    options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"), categories);
 #endif
 
     RELEASE_AND_RETURN(scope, options);
@@ -254,7 +254,7 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
         return throwTypeError(&exec, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s);
 
     if (!std::isfinite(value))
-        return jsNontrivialString(&exec, "other"_s);
+        return jsNontrivialString(vm, "other"_s);
 
 #if HAVE(ICU_PLURALRULES_WITH_FORMAT)
     UErrorCode status = U_ZERO_ERROR;
@@ -286,7 +286,7 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
         return throwTypeError(&exec, scope, "failed to select plural value"_s);
 #endif
 
-    return jsString(&exec, String(result.data(), length));
+    return jsString(vm, String(result.data(), length));
 }
 
 } // namespace JSC

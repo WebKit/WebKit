@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -177,7 +177,7 @@ void LargeAllocation::sweep()
     
     if (m_hasValidCell && !isLive()) {
         if (m_attributes.destruction == NeedsDestruction)
-            m_subspace->destroy(*vm(), static_cast<JSCell*>(cell()));
+            m_subspace->destroy(vm(), static_cast<JSCell*>(cell()));
         m_hasValidCell = false;
     }
 }
@@ -198,7 +198,7 @@ void LargeAllocation::dump(PrintStream& out) const
 #if !ASSERT_DISABLED
 void LargeAllocation::assertValidCell(VM& vm, HeapCell* cell) const
 {
-    ASSERT(&vm == this->vm());
+    ASSERT(&vm == &this->vm());
     ASSERT(cell == this->cell());
     ASSERT(m_hasValidCell);
 }

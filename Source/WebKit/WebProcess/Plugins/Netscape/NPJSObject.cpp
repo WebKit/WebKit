@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,12 +82,13 @@ void NPJSObject::initialize(VM& vm, NPRuntimeObjectMap* objectMap, JSObject* jsO
 
 static Identifier identifierFromIdentifierRep(ExecState* exec, IdentifierRep* identifierRep)
 {
+    VM& vm = exec->vm();
     ASSERT(identifierRep->isString());
 
     const char* string = identifierRep->string();
     int length = strlen(string);
 
-    return Identifier::fromString(exec, String::fromUTF8WithLatin1Fallback(string, length));
+    return Identifier::fromString(vm, String::fromUTF8WithLatin1Fallback(string, length));
 }
 
 bool NPJSObject::hasMethod(NPIdentifier methodName)
@@ -252,7 +253,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
 
-    PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+    PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     m_jsObject->methodTable(vm)->getPropertyNames(m_jsObject.get(), exec, propertyNames, EnumerationMode());
 
     NPIdentifier* nameIdentifiers = npnMemNewArray<NPIdentifier>(propertyNames.size());

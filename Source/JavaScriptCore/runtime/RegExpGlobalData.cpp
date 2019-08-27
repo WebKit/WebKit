@@ -51,7 +51,7 @@ JSValue RegExpGlobalData::getBackref(ExecState* exec, JSGlobalObject* owner, uns
         if (!result.isUndefined())
             return result;
     }
-    return jsEmptyString(&vm);
+    return jsEmptyString(vm);
 }
 
 JSValue RegExpGlobalData::getLastParen(ExecState* exec, JSGlobalObject* owner)
@@ -70,7 +70,7 @@ JSValue RegExpGlobalData::getLastParen(ExecState* exec, JSGlobalObject* owner)
         if (!result.isUndefined())
             return result;
     }
-    return jsEmptyString(&vm);
+    return jsEmptyString(vm);
 }
 
 JSValue RegExpGlobalData::getLeftContext(ExecState* exec, JSGlobalObject* owner)

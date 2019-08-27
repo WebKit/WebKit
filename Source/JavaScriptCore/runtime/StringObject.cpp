@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -57,7 +57,8 @@ bool StringObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, 
     StringObject* thisObject = jsCast<StringObject*>(object);
     if (thisObject->internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;    
-    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
+    VM& vm = exec->vm();
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(vm, propertyName), slot);
 }
 
 bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -146,11 +147,12 @@ bool StringObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned
 
 void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     StringObject* thisObject = jsCast<StringObject*>(object);
     if (propertyNames.includeStringProperties()) {
         int size = thisObject->internalValue()->length();
         for (int i = 0; i < size; ++i)
-            propertyNames.add(Identifier::from(exec, i));
+            propertyNames.add(Identifier::from(vm, i));
     }
     return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }

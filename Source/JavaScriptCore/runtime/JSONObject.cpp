@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ void JSONObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "JSON"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "JSON"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 // PropertyNameForFunctionCall objects must be on the stack, since the JSValue that they create is not marked.
@@ -205,13 +205,13 @@ inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(unsigned number)
 JSValue PropertyNameForFunctionCall::value(ExecState* exec) const
 {
     if (!m_value) {
+        VM& vm = exec->vm();
         if (m_identifier)
-            m_value = jsString(exec, m_identifier->string());
+            m_value = jsString(vm, m_identifier->string());
         else {
-            VM& vm = exec->vm();
             if (m_number <= 9)
                 return vm.smallStrings.singleCharacterString(m_number + '0');
-            m_value = jsNontrivialString(&vm, vm.numericStrings.add(m_number));
+            m_value = jsNontrivialString(vm, vm.numericStrings.add(m_number));
         }
     }
     return m_value;
@@ -222,7 +222,7 @@ JSValue PropertyNameForFunctionCall::value(ExecState* exec) const
 Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
     : m_exec(exec)
     , m_replacer(replacer)
-    , m_arrayReplacerPropertyNames(&exec->vm(), PropertyNameMode::Strings, PrivateSymbolMode::Exclude)
+    , m_arrayReplacerPropertyNames(exec->vm(), PropertyNameMode::Strings, PrivateSymbolMode::Exclude)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -287,7 +287,7 @@ JSValue Stringifier::stringify(JSValue value)
     }
     if (UNLIKELY(stringifyResult != StringifySucceeded))
         return jsUndefined();
-    RELEASE_AND_RETURN(scope, jsString(m_exec, result.toString()));
+    RELEASE_AND_RETURN(scope, jsString(vm, result.toString()));
 }
 
 ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameForFunctionCall& propertyName)
@@ -496,7 +496,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             if (stringifier.m_usingArrayReplacer)
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
             else {
-                PropertyNameArray objectPropertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+                PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
                 m_object->methodTable(vm)->getOwnPropertyNames(m_object, exec, objectPropertyNames, EnumerationMode());
                 RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
@@ -705,7 +705,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             case ArrayEndVisitMember: {
                 JSArray* array = jsCast<JSArray*>(markedStack.last());
-                JSValue filteredValue = callReviver(array, jsString(m_exec, String::number(indexStack.last())), outValue);
+                JSValue filteredValue = callReviver(array, jsString(vm, String::number(indexStack.last())), outValue);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
                     array->methodTable(vm)->deletePropertyByIndex(array, m_exec, indexStack.last());
@@ -725,7 +725,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSObject* object = asObject(inValue);
                 markedStack.appendWithCrashOnOverflow(object);
                 indexStack.append(0);
-                propertyStack.append(PropertyNameArray(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
+                propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                 object->methodTable(vm)->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                 RETURN_IF_EXCEPTION(scope, { });
             }
@@ -762,7 +762,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSObject* object = jsCast<JSObject*>(markedStack.last());
                 Identifier prop = propertyStack.last()[indexStack.last()];
                 PutPropertySlot slot(object);
-                JSValue filteredValue = callReviver(object, jsString(m_exec, prop.string()), outValue);
+                JSValue filteredValue = callReviver(object, jsString(vm, prop.string()), outValue);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
                     object->methodTable(vm)->deleteProperty(object, m_exec, prop);
@@ -793,7 +793,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     PutPropertySlot slot(finalHolder);
     finalHolder->methodTable(vm)->put(finalHolder, m_exec, vm.propertyNames->emptyIdentifier, outValue, slot);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, callReviver(finalHolder, jsEmptyString(m_exec), outValue));
+    RELEASE_AND_RETURN(scope, callReviver(finalHolder, jsEmptyString(vm), outValue));
 }
 
 // ECMA-262 v5 15.12.2

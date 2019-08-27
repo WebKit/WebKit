@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
@@ -129,9 +129,9 @@ static bool extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
-    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "line"));
-    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "column"));
-    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "sourceURL"));
+    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "line"));
+    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "column"));
+    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "sourceURL"));
     
     bool result = false;
     if (lineValue && lineValue.isNumber()

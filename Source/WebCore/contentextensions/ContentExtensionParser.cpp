@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,11 +131,11 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const JSValue triggerObject = ruleObject.get(&exec, Identifier::fromString(&exec, "trigger"));
+    const JSValue triggerObject = ruleObject.get(&exec, Identifier::fromString(vm, "trigger"));
     if (!triggerObject || scope.exception() || !triggerObject.isObject())
         return makeUnexpected(ContentExtensionError::JSONInvalidTrigger);
     
-    const JSValue urlFilterObject = triggerObject.get(&exec, Identifier::fromString(&exec, "url-filter"));
+    const JSValue urlFilterObject = triggerObject.get(&exec, Identifier::fromString(vm, "url-filter"));
     if (!urlFilterObject || scope.exception() || !urlFilterObject.isString())
         return makeUnexpected(ContentExtensionError::JSONInvalidURLFilterInTrigger);
 
@@ -146,15 +146,15 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     Trigger trigger;
     trigger.urlFilter = urlFilter;
 
-    const JSValue urlFilterCaseValue = triggerObject.get(&exec, Identifier::fromString(&exec, "url-filter-is-case-sensitive"));
+    const JSValue urlFilterCaseValue = triggerObject.get(&exec, Identifier::fromString(vm, "url-filter-is-case-sensitive"));
     if (urlFilterCaseValue && !scope.exception() && urlFilterCaseValue.isBoolean())
         trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&exec);
 
-    const JSValue topURLFilterCaseValue = triggerObject.get(&exec, Identifier::fromString(&exec, "top-url-filter-is-case-sensitive"));
+    const JSValue topURLFilterCaseValue = triggerObject.get(&exec, Identifier::fromString(vm, "top-url-filter-is-case-sensitive"));
     if (topURLFilterCaseValue && !scope.exception() && topURLFilterCaseValue.isBoolean())
         trigger.topURLConditionIsCaseSensitive = topURLFilterCaseValue.toBoolean(&exec);
 
-    const JSValue resourceTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "resource-type"));
+    const JSValue resourceTypeValue = triggerObject.get(&exec, Identifier::fromString(vm, "resource-type"));
     if (!scope.exception() && resourceTypeValue.isObject()) {
         auto typeFlagsError = getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType);
         if (typeFlagsError)
@@ -162,7 +162,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     } else if (!resourceTypeValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
 
-    const JSValue loadTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "load-type"));
+    const JSValue loadTypeValue = triggerObject.get(&exec, Identifier::fromString(vm, "load-type"));
     if (!scope.exception() && loadTypeValue.isObject()) {
         auto typeFlagsError = getTypeFlags(exec, loadTypeValue, trigger.flags, readLoadType);
         if (typeFlagsError)
@@ -170,7 +170,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     } else if (!loadTypeValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
 
-    const JSValue ifDomainValue = triggerObject.get(&exec, Identifier::fromString(&exec, "if-domain"));
+    const JSValue ifDomainValue = triggerObject.get(&exec, Identifier::fromString(vm, "if-domain"));
     if (!scope.exception() && ifDomainValue.isObject()) {
         auto ifDomain = getDomainList(exec, asObject(ifDomainValue));
         if (!ifDomain.has_value())
@@ -183,7 +183,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     } else if (!ifDomainValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
 
-    const JSValue unlessDomainValue = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-domain"));
+    const JSValue unlessDomainValue = triggerObject.get(&exec, Identifier::fromString(vm, "unless-domain"));
     if (!scope.exception() && unlessDomainValue.isObject()) {
         if (trigger.conditionType != Trigger::ConditionType::None)
             return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
@@ -197,7 +197,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     } else if (!unlessDomainValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
 
-    const JSValue ifTopURLValue = triggerObject.get(&exec, Identifier::fromString(&exec, "if-top-url"));
+    const JSValue ifTopURLValue = triggerObject.get(&exec, Identifier::fromString(vm, "if-top-url"));
     if (!scope.exception() && ifTopURLValue.isObject()) {
         if (trigger.conditionType != Trigger::ConditionType::None)
             return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
@@ -211,7 +211,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     } else if (!ifTopURLValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
 
-    const JSValue unlessTopURLValue = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-top-url"));
+    const JSValue unlessTopURLValue = triggerObject.get(&exec, Identifier::fromString(vm, "unless-top-url"));
     if (!scope.exception() && unlessTopURLValue.isObject()) {
         if (trigger.conditionType != Trigger::ConditionType::None)
             return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
@@ -245,11 +245,11 @@ static Expected<Optional<Action>, std::error_code> loadAction(ExecState& exec, c
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const JSValue actionObject = ruleObject.get(&exec, Identifier::fromString(&exec, "action"));
+    const JSValue actionObject = ruleObject.get(&exec, Identifier::fromString(vm, "action"));
     if (scope.exception() || !actionObject.isObject())
         return makeUnexpected(ContentExtensionError::JSONInvalidAction);
 
-    const JSValue typeObject = actionObject.get(&exec, Identifier::fromString(&exec, "type"));
+    const JSValue typeObject = actionObject.get(&exec, Identifier::fromString(vm, "type"));
     if (scope.exception() || !typeObject.isString())
         return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 
@@ -262,7 +262,7 @@ static Expected<Optional<Action>, std::error_code> loadAction(ExecState& exec, c
     if (actionType == "block-cookies")
         return { Action(ActionType::BlockCookies) };
     if (actionType == "css-display-none") {
-        JSValue selector = actionObject.get(&exec, Identifier::fromString(&exec, "selector"));
+        JSValue selector = actionObject.get(&exec, Identifier::fromString(vm, "selector"));
         if (scope.exception() || !selector.isString())
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
 
@@ -276,7 +276,7 @@ static Expected<Optional<Action>, std::error_code> loadAction(ExecState& exec, c
     if (actionType == "make-https")
         return { Action(ActionType::MakeHTTPS) };
     if (actionType == "notify") {
-        JSValue notification = actionObject.get(&exec, Identifier::fromString(&exec, "notification"));
+        JSValue notification = actionObject.get(&exec, Identifier::fromString(vm, "notification"));
         if (scope.exception() || !notification.isString())
             return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
         return { Action(ActionType::Notify, asString(notification)->value(&exec)) };

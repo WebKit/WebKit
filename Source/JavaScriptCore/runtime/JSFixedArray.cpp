@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@ void JSFixedArray::copyToArguments(ExecState* exec, VirtualRegister firstElement
 
 void JSFixedArray::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    VM& vm = *cell->vm();
+    VM& vm = cell->vm();
     const auto* thisObject = jsCast<const JSFixedArray*>(cell);
     out.printf("<%p, %s, [%u], [", thisObject, thisObject->className(vm), thisObject->length());
     CommaPrinter comma;

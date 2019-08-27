@@ -662,7 +662,7 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, CallFrame* callFra
 JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFrame, JSObject* thisObj)
 {
     JSScope* scope = thisObj->globalObject()->globalScope();
-    VM& vm = *scope->vm();
+    VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ProgramExecutable* program = ProgramExecutable::create(callFrame, source);
@@ -987,7 +987,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
 CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionExecutable, CallFrame* callFrame, ProtoCallFrame* protoCallFrame, JSFunction* function, int argumentCountIncludingThis, JSScope* scope, const ArgList& args)
 {
-    VM& vm = *scope->vm();
+    VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     throwScope.assertNoException();
     
@@ -1012,7 +1012,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
 {
-    VM& vm = *scope->vm();
+    VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(&vm == &callFrame->vm());
@@ -1161,7 +1161,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
 JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, CallFrame* callFrame, JSModuleEnvironment* scope)
 {
-    VM& vm = *scope->vm();
+    VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(&vm == &callFrame->vm());

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,7 @@ void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "BigInt"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "BigInt"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -110,7 +110,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(ExecState* state)
     if (resultString.length() == 1)
         return JSValue::encode(vm.smallStrings.singleCharacterString(resultString[0]));
 
-    return JSValue::encode(jsNontrivialString(&vm, resultString));
+    return JSValue::encode(jsNontrivialString(vm, resultString));
 }
 
 EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(ExecState* state)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,23 +257,23 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncToStringTag(Exe
     VM& vm = exec->vm();
     switch (thisValue.getObject()->classInfo(vm)->typedArrayStorageType) {
     case TypeUint8Clamped:
-        return JSValue::encode(jsString(&vm, "Uint8ClampedArray"));
+        return JSValue::encode(jsString(vm, "Uint8ClampedArray"));
     case TypeInt32:
-        return JSValue::encode(jsString(&vm, "Int32Array"));
+        return JSValue::encode(jsString(vm, "Int32Array"));
     case TypeUint32:
-        return JSValue::encode(jsString(&vm, "Uint32Array"));
+        return JSValue::encode(jsString(vm, "Uint32Array"));
     case TypeFloat64:
-        return JSValue::encode(jsString(&vm, "Float64Array"));
+        return JSValue::encode(jsString(vm, "Float64Array"));
     case TypeFloat32:
-        return JSValue::encode(jsString(&vm, "Float32Array"));
+        return JSValue::encode(jsString(vm, "Float32Array"));
     case TypeInt8:
-        return JSValue::encode(jsString(&vm, "Int8Array"));
+        return JSValue::encode(jsString(vm, "Int8Array"));
     case TypeUint8:
-        return JSValue::encode(jsString(&vm, "Uint8Array"));
+        return JSValue::encode(jsString(vm, "Uint8Array"));
     case TypeInt16:
-        return JSValue::encode(jsString(&vm, "Int16Array"));
+        return JSValue::encode(jsString(vm, "Int16Array"));
     case TypeUint16:
-        return JSValue::encode(jsString(&vm, "Uint16Array"));
+        return JSValue::encode(jsString(vm, "Uint16Array"));
     case NotTypedArray:
     case TypeDataView:
         return JSValue::encode(jsUndefined());

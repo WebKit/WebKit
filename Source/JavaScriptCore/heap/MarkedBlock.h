@@ -124,7 +124,7 @@ public:
         AlignedMemoryAllocator* alignedMemoryAllocator() const;
         Heap* heap() const;
         inline MarkedSpace* space() const;
-        VM* vm() const;
+        VM& vm() const;
         WeakSet& weakSet();
             
         enum SweepMode { SweepOnly, SweepToFreeList };
@@ -257,6 +257,8 @@ public:
         friend class MarkedBlock;
         
         Handle& m_handle;
+        // m_vm must remain a pointer (instead of a reference) because JSCLLIntOffsetsExtractor
+        // will fail otherwise.
         VM* m_vm;
         Subspace* m_subspace;
 
@@ -315,7 +317,7 @@ public:
     Handle& handle();
     const Handle& handle() const;
         
-    VM* vm() const;
+    VM& vm() const;
     inline Heap* heap() const;
     inline MarkedSpace* space() const;
 
@@ -471,14 +473,14 @@ inline Heap* MarkedBlock::Handle::heap() const
     return m_weakSet.heap();
 }
 
-inline VM* MarkedBlock::Handle::vm() const
+inline VM& MarkedBlock::Handle::vm() const
 {
     return m_weakSet.vm();
 }
 
-inline VM* MarkedBlock::vm() const
+inline VM& MarkedBlock::vm() const
 {
-    return footer().m_vm;
+    return *footer().m_vm;
 }
 
 inline WeakSet& MarkedBlock::Handle::weakSet()

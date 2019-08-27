@@ -41,7 +41,7 @@ ALWAYS_INLINE JSString* stringSlice(ExecState* exec, VM& vm, JSString* string, i
             to = length;
         return jsSubstring(vm, exec, string, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
     }
-    return jsEmptyString(&vm);
+    return jsEmptyString(vm);
 }
 
 } // namespace JSC

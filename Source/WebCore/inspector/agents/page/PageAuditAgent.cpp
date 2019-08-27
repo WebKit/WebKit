@@ -86,16 +86,17 @@ void PageAuditAgent::populateAuditObject(JSC::ExecState* execState, JSC::Strong<
         return;
 
     if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(execState->lexicalGlobalObject())) {
-        JSC::JSLockHolder lock(execState);
+        JSC::VM& vm = globalObject->vm();
+        JSC::JSLockHolder lock(vm);
 
         if (JSC::JSValue jsInspectorAuditAccessibilityObject = toJSNewlyCreated(execState, globalObject, InspectorAuditAccessibilityObject::create(*this)))
-            auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "Accessibility"), jsInspectorAuditAccessibilityObject);
+            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Accessibility"), jsInspectorAuditAccessibilityObject);
 
         if (JSC::JSValue jsInspectorAuditDOMObject = toJSNewlyCreated(execState, globalObject, InspectorAuditDOMObject::create(*this)))
-            auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "DOM"), jsInspectorAuditDOMObject);
+            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "DOM"), jsInspectorAuditDOMObject);
 
         if (JSC::JSValue jsInspectorAuditResourcesObject = toJSNewlyCreated(execState, globalObject, InspectorAuditResourcesObject::create(*this)))
-            auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "Resources"), jsInspectorAuditResourcesObject);
+            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Resources"), jsInspectorAuditResourcesObject);
     }
 }
 

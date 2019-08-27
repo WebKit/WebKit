@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -196,8 +196,8 @@ static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAs
         promise->resolve(exec, moduleRecord);
     } else {
         JSObject* result = constructEmptyObject(exec);
-        result->putDirect(vm, Identifier::fromString(&vm, "module"_s), module);
-        result->putDirect(vm, Identifier::fromString(&vm, "instance"_s), instance);
+        result->putDirect(vm, Identifier::fromString(vm, "module"_s), module);
+        result->putDirect(vm, Identifier::fromString(vm, "instance"_s), instance);
         promise->resolve(exec, result);
     }
     CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());

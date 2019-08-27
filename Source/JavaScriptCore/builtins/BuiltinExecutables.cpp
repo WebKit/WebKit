@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,7 +213,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         ParserError error;
         JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
         std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
-            &vm, source, Identifier(), builtinMode,
+            vm, source, Identifier(), builtinMode,
             JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error,
             &positionBeforeLastNewlineFromParser, constructorKind);
 
@@ -254,7 +254,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         }
     }
 
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, WTF::nullopt, DerivedContextType::None, isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, WTF::nullopt, DerivedContextType::None, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 
@@ -278,7 +278,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
     if (!m_unlinkedExecutables[index]) {\
         Identifier executableName = m_vm.propertyNames->builtinNames().functionName##PublicName();\
         if (overrideName)\
-            executableName = Identifier::fromString(&m_vm, overrideName);\
+            executableName = Identifier::fromString(m_vm, overrideName);\
         m_unlinkedExecutables[index] = createBuiltinExecutable(name##Source(), executableName, s_##name##ConstructAbility);\
     }\
     return m_unlinkedExecutables[index];\

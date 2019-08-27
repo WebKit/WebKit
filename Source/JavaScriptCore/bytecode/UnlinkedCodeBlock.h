@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -163,7 +163,7 @@ public:
     void addSetConstant(IdentifierSet& set)
     {
         createRareDataIfNecessary();
-        VM& vm = *this->vm();
+        VM& vm = this->vm();
         auto locker = lockDuringMarking(vm.heap, cellLock());
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
@@ -173,7 +173,7 @@ public:
 
     unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
     {
-        VM& vm = *this->vm();
+        VM& vm = this->vm();
         auto locker = lockDuringMarking(vm.heap, cellLock());
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
@@ -183,7 +183,7 @@ public:
     }
     unsigned addConstant(LinkTimeConstant type)
     {
-        VM& vm = *this->vm();
+        VM& vm = this->vm();
         auto locker = lockDuringMarking(vm.heap, cellLock());
         unsigned result = m_constantRegisters.size();
         ASSERT(result);
@@ -246,7 +246,7 @@ public:
 
     unsigned addFunctionDecl(UnlinkedFunctionExecutable* n)
     {
-        VM& vm = *this->vm();
+        VM& vm = this->vm();
         auto locker = lockDuringMarking(vm.heap, cellLock());
         unsigned size = m_functionDecls.size();
         m_functionDecls.append(WriteBarrier<UnlinkedFunctionExecutable>());
@@ -257,7 +257,7 @@ public:
     size_t numberOfFunctionDecls() { return m_functionDecls.size(); }
     unsigned addFunctionExpr(UnlinkedFunctionExecutable* n)
     {
-        VM& vm = *this->vm();
+        VM& vm = this->vm();
         auto locker = lockDuringMarking(vm.heap, cellLock());
         unsigned size = m_functionExprs.size();
         m_functionExprs.append(WriteBarrier<UnlinkedFunctionExecutable>());
@@ -377,7 +377,7 @@ public:
 
 
 protected:
-    UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
+    UnlinkedCodeBlock(VM&, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
 
     template<typename CodeBlockType>
     UnlinkedCodeBlock(Decoder&, Structure*, const CachedCodeBlock<CodeBlockType>&);

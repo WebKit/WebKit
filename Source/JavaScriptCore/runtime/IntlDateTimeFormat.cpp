@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -316,7 +316,7 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
         // a. For each of the property names "year", "month", "day":
         // i. Let status be CreateDatePropertyOrThrow(options, prop, "numeric").
         // ii. ReturnIfAbrupt(status).
-        JSString* numeric = jsNontrivialString(&exec, "numeric"_s);
+        JSString* numeric = jsNontrivialString(vm, "numeric"_s);
 
         options->putDirect(vm, vm.propertyNames->year, numeric);
         RETURN_IF_EXCEPTION(scope, nullptr);
@@ -848,42 +848,42 @@ JSObject* IntlDateTimeFormat::resolvedOptions(ExecState& exec)
     }
 
     JSObject* options = constructEmptyObject(&exec);
-    options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(&exec, m_locale));
-    options->putDirect(vm, vm.propertyNames->calendar, jsNontrivialString(&exec, m_calendar));
-    options->putDirect(vm, vm.propertyNames->numberingSystem, jsNontrivialString(&exec, m_numberingSystem));
-    options->putDirect(vm, vm.propertyNames->timeZone, jsNontrivialString(&exec, m_timeZone));
+    options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
+    options->putDirect(vm, vm.propertyNames->calendar, jsNontrivialString(vm, m_calendar));
+    options->putDirect(vm, vm.propertyNames->numberingSystem, jsNontrivialString(vm, m_numberingSystem));
+    options->putDirect(vm, vm.propertyNames->timeZone, jsNontrivialString(vm, m_timeZone));
 
     if (m_weekday != Weekday::None)
-        options->putDirect(vm, vm.propertyNames->weekday, jsNontrivialString(&exec, weekdayString(m_weekday)));
+        options->putDirect(vm, vm.propertyNames->weekday, jsNontrivialString(vm, weekdayString(m_weekday)));
 
     if (m_era != Era::None)
-        options->putDirect(vm, vm.propertyNames->era, jsNontrivialString(&exec, eraString(m_era)));
+        options->putDirect(vm, vm.propertyNames->era, jsNontrivialString(vm, eraString(m_era)));
 
     if (m_year != Year::None)
-        options->putDirect(vm, vm.propertyNames->year, jsNontrivialString(&exec, yearString(m_year)));
+        options->putDirect(vm, vm.propertyNames->year, jsNontrivialString(vm, yearString(m_year)));
 
     if (m_month != Month::None)
-        options->putDirect(vm, vm.propertyNames->month, jsNontrivialString(&exec, monthString(m_month)));
+        options->putDirect(vm, vm.propertyNames->month, jsNontrivialString(vm, monthString(m_month)));
 
     if (m_day != Day::None)
-        options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(&exec, dayString(m_day)));
+        options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(vm, dayString(m_day)));
 
     if (m_hour != Hour::None)
-        options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(&exec, hourString(m_hour)));
+        options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(vm, hourString(m_hour)));
 
     if (!m_hourCycle.isNull()) {
-        options->putDirect(vm, vm.propertyNames->hourCycle, jsNontrivialString(&exec, m_hourCycle));
+        options->putDirect(vm, vm.propertyNames->hourCycle, jsNontrivialString(vm, m_hourCycle));
         options->putDirect(vm, vm.propertyNames->hour12, jsBoolean(m_hourCycle == "h11" || m_hourCycle == "h12"));
     }
 
     if (m_minute != Minute::None)
-        options->putDirect(vm, vm.propertyNames->minute, jsNontrivialString(&exec, minuteString(m_minute)));
+        options->putDirect(vm, vm.propertyNames->minute, jsNontrivialString(vm, minuteString(m_minute)));
 
     if (m_second != Second::None)
-        options->putDirect(vm, vm.propertyNames->second, jsNontrivialString(&exec, secondString(m_second)));
+        options->putDirect(vm, vm.propertyNames->second, jsNontrivialString(vm, secondString(m_second)));
 
     if (m_timeZoneName != TimeZoneName::None)
-        options->putDirect(vm, vm.propertyNames->timeZoneName, jsNontrivialString(&exec, timeZoneNameString(m_timeZoneName)));
+        options->putDirect(vm, vm.propertyNames->timeZoneName, jsNontrivialString(vm, timeZoneNameString(m_timeZoneName)));
 
     return options;
 }
@@ -915,7 +915,7 @@ JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
     if (U_FAILURE(status))
         return throwTypeError(&exec, scope, "failed to format date value"_s);
 
-    return jsString(&exec, String(result.data(), resultLength));
+    return jsString(vm, String(result.data(), resultLength));
 }
 
 #if JSC_ICU_HAS_UFIELDPOSITER
@@ -1018,8 +1018,8 @@ JSValue IntlDateTimeFormat::formatToParts(ExecState& exec, double value)
         return throwOutOfMemoryError(&exec, scope);
 
     auto resultString = String(result.data(), resultLength);
-    auto typePropertyName = Identifier::fromString(&vm, "type");
-    auto literalString = jsString(&exec, "literal"_s);
+    auto typePropertyName = Identifier::fromString(vm, "type");
+    auto literalString = jsString(vm, "literal"_s);
 
     int32_t previousEndIndex = 0;
     int32_t beginIndex = 0;
@@ -1030,7 +1030,7 @@ JSValue IntlDateTimeFormat::formatToParts(ExecState& exec, double value)
             beginIndex = endIndex = resultLength;
 
         if (previousEndIndex < beginIndex) {
-            auto value = jsString(&exec, resultString.substring(previousEndIndex, beginIndex - previousEndIndex));
+            auto value = jsString(vm, resultString.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = constructEmptyObject(&exec);
             part->putDirect(vm, typePropertyName, literalString);
             part->putDirect(vm, vm.propertyNames->value, value);
@@ -1040,8 +1040,8 @@ JSValue IntlDateTimeFormat::formatToParts(ExecState& exec, double value)
         previousEndIndex = endIndex;
 
         if (fieldType >= 0) {
-            auto type = jsString(&exec, partTypeString(UDateFormatField(fieldType)));
-            auto value = jsString(&exec, resultString.substring(beginIndex, endIndex - beginIndex));
+            auto type = jsString(vm, partTypeString(UDateFormatField(fieldType)));
+            auto value = jsString(vm, resultString.substring(beginIndex, endIndex - beginIndex));
             JSObject* part = constructEmptyObject(&exec);
             part->putDirect(vm, typePropertyName, type);
             part->putDirect(vm, vm.propertyNames->value, value);

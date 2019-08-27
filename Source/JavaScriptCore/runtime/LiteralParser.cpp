@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,17 +59,17 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
     do {
         Vector<JSONPPathEntry> path;
         // Unguarded next to start off the lexer
-        Identifier name = Identifier::fromString(&vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
+        Identifier name = Identifier::fromString(vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
         JSONPPathEntry entry;
         if (name == vm.propertyNames->varKeyword) {
             if (m_lexer.next() != TokIdentifier)
                 return false;
             entry.m_type = JSONPPathEntryTypeDeclareVar;
-            entry.m_pathEntryName = Identifier::fromString(&vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
+            entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
             path.append(entry);
         } else {
             entry.m_type = JSONPPathEntryTypeDot;
-            entry.m_pathEntryName = Identifier::fromString(&vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
+            entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
             path.append(entry);
         }
         if (isLexerKeyword(entry.m_pathEntryName))
@@ -96,7 +96,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
                 entry.m_type = JSONPPathEntryTypeDot;
                 if (m_lexer.next() != TokIdentifier)
                     return false;
-                entry.m_pathEntryName = Identifier::fromString(&vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
+                entry.m_pathEntryName = Identifier::fromString(vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
                 break;
             }
             case TokLParen: {
@@ -136,40 +136,42 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
 template <typename CharType>
 ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const LChar* characters, size_t length)
 {
+    VM& vm = m_exec->vm();
     if (!length)
-        return m_exec->vm().propertyNames->emptyIdentifier;
+        return vm.propertyNames->emptyIdentifier;
     if (characters[0] >= MaximumCachableCharacter)
-        return Identifier::fromString(&m_exec->vm(), characters, length);
+        return Identifier::fromString(vm, characters, length);
 
     if (length == 1) {
         if (!m_shortIdentifiers[characters[0]].isNull())
             return m_shortIdentifiers[characters[0]];
-        m_shortIdentifiers[characters[0]] = Identifier::fromString(&m_exec->vm(), characters, length);
+        m_shortIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
         return m_shortIdentifiers[characters[0]];
     }
     if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
         return m_recentIdentifiers[characters[0]];
-    m_recentIdentifiers[characters[0]] = Identifier::fromString(&m_exec->vm(), characters, length);
+    m_recentIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
     return m_recentIdentifiers[characters[0]];
 }
 
 template <typename CharType>
 ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const UChar* characters, size_t length)
 {
+    VM& vm = m_exec->vm();
     if (!length)
-        return m_exec->vm().propertyNames->emptyIdentifier;
+        return vm.propertyNames->emptyIdentifier;
     if (characters[0] >= MaximumCachableCharacter)
-        return Identifier::fromString(&m_exec->vm(), characters, length);
+        return Identifier::fromString(vm, characters, length);
 
     if (length == 1) {
         if (!m_shortIdentifiers[characters[0]].isNull())
             return m_shortIdentifiers[characters[0]];
-        m_shortIdentifiers[characters[0]] = Identifier::fromString(&m_exec->vm(), characters, length);
+        m_shortIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
         return m_shortIdentifiers[characters[0]];
     }
     if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
         return m_recentIdentifiers[characters[0]];
-    m_recentIdentifiers[characters[0]] = Identifier::fromString(&m_exec->vm(), characters, length);
+    m_recentIdentifiers[characters[0]] = Identifier::fromString(vm, characters, length);
     return m_recentIdentifiers[characters[0]];
 }
 
@@ -961,9 +963,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     case TokString: {
                         typename Lexer::LiteralParserTokenPtr stringToken = m_lexer.currentToken();
                         if (stringToken->stringIs8Bit)
-                            lastValue = jsString(m_exec, makeIdentifier(stringToken->stringToken8, stringToken->stringLength).string());
+                            lastValue = jsString(vm, makeIdentifier(stringToken->stringToken8, stringToken->stringLength).string());
                         else
-                            lastValue = jsString(m_exec, makeIdentifier(stringToken->stringToken16, stringToken->stringLength).string());
+                            lastValue = jsString(vm, makeIdentifier(stringToken->stringToken16, stringToken->stringLength).string());
                         m_lexer.next();
                         break;
                     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,13 +48,13 @@ JSValue WebInjectedScriptHost::subtype(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
     if (value.inherits<JSNode>(vm))
-        return jsNontrivialString(exec, "node"_s);
+        return jsNontrivialString(vm, "node"_s);
     if (value.inherits<JSNodeList>(vm))
-        return jsNontrivialString(exec, "array"_s);
+        return jsNontrivialString(vm, "array"_s);
     if (value.inherits<JSHTMLCollection>(vm))
-        return jsNontrivialString(exec, "array"_s);
+        return jsNontrivialString(vm, "array"_s);
     if (value.inherits<JSDOMException>(vm))
-        return jsNontrivialString(exec, "error"_s);
+        return jsNontrivialString(vm, "error"_s);
 
     return jsUndefined();
 }
@@ -63,46 +63,46 @@ JSValue WebInjectedScriptHost::subtype(ExecState* exec, JSValue value)
 static JSObject* constructInternalProperty(VM& vm, ExecState* exec, const String& name, JSValue value)
 {
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "name"), jsString(exec, name));
-    object->putDirect(vm, Identifier::fromString(exec, "value"), value);
+    object->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, name));
+    object->putDirect(vm, Identifier::fromString(vm, "value"), value);
     return object;
 }
 
 static JSObject* objectForPaymentOptions(VM& vm, ExecState* exec, const PaymentOptions& paymentOptions)
 {
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "requestPayerName"), jsBoolean(paymentOptions.requestPayerName));
-    object->putDirect(vm, Identifier::fromString(exec, "requestPayerEmail"), jsBoolean(paymentOptions.requestPayerEmail));
-    object->putDirect(vm, Identifier::fromString(exec, "requestPayerPhone"), jsBoolean(paymentOptions.requestPayerPhone));
-    object->putDirect(vm, Identifier::fromString(exec, "requestShipping"), jsBoolean(paymentOptions.requestShipping));
-    object->putDirect(vm, Identifier::fromString(exec, "shippingType"), jsNontrivialString(exec, convertEnumerationToString(paymentOptions.shippingType)));
+    object->putDirect(vm, Identifier::fromString(vm, "requestPayerName"), jsBoolean(paymentOptions.requestPayerName));
+    object->putDirect(vm, Identifier::fromString(vm, "requestPayerEmail"), jsBoolean(paymentOptions.requestPayerEmail));
+    object->putDirect(vm, Identifier::fromString(vm, "requestPayerPhone"), jsBoolean(paymentOptions.requestPayerPhone));
+    object->putDirect(vm, Identifier::fromString(vm, "requestShipping"), jsBoolean(paymentOptions.requestShipping));
+    object->putDirect(vm, Identifier::fromString(vm, "shippingType"), jsNontrivialString(vm, convertEnumerationToString(paymentOptions.shippingType)));
     return object;
 }
 
 static JSObject* objectForPaymentCurrencyAmount(VM& vm, ExecState* exec, const PaymentCurrencyAmount& paymentCurrencyAmount)
 {
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "currency"), jsString(exec, paymentCurrencyAmount.currency));
-    object->putDirect(vm, Identifier::fromString(exec, "value"), jsString(exec, paymentCurrencyAmount.value));
+    object->putDirect(vm, Identifier::fromString(vm, "currency"), jsString(vm, paymentCurrencyAmount.currency));
+    object->putDirect(vm, Identifier::fromString(vm, "value"), jsString(vm, paymentCurrencyAmount.value));
     return object;
 }
 
 static JSObject* objectForPaymentItem(VM& vm, ExecState* exec, const PaymentItem& paymentItem)
 {
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "label"), jsString(exec, paymentItem.label));
-    object->putDirect(vm, Identifier::fromString(exec, "amount"), objectForPaymentCurrencyAmount(vm, exec, paymentItem.amount));
-    object->putDirect(vm, Identifier::fromString(exec, "pending"), jsBoolean(paymentItem.pending));
+    object->putDirect(vm, Identifier::fromString(vm, "label"), jsString(vm, paymentItem.label));
+    object->putDirect(vm, Identifier::fromString(vm, "amount"), objectForPaymentCurrencyAmount(vm, exec, paymentItem.amount));
+    object->putDirect(vm, Identifier::fromString(vm, "pending"), jsBoolean(paymentItem.pending));
     return object;
 }
 
 static JSObject* objectForPaymentShippingOption(VM& vm, ExecState* exec, const PaymentShippingOption& paymentShippingOption)
 {
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "id"), jsString(exec, paymentShippingOption.id));
-    object->putDirect(vm, Identifier::fromString(exec, "label"), jsString(exec, paymentShippingOption.label));
-    object->putDirect(vm, Identifier::fromString(exec, "amount"), objectForPaymentCurrencyAmount(vm, exec, paymentShippingOption.amount));
-    object->putDirect(vm, Identifier::fromString(exec, "selected"), jsBoolean(paymentShippingOption.selected));
+    object->putDirect(vm, Identifier::fromString(vm, "id"), jsString(vm, paymentShippingOption.id));
+    object->putDirect(vm, Identifier::fromString(vm, "label"), jsString(vm, paymentShippingOption.label));
+    object->putDirect(vm, Identifier::fromString(vm, "amount"), objectForPaymentCurrencyAmount(vm, exec, paymentShippingOption.amount));
+    object->putDirect(vm, Identifier::fromString(vm, "selected"), jsBoolean(paymentShippingOption.selected));
     return object;
 }
 
@@ -113,10 +113,10 @@ static JSObject* objectForPaymentDetailsModifier(VM& vm, ExecState* exec, const 
         additionalDisplayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, modifier.additionalDisplayItems[i]));
 
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "supportedMethods"), jsString(exec, modifier.supportedMethods));
-    object->putDirect(vm, Identifier::fromString(exec, "total"), !modifier.total ? jsNull() : objectForPaymentItem(vm, exec, *modifier.total));
-    object->putDirect(vm, Identifier::fromString(exec, "additionalDisplayItems"), additionalDisplayItems);
-    object->putDirect(vm, Identifier::fromString(exec, "data"), !modifier.data ? jsNull() : modifier.data.get());
+    object->putDirect(vm, Identifier::fromString(vm, "supportedMethods"), jsString(vm, modifier.supportedMethods));
+    object->putDirect(vm, Identifier::fromString(vm, "total"), !modifier.total ? jsNull() : objectForPaymentItem(vm, exec, *modifier.total));
+    object->putDirect(vm, Identifier::fromString(vm, "additionalDisplayItems"), additionalDisplayItems);
+    object->putDirect(vm, Identifier::fromString(vm, "data"), !modifier.data ? jsNull() : modifier.data.get());
     return object;
 }
 
@@ -135,27 +135,27 @@ static JSObject* objectForPaymentDetails(VM& vm, ExecState* exec, const PaymentD
         modifiers->putDirectIndex(exec, i, objectForPaymentDetailsModifier(vm, exec, paymentDetails.modifiers[i]));
 
     auto* object = constructEmptyObject(exec);
-    object->putDirect(vm, Identifier::fromString(exec, "id"), jsString(exec, paymentDetails.id));
-    object->putDirect(vm, Identifier::fromString(exec, "total"), objectForPaymentItem(vm, exec, paymentDetails.total));
-    object->putDirect(vm, Identifier::fromString(exec, "displayItems"), displayItems);
-    object->putDirect(vm, Identifier::fromString(exec, "shippingOptions"), shippingOptions);
-    object->putDirect(vm, Identifier::fromString(exec, "modifiers"), modifiers);
+    object->putDirect(vm, Identifier::fromString(vm, "id"), jsString(vm, paymentDetails.id));
+    object->putDirect(vm, Identifier::fromString(vm, "total"), objectForPaymentItem(vm, exec, paymentDetails.total));
+    object->putDirect(vm, Identifier::fromString(vm, "displayItems"), displayItems);
+    object->putDirect(vm, Identifier::fromString(vm, "shippingOptions"), shippingOptions);
+    object->putDirect(vm, Identifier::fromString(vm, "modifiers"), modifiers);
     return object;
 }
 
-static JSString* jsStringForPaymentRequestState(VM& vm, ExecState* exec, PaymentRequest::State state)
+static JSString* jsStringForPaymentRequestState(VM& vm, PaymentRequest::State state)
 {
     switch (state) {
     case PaymentRequest::State::Created:
-        return jsNontrivialString(exec, "created"_s);
+        return jsNontrivialString(vm, "created"_s);
     case PaymentRequest::State::Interactive:
-        return jsNontrivialString(exec, "interactive"_s);
+        return jsNontrivialString(vm, "interactive"_s);
     case PaymentRequest::State::Closed:
-        return jsNontrivialString(exec, "closed"_s);
+        return jsNontrivialString(vm, "closed"_s);
     }
 
     ASSERT_NOT_REACHED();
-    return jsEmptyString(&vm);
+    return jsEmptyString(vm);
 }
 #endif
 
@@ -169,7 +169,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, ExecState* exec, JS
         auto* array = constructEmptyArray(exec, nullptr);
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "options"_s, objectForPaymentOptions(vm, exec, paymentRequest->paymentOptions())));
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "details"_s, objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_s, jsStringForPaymentRequestState(vm, exec, paymentRequest->state())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_s, jsStringForPaymentRequestState(vm, paymentRequest->state())));
         RETURN_IF_EXCEPTION(scope, { });
         return array;
     }

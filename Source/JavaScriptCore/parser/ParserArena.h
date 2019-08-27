@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +44,12 @@ namespace JSC {
         }
 
         template <typename T>
-        ALWAYS_INLINE const Identifier& makeIdentifier(VM*, const T* characters, size_t length);
-        ALWAYS_INLINE const Identifier& makeEmptyIdentifier(VM*);
-        ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(VM*, const UChar* characters, size_t length);
-        ALWAYS_INLINE const Identifier& makeIdentifier(VM*, SymbolImpl*);
+        ALWAYS_INLINE const Identifier& makeIdentifier(VM&, const T* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeEmptyIdentifier(VM&);
+        ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(VM&, const UChar* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeIdentifier(VM&, SymbolImpl*);
 
-        const Identifier& makeNumericIdentifier(VM*, double number);
+        const Identifier& makeNumericIdentifier(VM&, double number);
 
     public:
         static const int MaximumCachableCharacter = 128;
@@ -70,10 +70,10 @@ namespace JSC {
     };
 
     template <typename T>
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM* vm, const T* characters, size_t length)
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM& vm, const T* characters, size_t length)
     {
         if (!length)
-            return vm->propertyNames->emptyIdentifier;
+            return vm.propertyNames->emptyIdentifier;
         if (characters[0] >= MaximumCachableCharacter) {
             m_identifiers.append(Identifier::fromString(vm, characters, length));
             return m_identifiers.last();
@@ -93,22 +93,22 @@ namespace JSC {
         return m_identifiers.last();
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM*, SymbolImpl* symbol)
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM&, SymbolImpl* symbol)
     {
         ASSERT(symbol);
         m_identifiers.append(Identifier::fromUid(*symbol));
         return m_identifiers.last();
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeEmptyIdentifier(VM* vm)
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeEmptyIdentifier(VM& vm)
     {
-        return vm->propertyNames->emptyIdentifier;
+        return vm.propertyNames->emptyIdentifier;
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(VM* vm, const UChar* characters, size_t length)
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(VM& vm, const UChar* characters, size_t length)
     {
         if (!length)
-            return vm->propertyNames->emptyIdentifier;
+            return vm.propertyNames->emptyIdentifier;
         if (characters[0] >= MaximumCachableCharacter) {
             m_identifiers.append(Identifier::createLCharFromUChar(vm, characters, length));
             return m_identifiers.last();
@@ -128,7 +128,7 @@ namespace JSC {
         return m_identifiers.last();
     }
     
-    inline const Identifier& IdentifierArena::makeNumericIdentifier(VM* vm, double number)
+    inline const Identifier& IdentifierArena::makeNumericIdentifier(VM& vm, double number)
     {
         // FIXME: Why doesn't this use the Identifier::from overload that takes a double?
         // Seems we are missing out on multiple optimizations by not using it.

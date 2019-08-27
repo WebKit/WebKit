@@ -256,7 +256,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     // up. But if you do *anything* to trigger a GC watermark check, it will know
     // that you *had* done those allocations and it will GC appropriately.
     Heap* heap = Heap::heap(this);
-    VM& vm = *heap->vm();
+    VM& vm = heap->vm();
     DeferGCForAWhile deferGC(*heap);
 
     RELEASE_ASSERT(!hasIndexingHeader(vm));

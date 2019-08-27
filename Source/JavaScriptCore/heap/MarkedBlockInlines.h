@@ -52,7 +52,7 @@ inline bool MarkedBlock::hasAnyNewlyAllocated()
 
 inline Heap* MarkedBlock::heap() const
 {
-    return &vm()->heap;
+    return &vm().heap;
 }
 
 inline MarkedSpace* MarkedBlock::space() const
@@ -253,7 +253,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     
     unsigned cellSize = this->cellSize();
     
-    VM& vm = *this->vm();
+    VM& vm = this->vm();
     auto destroy = [&] (void* cell) {
         JSCell* jsCell = static_cast<JSCell*>(cell);
         if (!jsCell->isZapped()) {

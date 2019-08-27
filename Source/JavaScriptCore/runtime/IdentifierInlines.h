@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,56 +31,43 @@
 
 namespace JSC  {
 
-inline Identifier::Identifier(ExecState* exec, AtomStringImpl* string)
+inline Identifier::Identifier(VM& vm, AtomStringImpl* string)
     : m_string(string)
 {
 #ifndef NDEBUG
-    checkCurrentAtomStringTable(exec);
+    checkCurrentAtomStringTable(vm);
     if (string)
         ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomStringImpl::isInAtomStringTable(string), "The atomic string comes from an other thread!");
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(vm);
 #endif
 }
 
-inline Identifier::Identifier(ExecState* exec, const AtomString& string)
+inline Identifier::Identifier(VM& vm, const AtomString& string)
     : m_string(string.string())
 {
 #ifndef NDEBUG
-    checkCurrentAtomStringTable(exec);
+    checkCurrentAtomStringTable(vm);
     if (!string.isNull())
         ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomStringImpl::isInAtomStringTable(string.impl()), "The atomic string comes from an other thread!");
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(vm);
 #endif
 }
 
-inline Ref<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
-{
-#ifndef NDEBUG
-    checkCurrentAtomStringTable(exec);
-#endif
-    VM& vm = exec->vm();
-    return *AtomStringImpl::addWithStringTableProvider(vm, r);
-}
-inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
+inline Ref<StringImpl> Identifier::add(VM& vm, StringImpl* r)
 {
 #ifndef NDEBUG
     checkCurrentAtomStringTable(vm);
 #endif
-    return *AtomStringImpl::addWithStringTableProvider(*vm, r);
+    return *AtomStringImpl::addWithStringTableProvider(vm, r);
 }
 
-inline Identifier Identifier::fromUid(VM* vm, UniquedStringImpl* uid)
+inline Identifier Identifier::fromUid(VM& vm, UniquedStringImpl* uid)
 {
     if (!uid || !uid->isSymbol())
         return Identifier(vm, uid);
     return static_cast<SymbolImpl&>(*uid);
-}
-
-inline Identifier Identifier::fromUid(ExecState* exec, UniquedStringImpl* uid)
-{
-    return fromUid(&exec->vm(), uid);
 }
 
 inline Identifier Identifier::fromUid(const PrivateName& name)
@@ -94,64 +81,63 @@ inline Identifier Identifier::fromUid(SymbolImpl& symbol)
 }
 
 template<unsigned charactersCount>
-inline Identifier Identifier::fromString(VM* vm, const char (&characters)[charactersCount])
+inline Identifier Identifier::fromString(VM& vm, const char (&characters)[charactersCount])
 {
-    return Identifier(vm, characters);
+    return Identifier(&vm, characters);
 }
 
-template<unsigned charactersCount>
-inline Identifier Identifier::fromString(ExecState* exec, const char (&characters)[charactersCount])
+inline Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
 {
-    return Identifier(&exec->vm(), characters);
+    return Identifier(vm, String(s));
 }
 
-inline Identifier Identifier::fromString(VM* vm, const LChar* s, int length)
-{
-    return Identifier(vm, s, length);
-}
-
-inline Identifier Identifier::fromString(VM* vm, const UChar* s, int length)
+inline Identifier Identifier::fromString(VM& vm, const LChar* s, int length)
 {
     return Identifier(vm, s, length);
 }
 
-inline Identifier Identifier::fromString(VM* vm, const String& string)
+inline Identifier Identifier::fromString(VM& vm, const UChar* s, int length)
+{
+    return Identifier(vm, s, length);
+}
+
+inline Identifier Identifier::fromString(VM& vm, const String& string)
 {
     return Identifier(vm, string.impl());
 }
 
-inline Identifier Identifier::fromString(ExecState* exec, const String& string)
+inline Identifier Identifier::fromString(VM& vm, AtomStringImpl* atomStringImpl)
 {
-    return Identifier(&exec->vm(), string.impl());
+    return Identifier(vm, atomStringImpl);
 }
 
-inline Identifier Identifier::fromString(ExecState* exec, AtomStringImpl* atomString)
+inline Identifier Identifier::fromString(VM& vm, const AtomString& atomString)
 {
-    return Identifier(exec, atomString);
+    return Identifier(vm, atomString);
 }
 
-inline Identifier Identifier::fromString(ExecState* exec, const AtomString& atomString)
+inline Identifier Identifier::fromString(VM& vm, SymbolImpl* symbolImpl)
 {
-    return Identifier(exec, atomString);
+    return Identifier(vm, symbolImpl);
 }
 
-inline Identifier Identifier::fromString(ExecState* exec, const char* s)
+inline Identifier Identifier::fromString(VM& vm, const char* s)
 {
-    return Identifier(exec, AtomString(s));
+    return Identifier(vm, AtomString(s));
 }
 
 inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
 {
     if (identifier.isSymbol())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(&vm, identifier.impl());
+    return jsString(vm, identifier.impl());
 }
 
 inline JSValue identifierToSafePublicJSValue(VM& vm, const Identifier& identifier) 
 {
     if (identifier.isSymbol() && !identifier.isPrivateName())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(&vm, identifier.impl());
+    return jsString(vm, identifier.impl());
 }
 
 } // namespace JSC

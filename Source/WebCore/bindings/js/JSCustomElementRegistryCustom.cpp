@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,25 +129,25 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
     auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
-    auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
+    auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "connectedCallback"));
     if (connectedCallback)
         elementInterface->setConnectedCallback(connectedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
+    auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "disconnectedCallback"));
     if (disconnectedCallback)
         elementInterface->setDisconnectedCallback(disconnectedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
+    auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "adoptedCallback"));
     if (adoptedCallback)
         elementInterface->setAdoptedCallback(adoptedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
+    auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "attributeChangedCallback"));
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (attributeChangedCallback) {
-        auto observedAttributesValue = constructor->get(&state, Identifier::fromString(&state, "observedAttributes"));
+        auto observedAttributesValue = constructor->get(&state, Identifier::fromString(vm, "observedAttributes"));
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (!observedAttributesValue.isUndefined()) {
             auto observedAttributes = convert<IDLSequence<IDLDOMString>>(state, observedAttributesValue);

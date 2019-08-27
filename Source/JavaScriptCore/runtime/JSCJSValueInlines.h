@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -686,7 +686,9 @@ ALWAYS_INLINE Identifier JSValue::toPropertyKey(ExecState* exec) const
     if (primitive.isSymbol())
         RELEASE_AND_RETURN(scope, Identifier::fromUid(asSymbol(primitive)->privateName()));
 
-    RELEASE_AND_RETURN(scope, primitive.toString(exec)->toIdentifier(exec));
+    auto string = primitive.toString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, string->toIdentifier(exec));
 }
 
 inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
@@ -965,7 +967,7 @@ ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, uint64_t propertyName) const
 {
     if (LIKELY(propertyName <= std::numeric_limits<unsigned>::max()))
         return get(exec, static_cast<unsigned>(propertyName));
-    return get(exec, Identifier::from(exec, static_cast<double>(propertyName)));
+    return get(exec, Identifier::from(exec->vm(), static_cast<double>(propertyName)));
 }
 
 inline bool JSValue::put(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

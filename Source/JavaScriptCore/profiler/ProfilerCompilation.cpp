@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,7 +119,7 @@ JSValue Compilation::toJS(ExecState* exec) const
     JSObject* result = constructEmptyObject(exec);
     RETURN_IF_EXCEPTION(scope, { });
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
-    result->putDirect(vm, vm.propertyNames->compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
+    result->putDirect(vm, vm.propertyNames->compilationKind, jsString(vm, String::fromUTF8(toCString(m_kind))));
     
     JSArray* profiledBytecodes = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -176,9 +176,9 @@ JSValue Compilation::toJS(ExecState* exec) const
     result->putDirect(vm, vm.propertyNames->numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
     result->putDirect(vm, vm.propertyNames->numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
     result->putDirect(vm, vm.propertyNames->numInlinedCalls, jsNumber(m_numInlinedCalls));
-    result->putDirect(vm, vm.propertyNames->jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
+    result->putDirect(vm, vm.propertyNames->jettisonReason, jsString(vm, String::fromUTF8(toCString(m_jettisonReason))));
     if (!m_additionalJettisonReason.isNull())
-        result->putDirect(vm, vm.propertyNames->additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
+        result->putDirect(vm, vm.propertyNames->additionalJettisonReason, jsString(vm, String::fromUTF8(m_additionalJettisonReason)));
     
     result->putDirect(vm, vm.propertyNames->uid, m_uid.toJS(exec));
     

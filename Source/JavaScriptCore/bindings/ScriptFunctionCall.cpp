@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,14 +42,16 @@ namespace Deprecated {
 
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
-    JSLockHolder lock(m_exec);
-    m_arguments.append(jsString(m_exec, argument));
+    VM& vm = m_exec->vm();
+    JSLockHolder lock(vm);
+    m_arguments.append(jsString(vm, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
-    JSLockHolder lock(m_exec);
-    m_arguments.append(jsString(m_exec, String(argument)));
+    VM& vm = m_exec->vm();
+    JSLockHolder lock(vm);
+    m_arguments.append(jsString(vm, String(argument)));
 }
 
 void ScriptCallArgumentHandler::appendArgument(JSValue argument)
@@ -108,7 +110,7 @@ JSValue ScriptFunctionCall::call(bool& hadException)
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue function = thisObject->get(m_exec, Identifier::fromString(m_exec, m_name));
+    JSValue function = thisObject->get(m_exec, Identifier::fromString(vm, m_name));
     if (UNLIKELY(scope.exception())) {
         hadException = true;
         return { };

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -412,13 +412,13 @@ JSObject* IntlCollator::resolvedOptions(ExecState& state)
     }
 
     JSObject* options = constructEmptyObject(&state);
-    options->putDirect(vm, vm.propertyNames->locale, jsString(&state, m_locale));
-    options->putDirect(vm, vm.propertyNames->usage, jsNontrivialString(&state, usageString(m_usage)));
-    options->putDirect(vm, vm.propertyNames->sensitivity, jsNontrivialString(&state, sensitivityString(m_sensitivity)));
+    options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
+    options->putDirect(vm, vm.propertyNames->usage, jsNontrivialString(vm, usageString(m_usage)));
+    options->putDirect(vm, vm.propertyNames->sensitivity, jsNontrivialString(vm, sensitivityString(m_sensitivity)));
     options->putDirect(vm, vm.propertyNames->ignorePunctuation, jsBoolean(m_ignorePunctuation));
-    options->putDirect(vm, vm.propertyNames->collation, jsString(&state, m_collation));
+    options->putDirect(vm, vm.propertyNames->collation, jsString(vm, m_collation));
     options->putDirect(vm, vm.propertyNames->numeric, jsBoolean(m_numeric));
-    options->putDirect(vm, vm.propertyNames->caseFirst, jsNontrivialString(&state, caseFirstString(m_caseFirst)));
+    options->putDirect(vm, vm.propertyNames->caseFirst, jsNontrivialString(vm, caseFirstString(m_caseFirst)));
     return options;
 }
 

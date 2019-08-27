@@ -138,9 +138,10 @@ void InspectorAuditAgent::populateAuditObject(JSC::ExecState* execState, JSC::St
     if (!execState)
         return;
 
-    JSC::JSLockHolder lock(execState);
+    JSC::VM& vm = execState->vm();
+    JSC::JSLockHolder lock(vm);
 
-    auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "Version"), JSC::JSValue(Inspector::Protocol::Audit::VERSION));
+    auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Version"), JSC::JSValue(Inspector::Protocol::Audit::VERSION));
 }
 
 } // namespace Inspector

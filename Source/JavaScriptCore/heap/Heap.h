@@ -139,12 +139,12 @@ public:
     // Take this if you know that from->cellState() < barrierThreshold.
     JS_EXPORT_PRIVATE void writeBarrierSlowPath(const JSCell* from);
 
-    Heap(VM*, HeapType);
+    Heap(VM&, HeapType);
     ~Heap();
     void lastChanceToFinalize();
     void releaseDelayedReleasedObjects();
 
-    VM* vm() const;
+    VM& vm() const;
 
     MarkedSpace& objectSpace() { return m_objectSpace; }
     MachineThreads& machineThreads() { return *m_machineThreads; }
@@ -642,7 +642,7 @@ private:
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 
-    VM* m_vm;
+    VM& m_vm;
     Seconds m_lastFullGCLength { 10_ms };
     Seconds m_lastEdenGCLength { 10_ms };
 

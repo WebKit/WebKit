@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,7 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
         ReturnType result;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
-        JSC::PropertyNameArray keys(&vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
+        JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
         object->methodTable(vm)->getOwnPropertyNames(object, &state, keys, JSC::EnumerationMode(JSC::DontEnumPropertiesMode::Include));
 
         RETURN_IF_EXCEPTION(scope, { });
@@ -150,7 +150,7 @@ template<typename K, typename V> struct JSConverter<IDLRecord<K, V>> {
             auto esValue = toJS<V>(state, globalObject, keyValuePair.value);
 
             // 3. Let created be ! CreateDataProperty(result, esKey, esValue).
-            bool created = result->putDirect(vm, JSC::Identifier::fromString(&vm, keyValuePair.key), esValue);
+            bool created = result->putDirect(vm, JSC::Identifier::fromString(vm, keyValuePair.key), esValue);
 
             // 4. Assert: created is true.
             ASSERT_UNUSED(created, created);

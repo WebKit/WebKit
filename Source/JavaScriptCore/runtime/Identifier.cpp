@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -35,28 +35,23 @@
 
 namespace JSC {
 
-Ref<StringImpl> Identifier::add(VM* vm, const char* c)
+Ref<StringImpl> Identifier::add(VM& vm, const char* c)
 {
     ASSERT(c);
     ASSERT(c[0]);
     if (!c[1])
-        return vm->smallStrings.singleCharacterStringRep(c[0]);
+        return vm.smallStrings.singleCharacterStringRep(c[0]);
 
     return *AtomStringImpl::add(c);
 }
 
-Ref<StringImpl> Identifier::add(ExecState* exec, const char* c)
-{
-    return add(&exec->vm(), c);
-}
-
-Ref<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
+Ref<StringImpl> Identifier::add8(VM& vm, const UChar* s, int length)
 {
     if (length == 1) {
         UChar c = s[0];
         ASSERT(isLatin1(c));
         if (canUseSingleCharacterString(c))
-            return vm->smallStrings.singleCharacterStringRep(c);
+            return vm.smallStrings.singleCharacterStringRep(c);
     }
     if (!length)
         return *StringImpl::empty();
@@ -64,34 +59,19 @@ Ref<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
     return *AtomStringImpl::add(s, length);
 }
 
-Identifier Identifier::from(ExecState* exec, unsigned value)
+Identifier Identifier::from(VM& vm, unsigned value)
 {
-    return Identifier(exec, exec->vm().numericStrings.add(value));
+    return Identifier(vm, vm.numericStrings.add(value));
 }
 
-Identifier Identifier::from(ExecState* exec, int value)
+Identifier Identifier::from(VM& vm, int value)
 {
-    return Identifier(exec, exec->vm().numericStrings.add(value));
+    return Identifier(vm, vm.numericStrings.add(value));
 }
 
-Identifier Identifier::from(ExecState* exec, double value)
+Identifier Identifier::from(VM& vm, double value)
 {
-    return Identifier(exec, exec->vm().numericStrings.add(value));
-}
-
-Identifier Identifier::from(VM* vm, unsigned value)
-{
-    return Identifier(vm, vm->numericStrings.add(value));
-}
-
-Identifier Identifier::from(VM* vm, int value)
-{
-    return Identifier(vm, vm->numericStrings.add(value));
-}
-
-Identifier Identifier::from(VM* vm, double value)
-{
-    return Identifier(vm, vm->numericStrings.add(value));
+    return Identifier(vm, vm.numericStrings.add(value));
 }
 
 void Identifier::dump(PrintStream& out) const
@@ -109,24 +89,18 @@ void Identifier::dump(PrintStream& out) const
 
 #ifndef NDEBUG
 
-void Identifier::checkCurrentAtomStringTable(VM* vm)
+void Identifier::checkCurrentAtomStringTable(VM& vm)
 {
     // Check the identifier table accessible through the threadspecific matches the
     // vm's identifier table.
-    ASSERT_UNUSED(vm, vm->atomStringTable() == Thread::current().atomStringTable());
-}
-
-void Identifier::checkCurrentAtomStringTable(ExecState* exec)
-{
-    checkCurrentAtomStringTable(&exec->vm());
+    ASSERT_UNUSED(vm, vm.atomStringTable() == Thread::current().atomStringTable());
 }
 
 #else
 
 // These only exists so that our exports are the same for debug and release builds.
 // This would be an RELEASE_ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomStringTable(VM*) { CRASH(); }
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomStringTable(ExecState*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomStringTable(VM&) { CRASH(); }
 
 #endif
 

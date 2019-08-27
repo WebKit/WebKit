@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,7 +129,7 @@ JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, JSC:
         return jsNumber(variant.value.doubleValue);
 
     case NPVariantType_String:
-        return jsString(exec, String::fromUTF8WithLatin1Fallback(variant.value.stringValue.UTF8Characters, 
+        return jsString(globalObject->vm(), String::fromUTF8WithLatin1Fallback(variant.value.stringValue.UTF8Characters,
                                                                  variant.value.stringValue.UTF8Length));
     case NPVariantType_Object:
         return getOrCreateJSObject(globalObject, variant.value.objectValue);
@@ -141,6 +141,7 @@ JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, JSC:
 
 void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue value, NPVariant& variant)
 {
+    VM& vm = exec->vm();
     JSLockHolder lock(exec);
 
     VOID_TO_NPVARIANT(variant);
@@ -172,7 +173,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     }
 
     if (value.isObject()) {
-        NPObject* npObject = getOrCreateNPObject(exec->vm(), asObject(value));
+        NPObject* npObject = getOrCreateNPObject(vm, asObject(value));
         OBJECT_TO_NPVARIANT(npObject, variant);
         return;
     }

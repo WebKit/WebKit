@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -822,7 +822,7 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
         String noExtensionsLocale = removeUnicodeLocaleExtension(locale);
         String availableLocale = bestAvailableLocale(availableLocales, noExtensionsLocale);
         if (!availableLocale.isNull()) {
-            subset->putDirectIndex(&state, index++, jsString(&state, locale));
+            subset->putDirectIndex(&state, index++, jsString(vm, locale));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -859,7 +859,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         : lookupSupportedLocales(state, availableLocales, requestedLocales);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    PropertyNameArray keys(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+    PropertyNameArray keys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     supportedLocales->getOwnPropertyNames(supportedLocales, &state, keys, EnumerationMode());
     RETURN_IF_EXCEPTION(scope, JSValue());
 
@@ -937,7 +937,7 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
     }
 
     for (size_t i = 0; i < length; ++i) {
-        localeArray->putDirectIndex(state, i, jsString(state, localeList[i]));
+        localeArray->putDirectIndex(state, i, jsString(vm, localeList[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(localeArray);

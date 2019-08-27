@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ void AbstractModuleRecord::finishCreation(ExecState* exec, VM& vm)
     JSMap* map = JSMap::create(exec, vm, globalObject(vm)->mapStructure());
     scope.releaseAssertNoException();
     m_dependenciesMap.set(vm, this, map);
-    putDirect(vm, Identifier::fromString(&vm, "dependenciesMap"_s), m_dependenciesMap.get());
+    putDirect(vm, Identifier::fromString(vm, "dependenciesMap"_s), m_dependenciesMap.get());
 }
 
 void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -148,7 +148,7 @@ AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(ExecState*
     JSValue moduleNameValue = identifierToJSValue(vm, moduleName);
     JSValue entry = m_dependenciesMap->JSMap::get(exec, moduleNameValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, jsCast<AbstractModuleRecord*>(entry.get(exec, Identifier::fromString(exec, "module"))));
+    RELEASE_AND_RETURN(scope, jsCast<AbstractModuleRecord*>(entry.get(exec, Identifier::fromString(vm, "module"))));
 }
 
 auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& localName) -> Resolution
@@ -541,7 +541,7 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
         // Enqueue the tasks in reverse order.
         for (auto iterator = query.moduleRecord->starExportEntries().rbegin(), end = query.moduleRecord->starExportEntries().rend(); iterator != end; ++iterator) {
             const RefPtr<UniquedStringImpl>& starModuleName = *iterator;
-            AbstractModuleRecord* importedModuleRecord = query.moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(exec, starModuleName.get()));
+            AbstractModuleRecord* importedModuleRecord = query.moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(vm, starModuleName.get()));
             RETURN_IF_EXCEPTION(scope, false);
             pendingTasks.append(Task { ResolveQuery(importedModuleRecord, query.exportName.get()), Type::Query });
         }
@@ -720,7 +720,7 @@ static void getExportedNames(ExecState* exec, AbstractModuleRecord* root, Identi
         }
 
         for (const auto& starModuleName : moduleRecord->starExportEntries()) {
-            AbstractModuleRecord* requestedModuleRecord = moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(exec, starModuleName.get()));
+            AbstractModuleRecord* requestedModuleRecord = moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(vm, starModuleName.get()));
             RETURN_IF_EXCEPTION(scope, void());
             pendingModules.append(requestedModuleRecord);
         }
@@ -743,7 +743,7 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(ExecState* exe
 
     Vector<std::pair<Identifier, Resolution>> resolutions;
     for (auto& name : exportedNames) {
-        Identifier ident = Identifier::fromUid(exec, name.get());
+        Identifier ident = Identifier::fromUid(vm, name.get());
         const Resolution resolution = resolveExport(exec, ident);
         RETURN_IF_EXCEPTION(scope, nullptr);
         switch (resolution.type) {

@@ -77,7 +77,7 @@ namespace JSC { namespace LLInt {
 
 #define LLINT_BEGIN_NO_SET_PC() \
     VM& vm = exec->vm();      \
-    NativeCallFrameTracer tracer(&vm, exec); \
+    NativeCallFrameTracer tracer(vm, exec); \
     auto throwScope = DECLARE_THROW_SCOPE(vm)
 
 #ifndef NDEBUG
@@ -529,7 +529,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     // It's ok to create the NativeCallFrameTracer here before we
     // convertToStackOverflowFrame() because this function is always called
     // after the frame has been propulated with a proper CodeBlock and callee.
-    NativeCallFrameTracer tracer(&vm, exec);
+    NativeCallFrameTracer tracer(vm, exec);
 
     LLINT_SET_PC_FOR_STUBS();
 
@@ -1441,7 +1441,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
         ASSERT(callType != CallType::JS);
     
         if (callType == CallType::Host) {
-            NativeCallFrameTracer tracer(&vm, execCallee);
+            NativeCallFrameTracer tracer(vm, execCallee);
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
@@ -1461,7 +1461,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
     ASSERT(constructType != ConstructType::JS);
     
     if (constructType == ConstructType::Host) {
-        NativeCallFrameTracer tracer(&vm, execCallee);
+        NativeCallFrameTracer tracer(vm, execCallee);
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
         LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
@@ -1777,7 +1777,7 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
     LLINT_BEGIN_NO_SET_PC();
     UNUSED_PARAM(throwScope);
-    genericUnwind(&vm, exec);
+    genericUnwind(vm, exec);
     LLINT_END_IMPL();
 }
 

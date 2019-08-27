@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,12 +104,12 @@ BytecodeIntrinsicNode::EmitterType BytecodeIntrinsicRegistry::lookup(const Ident
 
 JSValue BytecodeIntrinsicRegistry::sentinelMapBucketValue(BytecodeGenerator& generator)
 {
-    return generator.vm()->sentinelMapBucket();
+    return generator.vm().sentinelMapBucket();
 }
 
 JSValue BytecodeIntrinsicRegistry::sentinelSetBucketValue(BytecodeGenerator& generator)
 {
-    return generator.vm()->sentinelSetBucket();
+    return generator.vm().sentinelSetBucket();
 }
 
 } // namespace JSC

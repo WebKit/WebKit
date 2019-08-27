@@ -158,7 +158,7 @@
     }
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::JSArray* result = exec->lexicalGlobalObject()->moduleLoader()->dependencyKeysIfEvaluated(exec, JSC::jsString(&vm, [[script sourceURL] absoluteString]));
+    JSC::JSArray* result = exec->lexicalGlobalObject()->moduleLoader()->dependencyKeysIfEvaluated(exec, JSC::jsString(vm, [[script sourceURL] absoluteString]));
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(exec, scope.exception()->value());
         scope.clearException();

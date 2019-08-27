@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,11 +49,11 @@ JSValue LazyJSValue::getValue(VM& vm) const
     case KnownValue:
         return value()->value();
     case SingleCharacterString:
-        return jsSingleCharacterString(&vm, u.character);
+        return jsSingleCharacterString(vm, u.character);
     case KnownStringImpl:
-        return jsString(&vm, u.stringImpl);
+        return jsString(vm, u.stringImpl);
     case NewStringImpl:
-        return jsString(&vm, AtomStringImpl::add(u.stringImpl));
+        return jsString(vm, AtomStringImpl::add(u.stringImpl));
     }
     RELEASE_ASSERT_NOT_REACHED();
     return JSValue();
@@ -251,7 +251,7 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
     
     jit.addLinkTask(
         [codeBlock, label, thisValue] (LinkBuffer& linkBuffer) {
-            JSValue realValue = thisValue.getValue(*codeBlock->vm());
+            JSValue realValue = thisValue.getValue(codeBlock->vm());
             RELEASE_ASSERT(realValue.isCell());
 
             codeBlock->addConstant(realValue);

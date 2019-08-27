@@ -482,18 +482,20 @@ template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex(
     JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    return cell->methodTable(exec->vm())->deleteProperty(cell, exec, Identifier::from(exec, propertyName));
+    VM& vm = exec->vm();
+    return cell->methodTable(vm)->deleteProperty(cell, exec, Identifier::from(vm, propertyName));
 }
 
 template<typename Adaptor>
 void JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames(
     JSObject* object, ExecState* exec, PropertyNameArray& array, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
     if (array.includeStringProperties()) {
         for (unsigned i = 0; i < thisObject->m_length; ++i)
-            array.add(Identifier::from(exec, i));
+            array.add(Identifier::from(vm, i));
     }
     
     return Base::getOwnPropertyNames(object, exec, array, mode);

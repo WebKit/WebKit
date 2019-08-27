@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1275,7 +1275,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
 
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
  
-    PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+    PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     object->methodTable(vm)->getPropertyNames(object, exec, propertyNames, EnumerationMode());
 
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
@@ -1300,7 +1300,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
 
 static bool getObjectID(NetscapePluginInstanceProxy* pluginInstanceProxy, JSObject* object, uint64_t& objectID)
 {
-    JSC::VM& vm = *object->vm();
+    JSC::VM& vm = object->vm();
     if (object->classInfo(vm) != ProxyRuntimeObject::info())
         return false;
 
@@ -1318,7 +1318,8 @@ static bool getObjectID(NetscapePluginInstanceProxy* pluginInstanceProxy, JSObje
     
 void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecState* exec, JSValue value)
 {
-    JSLockHolder lock(exec);
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
 
     if (value.isString()) {
         [array addObject:[NSNumber numberWithInt:StringValueType]];
@@ -1339,7 +1340,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
             [array addObject:[NSNumber numberWithInt:objectID]];
         } else {
             [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
-            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(exec->vm(), object)]];
+            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(vm, object)]];
         }
     } else
         [array addObject:[NSNumber numberWithInt:VoidValueType]];
@@ -1395,7 +1396,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
         case StringValueType: {
             NSString *string = [array objectAtIndex:index++];
             
-            result = jsString(exec, String(string));
+            result = jsString(exec->vm(), String(string));
             return true;
         }
         case JSObjectValueType: {
@@ -1453,7 +1454,7 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
 
 void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
 {
-    if (!value.isObject() || value.inherits<ProxyRuntimeObject>(*value.getObject()->vm()))
+    if (!value.isObject() || value.inherits<ProxyRuntimeObject>(value.getObject()->vm()))
         return;
 
     m_localObjects.retain(asObject(value));
@@ -1461,7 +1462,7 @@ void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
 
 void NetscapePluginInstanceProxy::releaseLocalObject(JSC::JSValue value)
 {
-    if (!value.isObject() || value.inherits<ProxyRuntimeObject>(*value.getObject()->vm()))
+    if (!value.isObject() || value.inherits<ProxyRuntimeObject>(value.getObject()->vm()))
         return;
 
     m_localObjects.release(asObject(value));

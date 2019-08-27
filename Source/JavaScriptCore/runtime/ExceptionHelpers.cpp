@@ -50,7 +50,7 @@ const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError",
 JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
 {
     if (hint == PreferString)
-        return jsNontrivialString(exec, String("JavaScript execution terminated."_s));
+        return jsNontrivialString(exec->vm(), String("JavaScript execution terminated."_s));
     return JSValue(PNaN);
 }
 

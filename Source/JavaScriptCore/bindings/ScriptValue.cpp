@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (c) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,7 +79,7 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
         VM& vm = scriptState.vm();
         auto inspectorObject = JSON::Object::create();
         auto& object = *value.getObject();
-        PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+        PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
         object.methodTable(vm)->getOwnPropertyNames(&object, &scriptState, propertyNames, EnumerationMode());
         for (auto& name : propertyNames) {
             auto inspectorValue = jsToInspectorValue(scriptState, object.get(&scriptState, name), maxDepth);

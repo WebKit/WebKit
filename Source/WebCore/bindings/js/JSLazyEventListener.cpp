@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2018 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -149,7 +149,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     ExecState* exec = globalObject->globalExec();
 
     MarkedArgumentBuffer args;
-    args.append(jsNontrivialString(exec, m_eventParameterName));
+    args.append(jsNontrivialString(vm, m_eventParameterName));
     args.append(jsStringWithCache(exec, m_code));
     ASSERT(!args.hasOverflowed());
 
@@ -158,7 +158,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     int overrideLineNumber = m_sourcePosition.m_line.oneBasedInt();
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec,
-        exec->lexicalGlobalObject(), args, Identifier::fromString(exec, m_functionName),
+        exec->lexicalGlobalObject(), args, Identifier::fromString(vm, m_functionName),
         SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) },
         m_sourceURL, m_sourcePosition, overrideLineNumber);
     if (UNLIKELY(scope.exception())) {

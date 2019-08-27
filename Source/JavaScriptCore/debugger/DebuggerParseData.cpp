@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,7 +154,7 @@ bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData
     JSParserScriptMode scriptMode = DebuggerParseInfo<T>::scriptMode;
 
     ParserError error;
-    std::unique_ptr<RootNode> rootNode = parse<RootNode>(&vm, source, Identifier(),
+    std::unique_ptr<RootNode> rootNode = parse<RootNode>(vm, source, Identifier(),
         JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, parseMode, SuperBinding::NotNeeded,
         error, nullptr, ConstructorKind::None, DerivedContextType::None, EvalContextType::None,
         &debuggerParseData);

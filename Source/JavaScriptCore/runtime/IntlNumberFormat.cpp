@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,7 +195,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
 
     m_numberingSystem = result.get("nu"_s);
 
-    String styleString = intlStringOption(state, options, Identifier::fromString(&vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
+    String styleString = intlStringOption(state, options, Identifier::fromString(vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
     RETURN_IF_EXCEPTION(scope, void());
     if (styleString == "decimal")
         m_style = Style::Decimal;
@@ -206,7 +206,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     else
         ASSERT_NOT_REACHED();
 
-    String currency = intlStringOption(state, options, Identifier::fromString(&vm, "currency"), { }, nullptr, nullptr);
+    String currency = intlStringOption(state, options, Identifier::fromString(vm, "currency"), { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!currency.isNull()) {
         if (currency.length() != 3 || !currency.isAllSpecialCharacters<isASCIIAlpha>()) {
@@ -227,7 +227,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
         currencyDigits = computeCurrencyDigits(currency);
     }
 
-    String currencyDisplayString = intlStringOption(state, options, Identifier::fromString(&vm, "currencyDisplay"), { "code", "symbol", "name" }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\"", "symbol");
+    String currencyDisplayString = intlStringOption(state, options, Identifier::fromString(vm, "currencyDisplay"), { "code", "symbol", "name" }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\"", "symbol");
     RETURN_IF_EXCEPTION(scope, void());
     if (m_style == Style::Currency) {
         if (currencyDisplayString == "code")
@@ -240,13 +240,13 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
             ASSERT_NOT_REACHED();
     }
 
-    unsigned minimumIntegerDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "minimumIntegerDigits"), 1, 21, 1);
+    unsigned minimumIntegerDigits = intlNumberOption(state, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumIntegerDigits = minimumIntegerDigits;
 
     unsigned minimumFractionDigitsDefault = (m_style == Style::Currency) ? currencyDigits : 0;
 
-    unsigned minimumFractionDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
+    unsigned minimumFractionDigits = intlNumberOption(state, options, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumFractionDigits = minimumFractionDigits;
 
@@ -258,27 +258,27 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     else
         maximumFractionDigitsDefault = std::max(minimumFractionDigits, 3u);
 
-    unsigned maximumFractionDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
+    unsigned maximumFractionDigits = intlNumberOption(state, options, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_maximumFractionDigits = maximumFractionDigits;
 
-    JSValue minimumSignificantDigitsValue = options->get(&state, Identifier::fromString(&vm, "minimumSignificantDigits"));
+    JSValue minimumSignificantDigitsValue = options->get(&state, Identifier::fromString(vm, "minimumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumSignificantDigitsValue = options->get(&state, Identifier::fromString(&vm, "maximumSignificantDigits"));
+    JSValue maximumSignificantDigitsValue = options->get(&state, Identifier::fromString(vm, "maximumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
-        unsigned minimumSignificantDigits = intlDefaultNumberOption(state, minimumSignificantDigitsValue, Identifier::fromString(&vm, "minimumSignificantDigits"), 1, 21, 1);
+        unsigned minimumSignificantDigits = intlDefaultNumberOption(state, minimumSignificantDigitsValue, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumSignificantDigits = intlDefaultNumberOption(state, maximumSignificantDigitsValue, Identifier::fromString(&vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
+        unsigned maximumSignificantDigits = intlDefaultNumberOption(state, maximumSignificantDigitsValue, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
         RETURN_IF_EXCEPTION(scope, void());
         m_minimumSignificantDigits = minimumSignificantDigits;
         m_maximumSignificantDigits = maximumSignificantDigits;
     }
 
     bool usesFallback;
-    bool useGrouping = intlBooleanOption(state, options, Identifier::fromString(&vm, "useGrouping"), usesFallback);
+    bool useGrouping = intlBooleanOption(state, options, Identifier::fromString(vm, "useGrouping"), usesFallback);
     if (usesFallback)
         useGrouping = true;
     RETURN_IF_EXCEPTION(scope, void());
@@ -364,7 +364,7 @@ JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
     if (U_FAILURE(status))
         return throwException(&state, scope, createError(&state, "Failed to format a number."_s));
 
-    return jsString(&state, String(buffer.data(), length));
+    return jsString(vm, String(buffer.data(), length));
 }
 
 ASCIILiteral IntlNumberFormat::styleString(Style style)
@@ -415,22 +415,22 @@ JSObject* IntlNumberFormat::resolvedOptions(ExecState& state)
     }
 
     JSObject* options = constructEmptyObject(&state);
-    options->putDirect(vm, vm.propertyNames->locale, jsString(&state, m_locale));
-    options->putDirect(vm, Identifier::fromString(&vm, "numberingSystem"), jsString(&state, m_numberingSystem));
-    options->putDirect(vm, Identifier::fromString(&vm, "style"), jsNontrivialString(&state, styleString(m_style)));
+    options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
+    options->putDirect(vm, Identifier::fromString(vm, "numberingSystem"), jsString(vm, m_numberingSystem));
+    options->putDirect(vm, Identifier::fromString(vm, "style"), jsNontrivialString(vm, styleString(m_style)));
     if (m_style == Style::Currency) {
-        options->putDirect(vm, Identifier::fromString(&vm, "currency"), jsNontrivialString(&state, m_currency));
-        options->putDirect(vm, Identifier::fromString(&vm, "currencyDisplay"), jsNontrivialString(&state, currencyDisplayString(m_currencyDisplay)));
+        options->putDirect(vm, Identifier::fromString(vm, "currency"), jsNontrivialString(vm, m_currency));
+        options->putDirect(vm, Identifier::fromString(vm, "currencyDisplay"), jsNontrivialString(vm, currencyDisplayString(m_currencyDisplay)));
     }
-    options->putDirect(vm, Identifier::fromString(&vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
-    options->putDirect(vm, Identifier::fromString(&vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
-    options->putDirect(vm, Identifier::fromString(&vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));
+    options->putDirect(vm, Identifier::fromString(vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
+    options->putDirect(vm, Identifier::fromString(vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
+    options->putDirect(vm, Identifier::fromString(vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));
     if (m_minimumSignificantDigits) {
         ASSERT(m_maximumSignificantDigits);
-        options->putDirect(vm, Identifier::fromString(&vm, "minimumSignificantDigits"), jsNumber(m_minimumSignificantDigits));
-        options->putDirect(vm, Identifier::fromString(&vm, "maximumSignificantDigits"), jsNumber(m_maximumSignificantDigits));
+        options->putDirect(vm, Identifier::fromString(vm, "minimumSignificantDigits"), jsNumber(m_minimumSignificantDigits));
+        options->putDirect(vm, Identifier::fromString(vm, "maximumSignificantDigits"), jsNumber(m_maximumSignificantDigits));
     }
-    options->putDirect(vm, Identifier::fromString(&vm, "useGrouping"), jsBoolean(m_useGrouping));
+    options->putDirect(vm, Identifier::fromString(vm, "useGrouping"), jsBoolean(m_useGrouping));
     return options;
 }
 
@@ -534,8 +534,8 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
     unsigned index = 0;
 
     auto resultString = String(result.data(), resultLength);
-    auto typePropertyName = Identifier::fromString(&vm, "type");
-    auto literalString = jsString(&exec, "literal"_s);
+    auto typePropertyName = Identifier::fromString(vm, "type");
+    auto literalString = jsString(vm, "literal"_s);
 
     int32_t currentIndex = 0;
     while (currentIndex < resultLength) {
@@ -543,8 +543,8 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
         auto fieldType = fields[currentIndex].type;
         while (currentIndex < resultLength && fields[currentIndex].type == fieldType)
             ++currentIndex;
-        auto partType = fieldType == literalFieldType ? literalString : jsString(&exec, partTypeString(UNumberFormatFields(fieldType), value));
-        auto partValue = jsSubstring(&vm, resultString, startIndex, currentIndex - startIndex);
+        auto partType = fieldType == literalFieldType ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), value));
+        auto partValue = jsSubstring(vm, resultString, startIndex, currentIndex - startIndex);
         JSObject* part = constructEmptyObject(&exec);
         part->putDirect(vm, typePropertyName, partType);
         part->putDirect(vm, vm.propertyNames->value, partValue);

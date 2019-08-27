@@ -59,7 +59,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();
     else {
-        bubblesValue = object->get(&state, Identifier::fromString(&state, "bubbles"));
+        bubblesValue = object->get(&state, Identifier::fromString(vm, "bubbles"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bubblesValue.isUndefined()) {
@@ -71,7 +71,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
     else {
-        cancelableValue = object->get(&state, Identifier::fromString(&state, "cancelable"));
+        cancelableValue = object->get(&state, Identifier::fromString(vm, "cancelable"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!cancelableValue.isUndefined()) {
@@ -83,7 +83,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         composedValue = jsUndefined();
     else {
-        composedValue = object->get(&state, Identifier::fromString(&state, "composed"));
+        composedValue = object->get(&state, Identifier::fromString(vm, "composed"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!composedValue.isUndefined()) {
@@ -95,7 +95,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         promiseValue = jsUndefined();
     else {
-        promiseValue = object->get(&state, Identifier::fromString(&state, "promise"));
+        promiseValue = object->get(&state, Identifier::fromString(vm, "promise"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!promiseValue.isUndefined()) {
@@ -109,7 +109,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         reasonValue = jsUndefined();
     else {
-        reasonValue = object->get(&state, Identifier::fromString(&state, "reason"));
+        reasonValue = object->get(&state, Identifier::fromString(vm, "reason"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!reasonValue.isUndefined()) {
@@ -180,7 +180,7 @@ template<> JSValue JSTestPromiseRejectionEventConstructor::prototypeForStructure
 template<> void JSTestPromiseRejectionEventConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestPromiseRejectionEvent::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String("TestPromiseRejectionEvent"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestPromiseRejectionEvent"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 

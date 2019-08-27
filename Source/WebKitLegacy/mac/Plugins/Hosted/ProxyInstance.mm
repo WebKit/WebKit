@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -282,7 +282,7 @@ JSValue ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint
 JSValue ProxyInstance::stringValue(ExecState* exec) const
 {
     // FIXME: Implement something sensible.
-    return jsEmptyString(exec);
+    return jsEmptyString(exec->vm());
 }
 
 JSValue ProxyInstance::numberValue(ExecState*) const
@@ -319,6 +319,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     
     NSArray *array = [NSPropertyListSerialization propertyListWithData:(__bridge NSData *)reply->m_result.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
     
+    VM& vm = exec->vm();
     for (NSNumber *number in array) {
         IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>([number longLongValue]);
         if (!IdentifierRep::isValid(identifier))
@@ -326,9 +327,9 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
         if (identifier->isString()) {
             const char* str = identifier->string();
-            nameArray.add(Identifier::fromString(&commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
+            nameArray.add(Identifier::fromString(vm, String::fromUTF8WithLatin1Fallback(str, strlen(str))));
         } else
-            nameArray.add(Identifier::from(exec, identifier->number()));
+            nameArray.add(Identifier::from(vm, identifier->number()));
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ bool JSRemoteDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, P
 
 bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
+    VM& vm = state->vm();
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
 
     // Indexed getters take precendence over regular properties, so caching would be invalid.
@@ -50,7 +51,7 @@ bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* s
 
     // FIXME: Add support for indexed properties.
 
-    return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->wrapped(), *state, Identifier::from(state, index), slot, String());
+    return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->wrapped(), *state, Identifier::from(vm, index), slot, String());
 }
 
 bool JSRemoteDOMWindow::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

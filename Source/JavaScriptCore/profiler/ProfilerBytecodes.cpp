@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,9 +57,9 @@ JSValue Bytecodes::toJS(ExecState* exec) const
     JSObject* result = constructEmptyObject(exec);
     
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_id));
-    result->putDirect(vm, vm.propertyNames->inferredName, jsString(exec, String::fromUTF8(m_inferredName)));
-    result->putDirect(vm, vm.propertyNames->sourceCode, jsString(exec, String::fromUTF8(m_sourceCode)));
-    result->putDirect(vm, vm.propertyNames->hash, jsString(exec, String::fromUTF8(toCString(m_hash))));
+    result->putDirect(vm, vm.propertyNames->inferredName, jsString(vm, String::fromUTF8(m_inferredName)));
+    result->putDirect(vm, vm.propertyNames->sourceCode, jsString(vm, String::fromUTF8(m_sourceCode)));
+    result->putDirect(vm, vm.propertyNames->hash, jsString(vm, String::fromUTF8(toCString(m_hash))));
     result->putDirect(vm, vm.propertyNames->instructionCount, jsNumber(m_instructionCount));
     addSequenceProperties(exec, result);
     

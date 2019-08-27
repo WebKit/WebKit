@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -533,19 +533,19 @@ inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separ
             goto generalCase;
         switch (separator.length()) {
         case 0:
-            RELEASE_AND_RETURN(scope, jsEmptyString(&state));
+            RELEASE_AND_RETURN(scope, jsEmptyString(vm));
         case 1: {
             if (length <= 1)
-                RELEASE_AND_RETURN(scope, jsEmptyString(&state));
+                RELEASE_AND_RETURN(scope, jsEmptyString(vm));
             if (separator.is8Bit())
                 RELEASE_AND_RETURN(scope, repeatCharacter(state, separator.characters8()[0], length - 1));
             RELEASE_AND_RETURN(scope, repeatCharacter(state, separator.characters16()[0], length - 1));
         default:
-            JSString* result = jsEmptyString(&state);
+            JSString* result = jsEmptyString(vm);
             if (length <= 1)
                 return result;
 
-            JSString* operand = jsString(&vm, separator.toString());
+            JSString* operand = jsString(vm, separator.toString());
             RETURN_IF_EXCEPTION(scope, { });
             unsigned count = length - 1;
             for (;;) {
@@ -699,7 +699,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         JSValue element = thisObject->getIndex(exec, i);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (element.isUndefinedOrNull())
-            element = jsEmptyString(exec);
+            element = jsEmptyString(vm);
         else {
             JSValue conversionFunction = element.get(exec, vm.propertyNames->toLocaleString);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -728,7 +728,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
 
     // 5. If len is zero, return the empty String.
     if (!length)
-        return jsEmptyString(&exec);
+        return jsEmptyString(vm);
 
     // 6. Let element0 be Get(O, "0").
     JSValue element0 = thisObject->getIndex(&exec, 0);
@@ -737,7 +737,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
     // 7. If element0 is undefined or null, let R be the empty String; otherwise, let R be ? ToString(element0).
     JSString* r = nullptr;
     if (element0.isUndefinedOrNull())
-        r = jsEmptyString(&exec);
+        r = jsEmptyString(vm);
     else
         r = element0.toString(&exec);
     RETURN_IF_EXCEPTION(scope, { });
@@ -747,7 +747,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
     // 9.e Increase k by 1..
     for (uint64_t k = 1; k < length; ++k) {
         // b. Let element be ? Get(O, ! ToString(k)).
-        JSValue element = thisObject->get(&exec, Identifier::fromString(&exec, AtomString::number(k)));
+        JSValue element = thisObject->get(&exec, Identifier::fromString(vm, AtomString::number(k)));
         RETURN_IF_EXCEPTION(scope, { });
 
         // c. If element is undefined or null, let next be the empty String; otherwise, let next be ? ToString(element).
@@ -755,7 +755,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
         if (element.isUndefinedOrNull()) {
             if (!separator->length())
                 continue;
-            next = jsEmptyString(&exec);
+            next = jsEmptyString(vm);
         } else
             next = element.toString(&exec);
         RETURN_IF_EXCEPTION(scope, { });
@@ -797,7 +797,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
         if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject))) {
             uint64_t length64 = static_cast<uint64_t>(length);
             ASSERT(static_cast<double>(length64) == length);
-            JSString* jsSeparator = jsSingleCharacterString(exec, comma);
+            JSString* jsSeparator = jsSingleCharacterString(vm, comma);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
             RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64)));
@@ -888,7 +888,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
             thisObj->methodTable(vm)->putByIndex(thisObj, exec, length + n, exec->uncheckedArgument(n), true);
         else {
             PutPropertySlot slot(thisObj);
-            Identifier propertyName = Identifier::fromString(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
+            Identifier propertyName = Identifier::fromString(vm, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
             thisObj->methodTable(vm)->put(thisObj, exec, propertyName, exec->uncheckedArgument(n), slot);
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2007, 2009, 2012, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -33,7 +33,7 @@ namespace JSC {
 #define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(m_builtinNames->name##PrivateName())
 #define INITIALIZE_SYMBOL(name) , name##Symbol(m_builtinNames->name##Symbol())
 
-CommonIdentifiers::CommonIdentifiers(VM* vm)
+CommonIdentifiers::CommonIdentifiers(VM& vm)
     : nullIdentifier()
     , emptyIdentifier(Identifier::EmptyIdentifier)
     , underscoreProto(Identifier::fromString(vm, "__proto__"))

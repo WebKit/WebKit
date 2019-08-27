@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -422,7 +422,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsNontrivialString(exec, String::number(x)));
+        return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
     if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, "toExponential() argument must be between 0 and 20"_s));
@@ -435,7 +435,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     isUndefined
         ? converter.ToExponential(x, -1, &builder)
         : converter.ToExponential(x, decimalPlacesInExponent, &builder);
-    return JSValue::encode(jsString(exec, builder.Finalize()));
+    return JSValue::encode(jsString(vm, builder.Finalize()));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -463,13 +463,13 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // This also covers Ininity, and structure the check so that NaN
     // values are also handled by numberToString
     if (!(fabs(x) < 1e+21))
-        return JSValue::encode(jsString(exec, String::number(x)));
+        return JSValue::encode(jsString(vm, String::number(x)));
 
     // The check above will return false for NaN or Infinity, these will be
     // handled by numberToString.
     ASSERT(std::isfinite(x));
 
-    return JSValue::encode(jsString(exec, String::numberToStringFixedWidth(x, decimalPlaces)));
+    return JSValue::encode(jsString(vm, String::numberToStringFixedWidth(x, decimalPlaces)));
 }
 
 // toPrecision converts a number to a string, taking an argument specifying a
@@ -496,16 +496,16 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
     // To precision called with no argument is treated as ToString.
     if (isUndefined)
-        return JSValue::encode(jsString(exec, String::number(x)));
+        return JSValue::encode(jsString(vm, String::number(x)));
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsNontrivialString(exec, String::number(x)));
+        return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
     if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, "toPrecision() argument must be between 1 and 21"_s));
 
-    return JSValue::encode(jsString(exec, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
+    return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
 }
 
 static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
@@ -519,9 +519,9 @@ static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int3
     }
 
     if (radix == 10)
-        return jsNontrivialString(&vm, vm.numericStrings.add(value));
+        return jsNontrivialString(vm, vm.numericStrings.add(value));
 
-    return jsNontrivialString(&vm, toStringWithRadixInternal(value, radix));
+    return jsNontrivialString(vm, toStringWithRadixInternal(value, radix));
 
 }
 
@@ -534,13 +534,13 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return int32ToStringInternal(vm, integerValue, radix);
 
     if (radix == 10)
-        return jsString(&vm, vm.numericStrings.add(doubleValue));
+        return jsString(vm, vm.numericStrings.add(doubleValue));
 
     if (!std::isfinite(doubleValue))
-        return jsNontrivialString(&vm, String::number(doubleValue));
+        return jsNontrivialString(vm, String::number(doubleValue));
 
     RadixBuffer buffer;
-    return jsString(&vm, toStringWithRadixInternal(buffer, doubleValue, radix));
+    return jsString(vm, toStringWithRadixInternal(buffer, doubleValue, radix));
 }
 
 JSString* int32ToString(VM& vm, int32_t value, int32_t radix)
@@ -559,7 +559,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
     }
 
     if (radix == 10)
-        return jsNontrivialString(&vm, vm.numericStrings.add(static_cast<double>(value)));
+        return jsNontrivialString(vm, vm.numericStrings.add(static_cast<double>(value)));
 
     // Position the decimal point at the center of the string, set
     // the startOfResultString pointer to point at the decimal point.
@@ -568,7 +568,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
     char* startOfResultString = decimalPoint;
     *decimalPoint = '\0';
 
-    return jsNontrivialString(&vm, int52ToStringWithRadix(startOfResultString, value, radix));
+    return jsNontrivialString(vm, int52ToStringWithRadix(startOfResultString, value, radix));
 }
 
 JSString* numberToString(VM& vm, double doubleValue, int32_t radix)

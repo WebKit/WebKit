@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -1697,19 +1697,20 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         }
 
         if (handlerObject && exec) {
-            JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(exec->vm(), handlerObject);
+            JSC::VM& vm = exec->vm();
+            JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handlerObject);
 
             if (!handlerFunction) {
-                auto scope = DECLARE_CATCH_SCOPE(exec->vm());
+                auto scope = DECLARE_CATCH_SCOPE(vm);
 
                 // If the handler is not actually a function, see if it implements the EventListener interface and use that.
-                auto handleEventValue = handlerObject->get(exec, JSC::Identifier::fromString(exec, "handleEvent"));
+                auto handleEventValue = handlerObject->get(exec, JSC::Identifier::fromString(vm, "handleEvent"));
 
                 if (UNLIKELY(scope.exception()))
                     scope.clearException();
 
                 if (handleEventValue)
-                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(exec->vm(), handleEventValue);
+                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handleEventValue);
             }
 
             if (handlerFunction && !handlerFunction->isHostOrBuiltinFunction()) {
@@ -1718,7 +1719,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
                 if (handlerFunction != handlerObject)
                     handlerName = JSC::JSObject::calculatedClassName(handlerObject);
                 if (handlerName.isEmpty() || handlerName == "Object"_s)
-                    handlerName = handlerFunction->calculatedDisplayName(exec->vm());
+                    handlerName = handlerFunction->calculatedDisplayName(vm);
 
                 if (auto executable = handlerFunction->jsExecutable()) {
                     lineNumber = executable->firstLine() - 1;
@@ -2604,7 +2605,7 @@ Node* InspectorDOMAgent::scriptValueAsNode(JSC::JSValue value)
 {
     if (!value || !value.isObject())
         return nullptr;
-    return JSNode::toWrapped(*value.getObject()->vm(), value.getObject());
+    return JSNode::toWrapped(value.getObject()->vm(), value.getObject());
 }
 
 JSC::JSValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState& state, Node* node)

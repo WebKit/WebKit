@@ -711,7 +711,7 @@ public:
             if (!m_isSymbol)
                 return AtomStringImpl::add(buffer, m_length).leakRef();
 
-            Identifier ident = Identifier::fromString(&decoder.vm(), buffer, m_length);
+            Identifier ident = Identifier::fromString(decoder.vm(), buffer, m_length);
             String str = decoder.vm().propertyNames->lookUpPrivateName(ident);
             StringImpl* impl = str.releaseImpl().get();
             ASSERT(impl->isSymbol());
@@ -773,7 +773,7 @@ public:
         if (str.isNull())
             return Identifier();
 
-        return Identifier::fromUid(&decoder.vm(), (UniquedStringImpl*)str.impl());
+        return Identifier::fromUid(decoder.vm(), (UniquedStringImpl*)str.impl());
     }
 
     void decode(Decoder& decoder, Identifier& ident) const
@@ -1314,7 +1314,7 @@ public:
             break;
         case EncodedType::String: {
             StringImpl* impl = this->buffer<CachedUniquedStringImpl>()->decode(decoder);
-            v = jsString(&decoder.vm(), adoptRef(*impl));
+            v = jsString(decoder.vm(), adoptRef(*impl));
             break;
         }
         case EncodedType::ImmutableButterfly:

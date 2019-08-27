@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,12 +40,12 @@ class GlobalCodeBlock : public CodeBlock {
     typedef CodeBlock Base;
 
 protected:
-    GlobalCodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, GlobalCodeBlock& other)
+    GlobalCodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, GlobalCodeBlock& other)
         : CodeBlock(vm, structure, CopyParsedBlock, other)
     {
     }
 
-    GlobalCodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    GlobalCodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
         : CodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope)
     {
     }

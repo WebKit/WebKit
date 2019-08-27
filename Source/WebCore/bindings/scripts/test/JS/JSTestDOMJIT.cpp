@@ -500,7 +500,7 @@ template<> JSValue JSTestDOMJITConstructor::prototypeForStructure(JSC::VM& vm, c
 template<> void JSTestDOMJITConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDOMJIT::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String("TestDOMJIT"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestDOMJIT"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -1134,7 +1134,7 @@ JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionGetAttributeWitho
 {
     UNUSED_PARAM(state);
     VM& vm = state->vm();
-    JSC::NativeCallFrameTracer tracer(&vm, state);
+    JSC::NativeCallFrameTracer tracer(vm, state);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
@@ -1166,7 +1166,7 @@ JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionItemWithoutTypeCh
 {
     UNUSED_PARAM(state);
     VM& vm = state->vm();
-    JSC::NativeCallFrameTracer tracer(&vm, state);
+    JSC::NativeCallFrameTracer tracer(vm, state);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
@@ -1194,7 +1194,7 @@ JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionHasAttributeWitho
 {
     UNUSED_PARAM(state);
     VM& vm = state->vm();
-    JSC::NativeCallFrameTracer tracer(&vm, state);
+    JSC::NativeCallFrameTracer tracer(vm, state);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
@@ -1222,7 +1222,7 @@ JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionGetElementByIdWit
 {
     UNUSED_PARAM(state);
     VM& vm = state->vm();
-    JSC::NativeCallFrameTracer tracer(&vm, state);
+    JSC::NativeCallFrameTracer tracer(vm, state);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
@@ -1252,7 +1252,7 @@ JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionGetElementsByName
 {
     UNUSED_PARAM(state);
     VM& vm = state->vm();
-    JSC::NativeCallFrameTracer tracer(&vm, state);
+    JSC::NativeCallFrameTracer tracer(vm, state);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();

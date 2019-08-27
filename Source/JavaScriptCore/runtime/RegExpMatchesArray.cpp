@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
         // https://bugs.webkit.org/show_bug.cgi?id=169786
         RELEASE_ASSERT(array);
 
-        array->initializeIndexWithoutBarrier(scope, 0, jsEmptyString(&vm));
+        array->initializeIndexWithoutBarrier(scope, 0, jsEmptyString(vm));
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
             for (unsigned i = 1; i <= numSubpatterns; ++i)
@@ -58,7 +58,7 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
         array = tryCreateUninitializedRegExpMatchesArray(scope, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         RELEASE_ASSERT(array);
         
-        array->initializeIndexWithoutBarrier(scope, 0, jsEmptyString(&vm), ArrayWithContiguous);
+        array->initializeIndexWithoutBarrier(scope, 0, jsEmptyString(vm), ArrayWithContiguous);
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
             for (unsigned i = 1; i <= numSubpatterns; ++i)

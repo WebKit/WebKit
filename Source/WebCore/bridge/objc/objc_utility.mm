@@ -152,8 +152,9 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
 
 JSValue convertNSStringToString(ExecState* exec, NSString *nsstring)
 {
-    JSLockHolder lock(exec);
-    JSValue aValue = jsString(exec, String(nsstring));
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    JSValue aValue = jsString(vm, String(nsstring));
     return aValue;
 }
 

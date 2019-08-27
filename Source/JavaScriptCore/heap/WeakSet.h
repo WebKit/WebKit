@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    WeakSet(VM*, CellContainer);
+    WeakSet(VM&, CellContainer);
     ~WeakSet();
     void lastChanceToFinalize();
     
@@ -49,7 +49,7 @@ public:
     void setContainer(CellContainer container) { m_container = container; }
 
     Heap* heap() const;
-    VM* vm() const;
+    VM& vm() const;
 
     bool isEmpty() const;
     bool isTriviallyDestructible() const;
@@ -70,11 +70,11 @@ private:
     WeakBlock::FreeCell* m_allocator;
     WeakBlock* m_nextAllocator;
     DoublyLinkedList<WeakBlock> m_blocks;
-    VM* m_vm;
+    VM& m_vm;
     CellContainer m_container;
 };
 
-inline WeakSet::WeakSet(VM* vm, CellContainer container)
+inline WeakSet::WeakSet(VM& vm, CellContainer container)
     : m_allocator(0)
     , m_nextAllocator(0)
     , m_vm(vm)
@@ -82,7 +82,7 @@ inline WeakSet::WeakSet(VM* vm, CellContainer container)
 {
 }
 
-inline VM* WeakSet::vm() const
+inline VM& WeakSet::vm() const
 {
     return m_vm;
 }

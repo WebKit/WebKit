@@ -68,7 +68,7 @@ public:
         , m_codeBlock(codeBlock)
         , m_instructions(instructions)
         , m_graph(m_codeBlock, m_instructions)
-        , m_generatorFrameSymbolTable(*codeBlock->vm(), generatorFrameSymbolTable)
+        , m_generatorFrameSymbolTable(codeBlock->vm(), generatorFrameSymbolTable)
         , m_generatorFrameSymbolTableIndex(generatorFrameSymbolTableIndex)
     {
         for (BytecodeBasicBlock* block : m_graph) {
@@ -158,7 +158,7 @@ private:
         if (Optional<Storage> storage = m_storages[index])
             return *storage;
 
-        Identifier identifier = Identifier::from(&vm, index);
+        Identifier identifier = Identifier::from(vm, index);
         unsigned identifierIndex = m_codeBlock->numberOfIdentifiers();
         m_codeBlock->addIdentifier(identifier);
         ScopeOffset scopeOffset = m_generatorFrameSymbolTable->takeNextScopeOffset(NoLockingNecessary);
@@ -211,7 +211,7 @@ void BytecodeGeneratorification::run()
 {
     // We calculate the liveness at each merge point. This gives us the information which registers should be saved and resumed conservatively.
 
-    VM& vm = *m_bytecodeGenerator.vm();
+    VM& vm = m_bytecodeGenerator.vm();
     {
         GeneratorLivenessAnalysis pass(*this);
         pass.run(m_codeBlock, m_instructions);
