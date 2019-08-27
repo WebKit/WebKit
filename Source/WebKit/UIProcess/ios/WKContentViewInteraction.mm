@@ -45,6 +45,7 @@
 #import "VersionChecks.h"
 #import "WKActionSheetAssistant.h"
 #import "WKContextMenuElementInfoInternal.h"
+#import "WKContextMenuElementInfoPrivate.h"
 #import "WKDatePickerViewController.h"
 #import "WKDrawingCoordinator.h"
 #import "WKError.h"
@@ -7870,7 +7871,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 
     UIViewController *previewViewController = nil;
 
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation userInfo:nil]);
 
     if (_positionInformation.isLink) {
         _longPressCanClick = NO;
@@ -8073,7 +8074,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = NO;
 
-            auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation]);
+            auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation userInfo:nil]);
 
             UIContextMenuActionProvider actionMenuProvider = [weakSelf, elementInfo] (NSArray<UIMenuElement *> *) -> UIMenu * {
                 auto strongSelf = weakSelf.get();
@@ -8117,8 +8118,16 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
     });
 
     _contextMenuActionProviderDelegateNeedsOverride = NO;
-    _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation));
+    _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation, nil));
     if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuConfigurationForElement:completionHandler:)]) {
+        if (_positionInformation.isImage && _positionInformation.url.isNull() && [uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
+            UIImage *uiImage = [[_contextMenuElementInfo _activatedElementInfo] image];
+            NSDictionary *userInfo = nil;
+            NSURL *nsURL = [uiDelegate _webView:_webView alternateURLFromImage:uiImage userInfo:&userInfo];
+            _positionInformation.url = nsURL;
+            _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation, userInfo));
+        }
+
         auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:contextMenuConfigurationForElement:completionHandler:));
         [uiDelegate _webView:_webView contextMenuConfigurationForElement:_contextMenuElementInfo.get() completionHandler:makeBlockPtr([completionBlock = WTFMove(completionBlock), checker = WTFMove(checker)] (UIContextMenuConfiguration *configuration) {
             if (checker->completionHandlerHasBeenCalled())
@@ -8161,7 +8170,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {
     if (_contextMenuActionProviderDelegateNeedsOverride) {
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation userInfo:nil]);
         RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = _positionInformation.isLink ? [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()] : [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
         return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
     }

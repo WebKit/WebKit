@@ -1,3 +1,39 @@
+2019-08-27  James Savage  <james.savage@apple.com>
+
+        Populate alternate URL for _WKActivatedElementInfo in UIContextMenu SPI.
+        https://bugs.webkit.org/show_bug.cgi?id=201165.
+        rdar://problem/54729648.
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/API/APIContextMenuElementInfo.h:
+        * UIProcess/API/APIContextMenuElementInfo.cpp:
+        (API::ContextMenuElementInfo::ContextMenuElementInfo): Initialize new memeber.
+
+        * UIProcess/API/Cocoa/WKContextMenuElementInfo.mm:
+        (-[WKContextMenuElementInfo _activatedElementInfo]): Use new initializer.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestActivatedElementAtPosition:completionBlock:]): Ditto.
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (+[_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:userInfo:]):
+            Ditto.
+        (-[_WKActivatedElementInfo _initWithInteractionInformationAtPosition:userInfo:]): Set new ivar.
+        (+[_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:]): Deleted.
+        (-[_WKActivatedElementInfo _initWithInteractionInformationAtPosition:]): Deleted.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]): Use new initializer.
+        (-[WKContentView continueContextMenuInteraction:]): If the context menu is being generated for
+            an image, and we do not have a URL associated with the position information, try to
+            generate one using existing SPI. This change also passes through the userInfo via a new
+            property on _WKActivatedElementInfo. We only do this for the SPI version of this delegate
+            method, because the API is not called for image previews.
+        (-[WKContentView _contextMenuInteraction:overrideSuggestedActionsForConfiguration:]): Use new
+            initializer.
+
 2019-08-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [RemoteInspector][Socket] Restructuring the components of Socket implementation

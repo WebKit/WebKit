@@ -55,12 +55,12 @@
 }
 
 #if PLATFORM(IOS_FAMILY)
-+ (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information
++ (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
 {
-    return [[[self alloc] _initWithInteractionInformationAtPosition:information] autorelease];
+    return [[[self alloc] _initWithInteractionInformationAtPosition:information userInfo:userInfo] autorelease];
 }
 
-- (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information
+- (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
@@ -83,6 +83,8 @@
     _image = information.image;
     _ID = information.idAttribute;
     _animatedImage = information.isAnimatedImage;
+
+    _userInfo = userInfo;
     
     return self;
 }

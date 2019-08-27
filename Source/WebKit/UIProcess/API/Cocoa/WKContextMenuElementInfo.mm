@@ -48,7 +48,7 @@
 
 - (_WKActivatedElementInfo *)_activatedElementInfo
 {
-    return [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:_elementInfo->interactionInformation()];
+    return [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:_elementInfo->interactionInformation() userInfo:_elementInfo->userInfo().get()];
 }
 
 @end

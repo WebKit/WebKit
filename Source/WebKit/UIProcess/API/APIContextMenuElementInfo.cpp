@@ -32,6 +32,13 @@ namespace API {
 
 ContextMenuElementInfo::ContextMenuElementInfo(const WebKit::InteractionInformationAtPosition& info)
     : m_interactionInformation(info)
+    , m_userInfo(nullptr)
+{
+}
+
+ContextMenuElementInfo::ContextMenuElementInfo(const WebKit::InteractionInformationAtPosition& info, NSDictionary *userInfo)
+    : m_interactionInformation(info)
+    , m_userInfo(userInfo)
 {
 }
 

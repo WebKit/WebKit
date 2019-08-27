@@ -6739,7 +6739,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     infoRequest.includeSnapshot = true;
 
     [_contentView doAfterPositionInformationUpdate:[capturedBlock = makeBlockPtr(block)] (WebKit::InteractionInformationAtPosition information) {
-        capturedBlock([_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:information]);
+        capturedBlock([_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:information userInfo:nil]);
     } forRequest:infoRequest];
 }
 
