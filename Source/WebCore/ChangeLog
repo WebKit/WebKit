@@ -1,3 +1,44 @@
+2019-08-27  Antti Koivisto  <antti@apple.com>
+
+        InlineTextBox::end() should return first-past-end offset
+        https://bugs.webkit.org/show_bug.cgi?id=201181
+
+        Reviewed by Zalan Bujtas.
+
+        It currently points to the last character, except for empty text boxes.
+        This is awkward in itself and also inconsistent, as we use first-past-end offset everywhere else.
+
+        * dom/Position.cpp:
+        (WebCore::Position::downstream const):
+
+        Add a check for zero length case to avoid changing behavior.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::calculateDocumentMarkerBounds const):
+        (WebCore::InlineTextBox::collectMarkedTextsForDocumentMarkers const):
+        (WebCore::InlineTextBox::paintCompositionUnderlines const):
+        (WebCore::InlineTextBox::paintCompositionUnderline const):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::end const):
+
+        end = start + len
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setTextWithOffset):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::localQuadForTextBox):
+        (WebCore::RenderTextLineBoxes::absoluteRectsForRange const):
+        (WebCore::RenderTextLineBoxes::absoluteQuadsForRange const):
+        (WebCore::RenderTextLineBoxes::dirtyRange):
+
+        Here the incoming 'end' used linebox style too, move that to the new definition too.
+
 2019-08-27  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::jsNotificationConstructorPermission

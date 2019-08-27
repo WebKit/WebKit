@@ -392,7 +392,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
             if (renderText.text().length()) {
                 if (needsWordSpacing && isSpaceOrNewline(renderText.characterAt(textBox.start())))
                     logicalLeft += textBox.lineStyle().fontCascade().wordSpacing();
-                needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(textBox.end()));
+                needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(textBox.end() - 1));
             }
             textBox.setLogicalLeft(logicalLeft);
             if (knownToHaveNoOverflow())

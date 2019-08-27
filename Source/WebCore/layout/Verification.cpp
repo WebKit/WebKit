@@ -120,7 +120,7 @@ static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const Inline
         && areEssentiallyEqual(inlineTextBox.logicalTop(), inlineRun.logicalTop())
         && areEssentiallyEqual(inlineTextBox.logicalBottom(), inlineRun.logicalBottom())
         && inlineTextBox.start() == inlineRun.textContext()->start()
-        && (inlineTextBox.end() + 1) == inlineRun.textContext()->end();
+        && inlineTextBox.end() == inlineRun.textContext()->end();
 }
 
 static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
@@ -184,7 +184,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             stream << "Mismatching: run";
 
             if (inlineTextBox)
-                stream << " (" << inlineTextBox->start() << ", " << inlineTextBox->end() + 1 << ")";
+                stream << " (" << inlineTextBox->start() << ", " << inlineTextBox->end() << ")";
             stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalTop() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
 
             stream << " inline run";

@@ -554,7 +554,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     Vector<MarkedText> markedTexts;
     if (paintInfo.phase != PaintPhase::Selection) {
         // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
-        markedTexts.append({ clampedOffset(m_start), clampedOffset(end() + 1), MarkedText::Unmarked });
+        markedTexts.append({ clampedOffset(m_start), clampedOffset(end()), MarkedText::Unmarked });
         if (!isPrinting) {
             markedTexts.appendVector(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Foreground));
 
@@ -697,7 +697,7 @@ FloatRect InlineTextBox::calculateDocumentMarkerBounds(const MarkedText& markedT
     auto height = 0.13247 * fontSize;
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
-    if (markedText.startOffset || markedText.endOffset != clampedOffset(end() + 1)) {
+    if (markedText.startOffset || markedText.endOffset != clampedOffset(end())) {
         TextRun run = createTextRun();
         LayoutRect selectionRect = LayoutRect(0, y, 0, height);
         lineFont().adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
@@ -932,7 +932,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
             continue;
         }
 
-        if (marker->startOffset() > end()) {
+        if (marker->startOffset() >= end()) {
             // Marker is completely after this run, bail. A later run will paint it.
             break;
         }
@@ -1138,13 +1138,13 @@ void InlineTextBox::paintCompositionUnderlines(PaintInfo& paintInfo, const Float
             continue;
         }
 
-        if (underline.startOffset > end())
+        if (underline.startOffset >= end())
             break; // Underline is completely after this run, bail. A later run will paint it.
 
         // Underline intersects this run. Paint it.
         paintCompositionUnderline(paintInfo, boxOrigin, underline);
 
-        if (underline.endOffset > end() + 1)
+        if (underline.endOffset > end())
             break; // Underline also runs into the next run. Bail now, no more marker advancement.
     }
 }
@@ -1165,7 +1165,7 @@ void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatP
     float width = logicalWidth(); // how much line to draw
     bool useWholeWidth = true;
     unsigned paintStart = m_start;
-    unsigned paintEnd = end() + 1; // end points at the last char, not past it
+    unsigned paintEnd = end();
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;

@@ -66,7 +66,7 @@ public:
     // FIXME: These accessors should ASSERT(!isDirty()). See https://bugs.webkit.org/show_bug.cgi?id=97264
     // Note len() == 1 for combined text regardless of whether the composition is empty. Use hasTextContent() to
     unsigned start() const { return m_start; }
-    unsigned end() const { return m_len ? m_start + m_len - 1 : m_start; }
+    unsigned end() const { return m_start + m_len; }
     unsigned len() const { return m_len; }
 
     void setStart(unsigned start) { m_start = start; }

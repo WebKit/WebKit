@@ -360,11 +360,10 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
 
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         LayoutRect rect;
-        // Note, box->end() returns the index of the last character, not the index past it.
-        if (start <= box->start() && box->end() < end)
+        if (start <= box->start() && box->end() <= end)
             rect = box->localSelectionRect(start, end);
         else {
-            unsigned realEnd = std::min(box->end() + 1, end);
+            unsigned realEnd = std::min(box->end(), end);
             rect = box->localSelectionRect(start, realEnd);
             if (rect.isEmpty())
                 continue;
@@ -398,8 +397,8 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
         if (containingBlock->isRubyBase() || containingBlock->isRubyText())
             isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
-        bool containsStart = box->start() <= start && box->end() + 1 >= start;
-        bool containsEnd = box->start() <= end && box->end() + 1 >= end;
+        bool containsStart = box->start() <= start && box->end() >= start;
+        bool containsEnd = box->start() <= end && box->end() >= end;
 
         bool isFixed = false;
         IntRect absRect = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed).enclosingBoundingBox();
@@ -1109,7 +1108,7 @@ void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsig
         return;
 
     int delta = newText.length() - text().length();
-    unsigned end = length ? offset + length - 1 : offset;
+    unsigned end = offset + length;
 
     m_linesDirty = simpleLineLayout() || m_lineBoxes.dirtyRange(*this, offset, end, delta);
 

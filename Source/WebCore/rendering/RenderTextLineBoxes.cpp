@@ -515,7 +515,7 @@ Vector<IntRect> RenderTextLineBoxes::absoluteRects(const LayoutPoint& accumulate
 
 static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, unsigned end, bool useSelectionHeight)
 {
-    unsigned realEnd = std::min(box.end() + 1, end);
+    unsigned realEnd = std::min(box.end(), end);
     LayoutRect boxSelectionRect = box.localSelectionRect(start, realEnd);
     if (!boxSelectionRect.height())
         return FloatRect();
@@ -537,8 +537,7 @@ Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& ren
 {
     Vector<IntRect> rects;
     for (auto* box = m_first; box; box = box->nextTextBox()) {
-        // Note: box->end() returns the index of the last character, not the index past it
-        if (start <= box->start() && box->end() < end) {
+        if (start <= box->start() && box->end() <= end) {
             FloatRect boundaries = box->calculateBoundaries();
             if (useSelectionHeight) {
                 LayoutRect selectionRect = box->localSelectionRect(start, end);
@@ -584,8 +583,7 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& r
 {
     Vector<FloatQuad> quads;
     for (auto* box = m_first; box; box = box->nextTextBox()) {
-        // Note: box->end() returns the index of the last character, not the index past it
-        if (start <= box->start() && box->end() < end) {
+        if (start <= box->start() && box->end() <= end) {
             FloatRect boundaries = box->calculateBoundaries();
             if (useSelectionHeight) {
                 LayoutRect selectionRect = box->localSelectionRect(start, end);
@@ -623,10 +621,10 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
     for (auto* current = m_first; current; current = current->nextTextBox()) {
         // FIXME: This shouldn't rely on the end of a dirty line box. See https://bugs.webkit.org/show_bug.cgi?id=97264
         // Text run is entirely before the affected range.
-        if (current->end() < start)
+        if (current->end() <= start)
             continue;
         // Text run is entirely after the affected range.
-        if (current->start() > end) {
+        if (current->start() >= end) {
             current->offsetRun(lengthDelta);
             auto& rootBox = current->root();
             if (!firstRootBox) {
@@ -640,7 +638,7 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
             lastRootBox = &rootBox;
             continue;
         }
-        if (current->end() >= start && current->end() <= end) {
+        if (current->end() > start && current->end() <= end) {
             // Text run overlaps with the left end of the affected range.
             current->dirtyLineBoxes();
             dirtiedLines = true;
@@ -652,7 +650,7 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
             dirtiedLines = true;
             continue;
         }
-        if (current->start() <= end && current->end() >= end) {
+        if (current->start() < end && current->end() >= end) {
             // Text run overlaps with right end of the affected range.
             current->dirtyLineBoxes();
             dirtiedLines = true;
