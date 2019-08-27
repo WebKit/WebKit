@@ -1,3 +1,16 @@
+2019-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not clear the pending api request when there's no navigation ID
+        https://bugs.webkit.org/show_bug.cgi?id=201175
+
+        Reviewed by Chris Dumez.
+
+        After r247851, the pending API request URL is cleared for subresources in some cases.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-08-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Delay LayerTreeHost creation in always-on AC until DrawingArea painting is enabled

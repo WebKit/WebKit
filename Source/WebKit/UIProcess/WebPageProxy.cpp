@@ -4009,7 +4009,8 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.clearPendingAPIRequest(transaction);
+    if (navigation)
+        m_pageLoadState.clearPendingAPIRequest(transaction);
 
     if (frame->isMainFrame()) {
         process->didStartProvisionalLoadForMainFrame(url);
@@ -4657,7 +4658,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     auto transaction = m_pageLoadState.transaction();
 
     bool fromAPI = request.url() == m_pageLoadState.pendingAPIRequestURL();
-    if (!fromAPI)
+    if (navigationID && !fromAPI)
         m_pageLoadState.clearPendingAPIRequest(transaction);
 
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, request.url())) {
