@@ -314,6 +314,11 @@ public:
             m_freeFPs.append(tmp);
     }
 
+    const Bag<B3::PatchpointValue*>& patchpoints() const
+    {
+        return m_patchpoints;
+    }
+
 private:
     ALWAYS_INLINE void validateInst(Inst& inst)
     {
@@ -397,7 +402,10 @@ private:
 
     B3::PatchpointValue* addPatchpoint(B3::Type type)
     {
-        return m_proc.add<B3::PatchpointValue>(type, B3::Origin());
+        auto* result = m_proc.add<B3::PatchpointValue>(type, B3::Origin());
+        if (UNLIKELY(shouldDumpIRAtEachPhase(B3::AirMode)))
+            m_patchpoints.add(result);
+        return result;
     }
 
     template <typename ...Args>
@@ -639,6 +647,9 @@ private:
 
     Vector<Tmp, 8> m_freeGPs;
     Vector<Tmp, 8> m_freeFPs;
+
+    // This is only filled if we are dumping IR.
+    Bag<B3::PatchpointValue*> m_patchpoints;
 
     TypedTmp m_instanceValue; // Always use the accessor below to ensure the instance value is materialized when used.
     bool m_usesInstanceValue { false };
@@ -2252,6 +2263,12 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     }
 
     {
+        if (UNLIKELY(shouldDumpIRAtEachPhase(B3::AirMode))) {
+            dataLogLn("Generated patchpoints");
+            for (B3::PatchpointValue** patch : irGenerator.patchpoints())
+                dataLogLn(deepDump(procedure, *patch));
+        }
+
         B3::Air::prepareForGeneration(code);
         B3::Air::generate(code, *compilationContext.wasmEntrypointJIT);
         compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
