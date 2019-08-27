@@ -1,3 +1,19 @@
+2019-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Origin header not included in WebSocket handshake request when using platform WebSocket API
+        https://bugs.webkit.org/show_bug.cgi?id=200535
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline tests that are passing now for GTK and WPE.
+
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/003-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/003-sets-origin.worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/005-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/003-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/003-sets-origin.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/005-expected.txt:
+
 2019-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Rewrite all tests to use WHLSL and delete the isWHLSL flag

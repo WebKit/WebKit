@@ -1,3 +1,15 @@
+2019-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Origin header not included in WebSocket handshake request when using platform WebSocket API
+        https://bugs.webkit.org/show_bug.cgi?id=200535
+
+        Reviewed by Youenn Fablet.
+
+        Add Origin HTTP header to the WebSocket handshake request.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::webSocketConnectRequest):
+
 2019-08-27  Youenn Fablet  <youenn@apple.com>
 
         Make MediaStreamTrackPrivate RefCounted
