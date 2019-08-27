@@ -89,7 +89,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Layo
     return valueForLength(height, *containingBlockHeightValue);
 }
 
-static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(isHeightAuto(layoutBox) && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
 
@@ -126,9 +126,9 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
     } else if (formattingRootContainer.establishesTableFormattingContext()) {
         auto& rowList = downcast<TableFormattingState>(layoutState.establishedFormattingState(formattingRootContainer)).tableGrid().rows();
         ASSERT(!rowList.isEmpty());
-        top += rowList.first().offset;
+        top += rowList.first().logicalTop();
         auto& lastRow = rowList.last();
-        bottom += lastRow.offset + lastRow.height;
+        bottom += lastRow.logicalBottom();
     } else
         ASSERT_NOT_REACHED();
 

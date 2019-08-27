@@ -23,41 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "TableFormattingContext.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
-#include "TableFormattingState.h"
-#include <wtf/IsoMalloc.h>
+#include "LayoutBox.h"
+#include "LayoutState.h"
 
 namespace WebCore {
 namespace Layout {
 
-// This class implements the layout logic for table formatting contexts.
-// https://www.w3.org/TR/CSS22/tables.html
-class TableFormattingContext : public FormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
-public:
-    TableFormattingContext(const Box& formattingContextRoot, TableFormattingState&);
-    void layout() const override;
+HeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlow());
 
-private:
-    class Geometry : public FormattingContext::Geometry {
-    public:
-        static HeightAndMargin tableCellHeightAndMargin(const LayoutState&, const Box&);
-    };
+    auto height = computedHeightValue(layoutState, layoutBox, HeightType::Normal);
+    if (!height)
+        height = Geometry::contentHeightForFormattingContextRoot(layoutState, layoutBox);
 
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
-    LayoutUnit computedTableWidth() const;
-
-    void ensureTableGrid() const;
-    void computePreferredWidthForColumns() const;
-    void distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const;
-
-    TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
-};
+    // FIXME: Compute vertical margin values.
+    return HeightAndMargin { *height, { } };
+}
 
 }
 }
+
 #endif

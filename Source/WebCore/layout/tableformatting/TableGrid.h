@@ -71,15 +71,22 @@ public:
         void setLogicalWidth(LayoutUnit);
         LayoutUnit logicalWidth() const;
 
+        void setLogicalLeft(LayoutUnit);
+        LayoutUnit logicalLeft() const;
+
+        LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
+
     private:
         friend class ColumnsContext;
         Column() = default;
 
         FormattingContext::IntrinsicWidthConstraints m_widthConstraints;
         LayoutUnit m_computedLogicalWidth;
+        LayoutUnit m_computedLogicalLeft;
 #ifndef NDEBUG
         bool m_hasWidthConstraints { false };
         bool m_hasComputedWidth { false };
+        bool m_hasComputedLeft { false };
 #endif
     };
 
@@ -101,8 +108,18 @@ public:
     ColumnsContext& columnsContext() { return m_columnsContext; }
 
     struct Row {
-        LayoutUnit offset;
-        LayoutUnit height;
+    public:
+        void setLogicalTop(LayoutUnit logicalTop) { m_logicalTop = logicalTop; }
+        LayoutUnit logicalTop() const { return m_logicalTop; }
+
+        void setLogicalHeight(LayoutUnit logicalHeight) { m_logicalHeight = logicalHeight; }
+        LayoutUnit logicalHeight() const { return m_logicalHeight; }
+
+        LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
+
+    private:
+        LayoutUnit m_logicalTop;
+        LayoutUnit m_logicalHeight;
     };
     using RowList = WTF::Vector<Row>;
     RowList& rows() { return m_rows; }

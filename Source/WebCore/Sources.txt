@@ -1417,6 +1417,7 @@ layout/layouttree/LayoutContainer.cpp
 layout/layouttree/LayoutReplaced.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 layout/tableformatting/TableFormattingContext.cpp
+layout/tableformatting/TableFormattingContextGeometry.cpp
 layout/tableformatting/TableFormattingState.cpp
 layout/tableformatting/TableGrid.cpp
 layout/tableformatting/TableInvalidation.cpp

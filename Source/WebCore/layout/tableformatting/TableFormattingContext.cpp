@@ -45,7 +45,45 @@ TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot,
 
 void TableFormattingContext::layout() const
 {
-    ASSERT(!formattingState().tableGrid().cells().isEmpty());
+    auto& grid = formattingState().tableGrid();
+    auto& cellList = grid.cells();
+    ASSERT(!cellList.isEmpty());
+    // Layout and position each table cell (and compute row height as well).
+    auto& layoutState = this->layoutState();
+    auto& columnList = grid.columnsContext().columns();
+    auto& rowList = grid.rows();
+    for (auto& cell : cellList) {
+        auto& cellLayoutBox = cell->tableCellBox;
+        ASSERT(cellLayoutBox.establishesBlockFormattingContext());
+
+        auto& cellDisplayBox = layoutState.displayBoxForLayoutBox(cellLayoutBox);
+        // FIXME: Add support for column and row spanning.
+        auto cellPosition = cell->position;
+        auto& row = rowList.at(cellPosition.y());
+        auto& column = columnList.at(cellPosition.x());
+        cellDisplayBox.setContentBoxWidth(column.logicalWidth());
+        // FIXME: Do not use blanks.
+        cellDisplayBox.setBorder({ });
+        cellDisplayBox.setPadding({ });
+        cellDisplayBox.setHorizontalMargin({ });
+        cellDisplayBox.setHorizontalComputedMargin({ });
+
+        cellDisplayBox.setTopLeft({ column.logicalLeft(), row.logicalTop() });
+
+        layoutState.createFormattingContext(cellLayoutBox)->layout();
+
+        // FIXME: This requires a 2 pass layout.
+        auto heightAndMargin = Geometry::tableCellHeightAndMargin(layoutState, cellLayoutBox);
+        cellDisplayBox.setContentBoxHeight(heightAndMargin.height);
+        cellDisplayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
+
+        row.setLogicalHeight(std::max(row.logicalHeight(), heightAndMargin.height));
+        // FIXME: This also requires spanning support/check.
+        if (!cellPosition.x() && cellPosition.y()) {
+            auto& previousRow = rowList.at(cellPosition.y() - 1);
+            row.setLogicalTop(previousRow.logicalBottom());
+        }
+    }
 }
 
 FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints() const
@@ -163,7 +201,13 @@ LayoutUnit TableFormattingContext::computedTableWidth() const
             distributeAvailableWidth(*width - tableWidthConstraints.minimum);
         }
     }
-
+    // FIXME: This should also deal with collapsing borders etc.
+    LayoutUnit columnLogicalLeft;
+    auto& columns = columnsContext.columns();
+    for (auto& column : columns) {
+        column.setLogicalLeft(columnLogicalLeft);
+        columnLogicalLeft += column.logicalWidth();
+    }
     return usedWidth;
 }
 

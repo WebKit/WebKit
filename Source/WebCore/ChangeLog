@@ -1,3 +1,36 @@
+2019-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Layout and position the cell boxes
+        https://bugs.webkit.org/show_bug.cgi?id=201192
+        <rdar://problem/54758638>
+
+        Reviewed by Antti Koivisto.
+
+        Add a very basic (and faily incomplete) table cell layout logic. This is mostly WIP.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot):
+        (WebCore::Layout::contentHeightForFormattingContextRoot): Deleted.
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout const):
+        (WebCore::Layout::TableFormattingContext::computedTableWidth const):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp: Copied from Source/WebCore/layout/tableformatting/TableFormattingContext.h.
+        (WebCore::Layout::TableFormattingContext::Geometry::tableCellHeightAndMargin):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Column::setLogicalLeft):
+        (WebCore::Layout::TableGrid::Column::logicalLeft const):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Column::logicalRight const):
+        (WebCore::Layout::TableGrid::Row::setLogicalTop):
+        (WebCore::Layout::TableGrid::Row::logicalTop const):
+        (WebCore::Layout::TableGrid::Row::setLogicalHeight):
+        (WebCore::Layout::TableGrid::Row::logicalHeight const):
+        (WebCore::Layout::TableGrid::Row::logicalBottom const):
+
 2019-08-27  Mark Lam  <mark.lam@apple.com>
 
         Refactor to use VM& instead of VM* at as many places as possible.

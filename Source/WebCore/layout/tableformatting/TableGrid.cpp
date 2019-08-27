@@ -63,6 +63,20 @@ LayoutUnit TableGrid::Column::logicalWidth() const
     return m_computedLogicalWidth;
 }
 
+void TableGrid::Column::setLogicalLeft(LayoutUnit computedLogicalLeft)
+{
+#ifndef NDEBUG
+    m_hasComputedLeft = true;
+#endif
+    m_computedLogicalLeft = computedLogicalLeft;
+}
+
+LayoutUnit TableGrid::Column::logicalLeft() const
+{
+    ASSERT(m_hasComputedLeft);
+    return m_computedLogicalLeft;
+}
+
 void TableGrid::ColumnsContext::addColumn()
 {
     m_columns.append({ });

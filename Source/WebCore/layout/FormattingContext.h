@@ -112,6 +112,8 @@ protected:
 
         static FormattingContext::IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, IntrinsicWidthConstraints);
 
+        static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState&, const Box&);
+
     protected:
         enum class HeightType { Min, Max, Normal };
         static Optional<LayoutUnit> computedHeightValue(const LayoutState&, const Box&, HeightType);
