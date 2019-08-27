@@ -30,7 +30,7 @@
 }
 
 .console-user-command.special-user-log > .console-message-body {
-    padding: 0 6px 1px;
+    padding: 0 3px 1px;
     border-radius: 3px;
     border: 1px solid transparent;
     background-color: var(--selected-background-color);
