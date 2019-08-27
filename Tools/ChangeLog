@@ -1,3 +1,13 @@
+2019-08-27  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org Webkit.css] Center the legend symbols
+        https://bugs.webkit.org/show_bug.cgi?id=201187
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.lengend>.item .dot .text): center the dot symbol vertically
+
 2019-08-27  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests: Use -noBulkSymbolication when calling spindump (Follow-up fix)

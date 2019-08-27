@@ -2150,6 +2150,9 @@ pre {
   text-align: center;
   width: var(--smallSize);
   height: var(--smallSize);
+  line-height: var(--smallSize);
+  padding: 0;
+  margin: 0;
   display: inline-block;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
