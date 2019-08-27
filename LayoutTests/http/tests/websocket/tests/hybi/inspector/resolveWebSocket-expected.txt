@@ -9,5 +9,5 @@ PASS: Payload should have description "WebSocket".
 
 -- Running test case: Network.resolveWebSocket.invalidRequestIdentifier
 PASS: Should produce an error.
-Error: WebSocket not found
+Error: Missing web socket for given requestId
 

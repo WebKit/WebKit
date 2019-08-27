@@ -68,14 +68,14 @@ void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::FrontendRo
 
 void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString unused;
-    disable(unused);
+    ErrorString ignored;
+    disable(ignored);
 }
 
 void InspectorDOMStorageAgent::enable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorDOMStorageAgent() == this) {
-        errorString = "DOMStorageAgent already enabled"_s;
+        errorString = "DOMStorage domain already enabled"_s;
         return;
     }
 
@@ -85,7 +85,7 @@ void InspectorDOMStorageAgent::enable(ErrorString& errorString)
 void InspectorDOMStorageAgent::disable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorDOMStorageAgent() != this) {
-        errorString = "DOMStorageAgent already disabled"_s;
+        errorString = "DOMStorage domain already disabled"_s;
         return;
     }
 
@@ -97,7 +97,7 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, cons
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        errorString = "No StorageArea for given storageId"_s;
+        errorString = "Missing storage for given storageId"_s;
         return;
     }
 
@@ -121,7 +121,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        errorString = "Storage not found"_s;
+        errorString = "Missing storage for given storageId"_s;
         return;
     }
 
@@ -136,7 +136,7 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, co
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        errorString = "Storage not found"_s;
+        errorString = "Missing storage for given storageId"_s;
         return;
     }
 
@@ -179,19 +179,20 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
 RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& errorString, const JSON::Object& storageId, Frame*& targetFrame)
 {
     String securityOrigin;
+    if (!storageId.getString("securityOrigin"_s, securityOrigin)) {
+        errorString = "Missing securityOrigin in given storageId";
+        return nullptr;
+    }
+
     bool isLocalStorage = false;
-    bool success = storageId.getString("securityOrigin"_s, securityOrigin);
-    if (success)
-        success = storageId.getBoolean("isLocalStorage"_s, isLocalStorage);
-    if (!success) {
-        errorString = "Invalid storageId format"_s;
-        targetFrame = nullptr;
+    if (!storageId.getBoolean("isLocalStorage"_s, isLocalStorage)) {
+        errorString = "Missing isLocalStorage in given storageId";
         return nullptr;
     }
 
     targetFrame = InspectorPageAgent::findFrameWithSecurityOrigin(m_inspectedPage, securityOrigin);
     if (!targetFrame) {
-        errorString = "Frame not found for the given security origin"_s;
+        errorString = "Missing frame for given securityOrigin"_s;
         return nullptr;
     }
 

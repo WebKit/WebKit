@@ -79,7 +79,7 @@ void InspectorWorkerAgent::initialized(ErrorString& errorString, const String& w
 {
     WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
     if (!proxy) {
-        errorString = "Worker not found."_s;
+        errorString = "Missing worker for given workerId"_s;
         return;
     }
 
@@ -89,13 +89,13 @@ void InspectorWorkerAgent::initialized(ErrorString& errorString, const String& w
 void InspectorWorkerAgent::sendMessageToWorker(ErrorString& errorString, const String& workerId, const String& message)
 {
     if (!m_enabled) {
-        errorString = "Worker inspection must be enabled."_s;
+        errorString = "Worker domain must be enabled"_s;
         return;
     }
 
     WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
     if (!proxy) {
-        errorString = "Worker not found."_s;
+        errorString = "Missing worker for given workerId"_s;
         return;
     }
 

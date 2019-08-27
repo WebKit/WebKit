@@ -19,7 +19,7 @@ PASS: div#depth-1 has nodes 9 levels deep
 
 === Pass an invalid depth ===
 
-Backend error: Please provide a positive integer as a depth or -1 for entire subtree (-32000)
+Backend error: Unexpected value below -1 for given depth (-32000)
 
 PASS: Expected number of setChildNodes events
 

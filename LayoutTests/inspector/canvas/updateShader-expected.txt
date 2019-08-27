@@ -22,17 +22,17 @@ Test compilation of shaders after being attached to a program, with and without 
 
 -- Running test case: Canvas.updateShader.invalidProgramId
 PASS: Should produce an error.
-Error: No shader program for given identifier.
+Error: Missing program for given programId
 
 -- Running test case: Canvas.updateShader.invalidShaderType
 PASS: Should produce an error.
-Error: No shader for given type.
+Error: Missing shader for given shaderType
 
 -- Running test case: Canvas.updateShader.invalidVertexShaderSource
 PASS: Should produce error.
-Error: Shader compilation failed.
+Error: Failed to update shader
 
 -- Running test case: Canvas.updateShader.invalidFragmentShaderSource
 PASS: Should produce error.
-Error: Shader compilation failed.
+Error: Failed to update shader
 

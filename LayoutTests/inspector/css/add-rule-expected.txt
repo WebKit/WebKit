@@ -19,5 +19,5 @@ PASS: Rule range should be [2:0,2:3]
 PASS: Rule origin should be "regular"
 
 -- Running test case: CSS.addRule.BadStyleSheetId
-PASS: No target stylesheet found
+PASS: Missing style sheet for given styleSheetId
 

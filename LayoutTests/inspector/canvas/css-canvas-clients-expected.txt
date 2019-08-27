@@ -18,5 +18,5 @@ PASS: There should be no client nodes.
 
 -- Running test case: Canvas.CSSCanvasClients.InvalidCanvasId
 PASS: Should produce an error.
-Error: No canvas for given identifier.
+Error: Missing canvas for given canvasId
 

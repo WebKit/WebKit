@@ -108,7 +108,7 @@ void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::Disconnect
 void InspectorTimelineAgent::enable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorTimelineAgent() == this) {
-        errorString = "TimelineAgent already enabled"_s;
+        errorString = "Timeline domain already enabled"_s;
         return;
     }
 
@@ -118,14 +118,14 @@ void InspectorTimelineAgent::enable(ErrorString& errorString)
 void InspectorTimelineAgent::disable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorTimelineAgent() != this) {
-        errorString = "TimelineAgent already disabled"_s;
+        errorString = "Timeline domain already disabled"_s;
         return;
     }
 
     m_instrumentingAgents.setInspectorTimelineAgent(nullptr);
 
-    ErrorString unused;
-    stop(unused);
+    ErrorString ignored;
+    stop(ignored);
 
     m_autoCaptureEnabled = false;
     m_instruments.clear();
@@ -158,13 +158,13 @@ void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const JSON
     for (const auto& instrumentValue : instruments) {
         String enumValueString;
         if (!instrumentValue->asString(enumValueString)) {
-            errorString = "Unexpected type in instruments list, should be string"_s;
+            errorString = "Unexpected non-string value in given instruments"_s;
             return;
         }
 
         Optional<Protocol::Timeline::Instrument> instrumentType = Protocol::InspectorHelpers::parseEnumValueFromString<Protocol::Timeline::Instrument>(enumValueString);
         if (!instrumentType) {
-            errorString = makeString("Unexpected enum value: ", enumValueString);
+            errorString = makeString("Unknown item in given instruments: ", enumValueString);
             return;
         }
 
@@ -473,8 +473,8 @@ void InspectorTimelineAgent::mainFrameStartedLoading()
 
     // Pre-emptively disable breakpoints. The frontend must re-enable them.
     if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents.inspectorDebuggerAgent()) {
-        ErrorString unused;
-        debuggerAgent->setBreakpointsActive(unused, false);
+        ErrorString ignored;
+        debuggerAgent->setBreakpointsActive(ignored, false);
     }
 
     // Inform the frontend we started an auto capture. The frontend must stop capture.
@@ -500,8 +500,8 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents.inspectorDebuggerAgent()) {
         m_programmaticCaptureRestoreBreakpointActiveValue = debuggerAgent->breakpointsActive();
         if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-            ErrorString unused;
-            debuggerAgent->setBreakpointsActive(unused, false);
+            ErrorString ignored;
+            debuggerAgent->setBreakpointsActive(ignored, false);
         }
     } else
         m_programmaticCaptureRestoreBreakpointActiveValue = false;
@@ -523,8 +523,8 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
     // Re-enable breakpoints if they were enabled.
     if (m_programmaticCaptureRestoreBreakpointActiveValue) {
         if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents.inspectorDebuggerAgent()) {
-            ErrorString unused;
-            debuggerAgent->setBreakpointsActive(unused, true);
+            ErrorString ignored;
+            debuggerAgent->setBreakpointsActive(ignored, true);
         }
     }
 }
@@ -559,24 +559,24 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState state)
 {
     if (auto* scriptProfilerAgent = m_instrumentingAgents.inspectorScriptProfilerAgent()) {
-        ErrorString unused;
+        ErrorString ignored;
         if (state == InstrumentState::Start) {
             const bool includeSamples = true;
-            scriptProfilerAgent->startTracking(unused, &includeSamples);
+            scriptProfilerAgent->startTracking(ignored, &includeSamples);
         } else
-            scriptProfilerAgent->stopTracking(unused);
+            scriptProfilerAgent->stopTracking(ignored);
     }
 }
 
 void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 {
     if (auto* heapAgent = m_instrumentingAgents.pageHeapAgent()) {
-        ErrorString unused;
+        ErrorString ignored;
         if (state == InstrumentState::Start) {
             if (m_autoCapturePhase == AutoCapturePhase::None || m_autoCapturePhase == AutoCapturePhase::FirstNavigation)
-                heapAgent->startTracking(unused);
+                heapAgent->startTracking(ignored);
         } else
-            heapAgent->stopTracking(unused);
+            heapAgent->stopTracking(ignored);
     }
 }
 
@@ -584,11 +584,11 @@ void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
     if (InspectorCPUProfilerAgent* cpuProfilerAgent = m_instrumentingAgents.inspectorCPUProfilerAgent()) {
-        ErrorString unused;
+        ErrorString ignored;
         if (state == InstrumentState::Start)
-            cpuProfilerAgent->startTracking(unused);
+            cpuProfilerAgent->startTracking(ignored);
         else
-            cpuProfilerAgent->stopTracking(unused);
+            cpuProfilerAgent->stopTracking(ignored);
     }
 #else
     UNUSED_PARAM(state);
@@ -599,11 +599,11 @@ void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
     if (InspectorMemoryAgent* memoryAgent = m_instrumentingAgents.inspectorMemoryAgent()) {
-        ErrorString unused;
+        ErrorString ignored;
         if (state == InstrumentState::Start)
-            memoryAgent->startTracking(unused);
+            memoryAgent->startTracking(ignored);
         else
-            memoryAgent->stopTracking(unused);
+            memoryAgent->stopTracking(ignored);
     }
 #else
     UNUSED_PARAM(state);

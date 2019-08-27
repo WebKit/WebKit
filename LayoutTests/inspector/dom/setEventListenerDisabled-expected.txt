@@ -18,5 +18,5 @@ Click event listener is enabled.
 
 -- Running test case: DOM.setEventListenerDisabled.Invalid
 PASS: Should produce an error.
-Error: No event listener for given identifier.
+Error: Missing event listener for given eventListenerId
 

@@ -17,7 +17,7 @@ PASS: Log channel has known source.
 PASS: Log channel disabled by default.
 
 -- Running test case: Console.Logging.InvalidLevel
-PASS: Invalid logging level
+PASS: Unknown channelLevel: DOES_NOT_EXIST
 
 -- Running test case: Console.Logging.NoLogging
 PASS: Media logging disabled.

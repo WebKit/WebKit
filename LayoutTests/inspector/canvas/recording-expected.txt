@@ -26,9 +26,9 @@ PASS: A recording should have been started and stopped twice.
 
 -- Running test case: Canvas.startRecording.InvalidCanvasId
 PASS: Should produce an error.
-Error: No canvas for given identifier.
+Error: Missing canvas for given canvasId
 
 -- Running test case: Canvas.stopRecording.InvalidCanvasId
 PASS: Should produce an error.
-Error: No canvas for given identifier.
+Error: Missing canvas for given canvasId
 

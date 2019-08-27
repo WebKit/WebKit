@@ -16,5 +16,5 @@ PASS: Re-enabling a shader program should allow it to draw.
 
 -- Running test case: Canvas.setShaderProgramDisabled.invalidProgramId
 PASS: Should produce an error.
-Error: No shader program for given identifier.
+Error: Missing program for given programId
 

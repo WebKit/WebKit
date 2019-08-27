@@ -56,14 +56,14 @@ void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendRouter*
 
 void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString unused;
-    disable(unused);
+    ErrorString ignored;
+    disable(ignored);
 }
 
 void InspectorApplicationCacheAgent::enable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorApplicationCacheAgent() == this) {
-        errorString = "ApplicationCacheAgent already enabled"_s;
+        errorString = "ApplicationCache domain already enabled"_s;
         return;
     }
 
@@ -76,7 +76,7 @@ void InspectorApplicationCacheAgent::enable(ErrorString& errorString)
 void InspectorApplicationCacheAgent::disable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorApplicationCacheAgent() != this) {
-        errorString = "ApplicationCacheAgent already disabled"_s;
+        errorString = "ApplicationCache domain already disabled"_s;
         return;
     }
 

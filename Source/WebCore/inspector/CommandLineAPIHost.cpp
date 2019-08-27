@@ -136,8 +136,8 @@ void CommandLineAPIHost::clearConsoleMessages()
     if (!consoleAgent)
         return;
 
-    ErrorString unused;
-    consoleAgent->clearMessages(unused);
+    ErrorString ignored;
+    consoleAgent->clearMessages(ignored);
 }
 
 void CommandLineAPIHost::copyText(const String& text)

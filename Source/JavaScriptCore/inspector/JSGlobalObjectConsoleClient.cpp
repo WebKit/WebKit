@@ -129,28 +129,28 @@ void JSGlobalObjectConsoleClient::profileEnd(JSC::ExecState*, const String& titl
 
 void JSGlobalObjectConsoleClient::startConsoleProfile()
 {
-    ErrorString unused;
+    ErrorString ignored;
 
     if (m_debuggerAgent) {
         m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
-        m_debuggerAgent->setBreakpointsActive(unused, false);
+        m_debuggerAgent->setBreakpointsActive(ignored, false);
     }
 
     if (m_scriptProfilerAgent) {
         const bool includeSamples = true;
-        m_scriptProfilerAgent->startTracking(unused, &includeSamples);
+        m_scriptProfilerAgent->startTracking(ignored, &includeSamples);
     }
 }
 
 void JSGlobalObjectConsoleClient::stopConsoleProfile()
 {
-    ErrorString unused;
+    ErrorString ignored;
 
     if (m_scriptProfilerAgent)
-        m_scriptProfilerAgent->stopTracking(unused);
+        m_scriptProfilerAgent->stopTracking(ignored);
 
     if (m_debuggerAgent)
-        m_debuggerAgent->setBreakpointsActive(unused, m_profileRestoreBreakpointActiveValue);
+        m_debuggerAgent->setBreakpointsActive(ignored, m_profileRestoreBreakpointActiveValue);
 }
 
 void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)

@@ -62,7 +62,7 @@ void InspectorHeapAgent::willDestroyFrontendAndBackend(DisconnectReason)
 void InspectorHeapAgent::enable(ErrorString& errorString)
 {
     if (m_enabled) {
-        errorString = "HeapAgent already enabled"_s;
+        errorString = "Heap domain already enabled"_s;
         return;
     }
 
@@ -74,7 +74,7 @@ void InspectorHeapAgent::enable(ErrorString& errorString)
 void InspectorHeapAgent::disable(ErrorString& errorString)
 {
     if (!m_enabled) {
-        errorString = "HeapAgent already disabled"_s;
+        errorString = "Heap domain already disabled"_s;
         return;
     }
 
@@ -235,13 +235,13 @@ void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjec
     JSCell* cell = optionalNode->cell;
     Structure* structure = cell->structure(vm);
     if (!structure) {
-        errorString = "Unable to get object details"_s;
+        errorString = "Unable to get object details - Structure"_s;
         return;
     }
 
     JSGlobalObject* globalObject = structure->globalObject();
     if (!globalObject) {
-        errorString = "Unable to get object details"_s;
+        errorString = "Unable to get object details - GlobalObject"_s;
         return;
     }
 

@@ -47,5 +47,5 @@ PASS: RemoteObject.updatePreview should return null for a null RemoteObject.
 
 -- Running test case: Runtime.getPreview.InvalidObjectId
 PASS: Should produce an error.
-Error: Could not find InjectedScript for objectId
+Error: Missing injected script for given objectId
 

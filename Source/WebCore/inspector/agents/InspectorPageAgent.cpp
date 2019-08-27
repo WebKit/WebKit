@@ -181,7 +181,7 @@ void InspectorPageAgent::resourceContent(ErrorString& errorString, Frame* frame,
     }
 
     if (!success)
-        errorString = "No resource with given URL found"_s;
+        errorString = "Missing resource for given url"_s;
 }
 
 String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResource)
@@ -327,7 +327,7 @@ DocumentLoader* InspectorPageAgent::assertDocumentLoader(ErrorString& errorStrin
     FrameLoader& frameLoader = frame->loader();
     DocumentLoader* documentLoader = frameLoader.documentLoader();
     if (!documentLoader)
-        errorString = "No documentLoader for given frame found"_s;
+        errorString = "Missing document loader for given frame"_s;
     return documentLoader;
 }
 
@@ -434,13 +434,13 @@ static inline Optional<bool> asOptionalBool(const bool* value)
 void InspectorPageAgent::overrideSetting(ErrorString& errorString, const String& settingString, const bool* value)
 {
     if (settingString.isEmpty()) {
-        errorString = "Preference is empty"_s;
+        errorString = "settingString is empty"_s;
         return;
     }
 
     auto setting = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingString);
     if (!setting) {
-        errorString = makeString("Unknown setting: "_s, settingString);
+        errorString = makeString("Unknown settingString: "_s, settingString);
         return;
     }
 
@@ -724,7 +724,7 @@ Frame* InspectorPageAgent::assertFrame(ErrorString& errorString, const String& f
 {
     Frame* frame = frameForId(frameId);
     if (!frame)
-        errorString = "No frame for given id found"_s;
+        errorString = "Missing frame for given frameId"_s;
     return frame;
 }
 
@@ -961,7 +961,7 @@ void InspectorPageAgent::archive(ErrorString& errorString, String* data)
     *data = base64Encode(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
 #else
     UNUSED_PARAM(data);
-    errorString = "No support for creating archives"_s;
+    errorString = "Not supported"_s;
 #endif
 }
 

@@ -7,5 +7,5 @@ PASS: Content should not be empty.
 
 -- Running test case: Canvas.requestContent.invalidCanvasId
 PASS: Should produce an error.
-Error: No canvas for given identifier.
+Error: Missing canvas for given canvasId
 

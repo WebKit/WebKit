@@ -24,7 +24,7 @@ PASS: The given HTML should have been added back to the DOM tree.
 
 -- Running test case: DOM.insertAdjacentHTML.InvalidNodeId
 PASS: Should produce an error.
-PASS: Error: Could not find node with given id
+PASS: Error: Missing node for given nodeId
 
 -- Running test case: DOM.insertAdjacentHTML.InvalidPosition
 PASS: Should produce an error.

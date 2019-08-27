@@ -59,7 +59,7 @@ void InspectorAuditAgent::willDestroyFrontendAndBackend(DisconnectReason)
 void InspectorAuditAgent::setup(ErrorString& errorString, const int* executionContextId)
 {
     if (hasActiveAudit()) {
-        errorString = "Must call teardown before calling setup again."_s;
+        errorString = "Must call teardown before calling setup again"_s;
         return;
     }
 
@@ -69,7 +69,7 @@ void InspectorAuditAgent::setup(ErrorString& errorString, const int* executionCo
 
     JSC::ExecState* execState = injectedScript.scriptState();
     if (!execState) {
-        errorString = "Missing execution state for injected script."_s;
+        errorString = "Missing execution state of injected script for given executionContextId"_s;
         return;
     }
 
@@ -118,7 +118,7 @@ void InspectorAuditAgent::run(ErrorString& errorString, const String& test, cons
 void InspectorAuditAgent::teardown(ErrorString& errorString)
 {
     if (!hasActiveAudit()) {
-        errorString = "Must call setup before calling teardown."_s;
+        errorString = "Must call setup before calling teardown"_s;
         return;
     }
 

@@ -228,14 +228,14 @@ void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::FrontendRout
 
 void InspectorDatabaseAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString unused;
-    disable(unused);
+    ErrorString ignored;
+    disable(ignored);
 }
 
 void InspectorDatabaseAgent::enable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorDatabaseAgent() == this) {
-        errorString = "DatabaseAgent already enabled"_s;
+        errorString = "Database domain already enabled"_s;
         return;
     }
 
@@ -248,7 +248,7 @@ void InspectorDatabaseAgent::enable(ErrorString& errorString)
 void InspectorDatabaseAgent::disable(ErrorString& errorString)
 {
     if (m_instrumentingAgents.inspectorDatabaseAgent() != this) {
-        errorString = "DatabaseAgent already disabled"_s;
+        errorString = "Database domain already disabled"_s;
         return;
     }
 
@@ -260,7 +260,7 @@ void InspectorDatabaseAgent::disable(ErrorString& errorString)
 void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& errorString, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names)
 {
     if (m_instrumentingAgents.inspectorDatabaseAgent() != this) {
-        errorString = "Database agent is not enabled"_s;
+        errorString = "Database domain must be enabled"_s;
         return;
     }
 
@@ -275,13 +275,13 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& errorString, con
 void InspectorDatabaseAgent::executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)
 {
     if (m_instrumentingAgents.inspectorDatabaseAgent() != this) {
-        requestCallback->sendFailure("Database agent is not enabled"_s);
+        requestCallback->sendFailure("Database domain must be enabled"_s);
         return;
     }
 
     auto* database = databaseForId(databaseId);
     if (!database) {
-        requestCallback->sendFailure("Database not found");
+        requestCallback->sendFailure("Missing database for given databaseId");
         return;
     }
 

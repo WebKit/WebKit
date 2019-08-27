@@ -6,10 +6,10 @@ Tests for error cases with Timeline.setInstruments.
 PASS: Should be an error: Some arguments of method 'Timeline.setInstruments' can't be processed
 
 -- Running test case: InvalidTypeInInstrumentsList
-PASS: Should be an error: Unexpected type in instruments list, should be string
+PASS: Should be an error: Unexpected non-string value in given instruments
 
 -- Running test case: InvalidInstrumentInInstrumentsList
-PASS: Should be an error: Unexpected enum value: NoSuchInstrument
+PASS: Should be an error: Unknown item in given instruments: NoSuchInstrument
 
 -- Running test case: ValidInstrumentInInstrumentsList
 PASS: Should not be an error setting valid instruments.

@@ -1,3 +1,38 @@
+2019-08-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: unify agent command error messages
+        https://bugs.webkit.org/show_bug.cgi?id=200950
+
+        Reviewed by Joseph Pecoraro.
+
+        Different agents can sometimes have different error messages for commands that have a
+        similar intended effect.  We should make our error messages more similar.
+
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        * inspector/agents/page/PageAuditAgent.cpp:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        * inspector/agents/worker/WorkerAuditAgent.cpp:
+        * inspector/agents/worker/WorkerDebuggerAgent.cpp:
+        * inspector/agents/worker/WorkerRuntimeAgent.cpp:
+        Elide function lists to avoid an extremely large ChangeLog entry.
+
 2019-08-26  Chris Dumez  <cdumez@apple.com>
 
         Regression: ITP started doing a lot more IPC after its logic was moved to the network process

@@ -120,7 +120,7 @@ void PageConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const St
 {
     auto configuration = channelConfigurationForString(channelLevel);
     if (!configuration) {
-        errorString = "Invalid logging level"_s;
+        errorString = makeString("Unknown channelLevel: "_s, channelLevel);
         return;
     }
 

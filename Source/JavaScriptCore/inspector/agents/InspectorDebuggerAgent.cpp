@@ -144,7 +144,7 @@ void InspectorDebuggerAgent::setAsyncStackTraceDepth(ErrorString& errorString, i
         return;
 
     if (depth < 0) {
-        errorString = "depth must be a positive number."_s;
+        errorString = "Unexpected negative depth"_s;
         return;
     }
 
@@ -377,19 +377,19 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString& errorStr
         RefPtr<JSON::Value> value = actions->get(i);
         RefPtr<JSON::Object> object;
         if (!value->asObject(object)) {
-            errorString = "BreakpointAction of incorrect type, expected object"_s;
+            errorString = "Unexpected non-object item in given actions"_s;
             return false;
         }
 
         String typeString;
         if (!object->getString("type"_s, typeString)) {
-            errorString = "BreakpointAction had type missing"_s;
+            errorString = "Missing type for item in given actions"_s;
             return false;
         }
 
         ScriptBreakpointActionType type;
         if (!breakpointActionTypeForString(typeString, &type)) {
-            errorString = "BreakpointAction had unknown type"_s;
+            errorString = "Non-string type for item in given actions"_s;
             return false;
         }
 
@@ -422,10 +422,16 @@ static RefPtr<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Bre
 
 static bool parseLocation(ErrorString& errorString, const JSON::Object& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
 {
-    String scriptIDStr;
-    if (!location.getString("scriptId"_s, scriptIDStr) || !location.getInteger("lineNumber"_s, lineNumber)) {
+    if (!location.getInteger("lineNumber"_s, lineNumber)) {
+        errorString = "Unexpected non-integer lineNumber in given location"_s;
         sourceID = JSC::noSourceID;
-        errorString = "scriptId and lineNumber are required."_s;
+        return false;
+    }
+
+    String scriptIDStr;
+    if (!location.getString("scriptId"_s, scriptIDStr)) {
+        sourceID = JSC::noSourceID;
+        errorString = "Unexepcted non-string scriptId in given location"_s;
         return false;
     }
 
@@ -439,7 +445,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
 {
     locations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
     if (!optionalURL == !optionalURLRegex) {
-        errorString = "Either url or urlRegex must be specified."_s;
+        errorString = "Either url or urlRegex must be specified"_s;
         return;
     }
 
@@ -449,7 +455,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
 
     String breakpointIdentifier = makeString(isRegex ? "/" : "", url, isRegex ? "/:" : ":", lineNumber, ':', columnNumber);
     if (m_javaScriptBreakpoints.contains(breakpointIdentifier)) {
-        errorString = "Breakpoint at specified location already exists."_s;
+        errorString = "Breakpoint for given location already exists."_s;
         return;
     }
 
@@ -521,7 +527,7 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON:
 
     auto scriptIterator = m_scripts.find(sourceID);
     if (scriptIterator == m_scripts.end()) {
-        errorString = makeString("No script for id: "_s, sourceID);
+        errorString = "Missing script for scriptId in given location"_s;
         return;
     }
 
@@ -536,7 +542,7 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON:
     bool existing;
     setBreakpoint(breakpoint, existing);
     if (existing) {
-        errorString = "Breakpoint at specified location already exists"_s;
+        errorString = "Breakpoint for given location already exists"_s;
         return;
     }
 
@@ -624,7 +630,7 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
     if (scriptIterator == m_scripts.end()) {
         m_scriptDebugServer.continueProgram();
         m_frontendDispatcher->resumed();
-        errorString = makeString("No script for id: "_s, sourceID);
+        errorString = "Missing script for scriptId in given location"_s;
         return;
     }
 
@@ -660,12 +666,12 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
     m_scriptDebugServer.continueProgram();
 }
 
-void InspectorDebuggerAgent::searchInContent(ErrorString& error, const String& scriptIDStr, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>& results)
+void InspectorDebuggerAgent::searchInContent(ErrorString& errorString, const String& scriptIDStr, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>& results)
 {
     JSC::SourceID sourceID = scriptIDStr.toIntPtr();
     auto it = m_scripts.find(sourceID);
     if (it == m_scripts.end()) {
-        error = makeString("No script for id: "_s, scriptIDStr);
+        errorString = "Missing script for given scriptId";
         return;
     }
 
@@ -674,21 +680,21 @@ void InspectorDebuggerAgent::searchInContent(ErrorString& error, const String& s
     results = ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive, isRegex);
 }
 
-void InspectorDebuggerAgent::getScriptSource(ErrorString& error, const String& scriptIDStr, String* scriptSource)
+void InspectorDebuggerAgent::getScriptSource(ErrorString& errorString, const String& scriptIDStr, String* scriptSource)
 {
     JSC::SourceID sourceID = scriptIDStr.toIntPtr();
     auto it = m_scripts.find(sourceID);
     if (it != m_scripts.end())
         *scriptSource = it->value.source;
     else
-        error = makeString("No script for id: "_s, scriptIDStr);
+        errorString = "Missing script for given scriptId";
 }
 
 void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>& details)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(functionId);
     if (injectedScript.hasNoValue()) {
-        errorString = "Function object id is obsolete"_s;
+        errorString = "Missing injected script for given functionId"_s;
         return;
     }
 
@@ -729,7 +735,7 @@ void InspectorDebuggerAgent::pause(ErrorString&)
 void InspectorDebuggerAgent::resume(ErrorString& errorString)
 {
     if (!m_pausedScriptState && !m_javaScriptPauseScheduled) {
-        errorString = "Was not paused or waiting to pause"_s;
+        errorString = "Must be paused or waiting to pause"_s;
         return;
     }
 
@@ -813,7 +819,7 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, cons
     else if (stringPauseState == "uncaught")
         pauseState = JSC::Debugger::PauseOnUncaughtExceptions;
     else {
-        errorString = makeString("Unknown pause on exceptions mode: "_s, stringPauseState);
+        errorString = makeString("Unknown state: "_s, stringPauseState);
         return;
     }
 
@@ -834,14 +840,12 @@ void InspectorDebuggerAgent::setPauseOnMicrotasks(ErrorString&, bool enabled)
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* /* emulateUserGesture */, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
 {
-    if (!m_currentCallStack) {
-        errorString = "Not paused"_s;
+    if (!assertPaused(errorString))
         return;
-    }
 
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(callFrameId);
     if (injectedScript.hasNoValue()) {
-        errorString = "Could not find InjectedScript for callFrameId"_s;
+        errorString = "Missing injected script for given callFrameId"_s;
         return;
     }
 
@@ -1102,9 +1106,9 @@ void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason bre
 
 void InspectorDebuggerAgent::clearInspectorBreakpointState()
 {
-    ErrorString dummyError;
+    ErrorString ignored;
     for (const String& identifier : copyToVector(m_breakpointIdentifierToDebugServerBreakpointIDs.keys()))
-        removeBreakpoint(dummyError, identifier);
+        removeBreakpoint(ignored, identifier);
 
     m_javaScriptBreakpoints.clear();
 
@@ -1150,7 +1154,7 @@ void InspectorDebuggerAgent::didClearGlobalObject()
 bool InspectorDebuggerAgent::assertPaused(ErrorString& errorString)
 {
     if (!m_pausedScriptState) {
-        errorString = "Can only perform operation while paused."_s;
+        errorString = "Must be paused"_s;
         return false;
     }
 

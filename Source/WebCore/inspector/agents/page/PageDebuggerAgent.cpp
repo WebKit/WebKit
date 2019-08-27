@@ -152,7 +152,7 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString
 
     InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        errorString = "Execution context with given id not found."_s;
+        errorString = "Missing injected script for given executionContextId."_s;
 
     return injectedScript;
 }
@@ -166,8 +166,9 @@ void PageDebuggerAgent::mainFrameStartedLoading()
 {
     if (isPaused()) {
         setSuppressAllPauses(true);
-        ErrorString unused;
-        resume(unused);
+
+        ErrorString ignored;
+        resume(ignored);
     }
 }
 

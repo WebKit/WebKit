@@ -39,14 +39,14 @@ Sending message: {"id":123,"method":"Runtime.getProperties","params":{"objectId"
 PASS: the backend should send a protocol error when receiving an invalid message.
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
-Actual error message: Could not find InjectedScript for objectId
-Actual error data: [{"code":-32000,"message":"Could not find InjectedScript for objectId"}]
+Actual error message: Missing injected script for given objectId
+Actual error data: [{"code":-32000,"message":"Missing injected script for given objectId"}]
 
 -- Running test case: TestErrorCodeForAsyncServerError
 Sending message: {"id":123,"method":"Runtime.awaitPromise","params":{"promiseObjectId":"thisisNotAnId"}}
 PASS: the backend should send a protocol error when receiving an invalid message.
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
-Actual error message: Could not find InjectedScript for promiseObjectId
-Actual error data: [{"code":-32000,"message":"Could not find InjectedScript for promiseObjectId"}]
+Actual error message: Missing injected script for given promiseObjectId
+Actual error data: [{"code":-32000,"message":"Missing injected script for given promiseObjectId"}]
 

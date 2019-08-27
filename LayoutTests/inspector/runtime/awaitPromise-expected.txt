@@ -56,5 +56,5 @@ Error: Error: Object with given id is not a Promise
 
 -- Running test case: Runtime.awaitPromise.Error.InvalidPromiseObjectId
 PASS: Should produce an error.
-Error: Could not find InjectedScript for promiseObjectId
+Error: Missing injected script for given promiseObjectId
 

@@ -16,5 +16,5 @@ PASS: Unhighlighting a shader program should change the content.
 
 -- Running test case: Canvas.setShaderProgramHighlighted.invalidProgramId
 PASS: Should produce an error.
-Error: No shader program for given identifier.
+Error: Missing program for given programId
 

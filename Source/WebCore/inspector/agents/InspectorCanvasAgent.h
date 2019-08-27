@@ -116,11 +116,11 @@ private:
     void clearCanvasData();
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
     String unbindCanvas(InspectorCanvas&);
-    RefPtr<InspectorCanvas> assertInspectorCanvas(ErrorString&, const String& identifier);
+    RefPtr<InspectorCanvas> assertInspectorCanvas(ErrorString&, const String& canvasId);
     RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
 #if ENABLE(WEBGL)
     String unbindProgram(InspectorShaderProgram&);
-    RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& identifier);
+    RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& programId);
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif
 

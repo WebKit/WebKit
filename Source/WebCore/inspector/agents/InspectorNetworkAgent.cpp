@@ -185,8 +185,8 @@ void InspectorNetworkAgent::didCreateFrontendAndBackend(Inspector::FrontendRoute
 
 void InspectorNetworkAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString unused;
-    disable(unused);
+    ErrorString ignored;
+    disable(ignored);
 }
 
 static Ref<JSON::Object> buildObjectForHeaders(const HTTPHeaderMap& headers)
@@ -393,8 +393,8 @@ Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildOb
 InspectorNetworkAgent::~InspectorNetworkAgent()
 {
     if (m_enabled) {
-        ErrorString unused;
-        disable(unused);
+        ErrorString ignored;
+        disable(ignored);
     }
     ASSERT(!m_instrumentingAgents.inspectorNetworkAgent());
 }
@@ -854,7 +854,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {
-        errorString = "No resource with given identifier found"_s;
+        errorString = "Missing resource for given requestId"_s;
         return;
     }
 
@@ -865,7 +865,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
     }
 
     if (resourceData->isContentEvicted()) {
-        errorString = "Request content was evicted from inspector cache"_s;
+        errorString = "Resource content was evicted from inspector cache"_s;
         return;
     }
 
@@ -880,7 +880,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
             return;
     }
 
-    errorString = "No data found for resource with given identifier"_s;
+    errorString = "Missing content of resource for given requestId"_s;
 }
 
 void InspectorNetworkAgent::setResourceCachingDisabled(ErrorString&, bool disabled)
@@ -890,10 +890,10 @@ void InspectorNetworkAgent::setResourceCachingDisabled(ErrorString&, bool disabl
 
 void InspectorNetworkAgent::loadResource(const String& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
 {
-    ErrorString error;
-    auto* context = scriptExecutionContext(error, frameId);
+    ErrorString errorString;
+    auto* context = scriptExecutionContext(errorString, frameId);
     if (!context) {
-        callback->sendFailure(error);
+        callback->sendFailure(errorString);
         return;
     }
 
@@ -928,13 +928,13 @@ void InspectorNetworkAgent::getSerializedCertificate(ErrorString& errorString, c
 {
     auto* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {
-        errorString = "No resource with given identifier found"_s;
+        errorString = "Missing resource for given requestId"_s;
         return;
     }
 
     auto& certificate = resourceData->certificateInfo();
     if (!certificate || certificate.value().isEmpty()) {
-        errorString = "No certificate for resource"_s;
+        errorString = "Missing certificate of resource for given requestId"_s;
         return;
     }
 
@@ -967,7 +967,7 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
 {
     WebSocket* webSocket = webSocketForRequestId(requestId);
     if (!webSocket) {
-        errorString = "WebSocket not found"_s;
+        errorString = "Missing web socket for given requestId"_s;
         return;
     }
 
@@ -978,7 +978,7 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
     auto* document = downcast<Document>(webSocket->scriptExecutionContext());
     auto* frame = document->frame();
     if (!frame) {
-        errorString = "WebSocket belongs to document without a frame"_s;
+        errorString = "Missing frame of web socket for given requestId"_s;
         return;
     }
 
@@ -1107,12 +1107,12 @@ void InspectorNetworkAgent::searchInRequest(ErrorString& errorString, const Stri
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {
-        errorString = "No resource with given identifier found"_s;
+        errorString = "Missing resource for given requestId"_s;
         return;
     }
 
     if (!resourceData->hasContent()) {
-        errorString = "No resource content"_s;
+        errorString = "Missing content of resource for given requestId"_s;
         return;
     }
 

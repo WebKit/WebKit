@@ -52,7 +52,7 @@ WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (executionContextId) {
-        errorString = "Execution context id is not supported for workers as there is only one execution context."_s;
+        errorString = "executionContextId is not supported for workers as there is only one execution context"_s;
         return InjectedScript();
     }
 

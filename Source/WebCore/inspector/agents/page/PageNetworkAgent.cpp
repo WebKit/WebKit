@@ -112,7 +112,7 @@ ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(ErrorString& er
 
     auto* document = frame->document();
     if (!document) {
-        errorString = "No Document instance for the specified frame"_s;
+        errorString = "Missing frame of docuemnt for given frameId"_s;
         return nullptr;
     }
 

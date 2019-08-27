@@ -21,9 +21,9 @@ PASS: Should not pause before button1 event handler is run.
 
 -- Running test case: DOM.setBreakpointForEventListener.Invalid
 PASS: Should produce an error.
-Error: No event listener for given identifier.
+Error: Missing event listener for given eventListenerId
 
 -- Running test case: DOM.removeBreakpointForEventListener.Invalid
 PASS: Should produce an error.
-Error: No event listener for given identifier.
+Error: Missing event listener for given eventListenerId
 
