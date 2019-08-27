@@ -1,3 +1,12 @@
+2019-08-27  Russell Epstein  <repstein@apple.com>
+
+        Test Gardening for scrollingcoordinator/ios/scroll-position-after-reattach.html
+        rdar://52961406
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/TestExpectations:
+
 2019-08-27  Megan Gardner  <megan_gardner@apple.com>
 
         Update Test Expectations for iPad for fast/scrolling/ios/autoscroll-input-when-very-zoomed.html
