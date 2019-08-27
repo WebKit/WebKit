@@ -1,3 +1,15 @@
+2019-08-27  Megan Gardner  <megan_gardner@apple.com>
+
+        Update Test Expectations for iPad for fast/scrolling/ios/autoscroll-input-when-very-zoomed.html
+        https://bugs.webkit.org/show_bug.cgi?id=201163
+        <rdar://problem/54727027>
+
+        Reviewed by Simon Fraser.
+
+        Altering test slightly to have a reasonable test expecation on iPad. 
+
+        * platform/ipad/fast/scrolling/ios/autoscroll-input-when-very-zoomed-expected.txt: Added.
+
 2019-08-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: don't attach properties to `injectedScript` for the CommandLineAPI
