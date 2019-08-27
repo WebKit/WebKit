@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+        var eventCount = 0;
+
+        function go()
+        {
+            findMediaElement();
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('video.src = findMediaFile("video", "content/test")');
+            waitForEventOnce('canplaythrough', canPlayThrough);
+        }
+
+        function canPlayThrough()
+        {
+            runWithKeyDown('video.play()');
+            runWithKeyDown('video.webkitSetPresentationMode("picture-in-picture")');
+            waitForEventOnce("webkitpresentationmodechanged", presentationModeChanged1);
+        }
+
+        function presentationModeChanged1()
+        {
+            testExpected("video.webkitPresentationMode", "picture-in-picture");
+            runWithKeyDown('video.webkitSetPresentationMode("inline")');
+            waitForEvent("webkitpresentationmodechanged", presentationModeChanged2);
+        }
+
+        function presentationModeChanged2()
+        {
+            switch (++eventCount)
+            {
+                case 1:
+                    testExpected("video.webkitPresentationMode", "inline");
+                    setTimeout(endTest, 200);
+                    break;
+                default:
+                    failTest("'webkitpresentationmodechanged' event fired again");
+                    break;
+            }
+        }
+    </script>
+</head>
+<body onload="go()">
+    <div>This tests that the "webkitpresentationmodechanged" event is fired only once when the browser switches back to inline from the picture-in-picture mode.</div>
+    <video controls></video>
+</body>
+</html>

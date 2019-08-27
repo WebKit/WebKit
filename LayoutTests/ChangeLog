@@ -1,3 +1,13 @@
+2019-08-27  Peng Liu  <peng.liu6@apple.com>
+
+        webkitpresentationmodechanged is fired twice when exiting picture in picture
+        https://bugs.webkit.org/show_bug.cgi?id=193765
+
+        Reviewed by Jer Noble.
+
+        * media/presentationmodechanged-fired-once-expected.txt: Added.
+        * media/presentationmodechanged-fired-once.html: Added.
+
 2019-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Origin header not included in WebSocket handshake request when using platform WebSocket API

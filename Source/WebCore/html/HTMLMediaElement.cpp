@@ -6121,7 +6121,6 @@ void HTMLMediaElement::exitFullscreen()
         else
             document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
         scheduleEvent(eventNames().webkitendfullscreenEvent);
-        scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
     }
 }
 
@@ -7433,6 +7432,9 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
     // Don't execute script if the controls script hasn't been injected yet, or we have
     // stopped/suspended the object.
     if (!m_mediaControlsHost || document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
+        return;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
         return;
 
     setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController&, DOMWrapperWorld&) {

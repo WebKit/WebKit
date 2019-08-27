@@ -1,3 +1,27 @@
+2019-08-27  Peng Liu  <peng.liu6@apple.com>
+
+        webkitpresentationmodechanged is fired twice when exiting picture in picture
+        https://bugs.webkit.org/show_bug.cgi?id=193765
+
+        Reviewed by Jer Noble.
+
+        This patch removes the extra "webkitpresentationmodechanged" event when the browser switches from
+        picture-in-picture or fullscreen to inline.
+
+        The bug was introduced by the fix for bug
+        https://bugs.webkit.org/show_bug.cgi?id=181095
+        But now we are using modern media controls and the fix is not necessary.
+        Reverting that fix can fix the issue.
+
+        Also, this patch gets rid of the unnecessary try to call a JavaScript function which is not available
+        in the modern media controls.
+
+        Test: media/presentationmodechanged-fired-once.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+
 2019-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Image pasted from screenshot into Mail compose window via share sheet has the wrong aspect ratio
