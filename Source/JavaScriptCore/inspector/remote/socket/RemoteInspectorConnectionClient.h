@@ -28,19 +28,30 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteControllableTarget.h"
+#include "RemoteInspectorMessageParser.h"
 #include "RemoteInspectorSocketEndpoint.h"
-#include <wtf/WeakPtr.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-class RemoteInspectorConnectionClient : public CanMakeWeakPtr<RemoteInspectorConnectionClient> {
+class MessageParser;
+
+class JS_EXPORT_PRIVATE RemoteInspectorConnectionClient : public RemoteInspectorSocketEndpoint::Client {
 public:
-    void didReceiveWebInspectorEvent(ConnectionID, Vector<uint8_t>&&);
-    virtual void didAccept(ConnectionID /* acceptedID */, ConnectionID /* listenerID */, Socket::Domain) { }
-    virtual void didClose(ConnectionID) = 0;
+    virtual ~RemoteInspectorConnectionClient();
+
+    Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
+    Optional<ConnectionID> listenInet(const char* address, uint16_t port);
+    Optional<ConnectionID> createClient(PlatformSocketType);
+    void send(ConnectionID, const uint8_t* data, size_t);
+
+    void didReceive(ConnectionID, Vector<uint8_t>&&) override;
+    void didAccept(ConnectionID, ConnectionID, Socket::Domain) override { }
 
     struct Event {
+        String methodName;
         ConnectionID clientID { };
         Optional<ConnectionID> connectionID;
         Optional<TargetID> targetID;
@@ -49,6 +60,12 @@ public:
 
     using CallHandler = void (RemoteInspectorConnectionClient::*)(const Event&);
     virtual HashMap<String, CallHandler>& dispatchMap() = 0;
+
+protected:
+    static Optional<Event> extractEvent(ConnectionID, Vector<uint8_t>&&);
+
+    HashMap<ConnectionID, MessageParser> m_parsers;
+    Lock m_parsersLock;
 };
 
 } // namespace Inspector

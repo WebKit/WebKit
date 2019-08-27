@@ -34,28 +34,82 @@
 
 namespace Inspector {
 
-void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ConnectionID clientID, Vector<uint8_t>&& data)
+RemoteInspectorConnectionClient::~RemoteInspectorConnectionClient()
+{
+    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    endpoint.invalidateClient(*this);
+}
+
+Optional<ConnectionID> RemoteInspectorConnectionClient::connectInet(const char* serverAddr, uint16_t serverPort)
+{
+    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    return endpoint.connectInet(serverAddr, serverPort, *this);
+}
+
+Optional<ConnectionID> RemoteInspectorConnectionClient::listenInet(const char* address, uint16_t port)
+{
+    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    return endpoint.listenInet(address, port, *this);
+}
+
+Optional<ConnectionID> RemoteInspectorConnectionClient::createClient(PlatformSocketType socket)
+{
+    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    return endpoint.createClient(socket, *this);
+}
+
+void RemoteInspectorConnectionClient::send(ConnectionID id, const uint8_t* data, size_t size)
+{
+    auto message = MessageParser::createMessage(data, size);
+    if (message.isEmpty())
+        return;
+
+    auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
+    endpoint.send(id, message.data(), message.size());
+}
+
+void RemoteInspectorConnectionClient::didReceive(ConnectionID clientID, Vector<uint8_t>&& data)
 {
     ASSERT(!isMainThread());
 
+    LockHolder lock(m_parsersLock);
+    auto result = m_parsers.ensure(clientID, [this, clientID] {
+        return MessageParser([this, clientID](Vector<uint8_t>&& data) {
+            if (auto event = RemoteInspectorConnectionClient::extractEvent(clientID, WTFMove(data))) {
+                RunLoop::main().dispatch([this, event = WTFMove(*event)] {
+                    const auto& methodName = event.methodName;
+                    auto& methods = dispatchMap();
+                    if (methods.contains(methodName)) {
+                        auto call = methods.get(methodName);
+                        (this->*call)(event);
+                    } else
+                        LOG_ERROR("Unknown event: %s", methodName.utf8().data());
+                });
+            }
+        });
+    });
+    result.iterator->value.pushReceivedData(data.data(), data.size());
+}
+
+Optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient::extractEvent(ConnectionID clientID, Vector<uint8_t>&& data)
+{
     if (data.isEmpty())
-        return;
+        return WTF::nullopt;
 
     String jsonData = String::fromUTF8(data);
 
     RefPtr<JSON::Value> messageValue;
     if (!JSON::Value::parseJSON(jsonData, messageValue))
-        return;
+        return WTF::nullopt;
 
     RefPtr<JSON::Object> messageObject;
     if (!messageValue->asObject(messageObject))
-        return;
-
-    String methodName;
-    if (!messageObject->getString("event"_s, methodName))
-        return;
+        return WTF::nullopt;
 
     Event event;
+    if (!messageObject->getString("event"_s, event.methodName))
+        return WTF::nullopt;
+
     event.clientID = clientID;
 
     ConnectionID connectionID;
@@ -70,14 +124,7 @@ void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ConnectionID c
     if (messageObject->getString("message"_s, message))
         event.message = message;
 
-    RunLoop::main().dispatch([this, methodName, event = WTFMove(event)] {
-        auto& methods = dispatchMap();
-        if (methods.contains(methodName)) {
-            auto call = methods.get(methodName);
-            (this->*call)(event);
-        } else
-            LOG_ERROR("Unknown event: %s", methodName.utf8().data());
-    });
+    return event;
 }
 
 } // namespace Inspector

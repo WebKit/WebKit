@@ -88,12 +88,9 @@ private:
 RemoteInspectorClient::RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver& observer)
     : m_observer(observer)
 {
-    m_socket = Inspector::RemoteInspectorSocketEndpoint::create(this, "RemoteInspectorClient");
-
-    m_connectionID = m_socket->connectInet(address, port);
+    m_connectionID = connectInet(address, port);
     if (!m_connectionID) {
         LOG_ERROR("Inspector client could not connect to %s:%d", address, port);
-        m_socket = nullptr;
         return;
     }
 
@@ -109,7 +106,7 @@ void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
     ASSERT(isMainThread());
     ASSERT(m_connectionID.hasValue());
     auto message = event.utf8();
-    m_socket->send(m_connectionID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
+    send(m_connectionID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }
 
 HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()

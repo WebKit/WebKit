@@ -1,3 +1,83 @@
+2019-08-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [RemoteInspector][Socket] Restructuring the components of Socket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=201079
+
+        Reviewed by Ross Kirsling.
+
+        Since the change for WeakPtr on r248386, our port start assertion failure on the usage of
+        RemoteInspectorSocketEndpoint. We have to send a message to connection client, but if that
+        has to be done in the same thread which weakPtr generated, it's a little bit stronger
+        restriction for us to handle. In this restructure, we are stopping to use weakPtr to
+        resolve circular dependency, but using a reference with invalidation method because
+        everything is under our control.
+
+        - Make SocketEndpoint a singleton. This class represents a central place to handle socket
+          connections and there's no need to instantiate more than one in a process. Once every
+          connection goes away, it just start sleeping until next connection is created. Very low
+          resource usage when it is idle.
+        - Move Socket::Connection structure from global definition to SocketEndpoint local
+          structure. It is directly used in SocketEndpoint privately.
+        - Move responsibility to handle message encoding/decoding task from SocketEndpoint to
+          ConnectionClient. Make SocketEndpoint as plain socket handling as possible to keep it
+          simple to exist long span.
+        - Extract an interface from ConnectionClient as SocketEndpoint::Client which is required
+          to work with SocketEndpoint. Now SocketEndpoint is very independent from others.
+          SocketEndpoint::Client is the required parameter to create a connection.
+
+        Many responsibilities are moved into ConnectionClient which was a thin interface for
+        communication between RemoteInspector, RemoteInspectorServer and RemoteInspectorClient.
+        It now handles followings:
+        - life cycle of connection: create, listen and close or invalidation
+        - sending and receiving data packed in a message.
+
+        RemoteInspector and RemoteInspectorServer are now free from creation of SocketEndpoint.
+        All communication to SocketEndpoint id now the duty of super class.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::~RemoteInspectorConnectionClient): Make all connection invalidated.
+        (Inspector::RemoteInspectorConnectionClient::connectInet): Add itself as a listener of socket.
+        (Inspector::RemoteInspectorConnectionClient::listenInet): Ditto.
+        (Inspector::RemoteInspectorConnectionClient::createClient): Ditto.
+        (Inspector::RemoteInspectorConnectionClient::send): Add message processing.
+        (Inspector::RemoteInspectorConnectionClient::didReceive): Ditto.
+        (Inspector::RemoteInspectorConnectionClient::extractEvent): Extracted from send.
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        * inspector/remote/socket/RemoteInspectorMessageParser.cpp:
+        (Inspector::MessageParser::MessageParser):
+        (Inspector::MessageParser::pushReceivedData):
+        (Inspector::MessageParser::parse):
+        * inspector/remote/socket/RemoteInspectorMessageParser.h:
+        (Inspector::MessageParser::MessageParser):
+        (Inspector::MessageParser::Function<void):
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::connect): Remove direct communication to Socket Endpoint.
+        (Inspector::RemoteInspectorServer::listenForTargets): Ditto.
+        (Inspector::RemoteInspectorServer::sendWebInspectorEvent): Ditto.
+        (Inspector::RemoteInspectorServer::start): Ditto.
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::sendWebInspectorEvent): Remove direct communication to Socket Endpoint.
+        (Inspector::RemoteInspector::start): Ditto.
+        (Inspector::RemoteInspector::stopInternal): Ditto.
+        (Inspector::RemoteInspector::pushListingsNow): Change the target of validity check to ID.
+        (Inspector::RemoteInspector::pushListingsSoon): Ditto.
+        (Inspector::RemoteInspector::sendMessageToRemote): Ditto.
+        * inspector/remote/socket/RemoteInspectorSocket.h: Move Connection structure to RemoteInspectorSocketEndpoint.
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::singleton): Added.
+        (Inspector::RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint): Use hard-coded thread name.
+        (Inspector::RemoteInspectorSocketEndpoint::connectInet): Accept RemoteInspectorSocketEndpoint::Client as listener.
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet): Ditto.
+        (Inspector::RemoteInspectorSocketEndpoint::createClient): Ditto.
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateClient): Added. Invalidate all connection from the client.
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled): Remove message parser handling.
+        (Inspector::RemoteInspectorSocketEndpoint::send): Remove message packing.
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+        (Inspector::RemoteInspectorSocketEndpoint::Connection::Connection):
+
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: use more C++ keywords for defining agents

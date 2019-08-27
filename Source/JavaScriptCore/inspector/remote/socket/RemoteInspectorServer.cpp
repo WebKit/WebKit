@@ -28,6 +28,8 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "RemoteInspectorMessageParser.h"
+
 #include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
 
@@ -35,13 +37,8 @@ namespace Inspector {
 
 Optional<PlatformSocketType> RemoteInspectorServer::connect()
 {
-    if (!m_server) {
-        LOG_ERROR("Inspector server is not running");
-        return WTF::nullopt;
-    }
-
     if (auto sockets = Socket::createPair()) {
-        if (auto id = m_server->createClient(sockets->at(0))) {
+        if (auto id = createClient(sockets->at(0))) {
             LockHolder lock(m_connectionsLock);
             m_inspectorConnections.append(id.value());
 
@@ -54,19 +51,16 @@ Optional<PlatformSocketType> RemoteInspectorServer::connect()
 
 Optional<uint16_t> RemoteInspectorServer::listenForTargets()
 {
-    if (!m_server) {
-        LOG_ERROR("Inspector server is not running");
-        return WTF::nullopt;
-    }
-
     if (m_inspectorListener) {
         LOG_ERROR("Inspector server is already listening for targets.");
         return WTF::nullopt;
     }
 
-    if (auto connection = m_server->listenInet("127.0.0.1", 0)) {
+    if (auto connection = listenInet("127.0.0.1", 0)) {
         m_inspectorListener = connection;
-        return m_server->getPort(*connection);
+
+        auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
+        return endpoint.getPort(*connection);
     }
 
     return WTF::nullopt;
@@ -123,7 +117,7 @@ HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorSe
 void RemoteInspectorServer::sendWebInspectorEvent(ConnectionID id, const String& event)
 {
     const CString message = event.utf8();
-    m_server->send(id, reinterpret_cast<const uint8_t*>(message.data()), message.length());
+    send(id, reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }
 
 RemoteInspectorServer& RemoteInspectorServer::singleton()
@@ -134,14 +128,8 @@ RemoteInspectorServer& RemoteInspectorServer::singleton()
 
 bool RemoteInspectorServer::start(const char* address, uint16_t port)
 {
-    m_server = RemoteInspectorSocketEndpoint::create(this, "RemoteInspectorServer");
-
-    if (!m_server->listenInet(address, port)) {
-        m_server = nullptr;
-        return false;
-    }
-
-    return true;
+    m_server = listenInet(address, port);
+    return isRunning();
 }
 
 void RemoteInspectorServer::setTargetList(const Event& event)

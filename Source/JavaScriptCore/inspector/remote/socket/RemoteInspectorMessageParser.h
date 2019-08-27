@@ -27,7 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspectorSocketEndpoint.h"
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -37,18 +37,16 @@ class MessageParser {
 public:
     static Vector<uint8_t> createMessage(const uint8_t*, size_t);
 
-    MessageParser(ConnectionID, size_t);
+    MessageParser() { }
+    MessageParser(Function<void(Vector<uint8_t>&&)>&&);
     void pushReceivedData(const uint8_t*, size_t);
-    void setDidParseMessageListener(Function<void(ConnectionID, Vector<uint8_t>)>&& listener) { m_didParseMessageListener = WTFMove(listener); }
-
     void clearReceivedData();
 
 private:
     bool parse();
 
-    Function<void(ConnectionID, Vector<uint8_t>&&)> m_didParseMessageListener;
+    Function<void(Vector<uint8_t>&&)> m_listener { };
     Vector<uint8_t> m_buffer;
-    ConnectionID m_connectionID;
 };
 
 } // namespace Inspector

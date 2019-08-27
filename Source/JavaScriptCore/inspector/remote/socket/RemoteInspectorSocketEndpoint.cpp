@@ -28,23 +28,26 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspectorConnectionClient.h"
-#include "RemoteInspectorMessageParser.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint(RemoteInspectorConnectionClient* inspectorClient, const char* name)
-    : m_inspectorClient(makeWeakPtr(inspectorClient))
+RemoteInspectorSocketEndpoint& RemoteInspectorSocketEndpoint::singleton()
+{
+    static NeverDestroyed<RemoteInspectorSocketEndpoint> shared;
+    return shared;
+}
+
+RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint()
 {
     if (auto sockets = Socket::createPair()) {
         m_wakeupSendSocket = sockets->at(0);
         m_wakeupReceiveSocket = sockets->at(1);
     }
 
-    m_workerThread = Thread::create(name, [this] {
+    m_workerThread = Thread::create("SocketEndpoint", [this] {
         workerThread();
     });
 }
@@ -69,17 +72,17 @@ void RemoteInspectorSocketEndpoint::wakeupWorkerThread()
         Socket::write(m_wakeupSendSocket, "1", 1);
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* serverAddress, uint16_t serverPort)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* serverAddress, uint16_t serverPort, Client& client)
 {
     if (auto socket = Socket::connect(serverAddress, serverPort))
-        return createClient(*socket);
+        return createClient(*socket, client);
     return WTF::nullopt;
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Client& client)
 {
     if (auto socket = Socket::listen(address, port))
-        return createClient(*socket);
+        return createClient(*socket, client);
 
     return WTF::nullopt;
 }
@@ -130,7 +133,7 @@ void RemoteInspectorSocketEndpoint::workerThread()
     }
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket, Client& client)
 {
     if (!Socket::isValid(socket))
         return WTF::nullopt;
@@ -144,19 +147,30 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocke
 
     Socket::setup(socket);
 
-    auto connection = makeUnique<Socket::Connection>();
+    auto connection = makeUnique<Connection>(client);
 
+    connection->id = id;
     connection->poll = Socket::preparePolling(socket);
     connection->socket = socket;
-    connection->parser = makeUnique<MessageParser>(id, Socket::BufferSize);
-    connection->parser->setDidParseMessageListener([this](ConnectionID id, Vector<uint8_t>&& data) {
-        if (m_inspectorClient)
-            m_inspectorClient->didReceiveWebInspectorEvent(id, WTFMove(data));
-    });
     m_connections.add(id, WTFMove(connection));
     wakeupWorkerThread();
 
     return id;
+}
+
+void RemoteInspectorSocketEndpoint::invalidateClient(Client& client)
+{
+    LockHolder lock(m_connectionsLock);
+    m_connections.removeIf([&client](auto& keyValue) {
+        const auto& connection = keyValue.value;
+
+        if (&connection->client != &client)
+            return false;
+
+        Socket::close(connection->socket);
+        // do not call client.didClose because client is already invalidating phase.
+        return true;
+    });
 }
 
 Optional<uint16_t> RemoteInspectorSocketEndpoint::getPort(ConnectionID id) const
@@ -174,17 +188,18 @@ void RemoteInspectorSocketEndpoint::recvIfEnabled(ConnectionID id)
     if (const auto& connection = m_connections.get(id)) {
         Vector<uint8_t> recvBuffer(Socket::BufferSize);
         if (auto readSize = Socket::read(connection->socket, recvBuffer.data(), recvBuffer.size())) {
-            if (*readSize > 0)
-                connection->parser->pushReceivedData(recvBuffer.data(), *readSize);
-            return;
+            if (*readSize > 0) {
+                recvBuffer.shrink(*readSize);
+                connection->client.didReceive(id, WTFMove(recvBuffer));
+                return;
+            }
         }
 
         Socket::close(connection->socket);
         m_connections.remove(id);
 
         lock.unlockEarly();
-        if (m_inspectorClient)
-            m_inspectorClient->didClose(id);
+        connection->client.didClose(id);
     }
 }
 
@@ -217,24 +232,20 @@ void RemoteInspectorSocketEndpoint::send(ConnectionID id, const uint8_t* data, s
 {
     LockHolder lock(m_connectionsLock);
     if (const auto& connection = m_connections.get(id)) {
-        auto message = MessageParser::createMessage(data, size);
-        if (message.isEmpty())
-            return;
-
         size_t offset = 0;
         if (connection->sendBuffer.isEmpty()) {
             // Try to call send() directly if buffer is empty.
-            if (auto writeSize = Socket::write(connection->socket, message.data(), std::min(message.size(), Socket::BufferSize)))
+            if (auto writeSize = Socket::write(connection->socket, data, std::min(size, Socket::BufferSize)))
                 offset = *writeSize;
             // @TODO need to handle closed socket case?
         }
 
         // Check all data is sent.
-        if (offset == message.size())
+        if (offset == size)
             return;
 
         // Copy remaining data to send later.
-        connection->sendBuffer.appendRange(message.begin() + offset, message.end());
+        connection->sendBuffer.appendRange(data + offset, data + size);
         Socket::markWaitingWritable(connection->poll);
 
         wakeupWorkerThread();
@@ -251,11 +262,9 @@ void RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled(ConnectionID id)
         if (auto socket = Socket::accept(connection->socket)) {
             // Need to unlock before calling createClient as it also attempts to lock.
             lock.unlockEarly();
-            if (auto newID = createClient(*socket)) {
-                if (m_inspectorClient) {
-                    m_inspectorClient->didAccept(newID.value(), id, Socket::Domain::Network);
-                    return;
-                }
+            if (auto newID = createClient(*socket, connection->client)) {
+                connection->client.didAccept(newID.value(), id, Socket::Domain::Network);
+                return;
             }
 
             Socket::close(*socket);

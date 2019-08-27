@@ -70,7 +70,8 @@ private:
     HashMap<String, CallHandler>& dispatchMap() override;
 
     HashSet<std::pair<ConnectionID, TargetID>> m_inspectionTargets;
-    std::unique_ptr<RemoteInspectorSocketEndpoint> m_server;
+
+    Optional<ConnectionID> m_server;
 
     // Connections to the WebProcess.
     Vector<ConnectionID> m_inspectorConnections;
@@ -79,7 +80,7 @@ private:
     // Listener for targets.
     Optional<ConnectionID> m_inspectorListener;
 
-    // Connections from RemoteInspectorClient.
+    // Connection from RemoteInspectorClient.
     Optional<ConnectionID> m_clientConnection;
 };
 

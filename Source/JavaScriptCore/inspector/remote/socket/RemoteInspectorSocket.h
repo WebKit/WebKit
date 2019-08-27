@@ -31,12 +31,10 @@
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(PLAYSTATION)
-#include <poll.h>
-#endif
-
 #if OS(WINDOWS)
 #include <winsock2.h>
+#else
+#include <poll.h>
 #endif
 
 namespace Inspector {
@@ -56,8 +54,6 @@ using PollingDescriptor = struct pollfd;
 constexpr PlatformSocketType INVALID_SOCKET_VALUE = -1;
 
 #endif
-
-class MessageParser;
 
 namespace Socket {
 
@@ -89,14 +85,6 @@ bool isReadable(const PollingDescriptor&);
 bool isWritable(const PollingDescriptor&);
 void markWaitingWritable(PollingDescriptor&);
 void clearWaitingWritable(PollingDescriptor&);
-
-struct Connection {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    std::unique_ptr<MessageParser> parser;
-    Vector<uint8_t> sendBuffer;
-    PlatformSocketType socket { INVALID_SOCKET_VALUE };
-    PollingDescriptor poll;
-};
 
 constexpr size_t BufferSize = 65536;
 

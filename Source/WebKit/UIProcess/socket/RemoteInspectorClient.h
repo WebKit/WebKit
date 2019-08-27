@@ -29,7 +29,6 @@
 
 #include <JavaScriptCore/RemoteControllableTarget.h>
 #include <JavaScriptCore/RemoteInspectorConnectionClient.h>
-#include <JavaScriptCore/RemoteInspectorSocketEndpoint.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -78,13 +77,12 @@ private:
     void sendMessageToFrontend(const Event&);
     void setBackendCommands(const Event&);
 
-    void didClose(ConnectionID) override;
-    HashMap<String, CallHandler>& dispatchMap() override;
+    void didClose(ConnectionID) final;
+    HashMap<String, CallHandler>& dispatchMap() final;
 
     void sendWebInspectorEvent(const String&);
 
     RemoteInspectorObserver& m_observer;
-    std::unique_ptr<Inspector::RemoteInspectorSocketEndpoint> m_socket;
     Optional<ConnectionID> m_connectionID;
     HashMap<ConnectionID, Vector<Target>> m_targets;
     HashMap<std::pair<ConnectionID, TargetID>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;

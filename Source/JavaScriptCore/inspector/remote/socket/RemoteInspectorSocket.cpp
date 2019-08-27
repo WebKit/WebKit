@@ -81,7 +81,7 @@ void RemoteInspector::sendWebInspectorEvent(const String& event)
         return;
 
     const CString message = event.utf8();
-    m_socketConnection->send(m_clientID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
+    send(m_clientID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }
 
 void RemoteInspector::start()
@@ -93,13 +93,11 @@ void RemoteInspector::start()
 
     m_enabled = true;
 
-    m_socketConnection = RemoteInspectorSocketEndpoint::create(this, "RemoteInspector");
-
     if (s_connectionIdentifier) {
-        m_clientID = m_socketConnection->createClient(s_connectionIdentifier);
+        m_clientID = createClient(s_connectionIdentifier);
         s_connectionIdentifier = INVALID_SOCKET_VALUE;
     } else
-        m_clientID = m_socketConnection->connectInet("127.0.0.1", s_serverPort);
+        m_clientID = connectInet("127.0.0.1", s_serverPort);
 
     if (!m_targetMap.isEmpty())
         pushListingsSoon();
@@ -120,7 +118,6 @@ void RemoteInspector::stopInternal(StopSource)
     updateHasActiveDebugSession();
 
     m_automaticInspectionPaused = false;
-    m_socketConnection = nullptr;
     m_clientID = WTF::nullopt;
 }
 
@@ -156,7 +153,7 @@ TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomation
 
 void RemoteInspector::pushListingsNow()
 {
-    if (!m_socketConnection)
+    if (!m_clientID)
         return;
 
     m_pushScheduled = false;
@@ -173,7 +170,7 @@ void RemoteInspector::pushListingsNow()
 
 void RemoteInspector::pushListingsSoon()
 {
-    if (!m_socketConnection)
+    if (!m_clientID)
         return;
 
     if (m_pushScheduled)
@@ -195,7 +192,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
     LockHolder lock(m_mutex);
-    if (!m_socketConnection)
+    if (!m_clientID)
         return;
 
     auto sendMessageEvent = JSON::Object::create();

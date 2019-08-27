@@ -1,3 +1,18 @@
+2019-08-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [RemoteInspector][Socket] Restructuring the components of Socket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=201079
+
+        Reviewed by Ross Kirsling.
+
+        RemoteInspectorClient is now free from creation of SocketEndpoint. All communication
+        to SocketEndpoint id now the duty of super class.
+
+        * UIProcess/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::RemoteInspectorClient): Remove direct communication to Socket Endpoint.
+        (WebKit::RemoteInspectorClient::sendWebInspectorEvent): Ditto.
+        * UIProcess/socket/RemoteInspectorClient.h:
+
 2019-08-27  Chris Dumez  <cdumez@apple.com>
 
         Introduce subclasses to RemoteObjectRegistry for the UIProcess and the WebProcess

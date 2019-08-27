@@ -56,7 +56,6 @@ typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 #if USE(INSPECTOR_SOCKET_SERVER)
 #include "RemoteConnectionToTarget.h"
 #include "RemoteInspectorConnectionClient.h"
-#include "RemoteInspectorSocketEndpoint.h"
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -241,7 +240,6 @@ private:
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)
-    std::unique_ptr<RemoteInspectorSocketEndpoint> m_socketConnection;
     static PlatformSocketType s_connectionIdentifier;
     static uint16_t s_serverPort;
     Optional<ConnectionID> m_clientID;
