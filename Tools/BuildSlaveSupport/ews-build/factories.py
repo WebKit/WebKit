@@ -60,6 +60,18 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(CheckStyle())
 
 
+class WatchListFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform, configuration, architectures, False, triggers, additionalArguments))
+        self.addStep(ValidatePatch())
+        self.addStep(PrintConfiguration())
+        self.addStep(CheckOutSource())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ApplyPatch())
+        self.addStep(ApplyWatchList())
+
+
 class BindingsFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
@@ -175,9 +187,3 @@ class ServicesFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(RunEWSUnitTests())
         self.addStep(RunEWSBuildbotCheckConfig())
-
-
-class WatchListFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, triggers, additionalArguments)
-        self.addStep(ApplyWatchList())
