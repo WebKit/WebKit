@@ -39,11 +39,12 @@ _log = logging.getLogger(__name__)
 
 class TestParser(object):
 
-    def __init__(self, options, filename, host=Host()):
+    def __init__(self, options, filename, host=Host(), source_root_directory=None):
         self.options = options
         self.filename = filename
         self.host = host
         self.filesystem = self.host.filesystem
+        self.source_root_directory = source_root_directory
 
         self.test_doc = None
         self.ref_doc = None
@@ -89,7 +90,11 @@ class TestParser(object):
                              self.filesystem.basename(self.filename))
 
             try:
-                ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), matches[0]['href'])
+                href_match_file = matches[0]['href'].strip()
+                if href_match_file.startswith('/'):
+                    ref_file = self.filesystem.join(self.source_root_directory, href_match_file.lstrip('/'))
+                else:
+                    ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), href_match_file)
             except KeyError as e:
                 # FIXME: Figure out what to do w/ invalid test files.
                 _log.error('%s has a reference link but is missing the "href"', self.filesystem)

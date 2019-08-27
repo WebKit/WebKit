@@ -1,3 +1,33 @@
+2019-08-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        W3C test importer should be able to handle expected references with an absolute path.
+        https://bugs.webkit.org/show_bug.cgi?id=200717
+
+        Reviewed by Youenn Fablet.
+
+        This patch implements the logic to resolve test references with absolute paths
+        when importing w3c tests (like web-platform-tests).
+        When an absolute path is found for a test reference, the parser now
+        tries to find the right file by looking for a relative path inside
+        the root directory of the source test repository.
+        It works when the tool is run in download-mode as well as when the
+        tool is run to import the tests from a local directory.
+
+        This fixes the import of test references for tests like
+        web-platform-tests/css/css-images/multiple-position-color-stop-linear-2.html
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter._source_root_directory_for_path):
+        (TestImporter.find_importable_tests):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.import_directory):
+        (test_webkit_test_runner_options):
+        (test_webkit_test_runner_import_reftests_with_absolute_paths_download):
+        (test_webkit_test_runner_import_reftests_with_absolute_paths_from_source_dir):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.__init__):
+        (TestParser.analyze_test):
+
 2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove UIHelper.activateElementAtHumanSpeed

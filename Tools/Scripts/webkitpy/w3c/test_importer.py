@@ -269,6 +269,14 @@ class TestImporter(object):
             if self.filesystem.glob(path.replace('-expected.txt', '*')) == [path]:
                 self.filesystem.remove(path)
 
+    def _source_root_directory_for_path(self, path):
+        if not self._importing_downloaded_tests:
+            return self.source_directory
+        for test_repository in self.test_downloader().load_test_repositories(self.filesystem):
+            source_directory = self.filesystem.join(self.source_directory, test_repository['name'])
+            if path.startswith(source_directory):
+                return source_directory
+
     def find_importable_tests(self, directory):
         def should_keep_subdir(filesystem, path):
             if self._importing_downloaded_tests:
@@ -278,6 +286,7 @@ class TestImporter(object):
             should_skip = filesystem.basename(subdir).startswith('.') or (subdir in DIRS_TO_SKIP)
             return not should_skip
 
+        source_root_directory = self._source_root_directory_for_path(directory)
         directories = self.filesystem.dirs_under(directory, should_keep_subdir)
         for root in directories:
             _log.info('Scanning ' + root + '...')
@@ -302,7 +311,7 @@ class TestImporter(object):
                     copy_list.append({'src': fullpath, 'dest': filename})
                     continue
 
-                test_parser = TestParser(vars(self.options), filename=fullpath, host=self.host)
+                test_parser = TestParser(vars(self.options), filename=fullpath, host=self.host, source_root_directory=source_root_directory)
                 test_info = test_parser.analyze_test()
                 if test_info is None:
                     # This is probably a resource file, but we should generate WPT manifest instead and get the list of resource files from it.
