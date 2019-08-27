@@ -444,8 +444,10 @@ macro cagedPrimitive(ptr, length, scratch, scratch2)
         if ARM64E
             const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
             bfiq scratch2, 0, 64 - numberOfPACBits, ptr
-            untagArrayPtr length, ptr
         end
+    end
+    if ARM64E
+        untagArrayPtr length, ptr
     end
 end
 

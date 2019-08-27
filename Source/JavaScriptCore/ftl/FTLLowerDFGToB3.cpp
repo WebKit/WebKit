@@ -14190,15 +14190,28 @@ private:
 
     LValue caged(Gigacage::Kind kind, LValue ptr, LValue base)
     {
+        auto doUntagArrayPtr = [&](LValue taggedPtr) {
+#if CPU(ARM64E)
+            if (kind == Gigacage::Primitive) {
+                LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
+                return untagArrayPtr(taggedPtr, size);
+            }
+            return ptr;
+#else
+            UNUSED_PARAM(taggedPtr);
+            return ptr;
+#endif
+        };
+
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
-            return ptr;
+            return doUntagArrayPtr(ptr);
         
         if (kind == Gigacage::Primitive && Gigacage::canPrimitiveGigacageBeDisabled()) {
             if (vm().primitiveGigacageEnabled().isStillValid())
                 m_graph.watchpoints().addLazily(vm().primitiveGigacageEnabled());
             else
-                return ptr;
+                return doUntagArrayPtr(ptr);
         }
         
         LValue basePtr = m_out.constIntPtr(Gigacage::basePtr(kind));
@@ -14217,8 +14230,7 @@ private:
                 jit.bitFieldInsert64(params[1].gpr(), 0, 64 - MacroAssembler::numberOfPACBits, params[0].gpr());
             });
 
-            LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
-            result = untagArrayPtr(merge, size);
+            result = doUntagArrayPtr(merge);
         }
 #endif // CPU(ARM64E)
 
@@ -14238,7 +14250,7 @@ private:
 
         UNUSED_PARAM(kind);
         UNUSED_PARAM(base);
-        return ptr;
+        return doUntagArrayPtr(ptr);
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)

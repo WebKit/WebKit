@@ -1,3 +1,20 @@
+2019-08-27  Michael Saboff  <msaboff@apple.com>
+
+        Update PACCage changes for builds without Gigacage, but with signed pointers
+        https://bugs.webkit.org/show_bug.cgi?id=201202
+
+        Reviewed by Saam Barati.
+
+        Factored out the untagging of pointers and added that to both the Gigacage enabled
+        and disabled code paths.  Did this for the LLInt as well as the JITs.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added arm64e.rb to offlineasm file list.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * llint/LowLevelInterpreter64.asm:
+
 2019-08-27  Mark Lam  <mark.lam@apple.com>
 
         Refactor to use VM& instead of VM* at as many places as possible.

@@ -6784,28 +6784,35 @@ void SpeculativeJIT::compileConstantStoragePointer(Node* node)
 
 void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
 {
+    auto untagArrayPtr = [&]() {
 #if CPU(ARM64E)
-    m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
+        m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
 #else
-    UNUSED_PARAM(baseReg);
-    UNUSED_PARAM(storageReg);
+        UNUSED_PARAM(baseReg);
+        UNUSED_PARAM(storageReg);
 #endif
+    };
 
 #if GIGACAGE_ENABLED
     UNUSED_PARAM(baseReg);
-    if (!Gigacage::shouldBeEnabled())
+    if (!Gigacage::shouldBeEnabled()) {
+        untagArrayPtr();
         return;
+    }
     
     if (Gigacage::canPrimitiveGigacageBeDisabled()) {
         VM& vm = this->vm();
         if (vm.primitiveGigacageEnabled().isStillValid())
             m_jit.graph().watchpoints().addLazily(vm.primitiveGigacageEnabled());
-        else
+        else {
+            untagArrayPtr();
             return;
+        }
     }
     
     m_jit.cageWithoutUntagging(Gigacage::Primitive, storageReg);
 #endif
+    untagArrayPtr();
 }
 
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
