@@ -1347,13 +1347,6 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Foreground)
         return;
 
-    LayoutRect frameRect(this->frameRect());
-    constrainToLineTopAndBottomIfNeeded(frameRect);
-    
-    // Move x/y to our coordinates.
-    LayoutRect localRect(frameRect);
-    flipForWritingMode(localRect);
-
     // You can use p::first-line to specify a background. If so, the root line boxes for
     // a line may actually have to paint a background.
     if (parent() && !renderer().hasVisibleBoxDecorations())
@@ -1361,6 +1354,13 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     const RenderStyle& lineStyle = this->lineStyle();
     if (!parent() && (!isFirstLine() || &lineStyle == &renderer().style()))
         return;
+
+    LayoutRect frameRect(this->frameRect());
+    constrainToLineTopAndBottomIfNeeded(frameRect);
+    
+    // Move x/y to our coordinates.
+    LayoutRect localRect(frameRect);
+    flipForWritingMode(localRect);
 
     LayoutPoint adjustedPaintoffset = paintOffset + localRect.location();
     GraphicsContext& context = paintInfo.context();

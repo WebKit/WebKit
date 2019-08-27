@@ -1,3 +1,16 @@
+2019-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor optimization in InlineFlowBox::paintBoxDecorations()
+        https://bugs.webkit.org/show_bug.cgi?id=201199
+
+        Reviewed by Zalan Bujtas.
+
+        This function can early return before computing localRect, which takes a bit of time (seen
+        on profiles).
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+
 2019-08-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Drawing an animated image to a canvas via drawImage should draw the first frame
