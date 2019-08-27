@@ -32,29 +32,28 @@
 
 // FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overridden built-ins
 
-injectedScript._inspectObject = function(object) {
+injectedScript.setInspectObject(function(object) {
     if (arguments.length === 0)
         return;
 
-    let objectId = RemoteObject.create(object, "");
+    let objectId = RemoteObject.create(object);
     let hints = {};
 
     switch (RemoteObject.describe(object)) {
     case "Database":
-        let databaseId = CommandLineAPIHost.databaseId(object)
+        var databaseId = CommandLineAPIHost.databaseId(object);
         if (databaseId)
             hints.databaseId = databaseId;
         break;
     case "Storage":
-        let storageId = CommandLineAPIHost.storageId(object)
+        var storageId = CommandLineAPIHost.storageId(object);
         if (storageId)
             hints.domStorageId = InjectedScriptHost.evaluate("(" + storageId + ")");
         break;
     }
 
     CommandLineAPIHost.inspect(objectId, hints);
-    return object;
-};
+});
 
 injectedScript.addCommandLineAPIGetter("0", function() {
     return CommandLineAPIHost.inspectedObject();

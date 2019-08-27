@@ -387,12 +387,6 @@ let InjectedScript = class InjectedScript
         return this._objectForId(parsedObjectId);
     }
 
-    inspectObject(object)
-    {
-        if (this._inspectObject)
-            this._inspectObject(object);
-    }
-
     releaseObject(objectId)
     {
         let parsedObjectId = this._parseObjectId(objectId);
@@ -418,6 +412,17 @@ let InjectedScript = class InjectedScript
     }
 
     // CommandLineAPI
+
+    inspectObject(object)
+    {
+        if (this._inspectObject)
+            this._inspectObject(object);
+    }
+
+    setInspectObject(callback)
+    {
+        this._inspectObject = callback;
+    }
 
     addCommandLineAPIGetter(name, func)
     {
@@ -578,7 +583,7 @@ let InjectedScript = class InjectedScript
     {
         let commandLineAPI = null;
         if (includeCommandLineAPI)
-            commandLineAPI = new InjectedScript.CommandLineAPI(isEvalOnCallFrame ? object : null)
+            commandLineAPI = new InjectedScript.CommandLineAPI(isEvalOnCallFrame ? object : null);
         return evalFunction.call(object, expression, commandLineAPI);
     }
 
