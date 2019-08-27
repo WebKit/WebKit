@@ -1,3 +1,41 @@
+2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove UIHelper.activateElementAtHumanSpeed
+        https://bugs.webkit.org/show_bug.cgi?id=201147
+
+        Reviewed by Tim Horton.
+
+        This was used in layout tests that simulate repeated taps to work around <webkit.org/b/201129>, and should no
+        longer be needed after <https://trac.webkit.org/changeset/249112/webkit>. Instead, we can just use UIHelper's
+        activateElement as intended in cases where successive taps in the test does not result in a double-click; for
+        the cases where we need to avoid triggering double clicks when tapping (e.g. in several payment tests), use a
+        new script controller hook to wait for the double tap gesture delay before continuing.
+
+        * fast/forms/ios/file-upload-panel.html:
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+
+        Rebaseline more line numbers.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation.html:
+
+        Refactor this test so that the links are laid out in two (or more) columns to avoid firing the double click
+        gesture recognizer instead of the synthetic click gesture.
+
+        * http/tests/resources/payment-request.js:
+        (activateThen):
+
+        Instead of using activateElementAtHumanSpeed, wait for the platform double tap delay first, and then simulate
+        a click using activateElement.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForDoubleTapDelay):
+
+        Add a new UIHelper method to wait for the platform double tap delay. See Tools ChangeLog for more details.
+
+        (window.UIHelper):
+        (window.UIHelper.activateElementAtHumanSpeed.return.new.Promise): Deleted.
+        (window.UIHelper.activateElementAtHumanSpeed): Deleted.
+
 2019-08-26  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix test failure after r200971

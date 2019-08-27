@@ -48,6 +48,8 @@ interface UIScriptController {
     void ensurePositionInformationIsUpToDateAt(long x, long y, object callback);
     void doAfterVisibleContentRectUpdate(object callback);
 
+    void doAfterDoubleTapDelay(object callback);
+
     void simulateAccessibilitySettingsChangeNotification(object callback);
 
     // Interaction.

@@ -1,6 +1,6 @@
 function activateThen(completion)
 {
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
         var button = document.createElement("button");
         button.style["position"] = "absolute";
         button.onclick = () => {
@@ -8,7 +8,8 @@ function activateThen(completion)
             resolve(completion());
         };
         document.body.insertBefore(button, document.body.firstChild);
-        UIHelper.activateElementAtHumanSpeed(button);
+        await UIHelper.waitForDoubleTapDelay();
+        await UIHelper.activateElement(button);
     });
 }
 

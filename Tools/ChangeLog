@@ -1,3 +1,21 @@
+2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove UIHelper.activateElementAtHumanSpeed
+        https://bugs.webkit.org/show_bug.cgi?id=201147
+
+        Reviewed by Tim Horton.
+
+        Add plumbing for a new script controller hook to wait for the double tap delay to pass. On non-iOS, this
+        resolves immediately; on iOS, we inspect the content view for tap gestures that require more than one tap, and
+        find the value of the maximum double tap delay. We then delay for this amount of time before resolving.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::doAfterDoubleTapDelay):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::doAfterDoubleTapDelay):
+
 2019-08-26  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org Timline] Add symbols to the timeline dot

@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <style>
+        .wide-link {
+            width: 150px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body onload="runAllTests()">
 <div id="description"></div>
@@ -17,6 +23,7 @@
     function createAdClickAttributionAnchorElement(elementID, adCampaignID, adDestination) {
         let anchorElement = document.createElement("a");
         anchorElement.id = elementID;
+        anchorElement.classList.add("wide-link");
         anchorElement.adcampaignid = adCampaignID;
         anchorElement.addestination = adDestination;
         anchorElement.href = "#";
@@ -25,7 +32,7 @@
     }
 
     function activateElement(elementID, callback) {
-        UIHelper.activateElementAtHumanSpeed(document.getElementById(elementID)).then(
+        UIHelper.activateElement(document.getElementById(elementID)).then(
             function () {
                 callback();
             },
@@ -41,8 +48,6 @@
         const currentElementID = "test" + currentTest++;
         const anchorElement = createAdClickAttributionAnchorElement(currentElementID, adCampaignID, adDestination);
         output.appendChild(anchorElement);
-        const brElement = document.createElement("br");
-        output.appendChild(brElement);
         activateElement(currentElementID, callback);
     }
 

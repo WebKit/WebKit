@@ -1159,6 +1159,34 @@ void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)
     webView()._allowsViewportShrinkToFit = allows;
 }
 
+void UIScriptControllerIOS::doAfterDoubleTapDelay(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    NSTimeInterval maximumIntervalBetweenSuccessiveTaps = 0;
+    for (UIGestureRecognizer *gesture in [platformContentView() gestureRecognizers]) {
+        if (![gesture isKindOfClass:[UITapGestureRecognizer class]])
+            continue;
+
+        UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
+        if (tapGesture.numberOfTapsRequired < 2)
+            continue;
+
+        if (tapGesture.maximumIntervalBetweenSuccessiveTaps > maximumIntervalBetweenSuccessiveTaps)
+            maximumIntervalBetweenSuccessiveTaps = tapGesture.maximumIntervalBetweenSuccessiveTaps;
+    }
+
+    if (maximumIntervalBetweenSuccessiveTaps) {
+        const NSTimeInterval additionalDelayBetweenSuccessiveTaps = 0.01;
+        maximumIntervalBetweenSuccessiveTaps += additionalDelayBetweenSuccessiveTaps;
+    }
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(maximumIntervalBetweenSuccessiveTaps * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+    });
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)
