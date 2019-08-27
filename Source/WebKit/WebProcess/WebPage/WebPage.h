@@ -217,7 +217,6 @@ class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
 class PluginView;
-class RemoteObjectRegistry;
 class RemoteWebInspectorUI;
 class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
@@ -247,6 +246,7 @@ class WebPageInspectorTargetController;
 class WebPageOverlay;
 class WebPaymentCoordinator;
 class WebPopupMenu;
+class WebRemoteObjectRegistry;
 class WebTouchEvent;
 class WebURLSchemeHandlerProxy;
 class WebUndoStep;
@@ -1198,7 +1198,10 @@ public:
     TextCheckingControllerProxy& textCheckingController() { return m_textCheckingControllerProxy.get(); }
 #endif
 
-    void setRemoteObjectRegistry(RemoteObjectRegistry&);
+#if PLATFORM(COCOA)
+    void setRemoteObjectRegistry(WebRemoteObjectRegistry*);
+    WebRemoteObjectRegistry* remoteObjectRegistry();
+#endif
 
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
     void scheduleFullEditorStateUpdate();
@@ -1952,7 +1955,7 @@ private:
     bool m_needsFontAttributes { false };
     bool m_firstFlushAfterCommit { false };
 #if PLATFORM(COCOA)
-    WeakPtr<RemoteObjectRegistry> m_remoteObjectRegistry;
+    WeakPtr<WebRemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
     WebCore::IntSize m_lastSentIntrinsicContentSize;
 #if ENABLE(VIEWPORT_RESIZING)

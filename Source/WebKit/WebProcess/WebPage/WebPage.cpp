@@ -258,13 +258,13 @@
 #include "PDFPlugin.h"
 #include "PlaybackSessionManager.h"
 #include "RemoteLayerTreeTransaction.h"
-#include "RemoteObjectRegistry.h"
 #include "RemoteObjectRegistryMessages.h"
 #include "TextCheckingControllerProxy.h"
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
 #include "VideoFullscreenManager.h"
 #include "WKStringCF.h"
+#include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
 #include <wtf/MachSendRight.h>
@@ -1432,6 +1432,7 @@ void WebPage::close()
 #if PLATFORM(COCOA)
     if (m_remoteObjectRegistry)
         m_remoteObjectRegistry->close();
+    ASSERT(!m_remoteObjectRegistry);
 #endif
 #if ENABLE(ASYNC_SCROLLING)
     if (m_useAsyncScrolling)

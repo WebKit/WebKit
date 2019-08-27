@@ -902,6 +902,8 @@
 		449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */; };
 		460F488F1F996F7100CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */; };
 		460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */; };
+		461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */; };
+		461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		4657D88922664A2D005DE823 /* WKOrientationAccessAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 4657D88722664A19005DE823 /* WKOrientationAccessAlert.h */; };
@@ -3195,6 +3197,10 @@
 		460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSWContextManagerConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSWContextManagerConnectionMessages.h; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoad.cpp; sourceTree = "<group>"; };
+		46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRemoteObjectRegistry.h; sourceTree = "<group>"; };
+		463236842314825C00A48FA7 /* WebRemoteObjectRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRemoteObjectRegistry.cpp; sourceTree = "<group>"; };
+		463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIRemoteObjectRegistry.h; sourceTree = "<group>"; };
+		463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIRemoteObjectRegistry.cpp; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
 		4651ECE622178A850067EB95 /* WebProcessCacheCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessCacheCocoa.mm; sourceTree = "<group>"; };
@@ -5556,6 +5562,8 @@
 				2D0CF64B21F2A80300787566 /* TextCheckingController.mm */,
 				1AFE436418B6C081009C7A48 /* UIDelegate.h */,
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
+				463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */,
+				463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */,
 				E4E8648E1B1673FB00C82F40 /* VersionChecks.h */,
 				E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */,
 				52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */,
@@ -5798,6 +5806,8 @@
 				2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */,
 				2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */,
 				2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */,
+				463236842314825C00A48FA7 /* WebRemoteObjectRegistry.cpp */,
+				46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -9762,6 +9772,7 @@
 				515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */,
 				CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */,
 				513FFB8D201459B0002596EA /* UIMessagePortChannelProvider.h in Headers */,
+				461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */,
 				5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
@@ -9958,6 +9969,7 @@
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				1A1E093418861D3800D2DC49 /* WebProgressTrackerClient.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
+				461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,

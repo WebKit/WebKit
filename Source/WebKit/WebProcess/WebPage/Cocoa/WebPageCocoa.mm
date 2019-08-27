@@ -29,10 +29,10 @@
 #import "AttributedString.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
-#import "RemoteObjectRegistry.h"
 #import "WKAccessibilityWebPageObjectBase.h"
 #import "WebPageProxyMessages.h"
 #import "WebPaymentCoordinator.h"
+#import "WebRemoteObjectRegistry.h"
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -217,9 +217,14 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
     completionHandler({ result });
 }
 
-void WebPage::setRemoteObjectRegistry(RemoteObjectRegistry& registry)
+void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)
 {
     m_remoteObjectRegistry = makeWeakPtr(registry);
+}
+
+WebRemoteObjectRegistry* WebPage::remoteObjectRegistry()
+{
+    return m_remoteObjectRegistry.get();
 }
 
 void WebPage::updateMockAccessibilityElementAfterCommittingLoad()

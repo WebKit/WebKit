@@ -25,49 +25,23 @@
 
 #pragma once
 
-#include "MessageReceiver.h"
-#include "ProcessThrottler.h"
-#include <wtf/HashMap.h>
-#include <wtf/WeakObjCPtr.h>
-#include <wtf/WeakPtr.h>
-
-OBJC_CLASS _WKRemoteObjectRegistry;
-
-namespace IPC {
-class MessageSender;
-}
+#include "RemoteObjectRegistry.h"
 
 namespace WebKit {
 
-class RemoteObjectInvocation;
-class UserData;
+class WebPageProxy;
 
-class RemoteObjectRegistry : public CanMakeWeakPtr<RemoteObjectRegistry>, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+class UIRemoteObjectRegistry final : public RemoteObjectRegistry {
 public:
-    virtual ~RemoteObjectRegistry();
-
-    virtual void sendInvocation(const RemoteObjectInvocation&);
-    void sendReplyBlock(uint64_t replyID, const UserData& blockInvocation);
-    void sendUnusedReply(uint64_t replyID);
-
-protected:
-    explicit RemoteObjectRegistry(_WKRemoteObjectRegistry *);
+    UIRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
     
+    void sendInvocation(const RemoteObjectInvocation&) final;
+
 private:
-    virtual ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() { return nullptr; }
-    virtual IPC::MessageSender& messageSender() = 0;
+    IPC::MessageSender& messageSender() final;
+    ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() final;
 
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    // Message handlers
-    void invokeMethod(const RemoteObjectInvocation&);
-    void callReplyBlock(uint64_t replyID, const UserData& blockInvocation);
-    void releaseUnusedReplyBlock(uint64_t replyID);
-
-    WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
-    HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
+    WebPageProxy& m_page;
 };
 
 } // namespace WebKit

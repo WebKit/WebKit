@@ -1,3 +1,45 @@
+2019-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Introduce subclasses to RemoteObjectRegistry for the UIProcess and the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=201153
+
+        Reviewed by Alex Christensen.
+
+        This better factoring improves code clarity.
+
+        * PlatformMac.cmake:
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        (WebKit::RemoteObjectRegistry::~RemoteObjectRegistry):
+        (WebKit::RemoteObjectRegistry::takeBackgroundActivityToken):
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::RemoteObjectRegistry):
+        (WebKit::RemoteObjectRegistry::sendInvocation):
+        (WebKit::RemoteObjectRegistry::sendReplyBlock):
+        (WebKit::RemoteObjectRegistry::sendUnusedReply):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _initWithWebPage:]):
+        (-[_WKRemoteObjectRegistry _initWithWebPageProxy:]):
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/UIRemoteObjectRegistry.cpp: Added.
+        (WebKit::UIRemoteObjectRegistry::takeBackgroundActivityToken):
+        (WebKit::UIRemoteObjectRegistry::UIRemoteObjectRegistry):
+        (WebKit::UIRemoteObjectRegistry::sendInvocation):
+        (WebKit::UIRemoteObjectRegistry::messageSender):
+        * UIProcess/Cocoa/UIRemoteObjectRegistry.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::setRemoteObjectRegistry):
+        (WebKit::WebPage::remoteObjectRegistry):
+        * WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp: Added.
+        (WebKit::WebRemoteObjectRegistry::WebRemoteObjectRegistry):
+        (WebKit::WebRemoteObjectRegistry::~WebRemoteObjectRegistry):
+        (WebKit::WebRemoteObjectRegistry::close):
+        (WebKit::WebRemoteObjectRegistry::messageSender):
+        * WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-08-26  Jer Noble  <jer.noble@apple.com>
 
         Removing fullscreen element in rAF() callback after requestFullscreen() can leave fullscreen in inconsistent state.

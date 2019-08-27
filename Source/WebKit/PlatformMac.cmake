@@ -252,6 +252,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/PageClientImplCocoa.mm
     UIProcess/Cocoa/SessionStateCoding.mm
     UIProcess/Cocoa/UIDelegate.mm
+    UIProcess/Cocoa/UIRemoteObjectRegistry.cpp
     UIProcess/Cocoa/VersionChecks.mm
     UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm
     UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
@@ -362,6 +363,7 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
     WebProcess/WebPage/Cocoa/WebPageCocoa.mm
+    WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
 
     WebProcess/WebPage/mac/PageBannerMac.mm
     WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
