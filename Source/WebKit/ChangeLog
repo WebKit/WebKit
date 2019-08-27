@@ -1,3 +1,13 @@
+2019-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression: ITP started doing a lot more IPC after its logic was moved to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=201155
+
+        Reviewed by John Wilander.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2019-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (iOS 13): Tests that simulate multiple back-to-back single taps fail or time out

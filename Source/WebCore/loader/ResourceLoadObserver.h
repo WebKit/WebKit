@@ -77,9 +77,6 @@ public:
     WEBCORE_EXPORT void setStatisticsUpdatedCallback(Function<void(PerSessionResourceLoadData&&)>&&);
     WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)>&&);
     WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&)>&&);
-    WEBCORE_EXPORT void setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
-    WEBCORE_EXPORT void setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
-    WEBCORE_EXPORT void setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&)>&&);
 
     WEBCORE_EXPORT void updateCentralStatisticsStore();
     WEBCORE_EXPORT void clearState();
@@ -90,8 +87,11 @@ public:
 #endif
 
 private:
+    ResourceLoadObserver();
+
     bool shouldLog(PAL::SessionID) const;
     ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(PAL::SessionID, const RegistrableDomain&);
+    void scheduleNotificationIfNeeded();
 
     PerSessionResourceLoadData takeStatistics();
 
@@ -104,9 +104,9 @@ private:
     Function<void(PerSessionResourceLoadData)> m_notificationCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)> m_requestStorageAccessUnderOpenerCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&)> m_logUserInteractionNotificationCallback;
-    Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logWebSocketLoadingNotificationCallback;
-    Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logSubresourceLoadingNotificationCallback;
-    Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&)> m_logSubresourceRedirectNotificationCallback;
+
+    Timer m_notificationTimer;
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
     bool m_shouldLogUserInteraction { false };

@@ -118,9 +118,6 @@ public:
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame);
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
-    void logWebSocketLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen, CompletionHandler<void()>&&);
-    void logSubresourceLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen, CompletionHandler<void()>&&);
-    void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>>&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);

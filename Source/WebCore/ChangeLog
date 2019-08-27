@@ -1,3 +1,26 @@
+2019-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression: ITP started doing a lot more IPC after its logic was moved to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=201155
+
+        Reviewed by John Wilander.
+
+        ITP started doing a lot more IPC after its logic was moved to the network process. Web processes used to
+        send their statistics to the UIProcess at most every 5 seconds. However, when the logic got moved to the network
+        process, we started notifying the network process via IPC after every sub resource load. This is bad for performance
+        and battery life. This patch restores the 5 second delay to address the issue.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::ResourceLoadObserver):
+        (WebCore::ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::scheduleNotificationIfNeeded):
+        (WebCore::ResourceLoadObserver::updateCentralStatisticsStore):
+        (WebCore::ResourceLoadObserver::clearState):
+        * loader/ResourceLoadObserver.h:
+
 2019-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize computation of AbsoluteClipRects clip rects

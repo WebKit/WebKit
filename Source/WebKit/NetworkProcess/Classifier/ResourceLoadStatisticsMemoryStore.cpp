@@ -396,29 +396,6 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDoma
         scheduleStatisticsProcessingRequestIfNecessary();
 }
 
-void ResourceLoadStatisticsMemoryStore::logSubresourceLoading(const SubResourceDomain& targetDomain, const TopFrameDomain& topFrameDomain, WallTime lastSeen)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-    targetStatistics.lastSeen = lastSeen;
-    if (targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain).isNewEntry)
-        scheduleStatisticsProcessingRequestIfNecessary();
-}
-
-void ResourceLoadStatisticsMemoryStore::logSubresourceRedirect(const RedirectedFromDomain& sourceDomain, const RedirectedToDomain& targetDomain)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto& redirectingDomainStatistics = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
-    bool isNewRedirectToEntry = redirectingDomainStatistics.subresourceUniqueRedirectsTo.add(targetDomain).isNewEntry;
-    auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-    bool isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourceDomain).isNewEntry;
-
-    if (isNewRedirectToEntry || isNewRedirectFromEntry)
-        scheduleStatisticsProcessingRequestIfNecessary();
-}
-
 void ResourceLoadStatisticsMemoryStore::logUserInteraction(const TopFrameDomain& domain)
 {
     ASSERT(!RunLoop::isMain());

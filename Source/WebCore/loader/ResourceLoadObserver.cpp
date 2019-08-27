@@ -48,6 +48,11 @@ namespace WebCore {
 
 static const Seconds minimumNotificationInterval { 5_s };
 
+ResourceLoadObserver::ResourceLoadObserver()
+    : m_notificationTimer(*this, &ResourceLoadObserver::updateCentralStatisticsStore)
+{
+}
+
 ResourceLoadObserver& ResourceLoadObserver::shared()
 {
     static NeverDestroyed<ResourceLoadObserver> resourceLoadObserver;
@@ -70,24 +75,6 @@ void ResourceLoadObserver::setLogUserInteractionNotificationCallback(Function<vo
 {
     ASSERT(!m_logUserInteractionNotificationCallback);
     m_logUserInteractionNotificationCallback = WTFMove(callback);
-}
-
-void ResourceLoadObserver::setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&& callback)
-{
-    ASSERT(!m_logWebSocketLoadingNotificationCallback);
-    m_logWebSocketLoadingNotificationCallback = WTFMove(callback);
-}
-
-void ResourceLoadObserver::setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&& callback)
-{
-    ASSERT(!m_logSubresourceLoadingNotificationCallback);
-    m_logSubresourceLoadingNotificationCallback = WTFMove(callback);
-}
-
-void ResourceLoadObserver::setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&)>&& callback)
-{
-    ASSERT(!m_logSubresourceRedirectNotificationCallback);
-    m_logSubresourceRedirectNotificationCallback = WTFMove(callback);
 }
     
 static inline bool is3xxRedirect(const ResourceResponse& response)
@@ -135,7 +122,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         targetStatistics.lastSeen = lastSeen;
         targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain);
 
-        m_logSubresourceLoadingNotificationCallback(page->sessionID(), targetDomain, topFrameDomain, lastSeen);
+        scheduleNotificationIfNeeded();
     }
 
     if (isRedirect) {
@@ -144,7 +131,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(page->sessionID(), targetDomain);
         targetStatistics.subresourceUniqueRedirectsFrom.add(redirectedFromDomain);
 
-        m_logSubresourceRedirectNotificationCallback(page->sessionID(), redirectedFromDomain, targetDomain);
+        scheduleNotificationIfNeeded();
     }
 }
 
@@ -171,7 +158,7 @@ void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& 
     targetStatistics.lastSeen = lastSeen;
     targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain);
 
-    m_logWebSocketLoadingNotificationCallback(sessionID, targetDomain, topFrameDomain, lastSeen);
+    scheduleNotificationIfNeeded();
 }
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
@@ -208,6 +195,8 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         }
     }
 
+    // We notify right away in case of a user interaction instead of waiting the usual 5 seconds because we want
+    // to update cookie blocking state as quickly as possible.
     m_logUserInteractionNotificationCallback(document.sessionID(), topFrameDomain);
 #endif
 
@@ -370,8 +359,22 @@ ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForRegistr
     return addDomainResult.iterator->value;
 }
 
+void ResourceLoadObserver::scheduleNotificationIfNeeded()
+{
+    ASSERT(m_notificationCallback);
+    if (m_perSessionResourceStatisticsMap.isEmpty()) {
+        m_notificationTimer.stop();
+        return;
+    }
+
+    if (!m_notificationTimer.isActive())
+        m_notificationTimer.startOneShot(minimumNotificationInterval);
+}
+
 void ResourceLoadObserver::updateCentralStatisticsStore()
 {
+    ASSERT(m_notificationCallback);
+    m_notificationTimer.stop();
     m_notificationCallback(takeStatistics());
 }
 
@@ -408,6 +411,7 @@ auto ResourceLoadObserver::takeStatistics() -> PerSessionResourceLoadData
 
 void ResourceLoadObserver::clearState()
 {
+    m_notificationTimer.stop();
     m_perSessionResourceStatisticsMap.clear();
     m_lastReportedUserInteractionMap.clear();
 }

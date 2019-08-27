@@ -689,30 +689,6 @@ void NetworkConnectionToWebProcess::logUserInteraction(PAL::SessionID sessionID,
     }
 }
 
-void NetworkConnectionToWebProcess::logWebSocketLoading(PAL::SessionID sessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen)
-{
-    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logWebSocketLoading(targetDomain, topFrameDomain, lastSeen, [] { });
-    }
-}
-
-void NetworkConnectionToWebProcess::logSubresourceLoading(PAL::SessionID sessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen)
-{
-    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logSubresourceLoading(targetDomain, topFrameDomain, lastSeen, [] { });
-    }
-}
-
-void NetworkConnectionToWebProcess::logSubresourceRedirect(PAL::SessionID sessionID, const RegistrableDomain& sourceDomain, const RegistrableDomain& targetDomain)
-{
-    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logSubresourceRedirect(sourceDomain, targetDomain, [] { });
-    }
-}
-
 void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(ResourceLoadObserver::PerSessionResourceLoadData&& statistics)
 {
     for (auto& iter : statistics) {
