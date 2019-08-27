@@ -1,3 +1,12 @@
+2019-08-27  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [GTK][l10n] Updated Polish translation of WebKitGTK for 2.26
+        https://bugs.webkit.org/show_bug.cgi?id=201125
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * pl.po:
+
 2019-05-25  Rafael Fontenelle  <rafaelff@gnome.org>
 
         [l10n] [pt_BR] Updated Brazilian Portuguese translation
