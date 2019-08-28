@@ -64,7 +64,7 @@ public:
 
     // Must be called after calling emitMetalTypes().
     String mangledNameForType(AST::NativeTypeDeclaration&);
-    MangledTypeName mangledNameForType(AST::UnnamedType&);
+    MangledOrNativeTypeName mangledNameForType(AST::UnnamedType&);
     MangledOrNativeTypeName mangledNameForType(AST::NamedType&);
     MangledEnumerationMemberName mangledNameForEnumerationMember(AST::EnumerationMember&);
     MangledStructureElementName mangledNameForStructureElement(AST::StructureElement&);
@@ -84,14 +84,15 @@ private:
     MangledEnumerationMemberName generateNextEnumerationMemberName() { return { m_enumerationMemberCount++ }; }
 
     void emitNamedTypeDefinition(StringBuilder&, AST::NamedType&, Vector<std::reference_wrapper<AST::UnnamedType>>&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes);
-    void emitUnnamedTypeDefinition(StringBuilder&, AST::UnnamedType&, MangledTypeName, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes);
+    void emitUnnamedTypeDefinition(StringBuilder&, AST::UnnamedType&, MangledOrNativeTypeName, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes);
     void emitMetalTypeDeclarations(StringBuilder&);
     void emitMetalTypeDefinitions(StringBuilder&);
 
     void generateUniquedTypeName(AST::UnnamedType&);
 
     Program& m_program;
-    HashMap<UnnamedTypeKey, MangledTypeName> m_unnamedTypeMapping;
+    HashMap<UnnamedTypeKey, MangledTypeName> m_arrayReferenceTypeMapping;
+    HashMap<UnnamedTypeKey, String> m_lazyUnnamedTypeCache;
     HashMap<AST::NamedType*, MangledTypeName> m_namedTypeMapping;
     HashMap<AST::NamedType*, Vector<std::reference_wrapper<AST::UnnamedType>>> m_dependencyGraph;
     HashMap<AST::EnumerationMember*, MangledEnumerationMemberName> m_enumerationMemberMapping;

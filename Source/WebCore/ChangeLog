@@ -1,3 +1,44 @@
+2019-08-28  Sam Weinig  <weinig@apple.com>
+
+        [WHLSL] Inline typedef'd types during Metal code generation to simplify generated code while also making it easier to read
+        https://bugs.webkit.org/show_bug.cgi?id=201185
+
+        Reviewed by Saam Barati.
+
+        The current Metal code generation generates many unnecessary typedefs during TypeNamer::emitMetalTypeDefinitions
+        such as 'typedef float2 type19;' that can be removed by just using resolved type whereever the typedef would have
+        been used. The only types that actually need to be predefined are the types that declare a new struct or enum, which 
+        means we can stop emitting for AST::TypeReference, AST::Pointer, AST::Array, and AST::TypeDefinition. Instead, the
+        relevent mangledNameForType constructs the computed name on the fly. 
+        
+        This is a 25% speedup in the metal code generation phase.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        Switch to using auto rather than Mangled*Name when it is obvious and the actual return type
+        may need to become more complicated (e.g. MangledOrNativeTypeName).
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::visit):
+        There is no need to generate typenames for AST::TypeDefinitions if they are never used.
+
+        (WebCore::WHLSL::Metal::TypeNamer::generateUniquedTypeName):
+        The only UnnamedType that needs a generated typename now is AST::ArrayReferenceType, which emits a struct interface.
+
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        Stop generating type definitions for AST::TypeReference, AST::Pointer, AST::Array.
+
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        Stop generating type definitions for AST::TypeDefinition.
+
+        (WebCore::WHLSL::Metal::TypeNamer::emitMetalTypeDefinitions):
+        Update for rename from m_unnamedTypeMapping to m_arrayReferenceTypeMapping.
+
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForType):
+        Look into the types and generate a concrete type name when necessary. Lazily cache the constructed
+        names for AST::ArrayType and AST::Pointer.
+
 2019-08-28  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 2)

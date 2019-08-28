@@ -525,12 +525,12 @@ void FunctionDefinitionWriter::visit(AST::DotExpression& dotExpression)
 void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariableReference)
 {
     auto valueName = generateNextVariableName();
-    MangledTypeName mangledTypeName = m_typeNamer.mangledNameForType(globalVariableReference.resolvedType());
+    auto mangledTypeName = m_typeNamer.mangledNameForType(globalVariableReference.resolvedType());
 
     checkErrorAndVisit(globalVariableReference.base());
     MangledVariableName structVariable = takeLastValue();
 
-    MangledStructureElementName mangledFieldName = m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField());
+    auto mangledFieldName = m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField());
 
     m_stringBuilder.append(
         m_indent, mangledTypeName, ' ', valueName, " = ", structVariable, "->", mangledFieldName, ";\n");

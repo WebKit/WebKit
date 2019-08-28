@@ -118,10 +118,6 @@ void TypeNamer::visit(AST::StructureDefinition& structureDefinition)
 
 void TypeNamer::visit(AST::TypeDefinition& typeDefinition)
 {
-    {
-        auto addResult = m_namedTypeMapping.add(&typeDefinition, generateNextTypeName());
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    }
     Visitor::visit(typeDefinition);
     {
         auto addResult = m_dependencyGraph.add(&typeDefinition, Vector<std::reference_wrapper<AST::UnnamedType>> { typeDefinition.type() });
@@ -146,31 +142,13 @@ String TypeNamer::mangledNameForType(AST::NativeTypeDeclaration& nativeTypeDecla
     return writeNativeType(nativeTypeDeclaration);
 }
 
-static AST::UnnamedType* parent(AST::UnnamedType& unnamedType)
-{
-    switch (unnamedType.kind()) {
-    case AST::UnnamedType::Kind::TypeReference:
-        return nullptr;
-    case AST::UnnamedType::Kind::Pointer:
-        return &downcast<AST::PointerType>(unnamedType).elementType();
-    case AST::UnnamedType::Kind::ArrayReference:
-        return &downcast<AST::ArrayReferenceType>(unnamedType).elementType();
-    case AST::UnnamedType::Kind::Array:
-        return &downcast<AST::ArrayType>(unnamedType).type();
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
 void TypeNamer::generateUniquedTypeName(AST::UnnamedType& unnamedType)
 {
-    auto* parentUnnamedType = parent(unnamedType);
-    if (parentUnnamedType)
-        generateUniquedTypeName(*parentUnnamedType);
-
-    m_unnamedTypeMapping.ensure(UnnamedTypeKey { unnamedType }, [&] {
-        return generateNextTypeName();
-    });
+    if (is<AST::ArrayReferenceType>(unnamedType)) {
+        m_arrayReferenceTypeMapping.ensure(UnnamedTypeKey { unnamedType }, [&] {
+            return generateNextTypeName();
+        });
+    }
 }
 
 class MetalTypeDeclarationWriter final : public Visitor {
@@ -200,57 +178,34 @@ void TypeNamer::emitMetalTypeDeclarations(StringBuilder& stringBuilder)
     metalTypeDeclarationWriter.Visitor::visit(m_program);
 }
 
-void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, AST::UnnamedType& unnamedType, MangledTypeName mangledName, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes)
+void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, AST::UnnamedType& unnamedType, MangledOrNativeTypeName mangledName, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<UnnamedTypeKey>& emittedUnnamedTypes)
 {
     if (emittedUnnamedTypes.contains(UnnamedTypeKey { unnamedType }))
         return;
 
     switch (unnamedType.kind()) {
     case AST::UnnamedType::Kind::TypeReference: {
-        auto& typeReference = downcast<AST::TypeReference>(unnamedType);
-
-        auto& parent = typeReference.resolvedType();
-        auto parentMangledName = mangledNameForType(typeReference.resolvedType());
-        auto iterator = m_dependencyGraph.find(&parent);
-        ASSERT(iterator != m_dependencyGraph.end());
-        emitNamedTypeDefinition(stringBuilder, parent, iterator->value, emittedNamedTypes, emittedUnnamedTypes);
-
-        stringBuilder.append("typedef ", parentMangledName, ' ', mangledName, ";\n");
         break;
     }
     case AST::UnnamedType::Kind::Pointer: {
-        auto& pointerType = downcast<AST::PointerType>(unnamedType);
-
-        auto& parent = pointerType.elementType();
-        auto parentMangledName = mangledNameForType(parent);
-        emitUnnamedTypeDefinition(stringBuilder, parent, parentMangledName, emittedNamedTypes, emittedUnnamedTypes);
-
-        stringBuilder.append("typedef ", toString(pointerType.addressSpace()), ' ', parentMangledName, "* ", mangledName, ";\n");
+        break;
+    }
+    case AST::UnnamedType::Kind::Array: {
         break;
     }
     case AST::UnnamedType::Kind::ArrayReference: {
         auto& arrayReferenceType = downcast<AST::ArrayReferenceType>(unnamedType);
 
-        auto& parent = arrayReferenceType.elementType();
-        auto parentMangledName = mangledNameForType(parent);
-        emitUnnamedTypeDefinition(stringBuilder, parent, parentMangledName, emittedNamedTypes, emittedUnnamedTypes);
+        auto& elementType = arrayReferenceType.elementType();
+        auto elementTypeMangledName = mangledNameForType(elementType);
+        emitUnnamedTypeDefinition(stringBuilder, elementType, elementTypeMangledName, emittedNamedTypes, emittedUnnamedTypes);
 
         stringBuilder.append(
             "struct ", mangledName, " {\n"
-            "    ", toString(arrayReferenceType.addressSpace()), ' ', parentMangledName, "* pointer;\n"
+            "    ", toString(arrayReferenceType.addressSpace()), ' ', elementTypeMangledName, "* pointer;\n"
             "    uint32_t length;\n"
             "};\n"
         );
-        break;
-    }
-    case AST::UnnamedType::Kind::Array: {
-        auto& arrayType = downcast<AST::ArrayType>(unnamedType);
-
-        auto& parent = arrayType.type();
-        auto parentMangledName = mangledNameForType(parent);
-        emitUnnamedTypeDefinition(stringBuilder, parent, parentMangledName, emittedNamedTypes, emittedUnnamedTypes);
-
-        stringBuilder.append("typedef array<", parentMangledName, ", ", arrayType.numElements(), "> ", mangledName, ";\n");
         break;
     }
     default:
@@ -269,6 +224,14 @@ void TypeNamer::emitNamedTypeDefinition(StringBuilder& stringBuilder, AST::Named
         emitUnnamedTypeDefinition(stringBuilder, unnameType, mangledNameForType(unnameType), emittedNamedTypes, emittedUnnamedTypes);
 
     switch (namedType.kind()) {
+    case AST::NamedType::Kind::NativeTypeDeclaration: {
+        // Native types already have definitions. There's nothing to do.
+        break;
+    }
+    case AST::NamedType::Kind::TypeDefinition: {
+        // The mangled name of a AST::TypeDefinition looks through to the underlying type. There is nothing to do.
+        break;
+    }
     case AST::NamedType::Kind::EnumerationDefinition: {
         auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(namedType);
         auto& baseType = enumerationDefinition.type().unifyNode();
@@ -279,10 +242,6 @@ void TypeNamer::emitNamedTypeDefinition(StringBuilder& stringBuilder, AST::Named
         stringBuilder.append("};\n");
         break;
     }
-    case AST::NamedType::Kind::NativeTypeDeclaration: {
-        // Native types already have definitions. There's nothing to do.
-        break;
-    }
     case AST::NamedType::Kind::StructureDefinition: {
         auto& structureDefinition = downcast<AST::StructureDefinition>(namedType);
 
@@ -290,12 +249,6 @@ void TypeNamer::emitNamedTypeDefinition(StringBuilder& stringBuilder, AST::Named
         for (auto& structureElement : structureDefinition.structureElements())
             stringBuilder.append("    ", mangledNameForType(structureElement.type()), ' ', mangledNameForStructureElement(structureElement), ";\n");
         stringBuilder.append("};\n");
-        break;
-    }
-    case AST::NamedType::Kind::TypeDefinition: {
-        auto& typeDefinition = downcast<AST::TypeDefinition>(namedType);
-
-        stringBuilder.append("typedef ", mangledNameForType(typeDefinition.type()), ' ', mangledNameForType(typeDefinition), ";\n");
         break;
     }
     default:
@@ -311,24 +264,57 @@ void TypeNamer::emitMetalTypeDefinitions(StringBuilder& stringBuilder)
     HashSet<UnnamedTypeKey> emittedUnnamedTypes;
     for (auto& [namedType, neighbors] : m_dependencyGraph)
         emitNamedTypeDefinition(stringBuilder, *namedType, neighbors, emittedNamedTypes, emittedUnnamedTypes);
-    for (auto& [unnamedTypeKey, mangledName] : m_unnamedTypeMapping)
+    for (auto& [unnamedTypeKey, mangledName] : m_arrayReferenceTypeMapping)
         emitUnnamedTypeDefinition(stringBuilder, unnamedTypeKey.unnamedType(), mangledName, emittedNamedTypes, emittedUnnamedTypes);
 }
 
-MangledTypeName TypeNamer::mangledNameForType(AST::UnnamedType& unnamedType)
+MangledOrNativeTypeName TypeNamer::mangledNameForType(AST::UnnamedType& unnamedType)
 {
-    auto iterator = m_unnamedTypeMapping.find(UnnamedTypeKey { unnamedType });
-    ASSERT(iterator != m_unnamedTypeMapping.end());
-    return iterator->value;
+    switch (unnamedType.kind()) {
+    case AST::UnnamedType::Kind::TypeReference: {
+        auto& typeReference = downcast<AST::TypeReference>(unnamedType);
+        return mangledNameForType(typeReference.resolvedType());
+    }
+    case AST::UnnamedType::Kind::Pointer: {
+        auto& pointerType = downcast<AST::PointerType>(unnamedType);
+        return m_lazyUnnamedTypeCache.ensure(UnnamedTypeKey { unnamedType }, [&] {
+            return makeString(toString(pointerType.addressSpace()), ' ', mangledNameForType(pointerType.elementType()), '*');
+        }).iterator->value;
+    }
+    case AST::UnnamedType::Kind::Array: {
+        auto& arrayType = downcast<AST::ArrayType>(unnamedType);
+        return m_lazyUnnamedTypeCache.ensure(UnnamedTypeKey { unnamedType }, [&] {
+            return makeString("array<", mangledNameForType(arrayType.type()), ", ", arrayType.numElements(), '>');
+        }).iterator->value;
+    }
+    case AST::UnnamedType::Kind::ArrayReference: {
+        auto iterator = m_arrayReferenceTypeMapping.find(UnnamedTypeKey { unnamedType });
+        ASSERT(iterator != m_arrayReferenceTypeMapping.end());
+        return iterator->value;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 MangledOrNativeTypeName TypeNamer::mangledNameForType(AST::NamedType& namedType)
 {
-    if (is<AST::NativeTypeDeclaration>(namedType))
+    switch (namedType.kind()) {
+    case AST::NamedType::Kind::NativeTypeDeclaration: {
         return mangledNameForType(downcast<AST::NativeTypeDeclaration>(namedType));
-    auto iterator = m_namedTypeMapping.find(&namedType);
-    ASSERT(iterator != m_namedTypeMapping.end());
-    return iterator->value;
+    }
+    case AST::NamedType::Kind::TypeDefinition: {
+        return mangledNameForType(downcast<AST::TypeDefinition>(namedType).type());
+    }
+    case AST::NamedType::Kind::EnumerationDefinition:
+    case AST::NamedType::Kind::StructureDefinition: {
+        auto iterator = m_namedTypeMapping.find(&namedType);
+        ASSERT(iterator != m_namedTypeMapping.end());
+        return iterator->value;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 MangledEnumerationMemberName TypeNamer::mangledNameForEnumerationMember(AST::EnumerationMember& enumerationMember)
