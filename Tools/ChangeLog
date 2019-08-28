@@ -1,3 +1,16 @@
+2019-08-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Null check webFrame when creating a print preview to prevent a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=201237
+        <rdar://problem/51618863>
+
+        Reviewed by Tim Horton.
+
+        Test to verify that if we don't have the WebPageProxy, we will not crash when making a print preview.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+
 2019-08-28  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Move drawer to the right, open by default

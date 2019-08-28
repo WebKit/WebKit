@@ -1,3 +1,17 @@
+2019-08-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Null check webFrame when creating a print preview to prevent a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=201237
+        <rdar://problem/51618863>
+
+        Reviewed by Tim Horton.
+
+        Move and expend a null check to keep from crashing when making a print preview.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPreview:]):
+        (-[WKPrintingView drawRect:]):
+
 2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         All image drawing functions should take an argument of type ImagePaintingOptions
