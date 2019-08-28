@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "CallFrame.h"
 #include "DOMAnnotation.h"
 #include "JSCJSValue.h"
 #include "PropertyName.h"
@@ -29,7 +30,6 @@
 #include <wtf/ForbidHeapAllocation.h>
 
 namespace JSC {
-class ExecState;
 class GetterSetter;
 class JSObject;
 class JSModuleEnvironment;
