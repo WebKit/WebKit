@@ -4094,6 +4094,9 @@ void RenderLayer::restoreClip(GraphicsContext& context, const LayerPaintingInfo&
 
 static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, const RenderLayer* rootLayer, const RenderLayer* layer)
 {
+    if (overlapTestRequests.isEmpty())
+        return;
+
     Vector<OverlapTestRequestClient*> overlappedRequestClients;
     LayoutRect boundingBox = layer->boundingBox(rootLayer, layer->offsetFromAncestor(rootLayer));
     for (auto& request : overlapTestRequests) {
@@ -5934,13 +5937,8 @@ LayoutRect RenderLayer::localBoundingBox(OptionSet<CalculateLayerBoundsFlag> fla
         if (!(flags & DontConstrainForMask) && box->hasMask()) {
             result = box->maskClipRect(LayoutPoint());
             box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
-        } else {
-            LayoutRect bbox = box->borderBoxRect();
-            result = bbox;
-            LayoutRect overflowRect = box->visualOverflowRect();
-            if (bbox != overflowRect)
-                result.unite(overflowRect);
-        }
+        } else
+            result = box->visualOverflowRect();
     }
     return result;
 }

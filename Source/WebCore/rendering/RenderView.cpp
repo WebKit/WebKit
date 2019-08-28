@@ -514,14 +514,6 @@ void RenderView::repaintViewAndCompositedLayers()
         compositor.repaintCompositedLayers();
 }
 
-LayoutRect RenderView::visualOverflowRect() const
-{
-    if (frameView().paintsEntireContents())
-        return layoutOverflowRect();
-
-    return RenderBlockFlow::visualOverflowRect();
-}
-
 Optional<LayoutRect> RenderView::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // If a container was specified, and was not nullptr or the RenderView,
