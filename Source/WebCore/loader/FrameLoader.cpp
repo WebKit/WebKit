@@ -2309,7 +2309,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     m_needsClear = true;
     m_isComplete = false;
     m_didCallImplicitClose = false;
-    m_outgoingReferrer = url.string();
+    setOutgoingReferrer(url);
 
     FrameView* view = cachedFrame.view();
     

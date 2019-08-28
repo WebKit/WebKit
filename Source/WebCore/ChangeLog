@@ -1,3 +1,24 @@
+2019-08-27  John Wilander  <wilander@apple.com>  and  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Make FrameLoader::open() set outgoing referrer properly
+        https://bugs.webkit.org/show_bug.cgi?id=167050
+        <rdar://problem/27972404>
+
+        Reviewed by Youenn Fablet.
+
+        In debug builds, an assertion failed in WebCore::SecurityPolicy::generateReferrerHeader:
+        ASSERTION FAILED: referrer == URL(URL(), referrer).strippedForUseAsReferrer()
+
+        In release builds, cached pages with a URL fragment sent its URL fragment in the referrer.
+
+        m_outgoingReferrer mistakenly had a URL fragment.
+
+        Test: http/tests/navigation/page-cache-fragment-referrer.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open): Set m_outgoingReferrer by using
+        FrameLoader::setOutgoingReferrer to remove URL fragments.
+
 2019-08-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed. Build fix after r249175.

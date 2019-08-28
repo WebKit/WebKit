@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("A cached page with a URL fragment shouldn't send the fragment in the referrer");
+
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+    testRunner.dumpAsText();
+
+    testRunner.queueLoad('resources/success.html');
+    testRunner.queueBackNavigation(1);
+}
+
+const locationWithoutHash = document.location.href;
+
+document.location = '#fragment';
+
+window.addEventListener('pageshow', () => {
+    xhr = new XMLHttpRequest();
+    xhr.open('GET', 'resources/referrer.php', false);
+    xhr.send(null);
+    shouldBeEqualToString('xhr.responseText', locationWithoutHash);
+});
+</script>
+</head>
+<body>
+</body>
+<script src="../resources/js-test-post.js"></script>
+</head>
+</html>
