@@ -1,3 +1,50 @@
+2019-08-28  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Move drawer to the right, open by default
+        https://bugs.webkit.org/show_bug.cgi?id=200977
+
+        Rubber-stamped by Aakash Jain.
+
+        The drawer was both unpopular and not discoverable. After feedback from bot watchers,
+        moving the drawer to the right side of the screen, opening it by default and have it displace
+        instead of hide the main content.
+
+        * resultsdbpy/resultsdbpy/view/commit_view_unittest.py:
+        (CommitViewUnittest.test_drawer): Support new drawer style.
+        (CommitViewUnittest.test_range_slider): Ditto.
+        (CommitViewUnittest.test_one_line_switch): Ditto.
+        (CommitViewUnittest.test_branch_selection): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/css/drawer.css: Removed.
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js:
+        (setEnableRecursive): Disable all elements underneath this one 
+        (Drawer): Make drawer a sidebar.
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.header>.title, .topbar>.title): Overflow of titles should be hidden.
+        (:root): Move boldInverseColor into webkit.css.
+        (@media (prefers-color-scheme: dark)):
+        (.sidebar): Sidebars on mobile should behave like drawers.
+        (.sidebar.hidden): Add concept of hidden sidebar.
+        (.mobile-sidebar-control): Add a control to collapse sidebar that only exists on mobile.
+        (.mobile-sidebar-control.display):
+        (.main.under-topbar-with-actions):
+        (@media screen and (min-width: 600px) and (orientation: landscape)):
+        (.sidebar.left.hidden):
+        (.sidebar.right.hidden):
+        (.main.right.hidden):
+        (.main.left.hidden):
+        (@media screen and (min-width: 768px) and (orientation: landscape)):
+        (.sidebar.right):
+        (a.disabled): Add ability to disable a link.
+        (.desktop-control): Add a control which only exists on desktop.
+        * resultsdbpy/resultsdbpy/view/templates/base.html: Add hamburger drawer-button for mobile.
+        * resultsdbpy/resultsdbpy/view/templates/commits.html: Use main since Drawer is now a sidebar.
+        * resultsdbpy/resultsdbpy/view/templates/documentation.html: Ditto.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Ditto.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Ditto.
+        * resultsdbpy/resultsdbpy/view/view_routes_unittest.py:
+        (WebSiteTestCase.toggle_drawer): Support new drawer style.
+        (WebSiteTestCase.find_input_with_name): Ditto.
+
 2019-08-28  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 2)

@@ -25,7 +25,6 @@
 
 {% extends "base.html" %}
 {% block head %}
-<link rel="stylesheet" type="text/css" href="assets/css/drawer.css">
 <link rel="stylesheet" type="text/css" href="assets/css/search.css">
 <link rel="stylesheet" type="text/css" href="assets/css/timeline.css">
 <link rel="stylesheet" type="text/css" href="assets/css/tooltip.css">
@@ -227,33 +226,37 @@ DOM.inject(
         ConfigurationSelectors(() => {view.reload()}),
     ])}
 
-    ${SearchBar(function () {
-        const splitURL = document.URL.split('?');
-        let params = queryToParams(splitURL[1]);
-        if (!params.suite)
-            params.suite = [];
-        if (!params.test)
-            params.test = [];
+    <div class="main left under-topbar-with-actions">
+        <div class="content">
+            ${SearchBar(function () {
+                const splitURL = document.URL.split('?');
+                let params = queryToParams(splitURL[1]);
+                if (!params.suite)
+                    params.suite = [];
+                if (!params.test)
+                    params.test = [];
 
-        for (let i = 0; i < arguments.length; i++) {
-            let needToAdd = true;
-            if (!needToAdd)
-                continue;
+                for (let i = 0; i < arguments.length; i++) {
+                    let needToAdd = true;
+                    if (!needToAdd)
+                        continue;
 
-            let child = {
-                suite: arguments[i].suite,
-                test: arguments[i].test,
-                timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`),
-            }
+                    let child = {
+                        suite: arguments[i].suite,
+                        test: arguments[i].test,
+                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`),
+                    }
 
-            view.ref.setState({prepending: [child]});
-            params.suite.push(child.suite);
-            params.test.push(child.test);
-        }
-        const queryString = paramsToQuery(params);
-        window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
-    }, SUITES)}
-    ${view}`
+                    view.ref.setState({prepending: [child]});
+                    params.suite.push(child.suite);
+                    params.test.push(child.test);
+                }
+                const queryString = paramsToQuery(params);
+                window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
+            }, SUITES)}
+            ${view}
+        </div>
+    </div>`
 );
 
 </script>
@@ -261,7 +264,7 @@ DOM.inject(
 {% endblock %}
 {% block content %}
 
-<div class="content" id="app">
+<div id="app">
 </div>
 
 {% endblock %}

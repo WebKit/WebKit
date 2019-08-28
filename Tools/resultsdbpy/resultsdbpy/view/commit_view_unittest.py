@@ -64,10 +64,10 @@ class CommitViewUnittest(WebSiteTestCase):
     def test_drawer(self, driver, **kwargs):
         driver.get(self.URL + '/commits')
         time.sleep(.2)
-        self.assertNotIn('display', driver.find_element_by_class_name('drawer').get_attribute('class'))
+        self.assertNotIn('hidden', driver.find_element_by_class_name('sidebar').get_attribute('class'))
 
-        self.toggle_drawer(driver, assert_displayed=True)
         self.toggle_drawer(driver, assert_displayed=False)
+        self.toggle_drawer(driver, assert_displayed=True)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @WebSiteTestCase.decorator()
@@ -158,8 +158,6 @@ class CommitViewUnittest(WebSiteTestCase):
         self.assertEqual(5, len(commits['safari']))
         self.assertEqual(5, len(commits['webkit']))
 
-        self.toggle_drawer(driver, assert_displayed=True)
-
         controls = self.find_input_with_name(driver, 'Limit:').find_elements_by_tag_name('input')
         self.assertEqual(3, len(controls))
         input = [control for control in controls if control.get_attribute('type') == 'number'][0]
@@ -199,8 +197,6 @@ class CommitViewUnittest(WebSiteTestCase):
         changelog = commits['safari'][0].find_element_by_tag_name('div')
         self.assertEqual(line_1, changelog.text)
 
-        self.toggle_drawer(driver, assert_displayed=True)
-
         controls = self.find_input_with_name(driver, 'One-line:').find_elements_by_tag_name('span')
         self.assertEqual(1, len(controls))
         input = [control for control in controls if control.get_attribute('class') == 'slider'][0]
@@ -234,8 +230,6 @@ class CommitViewUnittest(WebSiteTestCase):
 
         self.assertEqual(5, len(commits['safari']))
         self.assertEqual(5, len(commits['webkit']))
-
-        self.toggle_drawer(driver, assert_displayed=True)
 
         controls = self.find_input_with_name(driver, 'Branch').find_elements_by_tag_name('select')
         self.assertEqual(1, len(controls))

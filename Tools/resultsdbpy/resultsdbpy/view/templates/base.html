@@ -35,7 +35,10 @@
 <body>
 <div class="header fixed">
     <div class="title">
-        <div class="text large block">{{site_title}}</div>
+        <div class="text large block" style="width: calc(100% - 44px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+            {{site_title}}
+        </div>
+        <button style="width: 44px" class="button mobile-sidebar-control">☰</button>
     </div>
     <div class="actions">
         <div class="list">

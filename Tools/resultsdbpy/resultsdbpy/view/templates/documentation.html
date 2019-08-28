@@ -24,11 +24,10 @@
 -->
 {% extends "base.html" %}
 {% block head %}
-<link rel="stylesheet" type="text/css" href="assets/css/drawer.css">
 
 <script type="module">
 
-import {DOM} from '/library/js/Ref.js';
+import {DOM, REF} from '/library/js/Ref.js';
 import {Expectations} from '/assets/js/timeline.js';
 
 function jumpIdUnderHeader(id) {
@@ -495,9 +494,23 @@ const documentation = {
     }
 }
 
+const sidebarControl = document.getElementsByClassName('mobile-sidebar-control')[0];
+sidebarControl.classList.add('display');
+
+const sidebarRef = REF.createRef({
+    onElementMount: (element) => {
+        sidebarControl.onclick = () => {
+            if (element.style.display)
+                element.style.display = null;
+            else
+                element.style.display = 'block';
+        }
+    }
+});
+
 DOM.inject(
     document.getElementById('app'),
-    `<div class="sidebar under-topbar-with-actions">
+    `<div class="sidebar under-topbar-with-actions" ref="${sidebarRef}">
         <div class="list">
         ${Object.keys(documentation).map((primary) => {
             return `<div class="item">

@@ -25,29 +25,68 @@ import {DOM, REF} from '/library/js/Ref.js';
 import {QueryModifier} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js'
 
+function setEnableRecursive(element, state) {
+    element.disabled = !state;
+    if (!state)
+        element.classList.add("disabled");
+    else
+        element.classList.remove("disabled");
+
+    for (let node of element.children)
+        setEnableRecursive(node, state);
+}
+
 function Drawer(controls = []) {
-    const COLLAPSED = false;
-    const EXTENDED = true;
-    var drawerState = COLLAPSED;
+    const HIDDEN = false;
+    const VISIBLE = true;
+    let drawerState = VISIBLE;
+    let main = null;
+
+    const sidebarControl = document.getElementsByClassName('mobile-sidebar-control')[0];
+    sidebarControl.classList.add('display');
 
     const drawerRef = REF.createRef({
         state: drawerState,
         onStateUpdate: (element, state) => {
-            if (state)
-                element.classList.add("display");
-            else
-                element.classList.remove("display");
+            if (state) {
+                element.classList.remove("hidden");
+                if (main)
+                    main.classList.remove("hidden");
+            } else {
+                element.classList.add("hidden");
+                if (main)
+                    main.classList.add("hidden");
+            }
+
+            for (let node of element.children) {
+                if (node.classList.contains("list"))
+                    setEnableRecursive(node, state);
+            }
+        },
+        onElementMount: (element) => {
+            let candidates = document.getElementsByClassName("main");
+            if (candidates.length)
+                main = candidates[0];
+
+            sidebarControl.onclick = () => {
+                if (element.style.display)
+                    element.style.display = null;
+                else
+                    element.style.display = 'block';
+            }
         }
     });
+
     const drawerControllerRef = REF.createRef({
         state: drawerState,
         onStateUpdate: (element, state) => {
             if (state) {
-                element.classList.remove("collapsed");
-                element.classList.add("extended");
-            } else {
-                element.classList.remove("extended");
-                element.classList.add("collapsed");
+                element.innerHTML = 'Collapse &gt';
+                element.style.textAlign = 'center';
+            }
+            else{
+                element.innerHTML = '&lt';
+                element.style.textAlign = 'left';
             }
         },
         onElementMount: (element) => {
@@ -59,14 +98,14 @@ function Drawer(controls = []) {
         }
     });
 
-    return `<div class="drawer left under-topbar-with-actions unselectable" ref="${drawerRef}">
+    return `<div class="sidebar right under-topbar-with-actions unselectable" ref="${drawerRef}">
+            <button class="button desktop-control" ref="${drawerControllerRef}" style="width:96%; margin: 10px 2% 10px 2%;"></button>
             ${controls.map(control => {
                 return `<div class="list">
                         <div class="item">${control}</div>
                     </div>`;
                 }).join('')}
-        </div>
-        <button class="drawer-control collapsed" ref="${drawerControllerRef}"><div></div></button>`;
+        </div>`;
 }
 
 function BranchSelector(callback) {

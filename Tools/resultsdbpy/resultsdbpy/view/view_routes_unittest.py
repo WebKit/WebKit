@@ -41,15 +41,16 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
     KEYSPACE = 'web_site_testcase_keyspace'
 
     def toggle_drawer(self, driver, assert_displayed=None):
-        driver.find_element_by_class_name('drawer-control').click()
+        sidebar = driver.find_element_by_class_name('sidebar')
+        sidebar.find_elements_by_tag_name('button')[0].click()
         time.sleep(.5)
         if assert_displayed:
-            self.assertIn('display', driver.find_element_by_class_name('drawer').get_attribute('class'))
+            self.assertNotIn('hidden', sidebar.get_attribute('class'))
         elif assert_displayed is False:
-            self.assertNotIn('display', driver.find_element_by_class_name('drawer').get_attribute('class'))
+            self.assertIn('hidden', sidebar.get_attribute('class'))
 
     def find_input_with_name(self, driver, name):
-        control = [label.parent for label in driver.find_element_by_class_name('drawer').find_elements_by_tag_name('div') if label.find_element_by_tag_name('label').text == name][0]
+        control = [label.parent for label in driver.find_element_by_class_name('sidebar').find_elements_by_tag_name('div') if label.find_element_by_tag_name('label').text == name][0]
         self.assertIsNotNone(control)
         return control
 
@@ -102,7 +103,7 @@ class WebSiteUnittest(WebSiteTestCase):
         driver.get(self.URL)
         self.assertEqual(driver.title, 'Results Database')
         title = driver.find_element_by_class_name('title').find_element_by_tag_name('div')
-        self.assertEqual(title.text, 'Results Database')
+        self.assertEqual(title.text.lstrip().rstrip(), 'Results Database')
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @WebSiteTestCase.decorator()

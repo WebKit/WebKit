@@ -25,7 +25,6 @@
 
 {% extends "base.html" %}
 {% block head %}
-<link rel="stylesheet" type="text/css" href="assets/css/drawer.css">
 <link rel="stylesheet" type="text/css" href="assets/css/search.css">
 <link rel="stylesheet" type="text/css" href="assets/css/timeline.css">
 <link rel="stylesheet" type="text/css" href="assets/css/tooltip.css">
@@ -170,15 +169,18 @@ ${Drawer([
     }),
     ConfigurationSelectors(() => {view.reload()}),
 ])}
-${view}
-`);
+<div class="main left under-topbar-with-actions">
+    <div class="content">
+        ${view}
+    </div>
+</div>`);
 
 </script>
 
 {% endblock %}
 {% block content %}
 
-<div class="content" id="app">
+<div id="app">
 </div>
 
 {% endblock %}

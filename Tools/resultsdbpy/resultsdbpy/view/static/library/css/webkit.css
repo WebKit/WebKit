@@ -91,6 +91,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
   --sectionPaddingSize: 12px 24px;
   --formLabelPadding: 14px;
   --topZIndex: 100;
+  --boldInverseColor: var(--black);
 }
 
 @media screen and (min-width: 600px) and (orientation: landscape) {
@@ -122,6 +123,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
     --borderColorInlineElement: var(--greyDarker);
     --borderColorSection: var(--blackDark);
     --borderColorHard: var(--blackDarker);
+    --boldInverseColor: var(--white);
   }
 }
 
@@ -226,6 +228,7 @@ a:hover {
   font-size: var(--largeSize);
   font-weight: 400;
   flex: auto;
+  overflow: hidden;
 }
 
 .header>.title>.logo, .topbar>.title>.logo {
@@ -915,6 +918,15 @@ pre {
   position: fixed;
   border-right: 1px solid var(--borderColorSection);
   overflow-y: auto;
+  min-width: 250px;
+  background-color: var(--blurBackgroundColor);
+  -webkit-backdrop-filter: blur(5px) brightness(88%);
+  backdrop-filter: blur(5px) brightness(88%);
+  z-index: var(--topZIndex);
+  right: 0;
+}
+.sidebar.hidden {
+  display: none;
 }
 
 .sidebar>.header {
@@ -926,6 +938,14 @@ pre {
 
 .sidebar>.header>.title {
   padding-left: var(--colPaddingSize);
+}
+
+.mobile-sidebar-control {
+  display: none;
+  float: right;
+}
+.mobile-sidebar-control.display {
+  display: block;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -953,14 +973,33 @@ pre {
   overflow: auto;
 }
 
+.main.under-topbar-with-actions {
+  margin-top: calc(12px * 2  + var(--largeSize) * 1.3 + var(--smallSize) * 1.3 + 12px * 2);
+}
+
 @media screen and (min-width: 600px) and (orientation: landscape) {
   .sidebar {
-    width: 299px;
     display: block;
+    width: 299px;
+    z-index: 0;
+    left: 0;
+    right: unset;
+  }
+  .sidebar.left.hidden {
+    display: block;
+    left: -249px;
+  }
+  .sidebar.right.hidden {
+    display: block;
+    right: -249px;
   }
   .sidebar.under-topbar-with-actions {
     height: calc(100% - 12px * 2  - var(--largeSize) * 1.3);
     bottom: 0;
+  }
+
+  .mobile-sidebar-control.display {
+    display: none;
   }
 
   .main {
@@ -972,6 +1011,15 @@ pre {
     margin-left: 0px;
     margin-right: 299px;
   }
+  .main.right.hidden {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+  }
+  .main.left.hidden {
+    margin-left: 0;
+    margin-right: 50px;
+    width: calc(100% - 50px);
+  }
 
   .main.under-topbar-with-actions {
     margin-top: calc(12px * 2  + var(--largeSize) * 1.3);
@@ -980,8 +1028,19 @@ pre {
 
 @media screen and (min-width: 768px) and (orientation: landscape) {
   .sidebar {
-    width: 310px;
     display: block;
+    width: 310px;
+    z-index: 0;
+    left: 0;
+    right: unset;
+  }
+  .sidebar.left.hidden {
+    display: block;
+    left: -260px;
+  }
+  .sidebar.right.hidden {
+    display: block;
+    right: -260px;
   }
   .sidebar.under-topbar-with-actions {
     height: calc(100% - 12px * 2  - var(--largeSize) * 1.3);
@@ -1004,8 +1063,7 @@ pre {
 }
 
 .sidebar.right {
-  border-right: 0px;
-  border-left: 1px;
+  left: unset;
   right: 0;
 }
 
@@ -1751,6 +1809,11 @@ pre {
   .tabs .tab a.link {
     color: var(--grey);
   }
+}
+
+a.disabled {
+  color: var(--grey);
+  pointer-events: none; 
 }
 
 /* timeline */
@@ -2593,4 +2656,14 @@ pre {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.desktop-control {
+  display: none;
+}
+
+@media screen and (min-width: 600px) and (orientation: landscape) {
+  .desktop-control {
+    display: block;
+  }
 }

@@ -26,7 +26,6 @@
 {% extends "base.html" %}
 {% block head %}
 <link rel="stylesheet" type="text/css" href="assets/css/commit.css">
-<link rel="stylesheet" type="text/css" href="assets/css/drawer.css">
 
 <script type="module">
 import {REF, DOM} from '/library/js/Ref.js';
@@ -104,14 +103,17 @@ DOM.inject(document.getElementById('app'), `${Drawer([
     LimitSlider(() => {table.reload()}),
     OneLineSwitch(),
     BranchSelector(() => {table.reload()}),
-])} ${table}`);
+])}
+<div class="main left under-topbar-with-actions">
+    <div class="content">${table}</div>
+</div>`);
 
 </script>
 
 {% endblock %}
 {% block content %}
 
-<div class="content" id="app">
+<div id="app">
 </div>
 
 
