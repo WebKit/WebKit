@@ -55,13 +55,12 @@ public:
     void updateDownloadBufferingFlag() override { };
 
     bool isLiveStream() const override { return false; }
-    MediaTime currentMediaTime() const override;
 
+    void play() override;
     void pause() override;
-    bool seeking() const override;
     void seek(const MediaTime&) override;
-    void configurePlaySink() override;
-    bool changePipelineState(GstState) override;
+    void reportSeekCompleted();
+    void updatePipelineState(GstState);
 
     void durationChanged() override;
     MediaTime durationMediaTime() const override;
@@ -73,30 +72,23 @@ public:
     void sourceSetup(GstElement*) override;
 
     void setReadyState(MediaPlayer::ReadyState);
-    void waitForSeekCompleted();
-    void seekCompleted();
     MediaSourcePrivateClient* mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
-    void markEndOfStream(MediaSourcePrivate::EndOfStreamStatus);
-
     void trackDetected(RefPtr<AppendPipeline>, RefPtr<WebCore::TrackPrivateBase>, bool firstTrackDetected);
-    void notifySeekNeedsDataForTime(const MediaTime&);
 
     void blockDurationChanges();
     void unblockDurationChanges();
+
+    void asyncStateChangeDone() override { }
+
+protected:
+    void didEnd() override;
 
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
-    // FIXME: Reduce code duplication.
     void updateStates() override;
-
-    bool doSeek(const MediaTime&, float, GstSeekFlags) override;
-    bool doSeek();
-    void maybeFinishSeek();
-    void updatePlaybackRate() override;
-    void asyncStateChangeDone() override;
 
     // FIXME: Implement videoPlaybackQualityMetrics.
     bool isTimeBuffered(const MediaTime&) const;
@@ -104,19 +96,14 @@ private:
     bool isMediaSource() const override { return true; }
 
     void setMediaSourceClient(Ref<MediaSourceClientGStreamerMSE>);
-    RefPtr<MediaSourceClientGStreamerMSE> mediaSourceClient();
 
     HashMap<RefPtr<SourceBufferPrivateGStreamer>, RefPtr<AppendPipeline>> m_appendPipelinesMap;
-    bool m_eosMarked = false;
-    mutable bool m_eosPending = false;
-    bool m_gstSeekCompleted = true;
     RefPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourceClientGStreamerMSE> m_mediaSourceClient;
     MediaTime m_mediaTimeDuration;
-    bool m_mseSeekCompleted = true;
     bool m_areDurationChangesBlocked = false;
     bool m_shouldReportDurationWhenUnblocking = false;
-    RefPtr<PlaybackPipeline> m_playbackPipeline;
+    bool m_isPipelinePlaying = true;
 };
 
 } // namespace WebCore

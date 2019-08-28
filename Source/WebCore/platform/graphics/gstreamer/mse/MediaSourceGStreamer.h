@@ -40,8 +40,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
-typedef struct _WebKitMediaSrc WebKitMediaSrc;
-
 namespace WebCore {
 
 class SourceBufferPrivateGStreamer;

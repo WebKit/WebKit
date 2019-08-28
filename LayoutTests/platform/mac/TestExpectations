@@ -1986,6 +1986,8 @@ webkit.org/b/200258 [ Debug ] imported/w3c/web-platform-tests/wasm/jsapi/interfa
 # rdar://52594556 (Layout test fast/text/international/system-language/han-quotes.html is failing)
 [ Catalina+ ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 
+webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
+
 # rdar://52557916 (REGRESSION: fast/css/paint-order.html and fast/css/paint-order-shadow.html are failing)
 [ Catalina+ ] fast/css/paint-order.html [ ImageOnlyFailure ]
 [ Catalina+ ] fast/css/paint-order-shadow.html [ ImageOnlyFailure ]

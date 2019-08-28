@@ -1,3 +1,17 @@
+2019-08-28  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] WebKitMediaSrc rework
+        https://bugs.webkit.org/show_bug.cgi?id=199719
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Updated expectations.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek-expected.txt: Added.
+
 2019-08-28  Jer Noble  <jer.noble@apple.com>
 
         Flaky Test: fullscreen/full-screen-request-removed-with-raf.html

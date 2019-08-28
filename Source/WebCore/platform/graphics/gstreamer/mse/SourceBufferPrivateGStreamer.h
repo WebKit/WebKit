@@ -69,15 +69,13 @@ public:
     void setActive(bool) final;
     void notifyClientWhenReadyForMoreSamples(const AtomString&) final;
 
-    void setReadyForMoreSamples(bool);
-    void notifyReadyForMoreSamples();
-
     void didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
     void didReceiveSample(MediaSample&);
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
     ContentType type() const { return m_type; }
+    AtomString trackId() const { return m_trackId; }
 
 private:
     SourceBufferPrivateGStreamer(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
@@ -87,8 +85,6 @@ private:
     ContentType m_type;
     Ref<MediaSourceClientGStreamerMSE> m_client;
     SourceBufferPrivateClient* m_sourceBufferPrivateClient { nullptr };
-    bool m_isReadyForMoreSamples = true;
-    bool m_notifyWhenReadyForMoreSamples = false;
     AtomString m_trackId;
 };
 

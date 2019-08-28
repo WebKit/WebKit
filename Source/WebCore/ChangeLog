@@ -1,3 +1,161 @@
+2019-08-28  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] WebKitMediaSrc rework
+        https://bugs.webkit.org/show_bug.cgi?id=199719
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch reworks the WebKitMediaSrc element and many of the player
+        private methods that interacted with it.
+
+        In comparison with the old WebKitMediaSrc, in the new one seeks have
+        been massively simplified.
+
+        The new WebKitMediaSrc no longer relies on a bin or appsrc, having
+        greater control over its operation. This made it comparatively much
+        easier to implement features such as seek before playback or
+        single-stream flushing.
+
+        stream-collection events are emitted from the WebKitMediaSrc to reuse
+        the track handling in MediaPlayerPrivateGStreamer for playbin3, which
+        is now used for MSE pipelines.
+
+        Additional tests have been added to check some assumptions, and some
+        bugs that have surfaced with the changes have been fixed but no new
+        features (like multi-track support) are implemented in this patch.
+
+        One instance of these bugs is `resized` events, which were previously
+        being emitted when frames with different resolutions where appended.
+        This is a wrong behavior that has not been preserved in the rework, as
+        resize events should be emitted when the frames are shown, not
+        just appended.
+
+        There are subtler bugfixes, such as ignoring PTS-less frames in
+        AppendPipeline::appsinkNewSample(). These frames are problematic for
+        MSE, yet they were somehow passing through the pipelines. Since
+        WebKitMediaSrc is stricter with assertions, these have to be filtered.
+
+        This test gets rid of !m_mseSeekCompleted assertion failures in tests
+        and potentially other hard to debug bugs in the previous seek
+        algorithm.
+
+        This patch makes the following existing tests pass:
+
+        imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html
+        imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html
+
+        New test: imported/w3c/web-platform-tests/media-source/mediasource-buffered-seek.html
+        New test: LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html (non-MSE related)
+
+        * Headers.cmake:
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstMiniObject>):
+        (WTF::derefGPtr<GstMiniObject>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::paused const):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::invalidateCachedPosition):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSizeFromCaps const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::samplesHaveDifferentNaturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::MediaSampleGStreamer):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::appsinkCaps):
+        (WebCore::AppendPipeline::streamType):
+        (WebCore::AppendPipeline::demuxerSrcPadCaps):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::play):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::pause):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::unblockDurationChanges):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+        (WebCore::MediaSourceClientGStreamerMSE::flush):
+        (WebCore::MediaSourceClientGStreamerMSE::enqueueSample):
+        (WebCore::MediaSourceClientGStreamerMSE::isReadyForMoreSamples):
+        (WebCore::MediaSourceClientGStreamerMSE::notifyClientWhenReadyForMoreSamples):
+        (WebCore::MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::markEndOfStream):
+        (WebCore::MediaSourceGStreamer::unmarkEndOfStream):
+        (WebCore::MediaSourceGStreamer::waitForSeekCompleted):
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp: Removed.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h: Removed.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::enqueueSample):
+        (WebCore::SourceBufferPrivateGStreamer::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (WebKitMediaSrcPrivate::streamByName):
+        (Stream::Stream):
+        (Stream::StreamingMembers::StreamingMembers):
+        (Stream::StreamingMembers::durationEnqueued const):
+        (findPipeline):
+        (webkit_media_src_class_init):
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (debugProbe):
+        (collectionPlusStream):
+        (collectionMinusStream):
+        (gstStreamType):
+        (webKitMediaSrcAddStream):
+        (webKitMediaSrcRemoveStream):
+        (webKitMediaSrcActivateMode):
+        (webKitMediaSrcPadLinked):
+        (webKitMediaSrcStreamNotifyLowWaterLevel):
+        (webKitMediaSrcLoop):
+        (webKitMediaSrcEnqueueObject):
+        (webKitMediaSrcEnqueueSample):
+        (webKitMediaSrcEnqueueEvent):
+        (webKitMediaSrcEndOfStream):
+        (webKitMediaSrcIsReadyForMoreSamples):
+        (webKitMediaSrcNotifyWhenReadyForMoreSamples):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcStreamFlushStart):
+        (webKitMediaSrcStreamFlushStop):
+        (webKitMediaSrcFlush):
+        (webKitMediaSrcSeek):
+        (countStreamsOfType):
+        (webKitMediaSrcGetProperty):
+        (webKitMediaSrcUriGetType):
+        (webKitMediaSrcGetProtocols):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+        (webKitMediaSrcUriHandlerInit):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h: Removed.
+
 2019-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Have RenderSVGBlock compute visual overflow just like everyone else
