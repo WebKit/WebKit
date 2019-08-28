@@ -267,6 +267,8 @@ class CommitController(HasCommitContext):
         if is_endpoint:
             try:
                 commit = request.form or json.loads(request.get_data())
+                if 'api_key' in commit:
+                    del commit['api_key']
             except ValueError:
                 abort(400, description='Expected uploaded data to be json')
 

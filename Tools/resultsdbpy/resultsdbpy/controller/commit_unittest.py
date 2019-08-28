@@ -100,9 +100,58 @@ class CommitUnittest(unittest.TestCase):
         ).uuid, 153755068501)
 
     def test_invalid(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as error:
             Commit(
                 repository_id='safari', branch='master',
                 id='7be4084258a452e8fe22f36287c5b321e9c8249b',
                 timestamp=None,
             )
+        self.assertEqual(str(error.exception), 'timestamp is not defined for commit')
+
+        with self.assertRaises(ValueError) as error:
+            Commit(
+                repository_id='invalid-repo', branch='master',
+                id='7be4084258a452e8fe22f36287c5b321e9c8249b',
+                timestamp=1537550685,
+            )
+        self.assertEqual(str(error.exception), "'invalid-repo' is an invalid repository id")
+
+        with self.assertRaises(ValueError) as error:
+            Commit(
+                repository_id='i' * 129, branch='master',
+                id='7be4084258a452e8fe22f36287c5b321e9c8249b',
+                timestamp=1537550685,
+            )
+        self.assertEqual(str(error.exception), f"'{'i' * 129}' is an invalid repository id")
+
+        with self.assertRaises(ValueError) as error:
+            Commit(
+                repository_id='safari', branch='<html>invalid-branch</html>',
+                id='7be4084258a452e8fe22f36287c5b321e9c8249b',
+                timestamp=1537550685,
+            )
+        self.assertEqual(str(error.exception), "'<html>invalid-branch</html>' is an invalid branch name")
+
+        with self.assertRaises(ValueError) as error:
+            Commit(
+                repository_id='safari', branch='i' * 129,
+                id='7be4084258a452e8fe22f36287c5b321e9c8249b',
+                timestamp=1537550685,
+            )
+        self.assertEqual(str(error.exception), f"'{'i' * 129}' is an invalid branch name")
+
+        with self.assertRaises(ValueError) as error:
+            Commit(
+                repository_id='safari', branch='master',
+                id='<html>1234</html>',
+                timestamp=1537550685,
+            )
+        self.assertEqual(str(error.exception), "'<html>1234</html>' is an invalid commit id")
+
+        with self.assertRaises(ValueError) as error:
+            Commit(
+                repository_id='safari', branch='master',
+                id='0' * 41,
+                timestamp=1537550685,
+            )
+        self.assertEqual(str(error.exception), f"'{'0' * 41}' is an invalid commit id")

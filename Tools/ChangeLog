@@ -1,3 +1,19 @@
+2019-08-28  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Sanitize all commit arguments on upload
+        https://bugs.webkit.org/show_bug.cgi?id=201189
+        <rdar://problem/54564837>
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/controller/commit.py:
+        (Commit.__init__): Only allow commits to be constructed with valid values.
+        * resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (CommitController.register): Strip potential API key.
+        * resultsdbpy/resultsdbpy/controller/commit_unittest.py:
+        (CommitUnittest.test_invalid): Test that commits which contain html inside the
+        repository_id, branch or commit id are rejected.
+
 2019-08-02  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Implement HSTS for the soup network backend

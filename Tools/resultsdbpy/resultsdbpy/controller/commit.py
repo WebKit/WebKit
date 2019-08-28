@@ -22,6 +22,7 @@
 
 import calendar
 import json
+import re
 
 from datetime import datetime
 from resultsdbpy.flask_support.util import FlaskJSONEncoder
@@ -29,6 +30,7 @@ from resultsdbpy.flask_support.util import FlaskJSONEncoder
 
 class Commit(object):
     TIMESTAMP_TO_UUID_MULTIPLIER = 100
+    MAX_KEY_LENGTH = 128
 
     @classmethod
     def from_json(cls, data):
@@ -49,10 +51,17 @@ class Commit(object):
                 raise ValueError(f'{argument[0]} is not defined for commit')
 
         self.repository_id = str(repository_id)
+        if not re.match(r'^[a-zA-Z?]+$', self.repository_id) or len(self.repository_id) > self.MAX_KEY_LENGTH:
+            raise ValueError(f"'{self.repository_id}' is an invalid repository id")
+
         self.branch = str(branch)
+        if not re.match(r'^[a-zA-Z0-9-.?/]+$', self.branch) or len(self.branch) > self.MAX_KEY_LENGTH:
+            raise ValueError(f"'{self.branch}' is an invalid branch name")
 
         # An id is either a git commit or SVN revision.
         self.id = str(id)
+        if not re.match(r'^[a-fA-F0-9?]+$', self.id) or len(self.id) > 40:
+            raise ValueError(f"'{self.id}' is an invalid commit id")
 
         if isinstance(timestamp, datetime):
             self.timestamp = timestamp
