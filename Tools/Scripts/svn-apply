@@ -382,7 +382,7 @@ sub patch($)
             open(my $FH, ">>", $fullPath) or die "Could not open \"$fullPath\" for writing: $!";
             close($FH);
             scmAdd($fullPath);
-        } else {
+        } elsif (!defined($diffHashRef->{executableBitDelta})) {
             die "Can't handle patch for \"$fullPath\".";
         }
     }

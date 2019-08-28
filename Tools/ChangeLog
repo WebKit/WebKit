@@ -1,3 +1,13 @@
+2019-08-27  James Darpinian  <jdarpinian@google.com>
+
+        Fix applying diffs that only change file mode
+        https://bugs.webkit.org/show_bug.cgi?id=201191
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/svn-apply:
+        (patch): Handle case of file mode change without content change
+
 2019-08-27  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Status bubble should be red for CANCELLED builds
