@@ -1,3 +1,26 @@
+2019-08-28  Mark Lam  <mark.lam@apple.com>
+
+        Wasm's AirIRGenerator::addLocal() and B3IRGenerator::addLocal() are doing unnecessary overflow checks.
+        https://bugs.webkit.org/show_bug.cgi?id=201006
+        <rdar://problem/52053991>
+
+        Reviewed by Yusuke Suzuki.
+
+        We already ensured that it is not possible to overflow in Wasm::FunctionParser's
+        parse().  It is unnecessary and misleading to do those overflow checks in
+        AirIRGenerator and B3IRGenerator.  The only check that is necessary is that
+        m_locals.tryReserveCapacity() is successful, otherwise, we have an out of memory
+        situation.
+
+        This patch changes these unnecessary checks to assertions instead.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addLocal):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addLocal):
+
 2019-08-28  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 2)
