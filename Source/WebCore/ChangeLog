@@ -1,3 +1,32 @@
+2019-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Matrices need to have correct alignment
+        https://bugs.webkit.org/show_bug.cgi?id=201212
+
+        Reviewed by Robin Morisset.
+
+        Matrices have particular alignment requirements and size requirements.
+
+          Type   | Alignment | Size
+        ---------------------------
+        float2x2 |         8 |   16
+        float2x3 |        16 |   32
+        float2x4 |        16 |   32
+        float3x2 |         8 |   24
+        float3x3 |        16 |   48
+        float3x4 |        16 |   48
+        float4x2 |         8 |   32
+        float4x3 |        16 |   64
+        float4x4 |        16 |   64
+
+        These are important because they may be a member of a struct, and we don't want to misplace
+        every successive item in the struct.
+
+        Test: webgpu/whlsl/matrix-alignment.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+
 2019-08-28  Rob Buis  <rbuis@igalia.com>
 
         Implement HTMLOrForeignElement
