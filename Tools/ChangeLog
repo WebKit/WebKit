@@ -1,3 +1,13 @@
+2019-08-27  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Status bubble should be red for CANCELLED builds
+        https://bugs.webkit.org/show_bug.cgi?id=201204
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble):
+
 2019-08-27  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org Webkit.css] Center the legend symbols

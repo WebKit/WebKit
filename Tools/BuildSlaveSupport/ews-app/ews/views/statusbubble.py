@@ -119,7 +119,7 @@ class StatusBubble(View):
             bubble['state'] = 'provisional-fail'
             bubble['details_message'] = 'Build is being retried. Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.CANCELLED:
-            bubble['state'] = 'provisional-fail'
+            bubble['state'] = 'fail'
             bubble['details_message'] = 'Build was cancelled. Recent messages:\n\n' + self._steps_messages(build)
         else:
             bubble['state'] = 'error'
