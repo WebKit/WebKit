@@ -4,9 +4,16 @@
     
     window.addEventListener('load', (ev) => {
         var target = document.querySelector('#target');
+        var didRemoveChild = false;
 
-        document.addEventListener('webkitfullscreenchange', (ev) => { 
-            if (document.webkitCurrentFullScreenElement && !document.webkitCurrentFullScreenElement.ownerDocument)
+        document.addEventListener('webkitfullscreenchange', (ev) => {
+            if (!didRemoveChild) {
+                // The 'webkitfullscreenchange' event was fired before the rAF() timer. This is not a
+                // successful test, but not a failure either.
+                removeTarget();
+                consoleWrite("SUCCESS");
+
+            } else if (document.webkitCurrentFullScreenElement && !document.webkitCurrentFullScreenElement.ownerDocument)
                 consoleWrite("FAIL: document.webkitCurrentFullScreenElement.ownerDocument is NULL!");
             else
                 consoleWrite("SUCCESS");
@@ -20,14 +27,20 @@
             endTest();    
         }, {once: true});
 
+        function removeTarget()
+        {
+            if (didRemoveChild)
+                return;
+            consoleWrite("Removed child element.");
+            target.parentNode.removeChild(target);
+            didRemoveChild = true;
+            consoleWrite("");
+        }
+
         function test()
         {
             target.webkitRequestFullScreen();
-            window.requestAnimationFrame(() => {
-                consoleWrite("Removed child element.");
-                target.parentNode.removeChild(target);
-                consoleWrite("");
-            });
+            window.requestAnimationFrame(removeTarget);
         }  
 
         runWithKeyDown(test);
