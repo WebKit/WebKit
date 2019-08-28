@@ -166,9 +166,9 @@ EXPRESSION: span = document.createElement("span"); span.id = "foo"; span
         "_value": ""
       },
       {
-        "_name": "dataset",
-        "_type": "object",
-        "_value": "DOMStringMap"
+        "_name": "hidden",
+        "_type": "boolean",
+        "_value": "false"
       }
     ],
     "_entries": null

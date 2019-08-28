@@ -1,3 +1,26 @@
+2019-08-28  Rob Buis  <rbuis@igalia.com>
+
+        Implement HTMLOrForeignElement
+        https://bugs.webkit.org/show_bug.cgi?id=201219
+
+        Reviewed by Ryosuke Niwa.
+
+        Add the HTMLOrForeignElement [1] interface to share properties
+        and methods between HTML, SVG and MathML.
+
+        [1] https://github.com/mathml-refresh/mathml/issues/83
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/StaticRange.h:
+        * html/HTMLElement.idl:
+        * html/HTMLOrForeignElement.idl: Added.
+        * svg/SVGElement.idl:
+
 2019-08-28  Sam Weinig  <weinig@apple.com>
 
         [WHLSL] Inline typedef'd types during Metal code generation to simplify generated code while also making it easier to read

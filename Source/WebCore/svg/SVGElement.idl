@@ -31,17 +31,11 @@
 
     readonly attribute SVGAnimatedString className;
 
-    [CEReactions=NotNeeded, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
-
     // FIXME: Using "undefined" as default parameter value is wrong.
     // This method is deprecated, and we'd like to remove it someday.
     DeprecatedCSSOMValue getPresentationAttribute(optional DOMString name = "undefined");
-
-    void focus();
-    void blur();
-
-    readonly attribute DOMStringMap dataset;
 };
 
 SVGElement implements ElementCSSInlineStyle;
 SVGElement implements GlobalEventHandlers;
+SVGElement implements HTMLOrForeignElement;

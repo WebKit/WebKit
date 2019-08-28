@@ -2560,8 +2560,8 @@ StylePropertyShorthandFunctions.cpp
 UserAgentStyleSheetsData.cpp
 WebCoreJSBuiltinInternals.cpp
 WebCoreJSBuiltins.cpp
-JSSVGElementWrapperFactory.cpp
 JSHTMLElementWrapperFactory.cpp
+JSSVGElementWrapperFactory.cpp
 
 // IDL bindings
 // FIXME: We should probably move these into ${DerivedSources}/bindings/js/ so they get bundled with the custom bindings.
@@ -2889,6 +2889,7 @@ JSHTMLMenuItemElement.cpp
 JSHTMLMetaElement.cpp
 JSHTMLMeterElement.cpp
 JSHTMLModElement.cpp
+JSHTMLOrForeignElement.cpp
 JSHTMLOListElement.cpp
 JSHTMLObjectElement.cpp
 JSHTMLOptGroupElement.cpp

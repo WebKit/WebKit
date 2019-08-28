@@ -37,9 +37,7 @@ PASS a["title"] is
 PASS a["lang"] is 
 PASS a["translate"] is true
 PASS a["dir"] is 
-PASS a["dataset"] is [object DOMStringMap]
 PASS a["hidden"] is false
-PASS a["tabIndex"] is 0
 PASS a["accessKey"] is 
 PASS a["draggable"] is true
 PASS a["spellcheck"] is true
@@ -47,7 +45,7 @@ PASS a["innerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["offsetTop"] is 744
+PASS a["offsetTop"] is 714
 PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
@@ -132,6 +130,8 @@ PASS a["onpointerover"] is null
 PASS a["onpointerout"] is null
 PASS a["onpointerenter"] is null
 PASS a["onpointerleave"] is null
+PASS a["dataset"] is [object DOMStringMap]
+PASS a["tabIndex"] is 0
 PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
 PASS a["prefix"] is null
 PASS a["localName"] is a

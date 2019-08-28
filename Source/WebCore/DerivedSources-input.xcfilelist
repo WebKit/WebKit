@@ -712,6 +712,7 @@ $(PROJECT_DIR)/html/HTMLObjectElement.idl
 $(PROJECT_DIR)/html/HTMLOptGroupElement.idl
 $(PROJECT_DIR)/html/HTMLOptionElement.idl
 $(PROJECT_DIR)/html/HTMLOptionsCollection.idl
+$(PROJECT_DIR)/html/HTMLOrForeignElement.idl
 $(PROJECT_DIR)/html/HTMLOutputElement.idl
 $(PROJECT_DIR)/html/HTMLParagraphElement.idl
 $(PROJECT_DIR)/html/HTMLParamElement.idl

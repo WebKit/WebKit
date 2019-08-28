@@ -775,6 +775,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModElement.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOrForeignElement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOrForeignElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOListElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOListElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLObjectElement.cpp

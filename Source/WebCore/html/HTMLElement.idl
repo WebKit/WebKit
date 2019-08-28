@@ -29,14 +29,10 @@
     [CEReactions, Reflect] attribute DOMString lang;
     [CEReactions] attribute boolean translate;
     [CEReactions] attribute DOMString dir;
-    readonly attribute DOMStringMap dataset; // FIXME: Should be [SameObject].
 
     // User interaction.
     [CEReactions, Reflect] attribute boolean hidden;
     void click();
-    [CEReactions, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
-    void focus();
-    void blur();
     [CEReactions, Reflect] attribute DOMString accessKey;
     // readonly attribute DOMString accessKeyLabel; // FIXME: Not supported.
     [CEReactions] attribute boolean draggable;
@@ -73,3 +69,4 @@
 
 HTMLElement implements ElementCSSInlineStyle;
 HTMLElement implements GlobalEventHandlers;
+HTMLElement implements HTMLOrForeignElement;

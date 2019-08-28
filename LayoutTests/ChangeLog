@@ -1,3 +1,16 @@
+2019-08-28  Rob Buis  <rbuis@igalia.com>
+
+        Implement HTMLOrForeignElement
+        https://bugs.webkit.org/show_bug.cgi?id=201219
+
+        Reviewed by Ryosuke Niwa.
+
+        Adjust test expectations to new HTMLOrForeignElement interface.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac/inspector/model/remote-object-dom-expected.txt:
+
 2019-08-28  Chris Dumez  <cdumez@apple.com>
 
         geolocation.watchPosition() / getCurrentPosition() should return PERMISSION_DENIED when context is not secure
