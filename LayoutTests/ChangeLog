@@ -1,3 +1,13 @@
+2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        XLinkNames namespace is required before the 'href' attribute of SVG animate elements
+        https://bugs.webkit.org/show_bug.cgi?id=201227
+
+        Reviewed by Ryosuke Niwa.
+
+        * svg/custom/href-svg-namespace-animate-target-expected.svg: Added.
+        * svg/custom/href-svg-namespace-animate-target.svg: Added.
+
 2019-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Matrices need to have correct alignment
