@@ -1,3 +1,24 @@
+2019-08-28  Chris Dumez  <cdumez@apple.com>
+
+        geolocation.watchPosition() / getCurrentPosition() should return PERMISSION_DENIED when context is not secure
+        https://bugs.webkit.org/show_bug.cgi?id=201221
+
+        Reviewed by Ryosuke Niwa.
+
+        Update layout tests to reflect behavior change.
+
+        * fast/dom/Geolocation/dataURL-getCurrentPosition-expected.txt:
+        * fast/dom/Geolocation/dataURL-getCurrentPosition.html:
+        * fast/dom/Geolocation/dataURL-watchPosition-expected.txt:
+        * fast/dom/Geolocation/dataURL-watchPosition.html:
+        * http/tests/security/resources/checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod.js:
+        (didReceiveError):
+        (checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod):
+        * http/tests/security/sandboxed-iframe-geolocation-getCurrentPosition-expected.txt:
+        * http/tests/security/sandboxed-iframe-geolocation-getCurrentPosition.html:
+        * http/tests/security/sandboxed-iframe-geolocation-watchPosition-expected.txt:
+        * http/tests/security/sandboxed-iframe-geolocation-watchPosition.html:
+
 2019-08-28  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] WebKitMediaSrc rework

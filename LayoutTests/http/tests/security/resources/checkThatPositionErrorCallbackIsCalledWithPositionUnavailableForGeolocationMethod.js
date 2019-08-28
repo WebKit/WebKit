@@ -19,10 +19,10 @@ function checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeoloca
 
     function didReceiveError(error)
     {
-        if (error.code === error.POSITION_UNAVAILABLE)
-            logMessage("PASS error.code is error.POSITION_UNAVAILABLE.");
+        if (error.code === error.PERMISSION_DENIED)
+            logMessage("PASS error.code is error.PERMISSION_DENIED.");
         else
-            logMessage("FAIL error.code should be " + error.POSITION_UNAVAILABLE + ". Was " + error.code + ".");
+            logMessage("FAIL error.code should be " + error.PERMISSION_DENIED + ". Was " + error.code + ".");
 
         if (error.message === expectedPositionUnavailableErrorMessage)
             logMessage('PASS error.message is "' + expectedPositionUnavailableErrorMessage + '".');
