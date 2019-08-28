@@ -1,3 +1,13 @@
+2019-08-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: replace uses of added utility `Array.prototype.keySet` with an actual `Set`
+        https://bugs.webkit.org/show_bug.cgi?id=201194
+
+        Reviewed by Ross Kirsling.
+
+        * inspector/unit-tests/array-utilities.html:
+        * inspector/unit-tests/array-utilities-expected.txt:
+
 2019-08-27  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement GPUErrors for and relax GPUBuffer validation rules

@@ -317,7 +317,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             }
 
             var completions = defaultCompletions;
-            var knownCompletions = completions.keySet();
+            let knownCompletions = new Set(completions);
 
             for (var i = 0; i < propertyNames.length; ++i) {
                 var property = propertyNames[i];
@@ -330,11 +330,11 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                         property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + (suffix !== quoteUsed ? quoteUsed : "");
                 }
 
-                if (!property.startsWith(prefix) || property in knownCompletions)
+                if (!property.startsWith(prefix) || knownCompletions.has(property))
                     continue;
 
                 completions.push(property);
-                knownCompletions[property] = true;
+                knownCompletions.add(property);
             }
 
             function compare(a, b)

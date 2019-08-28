@@ -654,36 +654,38 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         // FIXME: Include module keywords if we know this is a module environment.
         // var moduleKeywords = ["default", "export", "import"];
 
-        var allKeywords = [
+        const allKeywords = [
             "break", "case", "catch", "class", "const", "continue", "debugger", "default",
             "delete", "do", "else", "extends", "false", "finally", "for", "function",
             "if", "in", "Infinity", "instanceof", "let", "NaN", "new", "null", "of",
             "return", "static", "super", "switch", "this", "throw", "true", "try",
             "typeof", "undefined", "var", "void", "while", "with", "yield"
         ];
-        var valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined", "globalThis"];
+        const valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined", "globalThis"];
 
-        var allowedKeywordsInsideBlocks = allKeywords.keySet();
-        var allowedKeywordsWhenDeclaringVariable = valueKeywords.keySet();
-        var allowedKeywordsInsideParenthesis = valueKeywords.concat(["class", "function"]).keySet();
-        var allowedKeywordsInsideBrackets = allowedKeywordsInsideParenthesis;
-        var allowedKeywordsOnlyInsideSwitch = ["case", "default"].keySet();
+        const allowedKeywordsInsideBlocks = new Set(allKeywords);
+        const allowedKeywordsWhenDeclaringVariable = new Set(valueKeywords);
+        const allowedKeywordsInsideParenthesis = new Set(valueKeywords.concat(["class", "function"]));
+        const allowedKeywordsInsideBrackets = allowedKeywordsInsideParenthesis;
+        const allowedKeywordsOnlyInsideSwitch = new Set(["case", "default"]);
 
         function matchKeywords(keywords)
         {
-            matchingWords = matchingWords.concat(keywords.filter(function(word) {
-                if (!insideSwitch && word in allowedKeywordsOnlyInsideSwitch)
-                    return false;
-                if (insideBlock && !(word in allowedKeywordsInsideBlocks))
-                    return false;
-                if (insideBrackets && !(word in allowedKeywordsInsideBrackets))
-                    return false;
-                if (insideParenthesis && !(word in allowedKeywordsInsideParenthesis))
-                    return false;
-                if (declaringVariable && !(word in allowedKeywordsWhenDeclaringVariable))
-                    return false;
-                return word.startsWith(prefix);
-            }));
+            for (let keyword of keywords) {
+                if (!insideSwitch && allowedKeywordsOnlyInsideSwitch.has(keyword))
+                    continue;
+                if (insideBlock && !allowedKeywordsInsideBlocks.has(keyword))
+                    continue;
+                if (insideBrackets && !allowedKeywordsInsideBrackets.has(keyword))
+                    continue;
+                if (insideParenthesis && !allowedKeywordsInsideParenthesis.has(keyword))
+                    continue;
+                if (declaringVariable && !allowedKeywordsWhenDeclaringVariable.has(keyword))
+                    continue;
+                if (!keyword.startsWith(prefix))
+                    continue;
+                matchingWords.push(keyword);
+            }
         }
 
         function matchVariables()

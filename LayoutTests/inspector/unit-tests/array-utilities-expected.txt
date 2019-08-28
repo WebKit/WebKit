@@ -132,8 +132,3 @@ PASS: insertAtIndex with 0 < index < length should insert at the correct locatio
 PASS: insertAtIndex with negative index should insert from the end.
 PASS: insertAtIndex with index greater than array length should insert at the end.
 
--- Running test case: Array.prototype.keySet
-PASS: keySet should create an object with keys equal to the array values.
-PASS: keySet should create an object with all values equal to true.
-PASS: keySet should create an object with keys equal to stringified array values.
-

@@ -304,21 +304,6 @@ function test()
         }
     });
 
-    suite.addTestCase({
-        name: "Array.prototype.keySet",
-        test() {
-            let arr1 = ["abc", "def", "xyz"];
-            let keySet = arr1.keySet();
-            InspectorTest.expectShallowEqual(Object.keys(keySet), arr1, "keySet should create an object with keys equal to the array values.");
-            InspectorTest.expectShallowEqual(Object.values(keySet), [true, true, true], "keySet should create an object with all values equal to true.");
-
-            let arr2 = [1, 2, 3];
-            InspectorTest.expectShallowEqual(Object.keys(arr2.keySet()), arr2.map(x => x.toString()), "keySet should create an object with keys equal to stringified array values.");
-
-            return true;
-        }
-    });
-
     suite.runTestCasesAndFinish();
 }
 </script>
