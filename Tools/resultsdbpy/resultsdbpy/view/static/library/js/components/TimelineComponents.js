@@ -475,9 +475,9 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     });
 }
 
-Timeline.ExpandableSeriesComponent = (mainSeries, subSerieses, exporter) => {
+Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter) => {
     const ref = REF.createRef({
-        state: {expanded: false},
+        state: {expanded: options.expanded ? options.expanded : false},
         onStateUpdate: (element, stateDiff) => {
             if (stateDiff.expanded === false) {
                 element.children[0].style.display = 'none';
@@ -505,9 +505,9 @@ Timeline.HeaderComponent = (label) => {
     return `<div class="series">${label}</div>`;
 }
 
-Timeline.ExpandableHeaderComponent = (mainLabel, subLabels, exporter) => {
+Timeline.ExpandableHeaderComponent = (mainLabel, options, subLabels, exporter) => {
     const ref = REF.createRef({
-        state: {expanded: false},
+        state: {expanded: options.expanded ? options.expanded : false},
         onStateUpdate: (element, stateDiff) => {
             if (stateDiff.expanded === false)
                 element.children[1].style.display = "none";
@@ -531,9 +531,9 @@ Timeline.SeriesWithHeaderComponent = (header, series) => {
     return {header, series};
 }
 
-Timeline.ExpandableSeriesWithHeaderExpanderComponent = (mainSeriesWithLable, ...subSeriesWithLable) => {
+Timeline.ExpandableSeriesWithHeaderExpanderComponent = (mainSeriesWithLable, options, ...subSeriesWithLable) => {
     const ref = REF.createRef({
-        state: {expanded: false},
+        state: {expanded: options.expanded ? options.expanded : false},
         onStateUpdate: (element, stateDiff) => {
             if (stateDiff.expanded === false)
                 element.innerText = "+";
@@ -558,8 +558,8 @@ Timeline.ExpandableSeriesWithHeaderExpanderComponent = (mainSeriesWithLable, ...
         })
     }));
     return {
-        header: Timeline.ExpandableHeaderComponent(`<a class="link-button" href="javascript:void(0)" ref="${ref}">+</a>` + mainLabel, subLabels, composer),
-        series: Timeline.ExpandableSeriesComponent(mainSeries, subSerieses, composer),
+        header: Timeline.ExpandableHeaderComponent(`<a class="link-button" href="javascript:void(0)" ref="${ref}">+</a>` + mainLabel, options, subLabels, composer),
+        series: Timeline.ExpandableSeriesComponent(mainSeries, options, subSerieses, composer),
     }
 }
 

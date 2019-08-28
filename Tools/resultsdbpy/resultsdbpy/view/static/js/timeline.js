@@ -721,7 +721,7 @@ class TimelineFromEndpoint {
                                     exporter: exporterFactory(resultsByKey[sdkConfig.toKey()]),
                                 })));
                     });
-                    myTimeline = Timeline.ExpandableSeriesWithHeaderExpanderComponent(myTimeline, ...timelinesBySDK);
+                    myTimeline = Timeline.ExpandableSeriesWithHeaderExpanderComponent(myTimeline, {}, ...timelinesBySDK);
                 }
                 collapsedTimelines.push(myTimeline);
             });
@@ -747,6 +747,7 @@ class TimelineFromEndpoint {
                         onDotLeave: onDotLeave,
                         exporter: exporterFactory(allResults),
                     })),
+                {expanded: this.configurations.length <= 1},
                 ...collapsedTimelines
             ));
         });

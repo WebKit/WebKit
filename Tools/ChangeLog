@@ -1,5 +1,19 @@
 2019-08-28  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Auto-expand single configurations
+        https://bugs.webkit.org/show_bug.cgi?id=201218
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (TimelineFromEndpoint.toString): Automatically expand timeline when only one
+        configuration has been specified.
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (prototype.ExpandableSeriesComponent): Add options so that the caller can set whether a timeline
+        is expanded or collapsed by default.
+
+2019-08-28  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Sanitize all commit arguments on upload
         https://bugs.webkit.org/show_bug.cgi?id=201189
         <rdar://problem/54564837>
