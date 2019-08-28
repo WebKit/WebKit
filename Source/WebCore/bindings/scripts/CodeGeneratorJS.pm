@@ -736,7 +736,7 @@ sub GenerateGetOwnPropertySlotByIndex
     
     push(@$outputArray, "bool ${className}::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)\n");
     push(@$outputArray, "{\n");
-    if ($namedGetterOperation || $interface->extendedAttributes->{Plugin}) {
+    if ($namedGetterOperation || $interface->extendedAttributes->{Plugin} || ($indexedGetterOperation && $indexedGetterOperation->extendedAttributes->{MayThrowException})) {
         push(@$outputArray, "    VM& vm = state->vm();\n");
     }
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(object);\n");

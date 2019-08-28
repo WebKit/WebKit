@@ -1,3 +1,13 @@
+2019-08-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed. Build fix after r249175.
+
+        Fix the condition which generates the declaration of vm in
+        GenerateGetOwnPropertySlotByIndex.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotByIndex):
+
 2019-08-27  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement GPUErrors for and relax GPUBuffer validation rules
