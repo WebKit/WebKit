@@ -1,3 +1,16 @@
+2019-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unable to enter text in https://eat.fi
+        https://bugs.webkit.org/show_bug.cgi?id=193046
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new test imported for blink.
+
+        * imported/blink/fast/forms/label/label-contains-other-interactive-content-expected.txt: Added.
+        * imported/blink/fast/forms/label/label-contains-other-interactive-content.html: Added.
+        * platform/ios-wk2/TestExpectations: Skip the new test because it requires eventSender.mouseDown/Up/MoveTo()
+
 2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG2: Add length, item getter and item setter to all SVG lists

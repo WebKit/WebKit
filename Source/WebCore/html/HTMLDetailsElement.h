@@ -51,6 +51,7 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
     bool hasCustomFocusLogic() const final { return true; }
+    bool isInteractiveContent() const final { return true; }
 
     bool m_isOpen { false };
     HTMLSlotElement* m_summarySlot { nullptr };

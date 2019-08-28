@@ -1016,6 +1016,7 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 # eventSender.mouseDown is not implemented
 fast/loader/location-hash-user-gesture.html [ Skip ]
 imported/blink/editing/selection/selectstart-event-crash.html [ Skip ]
+imported/blink/fast/forms/label/label-contains-other-interactive-content.html [ Skip ]
 fast/dom/Window/post-message-user-action.html [ Skip ]
 fast/images/image-usemap-parsing.html [ Skip ]
 fast/shadow-dom/fullscreen-in-shadow-full-screen-ancestor.html [ Skip ]

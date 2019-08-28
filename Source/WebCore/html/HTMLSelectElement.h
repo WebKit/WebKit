@@ -124,6 +124,8 @@ private:
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }
 
+    bool isInteractiveContent() const final { return true; }
+
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
 

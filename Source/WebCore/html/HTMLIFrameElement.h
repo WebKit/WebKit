@@ -53,6 +53,8 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
+    bool isInteractiveContent() const final { return true; }
+
     bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 

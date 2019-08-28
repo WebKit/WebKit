@@ -626,6 +626,7 @@ private:
     void didFinishInsertingNode() override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void didRecalcStyle(Style::Change) override;
+    bool isInteractiveContent() const override;
 
     void willBecomeFullscreenElement() override;
     void willStopBeingFullscreenElement() override;

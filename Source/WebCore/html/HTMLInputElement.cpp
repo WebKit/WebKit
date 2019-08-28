@@ -450,6 +450,11 @@ bool HTMLInputElement::isMouseFocusable() const
     return m_inputType->isMouseFocusable();
 }
 
+bool HTMLInputElement::isInteractiveContent() const
+{
+    return m_inputType->isInteractiveContent();
+}
+
 bool HTMLInputElement::isTextFormControlFocusable() const
 {
     return HTMLTextFormControlElement::isFocusable();

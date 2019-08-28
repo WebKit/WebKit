@@ -156,6 +156,8 @@ private:
     HTMLImageElement& asHTMLElement() final { return *this; }
     const HTMLImageElement& asHTMLElement() const final { return *this; }
 
+    bool isInteractiveContent() const final;
+
     void selectImageSource();
 
     ImageCandidate bestFitSourceFromPictureElement();

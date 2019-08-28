@@ -90,6 +90,8 @@ public:
     virtual FormNamedItem* asFormNamedItem();
     virtual FormAssociatedElement* asFormAssociatedElement();
 
+    virtual bool isInteractiveContent() const { return false; }
+
     bool hasTagName(const HTMLQualifiedName& name) const { return hasLocalName(name.localName()); }
 
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);

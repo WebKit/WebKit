@@ -90,6 +90,7 @@ private:
     String target() const override;
     int defaultTabIndex() const final;
     bool draggable() const final;
+    bool isInteractiveContent() const final;
 
     String effectiveTarget() const;
 

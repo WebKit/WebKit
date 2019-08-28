@@ -1,3 +1,62 @@
+2019-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unable to enter text in https://eat.fi
+        https://bugs.webkit.org/show_bug.cgi?id=193046
+
+        Reviewed by Ryosuke Niwa.
+
+        This is because the button element inside the label is receiving the click event, which causes the form to be
+        submitted. According to the spec we should do nothing in this case, because button element is considered to be
+        interactive content.
+
+        "The activation behavior of a label element for events targeted at interactive content descendants of a label
+        element, and any descendants of those interactive content descendants, must be to do nothing."
+        https://html.spec.whatwg.org/#the-label-element
+
+        This patch adds HTMLElement::isInteractiveContent() according to the HTML spec:
+
+        "Interactive content is content that is specifically intended for user interaction.
+        a (if the href attribute is present), audio (if the controls attribute is present), button, details, embed,
+        iframe, img (if the usemap attribute is present), input (if the type attribute is not in the Hidden state),
+        label, object (if the usemap attribute is present), select, textarea, video (if the controls attribute is
+        present)"
+        https://html.spec.whatwg.org/#interactive-content-2
+
+        That's used in HTMLLabelElement::defaultEventHandler() using the helper method
+        isEventTargetedAtInteractiveDescendants() to decide whether to simulate a click event or do nothing.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isInteractiveContent const):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLButtonElement.h:
+        * html/HTMLDetailsElement.h:
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::isInteractiveContent const):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isInteractiveContent const):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isInteractiveContent const):
+        * html/HTMLInputElement.h:
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::isEventTargetedAtInteractiveDescendants const):
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+        * html/HTMLLabelElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isInteractiveContent const):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isInteractiveContent const):
+        * html/HTMLObjectElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.h:
+        * html/HiddenInputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::isInteractiveContent const):
+        * html/InputType.h:
+
 2019-08-28  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Implement HSTS for the soup network backend

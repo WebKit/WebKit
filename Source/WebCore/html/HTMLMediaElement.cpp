@@ -803,6 +803,11 @@ bool HTMLMediaElement::isMouseFocusable() const
     return false;
 }
 
+bool HTMLMediaElement::isInteractiveContent() const
+{
+    return controls();
+}
+
 void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == srcAttr) {

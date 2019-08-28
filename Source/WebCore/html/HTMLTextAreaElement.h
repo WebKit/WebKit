@@ -98,6 +98,8 @@ private:
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }
 
+    bool isInteractiveContent() const final { return true; }
+
     const AtomString& formControlType() const final;
 
     FormControlState saveFormControlState() const final;

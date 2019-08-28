@@ -325,6 +325,11 @@ bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == dataAttr || attribute.name() == codebaseAttr || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#') || HTMLPlugInImageElement::isURLAttribute(attribute);
 }
 
+bool HTMLObjectElement::isInteractiveContent() const
+{
+    return hasAttributeWithoutSynchronization(usemapAttr);
+}
+
 const AtomString& HTMLObjectElement::imageSourceURL() const
 {
     return attributeWithoutSynchronization(dataAttr);

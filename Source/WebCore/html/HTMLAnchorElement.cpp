@@ -103,6 +103,11 @@ bool HTMLAnchorElement::isMouseFocusable() const
     return HTMLElement::isMouseFocusable();
 }
 
+bool HTMLAnchorElement::isInteractiveContent() const
+{
+    return isLink();
+}
+
 static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
 {
     if (!renderer)

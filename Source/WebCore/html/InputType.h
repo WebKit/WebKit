@@ -101,6 +101,7 @@ public:
     virtual bool isFileUpload() const;
     virtual bool isHiddenType() const;
     virtual bool isImageButton() const;
+    virtual bool isInteractiveContent() const;
     virtual bool supportLabels() const;
     virtual bool isMonthField() const;
     virtual bool isNumberField() const;

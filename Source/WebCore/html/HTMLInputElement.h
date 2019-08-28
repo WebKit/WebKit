@@ -375,6 +375,8 @@ private:
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
     bool shouldUseInputMethod() final;
 
+    bool isInteractiveContent() const final;
+
     bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
 
     bool canTriggerImplicitSubmission() const final { return isTextField(); }

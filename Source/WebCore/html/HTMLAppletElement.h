@@ -44,6 +44,8 @@ private:
     void updateWidget(CreatePlugins) final;
 
     bool canEmbedJava() const;
+
+    bool isInteractiveContent() const final { return true; }
 };
 
 } // namespace WebCore

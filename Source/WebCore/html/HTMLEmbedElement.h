@@ -43,6 +43,8 @@ private:
     bool isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
 
+    bool isInteractiveContent() const final { return true; }
+
     RenderWidget* renderWidgetLoadingPlugin() const final;
 
     void updateWidget(CreatePlugins) final;

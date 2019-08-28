@@ -111,6 +111,22 @@ void HTMLLabelElement::setHovered(bool over)
         element->setHovered(over);
 }
 
+bool HTMLLabelElement::isEventTargetedAtInteractiveDescendants(Event& event) const
+{
+    if (!is<Node>(event.target()))
+        return false;
+
+    auto& node = downcast<Node>(*event.target());
+    if (!containsIncludingShadowDOM(&node))
+        return false;
+
+    for (const auto* it = &node; it && it != this; it = it->parentElementInComposedTree()) {
+        if (is<HTMLElement>(it) && downcast<HTMLElement>(*it).isInteractiveContent())
+            return true;
+    }
+
+    return false;
+}
 void HTMLLabelElement::defaultEventHandler(Event& event)
 {
     static bool processingClick = false;
@@ -121,6 +137,15 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
         // If we can't find a control or if the control received the click
         // event, then there's no need for us to do anything.
         if (!control || (is<Node>(event.target()) && control->containsIncludingShadowDOM(&downcast<Node>(*event.target())))) {
+            HTMLElement::defaultEventHandler(event);
+            return;
+        }
+
+        // The activation behavior of a label element for events targeted at interactive
+        // content descendants of a label element, and any descendants of those interactive
+        // content descendants, must be to do nothing.
+        // https://html.spec.whatwg.org/#the-label-element
+        if (isEventTargetedAtInteractiveDescendants(event)) {
             HTMLElement::defaultEventHandler(event);
             return;
         }

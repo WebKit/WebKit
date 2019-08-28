@@ -797,6 +797,11 @@ bool InputType::isImageButton() const
     return false;
 }
 
+bool InputType::isInteractiveContent() const
+{
+    return true;
+}
+
 bool InputType::supportLabels() const
 {
     return true;

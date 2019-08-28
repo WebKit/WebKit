@@ -303,6 +303,11 @@ bool HTMLImageElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
+bool HTMLImageElement::isInteractiveContent() const
+{
+    return hasAttributeWithoutSynchronization(usemapAttr);
+}
+
 void HTMLImageElement::didAttachRenderers()
 {
     if (!is<RenderImage>(renderer()))
