@@ -179,7 +179,7 @@ IntSize SVGImage::containerSize() const
 }
 
 ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect,
-    const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode)
+    const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -203,7 +203,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 
     frameView()->scrollToFragment(initialFragmentURL);
 
-    ImageDrawResult result = draw(context, dstRect, scaledSrc, compositeOp, blendMode, DecodingMode::Synchronous, ImageOrientation::None);
+    ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
 
     setImageObserver(observer);
     return result;
@@ -222,7 +222,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame(const GraphicsContext*)
     if (!buffer) // failed to allocate image
         return nullptr;
 
-    draw(buffer->context(), rect(), rect(), CompositeSourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None);
+    draw(buffer->context(), rect(), rect());
 
     // FIXME: WK(Bug 113657): We should use DontCopyBackingStore here.
     return buffer->copyImage(CopyBackingStore)->nativeImageForCurrentFrame();
@@ -265,7 +265,7 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
 #endif
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, const ImagePaintingOptions& options)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerSize);
     zoomedContainerRect.scale(containerZoom);
@@ -282,7 +282,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(imageBufferSize.size()), 1, ColorSpaceSRGB, context);
     if (!buffer) // Failed to allocate buffer.
         return;
-    drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect, CompositeSourceOver, BlendMode::Normal);
+    drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
@@ -297,10 +297,10 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context.setDrawLuminanceMask(false);
-    image->drawPattern(context, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, compositeOp, blendMode);
+    image->drawPattern(context, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
-ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientation)
+ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -309,11 +309,11 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     ASSERT(view);
 
     GraphicsContextStateSaver stateSaver(context);
-    context.setCompositeOperation(compositeOp, blendMode);
+    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
     context.clip(enclosingIntRect(dstRect));
 
     float alpha = context.alpha();
-    bool compositingRequiresTransparencyLayer = compositeOp != CompositeSourceOver || blendMode != BlendMode::Normal || alpha < 1;
+    bool compositingRequiresTransparencyLayer = options.compositeOperator() != CompositeSourceOver || options.blendMode() != BlendMode::Normal || alpha < 1;
     if (compositingRequiresTransparencyLayer) {
         context.beginTransparencyLayer(alpha);
         context.setCompositeOperation(CompositeSourceOver, BlendMode::Normal);

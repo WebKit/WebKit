@@ -641,16 +641,16 @@ private:
 #if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 class DrawNativeImage : public DrawingItem {
 public:
-    static Ref<DrawNativeImage> create(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+    static Ref<DrawNativeImage> create(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
     {
-        return adoptRef(*new DrawNativeImage(image, imageSize, destRect, srcRect, op, blendMode, orientation));
+        return adoptRef(*new DrawNativeImage(image, imageSize, destRect, srcRect, options));
     }
 
     FloatRect source() const { return m_srcRect; }
     FloatRect destination() const { return m_destination; }
 
 private:
-    DrawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation);
+    DrawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
     void apply(GraphicsContext&) const override;
 
@@ -662,19 +662,15 @@ private:
     FloatSize m_imageSize;
     FloatRect m_destination;
     FloatRect m_srcRect;
-#if USE(CG)
-    CompositeOperator m_op;
-    BlendMode m_blendMode;
-#endif
-    ImageOrientation m_orientation;
+    ImagePaintingOptions m_options;
 };
 #endif
 
 class DrawPattern : public DrawingItem {
 public:
-    static Ref<DrawPattern> create(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+    static Ref<DrawPattern> create(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
     {
-        return adoptRef(*new DrawPattern(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode));
+        return adoptRef(*new DrawPattern(image, destRect, tileRect, patternTransform, phase, spacing, options));
     }
 
     const Image& image() const { return m_image.get(); }
@@ -685,7 +681,7 @@ public:
     FloatSize spacing() const { return m_spacing; }
 
 private:
-    DrawPattern(Image&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendMode::Normal);
+    DrawPattern(Image&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
 
     void apply(GraphicsContext&) const override;
 
@@ -697,8 +693,7 @@ private:
     FloatRect m_destination;
     FloatPoint m_phase;
     FloatSize m_spacing;
-    CompositeOperator m_op;
-    BlendMode m_blendMode;
+    ImagePaintingOptions m_options;
 };
 
 // Is DrawingItem because the size of the transparency layer is implicitly the clip bounds.

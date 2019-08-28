@@ -127,16 +127,16 @@ ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destinat
 }
 
 #if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
-void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawNativeImage::create(image, imageSize, destRect, srcRect, op, blendMode, orientation)));
+    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawNativeImage::create(image, imageSize, destRect, srcRect, options)));
     updateItemExtent(newItem);
 }
 #endif
 
-void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPattern::create(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode)));
+    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPattern::create(image, destRect, tileRect, patternTransform, phase, spacing, options)));
     updateItemExtent(newItem);
 }
 

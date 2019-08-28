@@ -2084,6 +2084,7 @@
 		72144332223EC85F00F12FF7 /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Private, ); }; };
 		72144333223EC8B000F12FF7 /* SVGProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EE5363223B2A2400FBA944 /* SVGProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72144334223EC91600F12FF7 /* SVGPropertyOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EE5360223B2A2100FBA944 /* SVGPropertyOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		72283F0E230B268C00F5D828 /* ImagePaintingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C18A3F230B04B7006847C7 /* ImagePaintingOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */ = {isa = PBXBuildFile; fileRef = 724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */; };
 		724EE5501DC80D7F00A91FFB /* ActivityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE54E1DC7F25B00A91FFB /* ActivityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		724EE5511DC80D8400A91FFB /* ActivityStateChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE54F1DC7F25B00A91FFB /* ActivityStateChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9419,6 +9420,7 @@
 		727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTsRGB.cpp; sourceTree = "<group>"; };
 		727AFED21A2EA6A0000442E8 /* EXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTsRGB.h; sourceTree = "<group>"; };
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTsRGB.idl; sourceTree = "<group>"; };
+		72C18A3F230B04B7006847C7 /* ImagePaintingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePaintingOptions.h; sourceTree = "<group>"; };
 		72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTsRGB.cpp; sourceTree = "<group>"; };
 		72E417621A2E8D2F004C562A /* JSEXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTsRGB.h; sourceTree = "<group>"; };
 		72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTFragDepth.cpp; sourceTree = "<group>"; };
@@ -24564,6 +24566,7 @@
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
+				72C18A3F230B04B7006847C7 /* ImagePaintingOptions.h */,
 				49291E4A134172C800E753DE /* ImageRenderingMode.h */,
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
@@ -29583,6 +29586,7 @@
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
+				72283F0E230B268C00F5D828 /* ImagePaintingOptions.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,
 				CD27AE5022A9868700947FF9 /* ImageRotationSessionVT.h in Headers */,

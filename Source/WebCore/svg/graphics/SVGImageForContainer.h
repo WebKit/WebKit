@@ -53,9 +53,9 @@ public:
         m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, DecodingMode, ImageOrientation) final;
+    ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { }) final;
 
-    void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, BlendMode) final;
+    void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions& = { }) final;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }

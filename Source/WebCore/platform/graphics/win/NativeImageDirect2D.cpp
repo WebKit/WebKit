@@ -78,7 +78,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return Color();
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientation orientation)
+void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions&)
 {
     auto platformContext = context.platformContext();
 

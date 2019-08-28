@@ -37,27 +37,27 @@ GraphicsContextImpl::~GraphicsContextImpl()
 {
 }
 
-ImageDrawResult GraphicsContextImpl::drawImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
+ImageDrawResult GraphicsContextImpl::drawImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
 {
-    InterpolationQualityMaintainer interpolationQualityForThisScope(context, imagePaintingOptions.m_interpolationQuality);
-    return image.draw(context, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_decodingMode, imagePaintingOptions.m_orientation);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(context, options.interpolationQuality());
+    return image.draw(context, destination, source, options);
 }
 
-ImageDrawResult GraphicsContextImpl::drawTiledImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
+ImageDrawResult GraphicsContextImpl::drawTiledImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    InterpolationQualityMaintainer interpolationQualityForThisScope(context, imagePaintingOptions.m_interpolationQuality);
-    return image.drawTiled(context, destination, source, tileSize, spacing, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_decodingMode, imagePaintingOptions.m_orientation);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(context, options.interpolationQuality());
+    return image.drawTiled(context, destination, source, tileSize, spacing, options);
 }
 
-ImageDrawResult GraphicsContextImpl::drawTiledImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
+ImageDrawResult GraphicsContextImpl::drawTiledImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& options)
 {
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.
-        return drawImageImpl(context, image, destination, source, imagePaintingOptions);
+        return drawImageImpl(context, image, destination, source, options);
     }
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(context, imagePaintingOptions.m_interpolationQuality);
-    return image.drawTiled(context, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions.m_compositeOperator);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(context, options.interpolationQuality());
+    return image.drawTiled(context, destination, source, tileScaleFactor, hRule, vRule, options.compositeOperator());
 }
 
 } // namespace WebCore

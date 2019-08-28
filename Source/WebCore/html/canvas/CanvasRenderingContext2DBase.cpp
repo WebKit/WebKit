@@ -1579,17 +1579,17 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     }
 
     if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, { op, blendMode });
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(op)) {
         fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op);
         didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
         clearCanvas();
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, { op, blendMode });
         didDrawEntireCanvas();
     } else {
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, { op, blendMode });
         didDraw(normalizedDstRect);
     }
     
@@ -1637,7 +1637,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLCanvasElement& sou
 #endif
 
     if (rectContainsCanvas(dstRect)) {
-        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
@@ -1646,15 +1646,15 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLCanvasElement& sou
         if (&sourceCanvas == &canvasBase()) {
             if (auto copy = buffer->copyRectToBuffer(srcRect, ColorSpaceSRGB, *c)) {
                 clearCanvas();
-                c->drawImageBuffer(*copy, dstRect, { { }, srcRect.size() }, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+                c->drawImageBuffer(*copy, dstRect, { { }, srcRect.size() }, { state().globalComposite, state().globalBlend });
             }
         } else {
             clearCanvas();
-            c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+            c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
         }
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
         didDraw(dstRect);
     }
 
@@ -1735,17 +1735,17 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     checkOrigin(&imageBitmap);
 
     if (rectContainsCanvas(dstRect)) {
-        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
         didDrawEntireCanvas();
     } else if (state().globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
         didDraw(dstRect);
     }
 
@@ -1834,14 +1834,14 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
     c->restore();
 }
 
-static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, const ImagePaintingOptions& options)
 {
-    context.drawImage(image, dest, src, op);
+    context.drawImage(image, dest, src, options);
 }
 
-static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, const ImagePaintingOptions& options)
 {
-    context.drawImageBuffer(imageBuffer, dest, src, op);
+    context.drawImageBuffer(imageBuffer, dest, src, options);
 }
 
 template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
@@ -1870,7 +1870,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     buffer->context().translate(-transformedAdjustedRect.location());
     buffer->context().translate(croppedOffset);
     buffer->context().concatCTM(effectiveTransform);
-    drawImageToContext(image, buffer->context(), adjustedDest, src, CompositeSourceOver);
+    drawImageToContext(image, buffer->context(), adjustedDest, src, { CompositeSourceOver });
 
     compositeBuffer(*buffer, bufferRect, op);
 }

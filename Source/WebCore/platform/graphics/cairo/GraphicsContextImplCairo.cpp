@@ -276,17 +276,17 @@ ImageDrawResult GraphicsContextImplCairo::drawTiledImage(Image& image, const Flo
     return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
 }
 
-void GraphicsContextImplCairo::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContextImplCairo::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     UNUSED_PARAM(imageSize);
     auto& state = graphicsContext().state();
-    Cairo::drawNativeImage(m_platformContext, image.get(), destRect, srcRect, compositeOperator, blendMode, orientation, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
+    Cairo::drawNativeImage(m_platformContext, image.get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
 }
 
-void GraphicsContextImplCairo::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, CompositeOperator compositeOperator, BlendMode blendMode)
+void GraphicsContextImplCairo::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)
 {
     if (auto surface = image.nativeImageForCurrentFrame())
-        Cairo::drawPattern(m_platformContext, surface.get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
+        Cairo::drawPattern(m_platformContext, surface.get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options);
 }
 
 void GraphicsContextImplCairo::drawRect(const FloatRect& rect, float borderThickness)

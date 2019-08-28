@@ -1,3 +1,15 @@
+2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        All image drawing functions should take an argument of type ImagePaintingOptions
+        https://bugs.webkit.org/show_bug.cgi?id=201059
+
+        Reviewed by Simon Fraser.
+
+        GraphicsContext::drawImage() now takes an ImagePaintingOptions.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+
 2019-08-28  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 2)

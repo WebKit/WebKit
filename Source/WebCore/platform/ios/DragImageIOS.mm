@@ -96,7 +96,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
         GraphicsContext context(rendererContext.CGContext);
         context.translate(0, imageSize.height);
         context.scale({ adjustedImageScale, -adjustedImageScale });
-        context.drawImage(*image, FloatPoint(), ImagePaintingOptions(orientation));
+        context.drawImage(*image, FloatPoint(), { orientation });
     }];
     return imageCopy.CGImage;
 }

@@ -334,11 +334,11 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
     return image;
 }
 
-void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
+void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (!imageBuffer->m_data.surface) {
-        imageBuffer->draw(destContext, destRect, srcRect, op, blendMode);
+        imageBuffer->draw(destContext, destRect, srcRect, options);
         return;
     }
     
@@ -351,13 +351,13 @@ void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, Graphi
     
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(resolutionScale);
-    destContext.drawNativeImage(image.get(), backingStoreSize, destRect, adjustedSrcRect, op, blendMode);
+    destContext.drawNativeImage(image.get(), backingStoreSize, destRect, adjustedSrcRect, options);
 #else
-    imageBuffer->draw(destContext, destRect, srcRect, op, blendMode);
+    imageBuffer->draw(destContext, destRect, srcRect, options);
 #endif
 }
 
-void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
+void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     RetainPtr<CGImageRef> image;
     if (&destContext == &context() || destContext.isAcceleratedContext())
@@ -367,10 +367,10 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale);
-    destContext.drawNativeImage(image.get(), m_data.backingStoreSize, destRect, adjustedSrcRect, op, blendMode);
+    destContext.drawNativeImage(image.get(), m_data.backingStoreSize, destRect, adjustedSrcRect, options);
 }
 
-void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale);
@@ -378,14 +378,14 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& des
     if (!context().isAcceleratedContext()) {
         if (&destContext == &context() || destContext.isAcceleratedContext()) {
             if (RefPtr<Image> copy = copyImage(CopyBackingStore)) // Drawing into our own buffer, need to deep copy.
-                copy->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, op, blendMode);
+                copy->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
         } else {
             if (RefPtr<Image> imageForRendering = copyImage(DontCopyBackingStore))
-                imageForRendering->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, op, blendMode);
+                imageForRendering->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
         }
     } else {
         if (RefPtr<Image> copy = copyImage(CopyBackingStore))
-            copy->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, op, blendMode);
+            copy->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
     }
 }
 

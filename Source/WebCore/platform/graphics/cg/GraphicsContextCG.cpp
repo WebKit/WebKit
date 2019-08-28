@@ -273,13 +273,13 @@ void GraphicsContext::restorePlatformState()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
 
     if (m_impl) {
-        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, op, blendMode, orientation);
+        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, options);
         return;
     }
 
@@ -288,7 +288,7 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
 #endif
     RetainPtr<CGImageRef> subImage(image);
 
-    float currHeight = orientation.usesWidthAsHeight() ? CGImageGetWidth(subImage.get()) : CGImageGetHeight(subImage.get());
+    float currHeight = options.orientation().usesWidthAsHeight() ? CGImageGetWidth(subImage.get()) : CGImageGetHeight(subImage.get());
     if (currHeight <= srcRect.y())
         return;
 
@@ -358,15 +358,15 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
     adjustedDestRect = roundToDevicePixels(adjustedDestRect);
 #endif
 
-    setPlatformCompositeOperation(op, blendMode);
+    setPlatformCompositeOperation(options.compositeOperator(), options.blendMode());
 
     // ImageOrientation expects the origin to be at (0, 0)
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint());
 
-    if (orientation != ImageOrientation::None) {
-        CGContextConcatCTM(context, orientation.transformFromDefault(adjustedDestRect.size()));
-        if (orientation.usesWidthAsHeight()) {
+    if (options.orientation() != ImageOrientation::None) {
+        CGContextConcatCTM(context, options.orientation().transformFromDefault(adjustedDestRect.size()));
+        if (options.orientation().usesWidthAsHeight()) {
             // The destination rect will have it's width and height already reversed for the orientation of
             // the image, as it was needed for page layout, so we need to reverse it back here.
             adjustedDestRect = FloatRect(adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.height(), adjustedDestRect.width());
@@ -408,13 +408,13 @@ static void patternReleaseCallback(void* info)
     });
 }
 
-void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (paintingDisabled() || !patternTransform.isInvertible())
         return;
 
     if (m_impl) {
-        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
+        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, options);
         return;
     }
 
@@ -422,7 +422,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     CGContextStateSaver stateSaver(context);
     CGContextClipToRect(context, destRect);
 
-    setPlatformCompositeOperation(op, blendMode);
+    setPlatformCompositeOperation(options.compositeOperator(), options.blendMode());
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
@@ -439,11 +439,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     float h = CGImageGetHeight(tileImage.get());
 
     RetainPtr<CGImageRef> subImage;
-#if PLATFORM(IOS_FAMILY)
-    FloatSize imageSize = image.originalSize();
-#else
     FloatSize imageSize = image.size();
-#endif
     if (tileRect.size() == imageSize)
         subImage = tileImage;
     else {

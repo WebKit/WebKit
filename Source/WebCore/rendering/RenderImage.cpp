@@ -469,7 +469,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                     centerY = 0;
                 imageOffset = LayoutSize(leftBorder + leftPad + centerX + missingImageBorderWidth, topBorder + topPad + centerY + missingImageBorderWidth);
 
-                context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), imageOrientation());
+                context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
                 errorPictureDrawn = true;
             }
 
@@ -632,7 +632,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
     auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
-    auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendMode::Normal, decodingMode, imageOrientation(), interpolation));
+    auto drawResult = paintInfo.context().drawImage(*img, rect, { compositeOperator, BlendMode::Normal, decodingMode, imageOrientation(), interpolation });
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
 

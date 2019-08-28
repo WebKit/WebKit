@@ -487,7 +487,7 @@ static TextStream& operator<<(TextStream& ts, const DrawTiledScaledImage& item)
 }
 
 #if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
-DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
     : DrawingItem(ItemType::DrawNativeImage)
 #if USE(CG)
     // FIXME: Need to store an image for Cairo.
@@ -496,23 +496,17 @@ DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& i
     , m_imageSize(imageSize)
     , m_destination(destRect)
     , m_srcRect(srcRect)
-#if USE(CG)
-    , m_op(op)
-    , m_blendMode(blendMode)
-#endif
-    , m_orientation(orientation)
+    , m_options(options)
 {
 #if !USE(CG)
     UNUSED_PARAM(image);
-    UNUSED_PARAM(op);
-    UNUSED_PARAM(blendMode);
 #endif
 }
 
 void DrawNativeImage::apply(GraphicsContext& context) const
 {
 #if USE(CG)
-    context.drawNativeImage(m_image, m_imageSize, m_destination, m_srcRect, m_op, m_blendMode, m_orientation);
+    context.drawNativeImage(m_image, m_imageSize, m_destination, m_srcRect, m_options);
 #else
     UNUSED_PARAM(context);
 #endif
@@ -528,7 +522,7 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
 }
 #endif
 
-DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
     : DrawingItem(ItemType::DrawPattern)
     , m_image(image)
     , m_patternTransform(patternTransform)
@@ -536,14 +530,13 @@ DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRec
     , m_destination(destRect)
     , m_phase(phase)
     , m_spacing(spacing)
-    , m_op(op)
-    , m_blendMode(blendMode)
+    , m_options(options)
 {
 }
 
 void DrawPattern::apply(GraphicsContext& context) const
 {
-    context.drawPattern(m_image.get(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_op, m_blendMode);
+    context.drawPattern(m_image.get(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPattern& item)

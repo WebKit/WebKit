@@ -2619,7 +2619,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     if (!graphicsContext)
         return;
 
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), renderImage.imageOrientation());
+    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
     info.image = sharedBitmap;
 }
 

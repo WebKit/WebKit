@@ -750,7 +750,7 @@ void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fill
 }
 
 
-void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& originalImageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState)
+void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& originalImageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
 {
     auto nativeImageSize = bitmapSize(image);
     COMPtr<ID2D1Bitmap> deviceBitmap;
@@ -759,10 +759,10 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image
         return;
 
     auto imageSize = bitmapSize(deviceBitmap.get());
-    drawNativeImage(platformContext, deviceBitmap.get(), imageSize, destRect, srcRect, compositeOperator, blendMode, orientation, imageInterpolationQuality, globalAlpha, shadowState);
+    drawNativeImage(platformContext, deviceBitmap.get(), imageSize, destRect, srcRect, options, globalAlpha, shadowState);
 }
 
-void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState)
+void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
 {
     auto bitmapSize = image->GetSize();
 
@@ -794,16 +794,16 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* imag
     if (!shouldUseSubimage && currHeight < imageSize.height())
         adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / imageSize.height());
 
-    State::setCompositeOperation(platformContext, compositeOperator, blendMode);
+    State::setCompositeOperation(platformContext, options.compositeOperator(), options.blendMode());
 
     // ImageOrientation expects the origin to be at (0, 0).
     transform.translate(adjustedDestRect.x(), adjustedDestRect.y());
     context->SetTransform(transform);
     adjustedDestRect.setLocation(FloatPoint());
 
-    if (orientation != ImageOrientation::None) {
-        concatCTM(platformContext, orientation.transformFromDefault(adjustedDestRect.size()));
-        if (orientation.usesWidthAsHeight()) {
+    if (options.orientation() != ImageOrientation::None) {
+        concatCTM(platformContext, options.orientation().transformFromDefault(adjustedDestRect.size()));
+        if (options.orientation().usesWidthAsHeight()) {
             // The destination rect will have it's width and height already reversed for the orientation of
             // the image, as it was needed for page layout, so we need to reverse it back here.
             adjustedDestRect = FloatRect(adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.height(), adjustedDestRect.width());

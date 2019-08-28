@@ -270,8 +270,8 @@ void FEComposite::platformApplySoftware()
         IntRect adjustedDestinationRect = destinationRect - absolutePaintRect().location();
         IntRect sourceRect = destinationRect - in->absolutePaintRect().location();
         IntRect source2Rect = destinationRect - in2->absolutePaintRect().location();
-        filterContext.drawImageBuffer(*imageBuffer2, adjustedDestinationRect, source2Rect);
-        filterContext.drawImageBuffer(*imageBuffer, adjustedDestinationRect, sourceRect, CompositeSourceIn);
+        filterContext.drawImageBuffer(*imageBuffer2, FloatRect(adjustedDestinationRect), FloatRect(source2Rect));
+        filterContext.drawImageBuffer(*imageBuffer, FloatRect(adjustedDestinationRect), FloatRect(sourceRect), { CompositeSourceIn });
         break;
     }
     case FECOMPOSITE_OPERATOR_OUT:
