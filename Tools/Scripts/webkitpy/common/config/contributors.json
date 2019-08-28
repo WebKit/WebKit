@@ -263,7 +263,7 @@
       "nicks" : [
          "gskachkov"
       ],
-      "status" : "committer"
+      "status" : "contributor"
    },
    "Alex Christensen" : {
       "emails" : [
@@ -483,7 +483,7 @@
       "nicks" : [
          "kling"
       ],
-      "status" : "reviewer"
+      "status" : "contributor"
    },
    "Andrei Bucur" : {
       "emails" : [
@@ -1452,7 +1452,7 @@
       "nicks" : [
          "realdawei"
       ],
-      "status" : "committer"
+      "status" : "contributor"
    },
    "David Grogan" : {
       "emails" : [
@@ -1663,7 +1663,7 @@
       "nicks" : [
          "krit"
       ],
-      "status" : "reviewer"
+      "status" : "contributor"
    },
    "Dmitry Gorbik" : {
       "emails" : [
@@ -2241,7 +2241,7 @@
       "nicks" : [
          "kov"
       ],
-      "status" : "reviewer"
+      "status" : "contributor"
    },
    "Gwang Yoon Hwang" : {
       "emails" : [
@@ -2613,7 +2613,7 @@
       "nicks" : [
          "jmarcell"
       ],
-      "status" : "committer"
+      "status" : "contributor"
    },
    "Javier Fernandez" : {
       "emails" : [
@@ -4108,7 +4108,7 @@
       "nicks" : [
          "n_wang"
       ],
-      "status" : "reviewer"
+      "status" : "contributor"
    },
    "Naoki Takano" : {
       "emails" : [
@@ -4853,7 +4853,7 @@
       "emails" : [
          "sroberts@apple.com"
       ],
-      "status" : "committer"
+      "status" : "contributor"
    },
    "Shawn Singh" : {
       "emails" : [
@@ -5033,7 +5033,7 @@
       "nicks" : [
          "sukol"
       ],
-      "status" : "reviewer"
+      "status" : "contributor"
    },
    "Sungmann Cho" : {
       "emails" : [

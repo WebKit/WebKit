@@ -1,3 +1,9 @@
+2019-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Updating inactive contributors in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-08-28  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Auto-expand single configurations
