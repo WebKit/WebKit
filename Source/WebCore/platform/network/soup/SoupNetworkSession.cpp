@@ -197,7 +197,7 @@ void SoupNetworkSession::setupHSTSEnforcer()
             GUniquePtr<char> dbFilename(g_build_filename(storagePath.data(), "hsts-storage.sqlite", nullptr));
             enforcer = adoptGRef(soup_hsts_enforcer_db_new(dbFilename.get()));
         } else {
-            RELEASE_LOG_ERROR("Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", hstsStorageDirectory.data());
+            RELEASE_LOG_ERROR("Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", hstsStorageDirectory().data());
             enforcer = adoptGRef(soup_hsts_enforcer_new());
         }
     }
