@@ -1,3 +1,16 @@
+2019-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r243434): Wrong URL passed to WebKitWebView::load-failed when cancelling previous load
+        https://bugs.webkit.org/show_bug.cgi?id=201176
+
+        Reviewed by Žan Doberšek.
+
+        Use the current provisional/committed url when faking an error event, instead of the current active URI that can
+        be the pending api request of a new load.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewWillStartLoad):
+
 2019-08-28  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Implement HSTS for the soup network backend
