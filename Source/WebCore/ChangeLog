@@ -1,3 +1,49 @@
+2019-08-28  Austin Eng  <enga@chromium.org>
+
+        Create ANGLE EGL Context with all extensions disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=200900
+
+        Reviewed by Alex Christensen.
+
+        In WebGL, extensions must be explicitly requested before they are enabled.
+        Fixes the following WebGL conformance tests with the ANGLE backend
+        LayoutTests/webgl/*/conformance/extensions/ext-blend-minmax.html
+        LayoutTests/webgl/*/conformance/extensions/ext-frag-depth.html
+        LayoutTests/webgl/*/conformance/extensions/ext-shader-texture-lod.html
+        LayoutTests/webgl/*/conformance/extensions/ext-sRGB.html
+        LayoutTests/webgl/*/conformance/extensions/oes-standard-derivatives.html
+        LayoutTests/webgl/*/conformance/extensions/oes-texture-float.html
+        LayoutTests/webgl/*/conformance/extensions/webgl-compressed-texture-s3tc.html
+        LayoutTests/webgl/*/conformance/glsl/misc/shader-with-dfdx.frag.html
+        LayoutTests/webgl/*/conformance/glsl/variables/glsl-built-ins.html
+        LayoutTests/webgl/*/conformance/textures/misc/texture-npot-video.html
+        LayoutTests/webgl/*/conformance/textures/misc/texture-npot.html
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::ANGLEInstancedArrays):
+        (WebCore::ANGLEInstancedArrays::supported):
+        * html/canvas/WebGLCompressedTextureASTC.cpp:
+        (WebCore::WebGLCompressedTextureASTC::WebGLCompressedTextureASTC):
+        * html/canvas/WebGLCompressedTextureATC.cpp:
+        (WebCore::WebGLCompressedTextureATC::WebGLCompressedTextureATC):
+        * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+        (WebCore::WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC):
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        (WebCore::WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC):
+        (WebCore::WebGLCompressedTextureS3TC::supported):
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::WebGLDebugShaders):
+        * html/canvas/WebGLDepthTexture.cpp:
+        (WebCore::WebGLDepthTexture::WebGLDepthTexture):
+        * html/canvas/WebGLDrawBuffers.cpp:
+        (WebCore::WebGLDrawBuffers::WebGLDrawBuffers):
+        (WebCore::WebGLDrawBuffers::supported):
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::validateDepthStencil):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         All image drawing functions should take an argument of type ImagePaintingOptions

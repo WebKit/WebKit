@@ -35,6 +35,7 @@ namespace WebCore {
 WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_EXT_draw_buffers");
 }
 
 WebGLDrawBuffers::~WebGLDrawBuffers() = default;
@@ -46,8 +47,12 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
 
 bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 {
+#if USE(ANGLE)
+    return context.graphicsContext3D()->getExtensions().supports("GL_EXT_draw_buffers");
+#else
     return context.graphicsContext3D()->getExtensions().supports("GL_EXT_draw_buffers")
         && satisfiesWebGLRequirements(context);
+#endif
 }
 
 void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GC3Denum>& buffers)

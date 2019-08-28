@@ -38,6 +38,7 @@ namespace WebCore {
 WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_ANGLE_translated_shader_source");
 }
 
 WebGLDebugShaders::~WebGLDebugShaders() = default;

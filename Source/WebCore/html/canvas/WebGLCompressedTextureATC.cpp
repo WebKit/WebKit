@@ -36,6 +36,8 @@ namespace WebCore {
 WebGLCompressedTextureATC::WebGLCompressedTextureATC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_AMD_compressed_ATC_texture");
+
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_ATC_RGB_AMD);
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD);
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD);

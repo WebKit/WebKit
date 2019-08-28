@@ -145,7 +145,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
         Extensions3D& extensions = getExtensions();
         // Use a 24 bit depth buffer where we know we have it.
-        if (extensions.supports("GL_OES_packed_depth_stencil"))
+        if (extensions.supports(packedDepthStencilExtensionName))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
         else
             internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
@@ -392,13 +392,10 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
 void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExtension)
 {
-    // Note there are no Extensions3D::ensureEnabled calls here. The ANGLE
-    // backend currently assumes at a fairly deep level that
-    // EGL_EXTENSIONS_ENABLED_ANGLE is set to true during context creation: for
-    // the allocation of rectangular textures, etc.
     Extensions3D& extensions = getExtensions();
     if (m_attrs.stencil) {
         if (extensions.supports(packedDepthStencilExtension)) {
+            extensions.ensureEnabled(packedDepthStencilExtension);
             // Force depth if stencil is true.
             m_attrs.depth = true;
         } else
@@ -409,6 +406,11 @@ void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExten
         // FIXME: must adjust this when upgrading to WebGL 2.0 / OpenGL ES 3.0 support.
         if (!extensions.supports("GL_ANGLE_framebuffer_multisample") || !extensions.supports("GL_ANGLE_framebuffer_blit") || !extensions.supports("GL_OES_rgb8_rgba8") || isGLES2Compliant())
             m_attrs.antialias = false;
+        else {
+            extensions.ensureEnabled("GL_ANGLE_framebuffer_multisample");
+            extensions.ensureEnabled("GL_ANGLE_framebuffer_blit");
+            extensions.ensureEnabled("GL_OES_rgb8_rgba8");
+        }
     }
 }
 

@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 #include "ANGLEInstancedArrays.h"
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || USE(ANGLE)
 #include "Extensions3D.h"
 #endif
 
@@ -37,6 +37,9 @@ namespace WebCore {
 ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+#if USE(ANGLE)
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_ANGLE_instanced_arrays");
+#endif
 }
 
 ANGLEInstancedArrays::~ANGLEInstancedArrays() = default;
@@ -49,8 +52,12 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
 bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase& context)
 {
 #if PLATFORM(COCOA)
+#if USE(ANGLE)
+    return context.graphicsContext3D()->getExtensions().supports("GL_ANGLE_instanced_arrays");
+#else
     UNUSED_PARAM(context);
     return true;
+#endif
 #elif PLATFORM(GTK)
     return context.graphicsContext3D()->getExtensions().supports("GL_ANGLE_instanced_arrays");
 #else

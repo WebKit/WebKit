@@ -36,6 +36,8 @@ namespace WebCore {
 WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_OES_depth_texture");
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_ARB_depth_texture");
 }
 
 WebGLDepthTexture::~WebGLDepthTexture() = default;

@@ -37,6 +37,8 @@ namespace WebCore {
 WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_IMG_texture_compression_pvrtc");
+
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG);
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG);

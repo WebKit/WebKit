@@ -329,8 +329,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     contextAttributes.push_back(2);
     contextAttributes.push_back(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
-    contextAttributes.push_back(EGL_EXTENSIONS_ENABLED_ANGLE);
-    contextAttributes.push_back(EGL_TRUE);
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         contextAttributes.push_back(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
@@ -347,6 +345,31 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     LOG(WebGL, "Got EGLContext");
 
     EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+
+    static constexpr const char* requiredExtensions[] = {
+        "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures
+        "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface
+    };
+
+    static constexpr const char* optionalExtensions[] = {
+        "GL_EXT_debug_marker",
+    };
+
+    Extensions3D& extensions = getExtensions();
+
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(requiredExtensions); ++i) {
+        if (!extensions.supports(requiredExtensions[i])) {
+            LOG(WebGL, "Missing required extension.");
+            return;
+        }
+
+        extensions.ensureEnabled(requiredExtensions[i]);
+    }
+
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(optionalExtensions); ++i) {
+        if (extensions.supports(optionalExtensions[i]))
+            extensions.ensureEnabled(optionalExtensions[i]);
+    }
 
 #endif // #elif USE(ANGLE)
 
