@@ -1,3 +1,20 @@
+2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG2: Add length, item getter and item setter to all SVG lists
+        https://bugs.webkit.org/show_bug.cgi?id=199526
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/polyline-points-crash-expected.txt:
+        * svg/dom/SVGLengthList-basics-expected.txt:
+        * svg/dom/SVGLengthList-length-indexed-access-expected.txt: Added.
+        * svg/dom/SVGLengthList-length-indexed-access.xhtml: Added.
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGPathSegList-length-indexed-access-expected.txt: Added.
+        * svg/dom/SVGPathSegList-length-indexed-access.xhtml: Added.
+        * svg/dom/SVGPointList-basics-expected.txt:
+        * svg/dom/SVGTransformList-basics-expected.txt:
+
 2019-08-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Make FrameLoader::open() set outgoing referrer properly

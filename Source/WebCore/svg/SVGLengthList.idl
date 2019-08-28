@@ -27,13 +27,15 @@
 [
     SkipVTableValidation
 ] interface SVGLengthList {
+    readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
     [MayThrowException] void clear();
-    [MayThrowException] SVGLength initialize(SVGLength item);
-    [MayThrowException] SVGLength getItem(unsigned long index);
-    [MayThrowException] SVGLength insertItemBefore(SVGLength item, unsigned long index);
-    [MayThrowException] SVGLength replaceItem(SVGLength item, unsigned long index);
+    [MayThrowException] SVGLength initialize(SVGLength newItem);
+    [MayThrowException] getter SVGLength getItem(unsigned long index);
+    [MayThrowException] SVGLength insertItemBefore(SVGLength newItem, unsigned long index);
+    [MayThrowException] SVGLength replaceItem(SVGLength newItem, unsigned long index);
     [MayThrowException] SVGLength removeItem(unsigned long index);
-    [MayThrowException] SVGLength appendItem(SVGLength item);
+    [MayThrowException] SVGLength appendItem(SVGLength newItem);
+    [MayThrowException] setter void (unsigned long index, SVGLength newItem);
 };

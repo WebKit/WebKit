@@ -1,2 +1,2 @@
-Caught exception: TypeError: Argument 1 ('item') to SVGPointList.appendItem must be an instance of SVGPoint
+Caught exception: TypeError: Argument 1 ('newItem') to SVGPointList.appendItem must be an instance of SVGPoint
 PASSED -- WebKit did not crash!

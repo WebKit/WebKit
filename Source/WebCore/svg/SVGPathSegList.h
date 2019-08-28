@@ -58,6 +58,9 @@ public:
         return *this;
     }
 
+    // Override SVGList::length() because numberOfItems() isn't virtual.
+    unsigned length() const { return numberOfItems(); }
+
     unsigned numberOfItems() const
     {
         const_cast<SVGPathSegList*>(this)->ensureItems();
@@ -109,6 +112,15 @@ public:
         appendPathSegToPathByteStream(newItem);
         clearPath();
         return Base::appendItem(WTFMove(newItem));
+    }
+
+    // Override SVGList::setItem() because replaceItem() isn't virtual.
+    ExceptionOr<void> setItem(unsigned index, Ref<SVGPathSeg>&& newItem)
+    {
+        auto result = replaceItem(WTFMove(newItem), index);
+        if (result.hasException())
+            return result.releaseException();
+        return { };
     }
 
     const SVGPathByteStream& pathByteStream() const { return const_cast<SVGPathSegList*>(this)->pathByteStream(); }

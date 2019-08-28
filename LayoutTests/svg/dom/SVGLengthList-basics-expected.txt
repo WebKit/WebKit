@@ -12,10 +12,10 @@ PASS text1.x.baseVal.getItem(1).value is 1000
 PASS text1.x.baseVal.getItem(2).value is 1500
 
 Test uncommon arguments for initialize()
-PASS text1.x.baseVal.initialize(30) threw exception TypeError: Argument 1 ('item') to SVGLengthList.initialize must be an instance of SVGLength.
-PASS text1.x.baseVal.initialize('aString') threw exception TypeError: Argument 1 ('item') to SVGLengthList.initialize must be an instance of SVGLength.
-PASS text1.x.baseVal.initialize(text1) threw exception TypeError: Argument 1 ('item') to SVGLengthList.initialize must be an instance of SVGLength.
-PASS text1.x.baseVal.initialize(null) threw exception TypeError: Argument 1 ('item') to SVGLengthList.initialize must be an instance of SVGLength.
+PASS text1.x.baseVal.initialize(30) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.initialize must be an instance of SVGLength.
+PASS text1.x.baseVal.initialize('aString') threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.initialize must be an instance of SVGLength.
+PASS text1.x.baseVal.initialize(text1) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.initialize must be an instance of SVGLength.
+PASS text1.x.baseVal.initialize(null) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.initialize must be an instance of SVGLength.
 
 Test uncommon arguments for getItem()
 PASS text1.x.baseVal.getItem(30) threw exception IndexSizeError: The index is not in the allowed range..
@@ -56,10 +56,10 @@ PASS text1.x.baseVal.getItem(0).value is 500
 PASS text1.x.baseVal.getItem(1).value is 1000
 PASS text1.x.baseVal.getItem(2).value is 1500
 PASS text1.getAttribute('x') is "500 1000 1500"
-PASS text1.x.baseVal.insertItemBefore(30, 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
-PASS text1.x.baseVal.insertItemBefore('aString', 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
-PASS text1.x.baseVal.insertItemBefore(text1, 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
-PASS text1.x.baseVal.insertItemBefore(null, 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
+PASS text1.x.baseVal.insertItemBefore(30, 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
+PASS text1.x.baseVal.insertItemBefore('aString', 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
+PASS text1.x.baseVal.insertItemBefore(text1, 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
+PASS text1.x.baseVal.insertItemBefore(null, 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.insertItemBefore must be an instance of SVGLength.
 
 Set x='1 2 3 4' for text1
 PASS text1.setAttribute('x', '1 2 3 4') is undefined.
@@ -89,10 +89,10 @@ PASS text1.x.baseVal.replaceItem(30) threw exception TypeError: Not enough argum
 PASS text1.x.baseVal.replaceItem('aString') threw exception TypeError: Not enough arguments.
 PASS text1.x.baseVal.replaceItem(text1) threw exception TypeError: Not enough arguments.
 PASS text1.x.baseVal.replaceItem(null) threw exception TypeError: Not enough arguments.
-PASS text1.x.baseVal.replaceItem(30, 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.replaceItem must be an instance of SVGLength.
-PASS text1.x.baseVal.replaceItem('aString', 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.replaceItem must be an instance of SVGLength.
-PASS text1.x.baseVal.replaceItem(text1, 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.replaceItem must be an instance of SVGLength.
-PASS text1.x.baseVal.replaceItem(null, 0) threw exception TypeError: Argument 1 ('item') to SVGLengthList.replaceItem must be an instance of SVGLength.
+PASS text1.x.baseVal.replaceItem(30, 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.replaceItem must be an instance of SVGLength.
+PASS text1.x.baseVal.replaceItem('aString', 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.replaceItem must be an instance of SVGLength.
+PASS text1.x.baseVal.replaceItem(text1, 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.replaceItem must be an instance of SVGLength.
+PASS text1.x.baseVal.replaceItem(null, 0) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.replaceItem must be an instance of SVGLength.
 PASS text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 0) is text1.x.baseVal.getItem(0)
 PASS text1.x.baseVal.numberOfItems is 4
 PASS text1.x.baseVal.getItem(0).value is 1
@@ -161,10 +161,10 @@ PASS text1.x.baseVal.getItem(1).value is 4
 PASS text1.getAttribute('x') is "3 4"
 
 Test uncommon arguments for appendItem()
-PASS text1.x.baseVal.appendItem(30) threw exception TypeError: Argument 1 ('item') to SVGLengthList.appendItem must be an instance of SVGLength.
-PASS text1.x.baseVal.appendItem('aString') threw exception TypeError: Argument 1 ('item') to SVGLengthList.appendItem must be an instance of SVGLength.
-PASS text1.x.baseVal.appendItem(text1) threw exception TypeError: Argument 1 ('item') to SVGLengthList.appendItem must be an instance of SVGLength.
-PASS text1.x.baseVal.appendItem(null) threw exception TypeError: Argument 1 ('item') to SVGLengthList.appendItem must be an instance of SVGLength.
+PASS text1.x.baseVal.appendItem(30) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.appendItem must be an instance of SVGLength.
+PASS text1.x.baseVal.appendItem('aString') threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.appendItem must be an instance of SVGLength.
+PASS text1.x.baseVal.appendItem(text1) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.appendItem must be an instance of SVGLength.
+PASS text1.x.baseVal.appendItem(null) threw exception TypeError: Argument 1 ('newItem') to SVGLengthList.appendItem must be an instance of SVGLength.
 
 Testing animVal clear throws
 PASS text1.x.animVal.clear() threw exception NoModificationAllowedError: The object can not be modified..

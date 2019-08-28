@@ -1,3 +1,29 @@
+2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG2: Add length, item getter and item setter to all SVG lists
+        https://bugs.webkit.org/show_bug.cgi?id=199526
+
+        Reviewed by Simon Fraser.
+
+        -- Implement the SVG2 specs for SVG lists:
+        https://svgwg.org/svg2-draft/types.html#TermListInterface.
+
+        -- Match the arguments' names in the IDL files with the specs.
+
+        Tests: svg/dom/SVGLengthList-length-indexed-access.xhtml
+               svg/dom/SVGPathSegList-length-indexed-access.xhtml
+
+        * svg/SVGLengthList.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPathSegList.h:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGTransformList.idl:
+        * svg/properties/SVGList.h:
+        (WebCore::SVGList::length const):
+        (WebCore::SVGList::setItem):
+
 2019-08-27  John Wilander  <wilander@apple.com>  and  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Make FrameLoader::open() set outgoing referrer properly

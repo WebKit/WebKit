@@ -33,6 +33,8 @@ namespace WebCore {
 template<typename ItemType>
 class SVGList : public SVGProperty {
 public:
+    unsigned length() const { return numberOfItems(); }
+
     unsigned numberOfItems() const
     {
         return m_items.size();
@@ -125,6 +127,14 @@ public:
         auto item = append(WTFMove(newItem));
         commitChange();
         return item;
+    }
+
+    ExceptionOr<void> setItem(unsigned index, ItemType&& newItem)
+    {
+        auto result = replaceItem(WTFMove(newItem), index);
+        if (result.hasException())
+            return result.releaseException();
+        return { };
     }
 
     // Parsers and animators need to have a direct access to the items.
