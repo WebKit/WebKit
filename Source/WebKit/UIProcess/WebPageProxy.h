@@ -385,7 +385,7 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #endif
     , public CanMakeWeakPtr<WebPageProxy> {
 public:
-    static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, WebCore::PageIdentifier, Ref<API::PageConfiguration>&&);
+    static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
 
     static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
@@ -1570,7 +1570,7 @@ public:
 #endif
 
 private:
-    WebPageProxy(PageClient&, WebProcessProxy&, WebCore::PageIdentifier, Ref<API::PageConfiguration>&&);
+    WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
 
     void notifyProcessPoolToPrewarm();
@@ -2113,6 +2113,7 @@ private:
 
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
 
+    const WebCore::PageIdentifier m_pageID;
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
@@ -2351,8 +2352,6 @@ private:
 #if PLATFORM(COCOA)
     RefPtr<WebCore::ValidationBubble> m_validationBubble;
 #endif
-
-    const WebCore::PageIdentifier m_pageID;
 
     bool m_isPageSuspended { false };
     bool m_addsVisitedLinks { true };

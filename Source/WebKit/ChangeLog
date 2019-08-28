@@ -1,3 +1,24 @@
+2019-08-28  Chris Dumez  <cdumez@apple.com>
+
+        Have WebPageProxy generate the page identifier by itself
+        https://bugs.webkit.org/show_bug.cgi?id=201223
+
+        Reviewed by Ryosuke Niwa.
+
+        Have WebPageProxy generate the page identifier by itself instead of
+        having the WebProcessProxy do it.
+
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::m_serviceWorkerPageID):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::generatePageID): Deleted.
+        * UIProcess/WebProcessProxy.h:
+
 2019-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r243434): Wrong URL passed to WebKitWebView::load-failed when cancelling previous load

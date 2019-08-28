@@ -110,11 +110,6 @@ WebProcessProxy* WebProcessProxy::processForIdentifier(ProcessIdentifier identif
     return allProcesses().get(identifier);
 }
 
-PageIdentifier WebProcessProxy::generatePageID()
-{
-    return PageIdentifier::generate();
-}
-
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
 {
     ASSERT(isMainThreadOrCheckDisabled());
@@ -389,8 +384,7 @@ void WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Object* message
 
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
-    auto pageID = generatePageID();
-    Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTFMove(pageConfiguration));
+    Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, WTFMove(pageConfiguration));
 
     addExistingWebPage(webPage.get(), BeginsUsingDataStore::Yes);
 
