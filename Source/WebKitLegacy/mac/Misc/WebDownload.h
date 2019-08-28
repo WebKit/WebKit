@@ -34,7 +34,7 @@
 
 #if (defined TARGET_OS_IOSMAC && TARGET_OS_IOSMAC) || (defined(TARGET_OS_WATCH) && TARGET_OS_WATCH)
 #import <CFNetwork/CFNSURLConnection.h>
-#elif !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
+#elif !TARGET_OS_IPHONE || (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000) || (defined(USE_APPLE_INTERNAL_SDK) && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
 #import <WebKitLegacy/NSURLDownloadSPI.h>
