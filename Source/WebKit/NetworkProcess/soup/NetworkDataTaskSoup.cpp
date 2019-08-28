@@ -38,6 +38,7 @@
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/PublicSuffix.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <WebCore/TextEncoding.h>
@@ -147,6 +148,13 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
 #endif
     }
 
+#if SOUP_CHECK_VERSION(2, 67, 1)
+    if ((m_currentRequest.url().protocolIs("https") && !shouldAllowHSTSPolicySetting()) || (m_currentRequest.url().protocolIs("http") && !shouldAllowHSTSProtocolUpgrade()))
+        soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_HSTS_ENFORCER);
+    else
+        g_signal_connect(soup_session_get_feature(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), SOUP_TYPE_HSTS_ENFORCER), "hsts-enforced", G_CALLBACK(hstsEnforced), this);
+#endif
+
     // Make sure we have an Accept header for subresources; some sites want this to serve some of their subresources.
     if (!soup_message_headers_get_one(soupMessage->request_headers, "Accept"))
         soup_message_headers_append(soupMessage->request_headers, "Accept", "*/*");
@@ -192,8 +200,12 @@ void NetworkDataTaskSoup::clearRequest()
             soup_session_cancel_message(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
         m_soupMessage = nullptr;
     }
-    if (m_session)
+    if (m_session) {
         g_signal_handlers_disconnect_matched(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#if SOUP_CHECK_VERSION(2, 67, 1)
+        g_signal_handlers_disconnect_by_data(soup_session_get_feature(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), SOUP_TYPE_HSTS_ENFORCER), this);
+#endif
+    }
 }
 
 void NetworkDataTaskSoup::resume()
@@ -1059,6 +1071,45 @@ void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkData
     ASSERT(task->m_soupMessage.get() == soupMessage);
     task->didStartRequest();
 }
+
+#if SOUP_CHECK_VERSION(2, 67, 1)
+bool NetworkDataTaskSoup::shouldAllowHSTSPolicySetting() const
+{
+    // Follow Apple's HSTS abuse mitigation 1:
+    //  "Limit HSTS State to the Hostname, or the Top Level Domain + 1"
+    if (isTopLevelNavigation() || hostsAreEqual(m_currentRequest.url(), m_currentRequest.firstPartyForCookies()) || isPublicSuffix(m_currentRequest.url().host().toStringWithoutCopying()))
+        return true;
+
+    return false;
+}
+
+bool NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade() const
+{
+    // Follow Apple's HSTS abuse mitgation 2:
+    // "Ignore HSTS State for Subresource Requests to Blocked Domains"
+    if (!isTopLevelNavigation() && !m_currentRequest.allowCookies())
+        return false;
+
+    return true;
+}
+
+void NetworkDataTaskSoup::protocolUpgradedViaHSTS(SoupMessage* soupMessage)
+{
+    m_response = ResourceResponse::syntheticRedirectResponse(m_currentRequest.url(), soupURIToURL(soup_message_get_uri(soupMessage)));
+    continueHTTPRedirection();
+}
+
+void NetworkDataTaskSoup::hstsEnforced(SoupHSTSEnforcer*, SoupMessage* soupMessage, NetworkDataTaskSoup* task)
+{
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return;
+    }
+
+    if (soupMessage == task->m_soupMessage.get())
+        task->protocolUpgradedViaHSTS(soupMessage);
+}
+#endif
 
 void NetworkDataTaskSoup::didStartRequest()
 {

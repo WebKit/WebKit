@@ -95,6 +95,24 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
     return builder.toString().utf8();
 }
 
+void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& storageSession, HashSet<String>& hostNames)
+{
+    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(storageSession.sessionID()));
+    session->soupNetworkSession().getHostNamesWithHSTSCache(hostNames);
+}
+
+void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& storageSession, const Vector<String>& hostNames)
+{
+    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(storageSession.sessionID()));
+    session->soupNetworkSession().deleteHSTSCacheForHostNames(hostNames);
+}
+
+void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& storageSession, WallTime modifiedSince)
+{
+    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(storageSession.sessionID()));
+    session->soupNetworkSession().clearHSTSCache(modifiedSince);
+}
+
 void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
 {
     auto acceptLanguages = buildAcceptLanguages(languages);
@@ -129,6 +147,12 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         userPreferredLanguagesChanged(parameters.languages);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
+
+    if (!parameters.hstsStorageDirectory.isEmpty())
+        SoupNetworkSession::setHSTSPersistentStorage(parameters.hstsStorageDirectory.utf8());
+    forEachNetworkSession([](const auto& session) {
+        static_cast<const NetworkSessionSoup&>(session).soupNetworkSession().setupHSTSEnforcer();
+    });
 }
 
 std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const

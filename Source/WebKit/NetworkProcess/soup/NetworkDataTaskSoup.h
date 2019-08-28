@@ -112,6 +112,12 @@ private:
 #else
     static void requestStartedCallback(SoupSession*, SoupMessage*, SoupSocket*, NetworkDataTaskSoup*);
 #endif
+#if SOUP_CHECK_VERSION(2, 67, 1)
+    bool shouldAllowHSTSPolicySetting() const;
+    bool shouldAllowHSTSProtocolUpgrade() const;
+    void protocolUpgradedViaHSTS(SoupMessage*);
+    static void hstsEnforced(SoupHSTSEnforcer*, SoupMessage*, NetworkDataTaskSoup*);
+#endif
     void didStartRequest();
     static void restartedCallback(SoupMessage*, NetworkDataTaskSoup*);
     void didRestart();

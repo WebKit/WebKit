@@ -84,6 +84,7 @@ enum {
     PROP_APPLICATION_CACHE_DIRECTORY,
     PROP_INDEXEDDB_DIRECTORY,
     PROP_WEBSQL_DIRECTORY,
+    PROP_HSTS_CACHE_DIRECTORY,
     PROP_IS_EPHEMERAL
 };
 
@@ -101,6 +102,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> applicationCacheDirectory;
     GUniquePtr<char> indexedDBDirectory;
     GUniquePtr<char> webSQLDirectory;
+    GUniquePtr<char> hstsCacheDirectory;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     Vector<WebProcessPool*> processPools;
@@ -136,6 +138,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
         g_value_set_string(value, webkit_website_data_manager_get_websql_directory(manager));
         ALLOW_DEPRECATED_DECLARATIONS_END
         break;
+    case PROP_HSTS_CACHE_DIRECTORY:
+        g_value_set_string(value, webkit_website_data_manager_get_hsts_cache_directory(manager));
+        break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
         break;
@@ -170,6 +175,9 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_WEBSQL_DIRECTORY:
         manager->priv->webSQLDirectory.reset(g_value_dup_string(value));
         break;
+    case PROP_HSTS_CACHE_DIRECTORY:
+        manager->priv->hstsCacheDirectory.reset(g_value_dup_string(value));
+        break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = API::WebsiteDataStore::createNonPersistentDataStore();
@@ -198,6 +206,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
             priv->diskCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.get()));
         if (!priv->applicationCacheDirectory)
             priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "applications", nullptr));
+        if (!priv->hstsCacheDirectory)
+            priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.get()));
     }
 }
 
@@ -333,6 +343,23 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
     /**
+     * WebKitWebsiteDataManager:hsts-cache-directory:
+     *
+     * The directory where the HTTP Strict-Transport-Security (HSTS) cache will be stored.
+     *
+     * Since: 2.26
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_HSTS_CACHE_DIRECTORY,
+        g_param_spec_string(
+            "hsts-cache-directory",
+            _("HSTS Cache Directory"),
+            _("The directory where the HTTP Strict-Transport-Security cache will be stored"),
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
      * WebKitWebsiteDataManager:is-ephemeral:
      *
      * Whether the #WebKitWebsiteDataManager is ephemeral. An ephemeral #WebKitWebsiteDataManager
@@ -374,6 +401,8 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
             API::WebsiteDataStore::defaultApplicationCacheDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get()));
         configuration->setWebSQLDatabaseDirectory(!priv->webSQLDirectory ?
             API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get()));
+        configuration->setHSTSStorageDirectory(!priv->hstsCacheDirectory ?
+            API::WebsiteDataStore::defaultHSTSDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
         configuration->setMediaKeysStorageDirectory(API::WebsiteDataStore::defaultMediaKeysStorageDirectory());
         priv->websiteDataStore = API::WebsiteDataStore::createLegacy(WTFMove(configuration));
     }
@@ -613,6 +642,29 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
 }
 
 /**
+ * webkit_website_data_manager_get_hsts_cache_directory:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get the #WebKitWebsiteDataManager:hsts-cache-directory property.
+ *
+ * Returns: (allow-none): the directory where the HSTS cache is stored or %NULL if @manager is ephemeral.
+ *
+ * Since: 2.26
+ */
+const gchar* webkit_website_data_manager_get_hsts_cache_directory(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
+    if (!priv->hstsCacheDirectory)
+        priv->hstsCacheDirectory.reset(g_strdup(API::WebsiteDataStore::defaultHSTSDirectory().utf8().data()));
+    return priv->hstsCacheDirectory.get();
+}
+
+/**
  * webkit_website_data_manager_get_cookie_manager:
  * @manager: a #WebKitWebsiteDataManager
  *
@@ -649,6 +701,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::WebSQLDatabases);
     if (types & WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES)
         returnValue.add(WebsiteDataType::IndexedDBDatabases);
+    if (types & WEBKIT_WEBSITE_DATA_HSTS_CACHE)
+        returnValue.add(WebsiteDataType::HSTSCache);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
         returnValue.add(WebsiteDataType::PlugInData);

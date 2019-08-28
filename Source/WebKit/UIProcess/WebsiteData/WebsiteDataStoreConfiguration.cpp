@@ -50,6 +50,9 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
     copy->m_serviceWorkerRegistrationDirectory = this->m_serviceWorkerRegistrationDirectory;
     copy->m_webSQLDatabaseDirectory = this->m_webSQLDatabaseDirectory;
+#if USE(GLIB)
+    copy->m_hstsStorageDirectory = this->m_hstsStorageDirectory;
+#endif
     copy->m_localStorageDirectory = this->m_localStorageDirectory;
     copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
     copy->m_deviceIdHashSaltsStorageDirectory = this->m_deviceIdHashSaltsStorageDirectory;

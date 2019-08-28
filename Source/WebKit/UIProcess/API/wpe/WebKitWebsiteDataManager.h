@@ -90,6 +90,9 @@ webkit_website_data_manager_get_indexeddb_directory                   (WebKitWeb
 WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_websql_directory                      (WebKitWebsiteDataManager *manager);
 
+WEBKIT_API const gchar *
+webkit_website_data_manager_get_hsts_cache_directory                  (WebKitWebsiteDataManager *manager);
+
 WEBKIT_API WebKitCookieManager *
 webkit_website_data_manager_get_cookie_manager                        (WebKitWebsiteDataManager *manager);
 

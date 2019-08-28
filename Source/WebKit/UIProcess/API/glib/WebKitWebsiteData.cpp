@@ -73,6 +73,7 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
         WebsiteDataType::LocalStorage,
         WebsiteDataType::WebSQLDatabases,
         WebsiteDataType::IndexedDBDatabases,
+        WebsiteDataType::HSTSCache,
 #if ENABLE(NETSCAPE_PLUGIN_API)
         WebsiteDataType::PlugInData,
 #endif
@@ -98,6 +99,8 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES;
     if (types.contains(WebsiteDataType::IndexedDBDatabases))
         returnValue |= WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES;
+    if (types.contains(WebsiteDataType::HSTSCache))
+        returnValue |= WEBKIT_WEBSITE_DATA_HSTS_CACHE;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (types.contains(WebsiteDataType::PlugInData))
         returnValue |= WEBKIT_WEBSITE_DATA_PLUGIN_DATA;

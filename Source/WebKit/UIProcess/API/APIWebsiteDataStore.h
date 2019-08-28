@@ -66,6 +66,9 @@ public:
     static WTF::String defaultMediaKeysStorageDirectory();
     static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String defaultWebSQLDatabaseDirectory();
+#if USE(GLIB)
+    static WTF::String defaultHSTSDirectory();
+#endif
     static WTF::String defaultResourceLoadStatisticsDirectory();
     static WTF::String defaultJavaScriptConfigurationDirectory();
 

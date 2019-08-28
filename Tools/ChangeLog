@@ -1,3 +1,42 @@
+2019-08-02  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Implement HSTS for the soup network backend
+        https://bugs.webkit.org/show_bug.cgi?id=192074
+
+        Reviewed by Carlos Garcia Campos.
+
+        libsoup 2.67.1 introduced HSTS support via a SoupSessionFeature.
+        Add support to the soup network backend by adding the feature to
+        SoupNetworkSession and handling HSTS protocol upgrades, by
+        propagating the scheme change further to clients. This patch adds
+        the HSTS feature unconditionally, but it still possible to add
+        a boolean property to the web context class if desired.
+
+        Additionally, add API to the WebKitWebsiteDataManager to specify
+        the directory where the HSTS database is saved. If the directory
+        is not set or if the data manager is ephemeral, use a
+        non-persistent, memory only HSTS enforcer.
+
+        Implement as well the methods needed to clean-up and delete HSTS
+        policies from the storage and expose the feature in GTK+
+        MiniBrowser's about:data.
+
+        * MiniBrowser/gtk/main.c:
+        (gotWebsiteDataCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback):
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataEphemeral):
+        (prepopulateHstsData):
+        (testWebsiteDataHsts):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+        * gtk/jhbuild.modules: Bump libsoup to 2.67.91 for the new APIs
+        * wpe/jhbuild.modules: Ditto
+        * MiniBrowser/gtk/main.c:
+        (gotWebsiteDataCallback):
+
 2019-08-27  James Darpinian  <jdarpinian@google.com>
 
         Fix applying diffs that only change file mode

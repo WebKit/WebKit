@@ -193,10 +193,12 @@ public:
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
+    bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
+#endif
+#if PLATFORM(COCOA) || USE(SOUP)
     void getHostNamesWithHSTSCache(WebCore::NetworkStorageSession&, HashSet<String>&);
     void deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession&, const Vector<String>&);
     void clearHSTSCache(WebCore::NetworkStorageSession&, WallTime modifiedSince);
-    bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
 #endif
 
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);

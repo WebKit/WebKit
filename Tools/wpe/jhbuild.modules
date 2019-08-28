@@ -100,9 +100,9 @@
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/libsoup/2.67/libsoup-${version}.tar.xz" version="2.67.90"
+    <branch module="/pub/GNOME/sources/libsoup/2.67/libsoup-${version}.tar.xz" version="2.67.91"
             repo="ftp.gnome.org"
-            hash="sha256:303686002bd7d7bf93204eebe0d5ec9f5d57d071e3411e2304d6f8bcfa97ef79">
+            hash="sha256:390b5b28263d3bdf9866fa694346caa5e4bcb986e014e3383e9b6130b706f3da">
     </branch>
   </meson>
 

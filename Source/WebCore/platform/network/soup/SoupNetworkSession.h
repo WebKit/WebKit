@@ -57,6 +57,9 @@ public:
     void setCookieJar(SoupCookieJar*);
     SoupCookieJar* cookieJar() const;
 
+    static void setHSTSPersistentStorage(const CString& hstsStorageDirectory);
+    void setupHSTSEnforcer();
+
     static void clearOldSoupCache(const String& cacheDirectory);
 
     static void setProxySettings(const SoupNetworkProxySettings&);
@@ -72,10 +75,15 @@ public:
     static void setCustomProtocolRequestType(GType);
     void setupCustomProtocols();
 
+    void getHostNamesWithHSTSCache(HashSet<String>&);
+    void deleteHSTSCacheForHostNames(const Vector<String>&);
+    void clearHSTSCache(WallTime);
+
 private:
     void setupLogger();
 
     GRefPtr<SoupSession> m_soupSession;
+    PAL::SessionID m_sessionID;
 };
 
 } // namespace WebCore
