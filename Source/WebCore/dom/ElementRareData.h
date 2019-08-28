@@ -190,7 +190,8 @@ private:
 };
 
 inline ElementRareData::ElementRareData()
-    : m_tabIndex(0)
+    : NodeRareData(Type::Element)
+    , m_tabIndex(0)
     , m_childIndex(0)
     , m_tabIndexWasSetExplicitly(false)
 #if ENABLE(FULLSCREEN_API)
