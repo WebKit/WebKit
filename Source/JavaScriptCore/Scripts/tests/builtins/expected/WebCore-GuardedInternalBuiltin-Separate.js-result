@@ -68,8 +68,8 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 class GuardedInternalBuiltinBuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
-    explicit GuardedInternalBuiltinBuiltinsWrapper(JSC::VM* vm)
-        : m_vm(*vm)
+    explicit GuardedInternalBuiltinBuiltinsWrapper(JSC::VM& vm)
+        : m_vm(vm)
         WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
 #define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
         WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
@@ -106,7 +106,7 @@ inline JSC::UnlinkedFunctionExecutable* GuardedInternalBuiltinBuiltinsWrapper::n
     if (!m_##name##Executable) {\
         JSC::Identifier executableName = functionName##PublicName();\
         if (overriddenName)\
-            executableName = JSC::Identifier::fromString(&m_vm, overriddenName);\
+            executableName = JSC::Identifier::fromString(m_vm, overriddenName);\
         m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ConstructAbility), this, &m_##name##Executable);\
     }\
     return m_##name##Executable.get();\
