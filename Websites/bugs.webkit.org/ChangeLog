@@ -1,3 +1,12 @@
+2019-08-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Increase status-bubble iframe width on bugzilla comment review page
+        https://bugs.webkit.org/show_bug.cgi?id=201304
+
+        Reviewed by Jonathan Bedard.
+
+        * template/en/default/attachment/reviewform.html.tmpl: Increased the width from 400 to 700 pixels.
+
 2019-07-19  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] EWS status-bubbles are sometimes multi-row with scroll-bar
