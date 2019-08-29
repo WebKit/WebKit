@@ -122,8 +122,7 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
 {
     // Normally the available width for an in-flow block level box is the width of the containing block's content box.
     // However (and can't find it anywhere in the spec) non-floating positioned float avoider block level boxes are constrained by existing floats.
-    if (!layoutBox.isFloatAvoider() || layoutBox.isFloatingPositioned())
-        return { };
+    ASSERT(layoutBox.isFloatAvoider());
     auto& floatingState = floatingContext.floatingState();
     if (floatingState.isEmpty())
         return { };
@@ -163,7 +162,11 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     computeBorderAndPadding(layoutBox);
     computeStaticVerticalPosition(floatingContext, layoutBox);
 
-    computeWidthAndMargin(layoutBox, usedAvailableWidthForFloatAvoider(floatingContext, layoutBox));
+    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider;
+    auto horizontalAvailableSpaceIsConstrainedByExistingFloats = layoutBox.isFloatAvoider() && !layoutBox.isFloatingPositioned();
+    if (horizontalAvailableSpaceIsConstrainedByExistingFloats)
+        usedAvailableWidthForFloatAvoider = this->usedAvailableWidthForFloatAvoider(floatingContext, layoutBox);
+    computeWidthAndMargin(layoutBox, usedAvailableWidthForFloatAvoider);
     computeStaticHorizontalPosition(layoutBox);
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutState().createFormattingContext(layoutBox);

@@ -1,5 +1,19 @@
 2019-08-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] BlockFormattingContext::usedAvailableWidthForFloatAvoider should only be called on float avoiders.
+        https://bugs.webkit.org/show_bug.cgi?id=201238
+        <rdar://problem/54807663>
+
+        Reviewed by Antti Koivisto.
+
+        Make the horizontal available space logic for float avoiders more explicit/readable. 
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+
+2019-08-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Inline content logging should have some extra space for better readability
         https://bugs.webkit.org/show_bug.cgi?id=201236
         <rdar://problem/54807336>
