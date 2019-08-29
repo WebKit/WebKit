@@ -1,3 +1,20 @@
+2019-08-29  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Do not use makeWeakPtr from streaming thread.
+        https://bugs.webkit.org/show_bug.cgi?id=201220
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Test: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html
+
+        Recently some asserts were added that you can't create WeakPtr's
+        from streaming threads when the factory is created on the
+        main-thread. The fix is to eagerly create the WeakPtr at player
+        initialization time, rather than lazily when the streaming thread
+        first asks for it.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2019-08-29  Rob Buis  <rbuis@igalia.com>
 
         Address some MathML FIXMEs 
