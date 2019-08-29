@@ -1,5 +1,16 @@
 2019-08-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Inline content logging should have some extra space for better readability
+        https://bugs.webkit.org/show_bug.cgi?id=201236
+        <rdar://problem/54807336>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+
+2019-08-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Use the "complicated-cases" category for computing the TFC root's height
         https://bugs.webkit.org/show_bug.cgi?id=201230
         <rdar://problem/54806131>

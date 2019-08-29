@@ -250,8 +250,9 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
     auto& lineBoxes = inlineFormattingState.lineBoxes();
 
     unsigned printedCharacters = 0;
-    while (++printedCharacters <= depth * 3)
+    while (++printedCharacters <= depth * 2)
         stream << " ";
+    stream << "  ";
 
     stream << "lines are -> ";
     for (auto& lineBox : lineBoxes)
@@ -260,8 +261,9 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
 
     for (auto& inlineRun : inlineRuns) {
         unsigned printedCharacters = 0;
-        while (++printedCharacters <= depth * 3)
+        while (++printedCharacters <= depth * 2)
             stream << " ";
+        stream << "  ";
         if (inlineRun->textContext())
             stream << "inline text box";
         else
