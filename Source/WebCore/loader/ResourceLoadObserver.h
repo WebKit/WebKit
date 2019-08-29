@@ -29,6 +29,7 @@
 #include "PageIdentifier.h"
 #include "ResourceLoadStatistics.h"
 #include "Timer.h"
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -38,10 +39,6 @@ namespace WTF {
 class Lock;
 class WorkQueue;
 class WallTime;
-}
-
-namespace PAL {
-class SessionID;
 }
 
 namespace WebCore {
