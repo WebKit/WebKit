@@ -339,7 +339,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
 
     err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, &m_captureDeviceID, sizeof(m_captureDeviceID));
     if (err) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit capture device ID, error %d (%.4s)", this, (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit capture device ID %d, error %d (%.4s)", this, (int)m_captureDeviceID, (int)err, (char*)&err);
         return err;
     }
 #endif

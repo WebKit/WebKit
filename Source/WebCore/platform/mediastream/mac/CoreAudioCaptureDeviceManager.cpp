@@ -154,7 +154,7 @@ Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureD
 Optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID(const String& deviceID)
 {
     for (auto& device : coreAudioCaptureDevices()) {
-        if (device.persistentId() == deviceID)
+        if (device.persistentId() == deviceID && device.enabled())
             return device;
     }
     return WTF::nullopt;
