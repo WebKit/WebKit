@@ -145,7 +145,7 @@ public:
 
     bool containsImage(StyleImage&) const;
     bool imagesAreLoaded() const;
-    bool hasImage() const;
+    bool hasImage() const { return m_next ? hasImageInAnyLayer() : m_image; }
     bool hasFixedImage() const;
     bool hasOpaqueImage(const RenderElement&) const;
     bool hasRepeatXY() const;
@@ -175,6 +175,8 @@ private:
     friend class RenderStyle;
 
     void computeClipMax() const;
+
+    bool hasImageInAnyLayer() const;
 
     std::unique_ptr<FillLayer> m_next;
 
