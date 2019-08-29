@@ -108,7 +108,7 @@ inline Structure* Structure::storedPrototypeStructure() const
 
 ALWAYS_INLINE JSValue Structure::storedPrototype(const JSObject* object) const
 {
-    ASSERT(object->structure() == this);
+    ASSERT(!isMainThread() || object->structure() == this);
     if (hasMonoProto())
         return storedPrototype();
     return object->getDirect(knownPolyProtoOffset);
@@ -116,7 +116,7 @@ ALWAYS_INLINE JSValue Structure::storedPrototype(const JSObject* object) const
 
 ALWAYS_INLINE JSObject* Structure::storedPrototypeObject(const JSObject* object) const
 {
-    ASSERT(object->structure() == this);
+    ASSERT(!isMainThread() || object->structure() == this);
     if (hasMonoProto())
         return storedPrototypeObject();
     JSValue proto = object->getDirect(knownPolyProtoOffset);

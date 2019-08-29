@@ -6978,20 +6978,19 @@ private:
             results.append(m_out.anchor(m_out.intPtrZero));
         } else {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-            
-            bool prototypeChainIsSane = false;
+            Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure(vm());
+            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
+            WTF::loadLoadFence();
+
             if (globalObject->stringPrototypeChainIsSane()) {
                 // FIXME: This could be captured using a Speculation mode that means
                 // "out-of-bounds loads return a trivial value", something like
                 // SaneChainOutOfBounds.
                 // https://bugs.webkit.org/show_bug.cgi?id=144668
                 
-                m_graph.registerAndWatchStructureTransition(globalObject->stringPrototype()->structure(vm()));
-                m_graph.registerAndWatchStructureTransition(globalObject->objectPrototype()->structure(vm()));
+                m_graph.registerAndWatchStructureTransition(stringPrototypeStructure);
+                m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
 
-                prototypeChainIsSane = globalObject->stringPrototypeChainIsSane();
-            }
-            if (prototypeChainIsSane) {
                 LBasicBlock negativeIndex = m_out.newBlock();
                     
                 results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
