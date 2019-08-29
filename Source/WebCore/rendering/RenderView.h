@@ -68,7 +68,6 @@ public:
 
     FrameView& frameView() const { return m_frameView; }
 
-    LayoutRect visualOverflowRect() const override;
     Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const override;
     void repaintRootContents();
     void repaintViewRectangle(const LayoutRect&) const;
