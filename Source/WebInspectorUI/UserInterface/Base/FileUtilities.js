@@ -82,35 +82,43 @@ WI.FileUtilities = class FileUtilities {
         }
 
         let fileReader = new FileReader;
-        fileReader.readAsDataURL(saveData.content);
         fileReader.addEventListener("loadend", () => {
             let dataURLComponents = parseDataURL(fileReader.result);
 
             const base64Encoded = true;
             InspectorFrontendHost.save(suggestedName, dataURLComponents.data, base64Encoded, forceSaveAs || saveData.forceSaveAs);
         });
+        fileReader.readAsDataURL(saveData.content);
     }
 
     static importText(callback)
     {
-        let inputElement = document.createElement("input");
-        inputElement.type = "file";
-        inputElement.multiple = true;
-        inputElement.addEventListener("change", (event) => {
-            WI.FileUtilities.readText(inputElement.files, callback);
-        });
-        inputElement.click();
+        if (!FileUtilities._importTextInputElement) {
+            let inputElement = FileUtilities._importTextInputElement = document.createElement("input");
+            inputElement.type = "file";
+            inputElement.multiple = true;
+            inputElement.addEventListener("change", (event) => {
+                WI.FileUtilities.readText(inputElement.files, callback);
+            });
+        }
+
+        FileUtilities._importTextInputElement.value = null;
+        FileUtilities._importTextInputElement.click();
     }
 
     static importJSON(callback)
     {
-        let inputElement = document.createElement("input");
-        inputElement.type = "file";
-        inputElement.multiple = true;
-        inputElement.addEventListener("change", (event) => {
-            WI.FileUtilities.readJSON(inputElement.files, callback);
-        });
-        inputElement.click();
+        if (!FileUtilities._importJSONInputElement) {
+            let inputElement = FileUtilities._importJSONInputElement = document.createElement("input");
+            inputElement.type = "file";
+            inputElement.multiple = true;
+            inputElement.addEventListener("change", (event) => {
+                WI.FileUtilities.readJSON(inputElement.files, callback);
+            });
+        }
+
+        FileUtilities._importJSONInputElement.value = null;
+        FileUtilities._importJSONInputElement.click();
     }
 
     static async readText(fileOrList, callback)
@@ -124,20 +132,19 @@ WI.FileUtilities = class FileUtilities {
             files = Array.from(fileOrList);
 
         for (let file of files) {
-            let reader = new FileReader;
-            reader.readAsText(file);
-
             let result = {
                 filename: file.name,
             };
 
             try {
                 await new Promise((resolve, reject) => {
+                    let reader = new FileReader;
                     reader.addEventListener("loadend", (event) => {
                         result.text = reader.result;
                         resolve(event);
                     });
                     reader.addEventListener("error", reject);
+                    reader.readAsText(file);
                 });
             } catch (e) {
                 result.error = e;

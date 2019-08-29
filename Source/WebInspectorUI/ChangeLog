@@ -1,3 +1,22 @@
+2019-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Import file pickers sometimes do not import
+        https://bugs.webkit.org/show_bug.cgi?id=201290
+        <rdar://problem/54826117>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.importText):
+        (WI.FileUtilities.importJSON):
+        Keep the input element alive so it doesn't get garbage collected,
+        which makes the file chooser do nothing.
+
+        (WI.FileUtilities.save):
+        (WI.FileUtilities.async.readText):
+        Place read operations after event handlers are setup in case the
+        read operations can happen synchronously and events may not fire.
+
 2019-08-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r249078): JavaScript autocomplete doesn't work when evaluating properties of values
