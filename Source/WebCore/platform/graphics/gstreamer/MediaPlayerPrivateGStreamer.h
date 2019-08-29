@@ -114,14 +114,12 @@ public:
 
     void loadStateChanged();
     void timeChanged();
-    void didEnd();
     virtual void durationChanged();
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::HaveNothing, bool forceNotifications = false);
 
     virtual void sourceSetup(GstElement*);
 
     GstElement* audioSink() const override;
-    virtual void configurePlaySink() { }
 
     void simulateAudioInterruption() override;
 
@@ -206,7 +204,7 @@ protected:
     GstState m_requestedState;
     bool m_resetPipeline;
     bool m_seeking;
-    bool m_seekIsPending;
+    bool m_seekIsPending; // Set when the user requests a seek but gst can't handle it yet, so it's deferred until we're >=PAUSED.
     MediaTime m_seekTime;
     GRefPtr<GstElement> m_source;
     bool m_volumeAndMuteInitialized;
@@ -214,7 +212,6 @@ protected:
     void readyTimerFired();
 
     void notifyPlayerOfVideo();
-    void notifyPlayerOfVideoCaps();
     void notifyPlayerOfAudio();
 
 #if ENABLE(VIDEO_TRACK)
@@ -225,11 +222,13 @@ protected:
     void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
 
+    virtual void didEnd();
+    void invalidateCachedPosition() { m_lastQueryTime.reset(); }
+
     static void setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer*, GObject*);
 
     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
     static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
-    static void videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer*);
     static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
 #if ENABLE(VIDEO_TRACK)
     static void textChangedCallback(MediaPlayerPrivateGStreamer*);

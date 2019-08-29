@@ -46,6 +46,9 @@
 #include "NotImplemented.h"
 #include "WebKitMediaSourceGStreamer.h"
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
+#define GST_CAT_DEFAULT webkit_mse_debug
+
 namespace WebCore {
 
 Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourceGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
@@ -109,11 +112,9 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
     m_client->flush(trackId);
 }
 
-void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
+void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackId)
 {
-    m_notifyWhenReadyForMoreSamples = false;
-
-    m_client->enqueueSample(WTFMove(sample));
+    m_client->enqueueSample(WTFMove(sample), trackId);
 }
 
 void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& trackId)
@@ -121,23 +122,12 @@ void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& t
     m_client->allSamplesInTrackEnqueued(trackId);
 }
 
-bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomString&)
-{
-    return m_isReadyForMoreSamples;
-}
-
-void SourceBufferPrivateGStreamer::setReadyForMoreSamples(bool isReady)
+bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomString& trackId)
 {
     ASSERT(WTF::isMainThread());
-    m_isReadyForMoreSamples = isReady;
-}
-
-void SourceBufferPrivateGStreamer::notifyReadyForMoreSamples()
-{
-    ASSERT(WTF::isMainThread());
-    setReadyForMoreSamples(true);
-    if (m_notifyWhenReadyForMoreSamples)
-        m_sourceBufferPrivateClient->sourceBufferPrivateDidBecomeReadyForMoreSamples(m_trackId);
+    bool isReadyForMoreSamples = m_client->isReadyForMoreSamples(trackId);
+    GST_DEBUG("SourceBufferPrivate(%p) - isReadyForMoreSamples: %d", this, (int) isReadyForMoreSamples);
+    return isReadyForMoreSamples;
 }
 
 void SourceBufferPrivateGStreamer::setActive(bool isActive)
@@ -149,8 +139,7 @@ void SourceBufferPrivateGStreamer::setActive(bool isActive)
 void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const AtomString& trackId)
 {
     ASSERT(WTF::isMainThread());
-    m_notifyWhenReadyForMoreSamples = true;
-    m_trackId = trackId;
+    return m_client->notifyClientWhenReadyForMoreSamples(trackId, m_sourceBufferPrivateClient);
 }
 
 void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& initializationSegment)

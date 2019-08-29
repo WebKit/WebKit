@@ -452,6 +452,12 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         return;
     }
 
+    if (!GST_BUFFER_PTS_IS_VALID(gst_sample_get_buffer(sample.get()))) {
+        // When demuxing Vorbis, matroskademux creates several PTS-less frames with header information. We don't need those.
+        GST_DEBUG("Ignoring sample without PTS: %" GST_PTR_FORMAT, gst_sample_get_buffer(sample.get()));
+        return;
+    }
+
     auto mediaSample = WebCore::MediaSampleGStreamer::create(WTFMove(sample), m_presentationSize, trackId());
 
     GST_TRACE("append: trackId=%s PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
@@ -740,6 +746,9 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     // Only one stream per demuxer is supported.
     ASSERT(!gst_pad_is_linked(sinkSinkPad.get()));
 
+    // As it is now, resetParserState() will cause the pads to be disconnected, so they will later be re-added on the next initialization segment.
+    bool firstTimeConnectingTrack = m_track == nullptr;
+
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(GST_PAD(demuxerSrcPad)));
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -780,7 +789,7 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     }
 
     m_appsinkCaps = WTFMove(caps);
-    m_playerPrivate->trackDetected(this, m_track, true);
+    m_playerPrivate->trackDetected(this, m_track, firstTimeConnectingTrack);
 }
 
 void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*)

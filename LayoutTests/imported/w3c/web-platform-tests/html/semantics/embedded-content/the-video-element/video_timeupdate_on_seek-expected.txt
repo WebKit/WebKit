@@ -1,0 +1,4 @@
+
+PASS timeupdate is emitted after a seek before the data is received: mp4. 
+PASS timeupdate is emitted after a seek before the data is received: ogv. 
+

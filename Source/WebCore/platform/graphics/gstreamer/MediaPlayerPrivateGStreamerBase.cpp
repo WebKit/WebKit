@@ -486,6 +486,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 // Returns the size of the video
 FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
 {
+    ASSERT(isMainThread());
 #if USE(GSTREAMER_HOLEPUNCH)
     // When using the holepuch we may not be able to get the video frames size, so we can't use
     // it. But we need to report some non empty naturalSize for the player's GraphicsLayer
@@ -500,6 +501,7 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
         return m_videoSize;
 
     auto sampleLocker = holdLock(m_sampleMutex);
+
     if (!GST_IS_SAMPLE(m_sample.get()))
         return FloatSize();
 
@@ -507,6 +509,14 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     if (!caps)
         return FloatSize();
 
+    m_videoSize = naturalSizeFromCaps(caps);
+    GST_DEBUG_OBJECT(pipeline(), "Natural size: %.0fx%.0f", m_videoSize.width(), m_videoSize.height());
+    return m_videoSize;
+}
+
+FloatSize MediaPlayerPrivateGStreamerBase::naturalSizeFromCaps(GstCaps* caps) const
+{
+    ASSERT(caps);
 
     // TODO: handle possible clean aperture data. See
     // https://bugzilla.gnome.org/show_bug.cgi?id=596571
@@ -557,9 +567,7 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
         height = static_cast<guint64>(originalSize.height());
     }
 
-    GST_DEBUG_OBJECT(pipeline(), "Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
-    m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
-    return m_videoSize;
+    return FloatSize(static_cast<int>(width), static_cast<int>(height));
 }
 
 void MediaPlayerPrivateGStreamerBase::setVolume(float volume)
@@ -611,11 +619,6 @@ MediaPlayer::NetworkState MediaPlayerPrivateGStreamerBase::networkState() const
 MediaPlayer::ReadyState MediaPlayerPrivateGStreamerBase::readyState() const
 {
     return m_readyState;
-}
-
-void MediaPlayerPrivateGStreamerBase::sizeChanged()
-{
-    notImplemented();
 }
 
 void MediaPlayerPrivateGStreamerBase::setMuted(bool mute)
@@ -749,12 +752,28 @@ void MediaPlayerPrivateGStreamerBase::repaint()
     m_drawCondition.notifyOne();
 }
 
+bool MediaPlayerPrivateGStreamerBase::doSamplesHaveDifferentNaturalSizes(GstSample* sampleA, GstSample* sampleB) const
+{
+    ASSERT(sampleA);
+    ASSERT(sampleB);
+
+    GstCaps* capsA = gst_sample_get_caps(sampleA);
+    GstCaps* capsB = gst_sample_get_caps(sampleB);
+
+    if (LIKELY(capsA == capsB))
+        return false;
+
+    return naturalSizeFromCaps(capsA) != naturalSizeFromCaps(capsB);
+}
+
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 {
     bool triggerResize;
     {
         auto sampleLocker = holdLock(m_sampleMutex);
-        triggerResize = !m_sample;
+        triggerResize = !m_sample || doSamplesHaveDifferentNaturalSizes(m_sample.get(), sample);
+        if (triggerResize)
+            m_videoSize = FloatSize(); // Force re-calculation in next call to naturalSize().
         m_sample = sample;
     }
 

@@ -358,8 +358,16 @@ void MediaPlayerPrivateGStreamer::commitLoad()
 MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
 {
     GST_TRACE_OBJECT(pipeline(), "isEndReached: %s, seeking: %s, seekTime: %s", boolForPrinting(m_isEndReached), boolForPrinting(m_seeking), m_seekTime.toString().utf8().data());
-    if (m_isEndReached && m_seeking)
-        return m_seekTime;
+    if (m_isEndReached) {
+        // Position queries on a pipeline that is not running return 0. This is the case when the prerolling
+        // from a seek is still not done and after EOS. In these cases we want to report the seek time or the
+        // duration respectively.
+        if (m_seeking)
+            return m_seekTime;
+
+        MediaTime duration = durationMediaTime();
+        return duration.isInvalid() ? MediaTime::zeroTime() : duration;
+    }
 
     // This constant should remain lower than HTMLMediaElement's maxTimeupdateEventFrequency.
     static const Seconds positionCacheThreshold = 200_ms;
@@ -661,10 +669,10 @@ bool MediaPlayerPrivateGStreamer::paused() const
         return false;
     }
 
-    GstState state;
-    gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);
+    GstState state, pending;
+    gst_element_get_state(m_pipeline.get(), &state, &pending, 0);
     bool paused = state <= GST_STATE_PAUSED;
-    GST_LOG_OBJECT(pipeline(), "Paused: %s", toString(paused).utf8().data());
+    GST_LOG_OBJECT(pipeline(), "Paused: %s (pending state: %s)", toString(paused).utf8().data(), gst_element_state_get_name(pending));
     return paused;
 }
 
@@ -710,13 +718,11 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
 #if ENABLE(VIDEO_TRACK)
 #define CREATE_TRACK(type, Type) G_STMT_START {                         \
         m_has##Type = true;                                             \
-        if (!useMediaSource) {                                          \
-            RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), i, stream); \
-            m_##type##Tracks.add(track->id(), track);                   \
-            m_player->add##Type##Track(*track);                         \
-            if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT) \
-                m_current##Type##StreamId = String(gst_stream_get_stream_id(stream.get())); \
-        }                                                               \
+        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), i, stream); \
+        m_##type##Tracks.add(track->id(), track);                       \
+        m_player->add##Type##Track(*track);                             \
+        if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT) \
+            m_current##Type##StreamId = String(gst_stream_get_stream_id(stream.get())); \
     } G_STMT_END
 #else
 #define CREATE_TRACK(type, Type) G_STMT_START { \
@@ -730,6 +736,8 @@ void MediaPlayerPrivateGStreamer::updateTracks()
 
     bool useMediaSource = isMediaSource();
     unsigned length = gst_stream_collection_get_size(m_streamCollection.get());
+    GST_DEBUG_OBJECT(pipeline(), "Inspecting stream collection: %s %" GST_PTR_FORMAT,
+        gst_stream_collection_get_upstream_id(m_streamCollection.get()), m_streamCollection.get());
 
     bool oldHasAudio = m_hasAudio;
     bool oldHasVideo = m_hasVideo;
@@ -769,21 +777,13 @@ void MediaPlayerPrivateGStreamer::updateTracks()
 
 void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackType trackType, unsigned index)
 {
-    // FIXME: Remove isMediaSource() test below when fixing https://bugs.webkit.org/show_bug.cgi?id=182531.
-    if (isMediaSource()) {
-        GST_FIXME_OBJECT(m_pipeline.get(), "Audio/Video/Text track switching is not yet supported by the MSE backend.");
-        return;
-    }
-
     const char* propertyName;
     const char* trackTypeAsString;
     Vector<String> selectedStreams;
     String selectedStreamId;
 
-    GstStream* stream = nullptr;
-
     if (!m_isLegacyPlaybin) {
-        stream = gst_stream_collection_get_stream(m_streamCollection.get(), index);
+        GstStream* stream = gst_stream_collection_get_stream(m_streamCollection.get(), index);
         if (!stream) {
             GST_WARNING_OBJECT(pipeline(), "No stream to select at index %u", index);
             return;
@@ -864,7 +864,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     if (UNLIKELY(!m_pipeline || !m_source))
         return;
 
-    ASSERT(m_isLegacyPlaybin || isMediaSource());
+    ASSERT(m_isLegacyPlaybin);
+    ASSERT(!isMediaSource());
 
     gint numTracks = 0;
     bool useMediaSource = isMediaSource();
@@ -914,19 +915,6 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     purgeInvalidVideoTracks(validVideoStreams);
 #endif
 
-    m_player->client().mediaPlayerEngineUpdated(m_player);
-}
-
-void MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer* player)
-{
-    player->m_notifier->notify(MainThreadNotification::VideoCapsChanged, [player] {
-        player->notifyPlayerOfVideoCaps();
-    });
-}
-
-void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
-{
-    m_videoSize = IntSize();
     m_player->client().mediaPlayerEngineUpdated(m_player);
 }
 
@@ -1848,6 +1836,7 @@ void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const char* downloadFile
 
 void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
 {
+    ASSERT(!isMediaSource());
     GST_DEBUG_OBJECT(pipeline(), "Source element set-up for %s", GST_ELEMENT_NAME(sourceElement));
 
     if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
@@ -2098,15 +2087,21 @@ void MediaPlayerPrivateGStreamer::updateStates()
 bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION && !m_isLegacyPlaybin) {
+        // GStreamer workaround:
+        // Unfortunately, when we have a stream-collection aware source (like WebKitMediaSrc) parsebin and decodebin3 emit
+        // their own stream-collection messages, but late, and sometimes with duplicated streams. Let's only listen for
+        // stream-collection messages from the source in the MSE case to avoid these issues.
+        if (isMediaSource() && message->src != GST_OBJECT(m_source.get()))
+            return true;
+
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_stream_collection(message, &collection.outPtr());
+        ASSERT(collection);
+        m_streamCollection.swap(collection);
 
-        if (collection) {
-            m_streamCollection.swap(collection);
-            m_notifier->notify(MainThreadNotification::StreamCollectionChanged, [this] {
-                this->updateTracks();
-            });
-        }
+        m_notifier->notify(MainThreadNotification::StreamCollectionChanged, [this] {
+            this->updateTracks();
+        });
     }
 
     return MediaPlayerPrivateGStreamerBase::handleSyncMessage(message);
@@ -2390,10 +2385,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
 {
     const gchar* playbinName = "playbin";
 
-    // MSE doesn't support playbin3. Mediastream requires playbin3. Regular
-    // playback can use playbin3 on-demand with the WEBKIT_GST_USE_PLAYBIN3
-    // environment variable.
-    if ((!isMediaSource() && g_getenv("WEBKIT_GST_USE_PLAYBIN3")) || url.protocolIs("mediastream"))
+    // MSE and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
+    // WEBKIT_GST_USE_PLAYBIN3 environment variable.
+    if ((isMediaSource() || url.protocolIs("mediastream") || g_getenv("WEBKIT_GST_USE_PLAYBIN3")))
         playbinName = "playbin3";
 
     if (m_pipeline) {
@@ -2474,8 +2468,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
 
     g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), "audio-sink", createAudioSink(), nullptr);
 
-    configurePlaySink();
-
     if (m_preservesPitch) {
         GstElement* scale = gst_element_factory_make("scaletempo", nullptr);
 
@@ -2495,10 +2487,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
         } else
             GST_WARNING("The videoflip element is missing, video rotation support is now disabled. Please check your gst-plugins-good installation.");
     }
-
-    GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
-    if (videoSinkPad)
-        g_signal_connect_swapped(videoSinkPad.get(), "notify::caps", G_CALLBACK(videoSinkCapsChangedCallback), this);
 }
 
 void MediaPlayerPrivateGStreamer::simulateAudioInterruption()

@@ -228,7 +228,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avt
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure Pass ]
 # Crash is webkit.org/b/176020
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure Crash ]
 # Crash in bug #176019
@@ -245,6 +244,9 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-tra
 
 # We don't support multiple streams per sourcebuffer nor dynamic type changes (audio/video/text)
 webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Skip ]
+
+# There is an oggdemux bug that deadlocks WebKit: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/639
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout ]
 
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
@@ -2459,7 +2461,7 @@ webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-vali
 
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
 
-webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
+webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 
