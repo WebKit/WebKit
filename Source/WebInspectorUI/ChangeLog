@@ -1,3 +1,23 @@
+2019-08-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r249078): JavaScript autocomplete doesn't work when evaluating properties of values
+        https://bugs.webkit.org/show_bug.cgi?id=201226
+
+        Reviewed by Joseph Pecoraro.
+
+        r249078 modified `WI.JavaScriptRuntimeCompletionProvider` to use arrays of property names
+        instead of objects for completion, but a few code paths were missed.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.evaluated):
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.receivedPropertyNamesFromEvaluate):
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.receivedObjectPropertyNames): Added.
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.receivedArrayPropertyNames):
+
+        * UserInterface/Models/CallFrame.js:
+        (WI.CallFrame.prototype.collectScopeChainVariableNames):
+        (WI.CallFrame.prototype.collectScopeChainVariableNames.propertiesCollected):
+
 2019-08-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: replace uses of added utility `Array.prototype.keySet` with an actual `Set`

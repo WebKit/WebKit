@@ -165,7 +165,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             if (wasThrown || !result || result.type === "undefined" || (result.type === "object" && result.subtype === "null")) {
                 WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
 
-                updateLastPropertyNames.call(this, {});
+                updateLastPropertyNames.call(this, []);
                 completionController.updateCompletions(defaultCompletions);
 
                 return;
@@ -226,7 +226,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             if (result.subtype === "array")
                 result.callFunctionJSON(inspectedPage_evalResult_getArrayCompletions, undefined, receivedArrayPropertyNames.bind(this));
             else if (result.type === "object" || result.type === "function")
-                result.callFunctionJSON(inspectedPage_evalResult_getCompletions, undefined, receivedPropertyNames.bind(this));
+                result.callFunctionJSON(inspectedPage_evalResult_getCompletions, undefined, receivedObjectPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean" || result.type === "symbol") {
                 let options = {objectGroup: "completion", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: true, generatePreview: false, saveResult: false};
                 WI.runtimeManager.evaluateInInspectedWindow("(" + inspectedPage_evalResult_getCompletions + ")(\"" + result.type + "\")", options, receivedPropertyNamesFromEvaluate.bind(this));
@@ -236,7 +236,12 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         function receivedPropertyNamesFromEvaluate(object, wasThrown, result)
         {
-            receivedPropertyNames.call(this, result && !wasThrown ? result.value : null);
+            receivedPropertyNames.call(this, result && !wasThrown ? Object.keys(result.value) : null);
+        }
+
+        function receivedObjectPropertyNames(propertyNames)
+        {
+            receivedPropertyNames.call(this, Object.keys(propertyNames));
         }
 
         function receivedArrayPropertyNames(propertyNames)
@@ -250,12 +255,13 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                     propertyNames[i] = true;
             }
 
-            receivedPropertyNames.call(this, propertyNames);
+            receivedObjectPropertyNames.call(this, propertyNames);
         }
 
         function receivedPropertyNames(propertyNames)
         {
-            propertyNames = propertyNames ? Object.keys(propertyNames) : [];
+            console.assert(!propertyNames || Array.isArray(propertyNames));
+            propertyNames = propertyNames || [];
 
             updateLastPropertyNames.call(this, propertyNames);
 
