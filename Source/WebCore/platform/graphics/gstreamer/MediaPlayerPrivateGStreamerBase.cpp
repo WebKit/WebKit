@@ -904,15 +904,11 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
-    ImagePaintingOptions paintingOptions(CompositeCopy);
-    if (m_renderingCanBeAccelerated)
-        paintingOptions.m_orientation = m_videoSourceOrientation;
-
     auto gstImage = ImageGStreamer::createImage(m_sample.get());
     if (!gstImage)
         return;
 
-    context.drawImage(gstImage->image(), rect, gstImage->rect(), paintingOptions);
+    context.drawImage(gstImage->image(), rect, gstImage->rect(), { CompositeCopy, m_renderingCanBeAccelerated ? m_videoSourceOrientation : ImageOrientation() });
 }
 
 #if USE(GSTREAMER_GL)

@@ -955,7 +955,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
             auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
-            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingMode, ImageOrientation::None, interpolation));
+            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), { compositeOp, bgLayer.blendMode(), decodingMode, interpolation });
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->isCachedImage());
                 bgImage->cachedImage()->addClientWaitingForAsyncDecoding(*this);

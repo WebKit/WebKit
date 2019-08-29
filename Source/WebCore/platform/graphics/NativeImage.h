@@ -27,8 +27,7 @@
 
 #pragma once
 
-#include "GraphicsTypes.h"
-#include "ImageOrientation.h"
+#include "ImagePaintingOptions.h"
 
 #if USE(CG)
 #include <wtf/RetainPtr.h>
@@ -66,7 +65,7 @@ IntSize nativeImageSize(const NativeImagePtr&);
 bool nativeImageHasAlpha(const NativeImagePtr&);
 Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
 
-void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, CompositeOperator, BlendMode, ImageOrientation);
+void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, const ImagePaintingOptions&);
 void clearNativeImageSubimages(const NativeImagePtr&);
     
 }

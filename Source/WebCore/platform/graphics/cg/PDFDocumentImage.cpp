@@ -257,7 +257,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     decodedSizeChanged(internalSize.unclampedArea() * 4);
 }
 
-ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, DecodingMode, ImageOrientation)
+ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (!m_document || !m_hasPage)
         return ImageDrawResult::DidNothing;
@@ -266,7 +266,7 @@ ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect
 
     {
         GraphicsContextStateSaver stateSaver(context);
-        context.setCompositeOperation(op);
+        context.setCompositeOperation(options.compositeOperator());
 
         if (m_cachedImageBuffer) {
             // Draw the ImageBuffer 'm_cachedImageBuffer' to the rectangle 'm_cachedImageRect'

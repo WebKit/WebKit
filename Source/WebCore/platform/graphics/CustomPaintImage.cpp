@@ -170,10 +170,10 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientation)
+ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     GraphicsContextStateSaver stateSaver(destContext);
-    destContext.setCompositeOperation(compositeOp, blendMode);
+    destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
     destContext.clip(destRect);
     destContext.translate(destRect.location());
     if (destRect.size() != srcRect.size())
@@ -183,7 +183,7 @@ ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const Float
 }
 
 void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOp, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
     FloatSize adjustedSize = size();
@@ -205,7 +205,7 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect
     if (destContext.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    buffer->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, compositeOp, blendMode);
+    buffer->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
     destContext.setDrawLuminanceMask(false);
 }
 

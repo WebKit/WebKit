@@ -1,5 +1,189 @@
 2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        All image drawing functions should take an argument of type ImagePaintingOptions
+        https://bugs.webkit.org/show_bug.cgi?id=201059
+
+        Reviewed by Simon Fraser.
+
+        In this patch:
+        -- All the image drawing function will take an argument of type
+           ImagePaintingOptions instead of passing individual options.
+
+        -- ImagePaintingOptions is made like a set of options. It can be
+           initialized with any number of options and the order does not matter
+
+        -- Image::originalSize() is deleted because it returns size() and none
+           of the Image concrete classes overrides this implementation.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise):
+        (WebCore::ImageBitmap::createFromBuffer):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::drawImageToContext):
+        (WebCore::CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::drawCrossfadeSubimage):
+        (WebCore::CrossfadeGeneratedImage::draw):
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::draw):
+        (WebCore::CustomPaintImage::drawPattern):
+        * platform/graphics/CustomPaintImage.h:
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::draw):
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::draw):
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::drawConsumingImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::drawPattern):
+        (WebCore::GraphicsContext::drawConsumingImageBuffer):
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions): Deleted.
+        (WebCore::ImagePaintingOptions::usesDefaultInterpolation const): Deleted.
+        * platform/graphics/GraphicsContextImpl.cpp:
+        (WebCore::GraphicsContextImpl::drawImageImpl):
+        (WebCore::GraphicsContextImpl::drawTiledImageImpl):
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::Image::drawTiled):
+        (WebCore::Image::computeIntrinsicDimensions):
+        * platform/graphics/Image.h:
+        (WebCore::Image::drawPattern):
+        (WebCore::Image::draw):
+        (WebCore::Image::drawTiled):
+        (WebCore::Image::originalSize const): Deleted.
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        (WebCore::ImageBuffer::drawConsuming):
+        * platform/graphics/ImagePaintingOptions.h: Added.
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions):
+        (WebCore::ImagePaintingOptions::compositeOperator const):
+        (WebCore::ImagePaintingOptions::blendMode const):
+        (WebCore::ImagePaintingOptions::decodingMode const):
+        (WebCore::ImagePaintingOptions::orientation const):
+        (WebCore::ImagePaintingOptions::interpolationQuality const):
+        (WebCore::ImagePaintingOptions::setOption):
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw):
+        (WebCore::NamedImageGeneratedImage::drawPattern):
+        * platform/graphics/NamedImageGeneratedImage.h:
+        * platform/graphics/NativeImage.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowLayerBuffer):
+        (WebCore::Cairo::drawShadowImage):
+        (WebCore::Cairo::drawNativeImage):
+        (WebCore::Cairo::drawPattern):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawPattern):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::drawNativeImage):
+        (WebCore::GraphicsContextImplCairo::drawPattern):
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::drawConsuming):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::drawNativeImage):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawPattern):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::drawConsuming):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::drawNativeImage):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawNativeImage::DrawNativeImage):
+        (WebCore::DisplayList::DrawNativeImage::apply const):
+        (WebCore::DisplayList::DrawPattern::DrawPattern):
+        (WebCore::DisplayList::DrawPattern::apply const):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawNativeImage::create):
+        (WebCore::DisplayList::DrawPattern::create):
+        (WebCore::DisplayList::DrawPattern::DrawPattern):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawNativeImage):
+        (WebCore::DisplayList::Recorder::drawPattern):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::platformApplySoftware):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::drawNativeImage):
+        (Nicosia::CairoOperationRecorder::drawPattern):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::drawNativeImage):
+        (WebCore::Direct2D::drawPattern):
+        * platform/graphics/win/Direct2DOperations.h:
+        * platform/graphics/win/GraphicsContextImplDirect2D.h:
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::drawNativeImage):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawForContainer):
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        (WebCore::SVGImage::nativeImage):
+        (WebCore::SVGImage::drawPatternForContainer):
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::draw):
+        (WebCore::SVGImageForContainer::drawPattern):
+        * svg/graphics/SVGImageForContainer.h:
+
+2019-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         XLinkNames namespace is required before the 'href' attribute of SVG animate elements
         https://bugs.webkit.org/show_bug.cgi?id=201227
 

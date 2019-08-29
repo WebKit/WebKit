@@ -224,7 +224,7 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
         return;
 
     InterpolationQuality interpolation = chooseInterpolationQuality(context, image, &image, alignedRect.size());
-    context.drawImage(image, alignedRect, ImagePaintingOptions(imageOrientation(), interpolation));
+    context.drawImage(image, alignedRect, { imageOrientation(), interpolation });
 }
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

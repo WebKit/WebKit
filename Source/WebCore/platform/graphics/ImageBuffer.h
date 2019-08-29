@@ -32,6 +32,7 @@
 #include "GraphicsTypes.h"
 #include "GraphicsTypes3D.h"
 #include "ImageBufferData.h"
+#include "ImagePaintingOptions.h"
 #include "IntSize.h"
 #include "PlatformLayer.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
@@ -51,7 +52,7 @@ class ImageData;
 class IntPoint;
 class IntRect;
 class HostWindow;
-    
+
 enum BackingStoreCopy {
     CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
     DontCopyBackingStore // Subsequent draws may affect the copy.
@@ -151,10 +152,10 @@ private:
     void flushContext() const;
 #endif
     
-    void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendMode::Normal);
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendMode::Normal);
+    void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { });
+    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
 
-    static void drawConsuming(std::unique_ptr<ImageBuffer>, GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendMode::Normal);
+    static void drawConsuming(std::unique_ptr<ImageBuffer>, GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { });
 
     inline void genericConvertToLuminanceMask();
 

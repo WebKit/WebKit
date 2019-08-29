@@ -94,10 +94,9 @@ private:
     void startAnimationTimerFired();
 
     explicit SVGImage(ImageObserver&);
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientation) final;
-    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode);
-    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing,
-        CompositeOperator, const FloatRect&, BlendMode);
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, const ImagePaintingOptions& = { }) final;
+    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });
+    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect&, const ImagePaintingOptions& = { });
 
     RefPtr<SVGSVGElement> rootElement() const;
 

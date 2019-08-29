@@ -539,7 +539,7 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const In
     context.scale(FloatSize(1, -1));
     context.translate(0, -imageSize.height());
     context.setImageInterpolationQuality(InterpolationNone);
-    context.drawNativeImage(cgImage, imageSize, canvasRect, FloatRect(FloatPoint(), imageSize), CompositeCopy);
+    context.drawNativeImage(cgImage, imageSize, canvasRect, FloatRect(FloatPoint(), imageSize), { CompositeCopy });
 }
 
 } // namespace WebCore

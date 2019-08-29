@@ -344,24 +344,23 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
     return DontCopyBackingStore;
 }
 
-void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
+void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    imageBuffer->draw(destContext, destRect, srcRect, op, blendMode);
+    imageBuffer->draw(destContext, destRect, srcRect, options);
 }
 
-void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& destRect, const FloatRect& srcRect,
-    CompositeOperator op, BlendMode blendMode)
+void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& destRect, const FloatRect& srcRect,  const ImagePaintingOptions& options)
 {
     BackingStoreCopy copyMode = &destinationContext == &context() ? CopyBackingStore : DontCopyBackingStore;
     RefPtr<Image> image = copyImage(copyMode);
-    destinationContext.drawImage(*image, destRect, srcRect, ImagePaintingOptions(op, blendMode, DecodingMode::Synchronous, ImageOrientation::None));
+    destinationContext.drawImage(*image, destRect, srcRect, options);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode)
+    const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (RefPtr<Image> image = copyImage(DontCopyBackingStore))
-        image->drawPattern(context, destRect, srcRect, patternTransform, phase, spacing, op);
+        image->drawPattern(context, destRect, srcRect, patternTransform, phase, spacing, options);
 }
 
 void ImageBuffer::platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable)

@@ -2278,7 +2278,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer,
     if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
         return true;
 
-    context.drawImage(*snapshot, alignedPluginRect, CompositeSourceOver);
+    context.drawImage(*snapshot, alignedPluginRect);
     return false;
 }
 
