@@ -1319,7 +1319,7 @@
 "resume real time streaming" = "resume real time streaming";
 
 /* accessibility label for return to real time button */
-"return to realtime" = "return to realtime";
+"return to real time" = "return to real time";
 
 /* An ARIA accessibility group that contains a search feature of a website. */
 "search" = "search";

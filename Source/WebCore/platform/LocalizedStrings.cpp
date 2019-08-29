@@ -783,7 +783,7 @@ String localizedMediaControlElementString(const String& name)
     if (name == "RewindButton")
         return WEB_UI_STRING("back 30 seconds", "accessibility label for seek back 30 seconds button");
     if (name == "ReturnToRealtimeButton")
-        return WEB_UI_STRING("return to realtime", "accessibility label for return to real time button");
+        return WEB_UI_STRING("return to real time", "accessibility label for return to real time button");
     if (name == "CurrentTimeDisplay")
         return WEB_UI_STRING("elapsed time", "accessibility label for elapsed time display");
     if (name == "TimeRemainingDisplay")
