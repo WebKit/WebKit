@@ -26,21 +26,23 @@
 #include "config.h"
 #include "ScrollingStateNode.h"
 
-#include "GraphicsLayer.h"
-#include "NotImplemented.h"
-
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
+
+#include "NicosiaPlatformLayer.h"
+#include "PlatformLayer.h"
 
 namespace WebCore {
 
-void LayerRepresentation::retainPlatformLayer(void*)
+void LayerRepresentation::retainPlatformLayer(void* typelessLayer)
 {
-    notImplemented();
+    if (auto* layer = makePlatformLayerTyped(typelessLayer))
+        layer->ref();
 }
 
-void LayerRepresentation::releasePlatformLayer(void*)
+void LayerRepresentation::releasePlatformLayer(void* typelessLayer)
 {
-    notImplemented();
+    if (auto* layer = makePlatformLayerTyped(typelessLayer))
+        layer->deref();
 }
 
 PlatformLayer* LayerRepresentation::makePlatformLayerTyped(void* typelessLayer)

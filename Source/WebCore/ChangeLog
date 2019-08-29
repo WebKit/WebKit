@@ -1,5 +1,19 @@
 2019-08-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Implement layer representation retain, release mechanics
+        https://bugs.webkit.org/show_bug.cgi?id=201133
+
+        Reviewed by Carlos Garcia Campos.
+
+        * page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp:
+        (WebCore::LayerRepresentation::retainPlatformLayer):
+        Type-cast the layer object to the reference-counted
+        Nicosia::PlatformLayer type and reference that object.
+        (WebCore::LayerRepresentation::releasePlatformLayer):
+        Ditto, but dereference the object.
+
+2019-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [Nicosia] Add Nicosia::PlatformLayer::accessStaging() helper
         https://bugs.webkit.org/show_bug.cgi?id=201132
 
