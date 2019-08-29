@@ -273,8 +273,11 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
             postLayoutData.caretColor = renderer.style().caretColor();
         }
         if (result.isContentEditable) {
-            if (auto container = makeRefPtr(selection.rootEditableElement()))
-                postLayoutData.editableRootIsTransparentOrFullyClipped = isTransparentOrFullyClipped(*container);
+            if (auto editableRootOrFormControl = makeRefPtr(selection.rootEditableElement())) {
+                if (is<HTMLTextFormControlElement>(editableRootOrFormControl->shadowHost()))
+                    editableRootOrFormControl = editableRootOrFormControl->shadowHost();
+                postLayoutData.editableRootIsTransparentOrFullyClipped = isTransparentOrFullyClipped(*editableRootOrFormControl);
+            }
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
         postLayoutData.selectionStartIsAtParagraphBoundary = atBoundaryOfGranularity(selection.visibleStart(), TextGranularity::ParagraphGranularity, SelectionDirection::DirectionBackward);

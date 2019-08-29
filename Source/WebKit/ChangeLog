@@ -1,3 +1,31 @@
+2019-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] Caret does not appear in text field if the body element is translated completely out of the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=201287
+        <rdar://problem/54780864>
+
+        Reviewed by Tim Horton.
+
+        During EditorState computation, we use the hidden editable element heuristic to determine whether we should
+        begin suppressing selection gestures and UI. Currently, we use the editable root of the selection range to
+        determine where in the layer tree we should start our ascent, in search of a completely transparent or
+        completely clipped container.
+
+        However, in the case where the selection is inside a focused text field, this causes us to walk up the layer
+        tree starting at the RenderLayer corresponding to the text field's inner contenteditable div, which is different
+        than the text field's enclosing RenderLayer in the case where the containing block is transformed, such that no
+        part of it is within the visible viewport. This scenario is exercised by the below test case, in which the caret
+        after transforming the body horizontally by -100vw is hidden due to a false positive in the hidden editable area
+        heuristic.
+
+        Fix this by starting the layer tree ascent from the enclosing layer of the text form control if applicable,
+        instead of the inner editable area under the shadow root of the form control.
+
+        Test: editing/selection/ios/show-selection-in-transformed-container.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2019-08-29  Youenn Fablet  <youenn@apple.com>
 
         Skip fetch event dispatching if no fetch event handler is added at script evaluation time
