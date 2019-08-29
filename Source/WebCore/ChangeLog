@@ -1,3 +1,21 @@
+2019-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Polish ScrollingCoordinator implementation
+        https://bugs.webkit.org/show_bug.cgi?id=201130
+
+        Reviewed by Carlos Garcia Campos.
+
+        These changes primarily mirror the Mac implementation of this class.
+
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::pageDestroyed):
+        Upon releasing the ThreadedScrollingTree, it should also be invalidated
+        on the scrolling thread.
+        (WebCore::ScrollingCoordinatorNicosia::commitTreeState):
+        Invoke willCommitTree() at the beginning of this method. Additionally
+        the pending-commit-count is incremented for the ThreadedScrollingTree
+        object.
+
 2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make tabIndex IDL attribute reflect its content attribute
