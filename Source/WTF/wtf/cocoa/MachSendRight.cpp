@@ -30,7 +30,15 @@
 #include <mach/mach_init.h>
 #include <utility>
 
+#define LOG_CHANNEL_PREFIX Log
+
 namespace WTF {
+
+#if RELEASE_LOG_DISABLED
+WTFLogChannel LogProcess = { WTFLogChannelState::On, "Process", WTFLogLevel::Error };
+#else
+WTFLogChannel LogProcess = { WTFLogChannelState::On, "Process", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
+#endif
 
 static void retainSendRight(mach_port_t port)
 {
@@ -65,8 +73,8 @@ void deallocateSendRightSafely(mach_port_t port)
     if (kr == KERN_SUCCESS)
         return;
 
-    LOG_ERROR("mach_port_deallocate error for port %d: %s (%#x)", port, mach_error_string(kr), kr);
-    if (kr == KERN_INVALID_RIGHT)
+    RELEASE_LOG_ERROR(Process, "mach_port_deallocate error for port %d: %{private}s (%#x)", port, mach_error_string(kr), kr);
+    if (kr == KERN_INVALID_RIGHT || kr == KERN_INVALID_NAME)
         CRASH();
 }
 

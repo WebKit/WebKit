@@ -1,3 +1,14 @@
+2019-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Crash when mach_port_deallocate() returns KERN_INVALID_NAME
+        https://bugs.webkit.org/show_bug.cgi?id=201248
+        <rdar://problem/54813890>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/cocoa/MachSendRight.cpp:
+        (WTF::deallocateSendRightSafely):
+
 2019-08-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Regression(r248533) Assertion hit in isMainThread() for some clients using WTF because the main thread is not initialized
