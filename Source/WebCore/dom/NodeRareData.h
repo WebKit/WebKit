@@ -270,11 +270,15 @@ public:
     };
 #endif
 
-    NodeRareData()
-    { }
+    enum class Type { Element, Node };
 
-    virtual ~NodeRareData()
-    { }
+    NodeRareData(Type type = Type::Node)
+        : m_connectedFrameCount(0)
+        , m_isElementRareData(type == Type::Element)
+    {
+    }
+
+    bool isElementRareData() { return m_isElementRareData; }
 
     void clearNodeLists() { m_nodeLists = nullptr; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
@@ -320,7 +324,8 @@ public:
 #endif
 
 private:
-    unsigned m_connectedFrameCount { 0 }; // Must fit Page::maxNumberOfFrames.
+    unsigned m_connectedFrameCount : 31; // Must fit Page::maxNumberOfFrames.
+    unsigned m_isElementRareData : 1;
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;

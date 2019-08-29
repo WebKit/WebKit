@@ -1,3 +1,33 @@
+2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r248807): Objects stored in ElementRareData are leaked
+        https://bugs.webkit.org/show_bug.cgi?id=200954
+
+        Reviewed by Antti Koivisto.
+
+        Use a custom deleter in std::unique_ptr to call the correct destructor instead of making
+        NodeRareData's destructor virtual. Added NodeRareData::isElementRareData to differentiate
+        ElementRareData and NodeRareData by borrowing 1 bit from the frame count.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::materializeRareData): Call the constructors of unique_ptr directly since
+        make_unique does not take a custom deleter. We can't add the support to makeUnique either
+        without making it three arguments since we need to cast ElementRareData to NodeRareData
+        in addition to specifying a custom deleter (normal casting wouldn't work due to
+        the presence of a custom deleter).
+        (WebCore::Node::NodeRareDataDeleter::operator() const): Added.
+        * dom/Node.h:
+        (WebCore::Node::NodeRareDataDeleter): Added.
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData): Makes newly added Type.
+        (WebCore::NodeRareData::isElementRareData): Added.
+        (WebCore::NodeRareData::~NodeRareData): Deleted.
+
 2019-08-28  Claudio Saavedra  <csaavedra@igalia.com>
 
         [SOUP] Shut compilation warning

@@ -395,9 +395,17 @@ void Node::willBeDeletedFrom(Document& document)
 void Node::materializeRareData()
 {
     if (is<Element>(*this))
-        m_rareData = makeUnique<ElementRareData>();
+        m_rareData = std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new ElementRareData);
     else
-        m_rareData = makeUnique<NodeRareData>();
+        m_rareData = std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new NodeRareData);
+}
+
+inline void Node::NodeRareDataDeleter::operator()(NodeRareData* rareData) const
+{
+    if (rareData->isElementRareData())
+        delete static_cast<ElementRareData*>(rareData);
+    else
+        delete static_cast<NodeRareData*>(rareData);
 }
 
 void Node::clearRareData()

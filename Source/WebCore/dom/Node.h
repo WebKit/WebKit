@@ -664,6 +664,10 @@ private:
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
 
+    struct NodeRareDataDeleter {
+        void operator()(NodeRareData*) const;
+    };
+
     uint32_t m_refCountAndParentBit { s_refCountIncrement };
     mutable uint32_t m_nodeFlags;
 
@@ -672,7 +676,7 @@ private:
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
     CompactPointerTuple<RenderObject*, uint8_t> m_rendererWithStyleFlags;
-    std::unique_ptr<NodeRareData> m_rareData;
+    std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
 };
 
 #ifndef NDEBUG
