@@ -29,13 +29,13 @@ class SVGElement;
 class RenderSVGBlock : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
 public:
-    LayoutRect visualOverflowRect() const final;
-
     SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
 
 protected:
     RenderSVGBlock(SVGGraphicsElement&, RenderStyle&&);
     void willBeDestroyed() override;
+
+    void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;
 
 private:
     void element() const = delete;

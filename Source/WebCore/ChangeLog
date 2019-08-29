@@ -1,3 +1,19 @@
+2019-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Have RenderSVGBlock compute visual overflow just like everyone else
+        https://bugs.webkit.org/show_bug.cgi?id=201211
+
+        Reviewed by Zalan Bujtas.
+
+        RenderSVGBlock overrode visualOverflowRect() just to account for text shadow. This prevents callers
+        optimizing calls to visualOverflowRect(), so instead have RenderSVGBlock implement computeOverflow()
+        and call addVisualOverflow().
+
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::computeOverflow):
+        (WebCore::RenderSVGBlock::visualOverflowRect const): Deleted.
+        * rendering/svg/RenderSVGBlock.h:
+
 2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r248807): Objects stored in ElementRareData are leaked
