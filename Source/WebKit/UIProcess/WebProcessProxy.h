@@ -313,7 +313,6 @@ public:
     void deref() final { ThreadSafeRefCounted::deref(); }
 
 protected:
-    static WebCore::PageIdentifier generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 
     // AuxiliaryProcessProxy

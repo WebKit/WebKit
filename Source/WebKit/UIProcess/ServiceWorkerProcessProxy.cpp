@@ -53,7 +53,7 @@ Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool&
 ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, const RegistrableDomain& registrableDomain, WebsiteDataStore& store)
     : WebProcessProxy { pool, &store, IsPrewarmed::No }
     , m_registrableDomain(registrableDomain)
-    , m_serviceWorkerPageID(generatePageID())
+    , m_serviceWorkerPageID(PageIdentifier::generate())
 {
 }
 
