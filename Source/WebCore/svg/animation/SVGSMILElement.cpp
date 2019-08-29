@@ -181,7 +181,7 @@ void SVGSMILElement::buildPendingResource()
 
     String id;
     RefPtr<Element> target;
-    auto& href = getAttribute(XLinkNames::hrefAttr);
+    auto& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     if (href.isEmpty())
         target = parentElement();
     else {
