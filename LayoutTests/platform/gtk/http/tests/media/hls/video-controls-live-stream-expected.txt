@@ -12,7 +12,7 @@ EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-controls-toggle-closed-captions-button: classes: [hidden]
 -webkit-media-controls-fullscreen-button: classes: []
 none: classes: [mute-box]
--webkit-media-controls-mute-button: classes: []
+-webkit-media-controls-mute-button: classes: [muted]
 -webkit-media-controls-volume-slider-container: classes: [volume-box hiding]
 -webkit-media-controls-volume-slider: classes: []
 TEST(timeline == null || timeline.disabled) OK

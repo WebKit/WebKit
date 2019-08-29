@@ -1,3 +1,26 @@
+2019-08-29  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=201276
+
+        * fast/borders/empty-outline-border-assert-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+        * platform/gtk/fast/forms/label/labelable-elements-expected.txt: Added.
+        * platform/gtk/http/tests/media/hls/video-controls-live-stream-expected.txt:
+        * platform/gtk/http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt: Added.
+        * platform/gtk/http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/closing-handshake/003-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/cookies/004-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/unload-a-document/002-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/unload-a-document/004-expected.txt: Added.
+        * platform/ios-wk2/fast/borders/empty-outline-border-assert-expected.txt: Removed.
+        * platform/mac-wk2/fast/borders/empty-outline-border-assert-expected.txt: Removed.
+
 2019-08-29  Youenn Fablet  <youenn@apple.com>
 
         Use WebPageProxy callbacks in case of authentication challenge received from Service Worker

@@ -1179,6 +1179,9 @@ webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/002.html [ Failure ]
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
 
+# No Mac system fonts in WebKitGTK
+editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1291,6 +1294,8 @@ webkit.org/b/198830 media/W3C/video/readyState/readyState_during_loadeddata.html
 webkit.org/b/198830 media/W3C/video/readyState/readyState_during_loadedmetadata.html [ Crash ]
 webkit.org/b/198830 media/track/track-active-cues.html [ Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html [ Crash ]
+
+webkit.org/b/201275 fast/events/focus-anchor-with-tabindex-hang.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1674,7 +1679,7 @@ webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 
 webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Failure Pass ]
-webkit.org/b/153771 legacy-animation-engine/animations/resume-after-page-cache.html [ Timeout Pass ]
+webkit.org/b/153771 legacy-animation-engine/animations/resume-after-page-cache.html [ Timeout Failure Pass ]
 
 webkit.org/b/153942 plugins/private-browsing-mode-2.html [ Failure Pass ]
 webkit.org/b/153942 plugins/private-browsing-mode.html [ Failure Pass ]
@@ -1804,8 +1809,8 @@ webkit.org/b/181031 fast/frames/crash-when-iframe-is-remove-in-eventhandler.html
 
 webkit.org/b/181528 http/tests/cache/memory-cache-pruning.html [ Pass Crash ]
 
-webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash ]
-webkit.org/b/181529 legacy-animation-engine/imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash ]
+webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash Timeout ]
+webkit.org/b/181529 legacy-animation-engine/imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash Timeout ]
 
 webkit.org/b/181766 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors.html [ Pass Timeout ]
 webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
@@ -2184,6 +2189,10 @@ webkit.org/b/198830 media/W3C/video/readyState/readyState_during_playing.html [ 
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
+webkit.org/b/201252 editing/pasteboard/paste-text-017.html [ Pass Failure ]
+
+webkit.org/b/201255 fullscreen/full-screen-request-removed-with-raf.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2539,6 +2548,20 @@ webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout ]
 webkit.org/b/198118 media/playlist-inherits-user-gesture.html [ Timeout ]
 
 webkit.org/b/199442 http/tests/contentextensions/make-https.html [ Timeout ]
+
+webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
+
+webkit.org/b/201269 fast/forms/image/image-error-event-modifies-type-crash.html [ Timeout ]
+
+webkit.org/b/201270 http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
+
+webkit.org/b/201271 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Timeout ]
+
+webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
+
+webkit.org/b/201273 js/dom/custom-constructors.html [ Timeout ]
+
+webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3439,8 +3462,8 @@ webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
-webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
-webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
+webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure Timeout ]
+webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure Timeout ]
 
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
 
@@ -3516,7 +3539,7 @@ webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.htm
 webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
-webkit.org/b/186139 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ Failure ]
+webkit.org/b/186139 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ Failure Timeout ]
 
 webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
 
@@ -3749,7 +3772,7 @@ webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_ope
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbrequest-onupgradeneeded.htm [ Failure ]
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbtransaction_objectStoreNames.html [ Failure ]
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
-webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm [ Failure Crash ]
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key_valid.html [ Failure ]
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html [ Failure ]
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator-inject.html [ Failure ]
@@ -3828,6 +3851,19 @@ webkit.org/b/199876 webaudio/oscillator-sawtooth.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-sine.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-square.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-triangle.html [ Failure ]
+
+webkit.org/b/201254 fast/mediastream/device-change-event-2.html [ Failure ]
+webkit.org/b/201257 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure ]
+webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
+webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
+webkit.org/b/201263 imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
+webkit.org/b/201264 mathml/presentation/foreign-element-in-token.html [ Failure ]
+
+webkit.org/b/201266 media/audio-playback-restriction-autoplay.html [ Failure ]
+webkit.org/b/201266 media/audio-playback-restriction-play-muted.html [ Failure ]
+webkit.org/b/201266 media/audio-playback-restriction-play.html [ Failure ]
+
+webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
