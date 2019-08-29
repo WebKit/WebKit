@@ -78,7 +78,7 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
             navigationItems.push(this._imageTypeScopeBar);
         if (this._showGridButtonNavigationItem)
             navigationItems.push(this._showGridButtonNavigationItem);
-        navigationItems = navigationItems.concat(super.navigationItems);
+        navigationItems.pushAll(super.navigationItems);
         return navigationItems;
     }
 

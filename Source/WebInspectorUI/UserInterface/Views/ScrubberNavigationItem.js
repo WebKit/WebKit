@@ -59,7 +59,9 @@ WI.ScrubberNavigationItem = class ScrubberNavigationItem extends WI.FlexibleSpac
 
     get additionalClassNames()
     {
-        return super.additionalClassNames.concat(["scrubber"]);
+        let additionalClassNames = super.additionalClassNames;
+        additionalClassNames.push("scrubber");
+        return additionalClassNames;
     }
 
     // Private

@@ -142,7 +142,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
         function processEntries(entries, moreAvailable)
         {
-            this._entries = this._entries.concat(entries);
+            this._entries.pushAll(entries);
             this._moreEntriesAvailable = moreAvailable;
 
             for (var entry of entries) {

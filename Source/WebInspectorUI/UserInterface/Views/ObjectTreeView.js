@@ -311,7 +311,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
     _updateProperties(properties, propertyPath)
     {
         if (this._extraProperties)
-            properties = properties.concat(this._extraProperties);
+            properties.pushAll(this._extraProperties);
 
         properties.sort(WI.ObjectTreeView.comparePropertyDescriptors);
 

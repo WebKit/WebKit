@@ -690,6 +690,15 @@ Object.defineProperty(Array.prototype, "insertAtIndex",
     }
 });
 
+Object.defineProperty(Array.prototype, "pushAll",
+{
+    value(iterable)
+    {
+        for (let item of iterable)
+            this.push(item);
+    },
+});
+
 Object.defineProperty(Array.prototype, "partition",
 {
     value(callback)

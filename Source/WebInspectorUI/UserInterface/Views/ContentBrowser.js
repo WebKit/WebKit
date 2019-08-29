@@ -140,7 +140,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         if (currentContentView) {
             var supplementalRepresentedObjects = currentContentView.supplementalRepresentedObjects;
             if (supplementalRepresentedObjects && supplementalRepresentedObjects.length)
-                representedObjects = representedObjects.concat(supplementalRepresentedObjects);
+                representedObjects.pushAll(supplementalRepresentedObjects);
         }
 
         return representedObjects;

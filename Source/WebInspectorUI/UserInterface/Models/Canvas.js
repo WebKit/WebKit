@@ -362,7 +362,7 @@ WI.Canvas = class Canvas extends WI.Object
     {
         // Called from WI.CanvasManager.
 
-        this._recordingFrames.push(...framesPayload.map(WI.RecordingFrame.fromPayload));
+        this._recordingFrames.pushAll(framesPayload.map(WI.RecordingFrame.fromPayload));
 
         this._recordingBufferUsed = bufferUsed;
 

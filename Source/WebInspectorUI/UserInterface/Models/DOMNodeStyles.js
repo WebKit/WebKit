@@ -738,7 +738,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         for (var i = 0; i < this._inheritedRules.length; ++i) {
             var inheritedStyleInfo = this._inheritedRules[i];
             var inheritedCascadeOrder = this._collectStylesInCascadeOrder(inheritedStyleInfo.matchedRules, inheritedStyleInfo.inlineStyle, null);
-            cascadeOrderedStyleDeclarations = cascadeOrderedStyleDeclarations.concat(inheritedCascadeOrder);
+            cascadeOrderedStyleDeclarations.pushAll(inheritedCascadeOrder);
         }
 
         this._orderedStyles = cascadeOrderedStyleDeclarations;
@@ -788,7 +788,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             result.push(attributesStyle);
 
         // Finally add the user and user stylesheet's matched style rules we collected earlier.
-        result = result.concat(userAndUserAgentStyles);
+        result.pushAll(userAndUserAgentStyles);
 
         return result;
     }

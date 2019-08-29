@@ -391,7 +391,7 @@ WI.View = class View extends WI.Object
             if (view.layoutPending)
                 view._layoutSubtree();
             else if (view._dirtyDescendantsCount) {
-                views = views.concat(view.subviews);
+                views.pushAll(view.subviews);
                 view._dirtyDescendantsCount = 0;
             }
         }

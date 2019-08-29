@@ -125,8 +125,8 @@ WI.NavigationItem = class NavigationItem extends WI.Object
         var classNames = ["item"];
         if (this._identifier)
             classNames.push(this._identifier);
-        if (this.additionalClassNames instanceof Array)
-            classNames = classNames.concat(this.additionalClassNames);
+        if (Array.isArray(this.additionalClassNames))
+            classNames.pushAll(this.additionalClassNames);
         return classNames;
     }
 };

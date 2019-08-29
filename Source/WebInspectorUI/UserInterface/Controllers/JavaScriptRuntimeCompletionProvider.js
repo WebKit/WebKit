@@ -268,7 +268,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
 
             if (!base) {
-                propertyNames.push(...JavaScriptRuntimeCompletionProvider._commandLineAPIKeys);
+                propertyNames.pushAll(JavaScriptRuntimeCompletionProvider._commandLineAPIKeys);
 
                 let savedResultAlias = WI.settings.consoleSavedResultAlias.value;
                 if (savedResultAlias)
