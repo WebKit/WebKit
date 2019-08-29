@@ -1,3 +1,17 @@
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Remove support for macOS < 10.13 (part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=201224
+        <rdar://problem/54795934>
+
+        Reviewed by Darin Adler.
+
+        Remove symbols in WebKitTargetConditionals.xcconfig related to macOS
+        10.13, including WK_MACOS_1013 and WK_MACOS_BEFORE_1013, and suffixes
+        like _MACOS_SINCE_1013.
+
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
 2019-08-15  Youenn Fablet  <youenn@apple.com>
 
         Make mock libwebrtc tests run with unified plan
