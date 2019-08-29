@@ -1,3 +1,13 @@
+2019-08-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble should only display important messages in pop-over
+        https://bugs.webkit.org/show_bug.cgi?id=201308
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Added various build-steps which are of low interest
+        to end-users in STEPS_TO_HIDE. If any of these steps fail, it will not be hidden.
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 3)

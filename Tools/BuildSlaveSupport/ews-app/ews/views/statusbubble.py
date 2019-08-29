@@ -53,7 +53,11 @@ class StatusBubble(View):
         'mac-debug-wk1': 'mac-debug',
     }
 
-    STEPS_TO_HIDE = ['Killed old processes', 'Configured build', '^OS:.*Xcode:', '(skipped)']
+    STEPS_TO_HIDE = ['^Archived built product$', '^Uploaded built product$', '^Transferred archive to S3$',
+                     '^Archived test results$', '^Uploaded test results$', '^Extracted test results$',
+                     '^Downloaded built product$', '^Extracted built product$',
+                     '^Cleaned and updated working directory$', '^Checked out required revision$',
+                     '^Validated patch$', '^Killed old processes$', '^Configured build$', '^OS:.*Xcode:', '(skipped)']
     DAYS_TO_CHECK = 3
 
     def _build_bubble(self, patch, queue):
