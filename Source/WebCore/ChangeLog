@@ -1,5 +1,14 @@
 2019-08-28  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [SOUP] Shut compilation warning
+
+        Unreviewed. RELEASE_LOG_ERROR() needs a channel.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::setupHSTSEnforcer):
+
+2019-08-28  Claudio Saavedra  <csaavedra@igalia.com>
+
         [SOUP] Fix the debug build after r249192
 
         Unreviewed build fix.
