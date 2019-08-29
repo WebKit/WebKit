@@ -70,14 +70,14 @@ WI.CallFrame = class CallFrame
 
     collectScopeChainVariableNames(callback)
     {
-        var result = {this: true, __proto__: null};
+        let result = ["this", "__proto__"];
 
         var pendingRequests = this._scopeChain.length;
 
         function propertiesCollected(properties)
         {
             for (var i = 0; properties && i < properties.length; ++i)
-                result[properties[i].name] = true;
+                result.push(properties[i].name);
 
             if (--pendingRequests)
                 return;
