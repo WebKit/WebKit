@@ -1,3 +1,13 @@
+2019-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebSockets: first-party for cookies not set in handshake request when using platform APIs
+        https://bugs.webkit.org/show_bug.cgi?id=200165
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::webSocketConnectRequest):
+
 2019-08-29  Rob Buis  <rbuis@igalia.com>
 
         Implement HTMLOrForeignElement
