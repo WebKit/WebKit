@@ -1,5 +1,19 @@
 2019-08-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Use the "complicated-cases" category for computing the TFC root's height
+        https://bugs.webkit.org/show_bug.cgi?id=201230
+        <rdar://problem/54806131>
+
+        Reviewed by Antti Koivisto.
+
+        This might change in the future but for now let's use the "complicated cases" when we need to compute the TFC's height and vertical margin.
+        This is very BFC specific since (block)TFC is always parented in a BFC.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+
+2019-08-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] The table wrapper box is a block level box
         https://bugs.webkit.org/show_bug.cgi?id=201229
         <rdar://problem/54805515>

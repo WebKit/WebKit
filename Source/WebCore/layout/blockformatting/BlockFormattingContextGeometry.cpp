@@ -257,10 +257,14 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
         return inlineReplacedHeightAndMargin(layoutState, layoutBox, usedValues);
 
     HeightAndMargin heightAndMargin;
-    // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
-    if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox())
+    // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
+    if (layoutBox.establishesTableFormattingContext()) {
+        auto usedHorizontalValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        heightAndMargin = complicatedCases(layoutState, layoutBox, usedValues, usedHorizontalValues);
+    } else if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox()) {
+        // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
         heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutState, layoutBox, usedValues);
-    else {
+    } else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
         auto usedHorizontalValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
