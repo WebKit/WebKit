@@ -1,5 +1,15 @@
 2019-08-29  Chris Dumez  <cdumez@apple.com>
 
+        CompletionHandler default constructor does not initialize `m_wasConstructedOnMainThread`
+        https://bugs.webkit.org/show_bug.cgi?id=201249
+
+        Reviewed by Joseph Pecoraro and Alex Christensen.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler<Out):
+
+2019-08-29  Chris Dumez  <cdumez@apple.com>
+
         Crash when mach_port_deallocate() returns KERN_INVALID_NAME
         https://bugs.webkit.org/show_bug.cgi?id=201248
         <rdar://problem/54813890>
