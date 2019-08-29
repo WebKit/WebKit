@@ -1,3 +1,16 @@
+2019-08-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MiniBrowser crashes in WKURLCopyString if WKPageCopyActiveURL returns null
+        https://bugs.webkit.org/show_bug.cgi?id=201215
+
+        Reviewed by Don Olmstead.
+
+        MiniBrowser crashed if it was going to go to a unreachable page
+        because WKPageCopyActiveURL returned a nullptr.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (createString): Added null checking of the argument.
+
 2019-08-28  Tim Horton  <timothy_horton@apple.com>
 
         Reloading a web view with a fixed-width viewport and variable content width restores the previous page scale, shouldn't

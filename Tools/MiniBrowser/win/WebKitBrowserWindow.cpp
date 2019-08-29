@@ -49,6 +49,8 @@ std::wstring createString(WKStringRef wkString)
 
 std::wstring createString(WKURLRef wkURL)
 {
+    if (!wkURL)
+        return { };
     WKRetainPtr<WKStringRef> url = adoptWK(WKURLCopyString(wkURL));
     return createString(url.get());
 }
