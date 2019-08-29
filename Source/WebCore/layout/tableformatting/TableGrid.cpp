@@ -88,6 +88,11 @@ void TableGrid::ColumnsContext::useAsLogicalWidth(WidthConstraintsType type)
         column.setLogicalWidth(type == WidthConstraintsType::Minimum ? column.widthConstraints().minimum : column.widthConstraints().maximum);
 }
 
+TableGrid::Row::Row(const Box& rowBox)
+    : m_layoutBox(rowBox)
+{
+}
+
 TableGrid::CellInfo::CellInfo(const Box& tableCellBox, SlotPosition position, CellSize size)
     : tableCellBox(tableCellBox)
     , position(position)
@@ -147,7 +152,7 @@ void TableGrid::appendCell(const Box& tableCellBox)
         m_columnsContext.addColumn();
 
     if (isInNewRow)
-        m_rows.append({ });
+        m_rows.append({ *tableCellBox.parent() });
 
     m_cellList.add(WTFMove(cellInfo));
 }

@@ -1,3 +1,23 @@
+2019-08-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Initialize <tr> display boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=201232
+        <rdar://problem/54806789>
+
+        Reviewed by Antti Koivisto.
+
+        Set them as blank for now.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::initializeDisplayBoxToBlank const):
+        (WebCore::Layout::TableFormattingContext::layout const):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Row::Row):
+        (WebCore::Layout::TableGrid::appendCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Row::box const):
+
 2019-08-29  Youenn Fablet  <youenn@apple.com>
 
         document.fonts.ready is resolved too quickly

@@ -55,6 +55,8 @@ private:
     void computePreferredWidthForColumns() const;
     void distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const;
 
+    void initializeDisplayBoxToBlank(Display::Box&) const;
+
     TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
 

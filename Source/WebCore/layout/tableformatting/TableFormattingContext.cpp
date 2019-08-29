@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
+#include "LayoutChildIterator.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -36,6 +37,19 @@ namespace WebCore {
 namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingContext);
+
+// FIXME: This is temporary. Remove this function when table formatting is complete.
+void TableFormattingContext::initializeDisplayBoxToBlank(Display::Box& displayBox) const
+{
+    displayBox.setBorder({ });
+    displayBox.setPadding({ });
+    displayBox.setHorizontalMargin({ });
+    displayBox.setHorizontalComputedMargin({ });
+    displayBox.setVerticalMargin({ { }, { } });
+    displayBox.setTopLeft({ });
+    displayBox.setContentBoxWidth({ });
+    displayBox.setContentBoxHeight({ });
+}
 
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
 TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot, TableFormattingState& formattingState)
@@ -52,6 +66,11 @@ void TableFormattingContext::layout() const
     auto& layoutState = this->layoutState();
     auto& columnList = grid.columnsContext().columns();
     auto& rowList = grid.rows();
+    // First row.
+    auto& row = rowList.first();
+    row.setLogicalTop({ });
+    initializeDisplayBoxToBlank(layoutState.displayBoxForLayoutBox(row.box()));
+
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
         ASSERT(cellLayoutBox.establishesBlockFormattingContext());
@@ -61,13 +80,9 @@ void TableFormattingContext::layout() const
         auto cellPosition = cell->position;
         auto& row = rowList.at(cellPosition.y());
         auto& column = columnList.at(cellPosition.x());
-        cellDisplayBox.setContentBoxWidth(column.logicalWidth());
-        // FIXME: Do not use blanks.
-        cellDisplayBox.setBorder({ });
-        cellDisplayBox.setPadding({ });
-        cellDisplayBox.setHorizontalMargin({ });
-        cellDisplayBox.setHorizontalComputedMargin({ });
 
+        initializeDisplayBoxToBlank(cellDisplayBox);
+        cellDisplayBox.setContentBoxWidth(column.logicalWidth());
         cellDisplayBox.setTopLeft({ column.logicalLeft(), row.logicalTop() });
 
         layoutState.createFormattingContext(cellLayoutBox)->layout();
@@ -82,6 +97,7 @@ void TableFormattingContext::layout() const
         if (!cellPosition.x() && cellPosition.y()) {
             auto& previousRow = rowList.at(cellPosition.y() - 1);
             row.setLogicalTop(previousRow.logicalBottom());
+            initializeDisplayBoxToBlank(layoutState.displayBoxForLayoutBox(row.box()));
         }
     }
 }

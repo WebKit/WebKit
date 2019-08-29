@@ -109,6 +109,10 @@ public:
 
     struct Row {
     public:
+        Row(const Box&);
+
+        const Box& box() const { return m_layoutBox; }
+
         void setLogicalTop(LayoutUnit logicalTop) { m_logicalTop = logicalTop; }
         LayoutUnit logicalTop() const { return m_logicalTop; }
 
@@ -120,6 +124,7 @@ public:
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
+        const Box& m_layoutBox;
     };
     using RowList = WTF::Vector<Row>;
     RowList& rows() { return m_rows; }
