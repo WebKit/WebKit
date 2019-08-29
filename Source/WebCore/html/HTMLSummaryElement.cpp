@@ -102,6 +102,11 @@ static bool isClickableControl(EventTarget* target)
     return is<HTMLFormControlElement>(element) || is<HTMLFormControlElement>(element.shadowHost());
 }
 
+int HTMLSummaryElement::defaultTabIndex() const
+{
+    return isActiveSummary() ? 0 : -1;
+}
+
 bool HTMLSummaryElement::supportsFocus() const
 {
     return isActiveSummary();

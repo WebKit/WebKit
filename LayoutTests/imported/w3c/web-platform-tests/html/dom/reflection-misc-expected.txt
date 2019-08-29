@@ -2786,29 +2786,29 @@ PASS summary.accessKey: IDL set to null
 PASS summary.accessKey: IDL set to object "test-toString" 
 PASS summary.accessKey: IDL set to object "test-valueOf" 
 PASS summary.tabIndex: typeof IDL attribute 
-FAIL summary.tabIndex: setAttribute() to -36 assert_equals: IDL get expected -36 but got -1
+PASS summary.tabIndex: setAttribute() to -36 
 PASS summary.tabIndex: setAttribute() to -1 
-FAIL summary.tabIndex: setAttribute() to 0 assert_equals: IDL get expected 0 but got -1
-FAIL summary.tabIndex: setAttribute() to 1 assert_equals: IDL get expected 1 but got -1
-FAIL summary.tabIndex: setAttribute() to 2147483647 assert_equals: IDL get expected 2147483647 but got -1
-FAIL summary.tabIndex: setAttribute() to -2147483648 assert_equals: IDL get expected -2147483648 but got -1
+PASS summary.tabIndex: setAttribute() to 0 
+PASS summary.tabIndex: setAttribute() to 1 
+PASS summary.tabIndex: setAttribute() to 2147483647 
+PASS summary.tabIndex: setAttribute() to -2147483648 
 PASS summary.tabIndex: setAttribute() to "-1" 
-FAIL summary.tabIndex: setAttribute() to "-0" assert_equals: IDL get expected 0 but got -1
-FAIL summary.tabIndex: setAttribute() to "0" assert_equals: IDL get expected 0 but got -1
-FAIL summary.tabIndex: setAttribute() to "1" assert_equals: IDL get expected 1 but got -1
-FAIL summary.tabIndex: setAttribute() to "\t7" assert_equals: IDL get expected 7 but got -1
-FAIL summary.tabIndex: setAttribute() to "\f7" assert_equals: IDL get expected 7 but got -1
-FAIL summary.tabIndex: setAttribute() to " 7" assert_equals: IDL get expected 7 but got -1
-FAIL summary.tabIndex: setAttribute() to "\n7" assert_equals: IDL get expected 7 but got -1
-FAIL summary.tabIndex: setAttribute() to "\r7" assert_equals: IDL get expected 7 but got -1
-FAIL summary.tabIndex: setAttribute() to 1.5 assert_equals: IDL get expected 1 but got -1
-FAIL summary.tabIndex: setAttribute() to object "2" assert_equals: IDL get expected 2 but got -1
-FAIL summary.tabIndex: IDL set to -36 assert_equals: IDL get expected -36 but got -1
+PASS summary.tabIndex: setAttribute() to "-0" 
+PASS summary.tabIndex: setAttribute() to "0" 
+PASS summary.tabIndex: setAttribute() to "1" 
+PASS summary.tabIndex: setAttribute() to "\t7" 
+PASS summary.tabIndex: setAttribute() to "\f7" 
+PASS summary.tabIndex: setAttribute() to " 7" 
+PASS summary.tabIndex: setAttribute() to "\n7" 
+PASS summary.tabIndex: setAttribute() to "\r7" 
+PASS summary.tabIndex: setAttribute() to 1.5 
+PASS summary.tabIndex: setAttribute() to object "2" 
+PASS summary.tabIndex: IDL set to -36 
 PASS summary.tabIndex: IDL set to -1 
-FAIL summary.tabIndex: IDL set to 0 assert_equals: IDL get expected 0 but got -1
-FAIL summary.tabIndex: IDL set to 1 assert_equals: IDL get expected 1 but got -1
-FAIL summary.tabIndex: IDL set to 2147483647 assert_equals: IDL get expected 2147483647 but got -1
-FAIL summary.tabIndex: IDL set to -2147483648 assert_equals: IDL get expected -2147483648 but got -1
+PASS summary.tabIndex: IDL set to 0 
+PASS summary.tabIndex: IDL set to 1 
+PASS summary.tabIndex: IDL set to 2147483647 
+PASS summary.tabIndex: IDL set to -2147483648 
 PASS menu.title: typeof IDL attribute 
 PASS menu.title: IDL get with DOM attribute unset 
 PASS menu.title: setAttribute() to "" 

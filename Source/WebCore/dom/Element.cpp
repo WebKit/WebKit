@@ -267,12 +267,7 @@ RefPtr<Element> Element::focusDelegate()
 
 int Element::tabIndexForBindings() const
 {
-    auto defaultIndex = defaultTabIndex();
-    ASSERT(!defaultIndex || defaultIndex == -1);
-    // FIXME: supportsFocus() check shouldn't be here.
-    if (!defaultIndex || supportsFocus())
-        return tabIndexSetExplicitly().valueOr(0);
-    return defaultIndex;
+    return valueOrCompute(tabIndexSetExplicitly(), [&] { return defaultTabIndex(); });
 }
 
 void Element::setTabIndexForBindings(int value)

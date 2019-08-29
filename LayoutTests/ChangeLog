@@ -1,3 +1,21 @@
+2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make tabIndex IDL attribute reflect its content attribute
+        https://bugs.webkit.org/show_bug.cgi?id=199606
+        <rdar://problem/52811448>
+
+        Reviewed by Chris Dumez.
+
+        Added test cases and assertions.
+
+        * fast/dom/tabindex-defaults-expected.txt:
+        * fast/dom/tabindex-defaults.html: Added test cases for iframe, frame, object, video, summary, and SVG elements.
+        Also blur the active element to avoid any race conditions.
+        * plugins/focus-expected.txt:
+        * plugins/focus.html:
+        * svg/custom/tabindex-order-expected.txt:
+        * svg/custom/tabindex-order.html: Made the sequential navigation code not rely on tabIndex IDL attribute.
+
 2019-08-28  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix test failure after r249173

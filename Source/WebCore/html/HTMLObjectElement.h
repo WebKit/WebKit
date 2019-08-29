@@ -59,6 +59,10 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
 
+    RenderWidget* renderWidgetLoadingPlugin() const final;
+
+    int defaultTabIndex() const final;
+
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
@@ -73,8 +77,6 @@ private:
 
     bool isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
-
-    RenderWidget* renderWidgetLoadingPlugin() const final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 

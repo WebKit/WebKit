@@ -16,6 +16,7 @@ id: h tabindex: 6 [object SVGTextElement] is focused.
 id: i tabindex: 0 [object SVGSVGElement] is focused.
 id: j tabindex: 0 [object SVGLineElement] is focused.
 id: k tabindex: 0 [object SVGPolygonElement] is focused.
+id: a tabindex: 1 [object SVGCircleElement] is focused.
 
 Tabbing backward....
 
@@ -31,6 +32,7 @@ id: symbol tabindex: 1 [object SVGSymbolElement] is focused.
 id: c tabindex: 1 [object SVGEllipseElement] is focused.
 id: b tabindex: 1 [object SVGGElement] is focused.
 id: a tabindex: 1 [object SVGCircleElement] is focused.
+id: k tabindex: 0 [object SVGPolygonElement] is focused.
 
 Test finished
 

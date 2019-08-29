@@ -1,3 +1,69 @@
+2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make tabIndex IDL attribute reflect its content attribute
+        https://bugs.webkit.org/show_bug.cgi?id=199606
+        <rdar://problem/52811448>
+
+        Reviewed by Chris Dumez.
+
+        This patch makes tabIndex IDL attribute no longer return 0 when the element is focusable
+        to match the latest HTML5 specification. Instead, the IDL attribute simply reflect the tabindex
+        content attribute with some elements having 0 as the default tab index (see r248784):
+        https://html.spec.whatwg.org/multipage/interaction.html#the-tabindex-attribute
+
+        The practical implication is that tabIndex IDL attribute on a root editable element (a.k.a.
+        editing host in HTML5 spec term), body element in design mode, and media elements with
+        media controls would start returning -1 instead of 0.
+
+        Mechanically, this is accomplished by removing the special case in Element::tabIndexForBindings
+        when supportsFocus returned true. The effect, if any, this patch has on each element which
+        overrides Element::supportsFocus is summarized as follows (indentation simplies inheritance):
+
+        HTMLAnchorElement -> No effect since defaultTabIndex returns 0.
+            HTMLAreaElement -> Ditto.
+        HTMLBodyElement -> Changes to return -1 in design mode.
+        HTMLElement -> Changes to return -1 on a root editable element.
+        HTMLFormControlElement
+            HTMLButtonElement -> No effect since defaultTabIndex returns 0.
+            HTMLFieldSetElement -> No effect since this is an override to use HTMLElement's supportsFocus.
+            HTMLFormControlElementWithState
+                HTMLKeygenElement -> No effect since defaultTabIndex returns 0.
+                HTMLSelectElement -> Ditto.
+                HTMLTextFormControlElement -> Ditto.
+                    HTMLInputElement -> Ditto.
+                    HTMLTextAreaElement -> Ditto.
+            HTMLOutputElement -> No effect since this is an override to use HTMLElement's supportsFocus.
+        HTMLFrameElementBase - No change. Added defaultTabIndex on HTMLIFrameElement and HTMLFrameElement
+            to returns 0.
+        HTMLImageElement - No impact since it only affects when an image is set to be editable via SPI.
+        HTMLMediaElement - Changes to return -1 when media controls is present.
+        HTMLPlugInElement - applet and embed elements change to return -1 when the plugin is available.
+        HTMLSummaryElement - No change. Added defaultTabIndex to return 0 when it's active to match
+            supportsFocus as well as the HTML5 specification.
+        MathMLElement - No effect since tabIndex IDL attribute does not exist in MathML.
+        SVGAElement - No effect since defaultTabIndex returns 0.
+        SVGClipPathElement - No effect since it always returns false.
+        SVGDefsElement - No effect since it always returns false.
+
+        Tests: fast/dom/tabindex-defaults.html
+               plugins/focus.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::tabIndexForBindings const): Made the change.
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::defaultTabIndex const): Added to preserve the existing behavior.
+        * html/HTMLFrameElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::defaultTabIndex const): Ditto.
+        * html/HTMLIFrameElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::defaultTabIndex const): Added. Always return 0 to match the spec.
+        * html/HTMLObjectElement.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::defaultTabIndex const): Added. Return 0 when the this summary
+        is the active summary element of the details element.
+        * html/HTMLSummaryElement.h:
+
 2019-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Make FillLayer::hasImage() inline

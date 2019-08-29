@@ -51,6 +51,11 @@ Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLIFrameElement(tagName, document));
 }
 
+int HTMLIFrameElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 DOMTokenList& HTMLIFrameElement::sandbox()
 {
     if (!m_sandbox) {

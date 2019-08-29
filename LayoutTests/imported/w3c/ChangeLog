@@ -1,3 +1,13 @@
+2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make tabIndex IDL attribute reflect its content attribute
+        https://bugs.webkit.org/show_bug.cgi?id=199606
+        <rdar://problem/52811448>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/dom/reflection-misc-expected.txt: Rebaselined now that test cases for summary are passing.
+
 2019-08-28  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] WebKitMediaSrc rework

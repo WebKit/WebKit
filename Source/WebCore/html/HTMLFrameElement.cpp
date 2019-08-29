@@ -74,6 +74,11 @@ void HTMLFrameElement::didAttachRenderers()
         m_frameBorder = containingFrameSet->hasFrameBorder();
 }
 
+int HTMLFrameElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == frameborderAttr) {

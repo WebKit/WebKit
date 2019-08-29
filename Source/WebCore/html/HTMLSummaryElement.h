@@ -46,6 +46,7 @@ private:
 
     RefPtr<HTMLDetailsElement> detailsElement() const;
 
+    int defaultTabIndex() const final;
     bool supportsFocus() const final;
 };
 

@@ -86,6 +86,11 @@ RenderWidget* HTMLObjectElement::renderWidgetLoadingPlugin() const
     return renderWidget(); // This will return 0 if the renderer is not a RenderWidget.
 }
 
+int HTMLObjectElement::defaultTabIndex() const
+{
+    return 0;
+}
+
 bool HTMLObjectElement::isPresentationAttribute(const QualifiedName& name) const
 {
     if (name == borderAttr)

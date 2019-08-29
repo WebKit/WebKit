@@ -34,6 +34,8 @@
                 testRunner.dumpAsText();
             }
 
+            document.activeElement.blur();
+
             var rects = document.getElementsByClassName('tab');
 
             // Put focus in the page
@@ -43,18 +45,20 @@
             addEventListenersToRects(rects);
 
             log('Tabbing forward....\n');
+            let tabCount = 0;
             for (var i = 0; i < rects.length; ++i) {
-                if (rects[i].tabIndex >= 0)
-                    dispatchTabPress(document, false);
+                if (i > 1 && document.activeElement.id == 'a')
+                    break;
+                dispatchTabPress(document, false);
+                tabCount++;
             }
 
             lastFocusedElement.blur();
 
             log('\nTabbing backward....\n');
-            for (var i = 0; i < rects.length; ++i) {
-                if (rects[i].tabIndex >= 0)
-                    dispatchTabPress(document, true);
-            }
+            previousActiveElement = null;
+            for (var i = 0; i < tabCount; ++i)
+                dispatchTabPress(document, true);
 
             log('\nTest finished\n');
         }
