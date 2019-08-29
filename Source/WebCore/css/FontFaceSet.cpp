@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "FontFace.h"
+#include "FrameLoader.h"
 #include "JSDOMBinding.h"
 #include "JSFontFace.h"
 #include "JSFontFaceSet.h"
@@ -66,8 +67,12 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     , m_backing(backing)
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
 {
-    if (!backing.hasActiveFontFaces())
+    if (document.frame())
+        m_isFirstLayoutDone = document.frame()->loader().stateMachine().firstLayoutDone();
+
+    if (m_isFirstLayoutDone && !backing.hasActiveFontFaces())
         m_readyPromise.resolve(*this);
+
     m_backing->addClient(*this);
 }
 
@@ -191,12 +196,19 @@ bool FontFaceSet::canSuspendForDocumentSuspension() const
 void FontFaceSet::startedLoading()
 {
     // FIXME: Fire a "loading" event asynchronously.
-    m_readyPromise.clear();
+}
+
+void FontFaceSet::didFirstLayout()
+{
+    m_isFirstLayoutDone = true;
+    if (!m_backing->hasActiveFontFaces() && !m_readyPromise.isFulfilled())
+        m_readyPromise.resolve(*this);
 }
 
 void FontFaceSet::completedLoading()
 {
-    m_readyPromise.resolve(*this);
+    if (m_isFirstLayoutDone && !m_readyPromise.isFulfilled())
+        m_readyPromise.resolve(*this);
 }
 
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)

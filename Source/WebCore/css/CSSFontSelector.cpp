@@ -84,6 +84,11 @@ CSSFontSelector::~CSSFontSelector()
     FontCache::singleton().removeClient(*this);
 }
 
+FontFaceSet* CSSFontSelector::optionalFontFaceSet()
+{
+    return m_fontFaceSet.get();
+}
+
 FontFaceSet& CSSFontSelector::fontFaceSet()
 {
     if (!m_fontFaceSet) {

@@ -3014,6 +3014,9 @@ void Document::implicitClose()
 
     m_processingLoadEvent = false;
 
+    if (auto* fontFaceSet = fontSelector().optionalFontFaceSet())
+        fontFaceSet->didFirstLayout();
+
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
     if (f && hasLivingRenderTree() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an

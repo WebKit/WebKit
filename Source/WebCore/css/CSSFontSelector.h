@@ -81,6 +81,7 @@ public:
 
     void beginLoadingFontSoon(CachedFont&);
 
+    FontFaceSet* optionalFontFaceSet();
     FontFaceSet& fontFaceSet();
 
     void incrementIsComputingRootStyleFont() { ++m_computingRootStyleFontCount; }
