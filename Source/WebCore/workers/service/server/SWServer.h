@@ -130,7 +130,7 @@ public:
     WEBCORE_EXPORT void startSuspension(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void endSuspension();
 
-    SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
+    WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
     void removeRegistration(const ServiceWorkerRegistrationKey&);
     WEBCORE_EXPORT Vector<ServiceWorkerRegistrationData> getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL);

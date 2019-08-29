@@ -71,10 +71,10 @@ void SWServerToContextConnection::scriptContextFailedToStart(const Optional<Serv
         worker->scriptContextFailedToStart(jobDataIdentifier, message);
 }
 
-void SWServerToContextConnection::scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+void SWServerToContextConnection::scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool doesHandleFetch)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->scriptContextStarted(jobDataIdentifier);
+        worker->scriptContextStarted(jobDataIdentifier, doesHandleFetch);
 }
     
 void SWServerToContextConnection::didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)

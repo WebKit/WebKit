@@ -108,8 +108,9 @@ void SWServerWorker::scriptContextFailedToStart(const Optional<ServiceWorkerJobD
         m_server->scriptContextFailedToStart(jobDataIdentifier, *this, message);
 }
 
-void SWServerWorker::scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier)
+void SWServerWorker::scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, bool doesHandleFetch)
 {
+    m_shouldSkipHandleFetch = !doesHandleFetch;
     ASSERT(m_server);
     if (m_server)
         m_server->scriptContextStarted(jobDataIdentifier, *this);
@@ -240,6 +241,9 @@ void SWServerWorker::setState(State state)
 {
     ASSERT(state != State::Running || m_server->getRegistration(m_registrationKey));
     m_state = state;
+
+    if (state == State::Running)
+        m_shouldSkipHandleFetch = false;
 }
 
 } // namespace WebCore

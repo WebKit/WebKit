@@ -50,7 +50,8 @@ public:
         virtual ~Connection() { }
 
         virtual void postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&&, ServiceWorkerIdentifier source, const String& sourceOrigin) = 0;
-        virtual void serviceWorkerStartedWithMessage(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage) = 0;
+        virtual void serviceWorkerStarted(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, bool doesHandleFetch) = 0;
+        virtual void serviceWorkerFailedToStart(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& message) = 0;
         virtual void didFinishInstall(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, bool wasSuccessful) = 0;
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
         virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
@@ -74,6 +75,7 @@ public:
     WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void softUpdate(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
 
     void forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>&);
@@ -88,7 +90,7 @@ public:
 private:
     SWContextManager() = default;
 
-    void startedServiceWorker(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage);
+    void startedServiceWorker(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch);
     NO_RETURN_DUE_TO_CRASH void serviceWorkerFailedToTerminate(ServiceWorkerIdentifier);
 
     HashMap<ServiceWorkerIdentifier, RefPtr<ServiceWorkerThreadProxy>> m_workerMap;

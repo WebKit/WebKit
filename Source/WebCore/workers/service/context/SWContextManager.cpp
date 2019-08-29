@@ -59,16 +59,20 @@ void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerTh
     auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
     ASSERT_UNUSED(result, result.isNewEntry);
     
-    threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage) {
-        SWContextManager::singleton().startedServiceWorker(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
+    threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage, bool doesHandleFetch) {
+        SWContextManager::singleton().startedServiceWorker(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage, doesHandleFetch);
     });
 }
 
-void SWContextManager::startedServiceWorker(Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage)
+void SWContextManager::startedServiceWorker(Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch)
 {
-    connection()->serviceWorkerStartedWithMessage(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
     if (m_serviceWorkerCreationCallback)
         m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
+    if (!exceptionMessage.isEmpty()) {
+        connection()->serviceWorkerFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
+        return;
+    }
+    connection()->serviceWorkerStarted(jobDataIdentifier, serviceWorkerIdentifier, doesHandleFetch);
 }
 
 ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWorkerIdentifier identifier) const
@@ -102,6 +106,15 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
         return;
 
     serviceWorker->thread().fireActivateEvent();
+}
+
+void SWContextManager::softUpdate(ServiceWorkerIdentifier identifier)
+{
+    auto* serviceWorker = m_workerMap.get(identifier);
+    if (!serviceWorker)
+        return;
+
+    serviceWorker->thread().softUpdate();
 }
 
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)

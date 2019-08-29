@@ -1,3 +1,56 @@
+2019-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Skip fetch event dispatching if no fetch event handler is added at script evaluation time
+        https://bugs.webkit.org/show_bug.cgi?id=201174
+
+        Reviewed by Chris Dumez.
+
+        At end of worker script evaluation, store whether a fetch event handler is registered.
+        Send it back to the SWServer that will store it in the corresponding SWServerWorker.
+
+        Add support for soft update directly from the registration.
+        This will trigger a soft-update from the worker context itself.
+        In theory, this should be started by the job queue but we do not have a way yet to implement this as per spec.
+
+        Test: http/wpt/service-workers/skipFetchEvent.https.html
+
+        * workers/DedicatedWorkerThread.h:
+        (WebCore::DedicatedWorkerThread::start):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::finishedEvaluatingScript):
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::registerServiceWorkerThreadForInstall):
+        (WebCore::SWContextManager::startedServiceWorker):
+        (WebCore::SWContextManager::softUpdate):
+        * workers/service/context/SWContextManager.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::postFetchTask):
+        (WebCore::ServiceWorkerThread::softUpdate):
+        (WebCore::ServiceWorkerThread::finishedEvaluatingScript):
+        (WebCore::ServiceWorkerThread::start):
+        * workers/service/context/ServiceWorkerThread.h:
+        (WebCore::ServiceWorkerThread::doesHandleFetch const):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::shouldSoftUpdate const):
+        (WebCore::SWServerRegistration::softUpdate):
+        * workers/service/server/SWServerRegistration.h:
+        (WebCore::SWServerRegistration::isStale const):
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::generateConnectionIdentifier):
+        (WebCore::SWServerToContextConnection::SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::scriptContextStarted):
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::scriptContextStarted):
+        (WebCore::SWServerWorker::setState):
+        * workers/service/server/SWServerWorker.h:
+        (WebCore::SWServerWorker::shouldSkipFetchEvent const):
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 3)

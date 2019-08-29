@@ -362,6 +362,28 @@ void SWServerRegistration::setIsUninstalling(bool value)
     }
 }
 
+bool SWServerRegistration::shouldSoftUpdate(const FetchOptions& options) const
+{
+    if (options.mode == FetchOptions::Mode::Navigate)
+        return true;
+
+    return WebCore::isNonSubresourceRequest(options.destination) && isStale();
+}
+
+// https://w3c.github.io/ServiceWorker/#soft-update
+void SWServerRegistration::softUpdate()
+{
+    auto* worker = getNewestWorker();
+    if (!worker)
+        return;
+
+    // FIXME: We should schedule an update job.
+    m_server.runServiceWorkerIfNecessary(worker->identifier(), [serviceWorkerIdentifier = worker->identifier()](auto* contextConnection) {
+        if (contextConnection)
+            contextConnection->softUpdate(serviceWorkerIdentifier);
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

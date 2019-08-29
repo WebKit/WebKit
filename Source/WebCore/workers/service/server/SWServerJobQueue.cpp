@@ -350,7 +350,7 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
     // - newestWorker is not null, and registration's last update check time is not null and the time difference in seconds calculated by the
     //   current time minus registration's last update check time is greater than 86400.
     if (registration->updateViaCache() != ServiceWorkerUpdateViaCache::All
-        || (newestWorker && registration->lastUpdateTime() && (WallTime::now() - registration->lastUpdateTime()) > 86400_s)) {
+        || (newestWorker && registration->isStale())) {
         cachePolicy = FetchOptions::Cache::NoCache;
     }
     m_server.startScriptFetch(job, cachePolicy);

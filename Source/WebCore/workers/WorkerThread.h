@@ -65,7 +65,6 @@ public:
     static HashSet<WorkerThread*>& workerThreads(const LockHolder&);
     static Lock& workerThreadsMutex();
 
-    WEBCORE_EXPORT void start(WTF::Function<void(const String&)>&& evaluateCallback);
     void stop(WTF::Function<void()>&& terminatedCallback);
 
     Thread* thread() const { return m_thread.get(); }
@@ -104,9 +103,13 @@ protected:
     IDBClient::IDBConnectionProxy* idbConnectionProxy();
     SocketProvider* socketProvider();
 
+    void start(Function<void(const String&)>&& evaluateCallback);
+
 private:
     void workerThread();
     virtual bool isServiceWorkerThread() const { return false; }
+
+    virtual void finishedEvaluatingScript() { }
 
     RefPtr<Thread> m_thread;
     String m_identifier;

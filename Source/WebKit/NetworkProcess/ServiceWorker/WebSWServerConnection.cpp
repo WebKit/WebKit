@@ -183,7 +183,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
         if (!worker->contextConnection())
             m_networkProcess->createServerToContextConnection(worker->registrableDomain(), server().sessionID());
 
-        server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](auto* contextConnection) {
+        server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer), shouldSkipFetchEvent = worker->shouldSkipFetchEvent()](auto* contextConnection) {
             if (!weakThis)
                 return;
 
@@ -196,6 +196,14 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
             }
         });
     };
+
+    if (worker->shouldSkipFetchEvent()) {
+        m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
+        auto* registration = server().getRegistration(worker->registrationKey());
+        if (registration && registration->shouldSoftUpdate(options))
+            registration->softUpdate();
+        return;
+    }
 
     if (worker->state() == ServiceWorkerState::Activating) {
         worker->whenActivated(WTFMove(runServerWorkerAndStartFetch));

@@ -56,6 +56,7 @@ public:
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&, PAL::SessionID, const String& userAgent) = 0;
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
+    virtual void softUpdate(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
@@ -65,7 +66,7 @@ public:
 
     // Messages back from the SW host process
     WEBCORE_EXPORT void scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, const String& message);
-    WEBCORE_EXPORT void scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, bool doesHandleFetch);
     WEBCORE_EXPORT void didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, bool wasSuccessful);
     WEBCORE_EXPORT void didFinishActivation(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);

@@ -30,6 +30,7 @@ messages -> WebSWContextManagerConnection {
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
+    SoftUpdate(WebCore::ServiceWorkerIdentifier identifier)
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
     SyncTerminateWorker(WebCore::ServiceWorkerIdentifier identifier) -> () Synchronous
     FindClientByIdentifierCompleted(uint64_t clientIdRequestIdentifier, Optional<WebCore::ServiceWorkerClientData> data, bool hasSecurityError)

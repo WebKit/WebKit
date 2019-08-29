@@ -184,6 +184,29 @@ void ServiceWorkerThread::fireActivateEvent()
     runLoop().postTask(WTFMove(task));
 }
 
+void ServiceWorkerThread::softUpdate()
+{
+    runLoop().postTask([](auto& context) mutable {
+        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+        serviceWorkerGlobalScope.registration().scheduleSoftUpdate();
+    });
+}
+
+void ServiceWorkerThread::finishedEvaluatingScript()
+{
+    m_doesHandleFetch = workerGlobalScope()->hasEventListeners(eventNames().fetchEvent);
+}
+
+void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
+{
+    WorkerThread::start([callback = WTFMove(callback), serviceWorkerIdentifier = this->identifier()](auto& errorMessage) mutable {
+        bool doesHandleFetch = true;
+        if (auto* threadProxy = SWContextManager::singleton().workerByID(serviceWorkerIdentifier))
+            doesHandleFetch = threadProxy->thread().doesHandleFetch();
+        callback(errorMessage, doesHandleFetch);
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

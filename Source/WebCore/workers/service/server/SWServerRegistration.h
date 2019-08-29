@@ -62,6 +62,7 @@ public:
 
     void setLastUpdateTime(WallTime);
     WallTime lastUpdateTime() const { return m_lastUpdateTime; }
+    bool isStale() const { return m_lastUpdateTime && (WallTime::now() - m_lastUpdateTime) > 86400_s; }
 
     void setUpdateViaCache(ServiceWorkerUpdateViaCache);
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
@@ -95,6 +96,9 @@ public:
     void didFinishActivation(ServiceWorkerIdentifier);
 
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
+
+    WEBCORE_EXPORT bool shouldSoftUpdate(const FetchOptions&) const;
+    WEBCORE_EXPORT void softUpdate();
 
 private:
     void activate();

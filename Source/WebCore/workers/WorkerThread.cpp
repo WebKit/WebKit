@@ -193,6 +193,8 @@ void WorkerThread::workerThread()
     String exceptionMessage;
     scriptController->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, URL(m_startupData->m_scriptURL)), &exceptionMessage);
 
+    finishedEvaluatingScript();
+
     callOnMainThread([evaluateCallback = WTFMove(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
         if (evaluateCallback)
             evaluateCallback(message);

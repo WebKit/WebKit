@@ -86,6 +86,7 @@ private:
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, PAL::SessionID, const String& userAgent) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
+    void softUpdate(WebCore::ServiceWorkerIdentifier) final;
     void terminateWorker(WebCore::ServiceWorkerIdentifier) final;
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<WebCore::ServiceWorkerClientData>&, bool hasSecurityError) final;

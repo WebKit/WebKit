@@ -175,12 +175,14 @@ void WebSWContextManagerConnection::removeFrameLoaderClient(ServiceWorkerFrameLo
     ASSERT_UNUSED(result, result);
 }
 
-void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage)
+void WebSWContextManagerConnection::serviceWorkerStarted(Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool doesHandleFetch)
 {
-    if (exceptionMessage.isEmpty())
-        m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ScriptContextStarted(jobDataIdentifier, serviceWorkerIdentifier), 0);
-    else
-        m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ScriptContextStarted { jobDataIdentifier, serviceWorkerIdentifier, doesHandleFetch }, 0);
+}
+
+void WebSWContextManagerConnection::serviceWorkerFailedToStart(Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage)
+{
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart { jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage }, 0);
 }
 
 static inline bool isValidFetch(const ResourceRequest& request, const FetchOptions& options, const URL& serviceWorkerURL, const String& referrer)
@@ -259,6 +261,11 @@ void WebSWContextManagerConnection::fireInstallEvent(ServiceWorkerIdentifier ide
 void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier identifier)
 {
     SWContextManager::singleton().fireActivateEvent(identifier);
+}
+
+void WebSWContextManagerConnection::softUpdate(WebCore::ServiceWorkerIdentifier identifier)
+{
+    SWContextManager::singleton().softUpdate(identifier);
 }
 
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
