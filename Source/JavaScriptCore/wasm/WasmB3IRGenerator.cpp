@@ -658,10 +658,10 @@ void B3IRGenerator::insertConstants()
 
 auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
 {
-    Checked<uint32_t, RecordOverflow> totalBytesChecked = count;
-    totalBytesChecked += m_locals.size();
-    uint32_t totalBytes;
-    WASM_COMPILE_FAIL_IF((totalBytesChecked.safeGet(totalBytes) == CheckedState::DidOverflow) || !m_locals.tryReserveCapacity(totalBytes), "can't allocate memory for ", totalBytes, " locals");
+    size_t newSize = m_locals.size() + count;
+    ASSERT(!(CheckedUint32(count) + m_locals.size()).hasOverflowed());
+    ASSERT(newSize <= maxFunctionLocals);
+    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(newSize), "can't allocate memory for ", newSize, " locals");
 
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));

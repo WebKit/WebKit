@@ -249,8 +249,10 @@ auto Validate::addRefFunc(uint32_t index, ExpressionType& result) -> Result
 
 auto Validate::addLocal(Type type, uint32_t count) -> Result
 {
-    size_t size = m_locals.size() + count;
-    WASM_VALIDATOR_FAIL_IF(!m_locals.tryReserveCapacity(size), "can't allocate memory for ", size, " locals");
+    size_t newSize = m_locals.size() + count;
+    ASSERT(!(CheckedUint32(count) + m_locals.size()).hasOverflowed());
+    ASSERT(newSize <= maxFunctionLocals);
+    WASM_VALIDATOR_FAIL_IF(!m_locals.tryReserveCapacity(newSize), "can't allocate memory for ", newSize, " locals");
 
     for (uint32_t i = 0; i < count; ++i)
         m_locals.uncheckedAppend(type);
