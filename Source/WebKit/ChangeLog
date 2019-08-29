@@ -1,3 +1,22 @@
+2019-08-28  Tim Horton  <timothy_horton@apple.com>
+
+        Reloading a web view with a fixed-width viewport and variable content width restores the previous page scale, shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=201256
+        <rdar://problem/54809509>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+        When restoring page state from a history item, if the saved scale was equal to the
+        initial scale at the time it was saved, ignore the saved scale and use the current
+        initial scale instead.
+
+        Normally this doesn't matter because a given page's initial scale doesn't usually change
+        between loads, but it totally can! See the test for one example of a way an API client
+        might cause this; you could also imagine something similar happening if the actual
+        page content changed.
+
 2019-08-28  Megan Gardner  <megan_gardner@apple.com>
 
         Null check webFrame when creating a print preview to prevent a crash.

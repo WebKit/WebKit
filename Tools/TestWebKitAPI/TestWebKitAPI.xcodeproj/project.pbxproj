@@ -126,6 +126,8 @@
 		2D21FE591F04642900B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */; };
 		2D2BEB2D22324E5F005544CA /* RequestTextInputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2BEB2C22324E5F005544CA /* RequestTextInputContext.mm */; };
 		2D2D13B3229F408B005068AF /* DeviceManagementRestrictions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D13B2229F408B005068AF /* DeviceManagementRestrictions.mm */; };
+		2D2FE8D82315F06E00B2E9C9 /* ReloadWithDifferingInitialScale.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FE8D72315F06D00B2E9C9 /* ReloadWithDifferingInitialScale.mm */; };
+		2D2FE8DA231745C900B2E9C9 /* long-email-viewport.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2D2FE8D9231745AB00B2E9C9 /* long-email-viewport.html */; };
 		2D3CA3A8221DF4B40088E803 /* PageOverlayPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */; };
 		2D4CF8BD1D8360CC0001CE8D /* WKThumbnailView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D4CF8BC1D8360CC0001CE8D /* WKThumbnailView.mm */; };
 		2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */; };
@@ -1321,6 +1323,7 @@
 				46C519E71D3563FD00DAA51A /* LocalStorageNullEntries.localstorage in Copy Resources */,
 				46C519E81D3563FD00DAA51A /* LocalStorageNullEntries.localstorage-shm in Copy Resources */,
 				7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */,
+				2D2FE8DA231745C900B2E9C9 /* long-email-viewport.html in Copy Resources */,
 				C9E8EE7521DED94300797765 /* long-test.mp4 in Copy Resources */,
 				9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */,
 				93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */,
@@ -1568,6 +1571,8 @@
 		2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFViewStablePresentationUpdateCallback.mm; sourceTree = "<group>"; };
 		2D2BEB2C22324E5F005544CA /* RequestTextInputContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RequestTextInputContext.mm; sourceTree = "<group>"; };
 		2D2D13B2229F408B005068AF /* DeviceManagementRestrictions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceManagementRestrictions.mm; sourceTree = "<group>"; };
+		2D2FE8D72315F06D00B2E9C9 /* ReloadWithDifferingInitialScale.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReloadWithDifferingInitialScale.mm; sourceTree = "<group>"; };
+		2D2FE8D9231745AB00B2E9C9 /* long-email-viewport.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "long-email-viewport.html"; sourceTree = "<group>"; };
 		2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageOverlayPlugin.mm; sourceTree = "<group>"; };
 		2D4CF8BC1D8360CC0001CE8D /* WKThumbnailView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKThumbnailView.mm; path = WebKit/WKThumbnailView.mm; sourceTree = "<group>"; };
 		2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLVideoElementWrapper.mm; sourceTree = "<group>"; };
@@ -2830,6 +2835,7 @@
 				5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */,
 				5CFACF64226FD1FB0056C7D0 /* Proxy.mm */,
 				A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */,
+				2D2FE8D72315F06D00B2E9C9 /* ReloadWithDifferingInitialScale.mm */,
 				1A4F81D01BDFFDCF004E672E /* RemoteObjectRegistry.h */,
 				1A4F81C81BDFFD18004E672E /* RemoteObjectRegistry.mm */,
 				1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */,
@@ -3695,6 +3701,7 @@
 				8361F1771E610B2100759B25 /* link-with-download-attribute-with-slashes.html */,
 				8349D3C31DB9724F004A9F65 /* link-with-download-attribute.html */,
 				378E647816326FDF00B6C676 /* link-with-title.html */,
+				2D2FE8D9231745AB00B2E9C9 /* long-email-viewport.html */,
 				C9E8EE7421DED91E00797765 /* long-test.mp4 */,
 				9361002814DC957B0061379D /* lots-of-iframes.html */,
 				93AF4ECF1506F123007FD57E /* lots-of-images.html */,
@@ -4644,6 +4651,7 @@
 				7C83E0C21D0A653500FEBCF3 /* QuickLook.mm in Sources */,
 				6B4E861C2220A5520022F389 /* RegistrableDomain.cpp in Sources */,
 				7CCE7F0D1A411AE600447C4C /* ReloadPageAfterCrash.cpp in Sources */,
+				2D2FE8D82315F06E00B2E9C9 /* ReloadWithDifferingInitialScale.mm in Sources */,
 				7C83E0C31D0A653A00FEBCF3 /* RemoteObjectRegistry.mm in Sources */,
 				7CCE7EC91A411A7E00447C4C /* RenderedImageFromDOMNode.mm in Sources */,
 				7CCE7ECA1A411A7E00447C4C /* RenderedImageFromDOMRange.mm in Sources */,

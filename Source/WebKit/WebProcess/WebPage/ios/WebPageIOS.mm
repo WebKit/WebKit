@@ -379,7 +379,8 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
 
     FloatSize currentMinimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
     if (historyItem.minimumLayoutSizeInScrollViewCoordinates() == currentMinimumLayoutSizeInScrollViewCoordinates) {
-        float boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), historyItem.pageScaleFactor()));
+        float boundedScale = historyItem.scaleIsInitial() ? m_viewportConfiguration.initialScale() : historyItem.pageScaleFactor();
+        boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), boundedScale));
         scalePage(boundedScale, IntPoint());
 
         Optional<FloatPoint> scrollPosition;
