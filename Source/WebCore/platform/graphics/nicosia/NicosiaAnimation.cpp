@@ -202,6 +202,25 @@ Animation::Animation(const Animation& other)
 {
 }
 
+Animation& Animation::operator=(const Animation& other)
+{
+    m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
+    m_keyframes = other.m_keyframes;
+    m_boxSize = other.m_boxSize;
+    m_timingFunction = other.m_timingFunction->clone();
+    m_iterationCount = other.m_iterationCount;
+    m_duration = other.m_duration;
+    m_direction = other.m_direction;
+    m_fillsForwards = other.m_fillsForwards;
+    m_listsMatch = other.m_listsMatch;
+    m_startTime = other.m_startTime;
+    m_pauseTime = other.m_pauseTime;
+    m_totalRunningTime = other.m_totalRunningTime;
+    m_lastRefreshedTime = other.m_lastRefreshedTime;
+    m_state = other.m_state;
+    return *this;
+}
+
 void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time)
 {
     if (!isActive())

@@ -42,7 +42,11 @@ public:
         : m_keyframes(WebCore::AnimatedPropertyInvalid)
     { }
     Animation(const String&, const WebCore::KeyframeValueList&, const WebCore::FloatSize&, const WebCore::Animation&, bool, MonotonicTime, Seconds, AnimationState);
+
     WEBCORE_EXPORT Animation(const Animation&);
+    Animation& operator=(const Animation&);
+    Animation(Animation&&) = default;
+    Animation& operator=(Animation&&) = default;
 
     void apply(ApplicationResult&, MonotonicTime);
     void applyKeepingInternalState(ApplicationResult&, MonotonicTime);

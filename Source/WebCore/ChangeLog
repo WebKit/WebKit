@@ -1,3 +1,26 @@
+2019-08-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Nicosia::Animation is missing the copy assignment operator
+        https://bugs.webkit.org/show_bug.cgi?id=201298
+
+        Reviewed by Carlos Garcia Campos.
+
+        Along with the copy constructor, the Nicosia::Animation class also
+        requires the copy assignment operator that's invoked whenever
+        the containing Nicosia::Animations object is copied across different
+        state objects.
+
+        Much like the constructor, the copy assignment should clone the
+        TimingFunction object to make it safely reusable in other contexts.
+        This fixes the assertion failures in debug configurations over the
+        improper cross-thread RefCounted usage.
+
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::Animation::operator=):
+        * platform/graphics/nicosia/NicosiaAnimation.h:
+        Explicitly default the move constructor and assignment operator,
+        providing the whole quartet.
+
 2019-08-29  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=200917
