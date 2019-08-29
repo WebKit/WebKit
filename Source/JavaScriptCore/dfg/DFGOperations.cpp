@@ -2135,6 +2135,7 @@ EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, Encode
         return JSValue::encode(jsBoolean(false));
 
     JSObject* base = baseValue.toObject(exec);
+    ASSERT(!scope.exception() || !base);
     if (!base)
         return JSValue::encode(JSValue());
     auto propertyName = asString(property)->toIdentifier(exec);

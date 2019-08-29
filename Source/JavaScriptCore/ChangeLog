@@ -1,3 +1,13 @@
+2019-08-28  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception check validation in DFG's operationHasGenericProperty().
+        https://bugs.webkit.org/show_bug.cgi?id=201245
+        <rdar://problem/54777512>
+
+        Reviewed by Robin Morisset.
+
+        * dfg/DFGOperations.cpp:
+
 2019-08-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed. Restabilize non-unified build.
