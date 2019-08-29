@@ -45,20 +45,20 @@
             addEventListenersToRects(rects);
 
             log('Tabbing forward....\n');
-            let tabCount = 0;
             for (var i = 0; i < rects.length; ++i) {
                 if (i > 1 && document.activeElement.id == 'a')
                     break;
                 dispatchTabPress(document, false);
-                tabCount++;
             }
 
             lastFocusedElement.blur();
 
             log('\nTabbing backward....\n');
-            previousActiveElement = null;
-            for (var i = 0; i < tabCount; ++i)
+            for (var i = 0; i < rects.length; ++i) {
+                if (i > 1 && document.activeElement.id == 'k')
+                    break;
                 dispatchTabPress(document, true);
+            }
 
             log('\nTest finished\n');
         }
