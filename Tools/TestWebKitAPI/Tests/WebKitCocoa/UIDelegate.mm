@@ -427,6 +427,21 @@ TEST(WebKit, PrintFrame)
     TestWebKitAPI::Util::run(&drawFooterCalled);
 }
 
+TEST(WebKit, PrintPreview)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[PrintDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:@"<head><title>test_title</title></head><body onload='print()'>hello world!</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+
+    NSPrintOperation *operation = [webView _printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]];
+    NSPrintOperation.currentOperation = operation;
+    auto previewView = [operation view];
+    [webView _close];
+    [previewView drawRect:CGRectMake(0, 0, 10, 10)];
+}
+
 @interface NotificationDelegate : NSObject <WKUIDelegatePrivate> {
     bool _allowNotifications;
 }
