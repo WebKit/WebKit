@@ -134,6 +134,7 @@ function BranchSelector(callback) {
                     return `<option selected value="${branch}">${branch}</option>`;
                 return `<option value="${branch}">${branch}</option>`;
             }).join('');
+            element.parentElement.parentElement.parentElement.style.display = state.length > 1 ? null : 'none';
         },
     });
 
