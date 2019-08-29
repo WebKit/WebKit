@@ -1,3 +1,17 @@
+2019-08-29  Rob Buis  <rbuis@igalia.com>
+
+        Address some MathML FIXMEs 
+        https://bugs.webkit.org/show_bug.cgi?id=201293
+
+        Reviewed by Frédéric Wang.
+
+        Also test newly exposed data and time elements.
+
+        * mathml/presentation/foreign-element-in-token-expected.txt:
+        * mathml/presentation/foreign-element-in-token.html:
+        * platform/ios-wk2/mathml/presentation/foreign-element-in-token-expected.txt:
+        * platform/mac-wk2/mathml/presentation/foreign-element-in-token-expected.txt:
+
 2019-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make tabIndex IDL attribute reflect its content attribute

@@ -26,6 +26,9 @@ mi
 
 datalist: 
 
+data: 
+mi
+
 del: 
 mi
 
@@ -99,6 +102,9 @@ sup:
 mi
 
 svg: 
+mi
+
+time: 
 mi
 
 u: 
@@ -133,6 +139,9 @@ mn
 
 datalist: 
 
+data: 
+mn
+
 del: 
 mn
 
@@ -206,6 +215,9 @@ sup:
 mn
 
 svg: 
+mn
+
+time: 
 mn
 
 u: 
@@ -240,6 +252,9 @@ mtext
 
 datalist: 
 
+data: 
+mtext
+
 del: 
 mtext
 
@@ -313,6 +328,9 @@ sup:
 mtext
 
 svg: 
+mtext
+
+time: 
 mtext
 
 u: 
@@ -347,6 +365,9 @@ mo
 
 datalist: 
 
+data: 
+mo
+
 del: 
 mo
 
@@ -420,6 +441,9 @@ sup:
 mo
 
 svg: 
+mo
+
+time: 
 mo
 
 u: 

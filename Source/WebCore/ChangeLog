@@ -1,3 +1,17 @@
+2019-08-29  Rob Buis  <rbuis@igalia.com>
+
+        Address some MathML FIXMEs 
+        https://bugs.webkit.org/show_bug.cgi?id=201293
+
+        Reviewed by Frédéric Wang.
+
+        Add element tag checks for data, time and dialog.
+
+        * mathml/MathMLOperatorDictionary.h:
+        * mathml/MathMLPresentationElement.cpp:
+        (WebCore::MathMLPresentationElement::isPhrasingContent):
+        (WebCore::MathMLPresentationElement::isFlowContent):
+
 2019-08-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Nicosia::Animation is missing the copy assignment operator
