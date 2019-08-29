@@ -113,8 +113,8 @@ private:
 #endif
 
     const LaunchOptions m_launchOptions;
-    bool m_isLaunching;
-    ProcessID m_processIdentifier;
+    bool m_isLaunching { true };
+    ProcessID m_processIdentifier { 0 };
 };
 
 } // namespace WebKit
