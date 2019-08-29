@@ -1,3 +1,16 @@
+2019-08-29  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=200917
+        Do not call addHTTPOriginIfNeeded for window.open
+
+        window.open() always uses GET requests and addHTTPOriginIfNeeded
+        has no effect for GET, so do not call it.
+
+        Reviewed by Frédéric Wang.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2019-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebSockets: first-party for cookies not set in handshake request when using platform APIs
