@@ -109,6 +109,10 @@ public:
     void resumeAnimations() override;
     bool usesContentsLayer() const override;
 
+#if USE(NICOSIA)
+    PlatformLayer* platformLayer() const override;
+#endif
+
     void syncPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();
 

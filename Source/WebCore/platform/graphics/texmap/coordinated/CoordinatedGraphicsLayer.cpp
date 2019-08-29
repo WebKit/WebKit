@@ -1302,6 +1302,13 @@ bool CoordinatedGraphicsLayer::usesContentsLayer() const
     return m_nicosia.contentLayer || m_compositedImage;
 }
 
+#if USE(NICOSIA)
+PlatformLayer* CoordinatedGraphicsLayer::platformLayer() const
+{
+    return m_nicosia.layer.get();
+}
+#endif
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ANIMATEDBACKINGSTORECLIENT(WebCore::CoordinatedAnimatedBackingStoreClient, type() == Nicosia::AnimatedBackingStoreClient::Type::Coordinated)
