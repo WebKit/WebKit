@@ -1,3 +1,43 @@
+2019-08-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION (r248873): Debugger: pressing delete on a breakpoint will also delete any resource/element parent immediately before it in the list
+        https://bugs.webkit.org/show_bug.cgi?id=200939
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._breakpointTreeOutlineDeleteTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.DebuggerSidebarPanel.prototype._breakpointTreeOutlineDeleteTreeElement.checkIfSelectionAdjustmentNeeded): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.this._breakpointsTreeOutline.ondelete.checkIfSelectionAdjustmentNeeded): Deleted.
+        When the `WI.TreeOutline`'s own `ondelete` is called, that means we must be handling a
+        delete that was _not_ handled by a `WI.TreeElement`. This means that the `selectedTreeElement`
+        has to be a resource/script, the `window` object, or one of the non-deletable breakpoints.
+
+        In the case of a non-deletable breakpoint, since they're never removed from their parent
+        `WI.TreeOutline`, we just shift the selection to the next selectable `WI.TreeElement`.
+
+        Otherwise, wait for the `WI.TreeOutline.Event.ElementRemoved` event to be fired, and adjust
+        the selection then based on whether the new `selectedTreeElement` is one of the "top" items,
+        namely the "All Exceptions", "Uncaught Exceptions", and "Assertion Failures" breakpoints.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement.prototype.ondelete):
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement.prototype.ondelete):
+        Add `return true;` to let the parent `WI.TreeOutline` know that the delete event was handled.
+        This prevents the parent `WI.TreeOutline`'s own `ondelete` from being called, which would
+        cause a double-delete as there would be a different `selectedTreeElement`.
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Remove support for macOS < 10.13 (part 3)
