@@ -365,7 +365,7 @@ bool FillLayer::hasRepeatXY() const
     return repeatX() == FillRepeat::Repeat && repeatY() == FillRepeat::Repeat;
 }
 
-bool FillLayer::hasImage() const
+bool FillLayer::hasImageInAnyLayer() const
 {
     for (auto* layer = this; layer; layer = layer->m_next.get()) {
         if (layer->image())
