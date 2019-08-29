@@ -1,5 +1,15 @@
 2019-08-28  Mark Lam  <mark.lam@apple.com>
 
+        DFG/FTL: We should prefetch structures and do a loadLoadFence before doing PrototypeChainIsSane checks.
+        https://bugs.webkit.org/show_bug.cgi?id=201281
+        <rdar://problem/54028228>
+
+        Reviewed by Yusuke Suzuki and Saam Barati.
+
+        * stress/structure-storedPrototype-should-only-assert-on-the-mutator-thread.js: Added.
+
+2019-08-28  Mark Lam  <mark.lam@apple.com>
+
         Placate exception check validation in DFG's operationHasGenericProperty().
         https://bugs.webkit.org/show_bug.cgi?id=201245
         <rdar://problem/54777512>

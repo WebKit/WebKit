@@ -2231,7 +2231,10 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
 #endif
 
         JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
-        bool prototypeChainIsSane = false;
+        Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure(vm);
+        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm);
+        WTF::loadLoadFence();
+
         if (globalObject->stringPrototypeChainIsSane()) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
             // loads return a trivial value". Something like SaneChainOutOfBounds. This should
@@ -2239,11 +2242,9 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
             // on a stringPrototypeChainIsSane() guaranteeing that the prototypes have no negative
             // indexed properties either.
             // https://bugs.webkit.org/show_bug.cgi?id=144668
-            m_jit.graph().registerAndWatchStructureTransition(globalObject->stringPrototype()->structure(vm));
-            m_jit.graph().registerAndWatchStructureTransition(globalObject->objectPrototype()->structure(vm));
-            prototypeChainIsSane = globalObject->stringPrototypeChainIsSane();
-        }
-        if (prototypeChainIsSane) {
+            m_jit.graph().registerAndWatchStructureTransition(stringPrototypeStructure);
+            m_jit.graph().registerAndWatchStructureTransition(objectPrototypeStructure);
+
 #if USE(JSVALUE64)
             addSlowPathGenerator(makeUnique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg));
