@@ -321,6 +321,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         if (!origin.isNull())
             loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
     }
+    if (document)
+        loadParameters.topOrigin = &document->topOrigin();
 
     if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
         ASSERT(loadParameters.sourceOrigin);
@@ -553,6 +555,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
 
     loadParameters.options = options;
     loadParameters.sourceOrigin = &document->securityOrigin();
+    loadParameters.topOrigin = &document->topOrigin();
     if (!document->shouldBypassMainWorldContentSecurityPolicy()) {
         if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
@@ -609,6 +612,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.identifier = generateLoadIdentifier();
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
+    loadParameters.topOrigin = &document->topOrigin();
     loadParameters.parentPID = presentingApplicationPID();
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.options = options;

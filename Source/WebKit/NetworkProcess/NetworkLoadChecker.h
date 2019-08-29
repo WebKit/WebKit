@@ -56,7 +56,7 @@ class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(NetworkProcess&, WebCore::FetchOptions&&, PAL::SessionID, WebCore::PageIdentifier, WebCore::FrameIdentifier, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    NetworkLoadChecker(NetworkProcess&, WebCore::FetchOptions&&, PAL::SessionID, WebCore::PageIdentifier, WebCore::FrameIdentifier, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -135,6 +135,7 @@ private:
     WebCore::HTTPHeaderMap m_firstRequestHeaders; // Needed for CORS checks.
     URL m_url;
     RefPtr<WebCore::SecurityOrigin> m_origin;
+    RefPtr<WebCore::SecurityOrigin> m_topOrigin;
     Optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
 #if ENABLE(CONTENT_EXTENSIONS)
     URL m_mainDocumentURL;

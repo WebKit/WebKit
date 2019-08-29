@@ -48,11 +48,11 @@ public:
     struct Parameters {
         WebCore::ResourceRequest originalRequest;
         Ref<WebCore::SecurityOrigin> sourceOrigin;
+        RefPtr<WebCore::SecurityOrigin> topOrigin;
         String referrer;
         String userAgent;
         PAL::SessionID sessionID;
         WebCore::PageIdentifier pageID;
-        WebCore::FrameIdentifier frameID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;

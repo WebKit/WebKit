@@ -7334,7 +7334,7 @@ void WebPageProxy::gamepadActivity(const Vector<GamepadData>& gamepadDatas, bool
 
 #endif
 
-void WebPageProxy::didReceiveAuthenticationChallengeProxy(FrameIdentifier, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
+void WebPageProxy::didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
 {
     m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
 }

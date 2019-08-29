@@ -31,6 +31,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOrigin.h>
 #include <pal/SessionID.h>
 #include <wtf/ProcessID.h>
 
@@ -48,6 +49,7 @@ public:
     PAL::SessionID sessionID;
     WebCore::PageIdentifier webPageID;
     WebCore::FrameIdentifier webFrameID;
+    RefPtr<WebCore::SecurityOrigin> topOrigin;
     WTF::ProcessID parentPID { 0 };
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::ContentSniffingPolicy::SniffContent };

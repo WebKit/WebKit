@@ -11,7 +11,7 @@ var registration;
 var iframe;
 promise_test(async (test) => {
     if (window.testRunner) {
-        window.testRunner.terminateNetworkProcess();
+        testRunner.terminateNetworkProcess();
         await fetch("").then(() => { }, () => { });
     }
 
@@ -32,21 +32,34 @@ promise_test(async (test) => {
 }, "Setup worker");
 
 promise_test(async (test) => {
-    if (window.testRunner)
-        window.testRunner.setAllowsAnySSLCertificate(false);
+    let count;
+    if (window.testRunner) {
+        testRunner.setAllowsAnySSLCertificate(false);
+        count = testRunner.serverTrustEvaluationCallbackCallsCount;
+    }
 
     iframe = await with_iframe("resources/iframe1.html");
     assert_true(iframe.contentWindow.document.body.innerHTML.trim().indexOf("Load failed: ") !== -1);
     iframe.remove();
+
+    if (window.testRunner)
+        assert_equals(testRunner.serverTrustEvaluationCallbackCallsCount, count + 1);
+
 }, "Service worker load should fail");
 
 promise_test(async (test) => {
-    if (window.testRunner)
+    let count;
+    if (window.testRunner) {
         window.testRunner.setAllowsAnySSLCertificate(true);
+        count = testRunner.serverTrustEvaluationCallbackCallsCount;
+    }
 
     iframe = await with_iframe("resources/iframe2.html");
     assert_true(iframe.contentWindow.document.body.innerHTML.trim().indexOf("PASS") !== -1);
     iframe.remove();
+
+    if (window.testRunner)
+        assert_equals(testRunner.serverTrustEvaluationCallbackCallsCount, count + 1);
 }, "Service worker load should succeed");
 </script>
 </body>

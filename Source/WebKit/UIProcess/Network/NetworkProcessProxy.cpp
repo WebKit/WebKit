@@ -315,7 +315,17 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
 #endif
 }
 
-void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessionID, PageIdentifier pageID, FrameIdentifier frameID, WebCore::AuthenticationChallenge&& coreChallenge, uint64_t challengeID)
+void NetworkProcessProxy::processAuthenticationChallenge(PAL::SessionID sessionID, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
+{
+    auto* store = websiteDataStoreFromSessionID(sessionID);
+    if (!store || authenticationChallenge->core().protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        authenticationChallenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
+        return;
+    }
+    store->client().didReceiveAuthenticationChallenge(WTFMove(authenticationChallenge));
+}
+
+void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessionID, PageIdentifier pageID, const Optional<SecurityOriginData>& topOrigin, WebCore::AuthenticationChallenge&& coreChallenge, uint64_t challengeID)
 {
 #if HAVE(SEC_KEY_PROXY)
     WeakPtr<SecKeyProxyStore> secKeyProxyStore;
@@ -332,20 +342,29 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
 #endif
 
     WebPageProxy* page = nullptr;
-    if (pageID && !m_processPool.isServiceWorkerPageID(pageID))
+    if (pageID)
         page = WebProcessProxy::webPage(pageID);
 
-    if (!page) {
-        auto* store = websiteDataStoreFromSessionID(sessionID);
-        if (!store || coreChallenge.protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-            authenticationChallenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
-            return;
-        }
-        store->client().didReceiveAuthenticationChallenge(WTFMove(authenticationChallenge));
+    if (page) {
+        page->didReceiveAuthenticationChallengeProxy(WTFMove(authenticationChallenge));
         return;
     }
 
-    page->didReceiveAuthenticationChallengeProxy(frameID, WTFMove(authenticationChallenge));
+    if (!topOrigin || !m_processPool.isServiceWorkerPageID(pageID)) {
+        processAuthenticationChallenge(sessionID, WTFMove(authenticationChallenge));
+        return;
+    }
+
+    WebPageProxy::forMostVisibleWebPageIfAny(sessionID, *topOrigin, [this, weakThis = makeWeakPtr(this), sessionID, authenticationChallenge = WTFMove(authenticationChallenge)](auto* page) mutable {
+        if (!weakThis)
+            return;
+
+        if (page) {
+            page->didReceiveAuthenticationChallengeProxy(WTFMove(authenticationChallenge));
+            return;
+        }
+        processAuthenticationChallenge(sessionID, WTFMove(authenticationChallenge));
+    });
 }
 
 void NetworkProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)

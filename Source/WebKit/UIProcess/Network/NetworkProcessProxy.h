@@ -213,7 +213,7 @@ private:
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didCreateNetworkConnectionToWebProcess(const IPC::Attachment&);
-    void didReceiveAuthenticationChallenge(PAL::SessionID, WebCore::PageIdentifier, WebCore::FrameIdentifier, WebCore::AuthenticationChallenge&&, uint64_t challengeID);
+    void didReceiveAuthenticationChallenge(PAL::SessionID, WebCore::PageIdentifier, const Optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, uint64_t challengeID);
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
@@ -249,6 +249,8 @@ private:
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+
+    void processAuthenticationChallenge(PAL::SessionID, Ref<AuthenticationChallengeProxy>&&);
 
     WebProcessPool& m_processPool;
     

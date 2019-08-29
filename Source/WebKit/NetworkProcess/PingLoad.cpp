@@ -44,7 +44,7 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, NetworkResourceLoadParameters
     : m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, FetchOptions { m_parameters.options}, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
+    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, FetchOptions { m_parameters.options}, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
 {
     initialize(networkProcess);
 }
@@ -53,7 +53,7 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkProcess& ne
     : m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, FetchOptions { m_parameters.options}, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
+    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, FetchOptions { m_parameters.options}, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
     , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
     for (auto& file : m_blobFiles) {
@@ -148,7 +148,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Challeng
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
+        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, WTFMove(completionHandler));
         return;
     }
     auto weakThis = makeWeakPtr(*this);

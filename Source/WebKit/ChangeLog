@@ -1,3 +1,51 @@
+2019-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Use WebPageProxy callbacks in case of authentication challenge received from Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=201177
+
+        Reviewed by Alex Christensen.
+
+        Send topOrigin for every possible load to NetworkProcess.
+        Send topOrigin as part of authentication challenge to UIProcess.
+
+        If there is no corresponding page for the pageID, try getting a page
+        related to the service worker using the topOrigin and send the challenge to it.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::didReceiveChallenge):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::processAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+
 2019-08-29  Chris Dumez  <cdumez@apple.com>
 
         Dissociate the WebPageProxy's identifier from the WebPage's

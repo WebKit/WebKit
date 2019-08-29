@@ -84,6 +84,9 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << static_cast<bool>(sourceOrigin);
     if (sourceOrigin)
         encoder << *sourceOrigin;
+    encoder << static_cast<bool>(topOrigin);
+    if (sourceOrigin)
+        encoder << *topOrigin;
     encoder << options;
     encoder << cspResponseHeaders;
     encoder << originalRequestHeaders;
@@ -186,6 +189,15 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     if (hasSourceOrigin) {
         result.sourceOrigin = SecurityOrigin::decode(decoder);
         if (!result.sourceOrigin)
+            return WTF::nullopt;
+    }
+
+    bool hasTopOrigin;
+    if (!decoder.decode(hasTopOrigin))
+        return WTF::nullopt;
+    if (hasTopOrigin) {
+        result.topOrigin = SecurityOrigin::decode(decoder);
+        if (!result.topOrigin)
             return WTF::nullopt;
     }
 

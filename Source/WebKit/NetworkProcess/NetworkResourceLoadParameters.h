@@ -30,7 +30,6 @@
 #include "UserContentControllerIdentifier.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
-#include <WebCore/SecurityOrigin.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {

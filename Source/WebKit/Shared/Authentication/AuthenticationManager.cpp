@@ -108,18 +108,20 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
     return challengesToCoalesce;
 }
 
-void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID sessionID, PageIdentifier pageID, FrameIdentifier frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
+void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID sessionID, PageIdentifier pageID, const SecurityOriginData* topOrigin, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     ASSERT(pageID);
-    ASSERT(frameID);
 
     uint64_t challengeID = addChallengeToChallengeMap({ pageID, authenticationChallenge, WTFMove(completionHandler) });
 
     // Coalesce challenges in the same protection space and in the same page.
     if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
         return;
-    
-    m_process.send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(sessionID, pageID, frameID, authenticationChallenge, challengeID));
+
+    Optional<SecurityOriginData> topOriginData;
+    if (topOrigin)
+        topOriginData = *topOrigin;
+    m_process.send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(sessionID, pageID, topOriginData, authenticationChallenge, challengeID));
 }
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
