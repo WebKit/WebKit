@@ -624,6 +624,7 @@ IGNORE_WARNINGS_END
         break;
     case DragAndDropPhaseEntered: {
         _lastKnownDropProposal = [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidUpdate:_dropSession.get()];
+        [_webView waitForNextPresentationUpdate];
         if (![self shouldAllowMoveOperation] && [_lastKnownDropProposal operation] == UIDropOperationMove)
             _lastKnownDropProposal = adoptNS([[UIDropProposal alloc] initWithDropOperation:UIDropOperationCancel]);
         break;
