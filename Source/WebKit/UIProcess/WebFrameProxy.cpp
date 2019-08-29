@@ -83,7 +83,7 @@ void WebFrameProxy::loadURL(const URL& url, const String& referrer)
     if (!m_page)
         return;
 
-    m_page->process().send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID), m_page->pageID());
+    m_page->process().send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID), m_page->webPageID());
 }
 
 void WebFrameProxy::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encodingName, const URL& baseURL)
@@ -92,7 +92,7 @@ void WebFrameProxy::loadData(const IPC::DataReference& data, const String& MIMET
     if (!m_page)
         return;
 
-    m_page->process().send(Messages::WebPage::LoadDataInFrame(data, MIMEType, encodingName, baseURL, m_frameID), m_page->pageID());
+    m_page->process().send(Messages::WebPage::LoadDataInFrame(data, MIMEType, encodingName, baseURL, m_frameID), m_page->webPageID());
 }
 
 void WebFrameProxy::stopLoading() const
@@ -103,7 +103,7 @@ void WebFrameProxy::stopLoading() const
     if (!m_page->hasRunningProcess())
         return;
 
-    m_page->process().send(Messages::WebPage::StopLoadingFrame(m_frameID), m_page->pageID());
+    m_page->process().send(Messages::WebPage::StopLoadingFrame(m_frameID), m_page->webPageID());
 }
     
 bool WebFrameProxy::canProvideSource() const
@@ -262,7 +262,7 @@ void WebFrameProxy::collapseSelection()
     if (!m_page)
         return;
 
-    m_page->process().send(Messages::WebPage::CollapseSelectionInFrame(m_frameID), m_page->pageID());
+    m_page->process().send(Messages::WebPage::CollapseSelectionInFrame(m_frameID), m_page->webPageID());
 }
 #endif
 

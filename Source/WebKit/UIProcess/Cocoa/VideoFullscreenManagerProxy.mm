@@ -325,7 +325,7 @@ VideoFullscreenManagerProxy::VideoFullscreenManagerProxy(WebPageProxy& page, Pla
     : m_page(&page)
     , m_playbackSessionManagerProxy(playbackSessionManagerProxy)
 {
-    m_page->process().addMessageReceiver(Messages::VideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID(), *this);
+    m_page->process().addMessageReceiver(Messages::VideoFullscreenManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
 }
 
 VideoFullscreenManagerProxy::~VideoFullscreenManagerProxy()
@@ -337,7 +337,7 @@ VideoFullscreenManagerProxy::~VideoFullscreenManagerProxy()
 
 void VideoFullscreenManagerProxy::invalidate()
 {
-    m_page->process().removeMessageReceiver(Messages::VideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
+    m_page->process().removeMessageReceiver(Messages::VideoFullscreenManagerProxy::messageReceiverName(), m_page->webPageID());
     m_page = nullptr;
 
     auto contextMap = WTFMove(m_contextMap);

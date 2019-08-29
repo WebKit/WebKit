@@ -61,6 +61,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
 #include "WebPageInjectedBundleClient.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebPreferences.h"
 #include "WebPageProxyMessages.h"
@@ -392,7 +393,10 @@ public:
 
     const API::PageConfiguration& configuration() const;
 
-    WebCore::PageIdentifier pageID() const { return m_pageID; }
+    using Identifier = WebPageProxyIdentifier;
+
+    Identifier identifier() const { return m_identifier; }
+    WebCore::PageIdentifier webPageID() const { return m_webPageID; }
 
     PAL::SessionID sessionID() const;
 
@@ -2113,7 +2117,8 @@ private:
 
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
 
-    const WebCore::PageIdentifier m_pageID;
+    const Identifier m_identifier;
+    WebCore::PageIdentifier m_webPageID;
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 

@@ -62,7 +62,7 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
         return;
 
 #if ENABLE(GEOLOCATION)
-    m_page.process().send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page.pageID());
+    m_page.process().send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page.webPageID());
 #else
     UNUSED_PARAM(allowed);
 #endif

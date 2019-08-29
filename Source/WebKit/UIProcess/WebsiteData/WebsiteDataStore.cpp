@@ -1551,7 +1551,7 @@ void WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured(bool value, Comple
         processPool->ensureNetworkProcess().setNotifyPagesWhenTelemetryWasCaptured(m_sessionID, value, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
-void WebsiteDataStore::getAllStorageAccessEntries(WebCore::PageIdentifier pageID, CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
+void WebsiteDataStore::getAllStorageAccessEntries(WebPageProxyIdentifier pageID, CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
 {
     auto* webPage = WebProcessProxy::webPage(pageID);
     if (!webPage) {

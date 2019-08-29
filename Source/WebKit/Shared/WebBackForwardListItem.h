@@ -27,7 +27,7 @@
 
 #include "APIObject.h"
 #include "SessionState.h"
-#include <WebCore/PageIdentifier.h>
+#include "WebPageProxyIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -47,7 +47,7 @@ class SuspendedPageProxy;
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
-    static Ref<WebBackForwardListItem> create(BackForwardListItemState&&, WebCore::PageIdentifier);
+    static Ref<WebBackForwardListItem> create(BackForwardListItemState&&, WebPageProxyIdentifier);
     virtual ~WebBackForwardListItem();
 
     static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
@@ -55,7 +55,7 @@ public:
 
     const WebCore::BackForwardItemIdentifier& itemID() const { return m_itemState.identifier; }
     const BackForwardListItemState& itemState() { return m_itemState; }
-    WebCore::PageIdentifier pageID() const { return m_pageID; }
+    WebPageProxyIdentifier pageID() const { return m_pageID; }
 
     WebCore::ProcessIdentifier lastProcessIdentifier() const { return m_lastProcessIdentifier; }
     void setLastProcessIdentifier(const WebCore::ProcessIdentifier& identifier) { m_lastProcessIdentifier = identifier; }
@@ -85,13 +85,13 @@ public:
 #endif
 
 private:
-    WebBackForwardListItem(BackForwardListItemState&&, WebCore::PageIdentifier);
+    WebBackForwardListItem(BackForwardListItemState&&, WebPageProxyIdentifier);
 
     void removeSuspendedPageFromProcessPool();
 
     BackForwardListItemState m_itemState;
     URL m_resourceDirectoryURL;
-    WebCore::PageIdentifier m_pageID;
+    WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     WeakPtr<SuspendedPageProxy> m_suspendedPage;
 };

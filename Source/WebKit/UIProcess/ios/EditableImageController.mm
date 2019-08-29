@@ -46,13 +46,13 @@ EditableImageController::EditableImageController(WebPageProxy& webPageProxy)
     : m_webPageProxy(makeWeakPtr(webPageProxy))
 {
     if (auto* webPageProxy = m_webPageProxy.get())
-        webPageProxy->process().addMessageReceiver(Messages::EditableImageController::messageReceiverName(), webPageProxy->pageID(), *this);
+        webPageProxy->process().addMessageReceiver(Messages::EditableImageController::messageReceiverName(), webPageProxy->webPageID(), *this);
 }
 
 EditableImageController::~EditableImageController()
 {
     if (auto* webPageProxy = m_webPageProxy.get())
-        webPageProxy->process().removeMessageReceiver(Messages::EditableImageController::messageReceiverName(), webPageProxy->pageID());
+        webPageProxy->process().removeMessageReceiver(Messages::EditableImageController::messageReceiverName(), webPageProxy->webPageID());
 }
 
 EditableImage& EditableImageController::ensureEditableImage(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)

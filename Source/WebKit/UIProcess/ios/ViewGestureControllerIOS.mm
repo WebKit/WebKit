@@ -251,7 +251,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         if (finish)
             m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureWillEnd(transitionCompleted, *targetItem);
     }];
-    auto pageID = m_webPageProxy.pageID();
+    auto pageID = m_webPageProxy.identifier();
     GestureID gestureID = m_currentGestureID;
     [m_swipeTransitionContext _setCompletionHandler:[pageID, gestureID, targetItem] (_UIViewControllerTransitionContext *context, BOOL didComplete) {
         if (auto gestureController = controllerForGesture(pageID, gestureID))
@@ -321,7 +321,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         m_webPageProxy.didChangeBackgroundColor();
     }
 
-    auto pageID = m_webPageProxy.pageID();
+    auto pageID = m_webPageProxy.identifier();
     GestureID gestureID = m_currentGestureID;
     m_loadCallback = [this, pageID, gestureID] {
         auto drawingArea = m_webPageProxy.provisionalDrawingArea();

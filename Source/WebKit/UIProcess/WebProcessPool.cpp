@@ -1307,9 +1307,9 @@ bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& sto
 }
 #endif
 
-void WebProcessPool::pageBeginUsingWebsiteDataStore(PageIdentifier pageID, WebsiteDataStore& dataStore)
+void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxyIdentifier pageID, WebsiteDataStore& dataStore)
 {
-    auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<PageIdentifier>()).iterator->value.add(pageID);
+    auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<WebPageProxyIdentifier>()).iterator->value.add(pageID);
     ASSERT_UNUSED(result, result.isNewEntry);
 
     auto sessionID = dataStore.sessionID();
@@ -1327,7 +1327,7 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(PageIdentifier pageID, Websi
     }
 }
 
-void WebProcessPool::pageEndUsingWebsiteDataStore(PageIdentifier pageID, WebsiteDataStore& dataStore)
+void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxyIdentifier pageID, WebsiteDataStore& dataStore)
 {
     auto sessionID = dataStore.sessionID();
     auto iterator = m_sessionToPageIDsMap.find(sessionID);

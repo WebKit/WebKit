@@ -80,6 +80,7 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 
 SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, FrameIdentifier mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
     : m_page(page)
+    , m_webPageID(page.webPageID())
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
     , m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode(shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
@@ -89,10 +90,10 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 #endif
 {
     m_process->incrementSuspendedPageCount();
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID(), *this);
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
-    m_process->send(Messages::WebPage::SetIsSuspended(true), m_page.pageID());
+    m_process->send(Messages::WebPage::SetIsSuspended(true), m_webPageID);
 }
 
 SuspendedPageProxy::~SuspendedPageProxy()
@@ -113,7 +114,7 @@ SuspendedPageProxy::~SuspendedPageProxy()
     close();
 
     if (m_suspensionState == SuspensionState::Suspending)
-        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
+        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
     // We call maybeShutDown() asynchronously since the SuspendedPage is currently being removed from the WebProcessPool
     // and we want to avoid re-entering WebProcessPool methods.
@@ -147,7 +148,7 @@ void SuspendedPageProxy::unsuspend()
     ASSERT(m_suspensionState == SuspensionState::Suspended);
 
     m_suspensionState = SuspensionState::Resumed;
-    m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
+    m_process->send(Messages::WebPage::SetIsSuspended(false), m_webPageID);
 }
 
 void SuspendedPageProxy::close()
@@ -159,7 +160,7 @@ void SuspendedPageProxy::close()
 
     RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::close()", this);
     m_isClosed = true;
-    m_process->send(Messages::WebPage::Close(), m_page.pageID());
+    m_process->send(Messages::WebPage::Close(), m_webPageID);
 }
 
 void SuspendedPageProxy::pageEnteredAcceleratedCompositingMode()
@@ -203,7 +204,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
     m_suspensionToken = nullptr;
 #endif
 
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
     if (m_suspensionState == SuspensionState::FailedToSuspend)
         closeWithoutFlashing();
@@ -246,7 +247,7 @@ void SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 
 const char* SuspendedPageProxy::loggingString() const
 {
-    return debugString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " page ID ", m_page.pageID().toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
+    return debugString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID ", m_webPageID.toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
 }
 
 #endif

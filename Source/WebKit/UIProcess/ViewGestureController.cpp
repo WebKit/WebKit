@@ -66,10 +66,10 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
-static HashMap<PageIdentifier, ViewGestureController*>& viewGestureControllersForAllPages()
+static HashMap<WebPageProxyIdentifier, ViewGestureController*>& viewGestureControllersForAllPages()
 {
     // The key in this map is the associated page ID.
-    static NeverDestroyed<HashMap<PageIdentifier, ViewGestureController*>> viewGestureControllers;
+    static NeverDestroyed<HashMap<WebPageProxyIdentifier, ViewGestureController*>> viewGestureControllers;
     return viewGestureControllers.get();
 }
 
@@ -86,14 +86,14 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     if (webPageProxy.hasRunningProcess())
         connectToProcess();
 
-    viewGestureControllersForAllPages().add(webPageProxy.pageID(), this);
+    viewGestureControllersForAllPages().add(webPageProxy.identifier(), this);
 }
 
 ViewGestureController::~ViewGestureController()
 {
     platformTeardown();
 
-    viewGestureControllersForAllPages().remove(m_webPageProxy.pageID());
+    viewGestureControllersForAllPages().remove(m_webPageProxy.identifier());
 
     disconnectFromProcess();
 }
@@ -103,7 +103,7 @@ void ViewGestureController::disconnectFromProcess()
     if (!m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID());
+    m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID());
     m_isConnectedToProcess = false;
 }
 
@@ -112,11 +112,11 @@ void ViewGestureController::connectToProcess()
     if (m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
+    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID(), *this);
     m_isConnectedToProcess = true;
 }
 
-ViewGestureController* ViewGestureController::controllerForGesture(PageIdentifier pageID, ViewGestureController::GestureID gestureID)
+ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyIdentifier pageID, ViewGestureController::GestureID gestureID)
 {
     auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
     if (gestureControllerIter == viewGestureControllersForAllPages().end())
@@ -547,7 +547,7 @@ void ViewGestureController::forceRepaintIfNeeded()
 
     m_hasOutstandingRepaintRequest = true;
 
-    auto pageID = m_webPageProxy.pageID();
+    auto pageID = m_webPageProxy.identifier();
     GestureID gestureID = m_currentGestureID;
     m_webPageProxy.forceRepaint(VoidCallback::create([pageID, gestureID] (CallbackBase::Error error) {
         if (auto gestureController = controllerForGesture(pageID, gestureID))
@@ -617,7 +617,7 @@ void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
     auto& process = m_webPageProxy.provisionalPageProxy() ? m_webPageProxy.provisionalPageProxy()->process() : m_webPageProxy.process();
     auto threshold = m_snapshotRemovalTracker.renderTreeSizeThreshold();
 
-    process.send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), m_webPageProxy.pageID());
+    process.send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), m_webPageProxy.webPageID());
 }
 #endif
 

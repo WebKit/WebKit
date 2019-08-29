@@ -351,9 +351,20 @@ void WebProcessProxy::shutDown()
     m_processPool->disconnectProcess(this);
 }
 
-WebPageProxy* WebProcessProxy::webPage(PageIdentifier pageID)
+WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
 {
     return globalPageMap().get(pageID);
+}
+
+WebPageProxy* WebProcessProxy::webPage(WebCore::PageIdentifier webPageID)
+{
+    // FIXME: Do better.
+    for (auto& page : globalPageMap().values()) {
+        if (page->webPageID() == webPageID)
+            return page;
+    }
+    
+    return nullptr;
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -393,16 +404,16 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
 {
-    ASSERT(!m_pageMap.contains(webPage.pageID()));
-    ASSERT(!globalPageMap().contains(webPage.pageID()));
+    ASSERT(!m_pageMap.contains(webPage.identifier()));
+    ASSERT(!globalPageMap().contains(webPage.identifier()));
     RELEASE_ASSERT(!m_isInProcessCache);
     ASSERT(!m_websiteDataStore || m_websiteDataStore == &webPage.websiteDataStore());
 
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
-        m_processPool->pageBeginUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
+        m_processPool->pageBeginUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
 
-    m_pageMap.set(webPage.pageID(), &webPage);
-    globalPageMap().set(webPage.pageID(), &webPage);
+    m_pageMap.set(webPage.identifier(), &webPage);
+    globalPageMap().set(webPage.identifier(), &webPage);
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
@@ -421,15 +432,15 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
 
 void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore)
 {
-    auto* removedPage = m_pageMap.take(webPage.pageID());
+    auto* removedPage = m_pageMap.take(webPage.identifier());
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
-    removedPage = globalPageMap().take(webPage.pageID());
+    removedPage = globalPageMap().take(webPage.identifier());
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
 
     if (endsUsingDataStore == EndsUsingDataStore::Yes)
-        m_processPool->pageEndUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
+        m_processPool->pageEndUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
 
-    removeVisitedLinkStoreUser(webPage.visitedLinkStore(), webPage.pageID());
+    removeVisitedLinkStoreUser(webPage.visitedLinkStore(), webPage.identifier());
     updateRegistrationWithDataStore();
 
     updateBackgroundResponsivenessTimer();
@@ -437,10 +448,10 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     maybeShutDown();
 }
 
-void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, PageIdentifier pageID)
+void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(&visitedLinkStore, [] {
-        return HashSet<PageIdentifier> { };
+        return HashSet<WebPageProxyIdentifier> { };
     }).iterator->value;
 
     ASSERT(!users.contains(pageID));
@@ -450,7 +461,7 @@ void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore
         visitedLinkStore.addProcess(*this);
 }
 
-void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, PageIdentifier pageID)
+void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto it = m_visitedLinkStoresWithUsers.find(&visitedLinkStore);
     if (it == m_visitedLinkStoresWithUsers.end())
@@ -563,10 +574,10 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-bool WebProcessProxy::hasProvisionalPageWithID(PageIdentifier pageID) const
+bool WebProcessProxy::hasProvisionalPageWithID(WebPageProxyIdentifier pageID) const
 {
     for (auto* provisionalPage : m_provisionalPages) {
-        if (provisionalPage->page().pageID() == pageID)
+        if (provisionalPage->page().identifier() == pageID)
             return true;
     }
     return false;
@@ -580,7 +591,7 @@ bool WebProcessProxy::isAllowedToUpdateBackForwardItem(WebBackForwardListItem& i
     if (hasProvisionalPageWithID(item.pageID()))
         return true;
 
-    if (item.suspendedPage() && item.suspendedPage()->page().pageID() == item.pageID() && &item.suspendedPage()->process() == this)
+    if (item.suspendedPage() && item.suspendedPage()->page().identifier() == item.pageID() && &item.suspendedPage()->process() == this)
         return true;
 
     return false;
@@ -1153,7 +1164,7 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
                 return API::FrameHandle::createAutoconverting(static_cast<const WebFrameProxy&>(object).frameID());
 
             case API::Object::Type::Page:
-                return API::PageHandle::createAutoconverting(static_cast<const WebPageProxy&>(object).pageID());
+                return API::PageHandle::createAutoconverting(static_cast<const WebPageProxy&>(object).webPageID());
 
             case API::Object::Type::PageGroup:
                 return API::PageGroupHandle::create(WebPageGroupData(static_cast<const WebPageGroup&>(object).data()));

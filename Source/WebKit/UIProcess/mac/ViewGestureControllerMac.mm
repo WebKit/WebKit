@@ -144,7 +144,7 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
 
         // FIXME: We drop the first frame of the gesture on the floor, because we don't have the visible content bounds yet.
         m_magnification = m_webPageProxy.pageScaleFactor();
-        m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.pageID());
+        m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.webPageID());
         m_lastMagnificationGestureWasSmartMagnification = false;
 
         return;
@@ -196,7 +196,7 @@ void ViewGestureController::handleSmartMagnificationGesture(FloatPoint origin)
     if (m_activeGestureType != ViewGestureType::None)
         return;
 
-    m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy.pageID());
+    m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy.webPageID());
 }
 
 static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)

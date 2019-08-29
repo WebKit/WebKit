@@ -59,7 +59,7 @@ void RemoteWebInspectorProxy::load(const String& debuggableType, const String& b
     m_debuggableType = debuggableType;
     m_backendCommandsURL = backendCommandsURL;
 
-    m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::Initialize(debuggableType, backendCommandsURL), m_inspectorPage->pageID());
+    m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::Initialize(debuggableType, backendCommandsURL), m_inspectorPage->webPageID());
     m_inspectorPage->loadRequest(URL(URL(), WebInspectorProxy::inspectorPageURL()));
 }
 
@@ -81,7 +81,7 @@ void RemoteWebInspectorProxy::show()
 
 void RemoteWebInspectorProxy::sendMessageToFrontend(const String& message)
 {
-    m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message), m_inspectorPage->pageID());
+    m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message), m_inspectorPage->webPageID());
 }
 
 void RemoteWebInspectorProxy::frontendDidClose()
@@ -157,7 +157,7 @@ void RemoteWebInspectorProxy::createFrontendPageAndWindow()
 
     trackInspectorPage(m_inspectorPage, nullptr);
 
-    m_inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorProxy::messageReceiverName(), m_inspectorPage->pageID(), *this);
+    m_inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
 }
 
@@ -166,7 +166,7 @@ void RemoteWebInspectorProxy::closeFrontendPageAndWindow()
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->process().removeMessageReceiver(Messages::RemoteWebInspectorProxy::messageReceiverName(), m_inspectorPage->pageID());
+    m_inspectorPage->process().removeMessageReceiver(Messages::RemoteWebInspectorProxy::messageReceiverName(), m_inspectorPage->webPageID());
 
     untrackInspectorPage(m_inspectorPage);
 

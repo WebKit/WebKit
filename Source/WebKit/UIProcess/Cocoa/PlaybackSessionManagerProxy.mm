@@ -302,7 +302,7 @@ Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProx
 PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
     : m_page(&page)
 {
-    m_page->process().addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->pageID(), *this);
+    m_page->process().addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
 }
 
 PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
@@ -314,7 +314,7 @@ PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
 
 void PlaybackSessionManagerProxy::invalidate()
 {
-    m_page->process().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->pageID());
+    m_page->process().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID());
     m_page = nullptr;
 
     auto contextMap = WTFMove(m_contextMap);

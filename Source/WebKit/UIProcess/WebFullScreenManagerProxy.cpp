@@ -44,25 +44,25 @@ WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFull
     : m_page(page)
     , m_client(client)
 {
-    m_page.process().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.pageID(), *this);
+    m_page.process().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID(), *this);
 }
 
 WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 {
-    m_page.process().removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.pageID());
+    m_page.process().removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID());
     m_client.closeFullScreenManager();
 }
 
 void WebFullScreenManagerProxy::willEnterFullScreen()
 {
     m_page.fullscreenClient().willEnterFullscreen(&m_page);
-    m_page.process().send(Messages::WebFullScreenManager::WillEnterFullScreen(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::WillEnterFullScreen(), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::didEnterFullScreen()
 {
     m_page.fullscreenClient().didEnterFullscreen(&m_page);
-    m_page.process().send(Messages::WebFullScreenManager::DidEnterFullScreen(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::DidEnterFullScreen(), m_page.webPageID());
 
     if (m_page.isControlledByAutomation()) {
         if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession())
@@ -73,13 +73,13 @@ void WebFullScreenManagerProxy::didEnterFullScreen()
 void WebFullScreenManagerProxy::willExitFullScreen()
 {
     m_page.fullscreenClient().willExitFullscreen(&m_page);
-    m_page.process().send(Messages::WebFullScreenManager::WillExitFullScreen(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::WillExitFullScreen(), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::didExitFullScreen()
 {
     m_page.fullscreenClient().didExitFullscreen(&m_page);
-    m_page.process().send(Messages::WebFullScreenManager::DidExitFullScreen(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::DidExitFullScreen(), m_page.webPageID());
     
     if (m_page.isControlledByAutomation()) {
         if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession())
@@ -89,12 +89,12 @@ void WebFullScreenManagerProxy::didExitFullScreen()
 
 void WebFullScreenManagerProxy::setAnimatingFullScreen(bool animating)
 {
-    m_page.process().send(Messages::WebFullScreenManager::SetAnimatingFullScreen(animating), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::SetAnimatingFullScreen(animating), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::requestExitFullScreen()
 {
-    m_page.process().send(Messages::WebFullScreenManager::RequestExitFullScreen(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::RequestExitFullScreen(), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&& completionHandler)
@@ -108,27 +108,27 @@ void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, Completion
 
 void WebFullScreenManagerProxy::saveScrollPosition()
 {
-    m_page.process().send(Messages::WebFullScreenManager::SaveScrollPosition(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::SaveScrollPosition(), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::restoreScrollPosition()
 {
-    m_page.process().send(Messages::WebFullScreenManager::RestoreScrollPosition(), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::RestoreScrollPosition(), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::setFullscreenInsets(const WebCore::FloatBoxExtent& insets)
 {
-    m_page.process().send(Messages::WebFullScreenManager::SetFullscreenInsets(insets), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::SetFullscreenInsets(insets), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
 {
-    m_page.process().send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::setFullscreenControlsHidden(bool hidden)
 {
-    m_page.process().send(Messages::WebFullScreenManager::SetFullscreenControlsHidden(hidden), m_page.pageID());
+    m_page.process().send(Messages::WebFullScreenManager::SetFullscreenControlsHidden(hidden), m_page.webPageID());
 }
 
 void WebFullScreenManagerProxy::close()

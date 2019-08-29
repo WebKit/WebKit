@@ -125,6 +125,7 @@ private:
     bool validateInput(WebCore::FrameIdentifier, const Optional<uint64_t>& navigationID = WTF::nullopt);
 
     WebPageProxy& m_page;
+    WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebFrameProxy> m_mainFrame;

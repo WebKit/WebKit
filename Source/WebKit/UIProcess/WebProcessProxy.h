@@ -37,6 +37,7 @@
 #include "ResponsivenessTimer.h"
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MessagePortChannelProvider.h>
@@ -99,7 +100,7 @@ enum class AllowProcessCaching { No, Yes };
 class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
     typedef HashMap<WebCore::FrameIdentifier, RefPtr<WebFrameProxy>> WebFrameProxyMap;
-    typedef HashMap<WebCore::PageIdentifier, WebPageProxy*> WebPageProxyMap;
+    typedef HashMap<WebPageProxyIdentifier, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
     enum class IsPrewarmed {
@@ -131,6 +132,7 @@ public:
     void setWebsiteDataStore(WebsiteDataStore&);
 
     static WebProcessProxy* processForIdentifier(WebCore::ProcessIdentifier);
+    static WebPageProxy* webPage(WebPageProxyIdentifier);
     static WebPageProxy* webPage(WebCore::PageIdentifier);
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
@@ -154,8 +156,8 @@ public:
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
-    void addVisitedLinkStoreUser(VisitedLinkStore&, WebCore::PageIdentifier);
-    void removeVisitedLinkStoreUser(VisitedLinkStore&, WebCore::PageIdentifier);
+    void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
+    void removeVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
 
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&, WebPageCreationParameters&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
@@ -351,7 +353,7 @@ private:
     void didDeliverMessagePortMessages(uint64_t messageBatchIdentifier);
     void didCheckProcessLocalPortForActivity(uint64_t callbackIdentifier, bool isLocallyReachable);
 
-    bool hasProvisionalPageWithID(WebCore::PageIdentifier) const;
+    bool hasProvisionalPageWithID(WebPageProxyIdentifier) const;
     bool isAllowedToUpdateBackForwardItem(WebBackForwardListItem&) const;
 
     // Plugins
@@ -446,7 +448,7 @@ private:
     HashSet<ProvisionalPageProxy*> m_provisionalPages;
     UserInitiatedActionMap m_userInitiatedActionMap;
 
-    HashMap<VisitedLinkStore*, HashSet<WebCore::PageIdentifier>> m_visitedLinkStoresWithUsers;
+    HashMap<VisitedLinkStore*, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;

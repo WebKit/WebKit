@@ -28,6 +28,7 @@
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreConfiguration.h"
 #include <WebCore/Cookie.h>
@@ -139,7 +140,7 @@ public:
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
     void logTestingEvent(const String&);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
-    void getAllStorageAccessEntries(WebCore::PageIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
+    void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);

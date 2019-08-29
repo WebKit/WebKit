@@ -74,6 +74,7 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
     WebPageProxy& m_page;
+    WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     WebCore::FrameIdentifier m_mainFrameID;
     bool m_isClosed { false };

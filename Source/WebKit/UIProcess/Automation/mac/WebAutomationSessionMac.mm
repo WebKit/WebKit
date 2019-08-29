@@ -50,9 +50,9 @@ void WebAutomationSession::inspectBrowsingContext(const String& handle, const bo
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (auto callback = m_pendingInspectorCallbacksPerPage.take(page->pageID()))
+    if (auto callback = m_pendingInspectorCallbacksPerPage.take(page->identifier()))
         callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
-    m_pendingInspectorCallbacksPerPage.set(page->pageID(), WTFMove(callback));
+    m_pendingInspectorCallbacksPerPage.set(page->identifier(), WTFMove(callback));
 
     // Don't bring the inspector to front since this may be done automatically.
     // We just want it loaded so it can pause if a breakpoint is hit during a command.

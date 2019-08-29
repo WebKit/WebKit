@@ -720,7 +720,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (WKBrowsingContextHandle *)handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->pageID()] autorelease];
+    return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->webPageID()] autorelease];
 }
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry

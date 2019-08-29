@@ -917,6 +917,7 @@
 		46BEB6DB22FB9D4800269867 /* LocalStorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6D922FB9D4800269867 /* LocalStorageNamespace.h */; };
 		46BEB6DF22FBB16B00269867 /* SessionStorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6DD22FBB16B00269867 /* SessionStorageNamespace.h */; };
 		46BEB6E322FBB21A00269867 /* TransientLocalStorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6E122FBB21A00269867 /* TransientLocalStorageNamespace.h */; };
+		46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */; };
 		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
 		4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3A19AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.h */; };
 		4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */; };
@@ -3228,6 +3229,7 @@
 		46BEB6DE22FBB16B00269867 /* SessionStorageNamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStorageNamespace.cpp; sourceTree = "<group>"; };
 		46BEB6E122FBB21A00269867 /* TransientLocalStorageNamespace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransientLocalStorageNamespace.h; sourceTree = "<group>"; };
 		46BEB6E222FBB21A00269867 /* TransientLocalStorageNamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransientLocalStorageNamespace.cpp; sourceTree = "<group>"; };
+		46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageProxyIdentifier.h; sourceTree = "<group>"; };
 		46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCORSPreflightChecker.cpp; sourceTree = "<group>"; };
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionRequest.cpp; sourceTree = "<group>"; };
@@ -7859,6 +7861,7 @@
 				BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */,
 				BC032DCB10F4389F0058C15A /* WebPageProxy.h */,
 				BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */,
+				46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */,
 				7C4694CD1A51E36800AD5845 /* WebPasteboardProxy.cpp */,
 				7C4694CE1A51E36800AD5845 /* WebPasteboardProxy.h */,
 				7C4694CF1A51E36800AD5845 /* WebPasteboardProxy.messages.in */,
@@ -10025,6 +10028,7 @@
 				C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */,
 				2D12DAB520662C73006F00FB /* WKAnimationDelegate.h in Headers */,
 				BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */,
+				46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */,
 				512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */,
 				A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */,
 				BC4075F4124FF0270068F20A /* WKArray.h in Headers */,

@@ -44,7 +44,7 @@ void TextCheckingController::replaceRelativeToSelection(NSAttributedString *anno
     if (!m_page.hasRunningProcess())
         return;
 
-    m_page.process().send(Messages::TextCheckingControllerProxy::ReplaceRelativeToSelection(annotatedString, selectionOffset, length, relativeReplacementLocation, relativeReplacementLength), m_page.pageID());
+    m_page.process().send(Messages::TextCheckingControllerProxy::ReplaceRelativeToSelection(annotatedString, selectionOffset, length, relativeReplacementLocation, relativeReplacementLength), m_page.webPageID());
 }
 
 void TextCheckingController::removeAnnotationRelativeToSelection(NSString *annotationName, int64_t selectionOffset, uint64_t length)
@@ -52,7 +52,7 @@ void TextCheckingController::removeAnnotationRelativeToSelection(NSString *annot
     if (!m_page.hasRunningProcess())
         return;
 
-    m_page.process().send(Messages::TextCheckingControllerProxy::RemoveAnnotationRelativeToSelection(annotationName, selectionOffset, length), m_page.pageID());
+    m_page.process().send(Messages::TextCheckingControllerProxy::RemoveAnnotationRelativeToSelection(annotationName, selectionOffset, length), m_page.webPageID());
 }
 
 } // namespace WebKit

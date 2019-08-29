@@ -46,7 +46,7 @@ WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& p
     , m_page(&page)
     , m_process(makeRef(process))
     , m_identifier(resourceIdentifier)
-    , m_pageIdentifier(page.pageID())
+    , m_pageIdentifier(page.identifier())
     , m_request(WTFMove(request))
     , m_syncCompletionHandler(WTFMove(syncCompletionHandler))
 {
@@ -82,7 +82,7 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
         m_request = request;
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_identifier, response, request), m_page->pageID());
+    m_process->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_identifier, response, request), m_page->webPageID());
 
     return ExceptionType::None;
 }
@@ -107,7 +107,7 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
     if (isSync())
         m_syncResponse = response;
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_identifier, response), m_page->pageID());
+    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_identifier, response), m_page->webPageID());
     return ExceptionType::None;
 }
 
@@ -134,7 +134,7 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionTy
         return ExceptionType::None;
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_identifier, { buffer }), m_page->pageID());
+    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_identifier, { buffer }), m_page->webPageID());
     return ExceptionType::None;
 }
 
@@ -164,7 +164,7 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
         m_syncData = nullptr;
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_identifier, error), m_page->pageID());
+    m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_identifier, error), m_page->webPageID());
     m_urlSchemeHandler->taskCompleted(*this);
 
     return ExceptionType::None;

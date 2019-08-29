@@ -58,17 +58,17 @@ SmartMagnificationController::SmartMagnificationController(WKContentView *conten
     : m_webPageProxy(*contentView.page)
     , m_contentView(contentView)
 {
-    m_webPageProxy.process().addMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy.pageID(), *this);
+    m_webPageProxy.process().addMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy.webPageID(), *this);
 }
 
 SmartMagnificationController::~SmartMagnificationController()
 {
-    m_webPageProxy.process().removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy.pageID());
+    m_webPageProxy.process().removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
 void SmartMagnificationController::handleSmartMagnificationGesture(FloatPoint origin)
 {
-    m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy.pageID());
+    m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy.webPageID());
 }
 
 void SmartMagnificationController::handleResetMagnificationGesture(FloatPoint origin)

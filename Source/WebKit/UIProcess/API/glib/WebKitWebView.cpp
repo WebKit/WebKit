@@ -2823,7 +2823,7 @@ guint64 webkit_web_view_get_page_id(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    return getPage(webView).pageID().toUInt64();
+    return getPage(webView).identifier().toUInt64();
 }
 
 /**

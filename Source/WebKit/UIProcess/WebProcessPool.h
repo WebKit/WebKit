@@ -209,8 +209,8 @@ public:
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
-    void pageBeginUsingWebsiteDataStore(WebCore::PageIdentifier, WebsiteDataStore&);
-    void pageEndUsingWebsiteDataStore(WebCore::PageIdentifier, WebsiteDataStore&);
+    void pageBeginUsingWebsiteDataStore(WebPageProxyIdentifier, WebsiteDataStore&);
+    void pageEndUsingWebsiteDataStore(WebPageProxyIdentifier, WebsiteDataStore&);
     bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
@@ -783,7 +783,7 @@ private:
     };
     Paths m_resolvedPaths;
 
-    HashMap<PAL::SessionID, HashSet<WebCore::PageIdentifier>> m_sessionToPageIDsMap;
+    HashMap<PAL::SessionID, HashSet<WebPageProxyIdentifier>> m_sessionToPageIDsMap;
     RunLoop::Timer<WebProcessPool> m_serviceWorkerProcessesTerminationTimer;
 
 #if PLATFORM(IOS_FAMILY)

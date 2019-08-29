@@ -64,7 +64,7 @@ WebBackForwardListItem* WebBackForwardList::itemForID(const BackForwardItemIdent
     if (!item)
         return nullptr;
 
-    ASSERT(item->pageID() == m_page->pageID());
+    ASSERT(item->pageID() == m_page->identifier());
     return item;
 }
 
@@ -437,7 +437,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     // FIXME: Enable restoring resourceDirectoryURL.
     for (auto& backForwardListItemState : backForwardListState.items) {
         backForwardListItemState.identifier = { Process::identifier(), ObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>::generate() };
-        items.uncheckedAppend(WebBackForwardListItem::create(WTFMove(backForwardListItemState), m_page->pageID()));
+        items.uncheckedAppend(WebBackForwardListItem::create(WTFMove(backForwardListItemState), m_page->identifier()));
     }
     m_currentIndex = backForwardListState.currentIndex ? Optional<size_t>(*backForwardListState.currentIndex) : WTF::nullopt;
     m_entries = WTFMove(items);
