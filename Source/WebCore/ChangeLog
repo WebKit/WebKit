@@ -1,3 +1,46 @@
+2019-08-28  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249154. rdar://problem/54775050
+
+    Disabled devices should not be taken into account when searching for a capture device
+    https://bugs.webkit.org/show_bug.cgi?id=201183
+    <rdar://problem/54353440>
+    
+    Reviewed by Jer Noble.
+    
+    Manually tested.
+    
+    * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+    (WebCore::CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID):
+    We currently keep a list of devices, some of which might be disabled.
+    We should not take into account disabled devices, only enabled devices
+    when doing this search.
+    * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+    (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+    Improve logging.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249154 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-27  Youenn Fablet  <youenn@apple.com>
+
+            Disabled devices should not be taken into account when searching for a capture device
+            https://bugs.webkit.org/show_bug.cgi?id=201183
+            <rdar://problem/54353440>
+
+            Reviewed by Jer Noble.
+
+            Manually tested.
+
+            * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+            (WebCore::CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID):
+            We currently keep a list of devices, some of which might be disabled.
+            We should not take into account disabled devices, only enabled devices
+            when doing this search.
+            * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+            (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+            Improve logging.
+
 2019-08-27  Alan Coon  <alancoon@apple.com>
 
         Revert r249140. rdar://problem/54749102
