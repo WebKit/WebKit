@@ -252,7 +252,7 @@ void BlockFormattingContext::computeEstimatedVerticalPosition(const Box& layoutB
 void BlockFormattingContext::computeEstimatedVerticalPositionForAncestors(const Box& layoutBox) const
 {
     // We only need to estimate margin top for float related layout (formatting context roots avoid floats).
-    ASSERT(layoutBox.isFloatingPositioned() || layoutBox.hasFloatClear() || layoutBox.establishesBlockFormattingContext() || layoutBox.establishesInlineFormattingContext());
+    ASSERT(layoutBox.isFloatAvoider() || layoutBox.establishesInlineFormattingContext());
 
     // In order to figure out whether a box should avoid a float, we need to know the final positions of both (ignore relative positioning for now).
     // In block formatting context the final position for a normal flow box includes

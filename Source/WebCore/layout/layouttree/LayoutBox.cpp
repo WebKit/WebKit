@@ -91,6 +91,9 @@ bool Box::establishesBlockFormattingContext() const
     if (isBlockLevelBox() && !isOverflowVisible())
         return true;
 
+    if (isTableWrapperBox())
+        return true;
+
     return false;
 }
 
@@ -176,7 +179,7 @@ bool Box::hasFloatClear() const
 
 bool Box::isFloatAvoider() const
 {
-    return establishesBlockFormattingContext() || isFloatingPositioned();
+    return establishesBlockFormattingContext() || establishesTableFormattingContext() || isFloatingPositioned() || hasFloatClear();
 }
 
 const Container* Box::containingBlock() const
@@ -276,7 +279,7 @@ bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || (display == DisplayType::Table && !isTableWrapperBox());
+    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table;
 }
 
 bool Box::isInlineLevelBox() const
