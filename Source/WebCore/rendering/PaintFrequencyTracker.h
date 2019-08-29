@@ -61,14 +61,15 @@ public:
             //  - The frame rate to paint this renderer has been at least 31.25 FPS.
             m_paintFrequency = PaintFrequency::High;
         }
+
+        m_lastPaintTime = now;
+        ++m_totalPaints;
     }
 
     void end()
     {
-        m_lastPaintTime = MonotonicTime::now();
         ASSERT(m_firstPaintTime);
         ASSERT(m_firstPaintTime <= m_lastPaintTime);
-        ++m_totalPaints;
     }
 
     bool paintingFrequently() const { return m_paintFrequency == PaintFrequency::High; }
