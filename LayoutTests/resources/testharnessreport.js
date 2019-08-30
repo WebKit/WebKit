@@ -98,7 +98,7 @@ if (self.testRunner) {
         // Wait for any other completion callbacks, which may eliminate test elements
         // from the page and therefore reduce the output.
         setTimeout(function () {
-            testRunner.forceImmediateCompletion();
+            testRunner.notifyDone();
         }, 0);
     });
 }
