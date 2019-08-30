@@ -2734,7 +2734,6 @@ char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure,
     }
 
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
-    result->butterfly(); // Ensure that the butterfly is in to-space.
     return bitwise_cast<char*>(result);
 }
 
@@ -2749,7 +2748,6 @@ JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec, Structure
     }
     
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
-    result->butterfly(); // Ensure that the butterfly is in to-space.
     return result;
 }
 
@@ -2771,7 +2769,6 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
     
     // Paradoxically this may allocate a JSArray. That's totally cool.
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
-    result->butterfly(); // Ensure that the butterfly is in to-space.
     return result;
 }
 

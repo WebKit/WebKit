@@ -1,5 +1,21 @@
 2019-08-30  Mark Lam  <mark.lam@apple.com>
 
+        Remove some obsolete statements that have no effect.
+        https://bugs.webkit.org/show_bug.cgi?id=201357
+
+        Reviewed by Saam Barati.
+
+        This patch removes 3 statements that look like this:
+
+            result->butterfly(); // Ensure that the butterfly is in to-space.
+
+        The statement just reads a field and does nothing with it.  This is a no-op
+        logic-wise, and the comment that accompanies it is obsolete.
+
+        * dfg/DFGOperations.cpp:
+
+2019-08-30  Mark Lam  <mark.lam@apple.com>
+
         Fix a bug in SlotVisitor::reportZappedCellAndCrash() and also capture more information.
         https://bugs.webkit.org/show_bug.cgi?id=201345
 
