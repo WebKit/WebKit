@@ -1,3 +1,79 @@
+2019-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ObjectAllocationSinkingPhase wrongly deals with always-taken branches during interpretation
+        https://bugs.webkit.org/show_bug.cgi?id=198650
+
+        Reviewed by Saam Barati.
+
+        Object Allocation Sinking phase has a lightweight abstract interpreter which interprets DFG nodes related to allocations and properties.
+        This interpreter is lightweight since it does not track abstract values and conditions as deeply as AI does. It can happen that this
+        interpreter interpret the control-flow edge that AI proved that is never taken.
+        AI already knows some control-flow edges are never taken, and based on this information, AI can remove CheckStructure nodes. But
+        ObjectAllocationSinking phase can trace this never-taken edges and propagate structure information that contradicts to the analysis
+        done in ObjectAllocationSinking.
+
+        Let's see the example.
+
+            BB#0
+                35: NewObject([%AM:Object])
+                ...
+                47: Branch(ConstantTrue, T:#1, F:#2)
+
+            BB#1 // This basic block is never taken due to @47's jump.
+                ...
+                71: PutByOffset(@35, @66, id2{a}, 0, W:NamedProperties(2))
+                72: PutStructure(@35, %AM:Object -> %Dx:Object, ID:60066)
+                ...
+                XX: Jump(#2)
+
+            BB#2
+                ...
+                92: CheckStructure(@35, [%Dx:Object])
+                93: PutByOffset(@35, @35, id2{a}, 0, W:NamedProperties(2))
+                ...
+
+        AI removes @92 because AI knows BB#0 only takes BB#1 branch. @35's Structure is always %Dx so @92 is redundant.
+        AI proved that @71 and @72 are always executed while BB#0 -> BB#2 edge is never taken so that @35 object's structure is proven at @92.
+        After AI removes @92, ObjectAllocationSinking starts looking into this graph.
+
+            BB#0
+                35: NewObject([%AM:Object])
+                ...
+                47: Branch(ConstantTrue, T:#1, F:#2)
+
+            BB#1 // This basic block is never taken due to @47's jump.
+                ...
+                71: PutByOffset(@35, @66, id2{a}, 0, W:NamedProperties(2))
+                72: PutStructure(@35, %AM:Object -> %Dx:Object, ID:60066)
+                ...
+                XX: Jump(#2)
+
+            BB#2
+                ...
+                93: PutByOffset(@35, @35, id2{a}, 0, W:NamedProperties(2))
+                ...
+                YY: Jump(#3)
+
+            BB#3
+                ...
+                ZZ: <HERE> want to materialize @35's sunk object.
+
+        Since AI does not change the @47 Branch to Jump (it is OK anyway), BB#0 -> BB#2 edge remains and ObjectAllocationSinking phase propagates information in
+        BB#0's %AM structure information to BB#2. ObjectAllocationSinking phase converts @35 to PhantomNewObject, removes PutByOffset and PutStructure, and
+        insert MaterializeNewObject in @ZZ. At this point, ObjectAllocationSinking lightweight interpreter gets two structures while AI gets one: @35's original
+        one (%AM) and @72's replaced one (%Dx). Since AI already proved @ZZ only gets %Dx, AI removed @92 CheckStructure. But this is not known to ObjectAllocationSinking
+        phase's interpretation. So when creating recovery data, MultiPutByOffset includes two structures, %AM and %Dx. This is OK since MultiPutByOffset takes
+        conservative set of structures and performs switching. But the problem here is that %AM's id2{a} offset is -1 since %AM does not have such a property.
+        So when creating MultiPutByOffset in ObjectAllocationSinking, we accidentally create MultiPutByOffset with -1 offset data, and lowering phase hits the debug
+        assertion.
+
+            187: MultiPutByOffset(@138, @138, id2{a}, <Replace: [%AM:Object], offset = -1, >, <Replace: [%Dx:Object], offset = 0, >)
+
+        This bug is harmless since %AM structure comparison never meets at runtime. But we are not considering the case including `-1` offset property in MultiPutByOffset data.
+        In this patch, we just filter out apparently wrong structures when creating MultiPutByOffset in ObjectAllocationSinking. This is OK since it never comes at runtime.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2019-08-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOMDebugger: support event breakpoints in Worker contexts
