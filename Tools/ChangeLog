@@ -1,5 +1,24 @@
 2019-08-30  Keith Rollin  <krollin@apple.com>
 
+        Simplify PLATFORM expression
+        https://bugs.webkit.org/show_bug.cgi?id=201286
+        <rdar://problem/54822347>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The preprocessor expression conditionalizing the inclusion of the body
+        of ExitFullscreenOnEnterPiP.mm evolved into:
+
+            #if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR))
+
+        Simplify this to just:
+
+            #if !PLATFORM(IOS_FAMILY_SIMULATOR)
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm:
+
+2019-08-30  Keith Rollin  <krollin@apple.com>
+
         Remove AppKitCompatibilityDeclarations.h
         https://bugs.webkit.org/show_bug.cgi?id=201283
         <rdar://problem/54822042>

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR))
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
