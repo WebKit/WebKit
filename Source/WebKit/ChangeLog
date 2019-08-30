@@ -1,3 +1,20 @@
+2019-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        Allow process cache to cache processes when using a non-default persistent WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=201329
+
+        Reviewed by Chris Dumez.
+
+        Treat all persistent sessions the same when deciding whether to clear all cached web processes using a particular website data store.
+        This removes a huge performance regression on warm plt when switching to using a non-default persistent session.
+        I also removed a call to removeSession which is redundant with the one in the WebsiteDataStore destructor, which is where it should be.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::canCacheProcess const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+
 2019-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Caret does not appear in text field inside a transformed, overflow: hidden container

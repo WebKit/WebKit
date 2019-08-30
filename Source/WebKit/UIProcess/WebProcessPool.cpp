@@ -1313,13 +1313,8 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxyIdentifier pageI
     ASSERT_UNUSED(result, result.isNewEntry);
 
     auto sessionID = dataStore.sessionID();
-    if (sessionID.isEphemeral()) {
-        ASSERT(dataStore.parameters().networkSessionParameters.sessionID == sessionID);
-        if (m_networkProcess) {
-            m_networkProcess->addSession(makeRef(dataStore));
-            dataStore.clearPendingCookies();
-        }
-    } else if (sessionID != PAL::SessionID::defaultSessionID()) {
+    if (sessionID != PAL::SessionID::defaultSessionID()) {
+        ASSERT(!sessionID.isEphemeral() || dataStore.parameters().networkSessionParameters.sessionID == sessionID);
         if (m_networkProcess) {
             m_networkProcess->addSession(makeRef(dataStore));
             dataStore.clearPendingCookies();
@@ -1339,14 +1334,8 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxyIdentifier pageID,
     if (iterator->value.isEmpty()) {
         m_sessionToPageIDsMap.remove(iterator);
 
-        if (sessionID == PAL::SessionID::defaultSessionID())
-            return;
-
-        // The last user of this non-default PAL::SessionID is gone, so clean it up in the child processes.
-        if (networkProcess())
-            networkProcess()->removeSession(sessionID);
-
-        m_webProcessCache->clearAllProcessesForSession(sessionID);
+        if (sessionID.isEphemeral())
+            m_webProcessCache->clearAllProcessesForSession(sessionID);
     }
 }
 
