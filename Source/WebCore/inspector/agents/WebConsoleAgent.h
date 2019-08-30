@@ -33,6 +33,7 @@ namespace WebCore {
 class DOMWindow;
 class ResourceError;
 class ResourceResponse;
+struct WebAgentContext;
 typedef String ErrorString;
 
 class WebConsoleAgent : public Inspector::InspectorConsoleAgent {

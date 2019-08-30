@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

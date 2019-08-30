@@ -1,3 +1,13 @@
+2019-08-30  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix for ENABLE_UNIFIED_BUILDS=OFF.
+
+        No new tests needed.
+
+        * dom/StaticRange.h: Add missing inclusions of ExceptioOr.h and wtf/RefPtr.h.
+        * inspector/agents/WebConsoleAgent.cpp: Add missing inclusion of InspectorWebAgentBase.h.
+        * inspector/agents/WebConsoleAgent.h: Add forward declaration of the WebAgentContext struct.
+
 2019-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebSockets: first-party for cookies not set in handshake request when using platform APIs
