@@ -423,6 +423,7 @@ namespace JSC {
         RegisterID* argumentsRegister() { return m_argumentsRegister; }
         RegisterID* newTarget()
         {
+            ASSERT(m_newTargetRegister);
             return m_newTargetRegister;
         }
 

@@ -1799,6 +1799,11 @@ namespace JSC {
         bool captures(const Identifier& ident) { return captures(ident.impl()); }
         bool hasSloppyModeHoistedFunction(UniquedStringImpl* uid) const { return m_sloppyModeHoistedFunctions.contains(uid); }
 
+        bool needsNewTargetRegisterForThisScope() const
+        {
+            return usesSuperCall() || usesNewTarget();
+        }
+
         VariableEnvironment& varDeclarations() { return m_varDeclarations; }
 
         int neededConstants()

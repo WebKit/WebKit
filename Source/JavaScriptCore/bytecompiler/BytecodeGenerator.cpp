@@ -667,7 +667,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     }
 
 
-    m_newTargetRegister = addVar();
+    if (functionNode->needsNewTargetRegisterForThisScope() || isNewTargetUsedInInnerArrowFunction() || codeBlock->usesEval())
+        m_newTargetRegister = addVar();
+
     switch (parseMode) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
@@ -725,14 +727,16 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     case SourceParseMode::AsyncArrowFunctionBodyMode:
     case SourceParseMode::GeneratorBodyMode: {
         // |this| is already filled correctly before here.
-        emitLoad(m_newTargetRegister, jsUndefined());
+        if (m_newTargetRegister)
+            emitLoad(m_newTargetRegister, jsUndefined());
         break;
     }
 
     default: {
         if (SourceParseMode::ArrowFunctionMode != parseMode) {
             if (isConstructor()) {
-                move(m_newTargetRegister, &m_thisRegister);
+                if (m_newTargetRegister)
+                    move(m_newTargetRegister, &m_thisRegister);
                 if (constructorKind() == ConstructorKind::Extends) {
                     moveEmptyValue(&m_thisRegister);
                 } else
@@ -772,7 +776,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
 
-        if (m_scopeNode->usesNewTarget() || m_scopeNode->usesSuperCall())
+        if (m_scopeNode->needsNewTargetRegisterForThisScope())
             emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
     }
 
@@ -829,7 +833,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
     
-        if (m_scopeNode->usesNewTarget() || m_scopeNode->usesSuperCall())
+        if (m_scopeNode->needsNewTargetRegisterForThisScope())
             emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
     }
     
@@ -899,13 +903,13 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     codeBlock->adoptVariables(variables);
     codeBlock->adoptFunctionHoistingCandidates(WTFMove(hoistedFunctions));
     
-    if (evalNode->usesSuperCall() || evalNode->usesNewTarget())
+    if (evalNode->needsNewTargetRegisterForThisScope())
         m_newTargetRegister = addVar();
 
     if (codeBlock->isArrowFunctionContext() && (evalNode->usesThis() || evalNode->usesSuperProperty()))
         emitLoadThisFromArrowFunctionLexicalEnvironment();
 
-    if (evalNode->usesSuperCall() || evalNode->usesNewTarget())
+    if (evalNode->needsNewTargetRegisterForThisScope())
         emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
 
     if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunctionContext() && !isDerivedConstructorContext()) {
