@@ -659,9 +659,6 @@ webkit.org/b/168336 [ Debug ] imported/w3c/web-platform-tests/streams/readable-s
 # Skipped because Mac doesn't have a key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
 
-webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
-webkit.org/b/169760 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Pass Failure ]
-
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure ]

@@ -1,3 +1,42 @@
+2019-08-30  Sihui Liu  <sihui_liu@apple.com>
+
+        [wk2] LayoutTest imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=169621
+
+        Reviewed by Alex Christensen.
+
+        Event handlers of IDB objects were called in unexpected order because of race, which made the console messages 
+        in the tests come out of order.
+        Usually, an operation/request result is handled as follows:
+        1. IDBServer sends IDBResultData to IDBClient.
+        2. IDBClient receives IDBResultData and finishes a IDBTransaction operation with that result.
+        3. IDBTransaction schedules operation completed timer.
+        4. (Some time later) Timer fires, and IDBTransaction completes a request with the result and dispatches event.
+        5. (Some time later) IDBTransaction is notified that event is dispatched. If there are other results received, 
+        IDBTransaction schedules operation completed timer.
+
+        In previous implementation, if the IDBClient received a second IDBResultData for the same IDBTransaction between
+        step 3 and step 4, it would not schedule timer because timer was still active; if it received the result between
+        step 4 and step 5, it would schedule timer again.
+
+        Consider a flow like this:
+        result1 of transaction1 received, timer of transaction1 scheduled
+        result2 of transaction2 received, timer of transaction2 scheduled
+        result3 of transaction1 is received, timer of transaction1 active so no scheduling
+        timer of transaction1 fired, event1 to be dispatched to request1
+        timer of transaction2 fired, event2 to be dispatched to request2
+        result4 of transaction2 received, timer of transaction2 scheduled
+        event1 dispatched, timer of transaction1 scheduled (for handling result3)
+        event2 dispatched, timer of transaction2 active so no scheduling
+        timer of transaction2 fired, event3 to dispatch to request4
+        timer of transaction1 fired, event4 to dispatch to request3
+
+        request4 would get event before request3, though result3 was received before result4. We should stop scheduling
+        event if an IDBTransaction is in between step 4 and 5, which means its m_currentlyCompletingRequest is not null.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::operationCompletedOnServer):
+
 2019-08-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: async event listener stack traces should be available in Workers
