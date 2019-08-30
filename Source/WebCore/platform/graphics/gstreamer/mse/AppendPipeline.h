@@ -67,6 +67,7 @@ private:
     gint id();
 
     void handleAppsinkNewSampleFromStreamingThread(GstElement*);
+    void handleErrorConditionFromStreamingThread();
 
     // Takes ownership of caps.
     void parseDemuxerSrcPadCaps(GstCaps*);

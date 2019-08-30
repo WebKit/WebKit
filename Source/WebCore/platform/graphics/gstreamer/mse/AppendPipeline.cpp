@@ -216,11 +216,11 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
         return GST_FLOW_OK;
     }), this);
     g_signal_connect(m_appsink.get(), "eos", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
-        // basesrc will emit an EOS after it has received a GST_FLOW_ERROR. That's the only case we are expecting.
-        if (!appendPipeline->m_errorReceived) {
-            GST_ERROR("Unexpected appsink EOS in AppendPipeline");
-            ASSERT_NOT_REACHED();
-        }
+        if (appendPipeline->m_errorReceived)
+            return;
+
+        GST_ERROR("AppendPipeline's appsink received EOS. This is usually caused by an invalid initialization segment.");
+        appendPipeline->handleErrorConditionFromStreamingThread();
     }), this);
 
     // Add_many will take ownership of a reference. That's why we used an assignment before.
@@ -279,10 +279,9 @@ AppendPipeline::~AppendPipeline()
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }
 
-void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
+void AppendPipeline::handleErrorConditionFromStreamingThread()
 {
     ASSERT(!isMainThread());
-    GST_WARNING_OBJECT(m_pipeline.get(), "Demuxing error: %" GST_PTR_FORMAT, message);
     // Notify the main thread that the append has a decode error.
     auto response = m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this]() {
         m_errorReceived = true;
@@ -292,6 +291,13 @@ void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
     });
     // The streaming thread has now been unblocked because we are aborting in the main thread.
     ASSERT(!response);
+}
+
+void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
+{
+    ASSERT(!isMainThread());
+    GST_WARNING_OBJECT(m_pipeline.get(), "Demuxing error: %" GST_PTR_FORMAT, message);
+    handleErrorConditionFromStreamingThread();
 }
 
 GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo* padProbeInfo)

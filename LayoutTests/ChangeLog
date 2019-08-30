@@ -1,3 +1,13 @@
+2019-08-30  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Gracefully fail on invalid non-first initialization segment
+        https://bugs.webkit.org/show_bug.cgi?id=201322
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-08-30  Joonghun Park  <jh718.park@samsung.com>
 
         Import css/css-text/tab-size/tab-size.html wpt test

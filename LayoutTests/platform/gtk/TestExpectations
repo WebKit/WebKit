@@ -242,9 +242,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sou
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 
-# We don't support multiple streams per sourcebuffer nor dynamic type changes (audio/video/text)
-webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Skip ]
-
 # There is an oggdemux bug that deadlocks WebKit: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/639
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout ]
 
