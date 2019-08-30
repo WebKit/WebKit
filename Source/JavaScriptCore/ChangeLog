@@ -1,3 +1,17 @@
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG inlining CheckBadCell slow path does not assume result VirtualRegister can be invalid
+        https://bugs.webkit.org/show_bug.cgi?id=201332
+
+        Reviewed by Mark Lam.
+
+        When inlining setter calls in DFG, result VirtualRegister becomes invalid one. While other call-related DFG code correctly assumes
+        that `result` may be invalid, only CheckBadCell slow path missed this case. Since this is OSR exit path and VirtualRegister result
+        does not exist, set BottomValue only when "result" is valid as the other DFG code is doing.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+
 2019-08-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: async event listener stack traces should be available in Workers
