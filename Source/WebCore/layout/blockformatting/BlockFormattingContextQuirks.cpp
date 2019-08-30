@@ -48,10 +48,10 @@ static bool isQuirkContainer(const Box& layoutBox)
     return layoutBox.isBodyBox() || layoutBox.isDocumentBox() || layoutBox.isTableCell();
 }
 
-bool BlockFormattingContext::Quirks::needsStretching(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Quirks::needsStretching(const Box& layoutBox) const
 {
     // In quirks mode, body stretches to html and html to the initial containing block (height: auto only).
-    if (!layoutState.inQuirksMode())
+    if (!layoutState().inQuirksMode())
         return false;
 
     if (!layoutBox.isDocumentBox() && !layoutBox.isBodyBox())
@@ -60,11 +60,12 @@ bool BlockFormattingContext::Quirks::needsStretching(const LayoutState& layoutSt
     return layoutBox.style().logicalHeight().isAuto();
 }
 
-HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const LayoutState& layoutState, const Box& layoutBox, HeightAndMargin heightAndMargin)
+HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layoutBox, HeightAndMargin heightAndMargin)
 {
     ASSERT(layoutBox.isInFlow());
     ASSERT(layoutBox.isDocumentBox() || layoutBox.isBodyBox());
 
+    auto& layoutState = this->layoutState();
     auto& documentBox = layoutBox.isDocumentBox() ? layoutBox : *layoutBox.parent();
     auto& documentBoxDisplayBox = layoutState.displayBoxForLayoutBox(documentBox);
 
@@ -81,14 +82,14 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
         // Here is the quirky part for body box:
         // Stretch the body using the initial containing block's height and shrink it with document box's margin/border/padding.
         // This looks extremely odd when html has non-auto height.
-        auto documentBoxVerticalMargin = Geometry::computedVerticalMargin(documentBox, UsedHorizontalValues { initialContainingBlockDisplayBox.contentBoxWidth() });
+        auto documentBoxVerticalMargin = Geometry(layoutState).computedVerticalMargin(documentBox, UsedHorizontalValues { initialContainingBlockDisplayBox.contentBoxWidth() });
         strechedHeight -= (documentBoxVerticalMargin.before.valueOr(0) + documentBoxVerticalMargin.after.valueOr(0));
 
         auto& bodyBoxDisplayBox = layoutState.displayBoxForLayoutBox(layoutBox);
         strechedHeight -= bodyBoxDisplayBox.verticalBorder() + bodyBoxDisplayBox.verticalPadding().valueOr(0);
 
         auto nonCollapsedMargin = heightAndMargin.nonCollapsedMargin;
-        auto collapsedMargin = MarginCollapse::collapsedVerticalValues(layoutState, layoutBox, nonCollapsedMargin);
+        auto collapsedMargin = MarginCollapse(layoutState).collapsedVerticalValues(layoutBox, nonCollapsedMargin);
         totalVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before);
         totalVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     }
@@ -100,9 +101,9 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
     return heightAndMargin;
 }
 
-bool BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin(const Box& layoutBox) const
 {
-    return layoutState.inQuirksMode() && isQuirkContainer(layoutBox);
+    return layoutState().inQuirksMode() && isQuirkContainer(layoutBox);
 }
 
 }

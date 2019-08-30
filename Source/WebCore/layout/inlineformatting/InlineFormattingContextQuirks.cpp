@@ -36,10 +36,11 @@
 namespace WebCore {
 namespace Layout {
 
-bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LayoutState& layoutState, const Line::Content& lineContent)
+bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Content& lineContent) const
 {
     // Collapse line descent in limited and full quirk mode when there's no baseline aligned content or
     // the baseline aligned content has no descent.
+    auto& layoutState = this->layoutState();
     if (!layoutState.inQuirksMode() && !layoutState.inLimitedQuirksMode())
         return false;
 
@@ -81,13 +82,13 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LayoutSta
     return true;
 }
 
-Line::InitialConstraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const LayoutState& layoutState, const Box& formattingRoot)
+Line::InitialConstraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const Box& formattingRoot) const
 {
     // computedLineHeight takes font-size into account when line-height is not set.
     // Strut is the imaginary box that we put on every line. It sets the initial vertical constraints for each new line.
     auto strutHeight = formattingRoot.style().computedLineHeight();
     auto strutBaselineOffset = Line::halfLeadingMetrics(formattingRoot.style().fontMetrics(), strutHeight).ascent;
-    if (layoutState.inNoQuirksMode())
+    if (layoutState().inNoQuirksMode())
         return { strutHeight, strutBaselineOffset, { } };
 
     auto lineHeight = formattingRoot.style().lineHeight();

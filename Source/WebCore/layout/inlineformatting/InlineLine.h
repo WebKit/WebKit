@@ -49,7 +49,7 @@ public:
         HeightAndBaseline heightAndBaseline;
     };
     enum class SkipVerticalAligment { No, Yes };
-    Line(const LayoutState&, const InitialConstraints&, SkipVerticalAligment);
+    Line(LayoutState&, const InitialConstraints&, SkipVerticalAligment);
 
     class Content {
         WTF_MAKE_FAST_ALLOCATED;
@@ -156,7 +156,7 @@ private:
     LayoutUnit inlineItemContentHeight(const InlineItem&) const;
     bool isVisuallyEmpty() const;
 
-    const LayoutState& m_layoutState;
+    LayoutState& m_layoutState;
     std::unique_ptr<Content> m_content;
     ListHashSet<Content::Run*> m_trimmableContent;
 

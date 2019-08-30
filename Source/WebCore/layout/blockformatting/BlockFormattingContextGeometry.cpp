@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
-HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)
+HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin(const Box& layoutBox, UsedVerticalValues usedValues)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
     ASSERT(layoutBox.isOverflowVisible());
@@ -57,12 +57,13 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
         // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
+        auto& layoutState = this->layoutState();
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
         auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
         auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
-        auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
+        auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal);
 
         if (height) {
             auto borderAndPaddingBottom = displayBox.borderBottom() + displayBox.paddingBottom().valueOr(0);
@@ -84,7 +85,8 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
         auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
         ASSERT(lastInFlowChild);
-        if (!MarginCollapse::marginAfterCollapsesWithParentMarginAfter(layoutState, *lastInFlowChild)) {
+        auto marginCollapse = MarginCollapse(layoutState);
+        if (!marginCollapse.marginAfterCollapsesWithParentMarginAfter(*lastInFlowChild)) {
             auto& lastInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*lastInFlowChild);
             auto bottomEdgeOfBottomMargin = lastInFlowDisplayBox.bottom() + (lastInFlowDisplayBox.hasCollapsedThroughMargin() ? LayoutUnit() : lastInFlowDisplayBox.marginAfter()); 
             return { bottomEdgeOfBottomMargin - borderAndPaddingTop, nonCollapsedMargin };
@@ -92,7 +94,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
         auto* inFlowChild = lastInFlowChild;
-        while (inFlowChild && MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(layoutState, *inFlowChild))
+        while (inFlowChild && marginCollapse.marginBeforeCollapsesWithParentMarginAfter(*inFlowChild))
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
             auto& inFlowDisplayBox = layoutState.displayBoxForLayoutBox(*inFlowChild);
@@ -108,7 +110,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
     return heightAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedHorizontalValues usedValues)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -138,7 +140,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto& style = layoutBox.style();
         auto* containingBlock = layoutBox.containingBlock();
         auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
-        auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+        auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedValues.width ? Length { usedValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
         auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, usedValues);
@@ -204,7 +206,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
     return widthAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedHorizontalValues usedValues)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues) const
 {
     ASSERT(layoutBox.isInFlow() && layoutBox.replaced());
 
@@ -214,73 +216,74 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(co
     // 2. Then the rules for non-replaced block-level elements are applied to determine the margins.
 
     // #1
-    usedValues.width = inlineReplacedWidthAndMargin(layoutState, layoutBox, usedValues).width;
+    usedValues.width = inlineReplacedWidthAndMargin(layoutBox, usedValues).width;
     // #2
-    auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
+    auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutBox, usedValues);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << *usedValues.width << "px) margin(" << nonReplacedWidthAndMargin.usedMargin.start << "px, " << nonReplacedWidthAndMargin.usedMargin.end << "px) -> layoutBox(" << &layoutBox << ")");
     return { *usedValues.width, nonReplacedWidthAndMargin.usedMargin, nonReplacedWidthAndMargin.computedMargin };
 }
 
-LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& layoutBox) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-        auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
+        auto& previousInFlowDisplayBox = layoutState().displayBoxForLayoutBox(*previousInFlowSibling);
         return previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginAfter();
     }
-    return layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxTop();
+    return layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxTop();
 }
 
-LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const Box& layoutBox) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
-    return layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxLeft() + layoutState.displayBoxForLayoutBox(layoutBox).marginStart();
+    return layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxLeft() + layoutState().displayBoxForLayoutBox(layoutBox).marginStart();
 }
 
-Point BlockFormattingContext::Geometry::staticPosition(const LayoutState& layoutState, const Box& layoutBox)
+Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox) const
 {
-    return { staticHorizontalPosition(layoutState, layoutBox), staticVerticalPosition(layoutState, layoutBox) };
+    return { staticHorizontalPosition(layoutBox), staticVerticalPosition(layoutBox) };
 }
 
-HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)
+HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Box& layoutBox, UsedVerticalValues usedValues)
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutState, layoutBox, usedValues);
+        return inlineReplacedHeightAndMargin(layoutBox, usedValues);
 
     HeightAndMargin heightAndMargin;
     // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
     if (layoutBox.establishesTableFormattingContext()) {
-        auto usedHorizontalValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-        heightAndMargin = complicatedCases(layoutState, layoutBox, usedValues, usedHorizontalValues);
+        auto usedHorizontalValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
     } else if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox()) {
         // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
-        heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutState, layoutBox, usedValues);
+        heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutBox, usedValues);
     } else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
-        auto usedHorizontalValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-        heightAndMargin = complicatedCases(layoutState, layoutBox, usedValues, usedHorizontalValues);
+        auto usedHorizontalValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
     }
 
-    if (!Quirks::needsStretching(layoutState, layoutBox))
+    auto quirks = Quirks(layoutState());
+    if (!quirks.needsStretching(layoutBox))
         return heightAndMargin;
 
-    heightAndMargin = Quirks::stretchedInFlowHeight(layoutState, layoutBox, heightAndMargin);
+    heightAndMargin = quirks.stretchedInFlowHeight(layoutBox, heightAndMargin);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.nonCollapsedMargin.before << "px, " << heightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(LayoutState& layoutState, const Box& layoutBox, UsedHorizontalValues usedValues)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues)
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -288,14 +291,14 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(LayoutStat
         if (layoutBox.establishesTableFormattingContext()) {
             // This is a special table "fit-content size" behavior handling. Not in the spec though.
             // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
-            usedValues.width = Geometry::shrinkToFitWidth(layoutState, layoutBox, usedValues);
+            usedValues.width = shrinkToFitWidth(layoutBox, usedValues);
         }
-        return inFlowNonReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
+        return inFlowNonReplacedWidthAndMargin(layoutBox, usedValues);
     }
-    return inFlowReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
+    return inFlowReplacedWidthAndMargin(layoutBox, usedValues);
 }
 
-FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(LayoutState& layoutState, const Box& layoutBox)
+FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const Box& layoutBox)
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
@@ -325,13 +328,13 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
         }
 
         if (layoutBox.establishesFormattingContext())
-            return layoutState.createFormattingContext(layoutBox)->computedIntrinsicWidthConstraints();
+            return layoutState().createFormattingContext(layoutBox)->computedIntrinsicWidthConstraints();
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
             return { };
 
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-        auto& formattingState = layoutState.formattingStateForBox(layoutBox);
+        auto& formattingState = layoutState().formattingStateForBox(layoutBox);
         for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
             if (child.isOutOfFlowPositioned())
                 continue;

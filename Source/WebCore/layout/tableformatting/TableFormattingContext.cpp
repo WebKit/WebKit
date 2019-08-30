@@ -57,7 +57,7 @@ TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot,
 {
 }
 
-void TableFormattingContext::layout() const
+void TableFormattingContext::layout()
 {
     auto& grid = formattingState().tableGrid();
     auto& cellList = grid.cells();
@@ -88,7 +88,7 @@ void TableFormattingContext::layout() const
         layoutState.createFormattingContext(cellLayoutBox)->layout();
 
         // FIXME: This requires a 2 pass layout.
-        auto heightAndMargin = Geometry::tableCellHeightAndMargin(layoutState, cellLayoutBox);
+        auto heightAndMargin = geometry().tableCellHeightAndMargin(cellLayoutBox);
         cellDisplayBox.setContentBoxHeight(heightAndMargin.height);
         cellDisplayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
 
@@ -102,7 +102,7 @@ void TableFormattingContext::layout() const
     }
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints() const
+FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
 {
     // Tables have a slighty different concept of shrink to fit. It's really only different with non-auto "width" values, where
     // a generic shrink-to fit block level box like a float box would be just sized to the computed value of "width", tables
@@ -118,7 +118,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
     return { width, width };
 }
 
-void TableFormattingContext::ensureTableGrid() const
+void TableFormattingContext::ensureTableGrid()
 {
     auto& tableWrapperBox = downcast<Container>(root());
     auto& tableGrid = formattingState().tableGrid();
@@ -135,7 +135,7 @@ void TableFormattingContext::ensureTableGrid() const
     }
 }
 
-void TableFormattingContext::computePreferredWidthForColumns() const
+void TableFormattingContext::computePreferredWidthForColumns()
 {
     auto& formattingState = this->formattingState();
     auto& grid = formattingState.tableGrid();
@@ -147,7 +147,7 @@ void TableFormattingContext::computePreferredWidthForColumns() const
         ASSERT(cell->tableCellBox.establishesFormattingContext());
 
         auto intrinsicWidth = layoutState().createFormattingContext(cell->tableCellBox)->computedIntrinsicWidthConstraints();
-        intrinsicWidth = Geometry::constrainByMinMaxWidth(cell->tableCellBox, intrinsicWidth);
+        intrinsicWidth = geometry().constrainByMinMaxWidth(cell->tableCellBox, intrinsicWidth);
         formattingState.setIntrinsicWidthConstraints(intrinsicWidth);
 
         auto columnSpan = cell->size.width();
@@ -174,7 +174,7 @@ void TableFormattingContext::computePreferredWidthForColumns() const
     // FIXME: Take column group elements into account.
 }
 
-LayoutUnit TableFormattingContext::computedTableWidth() const
+LayoutUnit TableFormattingContext::computedTableWidth()
 {
     // Column and caption widths influence the final table width as follows:
     // If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the greater of
@@ -195,7 +195,7 @@ LayoutUnit TableFormattingContext::computedTableWidth() const
     auto& columnsContext = grid.columnsContext();
     auto tableWidthConstraints = grid.widthConstraints();
 
-    auto width = Geometry::computedValueIfNotAuto(style.width(), containingBlockWidth);
+    auto width = geometry().computedValueIfNotAuto(style.width(), containingBlockWidth);
     LayoutUnit usedWidth;
     if (width) {
         if (*width > tableWidthConstraints.minimum) {
@@ -227,7 +227,7 @@ LayoutUnit TableFormattingContext::computedTableWidth() const
     return usedWidth;
 }
 
-void TableFormattingContext::distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const
+void TableFormattingContext::distributeAvailableWidth(LayoutUnit extraHorizontalSpace)
 {
     // FIXME: Right now just distribute the extra space equaly among the columns.
     auto& columns = formattingState().tableGrid().columnsContext().columns();

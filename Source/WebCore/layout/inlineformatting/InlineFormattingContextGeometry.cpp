@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Layout {
 
-WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(LayoutState& layoutState, const Box& formattingContextRoot, UsedHorizontalValues usedValues)
+WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, UsedHorizontalValues usedValues)
 {
     ASSERT(formattingContextRoot.isInFlow());
 
@@ -46,7 +46,7 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(Layo
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.replaced())
-        return inlineReplacedWidthAndMargin(layoutState, formattingContextRoot, usedValues);
+        return inlineReplacedWidthAndMargin(formattingContextRoot, usedValues);
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
@@ -55,7 +55,7 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(Layo
     // #1
     auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedValues.containingBlockWidth.valueOr(0));
     if (!width)
-        width = shrinkToFitWidth(layoutState, formattingContextRoot, usedValues);
+        width = shrinkToFitWidth(formattingContextRoot, usedValues);
 
     // #2
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, usedValues);
@@ -63,18 +63,18 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(Layo
     return WidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
 }
 
-HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox)
+HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutState, layoutBox, { });
+        return inlineReplacedHeightAndMargin(layoutBox, { });
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
-    auto usedHorizontalValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-    return complicatedCases(layoutState, layoutBox, { }, usedHorizontalValues);
+    auto usedHorizontalValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    return complicatedCases(layoutBox, { }, usedHorizontalValues);
 }
 
 }

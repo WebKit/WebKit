@@ -35,10 +35,11 @@
 namespace WebCore {
 namespace Layout {
 
-LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox)
 {
     // In quirks mode, we go and travers the containing block chain to find a block level box with fixed height value, even if it means leaving
     // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
+    auto& layoutState = this->layoutState();
     auto* containingBlock = layoutBox.containingBlock();
     LayoutUnit bodyAndDocumentVerticalMarginPaddingAndBorder;
     while (containingBlock) {
@@ -52,7 +53,7 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
             auto& displayBox = layoutState.displayBoxForLayoutBox(*containingBlock);
 
             auto usedValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*containingBlock->containingBlock()).contentBoxWidth() };
-            auto verticalMargin = Geometry::computedVerticalMargin(*containingBlock, usedValues);
+            auto verticalMargin = Geometry(layoutState).computedVerticalMargin(*containingBlock, usedValues);
             auto verticalPadding = displayBox.paddingTop().valueOr(0) + displayBox.paddingBottom().valueOr(0);
             auto verticalBorder = displayBox.borderTop() + displayBox.borderBottom();
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;

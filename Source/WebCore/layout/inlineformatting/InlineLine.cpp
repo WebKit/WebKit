@@ -52,7 +52,7 @@ Line::Content::Run::Run(const InlineItem& inlineItem, const TextContext& textCon
 {
 }
 
-Line::Line(const LayoutState& layoutState, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
+Line::Line(LayoutState& layoutState, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_layoutState(layoutState)
     , m_content(makeUnique<Line::Content>())
     , m_logicalTopLeft(initialConstraints.logicalTopLeft)
@@ -109,7 +109,7 @@ std::unique_ptr<Line::Content> Line::close()
         }
 
         // Remove descent when all content is baseline aligned but none of them have descent.
-        if (InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(m_layoutState, *m_content)) {
+        if (InlineFormattingContext::Quirks(m_layoutState).lineDescentNeedsCollapsing(*m_content)) {
             m_lineLogicalHeight -= m_baseline.descent;
             m_baseline.descent = { };
         }

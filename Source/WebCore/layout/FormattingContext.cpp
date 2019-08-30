@@ -64,24 +64,24 @@ LayoutState& FormattingContext::layoutState() const
     return m_formattingState.layoutState();
 }
 
-void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox) const
+void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
     auto& layoutState = this->layoutState();
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
         auto usedValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
-        return Geometry::outOfFlowHorizontalGeometry(layoutState, layoutBox, usedValues);
+        return geometry().outOfFlowHorizontalGeometry(layoutBox, usedValues);
     };
 
     auto horizontalGeometry = compute({ });
-    if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
+    if (auto maxWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
         auto maxHorizontalGeometry = compute(maxWidth);
         if (horizontalGeometry.widthAndMargin.width > maxHorizontalGeometry.widthAndMargin.width)
             horizontalGeometry = maxHorizontalGeometry;
     }
 
-    if (auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
+    if (auto minWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
         auto minHorizontalGeometry = compute(minWidth);
         if (horizontalGeometry.widthAndMargin.width < minHorizontalGeometry.widthAndMargin.width)
             horizontalGeometry = minHorizontalGeometry;
@@ -94,22 +94,22 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     displayBox.setHorizontalComputedMargin(horizontalGeometry.widthAndMargin.computedMargin);
 }
 
-void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox) const
+void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
 {
     auto& layoutState = this->layoutState();
 
     auto compute = [&](UsedVerticalValues usedValues) {
-        return Geometry::outOfFlowVerticalGeometry(layoutState, layoutBox, usedValues);
+        return geometry().outOfFlowVerticalGeometry(layoutBox, usedValues);
     };
 
     auto verticalGeometry = compute({ });
-    if (auto maxHeight = Geometry::computedMaxHeight(layoutState, layoutBox)) {
+    if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
         auto maxVerticalGeometry = compute({ *maxHeight });
         if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
             verticalGeometry = maxVerticalGeometry;
     }
 
-    if (auto minHeight = Geometry::computedMinHeight(layoutState, layoutBox)) {
+    if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
         auto minVerticalGeometry = compute({ *minHeight });
         if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
             verticalGeometry = minVerticalGeometry;
@@ -123,17 +123,17 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox) c
     displayBox.setVerticalMargin({ nonCollapsedVerticalMargin, { } });
 }
 
-void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedValues) const
+void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedValues)
 {
     auto& layoutState = this->layoutState();
     if (!usedValues)
         usedValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    displayBox.setBorder(Geometry::computedBorder(layoutBox));
-    displayBox.setPadding(Geometry::computedPadding(layoutBox, *usedValues));
+    displayBox.setBorder(geometry().computedBorder(layoutBox));
+    displayBox.setPadding(geometry().computedPadding(layoutBox, *usedValues));
 }
 
-void FormattingContext::layoutOutOfFlowContent() const
+void FormattingContext::layoutOutOfFlowContent()
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 

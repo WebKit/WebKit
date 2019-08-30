@@ -40,25 +40,33 @@ class TableFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
     TableFormattingContext(const Box& formattingContextRoot, TableFormattingState&);
-    void layout() const override;
+    void layout() override;
 
 private:
     class Geometry : public FormattingContext::Geometry {
     public:
-        static HeightAndMargin tableCellHeightAndMargin(const LayoutState&, const Box&);
+        Geometry(LayoutState&);
+
+        HeightAndMargin tableCellHeightAndMargin(const Box&) const;
     };
+    TableFormattingContext::Geometry geometry() const { return Geometry(layoutState()); }
 
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
-    LayoutUnit computedTableWidth() const;
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
+    LayoutUnit computedTableWidth();
 
-    void ensureTableGrid() const;
-    void computePreferredWidthForColumns() const;
-    void distributeAvailableWidth(LayoutUnit extraHorizontalSpace) const;
+    void ensureTableGrid();
+    void computePreferredWidthForColumns();
+    void distributeAvailableWidth(LayoutUnit extraHorizontalSpace);
 
     void initializeDisplayBoxToBlank(Display::Box&) const;
 
     TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
+
+inline TableFormattingContext::Geometry::Geometry(LayoutState& layoutState)
+    : FormattingContext::Geometry(layoutState)
+{
+}
 
 }
 }

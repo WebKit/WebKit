@@ -35,13 +35,13 @@
 namespace WebCore {
 namespace Layout {
 
-HeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox)
+HeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isInFlow());
 
-    auto height = computedHeightValue(layoutState, layoutBox, HeightType::Normal);
+    auto height = computedHeightValue(layoutBox, HeightType::Normal);
     if (!height)
-        height = Geometry::contentHeightForFormattingContextRoot(layoutState, layoutBox);
+        height = contentHeightForFormattingContextRoot(layoutBox);
 
     // FIXME: Compute vertical margin values.
     return HeightAndMargin { *height, { } };

@@ -46,10 +46,10 @@ class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const Box& formattingContextRoot, InlineFormattingState&);
-    void layout() const override;
+    void layout() override;
 
 private:
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
     class InlineLayout {
     public:
@@ -68,26 +68,32 @@ private:
         const Container& m_formattingRoot;
     };
 
-    class Quirks {
+    class Quirks : public FormattingContext::Quirks {
     public:
-        static bool lineDescentNeedsCollapsing(const LayoutState&, const Line::Content&);
-        static Line::InitialConstraints::HeightAndBaseline lineHeightConstraints(const LayoutState&, const Box& formattingRoot);
+        Quirks(LayoutState&);
+
+        bool lineDescentNeedsCollapsing(const Line::Content&) const;
+        Line::InitialConstraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
     };
+    InlineFormattingContext::Quirks quirks() const { return Quirks(layoutState()); }
 
     class Geometry : public FormattingContext::Geometry {
     public:
-        static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
-        static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&, UsedHorizontalValues);
-    };
+        Geometry(LayoutState&);
 
-    void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
-    void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues) const;
-    void initializeMarginBorderAndPaddingForGenericInlineBox(const Box&) const;
-    void computeIntrinsicWidthForFormattingRoot(const Box&) const;
-    void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
-    void computeHorizontalMargin(const Box&, UsedHorizontalValues) const;
-    void computeHeightAndMargin(const Box&) const;
-    void computeWidthAndMargin(const Box&, UsedHorizontalValues) const;
+        HeightAndMargin inlineBlockHeightAndMargin(const Box&) const;
+        WidthAndMargin inlineBlockWidthAndMargin(const Box&, UsedHorizontalValues);
+    };
+    InlineFormattingContext::Geometry geometry() const { return Geometry(layoutState()); }
+
+    void layoutFormattingContextRoot(const Box&, UsedHorizontalValues);
+    void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues);
+    void initializeMarginBorderAndPaddingForGenericInlineBox(const Box&);
+    void computeIntrinsicWidthForFormattingRoot(const Box&);
+    void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues);
+    void computeHorizontalMargin(const Box&, UsedHorizontalValues);
+    void computeHeightAndMargin(const Box&);
+    void computeWidthAndMargin(const Box&, UsedHorizontalValues);
 
     void collectInlineContent() const;
 
@@ -95,6 +101,16 @@ private:
     // FIXME: Come up with a structure that requires no friending.
     friend class Line;
 };
+
+inline InlineFormattingContext::Geometry::Geometry(LayoutState& layoutState)
+    : FormattingContext::Geometry(layoutState)
+{
+}
+
+inline InlineFormattingContext::Quirks::Quirks(LayoutState& layoutState)
+    : FormattingContext::Quirks(layoutState)
+{
+}
 
 }
 }

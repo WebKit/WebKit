@@ -1,3 +1,248 @@
+2019-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Make Geometry/Quirk/MarginCollapse subclasses stateful.
+        https://bugs.webkit.org/show_bug.cgi?id=201343
+        <rdar://problem/54883787>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for enforcing LFC to not call outside of the formatting context.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const): Deleted.
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const): Deleted.
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding const): Deleted.
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent const): Deleted.
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::Geometry::layoutState const):
+        (WebCore::Layout::FormattingContext::Geometry::layoutState):
+        (WebCore::Layout::FormattingContext::geometry const):
+        (WebCore::Layout::FormattingContext::Quirks::layoutState const):
+        (WebCore::Layout::FormattingContext::Quirks::layoutState):
+        (WebCore::Layout::FormattingContext::quirks const):
+        (WebCore::Layout::FormattingContext::Geometry::Geometry):
+        (WebCore::Layout::FormattingContext::Quirks::Quirks):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::Geometry::computedValueIfNotAuto const):
+        (WebCore::Layout::FormattingContext::Geometry::fixedValue const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset const):
+        (WebCore::Layout::FormattingContext::Geometry::computedBorder const):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding const):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::constrainByMinMaxWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedValueIfNotAuto): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::fixedValue): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight): Deleted.
+        (WebCore::Layout::staticVerticalPositionForOutOfFlowPositioned): Deleted.
+        (WebCore::Layout::staticHorizontalPositionForOutOfFlowPositioned): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedBorder): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::constrainByMinMaxWidth): Deleted.
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForAncestors):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFormattingRoot):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        (WebCore::Layout::BlockFormattingContext::setEstimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::layout const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForAncestors const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFormattingRoot const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::setEstimatedMarginBefore const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::geometry const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::layoutState):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::layoutState const):
+        (WebCore::Layout::BlockFormattingContext::marginCollapse const):
+        (WebCore::Layout::BlockFormattingContext::quirks const):
+        (WebCore::Layout::BlockFormattingContext::removeEstimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::Geometry):
+        (WebCore::Layout::BlockFormattingContext::Quirks::Quirks):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::MarginCollapse):
+        (WebCore::Layout::BlockFormattingContext::removeEstimatedMarginBefore const): Deleted.
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticHorizontalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticHorizontalPosition): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition): Deleted.
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::needsStretching const):
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin const):
+        (WebCore::Layout::BlockFormattingContext::Quirks::needsStretching): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSiblingMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSiblingMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox):
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox):
+        (WebCore::Layout::InlineFormattingContext::layout const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::quirks const):
+        (WebCore::Layout::InlineFormattingContext::geometry const):
+        (WebCore::Layout::InlineFormattingContext::Geometry::Geometry):
+        (WebCore::Layout::InlineFormattingContext::Quirks::Quirks):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin const):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin): Deleted.
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints): Deleted.
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout):
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computedTableWidth):
+        (WebCore::Layout::TableFormattingContext::distributeAvailableWidth):
+        (WebCore::Layout::TableFormattingContext::layout const): Deleted.
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints const): Deleted.
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid const): Deleted.
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns const): Deleted.
+        (WebCore::Layout::TableFormattingContext::computedTableWidth const): Deleted.
+        (WebCore::Layout::TableFormattingContext::distributeAvailableWidth const): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+        (WebCore::Layout::TableFormattingContext::geometry const):
+        (WebCore::Layout::TableFormattingContext::Geometry::Geometry):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::tableCellHeightAndMargin const):
+        (WebCore::Layout::TableFormattingContext::Geometry::tableCellHeightAndMargin): Deleted.
+
 2019-08-30  Keith Rollin  <krollin@apple.com>
 
         Remove AppKitCompatibilityDeclarations.h
