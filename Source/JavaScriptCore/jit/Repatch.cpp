@@ -1007,6 +1007,7 @@ void linkPolymorphicCall(
         callLinkInfo.setHasSeenClosure();
     
     Vector<PolymorphicCallCase> callCases;
+    Vector<int64_t> caseValues;
     
     // Figure out what our cases are.
     for (CallVariant variant : list) {
@@ -1021,36 +1022,7 @@ void linkPolymorphicCall(
                 return;
             }
         }
-        
-        callCases.append(PolymorphicCallCase(variant, codeBlock));
-    }
-    
-    // If we are over the limit, just use a normal virtual call.
-    unsigned maxPolymorphicCallVariantListSize;
-    if (isWebAssembly)
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
-    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
-    else
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
 
-    if (list.size() > maxPolymorphicCallVariantListSize) {
-        linkVirtualFor(exec, callLinkInfo);
-        return;
-    }
-
-    Vector<int64_t> caseValues(callCases.size());
-    Vector<CallToCodePtr> calls(callCases.size());
-    UniqueArray<uint32_t> fastCounts;
-    
-    if (!isWebAssembly && callerCodeBlock->jitType() != JITCode::topTierJIT())
-        fastCounts = makeUniqueArray<uint32_t>(callCases.size());
-    
-    for (size_t i = 0; i < callCases.size(); ++i) {
-        if (fastCounts)
-            fastCounts[i] = 0;
-        
-        CallVariant variant = callCases[i].variant();
         int64_t newCaseValue = 0;
         if (isClosureCall) {
             newCaseValue = bitwise_cast<intptr_t>(variant.executable());
@@ -1064,25 +1036,47 @@ void linkPolymorphicCall(
             else
                 newCaseValue = bitwise_cast<intptr_t>(variant.internalFunction());
         }
-        
-        if (!ASSERT_DISABLED) {
-            for (size_t j = 0; j < i; ++j) {
-                if (caseValues[j] != newCaseValue)
-                    continue;
 
+        if (!ASSERT_DISABLED) {
+            if (caseValues.contains(newCaseValue)) {
                 dataLog("ERROR: Attempt to add duplicate case value.\n");
                 dataLog("Existing case values: ");
                 CommaPrinter comma;
-                for (size_t k = 0; k < i; ++k)
-                    dataLog(comma, caseValues[k]);
+                for (auto& value : caseValues)
+                    dataLog(comma, value);
                 dataLog("\n");
                 dataLog("Attempting to add: ", newCaseValue, "\n");
                 dataLog("Variant list: ", listDump(callCases), "\n");
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
-        
-        caseValues[i] = newCaseValue;
+
+        callCases.append(PolymorphicCallCase(variant, codeBlock));
+        caseValues.append(newCaseValue);
+    }
+    ASSERT(callCases.size() == caseValues.size());
+
+    // If we are over the limit, just use a normal virtual call.
+    unsigned maxPolymorphicCallVariantListSize;
+    if (isWebAssembly)
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
+    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
+    else
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
+
+    // We use list.size() instead of callCases.size() because we respect CallVariant size for now.
+    if (list.size() > maxPolymorphicCallVariantListSize) {
+        linkVirtualFor(exec, callLinkInfo);
+        return;
+    }
+
+    Vector<CallToCodePtr> calls(callCases.size());
+    UniqueArray<uint32_t> fastCounts;
+
+    if (!isWebAssembly && callerCodeBlock->jitType() != JITCode::topTierJIT()) {
+        fastCounts = makeUniqueArray<uint32_t>(callCases.size());
+        memset(fastCounts.get(), 0, callCases.size() * sizeof(uint32_t));
     }
     
     GPRReg calleeGPR = callLinkInfo.calleeGPR();

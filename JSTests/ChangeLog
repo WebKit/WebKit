@@ -1,5 +1,19 @@
 2019-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Repatch should construct CallCases and CasesValue at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=201325
+
+        Reviewed by Saam Barati.
+
+        * stress/repatch-switch.js: Added.
+        (main.f2.f0):
+        (main.f2.f3):
+        (main.f2.f1):
+        (main.f2):
+        (main):
+
+2019-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ObjectAllocationSinkingPhase wrongly deals with always-taken branches during interpretation
         https://bugs.webkit.org/show_bug.cgi?id=198650
 
