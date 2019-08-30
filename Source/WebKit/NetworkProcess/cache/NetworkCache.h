@@ -99,7 +99,7 @@ enum class CacheOption : uint8_t {
 
 class Cache : public RefCounted<Cache> {
 public:
-    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>);
+    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
     void setCapacity(size_t);
 
@@ -146,11 +146,12 @@ public:
 #endif
 
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
+    const PAL::SessionID& sessionID() const { return m_sessionID; }
 
     ~Cache();
 
 private:
-    Cache(NetworkProcess&, Ref<Storage>&&, OptionSet<CacheOption>);
+    Cache(NetworkProcess&, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);
 
     Key makeCacheKey(const WebCore::ResourceRequest&);
 
@@ -170,6 +171,7 @@ private:
 #endif
 
     unsigned m_traverseCount { 0 };
+    PAL::SessionID m_sessionID;
 };
 
 } // namespace NetworkCache

@@ -1,3 +1,22 @@
+2019-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative loads should use the NetworkSession owning their Cache
+        https://bugs.webkit.org/show_bug.cgi?id=201314
+
+        Reviewed by Chris Dumez.
+
+        This provides a performance improvement when using non-default persistent WKWebsiteDataStores.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+        (WebKit::NetworkCache::Cache::Cache):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::sessionID const):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+
 2019-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Caret does not appear in text field if the body element is translated completely out of the viewport
