@@ -2891,11 +2891,6 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
 
         if (shouldProcessSwap) {
-            // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
-            // In the case where the destination WebProcess has a SuspendedPageProxy for this WebPage, we should have thrown
-            // it away to support WebProcess re-use.
-            ASSERT(destinationSuspendedPage || !process().processPool().hasSuspendedPageFor(processForNavigation, *this));
-
             auto suspendedPage = destinationSuspendedPage ? process().processPool().takeSuspendedPage(*destinationSuspendedPage) : nullptr;
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;

@@ -53,11 +53,12 @@ public:
     void sendUnusedReply(uint64_t replyID);
 
 protected:
-    RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxyIdentifier messageDestinationID);
+    explicit RemoteObjectRegistry(_WKRemoteObjectRegistry *);
     
 private:
     virtual ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() { return nullptr; }
     virtual IPC::MessageSender& messageSender() = 0;
+    virtual uint64_t messageDestinationID() = 0;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -69,7 +70,6 @@ private:
 
     WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
     HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
-    WebPageProxyIdentifier m_messageDestinationID;
 };
 
 } // namespace WebKit

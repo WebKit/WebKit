@@ -34,9 +34,8 @@
 
 namespace WebKit {
 
-RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxyIdentifier messageDestinationID)
+RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry)
     : m_remoteObjectRegistry(remoteObjectRegistry)
-    , m_messageDestinationID(messageDestinationID)
 {
 }
 
@@ -52,17 +51,17 @@ void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocati
         m_pendingReplies.add(replyInfo->replyID, takeBackgroundActivityToken());
     }
 
-    messageSender().send(Messages::RemoteObjectRegistry::InvokeMethod(invocation), m_messageDestinationID);
+    messageSender().send(Messages::RemoteObjectRegistry::InvokeMethod(invocation), messageDestinationID());
 }
 
 void RemoteObjectRegistry::sendReplyBlock(uint64_t replyID, const UserData& blockInvocation)
 {
-    messageSender().send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation), m_messageDestinationID);
+    messageSender().send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation), messageDestinationID());
 }
 
 void RemoteObjectRegistry::sendUnusedReply(uint64_t replyID)
 {
-    messageSender().send(Messages::RemoteObjectRegistry::ReleaseUnusedReplyBlock(replyID), m_messageDestinationID);
+    messageSender().send(Messages::RemoteObjectRegistry::ReleaseUnusedReplyBlock(replyID), messageDestinationID());
 }
 
 void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation)

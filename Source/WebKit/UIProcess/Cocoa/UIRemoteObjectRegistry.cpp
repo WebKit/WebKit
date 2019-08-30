@@ -37,7 +37,7 @@ ProcessThrottler::BackgroundActivityToken UIRemoteObjectRegistry::takeBackground
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
-    : RemoteObjectRegistry(remoteObjectRegistry, page.identifier())
+    : RemoteObjectRegistry(remoteObjectRegistry)
     , m_page(page)
 {
 }
@@ -53,6 +53,11 @@ void UIRemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invoca
 IPC::MessageSender& UIRemoteObjectRegistry::messageSender()
 {
     return m_page;
+}
+
+uint64_t UIRemoteObjectRegistry::messageDestinationID()
+{
+    return m_page.webPageID().toUInt64();
 }
 
 } // namespace WebKit

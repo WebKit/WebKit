@@ -1,5 +1,25 @@
 2019-08-30  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] We no longer need to throw away suspended pages in a process before using it for a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=201344
+
+        Reviewed by Antti Koivisto.
+
+        We no longer need to throw away suspended pages in a process before using it for a navigation, now that
+        Bug 201225 has been fixed. WebPage objects (suspended or live) in the process now have distinct
+        identifiers and can coexist.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::RemoteObjectRegistry):
+        * UIProcess/Cocoa/UIRemoteObjectRegistry.cpp:
+        (WebKit::UIRemoteObjectRegistry::UIRemoteObjectRegistry):
+        * WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp:
+        (WebKit::WebRemoteObjectRegistry::WebRemoteObjectRegistry):
+        (WebKit::WebRemoteObjectRegistry::close):
+
+2019-08-30  Chris Dumez  <cdumez@apple.com>
+
         Assertion hit when saving to PDF from printing dialog
         https://bugs.webkit.org/show_bug.cgi?id=201351
 

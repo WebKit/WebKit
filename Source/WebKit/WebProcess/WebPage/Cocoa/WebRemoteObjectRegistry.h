@@ -40,6 +40,7 @@ public:
     
 private:
     IPC::MessageSender& messageSender() final;
+    uint64_t messageDestinationID() final;
 
     WebPage& m_page;
 };

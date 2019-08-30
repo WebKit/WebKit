@@ -39,6 +39,7 @@ public:
 
 private:
     IPC::MessageSender& messageSender() final;
+    uint64_t messageDestinationID() final;
     ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() final;
 
     WebPageProxy& m_page;
