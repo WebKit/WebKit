@@ -1,3 +1,17 @@
+2019-08-30  Joonghun Park  <jh718.park@samsung.com>
+
+        Import css/css-text/tab-size/tab-size.html wpt test
+        https://bugs.webkit.org/show_bug.cgi?id=201328
+
+        Unreviewed. No behavioral changes.
+
+        The css/css-text/tab-size/tab-size.html wpt test was ported from
+        the original test LayoutTests/css3/tab-size.html.
+
+        So we import that wpt test and remove the original test from LayoutTests.
+
+        * css3/tab-size.html: Removed.
+
 2019-08-30  Sihui Liu  <sihui_liu@apple.com>
 
         [wk2] LayoutTest imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a flaky failure
