@@ -36,6 +36,7 @@
 #include <WebCore/WheelEventTestTrigger.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SystemTracing.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #include <WebCore/AsyncScrollingCoordinator.h>
@@ -194,6 +195,8 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebKit::WebTouchEv
 
 void EventDispatcher::dispatchTouchEvents()
 {
+    TraceScope traceScope(DispatchTouchEventsStart, DispatchTouchEventsEnd);
+
     HashMap<PageIdentifier, TouchEventQueue> localCopy;
     {
         LockHolder locker(&m_touchEventsLock);

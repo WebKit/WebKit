@@ -78,11 +78,14 @@ enum TracePointCode {
     DisplayRefreshDispatchingToMainThread,
     ComputeEventRegionsStart,
     ComputeEventRegionsEnd,
-
     ScheduleRenderingUpdate,
     TriggerRenderingUpdate,
     RenderingUpdateStart,
     RenderingUpdateEnd,
+    CompositingUpdateStart,
+    CompositingUpdateEnd,
+    DispatchTouchEventsStart,
+    DispatchTouchEventsEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

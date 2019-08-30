@@ -67,6 +67,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -680,6 +681,8 @@ static Optional<ScrollingNodeID> frameHostingNodeForFrame(Frame& frame)
 bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " contentLayersCount " << m_contentLayersCount);
+
+    TraceScope tracingScope(CompositingUpdateStart, CompositingUpdateEnd);
 
 #if ENABLE(TREE_DEBUGGING)
     if (compositingLogEnabled())

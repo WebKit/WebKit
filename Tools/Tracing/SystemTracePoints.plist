@@ -260,6 +260,31 @@
                  <key>CodeEnd</key>
                  <string>5031</string>
              </dict>
+
+             <dict>
+                 <key>Name</key>
+                 <string>Compositing update</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5032</string>
+                 <key>CodeEnd</key>
+                 <string>5033</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>DispatchTouchEvents</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5034</string>
+                 <key>CodeEnd</key>
+                 <string>5035</string>
+             </dict>
              <dict>
                  <key>Name</key>
                  <string>Paint WebHTMLView</string>
