@@ -1,3 +1,13 @@
+2019-08-30  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Replaying the video should update currentTime
+        https://bugs.webkit.org/show_bug.cgi?id=201307
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * web-platform-tests/media-source/mediasource-replay-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-replay.html: Added.
+
 2019-08-30  Joonghun Park  <jh718.park@samsung.com>
 
         Import css/css-text/tab-size/tab-size.html wpt test

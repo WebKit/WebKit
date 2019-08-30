@@ -1,3 +1,24 @@
+2019-08-30  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Replaying the video should update currentTime
+        https://bugs.webkit.org/show_bug.cgi?id=201307
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        While writing a test to confirm that https://bugs.webkit.org/show_bug.cgi?id=190050
+        has indeed been fixed I noticed a non-conformity: when the video has
+        ended, right after calling .play() for a second playback currentTime
+        did not return zero, but the video duration.
+
+        This turned to be due to the m_isEndReached flag not being reseted on
+        seeks (replaying a video incurs in a seek done from multi-platform
+        code).
+
+        Test: imported/w3c/web-platform-tests/media-source/mediasource-replay.html
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+
 2019-08-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Make Geometry/Quirk/MarginCollapse subclasses stateful.
