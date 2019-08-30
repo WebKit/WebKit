@@ -1,3 +1,26 @@
+2019-08-30  Mark Lam  <mark.lam@apple.com>
+
+        Fix a bug in SlotVisitor::reportZappedCellAndCrash() and also capture more information.
+        https://bugs.webkit.org/show_bug.cgi?id=201345
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes a bug where SlotVisitor::reportZappedCellAndCrash() was using
+        the wrong pointer for capture the cell headerWord and zapReason.  As a result,
+        we get junk for those 2 values.
+
+        Previously, we were only capturing the upper 32-bits of the cell header slot,
+        and the lower 32-bit of the next slot in the zapped cell.  We now capture the
+        full 64-bits of both slots.  If the second slot did not contain a zapReason as we
+        expect, the upper 32-bits might give us a clue as to what type of value the slot
+        contains.
+
+        This patch also adds capturing of the found MarkedBlock address for the zapped
+        cell, as well as some state bit values.
+
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::reportZappedCellAndCrash):
+
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Generate new.target register only when it is used

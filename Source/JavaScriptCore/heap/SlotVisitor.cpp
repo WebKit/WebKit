@@ -38,6 +38,7 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "JSCInlines.h"
+#include "MarkedBlockInlines.h"
 #include "MarkingConstraintSolver.h"
 #include "SlotVisitorInlines.h"
 #include "StopIfNecessaryTimer.h"
@@ -45,6 +46,7 @@
 #include "VM.h"
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -825,29 +827,42 @@ void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)
 #if CPU(X86_64)
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void SlotVisitor::reportZappedCellAndCrash(JSCell* cell)
 {
-    MarkedBlock::Handle* foundBlock = nullptr;
-    uint32_t* cellWords = reinterpret_cast_ptr<uint32_t*>(this);
+    MarkedBlock::Handle* foundBlockHandle = nullptr;
+    uint64_t* cellWords = reinterpret_cast_ptr<uint64_t*>(cell);
 
     uintptr_t cellAddress = bitwise_cast<uintptr_t>(cell);
-    uintptr_t headerWord = cellWords[1];
-    uintptr_t zapReason = cellWords[2];
+    uint64_t headerWord = cellWords[0];
+    uint64_t zapReasonAndMore = cellWords[1];
     unsigned subspaceHash = 0;
     size_t cellSize = 0;
 
-    m_heap.objectSpace().forEachBlock([&] (MarkedBlock::Handle* block) {
-        if (block->contains(cell)) {
-            foundBlock = block;
+    m_heap.objectSpace().forEachBlock([&] (MarkedBlock::Handle* blockHandle) {
+        if (blockHandle->contains(cell)) {
+            foundBlockHandle = blockHandle;
             return IterationStatus::Done;
         }
         return IterationStatus::Continue;
     });
 
-    if (foundBlock) {
-        subspaceHash = StringHasher::computeHash(foundBlock->subspace()->name());
-        cellSize = foundBlock->cellSize();
+    uint64_t variousState = 0;
+    MarkedBlock* foundBlock = nullptr;
+    if (foundBlockHandle) {
+        foundBlock = &foundBlockHandle->block();
+        subspaceHash = StringHasher::computeHash(foundBlockHandle->subspace()->name());
+        cellSize = foundBlockHandle->cellSize();
+
+        variousState |= static_cast<uint64_t>(foundBlockHandle->isFreeListed()) << 0;
+        variousState |= static_cast<uint64_t>(foundBlockHandle->isAllocated()) << 1;
+        variousState |= static_cast<uint64_t>(foundBlockHandle->isEmpty()) << 2;
+        variousState |= static_cast<uint64_t>(foundBlockHandle->needsDestruction()) << 3;
+        variousState |= static_cast<uint64_t>(foundBlock->isNewlyAllocated(cell)) << 4;
+
+        ptrdiff_t cellOffset = cellAddress - reinterpret_cast<uint64_t>(foundBlockHandle->start());
+        bool cellIsProperlyAligned = !(cellOffset % cellSize);
+        variousState |= static_cast<uint64_t>(cellIsProperlyAligned) << 5;
     }
 
-    CRASH_WITH_INFO(cellAddress, headerWord, zapReason, subspaceHash, cellSize);
+    CRASH_WITH_INFO(cellAddress, headerWord, zapReasonAndMore, subspaceHash, cellSize, foundBlock, variousState);
 }
 #endif // PLATFORM(MAC)
 
