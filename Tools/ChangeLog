@@ -1,3 +1,17 @@
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Remove empty FontCache.cpp file in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=201277
+        <rdar://problem/54820726>
+
+        Reviewed by Alex Christensen.
+
+        Bug 200694 emptied out the contents of FontCache.cpp. This patch
+        removes the file from the project.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FontCache.cpp: Removed.
+
 2019-08-29  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Status bubble should only display important messages in pop-over
