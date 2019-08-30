@@ -1436,10 +1436,6 @@
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-#define HAVE_CFNETWORK_WITH_IGNORE_HSTS 1
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 #define HAVE_CFNETWORK_WITH_AUTO_ADDED_HTTP_HEADER_SUPPRESSION_SUPPORT 1
 /* FIXME: Does this work, and is this needed on other iOS family platforms? */
 #if PLATFORM(MAC) || PLATFORM(IOS)

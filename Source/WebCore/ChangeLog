@@ -1,3 +1,14 @@
+2019-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        Remove HAVE_CFNETWORK_WITH_IGNORE_HSTS conditional
+        https://bugs.webkit.org/show_bug.cgi?id=201279
+
+        Reviewed by Darin Adler.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::synthesizeRedirectResponseIfNecessary):
+        (WebCore::schemeWasUpgradedDueToDynamicHSTS): Deleted.
+
 2019-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Caret does not appear in text field inside a transformed, overflow: hidden container

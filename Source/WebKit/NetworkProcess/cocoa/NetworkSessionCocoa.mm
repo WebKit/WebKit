@@ -399,7 +399,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
 }
 
-#if HAVE(CFNETWORK_WITH_IGNORE_HSTS) && ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 static NSURLRequest* downgradeRequest(NSURLRequest *request)
 {
     NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
@@ -422,7 +422,6 @@ static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
 }
 #endif
 
-#if HAVE(CFNETWORK_WITH_IGNORE_HSTS)
 static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
 {
     if ([request respondsToSelector:@selector(_setIgnoreHSTS:)])
@@ -434,11 +433,9 @@ static bool ignoreHSTS(NSURLRequest *request)
     return [request respondsToSelector:@selector(_ignoreHSTS)]
         && [request _ignoreHSTS];
 }
-#endif
 
 static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURLRequest *request, bool shouldIgnoreHSTS)
 {
-#if HAVE(CFNETWORK_WITH_IGNORE_HSTS)
     if ([request.URL.scheme isEqualToString:@"https"] && shouldIgnoreHSTS && ignoreHSTS(request)) {
         // The request was upgraded for some other reason than HSTS.
         // Don't ignore HSTS to avoid the risk of another downgrade.
@@ -452,9 +449,6 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         setIgnoreHSTS(nsMutableRequest, shouldIgnoreHSTS);
         return nsMutableRequest;
     }
-#else
-    UNUSED_PARAM(shouldIgnoreHSTS);
-#endif
 
     return request;
 }
@@ -468,7 +462,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         auto completionHandlerCopy = Block_copy(completionHandler);
 
         bool shouldIgnoreHSTS = false;
-#if HAVE(CFNETWORK_WITH_IGNORE_HSTS) && ENABLE(RESOURCE_LOAD_STATISTICS)        
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
         shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && _session->networkProcess().storageSession(_session->sessionID())->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID());
         if (shouldIgnoreHSTS) {
             request = downgradeRequest(request);
@@ -501,7 +495,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 
     if (auto* networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
-#if HAVE(CFNETWORK_WITH_IGNORE_HSTS) && ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
         shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && _session->networkProcess().storageSession(_session->sessionID())->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID());
         if (shouldIgnoreHSTS) {
             request = downgradeRequest(request);
