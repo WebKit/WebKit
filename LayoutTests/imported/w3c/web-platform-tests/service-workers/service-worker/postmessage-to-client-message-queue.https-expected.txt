@@ -1,9 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Messages from ServiceWorker to Client only received after DOMContentLoaded event. Test timed out
-NOTRUN Messages from ServiceWorker to Client only received after calling startMessages(). 
-NOTRUN Messages from ServiceWorker to Client only received after setting onmessage. 
-NOTRUN Microtasks run before dispatching messages after calling startMessages(). 
-NOTRUN Microtasks run before dispatching messages after setting onmessage. 
+PASS Messages from ServiceWorker to Client only received after DOMContentLoaded event. 
+PASS Messages from ServiceWorker to Client only received after calling startMessages(). 
+PASS Messages from ServiceWorker to Client only received after setting onmessage. 
+PASS Microtasks run before dispatching messages after calling startMessages(). 
+PASS Microtasks run before dispatching messages after setting onmessage. 
 

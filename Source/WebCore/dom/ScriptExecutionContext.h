@@ -255,6 +255,7 @@ public:
     ServiceWorker* serviceWorker(ServiceWorkerIdentifier identifier) { return m_serviceWorkers.get(identifier); }
 
     ServiceWorkerContainer* serviceWorkerContainer();
+    ServiceWorkerContainer* ensureServiceWorkerContainer();
 
     WEBCORE_EXPORT static bool postTaskTo(const DocumentOrWorkerIdentifier&, WTF::Function<void(ScriptExecutionContext&)>&&);
 #endif

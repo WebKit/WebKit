@@ -612,6 +612,18 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
     return navigator ? &navigator->serviceWorker() : nullptr;
 }
 
+ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
+{
+    NavigatorBase* navigator = nullptr;
+    if (is<Document>(*this)) {
+        if (auto* window = downcast<Document>(*this).domWindow())
+            navigator = &window->navigator();
+    } else
+        navigator = &downcast<WorkerGlobalScope>(*this).navigator();
+        
+    return navigator ? &navigator->serviceWorker() : nullptr;
+}
+
 bool ScriptExecutionContext::postTaskTo(const DocumentOrWorkerIdentifier& contextIdentifier, WTF::Function<void(ScriptExecutionContext&)>&& task)
 {
     ASSERT(isMainThread());
