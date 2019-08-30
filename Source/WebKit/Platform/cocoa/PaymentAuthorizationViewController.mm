@@ -63,8 +63,6 @@
     [self _didFinish];
 }
 
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion
 {
     [self _didAuthorizePayment:payment completion:completion];
@@ -84,30 +82,6 @@
 {
     [self _didSelectPaymentMethod:paymentMethod completion:completion];
 }
-
-#else
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void(^)(PKPaymentAuthorizationStatus))completion
-{
-    [self _didAuthorizePayment:payment completion:completion];
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod completion:(void(^)(PKPaymentAuthorizationStatus, NSArray<PKPaymentSummaryItem *> *))completion
-{
-    [self _didSelectShippingMethod:shippingMethod completion:completion];
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact completion:(void(^)(PKPaymentAuthorizationStatus, NSArray<PKShippingMethod *> *, NSArray<PKPaymentSummaryItem *> *))completion
-{
-    [self _didSelectShippingContact:contact completion:completion];
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(void(^)(NSArray<PKPaymentSummaryItem *> *))completion
-{
-    [self _didSelectPaymentMethod:paymentMethod completion:completion];
-}
-
-#endif
 
 #pragma mark PKPaymentAuthorizationViewControllerDelegatePrivate
 

@@ -39,17 +39,10 @@ class PaymentAuthorizationPresenter;
 
 using DidRequestMerchantSessionCompletion = BlockPtr<void(PKPaymentMerchantSession *, NSError *)>;
 
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
 using DidAuthorizePaymentCompletion = BlockPtr<void(PKPaymentAuthorizationResult *)>;
 using DidSelectPaymentMethodCompletion = BlockPtr<void(PKPaymentRequestPaymentMethodUpdate *)>;
 using DidSelectShippingContactCompletion = BlockPtr<void(PKPaymentRequestShippingContactUpdate *)>;
 using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShippingMethodUpdate *)>;
-#else
-using DidAuthorizePaymentCompletion = BlockPtr<void(PKPaymentAuthorizationStatus)>;
-using DidSelectPaymentMethodCompletion = BlockPtr<void(NSArray *)>;
-using DidSelectShippingContactCompletion = BlockPtr<void(PKPaymentAuthorizationStatus, NSArray *, NSArray *)>;
-using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentAuthorizationStatus, NSArray *)>;
-#endif
 
 }
 

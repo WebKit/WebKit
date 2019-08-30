@@ -66,7 +66,6 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
         return completionHandler(false);
 #endif
 
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this, sessionID), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
@@ -75,16 +74,6 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
             completionHandler(canMakePayments);
         });
     }).get());
-#else
-    PKCanMakePaymentsWithMerchantIdentifierAndDomain(merchantIdentifier, domainName, makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
-        if (error)
-            LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
-
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
-            completionHandler(canMakePayments);
-        });
-    }).get());
-#endif
 }
 
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
@@ -102,7 +91,6 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
     }).get()];
 }
 
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
 static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     Vector<NSString *> result;
@@ -120,23 +108,6 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
 
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
-#else
-static PKAddressField toPKAddressField(const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
-{
-    PKAddressField result = 0;
-
-    if (contactFields.postalAddress)
-        result |= PKAddressFieldPostalAddress;
-    if (contactFields.phone)
-        result |= PKAddressFieldPhone;
-    if (contactFields.email)
-        result |= PKAddressFieldEmail;
-    if (contactFields.name)
-        result |= PKAddressFieldName;
-
-    return result;
-}
-#endif
 
 PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySessionPaymentRequest::LineItem::Type type)
 {
@@ -224,7 +195,6 @@ PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentReques
     return result;
 }
     
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
     if (strings.isEmpty())
@@ -236,7 +206,6 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 
     return WTFMove(mutableSet);
 }
-#endif
 
 #if HAVE(PASSKIT_API_TYPE)
 static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest::Requester requester)
@@ -274,13 +243,8 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     [result setCurrencyCode:paymentRequest.currencyCode()];
     [result setBillingContact:paymentRequest.billingContact().pkContact()];
     [result setShippingContact:paymentRequest.shippingContact().pkContact()];
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     [result setRequiredBillingContactFields:toPKContactFields(paymentRequest.requiredBillingContactFields()).get()];
     [result setRequiredShippingContactFields:toPKContactFields(paymentRequest.requiredShippingContactFields()).get()];
-#else
-    [result setRequiredBillingAddressFields:toPKAddressField(paymentRequest.requiredBillingContactFields())];
-    [result setRequiredShippingAddressFields:toPKAddressField(paymentRequest.requiredShippingContactFields())];
-#endif
 
     [result setSupportedNetworks:toSupportedNetworks(paymentRequest.supportedNetworks()).get()];
     [result setMerchantCapabilities:toPKMerchantCapabilities(paymentRequest.merchantCapabilities())];
@@ -310,9 +274,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setApplicationData:applicationData.get()];
     }
 
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
-#endif
 
 #if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
     // FIXME: Remove -respondsToSelector: check once rdar://problem/48041516 is widely available in SDKs.

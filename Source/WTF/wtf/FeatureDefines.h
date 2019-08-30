@@ -205,10 +205,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_MEDIA_SOURCE 0
 #endif
 
-#if !defined(HAVE_PASSKIT_GRANULAR_ERRORS)
-#define HAVE_PASSKIT_GRANULAR_ERRORS 1
-#endif
-
 #if !defined(HAVE_PASSKIT_API_TYPE)
 #define HAVE_PASSKIT_API_TYPE 1
 #endif
@@ -293,10 +289,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_MEDIA_SOURCE)
 #define ENABLE_MEDIA_SOURCE 1
-#endif
-
-#if !defined(HAVE_PASSKIT_GRANULAR_ERRORS)
-#define HAVE_PASSKIT_GRANULAR_ERRORS 1
 #endif
 
 #if !defined(HAVE_PASSKIT_API_TYPE)

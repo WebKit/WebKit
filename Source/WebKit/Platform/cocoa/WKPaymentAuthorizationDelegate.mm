@@ -60,49 +60,31 @@
 - (void)completePaymentMethodSelection:(NSArray<PKPaymentSummaryItem *> *)summaryItems
 {
     _summaryItems = summaryItems;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto update = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
     std::exchange(_didSelectPaymentMethodCompletion, nil)(update.get());
-#else
-    std::exchange(_didSelectPaymentMethodCompletion, nil)(_summaryItems);
-#endif
 }
 
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors didReachFinalState:(BOOL)didReachFinalState
 {
     _didReachFinalState = didReachFinalState;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:status errors:errors]);
     std::exchange(_didAuthorizePaymentCompletion, nil)(result.get());
-#else
-    ASSERT(!errors.count);
-    std::exchange(_didAuthorizePaymentCompletion, nil)(status);
-#endif
 }
 
 - (void)completeShippingContactSelection:(PKPaymentAuthorizationStatus)status summaryItems:(NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(NSArray<PKShippingMethod *> *)shippingMethods errors:(NSArray<NSError *> *)errors
 {
     _summaryItems = summaryItems;
     _shippingMethods = shippingMethods;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     ASSERT(status == PKPaymentAuthorizationStatusSuccess);
     auto update = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:errors paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]);
     std::exchange(_didSelectShippingContactCompletion, nil)(update.get());
-#else
-    ASSERT(!errors.count);
-    std::exchange(_didSelectShippingContactCompletion, nil)(status, _shippingMethods, _summaryItems);
-#endif
 }
 
 - (void)completeShippingMethodSelection:(NSArray<PKPaymentSummaryItem *> *)summaryItems
 {
     _summaryItems = summaryItems;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto update = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
     std::exchange(_didSelectShippingMethodCompletion, nil)(update.get());
-#else
-    std::exchange(_didSelectShippingMethodCompletion, nil)(PKPaymentAuthorizationStatusSuccess, _summaryItems);
-#endif
 }
 
 - (void)invalidate

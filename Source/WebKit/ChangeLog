@@ -1,3 +1,35 @@
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Remove HAVE_PASSKIT_GRANULAR_ERRORS conditional
+        https://bugs.webkit.org/show_bug.cgi?id=201278
+        <rdar://problem/54821052>
+
+        Reviewed by Alex Christensen.
+
+        HAVE_PASSKIT_GRANULAR_ERRORS is always True, so remove the conditional
+        tests, keeping the True branches and removing the False branches.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::PaymentAuthorizationPresenter::completePaymentSession):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection):
+        * Platform/cocoa/PaymentAuthorizationViewController.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:completion:]): Deleted.
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]):
+        (-[WKPaymentAuthorizationDelegate completePaymentSession:errors:didReachFinalState:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:summaryItems:shippingMethods:errors:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]):
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard):
+        (WebKit::toPKContactFields):
+        (WebKit::toNSSet):
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+        (WebKit::toPKAddressField): Deleted.
+
 2019-08-29  Chris Dumez  <cdumez@apple.com>
 
         Add "IsolatedCopy" in the name of String getters that call isolatedCopy() on the string

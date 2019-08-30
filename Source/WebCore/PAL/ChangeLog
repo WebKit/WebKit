@@ -1,5 +1,19 @@
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
+        Remove HAVE_PASSKIT_GRANULAR_ERRORS conditional
+        https://bugs.webkit.org/show_bug.cgi?id=201278
+        <rdar://problem/54821052>
+
+        Reviewed by Alex Christensen.
+
+        HAVE_PASSKIT_GRANULAR_ERRORS is always True, so remove the conditional
+        tests, keeping the True branches and removing the False branches.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
         Update .xcconfig symbols to reflect the current set of past and future product versions.
         https://bugs.webkit.org/show_bug.cgi?id=200720
         <rdar://problem/54305032>
