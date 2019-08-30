@@ -33,38 +33,7 @@
 #include <pal/spi/cocoa/CommonCryptoSPI.h>
 #include <wtf/Vector.h>
 
-#if !HAVE(CCRSAGetCRTComponents)
-typedef struct _CCBigNumRef *CCBigNumRef;
-#endif
-
 namespace WebCore {
-
-#if !HAVE(CCRSAGetCRTComponents)
-
-// Only need CCBigNum for the code used when we don't have CCRSAGetCRTComponents.
-class CCBigNum {
-public:
-    CCBigNum(const uint8_t*, size_t);
-    ~CCBigNum();
-
-    CCBigNum(const CCBigNum&);
-    CCBigNum(CCBigNum&&);
-    CCBigNum& operator=(const CCBigNum&);
-    CCBigNum& operator=(CCBigNum&&);
-
-    Vector<uint8_t> data() const;
-
-    CCBigNum operator-(uint32_t) const;
-    CCBigNum operator%(const CCBigNum&) const;
-    CCBigNum inverse(const CCBigNum& modulus) const;
-
-private:
-    CCBigNum(CCBigNumRef);
-
-    CCBigNumRef m_number;
-};
-
-#endif
 
 bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm&);
 

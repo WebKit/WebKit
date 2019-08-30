@@ -1,3 +1,30 @@
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Remove CCBigNum fallback code
+        https://bugs.webkit.org/show_bug.cgi?id=201250
+        <rdar://problem/54814330>
+
+        Reviewed by Jiewen Tan.
+
+        Bug 184637 added support for CCRSAGetCRTComponents, falling back to
+        the older CCBigNum code if CCRSAGetCRTComponents was not available. We
+        now only support OS's that have CCRSAGetCRTComponents so remove the
+        fallback code.
+
+        No new tests -- no new or changed functionality.
+
+        * crypto/CommonCryptoUtilities.cpp:
+        (WebCore::CCBigNum::CCBigNum): Deleted.
+        (WebCore::CCBigNum::~CCBigNum): Deleted.
+        (WebCore::CCBigNum::operator=): Deleted.
+        (WebCore::CCBigNum::data const): Deleted.
+        (WebCore::CCBigNum::operator- const): Deleted.
+        (WebCore::CCBigNum::operator% const): Deleted.
+        (WebCore::CCBigNum::inverse const): Deleted.
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPrivateKeyComponents):
+
 2019-08-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Initialize <tr> display boxes.

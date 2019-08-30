@@ -25,20 +25,14 @@
 
 #pragma once
 
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC)
-#define HAVE_CCRSAGetCRTComponents 1
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
+
 #include <CommonCrypto/CommonCryptorSPI.h>
 #include <CommonCrypto/CommonDigestSPI.h>
 #include <CommonCrypto/CommonECCryptor.h>
 #include <CommonCrypto/CommonKeyDerivationSPI.h>
 #include <CommonCrypto/CommonRSACryptor.h>
-
-#if HAVE(CCRSAGetCRTComponents)
 #include <CommonCrypto/CommonRSACryptorSPI.h>
-#endif
 
 #else
 
@@ -80,10 +74,8 @@ extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
 extern "C" CCCryptorStatus CCRSACryptorImport(const void *keyPackage, size_t keyPackageLen, CCRSACryptorRef *key);
 extern "C" CCCryptorStatus CCRSACryptorExport(CCRSACryptorRef key, void *out, size_t *outLen);
 
-#if HAVE(CCRSAGetCRTComponents)
 extern "C" CCCryptorStatus CCRSAGetCRTComponentsSizes(CCRSACryptorRef rsaKey, size_t *dpSize, size_t *dqSize, size_t *qinvSize);
 extern "C" CCCryptorStatus CCRSAGetCRTComponents(CCRSACryptorRef rsaKey, void *dp, size_t dpSize, void *dq, size_t dqSize, void *qinv, size_t qinvSize);
-#endif
 
 #ifndef _CC_ECCRYPTOR_H_
 enum {

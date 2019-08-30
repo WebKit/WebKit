@@ -100,7 +100,6 @@ static CCCryptorStatus getPrivateKeyComponents(const PlatformRSAKeyContainer& rs
     firstPrimeInfo.primeFactor.shrink(pLength);
     secondPrimeInfo.primeFactor.shrink(qLength);
 
-#if HAVE(CCRSAGetCRTComponents)
     size_t dpSize;
     size_t dqSize;
     size_t qinvSize;
@@ -116,19 +115,6 @@ static CCCryptorStatus getPrivateKeyComponents(const PlatformRSAKeyContainer& rs
     firstPrimeInfo.factorCRTExponent = WTFMove(dp);
     secondPrimeInfo.factorCRTExponent = WTFMove(dq);
     secondPrimeInfo.factorCRTCoefficient = WTFMove(qinv);
-#else
-    CCBigNum d(privateExponent.data(), privateExponent.size());
-    CCBigNum p(firstPrimeInfo.primeFactor.data(), firstPrimeInfo.primeFactor.size());
-    CCBigNum q(secondPrimeInfo.primeFactor.data(), secondPrimeInfo.primeFactor.size());
-
-    CCBigNum dp = d % (p - 1);
-    CCBigNum dq = d % (q - 1);
-    CCBigNum qi = q.inverse(p);
-
-    firstPrimeInfo.factorCRTExponent = dp.data();
-    secondPrimeInfo.factorCRTExponent = dq.data();
-    secondPrimeInfo.factorCRTCoefficient = qi.data();
-#endif
 
     return status;
 }
