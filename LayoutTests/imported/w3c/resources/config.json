@@ -9,7 +9,7 @@
           {"url-path": "/WebKit/", "local-dir":"../../../http/wpt/"}],
  "check_subdomains": false,
  "log_level":"debug",
- "bind_hostname": false,
+ "bind_hostname": true,
  "ssl": {"type": "openssl",
          "encrypt_after_connect": false,
          "openssl": {

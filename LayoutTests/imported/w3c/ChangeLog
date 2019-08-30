@@ -1,3 +1,13 @@
+2019-08-30  Youenn Fablet  <youenn@apple.com>
+
+        Bind WPT server hostname
+        https://bugs.webkit.org/show_bug.cgi?id=201334
+
+        Reviewed by Alex Christensen.
+
+        Make WPT server bind to localhost/127.0.0.1 only.
+        * resources/config.json:
+
 2019-08-30  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Replaying the video should update currentTime
