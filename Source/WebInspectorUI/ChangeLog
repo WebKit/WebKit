@@ -1,5 +1,18 @@
 2019-08-29  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOMDebugger: support event breakpoints in Worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=200651
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype._updateDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint):
+        Add assertions when adding/removing DOM breakpoints or animation frame event breakpoints if
+        the target is a `WI.WorkerTarget`, as neither are supported by `Worker`s.
+
+2019-08-29  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: replace uses of `Array.prototype.concat` with `Array.prototype.push`
         https://bugs.webkit.org/show_bug.cgi?id=201082
 

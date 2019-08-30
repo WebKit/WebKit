@@ -1,5 +1,33 @@
 2019-08-29  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOMDebugger: support event breakpoints in Worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=200651
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/worker/dom-debugger-dom-breakpoints.html: Added.
+        * inspector/worker/dom-debugger-dom-breakpoints-expected.txt: Added.
+        * inspector/worker/dom-debugger-event-animation-frame-breakpoints.html: Added.
+        * inspector/worker/dom-debugger-event-animation-frame-breakpoints-expected.txt: Added.
+        * inspector/worker/dom-debugger-event-interval-breakpoints.html: Added.
+        * inspector/worker/dom-debugger-event-interval-breakpoints-expected.txt: Added.
+        * inspector/worker/dom-debugger-event-listener-breakpoints.html: Added.
+        * inspector/worker/dom-debugger-event-listener-breakpoints-expected.txt: Added.
+        * inspector/worker/dom-debugger-event-timeout-breakpoints.html: Added.
+        * inspector/worker/dom-debugger-event-timeout-breakpoints-expected.txt: Added.
+        * inspector/worker/dom-debugger-url-breakpoints.html: Added.
+        * inspector/worker/dom-debugger-url-breakpoints-expected.txt: Added.
+
+        * inspector/debugger/resources/log-active-stack-trace.js: Added.
+        (TestPage.registerInitializer.window.logStackTrace): Added.
+        (TestPage.registerInitializer.window.logActiveStackTrace):
+
+        * inspector/worker/resources/dom-debugger-utilities.js: Added.
+        (TestPage.registerInitializer.InspectorTest.Worker.DOMDebugger.createWorkerTarget):
+        * inspector/worker/resources/worker-dom-debugger.js: Added.
+
+2019-08-29  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: replace uses of `Array.prototype.concat` with `Array.prototype.push`
         https://bugs.webkit.org/show_bug.cgi?id=201082
 

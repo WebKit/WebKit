@@ -143,36 +143,36 @@ void InspectorInstrumentation::addEventListenersToNodeImpl(InstrumentingAgents& 
 
 void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& parent)
 {
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->willInsertDOMNode(parent);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->willInsertDOMNode(parent);
 }
 
 void InspectorInstrumentation::didInsertDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didInsertDOMNode(node);
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->didInsertDOMNode(node);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->didInsertDOMNode(node);
 }
 
 void InspectorInstrumentation::willRemoveDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
 {
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->willRemoveDOMNode(node);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->willRemoveDOMNode(node);
 }
 
 void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
 {
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->didRemoveDOMNode(node);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->didRemoveDOMNode(node);
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didRemoveDOMNode(node);
 }
 
 void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->willModifyDOMAttr(element);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->willModifyDOMAttr(element);
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->willModifyDOMAttr(element, oldValue, newValue);
 }
@@ -191,8 +191,8 @@ void InspectorInstrumentation::didRemoveDOMAttrImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::willInvalidateStyleAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element)
 {
-    if (auto* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->willInvalidateStyleAttr(element);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->willInvalidateStyleAttr(element);
 }
 
 void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element)
@@ -764,8 +764,8 @@ void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& ins
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->frameDocumentUpdated(frame);
 
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->frameDocumentUpdated(frame);
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->frameDocumentUpdated(frame);
 }
 
 void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader& loader)
@@ -1141,8 +1141,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameI
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->willFireAnimationFrame(callbackId);
 
-    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->willFireAnimationFrame();
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->willFireAnimationFrame();
 
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent()) {

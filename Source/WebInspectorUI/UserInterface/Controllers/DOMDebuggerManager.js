@@ -603,6 +603,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _updateDOMBreakpoint(breakpoint, target)
     {
+        console.assert(target.type !== WI.Target.Type.Worker, "Worker targets do not support DOM breakpoints");
+        if (target.type === WI.Target.Type.Worker)
+            return;
+
         if (!target.DOMDebuggerAgent || !target.DOMDebuggerAgent.setDOMBreakpoint || !target.DOMDebuggerAgent.removeDOMBreakpoint)
             return;
 
@@ -621,6 +625,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _updateEventBreakpoint(breakpoint, target)
     {
+        // Worker targets do not support `requestAnimationFrame` breakpoints.
+        if (breakpoint === this._allAnimationFramesBreakpoint && target.type === WI.Target.Type.Worker)
+            return;
+
         if (!target.DOMDebuggerAgent)
             return;
 
@@ -685,13 +693,15 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             break;
         }
 
+        const callback = null;
+
         if (breakpoint.disabled)
-            target.DOMDebuggerAgent.removeEventBreakpoint.invoke(commandArguments);
+            target.DOMDebuggerAgent.removeEventBreakpoint.invoke(commandArguments, callback, target.DOMDebuggerAgent);
         else {
             if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
                 WI.debuggerManager.breakpointsEnabled = true;
 
-            target.DOMDebuggerAgent.setEventBreakpoint.invoke(commandArguments);
+            target.DOMDebuggerAgent.setEventBreakpoint.invoke(commandArguments, callback, target.DOMDebuggerAgent);
         }
     }
 

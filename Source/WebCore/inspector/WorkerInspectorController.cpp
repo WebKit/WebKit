@@ -34,6 +34,7 @@
 #include "WebInjectedScriptManager.h"
 #include "WorkerAuditAgent.h"
 #include "WorkerConsoleAgent.h"
+#include "WorkerDOMDebuggerAgent.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNetworkAgent.h"
@@ -174,7 +175,12 @@ void WorkerInspectorController::createLazyAgents()
 #endif
 
     m_agents.append(makeUnique<WebHeapAgent>(workerContext));
-    m_agents.append(makeUnique<WorkerDebuggerAgent>(workerContext));
+
+    auto debuggerAgent = makeUnique<WorkerDebuggerAgent>(workerContext);
+    auto debuggerAgentPtr = debuggerAgent.get();
+    m_agents.append(WTFMove(debuggerAgent));
+
+    m_agents.append(makeUnique<WorkerDOMDebuggerAgent>(workerContext, debuggerAgentPtr));
     m_agents.append(makeUnique<WorkerAuditAgent>(workerContext));
 
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())

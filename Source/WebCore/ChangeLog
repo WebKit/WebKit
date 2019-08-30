@@ -1,3 +1,100 @@
+2019-08-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOMDebugger: support event breakpoints in Worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=200651
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/worker/dom-debugger-dom-breakpoints.html
+               inspector/worker/dom-debugger-event-animation-frame-breakpoints.html
+               inspector/worker/dom-debugger-event-interval-breakpoints.html
+               inspector/worker/dom-debugger-event-listener-breakpoints.html
+               inspector/worker/dom-debugger-event-timeout-breakpoints.html
+               inspector/worker/dom-debugger-url-breakpoints.html
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::enabled const):
+        (WebCore::InspectorDOMDebuggerAgent::enable):
+        (WebCore::InspectorDOMDebuggerAgent::disable):
+        (WebCore::InspectorDOMDebuggerAgent::debuggerWasEnabled):
+        (WebCore::InspectorDOMDebuggerAgent::debuggerWasDisabled):
+        (WebCore::InspectorDOMDebuggerAgent::setEventBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeEventBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::frameDocumentUpdated): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::willInvalidateStyleAttr): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::didInsertDOMNode): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::didRemoveDOMNode): Deleted.
+        (WebCore::domTypeForName): Deleted.
+        (WebCore::domTypeName): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::setDOMBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::removeDOMBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::willInsertDOMNode): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::willRemoveDOMNode): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::willModifyDOMAttr): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::hasBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::updateSubtreeBreakpoints): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::willFireAnimationFrame): Deleted.
+        * inspector/agents/page/PageDOMDebuggerAgent.h: Added.
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp: Added.
+        (WebCore::domTypeForName):
+        (WebCore::domTypeName):
+        (WebCore::PageDOMDebuggerAgent::PageDOMDebuggerAgent):
+        (WebCore::PageDOMDebuggerAgent::enabled const):
+        (WebCore::PageDOMDebuggerAgent::enable):
+        (WebCore::PageDOMDebuggerAgent::disable):
+        (WebCore::PageDOMDebuggerAgent::setDOMBreakpoint):
+        (WebCore::PageDOMDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::PageDOMDebuggerAgent::frameDocumentUpdated):
+        (WebCore::PageDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::PageDOMDebuggerAgent::didInsertDOMNode):
+        (WebCore::PageDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::PageDOMDebuggerAgent::didRemoveDOMNode):
+        (WebCore::PageDOMDebuggerAgent::willModifyDOMAttr):
+        (WebCore::PageDOMDebuggerAgent::willFireAnimationFrame):
+        (WebCore::PageDOMDebuggerAgent::willInvalidateStyleAttr):
+        (WebCore::PageDOMDebuggerAgent::setAnimationFrameBreakpoint):
+        (WebCore::PageDOMDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::PageDOMDebuggerAgent::updateSubtreeBreakpoints):
+        (WebCore::PageDOMDebuggerAgent::hasBreakpoint):
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.h: Added.
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.cpp: Added.
+        (WebCore::WorkerDOMDebuggerAgent::WorkerDOMDebuggerAgent):
+        (WebCore::WorkerDOMDebuggerAgent::setDOMBreakpoint):
+        (WebCore::WorkerDOMDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint):
+        Split the `InspectorDOMDebuggerAgent` into two subclasses depending on the inspected target
+        type, as certain `DOMDebugger` commands don't make sense for a `Worker` context:
+         - DOM breakpoints, as there is no DOM in a `Worker` context
+         - animation frame event breakpoints, as there is no `requestAnimationFrame` function
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::createLazyAgents):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::createLazyAgents):
+
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::pageDOMDebuggerAgent const): Added.
+        (WebCore::InstrumentingAgents::setPageDOMDebuggerAgent): Added.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::willInvalidateStyleAttrImpl):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdatedImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Remove CCBigNum fallback code

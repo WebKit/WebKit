@@ -1372,6 +1372,7 @@ inspector/agents/WebHeapAgent.cpp
 
 inspector/agents/page/PageAuditAgent.cpp
 inspector/agents/page/PageConsoleAgent.cpp
+inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageDebuggerAgent.cpp
 inspector/agents/page/PageHeapAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
@@ -1380,6 +1381,7 @@ inspector/agents/page/PageRuntimeAgent.cpp
 inspector/agents/worker/ServiceWorkerAgent.cpp
 inspector/agents/worker/WorkerAuditAgent.cpp
 inspector/agents/worker/WorkerConsoleAgent.cpp
+inspector/agents/worker/WorkerDOMDebuggerAgent.cpp
 inspector/agents/worker/WorkerDebuggerAgent.cpp
 inspector/agents/worker/WorkerNetworkAgent.cpp
 inspector/agents/worker/WorkerRuntimeAgent.cpp

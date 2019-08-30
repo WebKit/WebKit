@@ -2532,6 +2532,8 @@
 		91B8F0B521953D65000C2B00 /* CertificateInfoBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */; };
 		91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		91E0DDC1230B41E50019E1E3 /* PageDOMDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91E0DDBF230B41E50019E1E3 /* PageDOMDebuggerAgent.h */; };
+		91E0DDC4230B41F10019E1E3 /* WorkerDOMDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91E0DDC2230B41F00019E1E3 /* WorkerDOMDebuggerAgent.h */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 9307F1D60AF2D59000DBA31A /* HitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10383,6 +10385,10 @@
 		91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfoBase.h; sourceTree = "<group>"; };
 		91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordingSwizzleTypes.h; sourceTree = "<group>"; };
 		91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXTextStateChangeIntent.h; sourceTree = "<group>"; };
+		91E0DDBD230B41E40019E1E3 /* PageDOMDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageDOMDebuggerAgent.cpp; sourceTree = "<group>"; };
+		91E0DDBF230B41E50019E1E3 /* PageDOMDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageDOMDebuggerAgent.h; sourceTree = "<group>"; };
+		91E0DDC2230B41F00019E1E3 /* WorkerDOMDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerDOMDebuggerAgent.h; sourceTree = "<group>"; };
+		91E0DDC3230B41F00019E1E3 /* WorkerDOMDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerDOMDebuggerAgent.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -22515,6 +22521,8 @@
 				A5B81CBB1FAA44B70037D1E6 /* PageConsoleAgent.h */,
 				A5B81CBD1FAA44B70037D1E6 /* PageDebuggerAgent.cpp */,
 				A5B81CBE1FAA44B70037D1E6 /* PageDebuggerAgent.h */,
+				91E0DDBD230B41E40019E1E3 /* PageDOMDebuggerAgent.cpp */,
+				91E0DDBF230B41E50019E1E3 /* PageDOMDebuggerAgent.h */,
 				A5B81CBA1FAA44B70037D1E6 /* PageHeapAgent.cpp */,
 				A5B81CBC1FAA44B70037D1E6 /* PageHeapAgent.h */,
 				A5CB051F1FB51F1600089B97 /* PageNetworkAgent.cpp */,
@@ -22536,6 +22544,8 @@
 				A5B81CCA1FAA44DA0037D1E6 /* WorkerConsoleAgent.h */,
 				A5B81CC81FAA44DA0037D1E6 /* WorkerDebuggerAgent.cpp */,
 				A5B81CCC1FAA44DA0037D1E6 /* WorkerDebuggerAgent.h */,
+				91E0DDC3230B41F00019E1E3 /* WorkerDOMDebuggerAgent.cpp */,
+				91E0DDC2230B41F00019E1E3 /* WorkerDOMDebuggerAgent.h */,
 				A5CB05221FB51F2300089B97 /* WorkerNetworkAgent.cpp */,
 				A5CB05231FB51F2400089B97 /* WorkerNetworkAgent.h */,
 				A5B81CC71FAA44DA0037D1E6 /* WorkerRuntimeAgent.cpp */,
@@ -30914,6 +30924,7 @@
 				DAED203116F244480070EC0F /* PageConsoleClient.h in Headers */,
 				A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */,
 				A5B81CC31FAA44BC0037D1E6 /* PageDebuggerAgent.h in Headers */,
+				91E0DDC1230B41E50019E1E3 /* PageDOMDebuggerAgent.h in Headers */,
 				9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */,
 				7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */,
 				A5B81CC41FAA44BC0037D1E6 /* PageHeapAgent.h in Headers */,
@@ -32293,6 +32304,7 @@
 				A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */,
 				A5B81CCE1FAA44DE0037D1E6 /* WorkerDebuggerAgent.h in Headers */,
 				A52B349E1FA41703008B6246 /* WorkerDebuggerProxy.h in Headers */,
+				91E0DDC4230B41F10019E1E3 /* WorkerDOMDebuggerAgent.h in Headers */,
 				A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerGlobalScope.h in Headers */,
 				41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */,

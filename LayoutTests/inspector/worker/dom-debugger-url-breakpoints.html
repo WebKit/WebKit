@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-debugger-utilities.js"></script>
+<script>
+function test()
+{
+    let workerTarget = null;
+
+    let suite = InspectorTest.createAsyncSuite("Worker.DOMDebugger.URLBreakpoint");
+
+    for (let type of ["Fetch", "XHR"]) {
+        suite.addTestCase({
+            name: "Worker.DOMDebugger.URLBreakpoint." + type,
+            description: "Check that adding/removing URL breakpoints work for a Worker target.",
+            async test() {
+                InspectorTest.assert(workerTarget.DOMDebuggerAgent, "Worker target should have a DOMDebuggerAgent.");
+                InspectorTest.assert(workerTarget.DOMDebuggerAgent.setURLBreakpoint, "The Worker's DOMDebuggerAgent should have a setURLBreakpoint command.");
+                InspectorTest.assert(workerTarget.DOMDebuggerAgent.removeURLBreakpoint, "The Worker's DOMDebuggerAgent should have a removeURLBreakpoint command.");
+
+                let url = type; // The resource names have "Fetch" and "XHR" in them.
+
+                await workerTarget.DOMDebuggerAgent.setURLBreakpoint(url);
+
+                await Promise.all([
+                    WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                    InspectorTest.evaluateInPage(`worker.postMessage("trigger${type}")`),
+                ]);
+
+                let paused = WI.debuggerManager.paused;
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                let pauseReason = targetData.pauseReason;
+                let pauseData = targetData.pauseData;
+
+                let stackTrace = getActiveStackTrace();
+
+                await workerTarget.DOMDebuggerAgent.removeURLBreakpoint(url);
+
+                await WI.debuggerManager.resume();
+
+                InspectorTest.expectThat(paused, "Should have paused.");
+                InspectorTest.expectEqual(pauseReason, WI.DebuggerManager.PauseReason[type], `Pause reason should have been ${type}.`);
+                InspectorTest.expectThat(pauseData.breakpointURL.includes(url), `Pause data URL should include "${type}".`);
+                logStackTrace(stackTrace);
+            },
+        });
+    }
+
+    InspectorTest.Worker.DOMDebugger.createWorkerTarget((target) => {
+        workerTarget = target;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for URL breakpoint functionality (DOMDebugger) in a Worker.</p>
+</body>
+</html>

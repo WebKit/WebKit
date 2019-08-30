@@ -59,6 +59,7 @@ class InspectorPageAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
 class Page;
+class PageDOMDebuggerAgent;
 class PageDebuggerAgent;
 class PageHeapAgent;
 class PageRuntimeAgent;
@@ -141,6 +142,9 @@ public:
     InspectorDOMDebuggerAgent* inspectorDOMDebuggerAgent() const { return m_inspectorDOMDebuggerAgent; }
     void setInspectorDOMDebuggerAgent(InspectorDOMDebuggerAgent* agent) { m_inspectorDOMDebuggerAgent = agent; }
 
+    PageDOMDebuggerAgent* pageDOMDebuggerAgent() const { return m_pageDOMDebuggerAgent; }
+    void setPageDOMDebuggerAgent(PageDOMDebuggerAgent* agent) { m_pageDOMDebuggerAgent = agent; }
+
     InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
     void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
 
@@ -175,6 +179,7 @@ private:
     PageDebuggerAgent* m_pageDebuggerAgent { nullptr };
     PageHeapAgent* m_pageHeapAgent { nullptr };
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent { nullptr };
+    PageDOMDebuggerAgent* m_pageDOMDebuggerAgent { nullptr };
     InspectorCanvasAgent* m_inspectorCanvasAgent { nullptr };
 };
 
