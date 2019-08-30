@@ -390,7 +390,7 @@ void WebInspectorProxy::createFrontendPage()
 
     trackInspectorPage(m_inspectorPage, m_inspectedPage);
 
-    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->webPageID(), *this);
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->identifier(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
 }
 
@@ -411,7 +411,7 @@ void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTes
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->webPageID(), m_underTest, inspectionLevel()), m_inspectorPage->webPageID());
+    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->identifier(), m_underTest, inspectionLevel()), m_inspectorPage->webPageID());
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;
@@ -485,7 +485,7 @@ void WebInspectorProxy::closeFrontendPageAndWindow()
     untrackInspectorPage(m_inspectorPage);
 
     m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->webPageID());
-    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->webPageID());
+    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->identifier());
 
     if (m_isActiveFrontend) {
         m_isActiveFrontend = false;

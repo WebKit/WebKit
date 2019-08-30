@@ -44,7 +44,7 @@ class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
     using Identifier = StorageNamespaceIdentifier;
 
-    static Ref<StorageNamespaceImpl> createSessionStorageNamespace(Identifier, unsigned quotaInBytes, PAL::SessionID);
+    static Ref<StorageNamespaceImpl> createSessionStorageNamespace(Identifier, WebCore::PageIdentifier, unsigned quotaInBytes, PAL::SessionID);
     static Ref<StorageNamespaceImpl> createLocalStorageNamespace(Identifier, unsigned quotaInBytes, PAL::SessionID);
     static Ref<StorageNamespaceImpl> createTransientLocalStorageNamespace(Identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes, PAL::SessionID);
 
@@ -63,7 +63,7 @@ public:
     void setSessionIDForTesting(PAL::SessionID) override;
 
 private:
-    StorageNamespaceImpl(WebCore::StorageType, Identifier, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, PAL::SessionID);
+    StorageNamespaceImpl(WebCore::StorageType, Identifier, const Optional<WebCore::PageIdentifier>&, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, PAL::SessionID);
 
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
 
@@ -72,6 +72,7 @@ private:
 
     const WebCore::StorageType m_storageType;
     const Identifier m_storageNamespaceID;
+    Optional<WebCore::PageIdentifier> m_sessionPageID;
 
     // Only used for transient local storage namespaces.
     const RefPtr<WebCore::SecurityOrigin> m_topLevelOrigin;

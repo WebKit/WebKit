@@ -32,10 +32,10 @@
 namespace WebKit {
 
 WebRemoteObjectRegistry::WebRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPage& page)
-    : RemoteObjectRegistry(remoteObjectRegistry)
+    : RemoteObjectRegistry(remoteObjectRegistry, page.webPageProxyIdentifier())
     , m_page(page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.webPageProxyIdentifier(), *this);
     page.setRemoteObjectRegistry(this);
 }
 
@@ -47,7 +47,7 @@ WebRemoteObjectRegistry::~WebRemoteObjectRegistry()
 void WebRemoteObjectRegistry::close()
 {
     if (m_page.remoteObjectRegistry() == this) {
-        WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.pageID());
+        WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.webPageProxyIdentifier());
         m_page.setRemoteObjectRegistry(nullptr);
     }
 }

@@ -1,3 +1,168 @@
+2019-08-30  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Bump the WebPage's identifier every time we process-swap
+        https://bugs.webkit.org/show_bug.cgi?id=201225
+
+        Reviewed by Alex Christensen.
+
+        Every time we create a new WebPage object in a provisional process, we now assign it a new
+        identifier, instead of using the identifier of the WebPage in the committed process. This
+        will address issues with IPC when navigating back and forth between processes since we will
+        no longer be confused as to which WebPage the IPC is coming from. Also, this will allow
+        suspended WebPages to keep living in the process, even if we use the process for a new load
+        (will be done in a follow-up patch) since we will no longer have an identifier conflict.
+
+        * Scripts/webkit/messages.py:
+        * Shared/API/APIPageHandle.cpp:
+        (API::PageHandle::create):
+        (API::PageHandle::createAutoconverting):
+        (API::PageHandle::PageHandle):
+        (API::PageHandle::encode const):
+        (API::PageHandle::decode):
+        * Shared/API/APIPageHandle.h:
+        (API::PageHandle::pageProxyID const):
+        (API::PageHandle::webPageID const):
+        * Shared/API/Cocoa/WKBrowsingContextHandle.mm:
+        (-[WKBrowsingContextHandle _initWithPageProxy:]):
+        (-[WKBrowsingContextHandle _initWithPage:]):
+        (-[WKBrowsingContextHandle _initWithPageProxyID:andWebPageID:]):
+        (-[WKBrowsingContextHandle hash]):
+        (-[WKBrowsingContextHandle isEqual:]):
+        (-[WKBrowsingContextHandle encodeWithCoder:]):
+        (-[WKBrowsingContextHandle initWithCoder:]):
+        * Shared/API/Cocoa/WKBrowsingContextHandleInternal.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::ObjCObjectGraph::encode):
+        (WebKit::ObjCObjectGraph::decode):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController handle]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]):
+        (-[WKWebView _remoteObjectRegistry]):
+        (-[WKWebView _handle]):
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::remoteObjectRegistry):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessage):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithValue):
+        (WebKit::NetworkProcessProxy::requestStorageAccessConfirm):
+        (WebKit::NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource):
+        (WebKit::NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        (WebKit::ProvisionalPageProxy::startURLSchemeTask):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::webPageID const):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.messages.in:
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::addVisitedLinkHashFromPage):
+        * UIProcess/VisitedLinkStore.h:
+        * UIProcess/VisitedLinkStore.messages.in:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createFrontendPage):
+        (WebKit::WebInspectorProxy::openLocalInspectorFrontend):
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSyncShared):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        (WebKit::WebPageProxy::startURLSchemeTaskShared):
+        (WebKit::WebPageProxy::loadSynchronousURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::webPageFromCorePageIdentifier):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::startTask):
+        (WebKit::WebURLSchemeHandler::taskCompleted):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::create):
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::didPerformRedirection):
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        (WebKit::WebURLSchemeTask::pageDestroyed):
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::pageProxyID const):
+        (WebKit::WebURLSchemeTask::webPageID const):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController handle]):
+        (+[WKWebProcessPlugInBrowserContextController lookUpBrowsingContextFromHandle:]):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp:
+        (WebKit::WebRemoteObjectRegistry::WebRemoteObjectRegistry):
+        (WebKit::WebRemoteObjectRegistry::close):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sessionStorageNamespaceIdentifier const):
+        (WebKit::WebPage::webPageProxyIdentifier const):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createTransientLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebKit::StorageNamespaceImpl::copy):
+        (WebKit::StorageNamespaceImpl::sessionStoragePageID const):
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::transformHandlesToObjects):
+
 2019-08-30  Keith Rollin  <krollin@apple.com>
 
         Remove AppKitCompatibilityDeclarations.h

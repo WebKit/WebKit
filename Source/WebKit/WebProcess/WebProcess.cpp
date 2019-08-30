@@ -746,7 +746,7 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     }
 #endif
 
-    LOG_ERROR("Unhandled web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
+    LOG_ERROR("Unhandled web process message '%s:%s' (destination: %llu)", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data(), decoder.destinationID());
 }
 
 WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const
@@ -1711,7 +1711,7 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
                 return m_webProcess.webPageGroup(static_cast<const API::PageGroupHandle&>(object).webPageGroupData());
 
             case API::Object::Type::PageHandle:
-                return m_webProcess.webPage(static_cast<const API::PageHandle&>(object).pageID());
+                return m_webProcess.webPage(static_cast<const API::PageHandle&>(object).webPageID());
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
@@ -1754,7 +1754,7 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
                 return API::FrameHandle::createAutoconverting(static_cast<const WebFrame&>(object).frameID());
 
             case API::Object::Type::BundlePage:
-                return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).pageID());
+                return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).webPageProxyIdentifier(), static_cast<const WebPage&>(object).pageID());
 
             case API::Object::Type::BundlePageGroup: {
                 WebPageGroupData pageGroupData;

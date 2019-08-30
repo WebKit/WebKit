@@ -27,6 +27,7 @@
 #define APIPageHandle_h
 
 #include "APIObject.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Ref.h>
 
@@ -39,20 +40,22 @@ namespace API {
 
 class PageHandle : public ObjectImpl<Object::Type::PageHandle> {
 public:
-    static Ref<PageHandle> create(WebCore::PageIdentifier);
-    static Ref<PageHandle> createAutoconverting(WebCore::PageIdentifier);
+    static Ref<PageHandle> create(WebKit::WebPageProxyIdentifier, WebCore::PageIdentifier);
+    static Ref<PageHandle> createAutoconverting(WebKit::WebPageProxyIdentifier, WebCore::PageIdentifier);
     virtual ~PageHandle();
 
-    WebCore::PageIdentifier pageID() const { return m_pageID; }
+    WebKit::WebPageProxyIdentifier pageProxyID() const { return m_pageProxyID; }
+    WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
-    PageHandle(WebCore::PageIdentifier, bool isAutoconverting);
+    PageHandle(WebKit::WebPageProxyIdentifier, WebCore::PageIdentifier, bool isAutoconverting);
 
-    const WebCore::PageIdentifier m_pageID;
+    const WebKit::WebPageProxyIdentifier m_pageProxyID;
+    const WebCore::PageIdentifier m_webPageID;
     const bool m_isAutoconverting;
 };
 

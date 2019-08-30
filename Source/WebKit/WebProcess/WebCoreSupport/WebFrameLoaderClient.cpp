@@ -906,9 +906,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     if (requester.frameID() && WebProcess::singleton().webFrame(requester.frameID()))
         originatingFrameInfoData.frameID = requester.frameID();
 
-    Optional<PageIdentifier> originatingPageID;
-    if (requester.pageID() && WebProcess::singleton().webPage(requester.pageID()))
-        originatingPageID = requester.pageID();
+    Optional<WebPageProxyIdentifier> originatingPageID;
+    if (requester.pageID()) {
+        if (auto* webPage = WebProcess::singleton().webPage(requester.pageID()))
+            originatingPageID = webPage->webPageProxyIdentifier();
+    }
 
     NavigationActionData navigationActionData;
     navigationActionData.navigationType = action->navigationType();

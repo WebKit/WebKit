@@ -343,7 +343,7 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
 
     WebPageProxy* page = nullptr;
     if (pageID)
-        page = WebProcessProxy::webPage(pageID);
+        page = WebProcessProxy::webPageFromCorePageIdentifier(pageID);
 
     if (page) {
         page->didReceiveAuthenticationChallengeProxy(WTFMove(authenticationChallenge));
@@ -412,7 +412,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 
 void NetworkProcessProxy::logDiagnosticMessage(PageIdentifier pageID, const String& message, const String& description, WebCore::ShouldSample shouldSample)
 {
-    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    WebPageProxy* page = WebProcessProxy::webPageFromCorePageIdentifier(pageID);
     // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
     // but for now we simply drop the message in the rare case this happens.
     if (!page)
@@ -423,7 +423,7 @@ void NetworkProcessProxy::logDiagnosticMessage(PageIdentifier pageID, const Stri
 
 void NetworkProcessProxy::logDiagnosticMessageWithResult(PageIdentifier pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
 {
-    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    WebPageProxy* page = WebProcessProxy::webPageFromCorePageIdentifier(pageID);
     // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
     // but for now we simply drop the message in the rare case this happens.
     if (!page)
@@ -434,7 +434,7 @@ void NetworkProcessProxy::logDiagnosticMessageWithResult(PageIdentifier pageID, 
 
 void NetworkProcessProxy::logDiagnosticMessageWithValue(PageIdentifier pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
 {
-    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    WebPageProxy* page = WebProcessProxy::webPageFromCorePageIdentifier(pageID);
     // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
     // but for now we simply drop the message in the rare case this happens.
     if (!page)
@@ -777,7 +777,7 @@ void NetworkProcessProxy::setGrandfathered(PAL::SessionID sessionID, const Regis
 
 void NetworkProcessProxy::requestStorageAccessConfirm(PageIdentifier pageID, FrameIdentifier frameID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    WebPageProxy* page = WebProcessProxy::webPageFromCorePageIdentifier(pageID);
     if (!page) {
         completionHandler(false);
         return;
@@ -960,7 +960,7 @@ void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentRes
     if (!canSendMessage())
         return;
 
-    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    WebPageProxy* page = WebProcessProxy::webPageFromCorePageIdentifier(pageID);
     if (!page)
         return;
 
@@ -1260,7 +1260,7 @@ void NetworkProcessProxy::clearUploadAssertion()
 
 void NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebCore::PageIdentifier webPageID, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::DelayedReply&& reply)
 {
-    auto* page = WebProcessProxy::webPage(webPageID);
+    auto* page = WebProcessProxy::webPageFromCorePageIdentifier(webPageID);
     if (!page)
         return reply(false);
 

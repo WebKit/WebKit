@@ -31,18 +31,19 @@
 
 namespace API {
 
-Ref<PageHandle> PageHandle::create(WebCore::PageIdentifier pageID)
+Ref<PageHandle> PageHandle::create(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID)
 {
-    return adoptRef(*new PageHandle(pageID, false));
+    return adoptRef(*new PageHandle(pageProxyID, webPageID, false));
 }
 
-Ref<PageHandle> PageHandle::createAutoconverting(WebCore::PageIdentifier pageID)
+Ref<PageHandle> PageHandle::createAutoconverting(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID)
 {
-    return adoptRef(*new PageHandle(pageID, true));
+    return adoptRef(*new PageHandle(pageProxyID, webPageID, true));
 }
 
-PageHandle::PageHandle(WebCore::PageIdentifier pageID, bool isAutoconverting)
-    : m_pageID(pageID)
+PageHandle::PageHandle(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID, bool isAutoconverting)
+    : m_pageProxyID(pageProxyID)
+    , m_webPageID(webPageID)
     , m_isAutoconverting(isAutoconverting)
 {
 }
@@ -53,22 +54,28 @@ PageHandle::~PageHandle()
 
 void PageHandle::encode(IPC::Encoder& encoder) const
 {
-    encoder << m_pageID;
+    encoder << m_pageProxyID;
+    encoder << m_webPageID;
     encoder << m_isAutoconverting;
 }
 
 bool PageHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
-    Optional<WebCore::PageIdentifier> pageID;
-    decoder >> pageID;
-    if (!pageID)
+    Optional<WebKit::WebPageProxyIdentifier> pageProxyID;
+    decoder >> pageProxyID;
+    if (!pageProxyID)
+        return false;
+
+    Optional<WebCore::PageIdentifier> webPageID;
+    decoder >> webPageID;
+    if (!webPageID)
         return false;
 
     bool isAutoconverting;
     if (!decoder.decode(isAutoconverting))
         return false;
 
-    result = isAutoconverting ? createAutoconverting(*pageID) : create(*pageID);
+    result = isAutoconverting ? createAutoconverting(*pageProxyID, *webPageID) : create(*pageProxyID, *webPageID);
     return true;
 }
 

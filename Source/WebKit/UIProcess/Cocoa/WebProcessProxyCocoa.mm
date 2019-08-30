@@ -76,7 +76,7 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
         RetainPtr<id> transformObject(id object) const override
         {
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPageProxy = m_webProcessProxy.webPage(handle.pageID)) {
+                if (auto* webPageProxy = m_webProcessProxy.webPage(handle.pageProxyID)) {
                     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     return [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPageProxy)];
                     ALLOW_DEPRECATED_DECLARATIONS_END

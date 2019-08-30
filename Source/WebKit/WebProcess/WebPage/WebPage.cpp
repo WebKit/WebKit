@@ -426,6 +426,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if USE(WPE_RENDERER)
     , m_hostFileDescriptor(WTFMove(parameters.hostFileDescriptor))
 #endif
+    , m_webPageProxyIdentifier(parameters.webPageProxyIdentifier)
 #if ENABLE(VIEWPORT_RESIZING)
     , m_shrinkToFitContentTimer(*this, &WebPage::shrinkToFitContentTimerFired, 0_s)
 #endif

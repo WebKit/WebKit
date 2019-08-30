@@ -356,14 +356,14 @@ WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
     return globalPageMap().get(pageID);
 }
 
-WebPageProxy* WebProcessProxy::webPage(WebCore::PageIdentifier webPageID)
+// FIXME: Ideally, we'd get rid of all the callers and drop this function.
+WebPageProxy* WebProcessProxy::webPageFromCorePageIdentifier(WebCore::PageIdentifier webPageID)
 {
-    // FIXME: Do better.
     for (auto& page : globalPageMap().values()) {
         if (page->webPageID() == webPageID)
             return page;
     }
-    
+
     return nullptr;
 }
 
@@ -1121,7 +1121,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
 
             case API::Object::Type::PageHandle:
                 ASSERT(static_cast<API::PageHandle&>(object).isAutoconverting());
-                return m_webProcessProxy.webPage(static_cast<API::PageHandle&>(object).pageID());
+                return m_webProcessProxy.webPage(static_cast<API::PageHandle&>(object).pageProxyID());
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
@@ -1164,7 +1164,7 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
                 return API::FrameHandle::createAutoconverting(static_cast<const WebFrameProxy&>(object).frameID());
 
             case API::Object::Type::Page:
-                return API::PageHandle::createAutoconverting(static_cast<const WebPageProxy&>(object).webPageID());
+                return API::PageHandle::createAutoconverting(static_cast<const WebPageProxy&>(object).identifier(), static_cast<const WebPageProxy&>(object).webPageID());
 
             case API::Object::Type::PageGroup:
                 return API::PageGroupHandle::create(WebPageGroupData(static_cast<const WebPageGroup&>(object).data()));

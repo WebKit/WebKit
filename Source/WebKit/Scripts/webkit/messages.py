@@ -222,6 +222,7 @@ def forward_declarations_and_headers(receiver):
         'WebKit::StorageAreaImplIdentifier',
         'WebKit::StorageNamespaceIdentifier',
         'WebKit::UserContentControllerIdentifier',
+        'WebKit::WebPageProxyIdentifier',
     ])
 
     for parameter in receiver.iterparameters():

@@ -87,7 +87,7 @@ WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitW
     request->priv->requestID = requestID;
 
     ASSERT(resourceRequest.initiatingPageID());
-    request->priv->initiatingPage = WebProcessProxy::webPage(*resourceRequest.initiatingPageID());
+    request->priv->initiatingPage = WebProcessProxy::webPageFromCorePageIdentifier(*resourceRequest.initiatingPageID());
     ASSERT(request->priv->initiatingPage);
 
     return request;

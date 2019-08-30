@@ -27,9 +27,9 @@
 
 #include "Connection.h"
 #include "WebInspectorFrontendAPIDispatcher.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
-#include <WebCore/PageIdentifier.h>
 
 namespace WebCore {
 class InspectorController;
@@ -53,7 +53,7 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference) override { closeWindow(); }
 
     // Called by WebInspectorUI messages
-    void establishConnection(WebCore::PageIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel);
+    void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel);
     void updateConnection();
 
     void showConsole();
@@ -134,7 +134,7 @@ private:
     // corePage(), since we may need it after the frontend's page has started destruction.
     WebCore::InspectorController* m_frontendController { nullptr };
 
-    WebCore::PageIdentifier m_inspectedPageIdentifier;
+    WebPageProxyIdentifier m_inspectedPageIdentifier;
     bool m_underTest { false };
     bool m_dockingUnavailable { false };
     bool m_isVisible { false };

@@ -794,12 +794,13 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     return true;
 }
 
-void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_ptr<DrawingAreaProxy>&& drawingArea, RefPtr<WebFrameProxy>&& mainFrame)
+void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, std::unique_ptr<DrawingAreaProxy>&& drawingArea, RefPtr<WebFrameProxy>&& mainFrame)
 {
     ASSERT(!m_isClosed);
-    RELEASE_LOG_IF_ALLOWED(Loading, "swapToWebProcess:");
+    RELEASE_LOG_IF_ALLOWED(Loading, "swapToWebProcess: newWebPageID=%" PRIu64, webPageID.toUInt64());
 
     m_process = WTFMove(process);
+    m_webPageID = webPageID;
     m_websiteDataStore = m_process->websiteDataStore();
 
     if (m_logger)
@@ -1125,11 +1126,11 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
         launchProcess(RegistrableDomain { request.url() });
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
-    loadRequestWithNavigationShared(m_process.copyRef(), navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No);
+    loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No);
     return navigation;
 }
 
-void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& process, API::Navigation& navigation, ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies)
+void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies)
 {
     ASSERT(!m_isClosed);
 
@@ -1155,7 +1156,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     addPlatformLoadParameters(loadParameters);
 
-    process->send(Messages::WebPage::LoadRequest(loadParameters), m_webPageID);
+    process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
     process->responsivenessTimer().start();
 }
 
@@ -1227,11 +1228,11 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
         launchProcess({ });
 
     auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
-    loadDataWithNavigationShared(m_process.copyRef(), navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, WTF::nullopt, shouldOpenExternalURLsPolicy);
+    loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, WTF::nullopt, shouldOpenExternalURLsPolicy);
     return navigation;
 }
 
-void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "loadDataWithNavigation");
 
@@ -1254,7 +1255,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     addPlatformLoadParameters(loadParameters);
 
     process->assumeReadAccessToBaseURL(*this, baseURL);
-    process->send(Messages::WebPage::LoadData(loadParameters), m_webPageID);
+    process->send(Messages::WebPage::LoadData(loadParameters), webPageID);
     process->responsivenessTimer().start();
 }
 
@@ -2959,7 +2960,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navig
     if (!didSuspendPreviousPage)
         m_process->send(Messages::WebPage::Close(), m_webPageID);
 
-    swapToWebProcess(m_provisionalPage->process(), m_provisionalPage->takeDrawingArea(), m_provisionalPage->mainFrame());
+    swapToWebProcess(m_provisionalPage->process(), m_provisionalPage->webPageID(), m_provisionalPage->takeDrawingArea(), m_provisionalPage->mainFrame());
 
 #if PLATFORM(COCOA)
     auto accessibilityToken = m_provisionalPage->takeAccessibilityToken();
@@ -2999,7 +3000,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
     if (m_backForwardList->currentItem() && (navigation.lockBackForwardList() == LockBackForwardList::Yes || navigation.lockHistory() == LockHistory::Yes)) {
         // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
         // it instead of creating a new one.
-        newProcess->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()), m_webPageID);
+        newProcess->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()), m_provisionalPage->webPageID());
     }
 
     // FIXME: Work out timing of responding with the last policy delegate, etc
@@ -4622,23 +4623,23 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListen
 #endif
 
 void WebPageProxy::decidePolicyForNavigationActionAsync(FrameIdentifier frameID, WebCore::SecurityOriginData&& frameSecurityOrigin, PolicyCheckIdentifier identifier, uint64_t navigationID,
-    NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<WebCore::PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request,
+    NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request,
     IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, uint64_t listenerID)
 {
-    decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), frameID, WTFMove(frameSecurityOrigin), identifier, navigationID, WTFMove(navigationActionData),
+    decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameSecurityOrigin), identifier, navigationID, WTFMove(navigationActionData),
         WTFMove(frameInfoData), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, listenerID);
 }
 
-void WebPageProxy::decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, WebCore::SecurityOriginData&& frameSecurityOrigin,
-    WebCore::PolicyCheckIdentifier identifier, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<WebCore::PageIdentifier> originatingPageID,
+void WebPageProxy::decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, WebCore::SecurityOriginData&& frameSecurityOrigin,
+    WebCore::PolicyCheckIdentifier identifier, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<WebPageProxyIdentifier> originatingPageID,
     const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse,
     const UserData& userData, uint64_t listenerID)
 {
     auto* frame = process->webFrame(frameID);
     MESSAGE_CHECK(process, frame);
 
-    auto sender = PolicyDecisionSender::create(identifier, [this, protectedThis = makeRef(*this), frameID, listenerID, process = process.copyRef()] (auto... args) {
-        process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), m_webPageID);
+    auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = process.copyRef()] (auto... args) {
+        process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), webPageID);
     });
 
     decidePolicyForNavigationAction(process.copyRef(), *frame, WTFMove(frameSecurityOrigin), navigationID, WTFMove(navigationActionData), WTFMove(frameInfoData), originatingPageID,
@@ -4646,7 +4647,7 @@ void WebPageProxy::decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProx
 }
 
 void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, WebCore::SecurityOriginData&& frameSecurityOrigin, uint64_t navigationID,
-    NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfoData, Optional<PageIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request,
+    NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfoData, Optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request,
     IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, Ref<PolicyDecisionSender>&& sender)
 {
     LOG(Loading, "WebPageProxy::decidePolicyForNavigationAction - Original URL %s, current target URL %s", originalRequest.url().string().utf8().data(), request.url().string().utf8().data());
@@ -4860,7 +4861,7 @@ void WebPageProxy::logFrameNavigation(const WebFrameProxy& frame, const URL& pag
 #endif
 
 void WebPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, bool isMainFrame, WebCore::SecurityOriginData&& frameSecurityOrigin, PolicyCheckIdentifier identifier,
-    uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<PageIdentifier> originatingPageID,
+    uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<WebPageProxyIdentifier> originatingPageID,
     const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse,
     const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
@@ -4878,7 +4879,7 @@ void WebPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, 
 }
 
 void WebPageProxy::decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, bool isMainFrame, WebCore::SecurityOriginData&& frameSecurityOrigin, PolicyCheckIdentifier identifier,
-    uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<PageIdentifier> originatingPageID,
+    uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, Optional<WebPageProxyIdentifier> originatingPageID,
     const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse,
     const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
@@ -4935,10 +4936,10 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, const
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, const SecurityOriginData& frameSecurityOrigin, PolicyCheckIdentifier identifier,
     uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
 {
-    decidePolicyForResponseShared(m_process.copyRef(), frameID, frameSecurityOrigin, identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID, userData);
+    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, frameSecurityOrigin, identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID, userData);
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, const SecurityOriginData& frameSecurityOrigin, PolicyCheckIdentifier identifier,
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, const SecurityOriginData& frameSecurityOrigin, PolicyCheckIdentifier identifier,
     uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
@@ -4951,14 +4952,14 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     MESSAGE_CHECK_URL(process, response.url());
 
     RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frameID, identifier, listenerID, navigation = WTFMove(navigation),
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, identifier, listenerID, navigation = WTFMove(navigation),
         process = process.copyRef()] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
-        auto sender = PolicyDecisionSender::create(identifier, [this, protectedThis = WTFMove(protectedThis), frameID, listenerID, process = WTFMove(process)] (auto... args) {
-            process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), m_webPageID);
+        auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = WTFMove(process)] (auto... args) {
+            process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), webPageID);
         });
         
         receivedPolicyDecision(policyAction, navigation.get(), WTF::nullopt, WTFMove(sender));
@@ -5105,7 +5106,7 @@ static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, We
 #endif
 }
 
-void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, Optional<PageIdentifier> originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Messages::WebPageProxy::CreateNewPage::DelayedReply&& reply)
+void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, Optional<WebPageProxyIdentifier> originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Messages::WebPageProxy::CreateNewPage::DelayedReply&& reply)
 {
     MESSAGE_CHECK(m_process, originatingFrameInfoData.frameID);
     MESSAGE_CHECK(m_process, m_process->webFrame(*originatingFrameInfoData.frameID));
@@ -7177,6 +7178,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.activityState = m_activityState;
     parameters.drawingAreaType = drawingArea.type();
     parameters.drawingAreaIdentifier = drawingArea.identifier();
+    parameters.webPageProxyIdentifier = m_identifier;
     parameters.store = preferencesStore();
     parameters.pageGroupData = m_pageGroup->data();
     parameters.isEditable = m_isEditable;
@@ -8697,15 +8699,15 @@ WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& schem
 
 void WebPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& parameters)
 {
-    startURLSchemeTaskShared(m_process.copyRef(), WTFMove(parameters));
+    startURLSchemeTaskShared(m_process.copyRef(), m_webPageID, WTFMove(parameters));
 }
 
-void WebPageProxy::startURLSchemeTaskShared(Ref<WebProcessProxy>&& process, URLSchemeTaskParameters&& parameters)
+void WebPageProxy::startURLSchemeTaskShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, URLSchemeTaskParameters&& parameters)
 {
     auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK(process, iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, process, parameters.taskIdentifier, WTFMove(parameters.request), nullptr);
+    iterator->value->startTask(*this, process, webPageID, parameters.taskIdentifier, WTFMove(parameters.request), nullptr);
 }
 
 void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
@@ -8721,7 +8723,7 @@ void WebPageProxy::loadSynchronousURLSchemeTask(URLSchemeTaskParameters&& parame
     auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK(m_process, iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, m_process, parameters.taskIdentifier, WTFMove(parameters.request), WTFMove(reply));
+    iterator->value->startTask(*this, m_process, m_webPageID, parameters.taskIdentifier, WTFMove(parameters.request), WTFMove(reply));
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

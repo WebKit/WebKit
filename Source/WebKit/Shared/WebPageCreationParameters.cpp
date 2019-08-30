@@ -39,6 +39,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << store;
     encoder.encodeEnum(drawingAreaType);
     encoder << drawingAreaIdentifier;
+    encoder << webPageProxyIdentifier;
     encoder << pageGroupData;
     encoder << isEditable;
     encoder << underlayColor;
@@ -157,6 +158,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!drawingAreaIdentifier)
         return WTF::nullopt;
     parameters.drawingAreaIdentifier = *drawingAreaIdentifier;
+    Optional<WebPageProxyIdentifier> webPageProxyIdentifier;
+    decoder >> webPageProxyIdentifier;
+    if (!webPageProxyIdentifier)
+        return WTF::nullopt;
+    parameters.webPageProxyIdentifier = WTFMove(*webPageProxyIdentifier);
     Optional<WebPageGroupData> pageGroupData;
     decoder >> pageGroupData;
     if (!pageGroupData)

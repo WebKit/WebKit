@@ -53,7 +53,7 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    void startTask(WebPageProxy&, WebProcessProxy&, uint64_t taskIdentifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
+    void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, uint64_t taskIdentifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
     void stopTask(WebPageProxy&, uint64_t taskIdentifier);
     void stopAllTasksForPage(WebPageProxy&, WebProcessProxy*);
     void taskCompleted(WebURLSchemeTask&);

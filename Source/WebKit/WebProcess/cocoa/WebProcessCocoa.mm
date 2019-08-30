@@ -676,7 +676,7 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
         RetainPtr<id> transformObject(id object) const override
         {
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPage = m_webProcess.webPage(handle._pageID))
+                if (auto* webPage = m_webProcess.webPage(handle._webPageID))
                     return wrapper(*webPage);
 
                 return [NSNull null];

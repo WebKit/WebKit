@@ -112,7 +112,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(IPC::Connection&, WebCore::PageIdentifier, const FrameInfoData&, uint64_t messageHandlerID, const IPC::DataReference&);
+    void didPostMessage(IPC::Connection&, WebPageProxyIdentifier, const FrameInfoData&, uint64_t messageHandlerID, const IPC::DataReference&);
 
     void addUserContentWorldUse(API::UserContentWorld&);
     void removeUserContentWorldUses(API::UserContentWorld&, unsigned numberOfUsesToRemove);

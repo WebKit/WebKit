@@ -47,6 +47,7 @@ public:
     ~SuspendedPageProxy();
 
     WebPageProxy& page() const { return m_page; }
+    WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() { return m_process.get(); }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
 

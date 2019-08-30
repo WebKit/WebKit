@@ -100,10 +100,9 @@ void VisitedLinkStore::removeAll()
     }
 }
 
-void VisitedLinkStore::addVisitedLinkHashFromPage(PageIdentifier pageID, SharedStringHash linkHash)
+void VisitedLinkStore::addVisitedLinkHashFromPage(WebPageProxyIdentifier pageProxyID, SharedStringHash linkHash)
 {
-    // FIXME: Needs to look up WebPageProxy from WebPageID.
-    if (auto* webPageProxy = WebProcessProxy::webPage(pageID)) {
+    if (auto* webPageProxy = WebProcessProxy::webPage(pageProxyID)) {
         if (!webPageProxy->addsVisitedLinks())
             return;
     }

@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "ProcessThrottler.h"
+#include "WebPageProxyIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
@@ -52,7 +53,7 @@ public:
     void sendUnusedReply(uint64_t replyID);
 
 protected:
-    explicit RemoteObjectRegistry(_WKRemoteObjectRegistry *);
+    RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxyIdentifier messageDestinationID);
     
 private:
     virtual ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() { return nullptr; }
@@ -68,6 +69,7 @@ private:
 
     WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
     HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
+    WebPageProxyIdentifier m_messageDestinationID;
 };
 
 } // namespace WebKit

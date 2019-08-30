@@ -186,7 +186,8 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
         break;
 
     case ObjCType::WKBrowsingContextHandle:
-        encoder << static_cast<WKBrowsingContextHandle *>(object).pageID;
+        encoder << static_cast<WKBrowsingContextHandle *>(object).pageProxyID;
+        encoder << static_cast<WKBrowsingContextHandle *>(object).webPageID;
         break;
 
     case ObjCType::WKTypeRefWrapper:
@@ -298,12 +299,16 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::WKBrowsingContextHandle: {
-        Optional<WebCore::PageIdentifier> pageID;
-        decoder >> pageID;
-        if (!pageID)
+        Optional<WebPageProxyIdentifier> pageProxyID;
+        decoder >> pageProxyID;
+        if (!pageProxyID)
+            return false;
+        Optional<WebCore::PageIdentifier> webPageID;
+        decoder >> webPageID;
+        if (!webPageID)
             return false;
 
-        result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageID:*pageID]);
+        result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageProxyID:*pageProxyID andWebPageID:*webPageID]);
         break;
     }
 

@@ -332,9 +332,9 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::UserConten
     removeUserContentWorldUses(world, numberRemoved);
 }
 
-void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, PageIdentifier pageID, const FrameInfoData& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
+void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, WebPageProxyIdentifier pageProxyID, const FrameInfoData& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
 {
-    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    WebPageProxy* page = WebProcessProxy::webPage(pageProxyID);
     if (!page)
         return;
 

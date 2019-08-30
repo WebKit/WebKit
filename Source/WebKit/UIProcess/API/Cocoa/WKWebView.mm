@@ -877,7 +877,7 @@ static void validate(WKWebViewConfiguration *configuration)
     [_contentView _webViewDestroyed];
 
     if (_remoteObjectRegistry)
-        _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->webPageID());
+        _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier());
 #endif
 
     _page->close();
@@ -4725,7 +4725,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 #else
     if (!_remoteObjectRegistry) {
         _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithWebPageProxy:*_page]);
-        _page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->webPageID(), [_remoteObjectRegistry remoteObjectRegistry]);
+        _page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 
     return _remoteObjectRegistry.get();
@@ -4734,7 +4734,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (WKBrowsingContextHandle *)_handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->webPageID()] autorelease];
+    return [[[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page] autorelease];
 }
 
 - (_WKRenderingProgressEvents)_observedRenderingProgressEvents

@@ -292,7 +292,7 @@ public:
 
     WebCore::Page* corePage() const { return m_page.get(); }
     WebCore::PageIdentifier pageID() const { return m_pageID; }
-    StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(m_pageID.toUInt64()); }
+    StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64()); }
     PAL::SessionID sessionID() const { return m_page->sessionID(); }
     bool usesEphemeralSession() const { return m_page->usesEphemeralSession(); }
 
@@ -1203,6 +1203,8 @@ public:
     WebRemoteObjectRegistry* remoteObjectRegistry();
 #endif
 
+    WebPageProxyIdentifier webPageProxyIdentifier() const { return m_webPageProxyIdentifier; }
+
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
     void scheduleFullEditorStateUpdate();
     bool isThrottleable() const;
@@ -1957,6 +1959,7 @@ private:
 #if PLATFORM(COCOA)
     WeakPtr<WebRemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
+    WebPageProxyIdentifier m_webPageProxyIdentifier;
     WebCore::IntSize m_lastSentIntrinsicContentSize;
 #if ENABLE(VIEWPORT_RESIZING)
     WebCore::DeferrableOneShotTimer m_shrinkToFitContentTimer;

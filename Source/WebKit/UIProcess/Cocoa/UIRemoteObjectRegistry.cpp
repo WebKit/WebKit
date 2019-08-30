@@ -37,7 +37,7 @@ ProcessThrottler::BackgroundActivityToken UIRemoteObjectRegistry::takeBackground
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
-    : RemoteObjectRegistry(remoteObjectRegistry)
+    : RemoteObjectRegistry(remoteObjectRegistry, page.identifier())
     , m_page(page)
 {
 }

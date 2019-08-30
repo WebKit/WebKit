@@ -26,21 +26,36 @@
 #import "config.h"
 #import "WKBrowsingContextHandleInternal.h"
 
+#import "WebPage.h"
+#import "WebPageProxy.h"
+#import <wtf/HashFunctions.h>
+
 @implementation WKBrowsingContextHandle
 
-- (id)_initWithPageID:(WebCore::PageIdentifier)pageID
+- (id)_initWithPageProxy:(WebKit::WebPageProxy&)page
+{
+    return [self _initWithPageProxyID:page.identifier() andWebPageID:page.webPageID()];
+}
+
+- (id)_initWithPage:(WebKit::WebPage&)page
+{
+    return [self _initWithPageProxyID:page.webPageProxyIdentifier() andWebPageID:page.pageID()];
+}
+
+- (id)_initWithPageProxyID:(WebKit::WebPageProxyIdentifier)pageProxyID andWebPageID:(WebCore::PageIdentifier)webPageID
 {
     if (!(self = [super init]))
         return nil;
 
-    _pageID = pageID;
+    _pageProxyID = pageProxyID;
+    _webPageID = webPageID;
 
     return self;
 }
 
 - (NSUInteger)hash
 {
-    return _pageID.toUInt64();
+    return WTF::pairIntHash(_pageProxyID.toUInt64(), _webPageID.toUInt64());
 }
 
 - (BOOL)isEqual:(id)object
@@ -48,12 +63,13 @@
     if (![object isKindOfClass:[WKBrowsingContextHandle class]])
         return NO;
 
-    return _pageID == static_cast<WKBrowsingContextHandle *>(object)->_pageID;
+    return _pageProxyID == static_cast<WKBrowsingContextHandle *>(object)->_pageProxyID && _webPageID == static_cast<WKBrowsingContextHandle *>(object)->_webPageID;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeInt64:_pageID.toUInt64() forKey:@"pageID"];
+    [coder encodeInt64:_pageProxyID.toUInt64() forKey:@"pageProxyID"];
+    [coder encodeInt64:_webPageID.toUInt64() forKey:@"webPageID"];
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -61,7 +77,8 @@
     if (!(self = [super init]))
         return nil;
 
-    _pageID = makeObjectIdentifier<WebCore::PageIdentifierType>([coder decodeInt64ForKey:@"pageID"]);
+    _pageProxyID = makeObjectIdentifier<WebKit::WebPageProxyIdentifierType>([coder decodeInt64ForKey:@"pageProxyID"]);
+    _webPageID = makeObjectIdentifier<WebCore::PageIdentifierType>([coder decodeInt64ForKey:@"webPageID"]);
 
     return self;
 }

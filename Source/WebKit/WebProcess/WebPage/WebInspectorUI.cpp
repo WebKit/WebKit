@@ -60,7 +60,7 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 #endif
 }
 
-void WebInspectorUI::establishConnection(PageIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
+void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
 {
     m_inspectedPageIdentifier = inspectedPageIdentifier;
     m_frontendAPIDispatcher.reset();

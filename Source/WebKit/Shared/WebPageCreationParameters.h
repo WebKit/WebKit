@@ -31,6 +31,7 @@
 #include "WebCompiledContentRuleListData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
 #include "WebUserContentControllerDataTypes.h"
 #include <WebCore/ActivityState.h>
@@ -80,6 +81,7 @@ struct WebPageCreationParameters {
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;
     DrawingAreaIdentifier drawingAreaIdentifier;
+    WebPageProxyIdentifier webPageProxyIdentifier;
     WebPageGroupData pageGroupData;
 
     bool isEditable;
