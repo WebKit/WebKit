@@ -162,7 +162,7 @@ class ConfigurationContext(object):
         if not isinstance(configuration, Configuration):
             raise TypeError(f'Expected type {Configuration}, got {type(configuration)}')
         if not configuration.is_complete():
-            raise TypeError('Register a partial configuration')
+            raise TypeError('Cannot register a partial configuration')
         if not isinstance(timestamp, datetime):
             timestamp = datetime.utcfromtimestamp(int(timestamp))
 
