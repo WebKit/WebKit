@@ -82,8 +82,6 @@ public:
     IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) final;
     void deleteBackingStore() final;
 
-    uint64_t databasesSizeForOrigin() const final;
-
     bool supportsSimultaneousTransactions() final { return false; }
     bool isEphemeral() final { return false; }
 
@@ -94,7 +92,7 @@ public:
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
     static String databaseNameFromEncodedFilename(const String&);
-    static uint64_t databasesSizeForFolder(const String& folder);
+    static uint64_t databasesSizeForDirectory(const String& directory);
 
     String databaseDirectory() const { return m_databaseDirectory; };
     static String fullDatabasePathForDirectory(const String&);
@@ -135,6 +133,9 @@ private:
     IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
 
     void closeSQLiteDB();
+    void close() final;
+    
+    uint64_t databaseSize() const final;
 
     enum class SQL : size_t {
         CreateObjectStoreInfo,

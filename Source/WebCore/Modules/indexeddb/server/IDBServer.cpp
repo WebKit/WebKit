@@ -732,6 +732,21 @@ void IDBServer::QuotaUser::resetSpaceUsed()
     m_manager->addUser(*this);
 }
 
+void IDBServer::QuotaUser::increaseSpaceUsed(uint64_t size)
+{
+    if (!m_isInitialized)
+        return;
+    ASSERT(m_spaceUsed + size > m_spaceUsed);
+    m_spaceUsed += size;
+}
+void IDBServer::QuotaUser::decreaseSpaceUsed(uint64_t size)
+{
+    if (!m_isInitialized)
+        return;
+    ASSERT(m_spaceUsed >= size);
+    m_spaceUsed -= size;
+}
+
 void IDBServer::QuotaUser::whenInitialized(CompletionHandler<void()>&& callback)
 {
     if (m_isInitialized) {
@@ -772,7 +787,7 @@ void IDBServer::computeSpaceUsedForOrigin(const ClientOrigin& origin)
     auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
     auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v0");
     auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v1");
-    auto size = SQLiteIDBBackingStore::databasesSizeForFolder(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForFolder(newVersionOriginDirectory);
+    auto size = SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory);
 
     postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::finishComputingSpaceUsedForOrigin, origin, size));
 }
@@ -799,9 +814,14 @@ void IDBServer::resetSpaceUsed(const ClientOrigin& origin)
         user->resetSpaceUsed();
 }
 
-void IDBServer::setSpaceUsed(const ClientOrigin& origin, uint64_t taskSize)
+void IDBServer::increaseSpaceUsed(const ClientOrigin& origin, uint64_t size)
 {
-    ensureQuotaUser(origin).setSpaceUsed(taskSize);
+    ensureQuotaUser(origin).increaseSpaceUsed(size);
+}
+
+void IDBServer::decreaseSpaceUsed(const ClientOrigin& origin, uint64_t size)
+{
+    ensureQuotaUser(origin).decreaseSpaceUsed(size);
 }
 
 void IDBServer::increasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t taskSize)
