@@ -1,3 +1,88 @@
+2019-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Pass FormattingContext to Geometry/Quirks/BlockMarginCollapsing classes
+        https://bugs.webkit.org/show_bug.cgi?id=201355
+        <rdar://problem/54895959>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for enforcing LFC to not call outside of the formatting context.
+        LayoutState::displayBoxForLayoutBox calls will be forced to go through the FormattingContext class to
+        check LFC escaping.
+
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::isBlockFormattingContext const):
+        (WebCore::Layout::FormattingContext::isInlineFormattingContext const):
+        (WebCore::Layout::FormattingContext::isTableFormattingContext const):
+        (WebCore::Layout::FormattingContext::Geometry::layoutState const):
+        (WebCore::Layout::FormattingContext::Geometry::layoutState):
+        (WebCore::Layout::FormattingContext::Geometry::formattingContext const):
+        (WebCore::Layout::FormattingContext::geometry const):
+        (WebCore::Layout::FormattingContext::Quirks::layoutState const):
+        (WebCore::Layout::FormattingContext::Quirks::layoutState):
+        (WebCore::Layout::FormattingContext::Quirks::formattingContext const):
+        (WebCore::Layout::FormattingContext::quirks const):
+        (WebCore::Layout::FormattingContext::Geometry::Geometry):
+        (WebCore::Layout::FormattingContext::Quirks::Quirks):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::Geometry::formattingContext const):
+        (WebCore::Layout::BlockFormattingContext::geometry const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::layoutState):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::layoutState const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::formattingContext const):
+        (WebCore::Layout::BlockFormattingContext::marginCollapse const):
+        (WebCore::Layout::BlockFormattingContext::Quirks::formattingContext const):
+        (WebCore::Layout::BlockFormattingContext::quirks const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::Geometry):
+        (WebCore::Layout::BlockFormattingContext::Quirks::Quirks):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::MarginCollapse):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layoutState const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingContext const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingRoot const):
+        (WebCore::Layout::InlineFormattingContext::Quirks::formattingContext const):
+        (WebCore::Layout::InlineFormattingContext::quirks const):
+        (WebCore::Layout::InlineFormattingContext::Geometry::formattingContext const):
+        (WebCore::Layout::InlineFormattingContext::geometry const):
+        (WebCore::Layout::InlineFormattingContext::Geometry::Geometry):
+        (WebCore::Layout::InlineFormattingContext::Quirks::Quirks):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::InlineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+        (WebCore::Layout::Line::layoutState const):
+        (WebCore::Layout::Line::formattingContext const):
+        * layout/inlineformatting/InlineLine.h:
+        * layout/tableformatting/TableFormattingContext.h:
+        (WebCore::Layout::TableFormattingContext::Geometry::formattingContext const):
+        (WebCore::Layout::TableFormattingContext::geometry const):
+        (WebCore::Layout::TableFormattingContext::Geometry::Geometry):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-08-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249338.

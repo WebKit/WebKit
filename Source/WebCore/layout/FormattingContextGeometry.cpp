@@ -76,7 +76,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
         containingBlockHeightValue = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
     } else {
         if (layoutState.inQuirksMode())
-            containingBlockHeightValue = Quirks(const_cast<LayoutState&>(layoutState)).heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
+            containingBlockHeightValue = Quirks(formattingContext()).heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
         else {
             auto containingBlockHeight = layoutBox.containingBlock()->style().logicalHeight();
             if (containingBlockHeight.isFixed())

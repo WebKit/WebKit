@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -38,7 +39,6 @@ class LayoutUnit;
 
 namespace Layout {
 
-class Box;
 class Container;
 class FormattingState;
 class LayoutState;
@@ -68,6 +68,10 @@ public:
     static Point mapPointToAncestor(const LayoutState&, Point, const Container& from, const Container& to);
     static Point mapPointToDescendent(const LayoutState&, Point, const Container& from, const Container& to);
 
+    bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
+    bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
+    bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
+
 protected:
     using LayoutQueue = Vector<const Box*>;
 
@@ -84,7 +88,7 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        Geometry(LayoutState&);
+        Geometry(const FormattingContext&);
 
         VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues);
@@ -120,8 +124,9 @@ protected:
         enum class HeightType { Min, Max, Normal };
         Optional<LayoutUnit> computedHeightValue(const Box&, HeightType) const;
 
-        const LayoutState& layoutState() const { return m_layoutState; }
-        LayoutState& layoutState() { return m_layoutState; }
+        const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
+        LayoutState& layoutState() { return m_formattingContext.layoutState(); }
+        const FormattingContext& formattingContext() const { return m_formattingContext; }
 
     private:
         VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, UsedVerticalValues) const;
@@ -138,23 +143,24 @@ protected:
         LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const Box&) const;
         LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&) const;
 
-        LayoutState& m_layoutState;
+        const FormattingContext& m_formattingContext;
     };
-    FormattingContext::Geometry geometry() const { return Geometry(layoutState()); }
+    FormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     class Quirks {
     public:
-        Quirks(LayoutState&);
+        Quirks(const FormattingContext&);
 
         LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&);
 
     protected:
-        const LayoutState& layoutState() const { return m_layoutState; }
-        LayoutState& layoutState() { return m_layoutState; }
+        const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
+        LayoutState& layoutState() { return m_formattingContext.layoutState(); }
+        const FormattingContext& formattingContext() const { return m_formattingContext; }
 
-        LayoutState& m_layoutState;
+        const FormattingContext& m_formattingContext;
     };
-    FormattingContext::Quirks quirks() const { return Quirks(layoutState()); }
+    FormattingContext::Quirks quirks() const { return Quirks(*this); }
 
 private:
     void computeOutOfFlowVerticalGeometry(const Box&);
@@ -164,13 +170,13 @@ private:
     FormattingState& m_formattingState;
 };
 
-inline FormattingContext::Geometry::Geometry(LayoutState& layoutState)
-    : m_layoutState(layoutState)
+inline FormattingContext::Geometry::Geometry(const FormattingContext& formattingContext)
+    : m_formattingContext(formattingContext)
 {
 }
 
-inline FormattingContext::Quirks::Quirks(LayoutState& layoutState)
-    : m_layoutState(layoutState)
+inline FormattingContext::Quirks::Quirks(const FormattingContext& formattingContext)
+    : m_formattingContext(formattingContext)
 {
 }
 
@@ -189,4 +195,10 @@ inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::Intrinsi
 
 }
 }
+
+#define SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
+    static bool isType(const WebCore::Layout::FormattingContext& formattingContext) { return formattingContext.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

@@ -75,7 +75,7 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        Geometry(LayoutState&);
+        Geometry(const BlockFormattingContext&);
 
         HeightAndMargin inFlowHeightAndMargin(const Box&, UsedVerticalValues);
         WidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
@@ -91,13 +91,15 @@ private:
         WidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
         WidthAndMargin inFlowReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;
+
+        const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };
-    BlockFormattingContext::Geometry geometry() const { return Geometry(layoutState()); }
+    BlockFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     // This class implements margin collapsing for block formatting context.
     class MarginCollapse {
     public:
-        MarginCollapse(LayoutState&);
+        MarginCollapse(const BlockFormattingContext&);
 
         UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
 
@@ -125,16 +127,17 @@ private:
         PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
         PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
 
-        LayoutState& layoutState() { return m_layoutState; }
-        const LayoutState& layoutState() const { return m_layoutState; }
+        LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }
+        const LayoutState& layoutState() const { return m_blockFormattingContext.layoutState(); }
+        const BlockFormattingContext& formattingContext() const { return m_blockFormattingContext; }
 
-        LayoutState& m_layoutState;
+        const BlockFormattingContext& m_blockFormattingContext;
     };
-    MarginCollapse marginCollapse() const { return MarginCollapse(layoutState()); }
+    MarginCollapse marginCollapse() const { return MarginCollapse(*this); }
 
     class Quirks : public FormattingContext::Quirks {
     public:
-        Quirks(LayoutState&);
+        Quirks(const BlockFormattingContext&);
 
         bool needsStretching(const Box&) const;
         HeightAndMargin stretchedInFlowHeight(const Box&, HeightAndMargin);
@@ -142,8 +145,12 @@ private:
         bool shouldIgnoreCollapsedQuirkMargin(const Box&) const;
         bool shouldIgnoreMarginBefore(const Box&) const;
         bool shouldIgnoreMarginAfter(const Box&) const;
+
+    private:
+        const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Quirks::formattingContext()); }
+
     };
-    BlockFormattingContext::Quirks quirks() const { return Quirks(layoutState()); }
+    BlockFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
     void setEstimatedMarginBefore(const Box&, const EstimatedMarginBefore&);
     void removeEstimatedMarginBefore(const Box& layoutBox) { m_estimatedMarginBeforeList.remove(&layoutBox); }
@@ -160,21 +167,24 @@ private:
     HashMap<const Box*, EstimatedMarginBefore> m_estimatedMarginBeforeList;
 };
 
-inline BlockFormattingContext::Geometry::Geometry(LayoutState& layoutState)
-    : FormattingContext::Geometry(layoutState)
+inline BlockFormattingContext::Geometry::Geometry(const BlockFormattingContext& blockFormattingContext)
+    : FormattingContext::Geometry(blockFormattingContext)
 {
 }
 
-inline BlockFormattingContext::Quirks::Quirks(LayoutState& layoutState)
-    : FormattingContext::Quirks(layoutState)
+inline BlockFormattingContext::Quirks::Quirks(const BlockFormattingContext& blockFormattingContext)
+    : FormattingContext::Quirks(blockFormattingContext)
 {
 }
 
-inline BlockFormattingContext::MarginCollapse::MarginCollapse(LayoutState& layoutState)
-    : m_layoutState(layoutState)
+inline BlockFormattingContext::MarginCollapse::MarginCollapse(const BlockFormattingContext& blockFormattingContext)
+    : m_blockFormattingContext(blockFormattingContext)
 {
 }
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(BlockFormattingContext, isBlockFormattingContext())
+
 #endif

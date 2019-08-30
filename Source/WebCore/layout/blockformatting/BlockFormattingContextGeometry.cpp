@@ -85,7 +85,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
         auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
         ASSERT(lastInFlowChild);
-        auto marginCollapse = MarginCollapse(layoutState);
+        auto marginCollapse = MarginCollapse(formattingContext());
         if (!marginCollapse.marginAfterCollapsesWithParentMarginAfter(*lastInFlowChild)) {
             auto& lastInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*lastInFlowChild);
             auto bottomEdgeOfBottomMargin = lastInFlowDisplayBox.bottom() + (lastInFlowDisplayBox.hasCollapsedThroughMargin() ? LayoutUnit() : lastInFlowDisplayBox.marginAfter()); 
@@ -273,7 +273,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Bo
         heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
     }
 
-    auto quirks = Quirks(layoutState());
+    auto quirks = Quirks(formattingContext());
     if (!quirks.needsStretching(layoutBox))
         return heightAndMargin;
 

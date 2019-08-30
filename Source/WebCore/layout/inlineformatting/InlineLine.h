@@ -35,6 +35,8 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineFormattingContext;
+
 class Line {
     WTF_MAKE_ISO_ALLOCATED(Line);
 public:
@@ -49,7 +51,7 @@ public:
         HeightAndBaseline heightAndBaseline;
     };
     enum class SkipVerticalAligment { No, Yes };
-    Line(LayoutState&, const InitialConstraints&, SkipVerticalAligment);
+    Line(const InlineFormattingContext&, const InitialConstraints&, SkipVerticalAligment);
 
     class Content {
         WTF_MAKE_FAST_ALLOCATED;
@@ -156,7 +158,10 @@ private:
     LayoutUnit inlineItemContentHeight(const InlineItem&) const;
     bool isVisuallyEmpty() const;
 
-    LayoutState& m_layoutState;
+    LayoutState& layoutState() const;
+    const InlineFormattingContext& formattingContext() const; 
+
+    const InlineFormattingContext& m_inlineFormattingContext;
     std::unique_ptr<Content> m_content;
     ListHashSet<Content::Run*> m_trimmableContent;
 

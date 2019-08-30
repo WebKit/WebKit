@@ -58,33 +58,42 @@ private:
         LayoutUnit computedIntrinsicWidth(const InlineItems&, LayoutUnit widthConstraint) const;
 
     private:
-        LayoutState& layoutState() const { return m_layoutState; }
+        LayoutState& layoutState() const { return m_inlineFormattingContext.layoutState(); }
+        const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+        const Container& formattingRoot() const { return downcast<Container>(m_inlineFormattingContext.root()); }
         LineContent placeInlineItems(const LineInput&) const;
         void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;
         void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
-        LayoutState& m_layoutState;
-        const Container& m_formattingRoot;
+        const InlineFormattingContext& m_inlineFormattingContext;
     };
 
     class Quirks : public FormattingContext::Quirks {
     public:
-        Quirks(LayoutState&);
+        Quirks(const InlineFormattingContext&);
 
         bool lineDescentNeedsCollapsing(const Line::Content&) const;
         Line::InitialConstraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
+
+    private:
+        const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Quirks::formattingContext()); }
+
     };
-    InlineFormattingContext::Quirks quirks() const { return Quirks(layoutState()); }
+    InlineFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
     class Geometry : public FormattingContext::Geometry {
     public:
-        Geometry(LayoutState&);
+        Geometry(const InlineFormattingContext&);
 
         HeightAndMargin inlineBlockHeightAndMargin(const Box&) const;
         WidthAndMargin inlineBlockWidthAndMargin(const Box&, UsedHorizontalValues);
+
+    private:
+        const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+
     };
-    InlineFormattingContext::Geometry geometry() const { return Geometry(layoutState()); }
+    InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues);
     void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues);
@@ -102,16 +111,19 @@ private:
     friend class Line;
 };
 
-inline InlineFormattingContext::Geometry::Geometry(LayoutState& layoutState)
-    : FormattingContext::Geometry(layoutState)
+inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)
+    : FormattingContext::Geometry(inlineFormattingContext)
 {
 }
 
-inline InlineFormattingContext::Quirks::Quirks(LayoutState& layoutState)
-    : FormattingContext::Quirks(layoutState)
+inline InlineFormattingContext::Quirks::Quirks(const InlineFormattingContext& inlineFormattingContext)
+    : FormattingContext::Quirks(inlineFormattingContext)
 {
 }
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(InlineFormattingContext, isInlineFormattingContext())
+
 #endif

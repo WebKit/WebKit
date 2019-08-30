@@ -45,11 +45,14 @@ public:
 private:
     class Geometry : public FormattingContext::Geometry {
     public:
-        Geometry(LayoutState&);
+        Geometry(const TableFormattingContext&);
 
         HeightAndMargin tableCellHeightAndMargin(const Box&) const;
+
+    private:
+        const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };
-    TableFormattingContext::Geometry geometry() const { return Geometry(layoutState()); }
+    TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit computedTableWidth();
@@ -63,11 +66,14 @@ private:
     TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
 
-inline TableFormattingContext::Geometry::Geometry(LayoutState& layoutState)
-    : FormattingContext::Geometry(layoutState)
+inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext)
+    : FormattingContext::Geometry(tableFormattingContext)
 {
 }
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(TableFormattingContext, isTableFormattingContext())
+
 #endif
