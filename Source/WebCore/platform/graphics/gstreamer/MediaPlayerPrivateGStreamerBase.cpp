@@ -244,9 +244,6 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-    m_protectionCondition.notifyAll();
-#endif
     m_notifier->invalidate();
 
     if (m_videoSink) {
@@ -265,6 +262,10 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     // This will release the GStreamer thread from m_drawCondition in non AC mode in case there's an ongoing triggerRepaint call
     // waiting there, and ensure that any triggerRepaint call reaching the lock won't wait on m_drawCondition.
     cancelRepaint(true);
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    m_cdmAttachmentSemaphore.signal();
+#endif
 
     // The change to GST_STATE_NULL state is always synchronous. So after this gets executed we don't need to worry
     // about handlers running in the GStreamer thread.
@@ -327,28 +328,28 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
             return false;
         }
         GST_DEBUG_OBJECT(pipeline(), "handling drm-preferred-decryption-system-id need context message");
-        LockHolder lock(m_protectionMutex);
-        ProtectionSystemEvents protectionSystemEvents(message);
-        GST_TRACE("found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
+
         InitData initData;
+        {
+            LockHolder lock(m_protectionMutex);
+            ProtectionSystemEvents protectionSystemEvents(message);
+            GST_TRACE("found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
 
-        for (auto& event : protectionSystemEvents.events()) {
-            const char* eventKeySystemId = nullptr;
-            GstBuffer* data = nullptr;
-            gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
+            for (auto& event : protectionSystemEvents.events()) {
+                const char* eventKeySystemId = nullptr;
+                GstBuffer* data = nullptr;
+                gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
 
-            initData.append({eventKeySystemId, data});
-            m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
+                initData.append({eventKeySystemId, data});
+                m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
+            }
         }
-
         initializationDataEncountered(WTFMove(initData));
 
         GST_INFO_OBJECT(pipeline(), "waiting for a CDM instance");
-        m_protectionCondition.waitFor(m_protectionMutex, Seconds(4), [this] {
-            return this->m_cdmInstance;
-        });
-
-        if (m_cdmInstance && !m_cdmInstance->keySystem().isEmpty()) {
+        if (m_cdmAttachmentSemaphore.waitFor(4_s)
+            && m_notifier->isValid() // Check the player is not being destroyed.
+            && !m_cdmInstance->keySystem().isEmpty()) {
             const char* preferredKeySystemUuid = GStreamerEMEUtilities::keySystemToUuid(m_cdmInstance->keySystem());
             GST_INFO_OBJECT(pipeline(), "working with key system %s, continuing with key system %s on %s", m_cdmInstance->keySystem().utf8().data(), preferredKeySystemUuid, GST_MESSAGE_SRC_NAME(message));
 
@@ -1321,7 +1322,7 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(CDMInstance& instance)
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "CDM instance %p dispatched as context", m_cdmInstance.get());
 
-    m_protectionCondition.notifyAll();
+    m_cdmAttachmentSemaphore.signal();
 }
 
 void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
@@ -1341,8 +1342,6 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
 
     GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-cdm-instance", FALSE));
     gst_element_set_context(GST_ELEMENT(m_pipeline.get()), context.get());
-
-    m_protectionCondition.notifyAll();
 }
 
 void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance(CDMInstance& instance)
@@ -1360,9 +1359,12 @@ void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithLocalInstance()
 
 void MediaPlayerPrivateGStreamerBase::handleProtectionEvent(GstEvent* event)
 {
-    if (m_handledProtectionEvents.contains(GST_EVENT_SEQNUM(event))) {
-        GST_DEBUG_OBJECT(pipeline(), "event %u already handled", GST_EVENT_SEQNUM(event));
-        return;
+    {
+        LockHolder lock(m_protectionMutex);
+        if (m_handledProtectionEvents.contains(GST_EVENT_SEQNUM(event))) {
+            GST_DEBUG_OBJECT(pipeline(), "event %u already handled", GST_EVENT_SEQNUM(event));
+            return;
+        }
     }
     GST_DEBUG_OBJECT(pipeline(), "handling event %u from MSE", GST_EVENT_SEQNUM(event));
     const char* eventKeySystemUUID = nullptr;

@@ -1,3 +1,41 @@
+2019-08-30  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Do not ref the player count from background threads.
+        https://bugs.webkit.org/show_bug.cgi?id=201222
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Test: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html
+
+        In the sync-message handler, a ref() was being taken waiting for a
+        CDM instance to be attached. This hits asserts since you are not
+        allowed to ref() an object created on the main thread
+        (BasePlayer) on a background thread.
+
+        The protection condition was overly scoped, tidied up the locking
+        and made it more granular. To avoid needing to hold a ref() in the
+        background thread, use instead a semaphore to signal when a CDM
+        instance is attached, or the player has been destroyed.
+
+        Also remove an erroneous safe-guard, the operator= in
+        isCDMInstanceAvailable will ref() the CDMInstance for us. This use
+        of holding a reference to CDMInstance in the decryptors is not
+        thread-safe, and now we have a problem since there's no clean way
+        to communicate with CDMInstance from background threads without
+        being thread unsafe. For ClearKey and Widevine, a thread safe
+        ProxyCDM needs to be designed and passed to background
+        threads (upcoming patch).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (isCDMInstanceAvailable):
+
 2019-08-30  Sihui Liu  <sihui_liu@apple.com>
 
         [wk2] LayoutTest imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a flaky failure
