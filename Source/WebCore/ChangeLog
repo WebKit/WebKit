@@ -1,3 +1,52 @@
+2019-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Caret does not appear in text field inside a transformed, overflow: hidden container
+        https://bugs.webkit.org/show_bug.cgi?id=201317
+        <rdar://problem/54859264>
+
+        Reviewed by Simon Fraser.
+
+        This patch refactors the heuristic for determining whether to suppress selection gestures and UI in a way that
+        fixes the corner case encountered in this bug. To understand why this test case fails with our existing
+        heuristic, consider the below test case.
+
+        Let's say we have an input field inside an "overflow: hidden;" container, which is positioned in such a way that
+        it is completely clipped by its enclosing container which is also "overflow: hidden". Our existing logic would
+        appropriately identify this as a hidden editable element.
+
+        However, let's now apply a transform to the input field's closest "overflow: hidden" ancestor, such that the
+        field is now visible. Since RenderLayer::offsetFromAncestor doesn't take transforms into account when we try to
+        find the offset of the "overflow: hidden" layer relative to the root view, we end up passing an offsetFromRoot
+        of (0, 100vw) to RenderLayer::calculateClipRects, which computes a background clip rect of (0, 0, 100vw, 100vh).
+
+        This means that at the end of RenderLayer::calculateClipRects, we end up intersecting the background clip rect
+        (0, 0, 100vw, 100vh) against (100vw, 0, 100vw, 100vh), which results in the empty rect, and subsequently makes
+        us believe we're editing a hidden editable element.
+
+        Instead of tacking on more logic to isTransparentOrFullyClippedRespectingParentFrames, we can fix this by using
+        RenderObject::computeVisibleRectInContainer instead, performing a similar walk up the render tree to compute the
+        visible rect of each focused element or subframe relative to its root. This is capable of taking transforms into
+        account. See comments below for more details.
+
+        Test: editing/selection/ios/show-selection-in-transformed-container-2.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparentRespectingParentFrames const):
+
+        Split out isTransparentOrFullyClippedRespectingParentFrames into two methods: RenderLayer's
+        isTransparentRespectingParentFrames, and RenderObject's hasNonEmptyVisibleRectRespectingParentFrames. The
+        transparency check starts at the enclosing layer and walks up the layer tree, while the non-empty visible rect
+        check looks for renderers that are completely empty relative to their root views.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hasNonEmptyVisibleRectRespectingParentFrames const):
+
+        Rewrite logic for detecting completely clipped editable areas (that formerly lived in
+        isTransparentOrFullyClippedRespectingParentFrames) to use computeVisibleRectInContainer instead.
+
+        * rendering/RenderObject.h:
+
 2019-08-30  Chris Dumez  <cdumez@apple.com>
 
         Add support for postMessage buffering between the service worker and window
