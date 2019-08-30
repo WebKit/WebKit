@@ -1,3 +1,11 @@
+2019-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        Fix non-iOS iOS-family and catalyst builds after r249019
+        https://bugs.webkit.org/show_bug.cgi?id=200945
+
+        * wtf/Platform.h:
+        State that they have tls_protocol_version_t
+
 2019-08-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add system tracing points for compositing updates, and touch-event dispatching
