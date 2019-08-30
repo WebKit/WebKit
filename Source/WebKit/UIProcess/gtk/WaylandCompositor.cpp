@@ -551,7 +551,7 @@ void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface
 {
     WebPageProxy* webPage = nullptr;
     for (auto* page : m_pageMap.keys()) {
-        if (page->pageID() == pageID) {
+        if (page->webPageID() == pageID) {
             webPage = page;
             break;
         }

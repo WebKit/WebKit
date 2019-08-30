@@ -1,3 +1,13 @@
+2019-08-30  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK] Build failure in Debian Stable and Ubuntu LTS bots
+        https://bugs.webkit.org/show_bug.cgi?id=201337
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::bindSurfaceToWebPage):
+
 2019-08-30  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] loadingChanged signal parameter is unusable
