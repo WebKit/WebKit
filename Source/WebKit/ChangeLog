@@ -1,3 +1,20 @@
+2019-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Assertion hit when saving to PDF from printing dialog
+        https://bugs.webkit.org/show_bug.cgi?id=201351
+
+        Reviewed by Tim Horton.
+
+        [WKPrintingView knowsPageRange:] may get called from a background thread and ends up calling
+        WeakPtr::get() which asserts because it is generally unsafe to get the raw pointer from a
+        WeakPtr to an object owned by another thread. However, the methods here merely want to null
+        check it so add a thread-safe method (pageIsClosed()) to WebFrameProxy for it.
+
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::pageIsClosed const):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView knowsPageRange:]):
+
 2019-08-30  Alex Christensen  <achristensen@webkit.org>
 
         Remove HAVE_CFNETWORK_WITH_AUTO_ADDED_HTTP_HEADER_SUPPRESSION_SUPPORT conditional

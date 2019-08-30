@@ -391,7 +391,7 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
     if (!RunLoop::isMain())
         _isPrintingFromSecondaryThread = YES;
 
-    if (!_webFrame->page()) {
+    if (_webFrame->pageIsClosed()) {
         *range = NSMakeRange(1, NSIntegerMax);
         return YES;
     }

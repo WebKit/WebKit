@@ -69,6 +69,8 @@ public:
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
     WebPageProxy* page() const { return m_page.get(); }
 
+    bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
+
     void webProcessWillShutDown();
 
     bool isMainFrame() const;
