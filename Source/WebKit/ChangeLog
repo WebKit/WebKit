@@ -1,3 +1,30 @@
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Invalid XPCServices symlinks are being created
+        https://bugs.webkit.org/show_bug.cgi?id=201320
+        <rdar://problem/54719612>
+
+        Reviewed by Dan Bernstein.
+
+        When performing incremental builds, errant XPCServices symlinks can be
+        created. For example, in the following, the second symlink is the
+        correct one. The first symlink gets created when the build process
+        tries to create the symlink and it already exists. When it already
+        exists, the command to create the symlink actually follows the
+        existing symlink and creates the (second) symlink at the location
+        where the first symlink points.
+
+            WebKit.framework/Versions/A/XPCServices/XPCServices@ -> Versions/Current/XPCServices
+            WebKit.framework/XPCServices@ -> Versions/Current/XPCServices
+
+        Address this by specifying -h to the `ln` command, which will cause it
+        to not follow symlinks if they already exist at the target.
+
+        Also, fix a benign issue where the Xcode build variable WRAPPER_NAME
+        was being referenced in a context where it wasn't defined.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-08-29  Alex Christensen  <achristensen@webkit.org>
 
         Speculative loads should use the NetworkSession owning their Cache
