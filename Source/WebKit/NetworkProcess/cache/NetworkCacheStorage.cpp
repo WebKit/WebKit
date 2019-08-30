@@ -251,17 +251,17 @@ Storage::~Storage()
     ASSERT(!m_shrinkInProgress);
 }
 
-String Storage::basePath() const
+String Storage::basePathIsolatedCopy() const
 {
     return m_basePath.isolatedCopy();
 }
 
 String Storage::versionPath() const
 {
-    return makeVersionedDirectoryPath(basePath());
+    return makeVersionedDirectoryPath(basePathIsolatedCopy());
 }
 
-String Storage::recordsPath() const
+String Storage::recordsPathIsolatedCopy() const
 {
     return m_recordsPath.isolatedCopy();
 }
@@ -299,7 +299,7 @@ void Storage::synchronize()
         unsigned blobCount = 0;
 
         String anyType;
-        traverseRecordsFiles(recordsPath(), anyType, [&](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        traverseRecordsFiles(recordsPathIsolatedCopy(), anyType, [&](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
 
             Key::HashType hash;
@@ -323,7 +323,7 @@ void Storage::synchronize()
 
         m_blobStorage.synchronize();
 
-        deleteEmptyRecordsDirectories(recordsPath());
+        deleteEmptyRecordsDirectories(recordsPathIsolatedCopy());
 
         LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu recordCount=%u", recordsSize, recordCount);
 
@@ -374,7 +374,7 @@ bool Storage::mayContainBlob(const Key& key) const
 String Storage::recordDirectoryPathForKey(const Key& key) const
 {
     ASSERT(!key.type().isEmpty());
-    return FileSystem::pathByAppendingComponent(FileSystem::pathByAppendingComponent(recordsPath(), key.partitionHashAsString()), key.type());
+    return FileSystem::pathByAppendingComponent(FileSystem::pathByAppendingComponent(recordsPathIsolatedCopy(), key.partitionHashAsString()), key.type());
 }
 
 String Storage::recordPathForKey(const Key& key) const
@@ -903,7 +903,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
     m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 
     ioQueue().dispatch([this, &traverseOperation] {
-        traverseRecordsFiles(recordsPath(), traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        traverseRecordsFiles(recordsPathIsolatedCopy(), traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             ASSERT(type == traverseOperation.type || traverseOperation.type.isEmpty());
             if (isBlob)
                 return;
@@ -998,7 +998,7 @@ void Storage::clear(const String& type, WallTime modifiedSinceTime, CompletionHa
     m_approximateRecordsSize = 0;
 
     ioQueue().dispatch([this, protectedThis = makeRef(*this), modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
-        auto recordsPath = this->recordsPath();
+        auto recordsPath = this->recordsPathIsolatedCopy();
         traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
             if (modifiedSinceTime > -WallTime::infinity()) {
@@ -1074,7 +1074,7 @@ void Storage::shrink()
     LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu capacity=%zu", approximateSize(), m_capacity);
 
     backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        auto recordsPath = this->recordsPath();
+        auto recordsPath = this->recordsPathIsolatedCopy();
         String anyType;
         traverseRecordsFiles(recordsPath, anyType, [this](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             if (isBlob)
@@ -1109,7 +1109,7 @@ void Storage::shrink()
 
 void Storage::deleteOldVersions()
 {
-    backgroundIOQueue().dispatch([cachePath = basePath()] () mutable {
+    backgroundIOQueue().dispatch([cachePath = basePathIsolatedCopy()] () mutable {
         traverseDirectory(cachePath, [&cachePath](const String& subdirName, DirectoryEntryType type) {
             if (type != DirectoryEntryType::Directory)
                 return;

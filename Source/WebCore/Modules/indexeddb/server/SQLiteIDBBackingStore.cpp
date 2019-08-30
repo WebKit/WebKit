@@ -765,7 +765,7 @@ String SQLiteIDBBackingStore::databaseNameFromFile(const String& databasePath)
 
 String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
 {
-    auto databaseRootDirectory = this->databaseRootDirectory();
+    auto databaseRootDirectory = this->databaseRootDirectoryIsolatedCopy();
     String oldOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v0");
     String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, filenameForDatabaseName());
     String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v1");
@@ -857,7 +857,7 @@ uint64_t SQLiteIDBBackingStore::databasesSizeForFolder(const String& folder)
 
 uint64_t SQLiteIDBBackingStore::databasesSizeForOrigin() const
 {
-    auto databaseRootDirectory = this->databaseRootDirectory();
+    auto databaseRootDirectory = this->databaseRootDirectoryIsolatedCopy();
     String oldVersionOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v0");
     String newVersionOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v1");
     return databasesSizeForFolder(oldVersionOriginDirectory) + databasesSizeForFolder(newVersionOriginDirectory);
@@ -2562,7 +2562,7 @@ void SQLiteIDBBackingStore::deleteBackingStore()
 
     SQLiteFileSystem::deleteDatabaseFile(dbFilename);
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory()));
+    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectoryIsolatedCopy()));
 }
 
 void SQLiteIDBBackingStore::unregisterCursor(SQLiteIDBCursor& cursor)

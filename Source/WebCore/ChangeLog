@@ -1,3 +1,55 @@
+2019-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Add "IsolatedCopy" in the name of String getters that call isolatedCopy() on the string
+        https://bugs.webkit.org/show_bug.cgi?id=201318
+
+        Reviewed by Alex Christensen.
+
+        Add "IsolatedCopy" in the name of String getters that call isolatedCopy() on the string, for clarity.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        (WebCore::IDBServer::IDBServer::performGetAllDatabaseNames):
+        (WebCore::IDBServer::IDBServer::removeDatabasesModifiedSinceForVersion):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::removeDatabasesWithOriginsForVersion):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::IDBServer::computeSpaceUsedForOrigin):
+        (WebCore::IDBServer::IDBServer::upgradeFilesIfNecessary):
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::databaseDirectoryPathIsolatedCopy const):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForOrigin const):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseRootDirectoryIsolatedCopy const):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::stringIdentifierIsolatedCopy const):
+        (WebCore::Database::displayNameIsolatedCopy const):
+        (WebCore::Database::expectedVersionIsolatedCopy const):
+        (WebCore::Database::fileNameIsolatedCopy const):
+        (WebCore::Database::details const):
+        (WebCore::Database::didCommitWriteTransaction):
+        (WebCore::Database::didExceedQuota):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::maximumSize):
+        (WebCore::DatabaseTracker::doneCreatingDatabase):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        * Modules/webdatabase/SQLError.h:
+        (WebCore::SQLError::messageIsolatedCopy const):
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+        (WebCore::RegistrationDatabase::clearAll):
+        * workers/service/server/RegistrationDatabase.h:
+        (WebCore::RegistrationDatabase::databaseDirectoryIsolatedCopy const):
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Update .xcconfig symbols to reflect the current set of past and future product versions.

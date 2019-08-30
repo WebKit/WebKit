@@ -580,7 +580,7 @@ void Database::markAsDeletedAndClose()
     if (m_deleted)
         return;
 
-    LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
+    LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifierIsolatedCopy().ascii().data(), this);
     m_deleted = true;
 
     close();
@@ -601,19 +601,19 @@ void Database::readTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr
     runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), nullptr, true);
 }
 
-String Database::stringIdentifier() const
+String Database::stringIdentifierIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
     return m_name.isolatedCopy();
 }
 
-String Database::displayName() const
+String Database::displayNameIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
     return m_displayName.isolatedCopy();
 }
 
-String Database::expectedVersion() const
+String Database::expectedVersionIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
     return m_expectedVersion.isolatedCopy();
@@ -630,7 +630,7 @@ void Database::setEstimatedSize(unsigned long long estimatedSize)
     DatabaseTracker::singleton().setDatabaseDetails(securityOrigin(), m_name, m_displayName, m_estimatedSize);
 }
 
-String Database::fileName() const
+String Database::fileNameIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
     return m_filename.isolatedCopy();
@@ -639,7 +639,7 @@ String Database::fileName() const
 DatabaseDetails Database::details() const
 {
     // This code path is only used for database quota delegate calls, so file dates are irrelevant and left uninitialized.
-    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0, WTF::nullopt, WTF::nullopt);
+    return DatabaseDetails(stringIdentifierIsolatedCopy(), displayNameIsolatedCopy(), estimatedSize(), 0, WTF::nullopt, WTF::nullopt);
 }
 
 void Database::disableAuthorizer()
@@ -786,7 +786,7 @@ unsigned long long Database::maximumSize()
 
 void Database::didCommitWriteTransaction()
 {
-    DatabaseTracker::singleton().scheduleNotifyDatabaseChanged(securityOrigin(), stringIdentifier());
+    DatabaseTracker::singleton().scheduleNotifyDatabaseChanged(securityOrigin(), stringIdentifierIsolatedCopy());
 }
 
 bool Database::didExceedQuota()
@@ -799,7 +799,7 @@ bool Database::didExceedQuota()
         // oldQuota + 5MB so that the client actually increases the quota.
         setEstimatedSize(oldQuota + quotaIncreaseSize);
     }
-    databaseContext().databaseExceededQuota(stringIdentifier(), details());
+    databaseContext().databaseExceededQuota(stringIdentifierIsolatedCopy(), details());
     return tracker.quota(securityOrigin()) > oldQuota;
 }
 

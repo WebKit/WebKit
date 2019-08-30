@@ -109,7 +109,7 @@ private:
     String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
     
-    String databaseRootDirectory() const { return m_databaseRootDirectory.isolatedCopy(); }
+    String databaseRootDirectoryIsolatedCopy() const { return m_databaseRootDirectory.isolatedCopy(); }
 
     bool ensureValidRecordsTable();
     bool ensureValidIndexRecordsTable();

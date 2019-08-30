@@ -130,7 +130,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     ASSERT(!isMainThread());
     ASSERT(!m_database);
 
-    auto databaseDirectory = this->databaseDirectory();
+    auto databaseDirectory = this->databaseDirectoryIsolatedCopy();
     cleanOldDatabases(databaseDirectory);
 
     LOG(ServiceWorker, "ServiceWorker RegistrationDatabase opening file %s", fullFilename.utf8().data());
@@ -305,7 +305,7 @@ void RegistrationDatabase::clearAll(CompletionHandler<void()>&& completionHandle
         m_database = nullptr;
 
         SQLiteFileSystem::deleteDatabaseFile(m_databaseFilePath);
-        SQLiteFileSystem::deleteEmptyDatabaseDirectory(databaseDirectory());
+        SQLiteFileSystem::deleteEmptyDatabaseDirectory(databaseDirectoryIsolatedCopy());
 
         callOnMainThread(WTFMove(completionHandler));
     });

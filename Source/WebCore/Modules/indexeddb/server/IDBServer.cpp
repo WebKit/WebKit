@@ -132,7 +132,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 {
     ASSERT(!isMainThread());
 
-    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
     if (databaseDirectoryPath.isEmpty())
         return MemoryIDBBackingStore::create(m_sessionID, identifier);
 
@@ -467,7 +467,7 @@ void IDBServer::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const S
 
 void IDBServer::performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
-    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
     String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, databaseDirectoryPath, "v0");
     Vector<String> files = FileSystem::listDirectory(oldDirectory, "*"_s);
     Vector<String> databases;
@@ -641,7 +641,7 @@ static void removeAllDatabasesForOriginPath(const String& originPath, WallTime m
 
 void IDBServer::removeDatabasesModifiedSinceForVersion(WallTime modifiedSince, const String& version)
 {
-    String versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath(), version);
+    String versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPathIsolatedCopy(), version);
     for (auto& originPath : FileSystem::listDirectory(versionPath, "*")) {
         String databaseIdentifier = FileSystem::lastComponentOfPathIgnoringTrailingSlash(originPath);
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
@@ -651,7 +651,7 @@ void IDBServer::removeDatabasesModifiedSinceForVersion(WallTime modifiedSince, c
 
 void IDBServer::performCloseAndDeleteDatabasesModifiedSince(WallTime modifiedSince, uint64_t callbackID)
 {
-    if (!databaseDirectoryPath().isEmpty()) {
+    if (!databaseDirectoryPathIsolatedCopy().isEmpty()) {
         removeDatabasesModifiedSinceForVersion(modifiedSince, "v0");
         removeDatabasesModifiedSinceForVersion(modifiedSince, "v1");
     }
@@ -661,7 +661,7 @@ void IDBServer::performCloseAndDeleteDatabasesModifiedSince(WallTime modifiedSin
 
 void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData> &origins, const String& version)
 {
-    String versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath(), version);
+    String versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPathIsolatedCopy(), version);
     for (const auto& origin : origins) {
         String originPath = FileSystem::pathByAppendingComponent(versionPath, origin.databaseIdentifier());
         removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
@@ -675,7 +675,7 @@ void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOrigin
     
 void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
 {
-    if (!databaseDirectoryPath().isEmpty()) {
+    if (!databaseDirectoryPathIsolatedCopy().isEmpty()) {
         removeDatabasesWithOriginsForVersion(origins, "v0");
         removeDatabasesWithOriginsForVersion(origins, "v1");
     }
@@ -769,7 +769,7 @@ void IDBServer::computeSpaceUsedForOrigin(const ClientOrigin& origin)
 {
     ASSERT(!isMainThread());
 
-    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
     auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v0");
     auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v1");
     auto size = SQLiteIDBBackingStore::databasesSizeForFolder(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForFolder(newVersionOriginDirectory);
@@ -816,7 +816,7 @@ void IDBServer::decreasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t 
 
 void IDBServer::upgradeFilesIfNecessary()
 {
-    auto databaseDirectoryPath = this->databaseDirectoryPath();
+    auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
     if (databaseDirectoryPath.isEmpty() || !FileSystem::fileExists(databaseDirectoryPath))
         return;
 

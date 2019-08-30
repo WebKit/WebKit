@@ -46,7 +46,7 @@ public:
     }
 
     unsigned code() const { return m_code; }
-    String message() const { return m_message.isolatedCopy(); }
+    String messageIsolatedCopy() const { return m_message.isolatedCopy(); }
 
     enum SQLErrorCode {
         UNKNOWN_ERR = 0,
