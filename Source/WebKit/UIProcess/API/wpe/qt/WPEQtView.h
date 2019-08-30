@@ -77,7 +77,7 @@ Q_SIGNALS:
     void webViewCreated();
     void urlChanged();
     void titleChanged();
-    void loadingChanged(WPEQtViewLoadRequest*);
+    void loadingChanged(WPEQtViewLoadRequest* loadRequest);
     void loadProgressChanged();
 
 protected:

@@ -16,5 +16,9 @@ Window {
         onTitleChanged: {
             main_window.title = title;
         }
+        onLoadingChanged: {
+            if (loadRequest.errorString)
+                console.log('WPEView error: ' + loadRequest.errorString)
+        }
     }
 }

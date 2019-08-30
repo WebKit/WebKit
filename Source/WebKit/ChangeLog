@@ -1,3 +1,13 @@
+2019-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][Qt] loadingChanged signal parameter is unusable
+        https://bugs.webkit.org/show_bug.cgi?id=201301
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/wpe/qt/WPEQtView.h: Explicitely name signal
+        parameter. It is a runtime requirement for QML.
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Remove HAVE_PASSKIT_GRANULAR_ERRORS conditional
