@@ -946,10 +946,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration._preventsAppSSO = true;
 #endif
 
-#if USE(CFNETWORK_AUTO_ADDED_HTTP_HEADER_SUPPRESSION)
     // Without this, CFNetwork would sometimes add a Content-Type header to our requests (rdar://problem/34748470).
     configuration._suppressedAutoAddedHTTPHeaders = [NSSet setWithObject:@"Content-Type"];
-#endif
 
     if (parameters.allowsCellularAccess == AllowsCellularAccess::No)
         configuration.allowsCellularAccess = NO;

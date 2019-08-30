@@ -192,9 +192,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if PLATFORM(IOS_FAMILY)
 @property (nullable, copy) NSString *_CTDataConnectionServiceType;
 #endif
-#if HAVE(CFNETWORK_WITH_AUTO_ADDED_HTTP_HEADER_SUPPRESSION_SUPPORT)
 @property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
-#endif
 #if PLATFORM(WATCHOS)
 @property NSURLSessionCompanionProxyPreference _companionProxyPreference;
 #endif
