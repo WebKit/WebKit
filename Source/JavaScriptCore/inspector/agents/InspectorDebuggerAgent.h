@@ -60,6 +60,7 @@ public:
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
+    virtual bool enabled() const { return m_enabled; }
 
     // DebuggerBackendDispatcherHandler
     void enable(ErrorString&) final;
@@ -132,6 +133,8 @@ public:
 
 protected:
     InspectorDebuggerAgent(AgentContext&);
+    virtual void enable();
+    virtual void disable(bool isBeingDestroyed);
 
     InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
@@ -140,9 +143,6 @@ protected:
 
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
-
-    virtual void enable();
-    virtual void disable(bool isBeingDestroyed);
 
     virtual String sourceMapURLForScript(const Script&);
 

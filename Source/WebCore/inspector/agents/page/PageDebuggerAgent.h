@@ -36,11 +36,7 @@
 namespace WebCore {
 
 class Document;
-class EventListener;
-class EventTarget;
 class Page;
-class RegisteredEventListener;
-class TimerBase;
 
 class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
@@ -48,6 +44,7 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
 public:
     PageDebuggerAgent(PageAgentContext&);
     virtual ~PageDebuggerAgent();
+    bool enabled() const final;
 
     // DebuggerBackendDispatcherHandler
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
@@ -63,13 +60,6 @@ public:
     void didRequestAnimationFrame(int callbackId, Document&);
     void willFireAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
-    void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    void willHandleEvent(const RegisteredEventListener&);
-    void didPostMessage(const TimerBase&, JSC::ExecState&);
-    void didFailPostMessage(const TimerBase&);
-    void willDispatchPostMessage(const TimerBase&);
-    void didDispatchPostMessage(const TimerBase&);
 
 private:
     void enable();
@@ -77,19 +67,12 @@ private:
 
     String sourceMapURLForScript(const Script&);
 
-    void didClearAsyncStackTraceData();
-
     void muteConsole();
     void unmuteConsole();
 
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId);
 
     Page& m_inspectedPage;
-
-    HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
-    HashMap<const TimerBase*, int> m_postMessageTimers;
-    int m_nextEventListenerIdentifier { 1 };
-    int m_nextPostMessageIdentifier { 1 };
 };
 
 } // namespace WebCore

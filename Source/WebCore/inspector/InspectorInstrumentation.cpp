@@ -63,6 +63,7 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "WebConsoleAgent.h"
+#include "WebDebuggerAgent.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebSocketFrame.h"
 #include <JavaScriptCore/ConsoleMessage.h>
@@ -110,9 +111,9 @@ static Frame* frameForScriptExecutionContext(ScriptExecutionContext& context)
 
 void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, DOMWrapperWorld& world)
 {
-    if (PageDebuggerAgent* debuggerAgent = instrumentingAgents.pageDebuggerAgent()) {
+    if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent()) {
         if (&world == &mainThreadNormalWorld() && frame.isMainFrame())
-            debuggerAgent->didClearMainFrameWindowObject();
+            pageDebuggerAgent->didClearMainFrameWindowObject();
     }
 
     if (PageRuntimeAgent* pageRuntimeAgent = instrumentingAgents.pageRuntimeAgent()) {
@@ -123,8 +124,8 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
 
 bool InspectorInstrumentation::isDebuggerPausedImpl(InstrumentingAgents& instrumentingAgents)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
-        return debuggerAgent->isPaused();
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        return webDebuggerAgent->isPaused();
     return false;
 }
 
@@ -313,8 +314,8 @@ void InspectorInstrumentation::willFetchImpl(InstrumentingAgents& instrumentingA
 
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext& context)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
-        debuggerAgent->didScheduleAsyncCall(context.execState(), InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId, singleShot);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didScheduleAsyncCall(context.execState(), InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId, singleShot);
 
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
         timelineAgent->didInstallTimer(timerId, timeout, singleShot, frameForScriptExecutionContext(context));
@@ -322,24 +323,24 @@ void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrume
 
 void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, ScriptExecutionContext& context)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
-        debuggerAgent->didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
         timelineAgent->didRemoveTimer(timerId, frameForScriptExecutionContext(context));
 }
 
 void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->didAddEventListener(target, eventType, listener, capture);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didAddEventListener(target, eventType, listener, capture);
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didAddEventListener(target);
 }
 
 void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->willRemoveEventListener(target, eventType, listener, capture);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->willRemoveEventListener(target, eventType, listener, capture);
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->willRemoveEventListener(target, eventType, listener, capture);
 }
@@ -353,26 +354,26 @@ bool InspectorInstrumentation::isEventListenerDisabledImpl(InstrumentingAgents& 
 
 void InspectorInstrumentation::didPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer, JSC::ExecState& state)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->didPostMessage(timer, state);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didPostMessage(timer, state);
 }
 
 void InspectorInstrumentation::didFailPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->didFailPostMessage(timer);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didFailPostMessage(timer);
 }
 
 void InspectorInstrumentation::willDispatchPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->willDispatchPostMessage(timer);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->willDispatchPostMessage(timer);
 }
 
 void InspectorInstrumentation::didDispatchPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->didDispatchPostMessage(timer);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didDispatchPostMessage(timer);
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents& instrumentingAgents, const String& scriptName, int scriptLine, int scriptColumn, ScriptExecutionContext* context)
@@ -405,8 +406,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
 
 void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrumentingAgents, Event& event, const RegisteredEventListener& listener)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->willHandleEvent(listener);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->willHandleEvent(listener);
 
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
         domDebuggerAgent->willHandleEvent(event, listener);
@@ -414,8 +415,8 @@ void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrume
 
 void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
-        debuggerAgent->didDispatchAsyncCall();
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didDispatchAsyncCall();
 
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
         domDebuggerAgent->didHandleEvent();
@@ -469,8 +470,8 @@ void InspectorInstrumentation::didEvaluateScriptImpl(const InspectorInstrumentat
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, bool oneShot, ScriptExecutionContext& context)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
-        debuggerAgent->willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
 
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
         domDebuggerAgent->willFireTimer(oneShot);
@@ -485,8 +486,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(Instr
 
 void InspectorInstrumentation::didFireTimerImpl(const InspectorInstrumentationCookie& cookie)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = cookie.instrumentingAgents()->inspectorDebuggerAgent())
-        debuggerAgent->didDispatchAsyncCall();
+    if (auto* webDebuggerAgent = cookie.instrumentingAgents()->webDebuggerAgent())
+        webDebuggerAgent->didDispatchAsyncCall();
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireTimer();
 }
@@ -671,8 +672,8 @@ void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents& instrumen
 
 void InspectorInstrumentation::scriptExecutionBlockedByCSPImpl(InstrumentingAgents& instrumentingAgents, const String& directiveText)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
-        debuggerAgent->scriptExecutionBlockedByCSP(directiveText);
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->scriptExecutionBlockedByCSP(directiveText);
 }
 
 void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
@@ -737,7 +738,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
         if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents.inspectorLayerTreeAgent())
             layerTreeAgent->reset();
 
-        if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+        if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
             pageDebuggerAgent->mainFrameNavigated();
 
         if (PageHeapAgent* pageHeapAgent = instrumentingAgents.pageHeapAgent())
@@ -777,7 +778,7 @@ void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents& 
 void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
     if (frame.isMainFrame()) {
-        if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+        if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
             pageDebuggerAgent->mainFrameStartedLoading();
         if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
             timelineAgent->mainFrameStartedLoading();
@@ -790,7 +791,7 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
 void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
     if (frame.isMainFrame()) {
-        if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+        if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
             pageDebuggerAgent->mainFrameStoppedLoading();
     }
 
@@ -845,9 +846,9 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->addMessageToConsole(WTFMove(message));
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent()) {
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))
-            debuggerAgent->handleConsoleAssert(messageText);
+            webDebuggerAgent->handleConsoleAssert(messageText);
     }
 }
 
@@ -1122,7 +1123,7 @@ bool InspectorInstrumentation::timelineAgentTracking(ScriptExecutionContext* scr
 
 void InspectorInstrumentation::didRequestAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+    if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->didRequestAnimationFrame(callbackId, document);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
         timelineAgent->didRequestAnimationFrame(callbackId, document.frame());
@@ -1130,7 +1131,7 @@ void InspectorInstrumentation::didRequestAnimationFrameImpl(InstrumentingAgents&
 
 void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+    if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->didCancelAnimationFrame(callbackId);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
         timelineAgent->didCancelAnimationFrame(callbackId, document.frame());
@@ -1138,7 +1139,7 @@ void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& 
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)
 {
-    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+    if (auto* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->willFireAnimationFrame(callbackId);
 
     if (auto* pageDOMDebuggerAgent = instrumentingAgents.pageDOMDebuggerAgent())
@@ -1154,8 +1155,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameI
 
 void InspectorInstrumentation::didFireAnimationFrameImpl(const InspectorInstrumentationCookie& cookie)
 {
-    if (InspectorDebuggerAgent* debuggerAgent = cookie.instrumentingAgents()->inspectorDebuggerAgent())
-        debuggerAgent->didDispatchAsyncCall();
+    if (auto* webDebuggerAgent = cookie.instrumentingAgents()->webDebuggerAgent())
+        webDebuggerAgent->didDispatchAsyncCall();
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireAnimationFrame();
 }

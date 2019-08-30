@@ -1,3 +1,82 @@
+2019-08-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: async event listener stack traces should be available in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=200903
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/worker/dom-debugger-event-interval-breakpoints.html
+               inspector/worker/dom-debugger-event-listener-breakpoints.html
+               inspector/worker/dom-debugger-event-timeout-breakpoints.html
+               inspector/worker/dom-debugger-url-breakpoints.html
+
+        * inspector/agents/WebDebuggerAgent.h:
+        * inspector/agents/WebDebuggerAgent.cpp:
+        (WebCore::WebDebuggerAgent::enabled const): Added.
+        (WebCore::WebDebuggerAgent::enable):
+        (WebCore::WebDebuggerAgent::disable):
+        (WebCore::WebDebuggerAgent::didAddEventListener): Added.
+        (WebCore::WebDebuggerAgent::willRemoveEventListener): Added.
+        (WebCore::WebDebuggerAgent::willHandleEvent): Added.
+        (WebCore::WebDebuggerAgent::didPostMessage): Added.
+        (WebCore::WebDebuggerAgent::didFailPostMessage): Added.
+        (WebCore::WebDebuggerAgent::willDispatchPostMessage): Added.
+        (WebCore::WebDebuggerAgent::didDispatchPostMessage): Added.
+        (WebCore::WebDebuggerAgent::didClearAsyncStackTraceData): Added.
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::enabled const): Added.
+        (WebCore::PageDebuggerAgent::enable):
+        (WebCore::PageDebuggerAgent::disable):
+        (WebCore::PageDebuggerAgent::didClearAsyncStackTraceData): Deleted.
+        (WebCore::PageDebuggerAgent::didAddEventListener): Deleted.
+        (WebCore::PageDebuggerAgent::willRemoveEventListener): Deleted.
+        (WebCore::PageDebuggerAgent::willHandleEvent): Deleted.
+        (WebCore::PageDebuggerAgent::didPostMessage): Deleted.
+        (WebCore::PageDebuggerAgent::didFailPostMessage): Deleted.
+        (WebCore::PageDebuggerAgent::willDispatchPostMessage): Deleted.
+        (WebCore::PageDebuggerAgent::didDispatchPostMessage): Deleted.
+        Move various `InspectorInstrumentation` calls from `PageDebuggerAgent` to `WebDebuggerAgent`
+        so that `WorkerDebuggerAgent` also inherits them.
+
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::webDebuggerAgent const): Added.
+        (WebCore::InstrumentingAgents::setWebDebuggerAgent): Added.
+        (WebCore::InstrumentingAgents::inspectorDebuggerAgent const): Deleted.
+        (WebCore::InstrumentingAgents::setInspectorDebuggerAgent): Deleted.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::mainFrameStartedLoading):
+        (WebCore::InspectorTimelineAgent::startProgrammaticCapture):
+        (WebCore::InspectorTimelineAgent::stopProgrammaticCapture):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::isDebuggerPausedImpl):
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::didAddEventListenerImpl):
+        (WebCore::InspectorInstrumentation::willRemoveEventListenerImpl):
+        (WebCore::InspectorInstrumentation::didPostMessageImpl):
+        (WebCore::InspectorInstrumentation::didFailPostMessageImpl):
+        (WebCore::InspectorInstrumentation::willDispatchPostMessageImpl):
+        (WebCore::InspectorInstrumentation::didDispatchPostMessageImpl):
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didHandleEventImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didFireTimerImpl):
+        (WebCore::InspectorInstrumentation::scriptExecutionBlockedByCSPImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::frameStartedLoadingImpl):
+        (WebCore::InspectorInstrumentation::frameStoppedLoadingImpl):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrameImpl):
+        Replace `inspectorDebuggerAgent` with `webDebuggerAgent` so the right instrumentation hooks
+        are available.
+
 2019-08-29  Chris Dumez  <cdumez@apple.com>
 
         Add "IsolatedCopy" in the name of String getters that call isolatedCopy() on the string

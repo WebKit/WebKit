@@ -9,5 +9,8 @@ PASS: Pause data eventName should have been "custom".
 CALL STACK:
 0: [F] handler
 1: [F] triggerListener
-2: [F] onmessage
+2: [F] handleMessage
+ASYNC CALL STACK:
+3: --- addEventListener ---
+4: [P] Global Code
 

@@ -79,14 +79,12 @@ void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendRouter*, Backen
 
 void InspectorDebuggerAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    disable(reason == DisconnectReason::InspectedTargetDestroyed);
+    if (enabled())
+        disable(reason == DisconnectReason::InspectedTargetDestroyed);
 }
 
 void InspectorDebuggerAgent::enable()
 {
-    if (m_enabled)
-        return;
-
     m_enabled = true;
 
     m_scriptDebugServer.addListener(this);
@@ -97,9 +95,6 @@ void InspectorDebuggerAgent::enable()
 
 void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
 {
-    if (!m_enabled)
-        return;
-
     for (auto* listener : copyToVector(m_listeners))
         listener->debuggerWasDisabled();
 
@@ -120,8 +115,13 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     m_enabled = false;
 }
 
-void InspectorDebuggerAgent::enable(ErrorString&)
+void InspectorDebuggerAgent::enable(ErrorString& errorString)
 {
+    if (enabled()) {
+        errorString = "Debugger domain already enabled"_s;
+        return;
+    }
+
     enable();
 }
 

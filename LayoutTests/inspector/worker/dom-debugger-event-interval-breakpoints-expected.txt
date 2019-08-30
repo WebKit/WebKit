@@ -10,5 +10,7 @@ CALL STACK:
 ASYNC CALL STACK:
 1: --- setInterval ---
 2: [F] triggerInterval
-3: [F] onmessage
+3: [F] handleMessage
+4: --- addEventListener ---
+5: [P] Global Code
 

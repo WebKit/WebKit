@@ -30,7 +30,11 @@
 
 namespace WebCore {
 
+class EventListener;
+class EventTarget;
 class InstrumentingAgents;
+class RegisteredEventListener;
+class TimerBase;
 typedef String ErrorString;
 
 class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
@@ -38,14 +42,31 @@ class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebDebuggerAgent();
+    bool enabled() const override;
+
+    // InspectorInstrumentation
+    void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    void willHandleEvent(const RegisteredEventListener&);
+    void didPostMessage(const TimerBase&, JSC::ExecState&);
+    void didFailPostMessage(const TimerBase&);
+    void willDispatchPostMessage(const TimerBase&);
+    void didDispatchPostMessage(const TimerBase&);
 
 protected:
     WebDebuggerAgent(WebAgentContext&);
-
     void enable() override;
     void disable(bool isBeingDestroyed) override;
 
+    void didClearAsyncStackTraceData() final;
+
     InstrumentingAgents& m_instrumentingAgents;
+
+private:
+    HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
+    HashMap<const TimerBase*, int> m_postMessageTimers;
+    int m_nextEventListenerIdentifier { 1 };
+    int m_nextPostMessageIdentifier { 1 };
 };
 
 } // namespace WebCore

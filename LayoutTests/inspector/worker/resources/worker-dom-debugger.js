@@ -27,6 +27,6 @@ addEventListener("custom", function handler(event) {
     console.log("listener fired");
 });
 
-onmessage = function(event) {
+addEventListener("message", function handleMessage(event) {
     functions[event.data]();
-}
+});

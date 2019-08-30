@@ -9,7 +9,10 @@ PASS: Pause data URL should include "Fetch".
 CALL STACK:
 0: [F] loadResourceFetch
 1: [F] triggerFetch
-2: [F] onmessage
+2: [F] handleMessage
+ASYNC CALL STACK:
+3: --- addEventListener ---
+4: [P] Global Code
 
 -- Running test case: Worker.DOMDebugger.URLBreakpoint.XHR
 PASS: Should have paused.
@@ -18,5 +21,8 @@ PASS: Pause data URL should include "XHR".
 CALL STACK:
 0: [F] loadResourceXHR
 1: [F] triggerXHR
-2: [F] onmessage
+2: [F] handleMessage
+ASYNC CALL STACK:
+3: --- addEventListener ---
+4: [P] Global Code
 
