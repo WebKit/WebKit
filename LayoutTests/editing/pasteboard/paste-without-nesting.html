@@ -40,6 +40,7 @@ testCopyPaste("div", "<div>Hello</div><div>world</div>", "<div>Hello</div><div>w
 testCopyPaste("div", "<div><div>Hello</div><div>world</div></div>", "<div>Hello</div><div>world</div>");
 testCopyPaste("div", "<div><b><i>Hello</i></b></div><div><b><i>world</i></b></div>", "<div><b><i>Hello</i></b></div><div><b><i>world</i></b></div>");
 testCopyPaste("div", "<div style=\"text-align: center;\"><div><font color=\"#ff0000\"><b><i>hello</i></b></font></div><div><font color=\"#ff0000\"><b><i>world</i></b></font></div></div>", "<div style=\"text-align: center;\"><div><font color=\"#ff0000\"><b><i>hello</i></b></font></div><div><font color=\"#ff0000\"><b><i>world</i></b></font></div></div>");
+testCopyPaste("div", "<p>Line One</p>&#10;<p>Line Two</p>", "<p>Line One</p><p>Line Two</p>");
 
 root.style.display = "none";
 
