@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,10 @@ public:
 #if USE(UNIX_DOMAIN_SOCKETS)
         IPC::Attachment releaseAttachment() const;
         void adoptAttachment(IPC::Attachment&&);
+#endif
+#if OS(WINDOWS)
+        static void encodeHandle(IPC::Encoder&, HANDLE);
+        static Optional<HANDLE> decodeHandle(IPC::Decoder&);
 #endif
     private:
         friend class SharedMemory;

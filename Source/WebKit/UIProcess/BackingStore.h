@@ -36,6 +36,9 @@
 
 #if USE(DIRECT2D)
 interface ID2D1RenderTarget;
+interface ID3D11Device1;
+interface ID3D11DeviceContext1;
+interface ID3D11Texture2D;
 #endif
 
 namespace WebKit {
@@ -58,11 +61,11 @@ public:
 #if USE(CAIRO)
     typedef cairo_t* PlatformGraphicsContext;
 #elif USE(DIRECT2D)
-    struct GdiConnections {
-        HWND hwnd;
-        HDC hdc;
+    struct DXConnections {
+        ID3D11DeviceContext1* immediateContext { nullptr };
+        ID3D11Texture2D* backBuffer { nullptr };
     };
-    typedef GdiConnections PlatformGraphicsContext;
+    typedef DXConnections PlatformGraphicsContext;
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);

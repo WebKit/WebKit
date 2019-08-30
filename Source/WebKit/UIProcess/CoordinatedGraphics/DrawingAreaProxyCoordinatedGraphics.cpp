@@ -48,6 +48,7 @@
 
 #if USE(DIRECT2D)
 #include <d2d1.h>
+#include <d3d11_1.h>
 #endif
 
 namespace WebKit {

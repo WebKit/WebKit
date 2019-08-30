@@ -34,6 +34,7 @@
 #include "WebView.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+#include <d3d11_1.h>
 
 namespace WebKit {
 using namespace WebCore;

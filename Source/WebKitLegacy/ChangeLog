@@ -1,3 +1,12 @@
+2019-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Use DirectX SharedResource as basis for SharedBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=201157
+
+        Reviewed by Alex Christensen.
+
+        * PlatformFTW.cmake: Link to DirectX to avoid build failure.
+
 2019-08-19  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDB-specific quota

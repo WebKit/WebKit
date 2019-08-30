@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,10 @@
 #include "PageClientImpl.h"
 #include <WebCore/SearchPopupMenuDB.h>
 #include <WebCore/UserAgent.h>
+
+#if USE(DIRECT2D)
+#include <d3d11_1.h>
+#endif
 
 namespace WebKit {
 
@@ -69,6 +73,18 @@ PlatformViewWidget WebPageProxy::viewWidget()
 {
     return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }
+
+#if USE(DIRECT2D)
+ID3D11Device1* WebPageProxy::device() const
+{
+    return m_device.get();
+}
+
+void WebPageProxy::setDevice(ID3D11Device1* device)
+{
+    m_device = device;
+}
+#endif
 
 
 } // namespace WebKit

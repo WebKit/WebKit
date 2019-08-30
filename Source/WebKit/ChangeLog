@@ -1,3 +1,72 @@
+2019-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Use DirectX SharedResource as basis for SharedBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=201157
+
+        Reviewed by Alex Christensen.
+
+        Currently an ID2D1Bitmap is used as the backing store for the SharedBitmap that is the
+        base type for sharing data between the WebContent Process and the UIProcess. However, this
+        involves moving GPU memory to local memory, copying that memory into the SharedMemory member
+        of the SharedBitmap, then building a new GPU bitmap on the UIProcess side from that SharedMemory.
+
+        Profiling indicates that this is the single largest place FTW WebKit spends its time.
+
+        Instead, we should use Direct2D's ability to render to an IDXGISurface, which can be shared
+        between multiple processes. This should avoid the GPU->CPU copy, the Direct2D-allocated
+        CPU->Shared Memory copy, and the shared memory to GPU copy.
+
+        Reviewed by Alex Christensen.
+
+        * Platform/SharedMemory.h:
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::encodeHandle): Added.
+        (WebKit::SharedMemory::Handle::encode const): Use new helper function.
+        (WebKit::SharedMemory::Handle::decodeHandle): Added.
+        (WebKit::SharedMemory::Handle::decode): Use new helper function.
+        * PlatformFTW.cmake: Add D3X11 libraries.
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Configuration::encode const): Encode shared resource handle for DX texture.
+        (WebKit::ShareableBitmap::Configuration::decode): Ditto (but decode).
+        (WebKit::ShareableBitmap::ShareableBitmap): Create SharedResource (if needed).
+        (WebKit::ShareableBitmap::~ShareableBitmap): Add cleanup code for SharedResoure.
+        (WebKit::ShareableBitmap::numBytesForSize): Only allocate a small memory store when using GPU textures.
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::dxSurface):
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::createSharedResource): Added.
+        (WebKit::ShareableBitmap::disposeSharedResource): Added.
+        (WebKit::ShareableBitmap::leakSharedResource): Added.
+        (WebKit::ShareableBitmap::createGraphicsContext): Update for new data types.
+        (WebKit::ShareableBitmap::paint): Ditto.
+        (WebKit::ShareableBitmap::createDirect2DSurface): Update for new data types.
+        (WebKit::ShareableBitmap::createImage): Ditto.
+        (WebKit::createSurfaceFromData): Deleted.
+        (WebKit::ShareableBitmap::sync): Deleted.
+        * UIProcess/BackingStore.cpp:
+        * UIProcess/BackingStore.h:
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/BackingStoreDirect2D.cpp:
+        (WebKit::BackingStore::createBackend):
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::incorporateUpdate):
+        * UIProcess/win/PageClientImpl.cpp:
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::device const):
+        (WebKit::WebPageProxy::setDevice):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Initialize DirectX stuff.
+        (WebKit::WebView::paint): Use new DiretX drawing logic.
+        (WebKit::WebView::onSizeEvent): Update SwapChain's buffer sizes when resizing.
+        (WebKit::WebView::setupSwapChain): Added.
+        (WebKit::WebView::configureBackingStore): Added.
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::d3dDevice):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::display):
+
 2019-08-30  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Bump the WebPage's identifier every time we process-swap

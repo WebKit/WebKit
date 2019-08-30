@@ -34,7 +34,9 @@
 
 interface ID2D1Bitmap;
 interface ID2D1BitmapBrush;
-interface ID2D1DCRenderTarget;
+interface ID2D1RenderTarget;
+interface ID3D11Device1;
+interface IDXGISurface1;
 
 namespace WebCore {
 
@@ -44,20 +46,24 @@ class BackingStoreBackendDirect2D {
 public:
     virtual ~BackingStoreBackendDirect2D() = default;
 
-    ID2D1DCRenderTarget* renderTarget() const { return m_renderTarget.get(); }
+    ID2D1RenderTarget* renderTarget() const { return m_renderTarget.get(); }
     ID2D1Bitmap* surface() const { return m_surface.get(); }
+    IDXGISurface1* dxSurface() const { return m_dxSurface.get(); }
     const IntSize& size() const { return m_size; }
 
     virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
     virtual ID2D1BitmapBrush* bitmapBrush() = 0;
 
 protected:
-    BackingStoreBackendDirect2D(const IntSize& size)
-        : m_size(size)
+    BackingStoreBackendDirect2D(const IntSize& size, ID3D11Device1* device)
+        : m_device(device)
+        , m_size(size)
     {
     }
 
-    COMPtr<ID2D1DCRenderTarget> m_renderTarget;
+    COMPtr<ID3D11Device1> m_device;
+    COMPtr<ID2D1RenderTarget> m_renderTarget;
+    COMPtr<IDXGISurface1> m_dxSurface;
     COMPtr<ID2D1Bitmap> m_surface;
     IntSize m_size;
 };

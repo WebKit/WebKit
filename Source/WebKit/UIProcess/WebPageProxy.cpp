@@ -250,6 +250,10 @@
 #include "SOAuthorizationCoordinator.h"
 #endif
 
+#if USE(DIRECT2D)
+#include <d3d11_1.h>
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 

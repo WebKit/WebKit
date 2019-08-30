@@ -35,33 +35,32 @@
 #include <WebCore/GraphicsContextImplDirect2D.h>
 #include <WebCore/PlatformContextDirect2D.h>
 #include <d2d1.h>
+#include <d3d11_1.h>
+#include <dxgi.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 std::unique_ptr<BackingStoreBackendDirect2D> BackingStore::createBackend()
 {
-    return makeUnique<BackingStoreBackendDirect2DImpl>(m_size, m_deviceScaleFactor);
+    return makeUnique<BackingStoreBackendDirect2DImpl>(m_size, m_deviceScaleFactor, m_webPageProxy.device());
 }
 
-void BackingStore::paint(GdiConnections gdiConnections, const IntRect& rect)
+void BackingStore::paint(DXConnections dxConnections, const IntRect& rect)
 {
     ASSERT(m_backend);
     ASSERT(m_backend->size() == m_size);
 
-    auto* renderTarget = m_backend->renderTarget();
+    COMPtr<ID3D11Resource> backBuffer;
+    HRESULT hr = dxConnections.backBuffer->QueryInterface(__uuidof(ID3D11Resource), reinterpret_cast<void**>(&backBuffer));
+    RELEASE_ASSERT(SUCCEEDED(hr));
 
-    RECT viewRect;
-    ::GetClientRect(gdiConnections.hwnd, &viewRect);
-    renderTarget->BindDC(gdiConnections.hdc, &viewRect);
+    COMPtr<ID3D11Resource> backingStore;
+    hr = m_backend->dxSurface()->QueryInterface(__uuidof(ID3D11Resource), reinterpret_cast<void**>(&backingStore));
+    RELEASE_ASSERT(SUCCEEDED(hr));
 
-    D2D1_RECT_F destRect = rect;
-
-    if (auto* patternBrush = m_backend->bitmapBrush()) {
-        renderTarget->BeginDraw();
-        renderTarget->FillRectangle(&destRect, patternBrush);
-        renderTarget->EndDraw();
-    }
+    CD3D11_BOX srcBox(rect.x(), rect.y(), 0, rect.x() + rect.width(), rect.y() + rect.height(), 1);
+    dxConnections.immediateContext->CopySubresourceRegion1(backBuffer.get(), 0, rect.x(), rect.y(), 0, backingStore.get(), 0, &srcBox, D3D11_COPY_DISCARD);
 }
 
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
@@ -73,7 +72,9 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 
     IntPoint updateRectBoundsLocation = updateInfo.updateRectBounds.location();
 
-    COMPtr<ID2D1Bitmap> deviceUpdateBitmap = bitmap->createDirect2DSurface(m_backend->renderTarget());
+    COMPtr<ID2D1Bitmap> deviceUpdateBitmap = bitmap->createDirect2DSurface(m_webPageProxy.device(), m_backend->renderTarget());
+    if (!deviceUpdateBitmap)
+        return;
 
 #ifndef _NDEBUG
     auto deviceBitmapSize = deviceUpdateBitmap->GetPixelSize();

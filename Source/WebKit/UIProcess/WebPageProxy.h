@@ -152,6 +152,10 @@ class MediaSessionMetadata;
 }
 #endif
 
+#if USE(DIRECT2D)
+interface ID3D11Device1;
+#endif
+
 namespace API {
 class Attachment;
 class ContextMenuClient;
@@ -817,6 +821,10 @@ public:
 
 #if PLATFORM(WIN)
     PlatformViewWidget viewWidget();
+#if USE(DIRECT2D)
+    ID3D11Device1* device() const;
+    void setDevice(ID3D11Device1*);
+#endif
 #endif
 #if PLATFORM(WPE)
     struct wpe_view_backend* viewBackend();
@@ -2554,6 +2562,9 @@ private:
         CompletionHandler<void()> speakingResumedCompletionHandler;
     };
     Optional<SpeechSynthesisData> m_speechSynthesisData;
+#endif
+#if USE(DIRECT2D)
+    COMPtr<ID3D11Device1> m_device;
 #endif
     bool m_isQuotaIncreaseDenied { false };
 };

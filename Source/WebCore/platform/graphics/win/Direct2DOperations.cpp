@@ -406,7 +406,6 @@ void fillRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, c
     auto context = platformContext.renderTarget();
 
     context->SetTags(1, __LINE__);
-    PlatformContextStateSaver stateSaver(platformContext);
     Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, rect, &fillSource](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, fillSource.brush.get());
@@ -423,7 +422,6 @@ void fillRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, c
     auto context = platformContext.renderTarget();
 
     context->SetTags(1, __LINE__);
-    PlatformContextStateSaver stateSaver(platformContext);
     Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, color, rect](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, platformContext.brushWithColor(color).get());
@@ -446,7 +444,6 @@ void fillRoundedRect(PlatformContextDirect2D& platformContext, const FloatRounde
     bool equalHeights = (radii.topLeft().height() == radii.bottomLeft().height() && radii.bottomLeft().height() == radii.topRight().height() && radii.topRight().height() == radii.bottomRight().height());
     bool hasCustomFill = false; // FIXME: Why isn't a FillSource passed to this function?
     if (!hasCustomFill && equalWidths && equalHeights && radii.topLeft().width() * 2 == r.width() && radii.topLeft().height() * 2 == r.height()) {
-        PlatformContextStateSaver stateSaver(platformContext);
         Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, color, rect, radii, r](ID2D1RenderTarget* renderTarget) {
             auto roundedRect = D2D1::RoundedRect(r, radii.topLeft().width(), radii.topLeft().height());
             renderTarget->FillRoundedRectangle(&roundedRect, platformContext.brushWithColor(color).get());
@@ -457,7 +454,6 @@ void fillRoundedRect(PlatformContextDirect2D& platformContext, const FloatRounde
         else
             drawWithoutShadow(platformContext, r, drawFunction);
     } else {
-        PlatformContextStateSaver stateSaver(platformContext);
         Path path;
         path.addRoundedRect(rect);
         fillPath(platformContext, path, color, shadowState);
@@ -489,7 +485,6 @@ void fillRectWithGradient(PlatformContextDirect2D& platformContext, const FloatR
     auto context = platformContext.renderTarget();
 
     context->SetTags(1, __LINE__);
-    PlatformContextStateSaver stateSaver(platformContext);
     Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, rect, &gradient](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, gradient);
@@ -505,8 +500,6 @@ void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const 
         // ignore the return value.
         path.activePath()->Close();
     }
-
-    PlatformContextStateSaver stateSaver(platformContext);
 
     auto context = platformContext.renderTarget();
 
@@ -574,7 +567,6 @@ void strokePath(PlatformContextDirect2D& platformContext, const Path& path, cons
     
     context->SetTags(1, __LINE__);
 
-    PlatformContextStateSaver stateSaver(platformContext);
     auto boundingRect = path.fastBoundingRect();
     Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, &path, &strokeSource](ID2D1RenderTarget* renderTarget) {
         renderTarget->DrawGeometry(path.platformPath(), strokeSource.brush.get(), strokeSource.thickness, platformContext.strokeStyle());
@@ -766,7 +758,7 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* imag
 {
     auto bitmapSize = image->GetSize();
 
-    float currHeight = orientation.usesWidthAsHeight() ? bitmapSize.width : bitmapSize.height;
+    float currHeight = options.orientation().usesWidthAsHeight() ? bitmapSize.width : bitmapSize.height;
     if (currHeight <= srcRect.y())
         return;
 

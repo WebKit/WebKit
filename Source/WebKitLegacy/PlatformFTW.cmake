@@ -8,6 +8,8 @@ list(APPEND WebKitLegacy_SOURCES_Classes
 )
 list(APPEND WebKitLegacy_LIBRARIES
     ${OPENSSL_LIBRARIES}
+    PRIVATE D3D11.lib
+    PRIVATE Dxgi.lib
     PRIVATE mfuuid.lib
     PRIVATE strmiids.lib
     PRIVATE ${LIBXML2_LIBRARIES}

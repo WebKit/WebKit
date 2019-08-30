@@ -283,17 +283,17 @@ ImageDrawResult GraphicsContextImplDirect2D::drawTiledImage(Image& image, const 
     return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
 }
 
-void GraphicsContextImplDirect2D::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContextImplDirect2D::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     auto& state = graphicsContext().state();
-    Direct2D::drawNativeImage(m_platformContext, image.get(), imageSize, destRect, srcRect, compositeOperator, blendMode, orientation, state.imageInterpolationQuality, state.alpha, Direct2D::ShadowState(state));
+    Direct2D::drawNativeImage(m_platformContext, image.get(), imageSize, destRect, srcRect, options, state.alpha, Direct2D::ShadowState(state));
 }
 
-void GraphicsContextImplDirect2D::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, CompositeOperator compositeOperator, BlendMode blendMode)
+void GraphicsContextImplDirect2D::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)
 {
     auto* context = &graphicsContext();
     if (auto surface = image.nativeImageForCurrentFrame(context))
-        Direct2D::drawPattern(m_platformContext, WTFMove(surface), IntSize(image.size()), destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
+        Direct2D::drawPattern(m_platformContext, WTFMove(surface), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options.compositeOperator(), options.blendMode());
 }
 
 void GraphicsContextImplDirect2D::drawRect(const FloatRect& rect, float borderThickness)

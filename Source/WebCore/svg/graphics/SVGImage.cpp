@@ -247,7 +247,7 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     PlatformContextDirect2D platformContext(nativeImageTarget.get());
     GraphicsContext localContext(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
-    draw(localContext, rect(), rect(), CompositeSourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None);
+    draw(localContext, rect(), rect(), { CompositeSourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None });
 
     COMPtr<ID2D1Bitmap> nativeImage;
     HRESULT hr = nativeImageTarget->GetBitmap(&nativeImage);

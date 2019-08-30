@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,17 @@
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+
+#if USE(DIRECT2D)
+interface ID3D11Device1;
+interface ID3D11DeviceContext1;
+interface ID3D11RenderTargetView;
+interface IDXGISwapChain;
+#endif
+
+namespace WebCore {
+class IntSize;
+}
 
 namespace WebKit {
 
@@ -71,6 +82,10 @@ public:
     WebPageProxy* page() const { return m_page.get(); }
 
     DrawingAreaProxy* drawingArea() { return page() ? page()->drawingArea() : nullptr; }
+
+#if USE(DIRECT2D)
+    ID3D11Device1* d3dDevice() { return m_d3dDevice.get(); }
+#endif
 
 private:
     WebView(RECT, const API::PageConfiguration&, HWND parentWindow);
@@ -128,6 +143,11 @@ private:
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
+#if USE(DIRECT2D)
+    void setupSwapChain(const WebCore::IntSize&);
+    void configureBackingStore(const WebCore::IntSize&);
+#endif
+
     HWND m_window { nullptr };
     HWND m_topLevelParentWindow { nullptr };
     HWND m_toolTipWindow { nullptr };
@@ -147,6 +167,12 @@ private:
 
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;
+#if USE(DIRECT2D)
+    COMPtr<ID3D11Device1> m_d3dDevice;
+    COMPtr<ID3D11DeviceContext1> m_immediateContext;
+    COMPtr<ID3D11RenderTargetView> m_renderTargetView; 
+    COMPtr<IDXGISwapChain> m_swapChain;
+#endif
 };
 
 } // namespace WebKit

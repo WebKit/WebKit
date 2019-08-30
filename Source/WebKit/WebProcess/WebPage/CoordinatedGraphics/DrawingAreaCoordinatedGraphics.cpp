@@ -45,6 +45,7 @@
 #include <WebCore/GraphicsContextImplDirect2D.h>
 #include <WebCore/PlatformContextDirect2D.h>
 #include <d2d1.h>
+#include <d3d11_1.h>
 #endif
 
 
@@ -760,8 +761,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     }
 
 #if USE(DIRECT2D)
-    if (graphicsContext)
-        bitmap->sync(*graphicsContext);
+    bitmap->leakSharedResource(); // It will be destroyed in the UIProcess.
 #endif
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them

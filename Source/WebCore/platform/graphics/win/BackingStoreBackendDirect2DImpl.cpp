@@ -34,24 +34,29 @@
 #include "ImageDecoderDirect2D.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include <d3d11_1.h>
 #include <wincodec.h>
 
 namespace WebCore {
 
 static const Seconds scrollHysteresisDuration { 300_ms };
 
-BackingStoreBackendDirect2DImpl::BackingStoreBackendDirect2DImpl(const IntSize& size, float deviceScaleFactor)
-    : BackingStoreBackendDirect2D(size)
+BackingStoreBackendDirect2DImpl::BackingStoreBackendDirect2DImpl(const IntSize& size, float deviceScaleFactor, ID3D11Device1* device)
+    : BackingStoreBackendDirect2D(size, device)
     , m_scrolledHysteresis([this](PAL::HysteresisState state) {
         if (state == PAL::HysteresisState::Stopped)
             m_scrollSurface = nullptr;
         }, scrollHysteresisDuration)
 {
-    m_renderTarget = WebCore::Direct2D::createGDIRenderTarget();
-
     IntSize scaledSize = m_size;
     scaledSize.scale(deviceScaleFactor);
-    m_surface = Direct2D::createBitmap(m_renderTarget.get(), scaledSize);
+
+    m_dxSurface = WebCore::Direct2D::createDXGISurfaceOfSize(scaledSize, m_device.get(), false);
+    m_renderTarget = WebCore::Direct2D::createSurfaceRenderTarget(m_dxSurface.get());
+
+    auto bitmapProperties = Direct2D::bitmapProperties();
+    HRESULT hr = m_renderTarget->CreateSharedBitmap(__uuidof(IDXGISurface1), reinterpret_cast<void*>(m_dxSurface.get()), &bitmapProperties, &m_surface);
+    RELEASE_ASSERT(SUCCEEDED(hr));
 }
 
 BackingStoreBackendDirect2DImpl::~BackingStoreBackendDirect2DImpl()
@@ -70,7 +75,12 @@ void BackingStoreBackendDirect2DImpl::scroll(const IntRect& scrollRect, const In
         ASSERT(m_size.height() >= scrollRect.size().height());
 #endif
         m_scrollSurfaceSize = sourceRect.size();
-        m_scrollSurface = Direct2D::createBitmap(m_renderTarget.get(), m_scrollSurfaceSize);
+        m_dxScrollSurface = WebCore::Direct2D::createDXGISurfaceOfSize(m_scrollSurfaceSize, m_device.get(), false);
+
+        m_scrollSurface = nullptr;
+        auto bitmapProperties = Direct2D::bitmapProperties();
+        HRESULT hr = m_renderTarget->CreateSharedBitmap(__uuidof(IDXGISurface1), reinterpret_cast<void*>(m_dxScrollSurface.get()), &bitmapProperties, &m_scrollSurface);
+        RELEASE_ASSERT(SUCCEEDED(hr));
     }
 
     auto sourceRectLocation = IntSize(sourceRect.x(), sourceRect.y());

@@ -38,6 +38,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include <d2d1_1.h>
+#include <d3d11_1.h>
 #include <shlwapi.h>
 #include <wincodec.h>
 
@@ -45,6 +46,9 @@
 namespace WebCore {
 
 namespace Direct2D {
+
+constexpr DXGI_FORMAT webkitTextureFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+constexpr D2D1_ALPHA_MODE webkitAlphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
 
 IntSize bitmapSize(IWICBitmapSource* bitmapSource)
 {
@@ -140,7 +144,7 @@ D2D1_PIXEL_FORMAT pixelFormatForSoftwareManipulation()
 D2D1_PIXEL_FORMAT pixelFormat()
 {
     // Since we need to interact with HDC from time-to-time, we are forced to use DXGI_FORMAT_B8G8R8A8_UNORM and D2D1_ALPHA_MODE_PREMULTIPLIED
-    return D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+    return D2D1::PixelFormat(webkitTextureFormat, webkitAlphaMode);
 }
 
 GUID wicBitmapFormat()
@@ -228,6 +232,53 @@ COMPtr<ID2D1BitmapRenderTarget> createBitmapRenderTargetOfSize(const IntSize& si
     return bitmapContext;
 }
 
+COMPtr<IDXGISurface1> createDXGISurfaceOfSize(const IntSize& size, ID3D11Device1* directXDevice, bool crossProcess)
+{
+    if (!directXDevice)
+        directXDevice = Direct2D::defaultDirectXDevice();
+
+    // Create the render target texture
+    D3D11_TEXTURE2D_DESC desc;
+    ZeroMemory(&desc, sizeof(desc));
+    desc.Width = size.width();
+    desc.Height = size.height();
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = webkitTextureFormat;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+    if (crossProcess)
+        desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED_NTHANDLE | D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;
+
+    COMPtr<ID3D11Texture2D> texture;
+    HRESULT hr = directXDevice->CreateTexture2D(&desc, nullptr, &texture);
+    RELEASE_ASSERT(SUCCEEDED(hr));
+
+    COMPtr<IDXGISurface1> surface;
+    hr = texture->QueryInterface(&surface);
+    RELEASE_ASSERT(SUCCEEDED(hr));
+
+    return surface;
+}
+
+COMPtr<ID2D1RenderTarget> createSurfaceRenderTarget(IDXGISurface1* surface)
+{
+    auto pixelFormat = D2D1::PixelFormat(webkitTextureFormat, webkitAlphaMode);
+
+    auto properties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+        pixelFormat, 0, 0, D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE, D2D1_FEATURE_LEVEL_10);
+
+    COMPtr<ID2D1RenderTarget> renderTarget;
+    HRESULT hr = GraphicsContext::systemFactory()->CreateDxgiSurfaceRenderTarget(surface, properties, &renderTarget);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return renderTarget;
+}
+
 void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset)
 {
     IntSize sourceBitmapSize = from->GetPixelSize();
@@ -297,6 +348,101 @@ void writeDiagnosticPNGToPath(ID2D1RenderTarget* renderTarget, ID2D1Bitmap* bitm
 
     hr = stream->Commit(STGC_DEFAULT);
     ASSERT(SUCCEEDED(hr));
+}
+
+static ID3D11DeviceContext1* immediateContext = nullptr;
+
+ID3D11DeviceContext1* dxgiImmediateContext()
+{
+    if (!immediateContext)
+        defaultDirectXDevice();
+
+    RELEASE_ASSERT(immediateContext);
+    return immediateContext;
+}
+
+ID3D11Device1* defaultDirectXDevice()
+{
+    static ID3D11Device1* defaultDevice1 = nullptr;
+
+    if (!defaultDevice1) {
+        int deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifndef NDEBUG
+        deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+        ID3D11Device* defaultDevice = nullptr;
+        D3D_FEATURE_LEVEL featureLevel = { };
+        ID3D11DeviceContext* immediateDeviceContext = nullptr;
+        HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlags, nullptr, 0, D3D11_SDK_VERSION, &defaultDevice, &featureLevel, &immediateDeviceContext);
+        RELEASE_ASSERT(SUCCEEDED(hr));
+
+        hr = defaultDevice->QueryInterface(&defaultDevice1);
+        RELEASE_ASSERT(SUCCEEDED(hr));
+        defaultDevice1->AddRef();
+
+        hr = immediateDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&immediateContext));
+        RELEASE_ASSERT(SUCCEEDED(hr));
+        immediateContext->AddRef();
+    }
+
+    return defaultDevice1;
+}
+
+bool createDeviceAndContext(COMPtr<ID3D11Device1>& d3dDevice, COMPtr<ID3D11DeviceContext1>& immediateContext)
+{
+    int deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifndef NDEBUG
+    deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+    D3D_FEATURE_LEVEL featureLevel = { };
+    ID3D11Device* defaultDevice = nullptr;
+    ID3D11DeviceContext* immediateDeviceContext = nullptr;
+    HRESULT hr = ::D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlags, nullptr, 0, D3D11_SDK_VERSION, &defaultDevice, &featureLevel, &immediateDeviceContext);
+    RELEASE_ASSERT(SUCCEEDED(hr));
+
+    hr = defaultDevice->QueryInterface(&d3dDevice);
+    RELEASE_ASSERT(SUCCEEDED(hr));
+    defaultDevice->Release();
+
+    hr = immediateDeviceContext->QueryInterface(&immediateContext);
+    RELEASE_ASSERT(SUCCEEDED(hr));
+    immediateContext->Release();
+    return true;
+}
+
+COMPtr<IDXGIDevice> toDXGIDevice(const COMPtr<ID3D11Device1>& d3dDevice)
+{
+    if (!d3dDevice)
+        return nullptr;
+
+    COMPtr<IDXGIDevice> dxgiDevice;
+    HRESULT hr = d3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return dxgiDevice;
+}
+
+COMPtr<IDXGIFactory2> factoryForDXGIDevice(const COMPtr<IDXGIDevice>& device)
+{
+    if (!device)
+        return nullptr;
+
+    COMPtr<IDXGIAdapter> adaptor;
+    HRESULT hr = device->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&adaptor));
+    RELEASE_ASSERT(SUCCEEDED(hr));
+
+    COMPtr<IDXGIFactory> factory;
+    hr = adaptor->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
+    RELEASE_ASSERT(SUCCEEDED(hr));
+
+    COMPtr<IDXGIFactory2> factory2;
+    hr = factory->QueryInterface(&factory2); 
+    RELEASE_ASSERT(SUCCEEDED(hr));
+    
+    return factory2;
 }
 
 } // namespace Direct2D

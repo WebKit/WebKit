@@ -175,7 +175,9 @@ list(APPEND WebKit_LIBRARIES
     PRIVATE
         ${OPENSSL_LIBRARIES}
         D2d1.lib
+        D3d11.lib
         Dwrite
+        Dxgi.lib
         Dxguid
         WindowsCodecs
         mfuuid.lib
