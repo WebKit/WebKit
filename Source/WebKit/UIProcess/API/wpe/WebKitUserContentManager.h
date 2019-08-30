@@ -102,6 +102,10 @@ webkit_user_content_manager_remove_filter                              (WebKitUs
                                                                         WebKitUserContentFilter  *filter);
 
 WEBKIT_API void
+webkit_user_content_manager_remove_filter_by_id                        (WebKitUserContentManager *manager,
+                                                                        const char               *filter_id);
+
+WEBKIT_API void
 webkit_user_content_manager_remove_all_filters                         (WebKitUserContentManager *manager);
 
 G_END_DECLS

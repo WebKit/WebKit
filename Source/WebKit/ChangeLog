@@ -1,3 +1,19 @@
+2019-08-30  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] New API to remove a filter from an user content manager given its identifier
+        https://bugs.webkit.org/show_bug.cgi?id=200479
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        (webkit_user_content_manager_remove_filter_by_id): Add new public API function.
+        * UIProcess/API/gtk/WebKitUserContentManager.h: Add declaration for
+        webkit_user_content_manager_remove_filter_by_id().
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: List new function.
+        * UIProcess/API/wpe/WebKitUserContentManager.h: Add declaration for
+        webkit_user_content_manager_remove_filter_by_id().
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt: List new function.
+
 2019-08-30  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK] Build failure in Debian Stable and Ubuntu LTS bots

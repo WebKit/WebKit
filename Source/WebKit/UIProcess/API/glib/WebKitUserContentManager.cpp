@@ -356,6 +356,24 @@ void webkit_user_content_manager_remove_filter(WebKitUserContentManager* manager
 }
 
 /**
+ * webkit_user_content_manager_remove_filter_by_id:
+ * @manager: A #WebKitUserContentManager
+ * @filter_id: Filter identifier
+ *
+ * Removes a filter from the given #WebKitUserContentManager given the
+ * identifier of a #WebKitUserContentFilter as returned by
+ * webkit_user_content_filter_get_identifier().
+ *
+ * Since: 2.26
+ */
+void webkit_user_content_manager_remove_filter_by_id(WebKitUserContentManager* manager, const char* filterId)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(filterId);
+    manager->priv->userContentController->removeContentRuleList(String::fromUTF8(filterId));
+}
+
+/**
  * webkit_user_content_manager_remove_all_filters:
  * @manager: A #WebKitUserContentManager
  *
