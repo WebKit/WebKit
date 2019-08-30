@@ -1,5 +1,16 @@
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG ByteCodeParser should not copy JIT-related part of SimpleJumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=201331
+
+        Reviewed by Mark Lam.
+
+        * stress/simple-jump-table-copy.js: Added.
+        (let.code):
+        (g2):
+
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DFG inlining CheckBadCell slow path does not assume result VirtualRegister can be invalid
         https://bugs.webkit.org/show_bug.cgi?id=201332
 
