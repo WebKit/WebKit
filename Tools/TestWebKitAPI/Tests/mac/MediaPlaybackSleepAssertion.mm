@@ -35,7 +35,6 @@
 #import <WebCore/Settings.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool didFinishLoad = false;
 static bool didBeginPlaying = false;

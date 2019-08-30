@@ -30,7 +30,6 @@
 #import <Carbon/Carbon.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKViewPrivate.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 namespace TestWebKitAPI {
 

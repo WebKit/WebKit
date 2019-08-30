@@ -51,7 +51,6 @@ NSString *NSTextInsertionUndoableAttributeName;
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface TextInputController (DumpRenderTreeInputMethodHandler)
 - (BOOL)interpretKeyEvents:(NSArray *)eventArray withSender:(WebHTMLView *)sender;

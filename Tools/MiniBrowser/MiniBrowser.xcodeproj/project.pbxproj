@@ -51,7 +51,6 @@
 		BCA8CBDD11E578A000812FB7 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MiniBrowser.xcconfig; sourceTree = "<group>"; };
-		F4E448E21FECEFE70097CED5 /* AppKitCompatibilityDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitCompatibilityDeclarations.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +69,6 @@
 			children = (
 				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
-				F4E448E21FECEFE70097CED5 /* AppKitCompatibilityDeclarations.h */,
 				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
 				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
 				7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */,

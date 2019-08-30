@@ -30,7 +30,6 @@
 #import "TestWKWebView.h"
 #import <Carbon/Carbon.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool contextMenuShown = false;
 

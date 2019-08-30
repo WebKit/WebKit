@@ -40,7 +40,6 @@
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

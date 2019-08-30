@@ -43,7 +43,6 @@
 
 #if PLATFORM(MAC)
 #import <Carbon/Carbon.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
 static bool done;

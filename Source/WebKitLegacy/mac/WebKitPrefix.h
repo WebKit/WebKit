@@ -79,7 +79,6 @@ typedef float CGFloat;
 #ifdef __OBJC__
 #if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #else
 #import <Foundation/Foundation.h>
 #endif

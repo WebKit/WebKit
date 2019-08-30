@@ -29,7 +29,6 @@
 #import "PlatformWebView.h"
 #import <Carbon/Carbon.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface ContextMenuDefaultItemsHaveTagsDelegate : NSObject <WebFrameLoadDelegate>
 @end

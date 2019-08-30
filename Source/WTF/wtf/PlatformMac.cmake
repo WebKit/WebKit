@@ -19,8 +19,6 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     darwin/WeakLinking.h
 
-    mac/AppKitCompatibilityDeclarations.h
-
     spi/cf/CFBundleSPI.h
     spi/cf/CFStringSPI.h
 

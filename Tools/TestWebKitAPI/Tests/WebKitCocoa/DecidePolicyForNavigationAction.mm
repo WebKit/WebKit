@@ -34,7 +34,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool shouldCancelNavigation;
 static bool shouldDelayDecision;

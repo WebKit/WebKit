@@ -1,3 +1,44 @@
+2019-08-30  Keith Rollin  <krollin@apple.com>
+
+        Remove AppKitCompatibilityDeclarations.h
+        https://bugs.webkit.org/show_bug.cgi?id=201283
+        <rdar://problem/54822042>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The two copies of these files -- on in WTF, one in MiniBrowser -- are
+        empty and can be removed.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        * DumpRenderTree/mac/TextInputControllerMac.m:
+        * MiniBrowser/AppKitCompatibilityDeclarations.h: Removed.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/SettingsController.m:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenLayoutConstraints.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenTopContentInset.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ShouldOpenExternalURLsInNewWindowActions.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm:
+        * TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm:
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.mm:
+        * TestWebKitAPI/Tests/mac/ContextMenuDefaultItemsHaveTags.mm:
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+        * TestWebKitAPI/Tests/mac/MediaPlaybackSleepAssertion.mm:
+        * TestWebKitAPI/Tests/mac/MenuTypesForMouseEvents.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+
 2019-08-30  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] New API to remove a filter from an user content manager given its identifier

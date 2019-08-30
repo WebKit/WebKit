@@ -33,7 +33,6 @@
 #import <WebKit/DOM.h>
 #import <Carbon/Carbon.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 
 @interface ContextMenuCanCopyURLDelegate : NSObject <WebFrameLoadDelegate> {

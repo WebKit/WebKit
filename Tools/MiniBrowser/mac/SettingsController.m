@@ -26,7 +26,6 @@
 #import "SettingsController.h"
 
 #import "AppDelegate.h"
-#import "AppKitCompatibilityDeclarations.h"
 #import "BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>

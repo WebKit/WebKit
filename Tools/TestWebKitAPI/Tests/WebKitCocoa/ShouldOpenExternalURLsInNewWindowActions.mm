@@ -33,7 +33,6 @@
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool createdWebView;
 static bool decidedPolicy;

@@ -27,7 +27,6 @@
 #include "WebKitAgnosticTest.h"
 
 #include <wtf/RetainPtr.h>
-#include <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface NSApplication (TestWebKitAPINSApplicationDetails)
 - (void)_setCurrentEvent:(NSEvent *)event;

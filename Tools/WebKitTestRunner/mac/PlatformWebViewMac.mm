@@ -35,7 +35,6 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;

@@ -301,7 +301,6 @@
 		1A233C7C17DAA6E300A93ACF /* MallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocPtr.h; sourceTree = "<group>"; };
 		1A3524AA1D63A2FF0031729B /* Scope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scope.h; sourceTree = "<group>"; };
 		1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NeverDestroyed.h; sourceTree = "<group>"; };
-		1A428B8B1C8F89DD0051E9EB /* AppKitCompatibilityDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKitCompatibilityDeclarations.h; sourceTree = "<group>"; };
 		1A4656181C7FC68E00F5920F /* OptionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionSet.h; sourceTree = "<group>"; };
 		1A6BB768162F300500DD16DB /* StreamBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamBuffer.h; sourceTree = "<group>"; };
 		1A6EB1DF187D0BD30030126F /* StringView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringView.h; sourceTree = "<group>"; };
@@ -1257,7 +1256,6 @@
 		A8A472C4151A825A004123FF /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A428B8B1C8F89DD0051E9EB /* AppKitCompatibilityDeclarations.h */,
 				1ACADD821884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm */,
 				A331D96021F24A0A009F02AA /* FileSystemMac.mm */,
 				53534F291EC0E10E00141B2F /* MachExceptions.defs */,

@@ -165,7 +165,6 @@
 #else
 #if USE(APPKIT)
 #import <Cocoa/Cocoa.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 #endif

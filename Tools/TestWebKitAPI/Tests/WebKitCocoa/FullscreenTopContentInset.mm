@@ -32,7 +32,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool receivedLoadedMessage;
 static bool receivedFullscreenChangeMessage;

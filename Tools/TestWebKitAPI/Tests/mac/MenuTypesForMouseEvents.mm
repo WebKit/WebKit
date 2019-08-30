@@ -30,7 +30,6 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 namespace TestWebKitAPI {
 

@@ -26,7 +26,6 @@
 #import "WK2BrowserWindowController.h"
 
 #import "AppDelegate.h"
-#import "AppKitCompatibilityDeclarations.h"
 #import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationActionPrivate.h>

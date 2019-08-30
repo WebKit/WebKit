@@ -46,7 +46,6 @@
 #import <Foundation/Foundation.h>
 #if USE(APPKIT)
 #import <Cocoa/Cocoa.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 #endif
 

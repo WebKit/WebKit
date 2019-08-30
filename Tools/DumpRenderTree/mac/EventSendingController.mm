@@ -49,7 +49,6 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <objc/runtime.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

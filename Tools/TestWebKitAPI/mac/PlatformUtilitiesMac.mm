@@ -32,7 +32,6 @@
 #include <WebKit/WKURLResponseNS.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 namespace TestWebKitAPI {
 namespace Util {

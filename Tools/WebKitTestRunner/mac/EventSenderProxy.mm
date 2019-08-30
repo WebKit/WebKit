@@ -38,7 +38,6 @@
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface NSApplication (Details)
 - (void)_setCurrentEvent:(NSEvent *)event;

@@ -26,7 +26,6 @@
 #import "WK1BrowserWindowController.h"
 
 #import "AppDelegate.h"
-#import "AppKitCompatibilityDeclarations.h"
 #import "SettingsController.h"
 #import <WebKit/WebInspector.h>
 #import <WebKit/WebKit.h>

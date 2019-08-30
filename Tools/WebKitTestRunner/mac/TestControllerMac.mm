@@ -45,7 +45,6 @@
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <mach-o/dyld.h>
 #import <wtf/ObjCRuntimeExtras.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface NSSound ()
 + (void)_setAlertType:(NSUInteger)alertType;

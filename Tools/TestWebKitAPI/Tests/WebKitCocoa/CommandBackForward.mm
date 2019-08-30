@@ -35,7 +35,6 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 enum ArrowDirection {
     Left,

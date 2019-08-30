@@ -38,7 +38,6 @@
 
 #if !PLATFORM(IOS_FAMILY)
 #import <WebKitLegacy/WebNSPasteboardExtras.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

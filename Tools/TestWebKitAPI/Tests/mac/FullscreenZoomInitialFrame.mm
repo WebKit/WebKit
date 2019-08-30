@@ -34,7 +34,6 @@
 #import <WebKit/WKViewPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface NSWindowController (WebKitFullScreenAdditions)
 - (NSRect)initialFrame;
