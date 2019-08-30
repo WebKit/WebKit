@@ -1,3 +1,9 @@
+2019-08-30  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failure after r249305
+
+        * inspector/dom-debugger/dom-breakpoints-expected.txt:
+
 2019-08-30  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Gracefully fail on invalid non-first initialization segment

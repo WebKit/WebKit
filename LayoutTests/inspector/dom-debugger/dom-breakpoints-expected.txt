@@ -115,7 +115,7 @@ PASS: Protocol should return an error.
 
 -- Running test case: SetBreakpointWithInvalidType
 Attempting to set breakpoint.
-Protocol result: Unknown type: custom-breakpoint-type
+Protocol result: Unknown DOM breakpoint type: custom-breakpoint-type
 PASS: Protocol should return an error.
 -- Running test teardown.
 
@@ -127,7 +127,7 @@ PASS: Protocol should return an error.
 
 -- Running test case: RemoveBreakpointWithInvalidType
 Attempting to remove breakpoint.
-Protocol result: Unknown type: custom-breakpoint-type
+Protocol result: Unknown DOM breakpoint type: custom-breakpoint-type
 PASS: Protocol should return an error.
 -- Running test teardown.
 
