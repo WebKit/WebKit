@@ -146,10 +146,14 @@ public:
     // requires walking the entire tree repeatedly and most pages don't actually use either
     // feature so we shouldn't take the performance hit when not needed. Long term we should
     // rewrite the counter code.
-    void addRenderCounter() { m_renderCounterCount++; }
-    void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); m_renderCounterCount--; }
-    bool hasRenderCounters() { return m_renderCounterCount; }
-    
+    void addRenderCounter() { ++m_renderCounterCount; }
+    void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); --m_renderCounterCount; }
+    bool hasRenderCounters() const { return m_renderCounterCount; }
+
+    void incrementRendersWithOutline() { ++m_renderersWithOutlineCount; }
+    void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
+    bool hasRenderersWithOutline() const { return m_renderersWithOutlineCount; }
+
     ImageQualityController& imageQualityController();
 
     void setHasSoftwareFilters(bool hasSoftwareFilters) { m_hasSoftwareFilters = hasSoftwareFilters; }
@@ -241,6 +245,7 @@ private:
     bool m_hasQuotesNeedingUpdate { false };
 
     unsigned m_renderCounterCount { 0 };
+    unsigned m_renderersWithOutlineCount { 0 };
 
     bool m_hasSoftwareFilters { false };
     bool m_usesFirstLineRules { false };

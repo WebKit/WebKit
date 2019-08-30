@@ -208,6 +208,25 @@
         * layout/layouttree/LayoutTreeBuilder.cpp:
         (WebCore::Layout::outputInlineRuns):
 
+2019-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid running the outline painting phase if no renderers have outlines
+        https://bugs.webkit.org/show_bug.cgi?id=201284
+
+        Reviewed by Said Abou-Hallawa.
+
+        The outline painting phase (paintOutlineForFragments()) can take up to 20% of the painting time
+        even when there are no outlines. Keep track of which renderers have outlines, and only run the phase
+        when printing (for hasOutlineAnnotation()) or if there are any renderers with outlines.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderView.h:
+
 2019-08-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Use the "complicated-cases" category for computing the TFC root's height
