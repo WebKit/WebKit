@@ -1,3 +1,42 @@
+2019-08-31  Frederic Wang  <fwang@igalia.com>
+
+        Fix interpretation of fraction shifts
+        https://bugs.webkit.org/show_bug.cgi?id=201242
+
+        Reviewed by Rob Buis.
+
+        In fractions, numerator/denominator shifts are currently interpreted relative to the math
+        axis while they should be relative to the baseline [1]. This patch refactors the
+        RenderMathMLFraction to do that and aligns more on MathML Core [2] [3]. This fixes serious
+        rendering bugs in fractions.
+
+        [1] https://github.com/mathml-refresh/mathml/issues/123
+        [2] https://mathml-refresh.github.io/mathml-core/#fraction-with-nonzero-line-thickness
+        [3] https://mathml-refresh.github.io/mathml-core/#fraction-with-zero-line-thickness
+
+        No new tests, existing tests updated.
+
+        * rendering/mathml/RenderMathMLFraction.h: ascentOverHorizontalAxis() is replaced with
+        fractionAscent() which gives the actual baseline position rather than the math axis position.
+        fractionParameters() and stackParameters() are modified so that they only return the shifts,
+        now stored in a shared FractionParameters struct.
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::fractionParameters const): Store existing parameters in local
+        variables and perform adjustments to the shift values so that the minimal gap constraints
+        are satisfied. Return them as a FractionParameters.
+        (WebCore::RenderMathMLFraction::stackParameters const): Ditto.
+        (WebCore::RenderMathMLFraction::fractionAscent const): This calculates the ascent above
+        the baseline as described in [2] [3] and replaces ascentOverHorizontalAxis. To minimize
+        changeset, this continues to ignore contribution of denominator size and not to distinguish
+        ink or non-ink metrics.
+        (WebCore::RenderMathMLFraction::layoutBlock): The position of the denominator is now just
+        calculated as a shift from the baseline. The height is given by the bottom of the
+        denominator. The old "ascent + mathAxisHeight() + denominatorDescent" does not make any
+        sense.
+        (WebCore::RenderMathMLFraction::paint): Use fractionAscent() instead of
+        ascentOverHorizontalAxis().
+        (WebCore::RenderMathMLFraction::firstLineBaseline const): Ditto.
+
 2019-08-31  Chris Dumez  <cdumez@apple.com>
 
         DocumentStorageAccess::hasStorageAccess() / requestStorageAccess() don't need to know about pageID / frameID

@@ -952,6 +952,9 @@ webkit.org/b/194952 imported/w3c/web-platform-tests/mathml/presentation-markup/f
 webkit.org/b/194952 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-003.html [ ImageOnlyFailure ]
 webkit.org/b/187039 imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-click-3.html [ Skip ]
 
+# This MathML test should be rewritten.
+webkit.org/b/201356 mathml/presentation/stretchy-depth-height-symmetric.html [ Skip ]
+
 # These webmessaging WPT tests time out.
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_onmessage_postMessage_infinite_loop.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_properties.htm [ Skip ]

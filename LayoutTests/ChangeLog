@@ -1,3 +1,16 @@
+2019-08-31  Frederic Wang  <fwang@igalia.com>
+
+        Fix interpretation of fraction shifts
+        https://bugs.webkit.org/show_bug.cgi?id=201242
+
+        Reviewed by Rob Buis.
+
+        * TestExpectations: Skip mathml/presentation/stretchy-depth-height-symmetric.html since it
+        cannot work in a reliable way and should be rewritten. Equivalent checks seem essentially
+        covered by WPT test mathml/presentation-markup/operators/mo-axis-height-1.html.
+        See bug 201356.
+        * platform/win/mathml/presentation/roots-expected.txt: Update windows expectation.
+
 2019-08-30  Chris Dumez  <cdumez@apple.com>
 
         Add support for postMessage buffering between the service worker and window

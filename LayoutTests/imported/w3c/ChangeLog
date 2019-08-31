@@ -1,3 +1,33 @@
+2019-08-31  Frederic Wang  <fwang@igalia.com>
+
+        Fix interpretation of fraction shifts
+        https://bugs.webkit.org/show_bug.cgi?id=201242
+
+        Reviewed by Rob Buis.
+
+        Update tests and support files for fractions/stacks parameters.
+
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt:
+        Update expectation now that AxisHeight is no longer involved in stacks.
+        * web-platform-tests/fonts/math/fraction-denominatordisplaystyleshiftdown6000-axisheight1000-rulethickness1000.woff: Added.
+        * web-platform-tests/fonts/math/fraction-denominatorshiftdown3000-axisheight1000-rulethickness1000.woff: Added.
+        * web-platform-tests/fonts/math/fraction-numeratordisplaystyleshiftup2000-axisheight1000-rulethickness1000.woff: Added.
+        * web-platform-tests/fonts/math/fraction-numeratorshiftup11000-axisheight1000-rulethickness1000.woff: Added.
+        * web-platform-tests/fonts/math/stack-bottomdisplaystyleshiftdown5000-axisheight1000.woff: Added.
+        * web-platform-tests/fonts/math/stack-bottomshiftdown6000-axisheight1000.woff: Added.
+        * web-platform-tests/fonts/math/stack-topdisplaystyleshiftup3000-axisheight1000.woff: Added.
+        * web-platform-tests/fonts/math/stack-topshiftup9000-axisheight1000.woff: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html:
+        * web-platform-tests/mathml/support/feature-detection.js: Added.
+        (MathMLFeatureDetection.has_mspace):
+        (MathMLFeatureDetection.has_operator_spacing):
+        (MathMLFeatureDetection.has_mfrac):
+        (MathMLFeatureDetection.has_msqrt):
+        (MathMLFeatureDetection.has_menclose):
+        (MathMLFeatureDetection.has_dir):
+        (MathMLFeatureDetection.ensure_for_match_reftest):
+
 2019-08-30  Chris Dumez  <cdumez@apple.com>
 
         Add support for postMessage buffering between the service worker and window
