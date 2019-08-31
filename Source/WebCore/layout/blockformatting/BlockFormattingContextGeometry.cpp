@@ -274,7 +274,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Bo
         heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
     }
 
-    auto quirks = Quirks(formattingContext());
+    auto quirks = formattingContext().quirks();
     if (!quirks.needsStretching(layoutBox))
         return heightAndMargin;
 

@@ -53,7 +53,7 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
             auto& displayBox = formattingContext.displayBoxForLayoutBox(*containingBlock);
 
             auto usedValues = UsedHorizontalValues { formattingContext.displayBoxForLayoutBox(*containingBlock->containingBlock()).contentBoxWidth() };
-            auto verticalMargin = Geometry(formattingContext).computedVerticalMargin(*containingBlock, usedValues);
+            auto verticalMargin = formattingContext.geometry().computedVerticalMargin(*containingBlock, usedValues);
             auto verticalPadding = displayBox.paddingTop().valueOr(0) + displayBox.paddingBottom().valueOr(0);
             auto verticalBorder = displayBox.borderTop() + displayBox.borderBottom();
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;

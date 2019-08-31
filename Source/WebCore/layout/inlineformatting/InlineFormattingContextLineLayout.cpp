@@ -324,7 +324,7 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
     };
 
     IndexAndRange currentInlineItem;
-    auto quirks = Quirks(formattingContext);
+    auto quirks = formattingContext.quirks();
     while (currentInlineItem.index < inlineItems.size()) {
         auto lineInput = LineInput { { { lineLogicalLeft, lineLogicalTop }, widthConstraint, quirks.lineHeightConstraints(formattingRoot) }, Line::SkipVerticalAligment::No, currentInlineItem, inlineItems };
         applyFloatConstraint(lineInput);
@@ -347,7 +347,7 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
     auto& formattingContext = this->formattingContext();
     LayoutUnit maximumLineWidth;
     IndexAndRange currentInlineItem;
-    auto quirks = Quirks(formattingContext);
+    auto quirks = formattingContext.quirks();
     while (currentInlineItem.index < inlineItems.size()) {
         auto lineContent = LineLayout(formattingContext, { { { }, widthConstraint, quirks.lineHeightConstraints(formattingRoot()) }, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems }).layout();
         currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
@@ -393,7 +393,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
     auto lineBoxRect = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0, lineContent.logicalHeight()};
     // Create final display runs.
     auto& lineRuns = lineContent.runs();
-    auto geometry = Geometry(formattingContext);
+    auto geometry = formattingContext.geometry();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& lineRun = lineRuns.at(index);
         auto& logicalRect = lineRun->logicalRect();

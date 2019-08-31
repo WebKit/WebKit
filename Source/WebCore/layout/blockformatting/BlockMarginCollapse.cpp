@@ -515,7 +515,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     }
     // This is the estimate path. We don't yet have positive/negative margin computed.
     auto usedValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-    auto computedVerticalMargin = Geometry(formattingContext()).computedVerticalMargin(layoutBox, usedValues);
+    auto computedVerticalMargin = formattingContext().geometry().computedVerticalMargin(layoutBox, usedValues);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
 
     if (marginType == MarginType::Before)
@@ -541,7 +541,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     // 2. Gather positive and negative margin values from previous inflow sibling if margins are adjoining.
     // 3. Compute min/max positive and negative collapsed margin values using non-collpased computed margin before.
     auto collapsedMarginBefore = computedPositiveAndNegativeMargin(firstChildCollapsedMarginBefore(), previouSiblingCollapsedMarginAfter());
-    if (collapsedMarginBefore.isQuirk && Quirks(formattingContext()).shouldIgnoreCollapsedQuirkMargin(layoutBox))
+    if (collapsedMarginBefore.isQuirk && formattingContext().quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox))
         collapsedMarginBefore = { };
 
     PositiveAndNegativeVerticalMargin::Values nonCollapsedBefore;
@@ -583,7 +583,7 @@ EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBef
     ASSERT(!layoutBox.replaced());
 
     auto usedValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-    auto computedVerticalMargin = Geometry(formattingContext()).computedVerticalMargin(layoutBox, usedValues);
+    auto computedVerticalMargin = formattingContext().geometry().computedVerticalMargin(layoutBox, usedValues);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto marginsCollapseThrough = this->marginsCollapseThrough(layoutBox);
     auto positiveNegativeMarginBefore = this->positiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);

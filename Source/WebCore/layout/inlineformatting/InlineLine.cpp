@@ -110,7 +110,7 @@ std::unique_ptr<Line::Content> Line::close()
         }
 
         // Remove descent when all content is baseline aligned but none of them have descent.
-        if (InlineFormattingContext::Quirks(formattingContext()).lineDescentNeedsCollapsing(*m_content)) {
+        if (formattingContext().quirks().lineDescentNeedsCollapsing(*m_content)) {
             m_lineLogicalHeight -= m_baseline.descent;
             m_baseline.descent = { };
         }
