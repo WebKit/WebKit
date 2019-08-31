@@ -1,3 +1,18 @@
+2019-08-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor optimization in determineNonLayerDescendantsPaintedContent()
+        https://bugs.webkit.org/show_bug.cgi?id=201352
+
+        Reviewed by Antti Koivisto.
+
+        It's cheaper to call renderText.hasRenderedText() than renderText.linesBoundingBox(), because
+        the latter has to traverse all the InlineTextBoxes. This code path is fairly hot when
+        scrolling twitter feeds, since it's called from RenderLayer::updateLayerPositionsAfterScroll()
+        which calls RenderLayer::isVisuallyNonEmpty().
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2019-08-30  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Remove getters/setters/anders
