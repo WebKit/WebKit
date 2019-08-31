@@ -1,0 +1,12 @@
+
+This test verifies that the callout bar is shown and can be interacted with after tapping inside an input field, such that the caret does not change. To run the test manually, tap the input field to focus it, tap again inside the input field to show the callout bar, and tap 'Select All'. The contents of the input field should be selected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.selectionStart is 0
+PASS input.selectionEnd is 11
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

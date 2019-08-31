@@ -1,3 +1,15 @@
+2019-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a test to ensure that a tap in editable content shows the callout bar if the selection did not change
+        https://bugs.webkit.org/show_bug.cgi?id=200082
+
+        Reviewed by Dean Jackson.
+
+        Adds a layout test to cover the UIKit change in <rdar://problem/53106460>.
+
+        * editing/selection/ios/show-callout-bar-after-tap-expected.txt: Added.
+        * editing/selection/ios/show-callout-bar-after-tap.html: Added.
+
 2019-08-31  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: responseXML returns null if the Content-Type is valid (end in +xml) in some cases
