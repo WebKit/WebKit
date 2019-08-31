@@ -208,7 +208,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tain
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-to-client-message-queue.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-not-allowed.https.html [ Skip ]
