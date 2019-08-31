@@ -841,12 +841,14 @@ String XMLHttpRequest::responseMIMEType() const
 {
     String mimeType = extractMIMETypeFromMediaType(m_mimeTypeOverride);
     if (mimeType.isEmpty()) {
+        String contentType;
         if (m_response.isHTTP())
-            mimeType = extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType));
+            contentType = m_response.httpHeaderField(HTTPHeaderName::ContentType);
         else
-            mimeType = m_response.mimeType();
-        if (mimeType.isEmpty())
-            mimeType = "text/xml"_s;
+            contentType = m_response.mimeType();
+        if (auto parsedContentType = ParsedContentType::create(contentType))
+            return parsedContentType->mimeType();
+        return "text/xml"_s;
     }
     return mimeType;
 }

@@ -40,40 +40,40 @@ PASS -- testing: foo&bar/baz+xml -- responseXML: [object XMLDocument]
 
 PASS -- testing: foo*bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: text/html -- responseXML: null
+PASS -- testing: foo bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: image/png -- responseXML: null
+PASS -- testing: foo[bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: invalid -- responseXML: null
+PASS -- testing: foo]bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo bar/baz+xml -- responseXML: null
+PASS -- testing: foo(bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo[bar/baz+xml -- responseXML: null
-
-PASS -- testing: foo]bar/baz+xml -- responseXML: null
-
-PASS -- testing: foo(bar/baz+xml -- responseXML: null
-
-PASS -- testing: foo)bar/baz+xml -- responseXML: null
+PASS -- testing: foo)bar/baz+xml -- responseXML: [object XMLDocument]
 
 PASS -- testing: foo
 
-PASS -- testing: foo>bar/baz+xml -- responseXML: null
+PASS -- testing: foo>bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo@bar/baz+xml -- responseXML: null
+PASS -- testing: foo@bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo,bar/baz+xml -- responseXML: null
+PASS -- testing: foo,bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo;bar/baz+xml -- responseXML: null
+PASS -- testing: foo;bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo:bar/baz+xml -- responseXML: null
+PASS -- testing: foo:bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo\bar/baz+xml -- responseXML: null
+PASS -- testing: foo\bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo"bar/baz+xml -- responseXML: null
+PASS -- testing: foo"bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo/bar/baz+xml -- responseXML: null
+PASS -- testing: foo/bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo?bar/baz+xml -- responseXML: null
+PASS -- testing: foo?bar/baz+xml -- responseXML: [object XMLDocument]
 
-PASS -- testing: foo=bar/baz+xml -- responseXML: null
+PASS -- testing: foo=bar/baz+xml -- responseXML: [object XMLDocument]
+
+PASS -- testing: invalid -- responseXML: [object XMLDocument]
+
+PASS -- testing: text/html -- responseXML: null
+
+PASS -- testing: image/png -- responseXML: null
