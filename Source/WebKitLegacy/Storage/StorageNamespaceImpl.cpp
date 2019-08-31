@@ -89,7 +89,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
         close();
 }
 
-Ref<StorageNamespace> StorageNamespaceImpl::copy(Page*)
+Ref<StorageNamespace> StorageNamespaceImpl::copy(Page&)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);

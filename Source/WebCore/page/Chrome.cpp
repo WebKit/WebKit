@@ -188,7 +188,7 @@ Page* Chrome::createWindow(Frame& frame, const FrameLoadRequest& request, const 
         return nullptr;
 
     if (auto* oldSessionStorage = m_page.sessionStorage(false))
-        newPage->setSessionStorage(oldSessionStorage->copy(newPage));
+        newPage->setSessionStorage(oldSessionStorage->copy(*newPage));
 
     return newPage;
 }

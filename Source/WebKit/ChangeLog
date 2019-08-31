@@ -1,5 +1,30 @@
 2019-08-30  Chris Dumez  <cdumez@apple.com>
 
+        WebPage::fromCorePage() to take and return a C++ reference
+        https://bugs.webkit.org/show_bug.cgi?id=201367
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::page const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::fromCorePage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPageOverlay.cpp:
+        (WebKit::WebPageOverlay::willMoveToPage):
+        (WebKit::WebPageOverlay::didMoveToPage):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::copy):
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+
+2019-08-30  Chris Dumez  <cdumez@apple.com>
+
         [PSON] We no longer need to throw away suspended pages in a process before using it for a navigation
         https://bugs.webkit.org/show_bug.cgi?id=201344
 

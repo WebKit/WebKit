@@ -80,11 +80,8 @@ void VisitedLinkTableController::addVisitedLink(Page& page, SharedStringHash lin
     if (m_visitedLinkTable.contains(linkHash))
         return;
 
-    WebPage* webPage = WebPage::fromCorePage(&page);
-    if (!webPage)
-        return;
-
-    WebProcess::singleton().parentProcessConnection()->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(webPage->webPageProxyIdentifier(), linkHash), m_identifier);
+    auto& webPage = WebPage::fromCorePage(page);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(webPage.webPageProxyIdentifier(), linkHash), m_identifier);
 }
 
 void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)

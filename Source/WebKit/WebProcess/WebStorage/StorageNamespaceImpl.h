@@ -68,7 +68,7 @@ private:
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
 
     // FIXME: This is only valid for session storage and should probably be moved to a subclass.
-    Ref<WebCore::StorageNamespace> copy(WebCore::Page*) override;
+    Ref<WebCore::StorageNamespace> copy(WebCore::Page&) override;
 
     const WebCore::StorageType m_storageType;
     const Identifier m_storageNamespaceID;

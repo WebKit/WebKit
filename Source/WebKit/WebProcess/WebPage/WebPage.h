@@ -288,7 +288,7 @@ public:
 
     void close();
 
-    static WebPage* fromCorePage(WebCore::Page*);
+    static WebPage& fromCorePage(WebCore::Page&);
 
     WebCore::Page* corePage() const { return m_page.get(); }
     WebCore::PageIdentifier pageID() const { return m_pageID; }

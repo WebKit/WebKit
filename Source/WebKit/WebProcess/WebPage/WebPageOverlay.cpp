@@ -85,12 +85,12 @@ void WebPageOverlay::clear()
 
 void WebPageOverlay::willMoveToPage(PageOverlay&, Page* page)
 {
-    m_client->willMoveToPage(*this, page ? WebPage::fromCorePage(page) : nullptr);
+    m_client->willMoveToPage(*this, page ? &WebPage::fromCorePage(*page) : nullptr);
 }
 
 void WebPageOverlay::didMoveToPage(PageOverlay&, Page* page)
 {
-    m_client->didMoveToPage(*this, page ? WebPage::fromCorePage(page) : nullptr);
+    m_client->didMoveToPage(*this, page ? &WebPage::fromCorePage(*page) : nullptr);
 }
 
 void WebPageOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRect& dirtyRect)
