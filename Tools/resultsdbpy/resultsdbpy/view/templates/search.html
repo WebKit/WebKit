@@ -37,10 +37,10 @@ import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/asse
 import {SearchBar} from '/assets/js/search.js';
 import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
 import {ToolTip} from '/assets/js/tooltip.js';
-import {DOM, REF} from '/library/js/Ref.js';
+import {DOM, REF, EventStream} from '/library/js/Ref.js';
 
 const DEFAULT_LIMIT = 100;
-const SUITES = JSON.parse('{{ suites|safe }}');    
+const SUITES = JSON.parse('{{ suites|safe }}');
 
 class SearchView {
     constructor() {    
@@ -207,12 +207,21 @@ class SearchView {
     toString() {
         return `<div ref="${this.ref}"></div>`;
     }
+    notifiyTimelinesRender() {
+        this.ref.state.children.forEach(child => {
+            child.timeline.notifiyRerender();
+        });
+    }
 }
 
 let view = new SearchView();
-
+const onLayoutChange = new EventStream();
+onLayoutChange.action(() => {
+    view.notifiyTimelinesRender();
+});
 window.onpopstate = event => {view.reload();};
 window.onpushstate = event => {view.reload();};
+
 
 DOM.inject(
     document.getElementById('app'),
@@ -224,7 +233,7 @@ DOM.inject(
             view.reload();
         }),
         ConfigurationSelectors(() => {view.reload()}),
-    ])}
+    ], () => onLayoutChange.add())}
 
     <div class="main left under-topbar-with-actions">
         <div class="content">

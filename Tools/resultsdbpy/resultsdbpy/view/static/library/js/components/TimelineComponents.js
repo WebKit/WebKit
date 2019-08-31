@@ -118,18 +118,25 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
         presenterRef.setState({resize:true});
     });
     const resizeContainerWidth = width => {containerRef.setState({width: width})};
+    const getScrollableBoundingClientRect = () => scrollRef.element.getBoundingClientRect();
     const presenterRef = REF.createRef({
         state: {scrollLeft: 0},
         onElementMount: (element) => {
-            element.style.width = `${element.parentElement.parentElement.offsetWidth}px`;
-            resizeEventStream.add(element.offsetWidth);
+            const scrollableWidth =  getScrollableBoundingClientRect().width;
+            element.style.width = `${scrollableWidth}px`;
+            resizeEventStream.add(scrollableWidth);
         },
         onStateUpdate: (element, stateDiff, state) => {
             if (stateDiff.resize) {
-                element.style.width = `${element.parentElement.parentElement.offsetWidth}px`;
-                resizeEventStream.add(element.offsetWidth);
+                const scrollableWidth =  getScrollableBoundingClientRect().width;
+                element.style.width = `${scrollableWidth}px`;
+                resizeEventStream.add(scrollableWidth);
             }
         }
+    });
+    const layoutSizeMayChange = new EventStream();
+    layoutSizeMayChange.action(() => {
+        presenterRef.setState({resize:true});
     });
     // Provide parent functions/event to children to use
 
@@ -138,14 +145,30 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
             <div ref="${presenterRef}" style="position: -webkit-sticky; position:sticky; top:0; left: 0">${
                 ListProvider((updateChildrenFunctions) => {
                     if (exporter) {
-                        exporter((children) => {
-                            updateChildrenFunctions(children);
-                            // this make sure the newly added children receive current state
-                            resizeEventStream.replayLast();
-                            scrollEventStream.replayLast();
-                        });
+                        exporter(
+                            /**
+                            * Update Children
+                            * @param children {Array} r An array of the children
+                            */
+                            (children) => {
+                                updateChildrenFunctions(children);
+                                // Propigate the current state to new children
+                                resizeEventStream.replayLast();
+                                scrollEventStream.replayLast();
+                            },
+                            /**
+                            * Notifiy Re-render
+                            * @param width {number} r if undefined, it will auto detact the width change
+                            */
+                            (width) => {
+                                if (typeof width === "number" && width >= 0)
+                                    resizeEventStream.add(width);
+                                else
+                                    layoutSizeMayChange.add();
+                            }
+                        );
                     }
-                }, [resizeContainerWidth, scrollEventStream, resizeEventStream], ...childrenFunctions)
+                }, [resizeContainerWidth, scrollEventStream, resizeEventStream, layoutSizeMayChange], ...childrenFunctions)
             }</div>
         </div>
     </div>`;
@@ -476,6 +499,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
 }
 
 Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter) => {
+    let layoutSizeMayChangeEvent = null;
     const ref = REF.createRef({
         state: {expanded: options.expanded ? options.expanded : false},
         onStateUpdate: (element, stateDiff) => {
@@ -488,15 +512,18 @@ Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter
                 element.children[1].style.display = 'none';
                 element.children[2].style.display = 'block';
             }
+            // Notifiy inside of the provider that we may changed the layout size because of expanded / unexpanded.
+            layoutSizeMayChangeEvent.add();
         }
     });
     if (exporter)
         exporter((expanded) => ref.setState({expanded: expanded}));
-    return ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+    return ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize, layoutSizeMayChange) => {
+        layoutSizeMayChangeEvent = layoutSizeMayChange;
         return `<div class="groupSeries" ref="${ref}">
             <div class="series" style="display:none;"></div>
-            <div>${mainSeries(updateContainerWidth, onContainerScroll, onResize)}</div>
-            <div style="display:none">${subSerieses.map((subSeries) => subSeries(updateContainerWidth, onContainerScroll, onResize)).join("")}</div>
+            <div>${mainSeries(updateContainerWidth, onContainerScroll, onResize, layoutSizeMayChange)}</div>
+            <div style="display:none">${subSerieses.map((subSeries) => subSeries(updateContainerWidth, onContainerScroll, onResize, layoutSizeMayChange)).join("")}</div>
         </div>`;
     });
 }
@@ -870,13 +897,13 @@ Timeline.CanvasContainer = (exporter, ...children) => {
         return {headers, serieses};
     };
     const {headers, serieses} = upackChildren(children);
-    let composer = FP.composer(FP.currying((updateHeaders, updateSerieses) => {
+    let composer = FP.composer(FP.currying((updateHeaders, updateSerieses, notifiyRerender) => {
         if (exporter)
             exporter((newChildren) => {
                 const {headers, serieses} = upackChildren(newChildren);
                 updateHeaders(headers);
                 updateSerieses(serieses);
-            });
+            }, notifiyRerender);
     }));
     return (
         `<div class="timeline">

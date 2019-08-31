@@ -36,7 +36,7 @@ function setEnableRecursive(element, state) {
         setEnableRecursive(node, state);
 }
 
-function Drawer(controls = []) {
+function Drawer(controls = [], onCollapseChange) {
     const HIDDEN = false;
     const VISIBLE = true;
     let drawerState = VISIBLE;
@@ -62,6 +62,9 @@ function Drawer(controls = []) {
                 if (node.classList.contains("list"))
                     setEnableRecursive(node, state);
             }
+            
+            if (onCollapseChange)
+                onCollapseChange();
         },
         onElementMount: (element) => {
             let candidates = document.getElementsByClassName("main");
