@@ -66,8 +66,7 @@ LayoutState& FormattingContext::layoutState() const
 
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
-    auto& layoutState = this->layoutState();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
+    auto containingBlockWidth = displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
         auto usedValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
@@ -87,7 +86,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
             horizontalGeometry = minHorizontalGeometry;
     }
 
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = displayBoxForLayoutBox(layoutBox);
     displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.usedMargin.start);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
     displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.usedMargin);
@@ -96,8 +95,6 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
 {
-    auto& layoutState = this->layoutState();
-
     auto compute = [&](UsedVerticalValues usedValues) {
         return geometry().outOfFlowVerticalGeometry(layoutBox, usedValues);
     };
@@ -115,7 +112,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
             verticalGeometry = minVerticalGeometry;
     }
 
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = displayBoxForLayoutBox(layoutBox);
     auto nonCollapsedVerticalMargin = verticalGeometry.heightAndMargin.nonCollapsedMargin;
     displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
@@ -125,10 +122,9 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
 
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedValues)
 {
-    auto& layoutState = this->layoutState();
     if (!usedValues)
-        usedValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+        usedValues = UsedHorizontalValues { displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto& displayBox = displayBoxForLayoutBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
     displayBox.setPadding(geometry().computedPadding(layoutBox, *usedValues));
 }
@@ -226,13 +222,12 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
     if (!is<Container>(root()))
         return;
     auto& formattingContextRoot = downcast<Container>(root());
-    auto& layoutState = this->layoutState();
     // FIXME: add a descendantsOfType<> flavor that stops at nested formatting contexts
     for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
         if (&layoutBox.formattingContextRoot() != &formattingContextRoot)
             continue;
-        auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock());
-        auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+        auto& containingBlockDisplayBox = displayBoxForLayoutBox(*layoutBox.containingBlock());
+        auto& displayBox = displayBoxForLayoutBox(layoutBox);
 
         // 10.3.3 Block-level, non-replaced elements in normal flow
         // 10.3.7 Absolutely positioned, non-replaced elements

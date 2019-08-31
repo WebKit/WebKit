@@ -61,7 +61,6 @@ static inline bool isHeightAuto(const Box& layoutBox)
 
 Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box& layoutBox, HeightType heightType) const
 {
-    auto& layoutState = this->layoutState();
     auto& style = layoutBox.style();
     auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();
     if (height.isUndefined() || height.isAuto())
@@ -73,9 +72,9 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
     Optional<LayoutUnit> containingBlockHeightValue;
     if (layoutBox.isOutOfFlowPositioned()) {
         // Containing block's height is already computed since we layout the out-of-flow boxes as the last step.
-        containingBlockHeightValue = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
+        containingBlockHeightValue = formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
     } else {
-        if (layoutState.inQuirksMode())
+        if (layoutState().inQuirksMode())
             containingBlockHeightValue = Quirks(formattingContext()).heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
         else {
             auto containingBlockHeight = layoutBox.containingBlock()->style().logicalHeight();
@@ -107,7 +106,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         return { };
 
     auto& layoutState = this->layoutState();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto& formattingContext = this->formattingContext();
+    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
     auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
     auto top = borderAndPaddingTop;
     auto bottom = borderAndPaddingTop;
@@ -120,8 +120,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         bottom = lineBoxes.last().logicalBottom();
     } else if (formattingRootContainer.establishesBlockFormattingContext() || layoutBox.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
-            auto& firstDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
-            auto& lastDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+            auto& firstDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
+            auto& lastDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
             top = firstDisplayBox.rectWithMargin().top();
             bottom = lastDisplayBox.rectWithMargin().bottom();
         }
@@ -201,28 +201,28 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     // computed value for 'display'.) The value is negative if the hypothetical box is above the containing block.
 
     // Start with this box's border box offset from the parent's border box.
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     LayoutUnit top;
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         // Add sibling offset
-        auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
+        auto& previousInFlowDisplayBox = formattingContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.nonCollapsedMarginAfter();
     } else {
         ASSERT(layoutBox.parent());
-        top = layoutState.displayBoxForLayoutBox(*layoutBox.parent()).contentBoxTop();
+        top = formattingContext.displayBoxForLayoutBox(*layoutBox.parent()).contentBoxTop();
     }
 
     // Resolve top all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& displayBox = layoutState.displayBoxForLayoutBox(*container);
+        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container);
         // Display::Box::top is the border box top position in its containing block's coordinate system.
         top += displayBox.top();
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxTop = layoutState.displayBoxForLayoutBox(containingBlock).paddingBoxTop();
+    auto paddingBoxTop = formattingContext.displayBoxForLayoutBox(containingBlock).paddingBoxTop();
     return top - paddingBoxTop;
 }
 
@@ -232,21 +232,21 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     // See staticVerticalPositionForOutOfFlowPositioned for the definition of the static position.
 
     // Start with this box's border box offset from the parent's border box.
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     ASSERT(layoutBox.parent());
-    auto left = layoutState.displayBoxForLayoutBox(*layoutBox.parent()).contentBoxLeft();
+    auto left = formattingContext.displayBoxForLayoutBox(*layoutBox.parent()).contentBoxLeft();
 
     // Resolve left all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& displayBox = layoutState.displayBoxForLayoutBox(*container);
+        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container);
         // Display::Box::left is the border box left position in its containing block's coordinate system.
         left += displayBox.left();
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxLeft = layoutState.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
+    auto paddingBoxLeft = formattingContext.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
     return left - paddingBoxLeft;
 }
 
@@ -300,10 +300,10 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     // 5. 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
     // 6. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
 
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
+    auto& containingBlockDisplayBox = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
     auto containingBlockHeight = containingBlockDisplayBox.paddingBoxHeight();
     auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
 
@@ -425,11 +425,11 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     // 5. 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
     // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
 
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(containingBlock);
+    auto& containingBlockDisplayBox = formattingContext.displayBoxForLayoutBox(containingBlock);
     auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
     
@@ -559,10 +559,10 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     // 4. If at this point there is only one 'auto' left, solve the equation for that value.
     // 5. If at this point the values are over-constrained, ignore the value for 'bottom' and solve for that value.
 
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
+    auto& containingBlockDisplayBox = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
     auto containingBlockHeight = containingBlockDisplayBox.paddingBoxHeight();
     auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
 
@@ -645,9 +645,9 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     // 5. If at this point the values are over-constrained, ignore the value for either 'left' (in case the 'direction' property of the containing block is 'rtl') or
     //   'right' (in case 'direction' is 'ltr') and solve for that value.
 
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
     auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
@@ -724,7 +724,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = layoutState.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
+    auto containingBlockPaddingVerticalEdge = formattingContext.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
     *left += containingBlockPaddingVerticalEdge;
     *right += containingBlockPaddingVerticalEdge;
 
@@ -861,8 +861,8 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
     //    the height of the largest rectangle that has a 2:1 ratio, has a height not greater than 150px, and has a width not greater than the device width.
 
     // #1
-    auto& layoutState = this->layoutState();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+    auto& formattingContext = this->formattingContext();
+    auto containingBlockWidth = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto& style = layoutBox.style();
@@ -877,7 +877,7 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
         height = replaced->intrinsicHeight();
     } else if (heightIsAuto && replaced->hasIntrinsicRatio()) {
         // #3
-        auto usedWidth = layoutState.displayBoxForLayoutBox(layoutBox).width();
+        auto usedWidth = formattingContext.displayBoxForLayoutBox(layoutBox).width();
         height = usedWidth / replaced->intrinsicRatio();
     } else if (heightIsAuto && replaced->hasIntrinsicHeight()) {
         // #4
@@ -979,7 +979,7 @@ LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box
 
     auto& style = layoutBox.style();
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = layoutState().displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+    auto containingBlockWidth = formattingContext().displayBoxForLayoutBox(containingBlock).contentBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);

@@ -64,10 +64,10 @@ Line::Line(const InlineFormattingContext& inlineFormattingContext, const Initial
 {
 }
 
-static bool isInlineContainerConsideredEmpty(const LayoutState& layoutState, const Box& layoutBox)
+static bool isInlineContainerConsideredEmpty(const FormattingContext& formattingContext, const Box& layoutBox)
 {
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered empty.
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
     return !(displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()));
 }
 
@@ -75,10 +75,10 @@ bool Line::isVisuallyEmpty() const
 {
     // FIXME: This should be cached instead -as the inline items are being added.
     // Return true for empty inline containers like <span></span>.
-    auto& layoutState = this->layoutState();
+    auto& formattingContext = this->formattingContext();
     for (auto& run : m_content->runs()) {
         if (run->isContainerStart()) {
-            if (!isInlineContainerConsideredEmpty(layoutState, run->layoutBox()))
+            if (!isInlineContainerConsideredEmpty(formattingContext, run->layoutBox()))
                 return false;
             continue;
         }
@@ -86,7 +86,7 @@ bool Line::isVisuallyEmpty() const
             continue;
         if (run->layoutBox().establishesFormattingContext()) {
             ASSERT(run->layoutBox().isInlineBlockBox());
-            auto& displayBox = layoutState.displayBoxForLayoutBox(run->layoutBox());
+            auto& displayBox = formattingContext.displayBoxForLayoutBox(run->layoutBox());
             if (!displayBox.width())
                 continue;
             if (m_skipVerticalAligment || displayBox.height())
@@ -116,6 +116,7 @@ std::unique_ptr<Line::Content> Line::close()
         }
 
         auto& layoutState = this->layoutState();
+        auto& formattingContext = this->formattingContext();
         for (auto& run : m_content->runs()) {
             LayoutUnit logicalTop;
             auto& layoutBox = run->layoutBox();
@@ -127,7 +128,7 @@ std::unique_ptr<Line::Content> Line::close()
                 if (run->isLineBreak() || run->isText())
                     logicalTop = baselineOffset() - ascent;
                 else if (run->isContainerStart()) {
-                    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+                    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
                     logicalTop = baselineOffset() - ascent - displayBox.borderTop() - displayBox.paddingTop().valueOr(0);
                 } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                     auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
@@ -294,7 +295,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
-    auto& displayBox = layoutState().displayBoxForLayoutBox(inlineItem.layoutBox());
+    auto& displayBox = formattingContext().displayBoxForLayoutBox(inlineItem.layoutBox());
     auto horizontalMargin = displayBox.horizontalMargin();    
     auto logicalRect = Display::Rect { };
 
@@ -413,8 +414,8 @@ LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const
         return fontMetrics.height();
 
     auto& layoutBox = inlineItem.layoutBox();
-    ASSERT(layoutState().hasDisplayBox(layoutBox));
-    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
+    ASSERT(formattingContext().hasDisplayBox(layoutBox));
+    auto& displayBox = formattingContext().displayBoxForLayoutBox(layoutBox);
 
     if (layoutBox.isFloatingPositioned())
         return displayBox.borderBoxHeight();

@@ -73,7 +73,7 @@ HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(co
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
-    auto usedHorizontalValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto usedHorizontalValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
     return complicatedCases(layoutBox, { }, usedHorizontalValues);
 }
 

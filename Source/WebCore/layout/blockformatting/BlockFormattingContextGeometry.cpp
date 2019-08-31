@@ -58,8 +58,9 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
         auto& layoutState = this->layoutState();
-        auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-        auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+        auto& formattingContext = this->formattingContext();
+        auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
+        auto containingBlockWidth = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
         auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
@@ -85,9 +86,9 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
         auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
         ASSERT(lastInFlowChild);
-        auto marginCollapse = MarginCollapse(formattingContext());
+        auto marginCollapse = MarginCollapse(formattingContext);
         if (!marginCollapse.marginAfterCollapsesWithParentMarginAfter(*lastInFlowChild)) {
-            auto& lastInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*lastInFlowChild);
+            auto& lastInFlowDisplayBox = formattingContext.displayBoxForLayoutBox(*lastInFlowChild);
             auto bottomEdgeOfBottomMargin = lastInFlowDisplayBox.bottom() + (lastInFlowDisplayBox.hasCollapsedThroughMargin() ? LayoutUnit() : lastInFlowDisplayBox.marginAfter()); 
             return { bottomEdgeOfBottomMargin - borderAndPaddingTop, nonCollapsedMargin };
         }
@@ -97,7 +98,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         while (inFlowChild && marginCollapse.marginBeforeCollapsesWithParentMarginAfter(*inFlowChild))
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
-            auto& inFlowDisplayBox = layoutState.displayBoxForLayoutBox(*inFlowChild);
+            auto& inFlowDisplayBox = formattingContext.displayBoxForLayoutBox(*inFlowChild);
             return { inFlowDisplayBox.top() + inFlowDisplayBox.borderBox().height() - borderAndPaddingTop, nonCollapsedMargin };
         }
 
@@ -140,7 +141,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto& style = layoutBox.style();
         auto* containingBlock = layoutBox.containingBlock();
         auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
-        auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
+        auto& displayBox = formattingContext().displayBoxForLayoutBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedValues.width ? Length { usedValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
         auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, usedValues);
@@ -231,17 +232,17 @@ LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& l
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-        auto& previousInFlowDisplayBox = layoutState().displayBoxForLayoutBox(*previousInFlowSibling);
+        auto& previousInFlowDisplayBox = formattingContext().displayBoxForLayoutBox(*previousInFlowSibling);
         return previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginAfter();
     }
-    return layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxTop();
+    return formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxTop();
 }
 
 LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const Box& layoutBox) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
-    return layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxLeft() + layoutState().displayBoxForLayoutBox(layoutBox).marginStart();
+    return formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxLeft() + formattingContext().displayBoxForLayoutBox(layoutBox).marginStart();
 }
 
 Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox) const
@@ -261,7 +262,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Bo
     HeightAndMargin heightAndMargin;
     // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
     if (layoutBox.establishesTableFormattingContext()) {
-        auto usedHorizontalValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        auto usedHorizontalValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
         heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
     } else if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox()) {
         // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
@@ -269,7 +270,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Bo
     } else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
-        auto usedHorizontalValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        auto usedHorizontalValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
         heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
     }
 

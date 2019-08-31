@@ -69,13 +69,13 @@ void TableFormattingContext::layout()
     // First row.
     auto& row = rowList.first();
     row.setLogicalTop({ });
-    initializeDisplayBoxToBlank(layoutState.displayBoxForLayoutBox(row.box()));
+    initializeDisplayBoxToBlank(displayBoxForLayoutBox(row.box()));
 
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
         ASSERT(cellLayoutBox.establishesBlockFormattingContext());
 
-        auto& cellDisplayBox = layoutState.displayBoxForLayoutBox(cellLayoutBox);
+        auto& cellDisplayBox = displayBoxForLayoutBox(cellLayoutBox);
         // FIXME: Add support for column and row spanning.
         auto cellPosition = cell->position;
         auto& row = rowList.at(cellPosition.y());
@@ -97,7 +97,7 @@ void TableFormattingContext::layout()
         if (!cellPosition.x() && cellPosition.y()) {
             auto& previousRow = rowList.at(cellPosition.y() - 1);
             row.setLogicalTop(previousRow.logicalBottom());
-            initializeDisplayBoxToBlank(layoutState.displayBoxForLayoutBox(row.box()));
+            initializeDisplayBoxToBlank(displayBoxForLayoutBox(row.box()));
         }
     }
 }
@@ -188,7 +188,7 @@ LayoutUnit TableFormattingContext::computedTableWidth()
     auto& tableWrapperBox = root();
     auto& style = tableWrapperBox.style();
     auto& containingBlock = *tableWrapperBox.containingBlock();
-    auto& containingBlockDisplayBox = layoutState().displayBoxForLayoutBox(containingBlock);
+    auto& containingBlockDisplayBox = displayBoxForLayoutBox(containingBlock);
     auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
 
     auto& grid = formattingState().tableGrid();

@@ -70,11 +70,11 @@ static bool hasPaddingAfter(const Box& layoutBox)
     return hasPadding(layoutBox.style().paddingAfter());
 }
 
-static bool hasClearance(const LayoutState& layoutState, const Box& layoutBox)
+static bool hasClearance(const FormattingContext& formattingContext, const Box& layoutBox)
 {
     if (!layoutBox.hasFloatClear())
         return false;
-    return layoutState.displayBoxForLayoutBox(layoutBox).hasClearance();
+    return formattingContext.displayBoxForLayoutBox(layoutBox).hasClearance();
 }
 
 static bool establishesBlockFormattingContext(const Box& layoutBox)
@@ -141,7 +141,7 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
         return false;
 
     // ...and the child has no clearance.
-    if (hasClearance(layoutState(), layoutBox))
+    if (hasClearance(formattingContext(), layoutBox))
         return false;
 
     return true;
@@ -176,7 +176,7 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSi
 
     // The bottom margin of an in-flow block-level element always collapses with the top margin of
     // its next in-flow block-level sibling, unless that sibling has clearance.
-    if (hasClearance(layoutState(), layoutBox))
+    if (hasClearance(formattingContext(), layoutBox))
         return false;
 
     return true;
@@ -209,7 +209,7 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlo
         return false;
 
     // ...and the child has no clearance.
-    if (hasClearance(layoutState(), firstInFlowChild))
+    if (hasClearance(formattingContext(), firstInFlowChild))
         return false;
 
     // Margins of inline-block boxes do not collapse.
@@ -229,7 +229,7 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarg
     for (auto* previousSibling = layoutBox.previousInFlowSibling(); previousSibling; previousSibling = previousSibling->previousInFlowSibling()) {
         if (!marginsCollapseThrough(*previousSibling))
             return false;
-        if (hasClearance(layoutState(), *previousSibling))
+        if (hasClearance(formattingContext(), *previousSibling))
             return true;
     }
     return false;
@@ -339,7 +339,7 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowC
     // nor (if the box's min-height is non-zero) with the box's top margin.
     auto computedMinHeight = layoutBox.style().logicalMinHeight();
     if (!computedMinHeight.isAuto() && computedMinHeight.value()
-        && (marginAfterCollapsesWithParentMarginBefore(lastInFlowChild) || hasClearance(layoutState(), lastInFlowChild)))
+        && (marginAfterCollapsesWithParentMarginBefore(lastInFlowChild) || hasClearance(formattingContext(), lastInFlowChild)))
         return false;
 
     // Margins of inline-block boxes do not collapse.
@@ -472,11 +472,11 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
     auto* currentBox = &layoutBox;
     while (marginBeforeCollapsesWithPreviousSiblingMarginAfter(*currentBox)) {
         auto& previousSibling = *currentBox->previousInFlowSibling();
-        auto& previousSiblingDisplayBox = layoutState.displayBoxForLayoutBox(previousSibling);
+        auto& previousSiblingDisplayBox = formattingContext().displayBoxForLayoutBox(previousSibling);
         auto previousSiblingVerticalMargin = previousSiblingDisplayBox.verticalMargin();
 
         auto collapsedVerticalMarginBefore = previousSiblingVerticalMargin.collapsedValues().before;
-        auto collapsedVerticalMarginAfter = layoutState.displayBoxForLayoutBox(*currentBox).verticalMargin().before();
+        auto collapsedVerticalMarginAfter = formattingContext().displayBoxForLayoutBox(*currentBox).verticalMargin().before();
 
         auto marginsCollapseThrough = this->marginsCollapseThrough(previousSibling);
         if (marginsCollapseThrough)
@@ -514,7 +514,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
         return marginType == MarginType::Before ? positiveAndNegativeVerticalMargin.before : positiveAndNegativeVerticalMargin.after; 
     }
     // This is the estimate path. We don't yet have positive/negative margin computed.
-    auto usedValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto usedValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
     auto computedVerticalMargin = Geometry(formattingContext()).computedVerticalMargin(layoutBox, usedValues);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
 
@@ -582,7 +582,7 @@ EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBef
     ASSERT(layoutBox.isInFlow() || layoutBox.isFloatingPositioned());
     ASSERT(!layoutBox.replaced());
 
-    auto usedValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto usedValues = UsedHorizontalValues { formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
     auto computedVerticalMargin = Geometry(formattingContext()).computedVerticalMargin(layoutBox, usedValues);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto marginsCollapseThrough = this->marginsCollapseThrough(layoutBox);
@@ -604,7 +604,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsin
 void BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
-    auto nonCollapsedValues = layoutState().displayBoxForLayoutBox(layoutBox).verticalMargin().nonCollapsedValues();
+    auto nonCollapsedValues = formattingContext().displayBoxForLayoutBox(layoutBox).verticalMargin().nonCollapsedValues();
 
     auto positiveNegativeMarginBefore = this->positiveNegativeMarginBefore(layoutBox, nonCollapsedValues);
     auto positiveNegativeMarginAfter = this->positiveNegativeMarginAfter(layoutBox, nonCollapsedValues);

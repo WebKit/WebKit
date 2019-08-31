@@ -29,6 +29,7 @@
 
 #include "DisplayBox.h"
 #include "LayoutBox.h"
+#include "LayoutState.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,7 +42,6 @@ namespace Layout {
 
 class Container;
 class FormattingState;
-class LayoutState;
 
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
@@ -71,6 +71,9 @@ public:
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
+
+    Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const { return layoutState().displayBoxForLayoutBox(layoutBox); }
+    bool hasDisplayBox(const Box& layoutBox) const { return layoutState().hasDisplayBox(layoutBox); }
 
 protected:
     using LayoutQueue = Vector<const Box*>;
