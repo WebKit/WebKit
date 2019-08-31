@@ -1,3 +1,14 @@
+2019-08-30  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] 're-run-layout-tests' step on macOS-High-Sierra-Debug-WK1-Tests-EWS runs WK2 tests
+        https://bugs.webkit.org/show_bug.cgi?id=201350
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKit1Tests.start): Set build property to use dump-render-tree.
+        (RunWebKitTests.start): Use dump-render-tree whenever the corresponding build property is set.
+
 2019-08-30  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Add endpoints to upload and download archives

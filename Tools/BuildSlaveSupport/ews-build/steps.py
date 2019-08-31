@@ -904,6 +904,9 @@ class RunWebKitTests(shell.Test):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         additionalArguments = self.getProperty('additionalArguments')
 
+        if self.getProperty('use-dump-render-tree', False):
+            self.setCommand(self.command + ['--dump-render-tree'])
+
         self.setCommand(self.command + ['--results-directory', self.resultDirectory])
         self.setCommand(self.command + ['--debug-rwt-logging'])
 
@@ -1159,8 +1162,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
 class RunWebKit1Tests(RunWebKitTests):
     def start(self):
-        self.setCommand(self.command + ['--dump-render-tree'])
-
+        self.setProperty('use-dump-render-tree', True)
         return RunWebKitTests.start(self)
 
 
