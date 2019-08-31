@@ -7,7 +7,7 @@
 <body>
 <script>
 const shaderSource = `
-[numthreads(2, 1, 1)]
+[numthreads(4, 1, 1)]
 compute void computeShader(device float[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
     buffer[1337] = 0.0;
     buffer[42424242] = 0.0;
@@ -57,14 +57,14 @@ async function start(device) {
     const computePassEncoder = commandEncoder.beginComputePass();
     computePassEncoder.setPipeline(computePipeline);
     computePassEncoder.setBindGroup(0, bindGroup);
-    computePassEncoder.dispatch(2, 1, 1);
+    computePassEncoder.dispatch(1, 1, 1);
     computePassEncoder.endPass();
     const commandBuffer = commandEncoder.finish();
     device.getQueue().submit([commandBuffer]);
 
     const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
     const resultsFloat32Array = new Float32Array(resultsArrayBuffer);
-    if (resultsFloat32Array[0] == 2
+    if (resultsFloat32Array[0] == 0
         && resultsFloat32Array[1] == 4
         && resultsFloat32Array[2] == 6
         && resultsFloat32Array[3] == 8

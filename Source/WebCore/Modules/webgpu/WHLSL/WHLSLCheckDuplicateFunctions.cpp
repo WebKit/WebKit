@@ -122,24 +122,7 @@ private:
 Expected<void, Error> checkDuplicateFunctions(const Program& program)
 {
     auto passesStaticChecks = [&] (const AST::FunctionDeclaration& function) -> Expected<void, Error> {
-        if (function.name() == "operator&[]" && function.parameters().size() == 2
-            && is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))) {
-            auto& type = static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type());
-            if (is<AST::TypeReference>(type)) {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we already know whether the types have been resolved by now?
-                if (auto* resolvedType = downcast<AST::TypeReference>(type).maybeResolvedType()) {
-                    if (is<AST::NativeTypeDeclaration>(*resolvedType)) {
-                        auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(*resolvedType);
-                        if (nativeTypeDeclaration.name() == "uint")
-                            return makeUnexpected(Error("Cannot define array reference ander."));
-                    }
-                }
-            }
-        } else if (function.name() == "operator.length" && function.parameters().size() == 1
-            && (is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))
-            || is<AST::ArrayType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))))
-            return makeUnexpected(Error("Cannot define operator.length for an array."));
-        else if (function.name() == "operator=="
+        if (function.name() == "operator=="
             && function.parameters().size() == 2
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type()))

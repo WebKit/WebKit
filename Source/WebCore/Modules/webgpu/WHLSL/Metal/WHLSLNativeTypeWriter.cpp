@@ -38,11 +38,6 @@ namespace WHLSL {
 
 namespace Metal {
 
-enum class MatrixType : uint8_t {
-    Float,
-    Bool
-};
-
 String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 {
     if (nativeTypeDeclaration.name() == "void")
@@ -101,35 +96,14 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         auto& unifyNode = typeReference->unifyNode();
         auto& namedType = downcast<AST::NamedType>(unifyNode);
         auto& parameterType = downcast<AST::NativeTypeDeclaration>(namedType);
-        auto matrixType = ([&]() -> MatrixType {
+        auto prefix = ([&] {
             if (parameterType.name() == "bool")
-                return MatrixType::Bool;
+                return "bool";
             ASSERT(parameterType.name() == "float");
-            return MatrixType::Float;
+            return "float";
         })();
 
-        ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]));
-        auto& constantExpression1 = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]);
-        auto& integerLiteral1 = constantExpression1.integerLiteral();
-        unsigned rows = integerLiteral1.value();
-        ASSERT(rows == 2 || rows == 3 || rows == 4);
-
-        ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]));
-        auto& constantExpression2 = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]);
-        auto& integerLiteral2 = constantExpression2.integerLiteral();
-        unsigned columns = integerLiteral2.value();
-        ASSERT(columns == 2 || columns == 3 || columns == 4);
-
-        switch (matrixType) {
-        case MatrixType::Float: {
-            unsigned alignment = columns == 2 ? 8 : 16;
-            if (columns == 3)
-                columns = 4;
-            return makeString("array<float, ", columns * rows, "> __attribute__((aligned(", alignment, ")))");
-        }
-        case MatrixType::Bool:
-            return makeString("array<bool, ", columns * rows, ">");
-        }
+        return makeString("WSLMatrix<", prefix, ", ", nativeTypeDeclaration.numberOfMatrixColumns(), ", ", nativeTypeDeclaration.numberOfMatrixRows(), ">");
     }
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 1);
     ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));

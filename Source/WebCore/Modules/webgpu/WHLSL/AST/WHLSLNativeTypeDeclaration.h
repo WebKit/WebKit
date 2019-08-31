@@ -86,11 +86,29 @@ private:
 public:
     unsigned numberOfMatrixRows()
     {
-        return matrixDimension(1);
+        return matrixDimension(2);
     }
     unsigned numberOfMatrixColumns()
     {
-        return matrixDimension(2);
+        return matrixDimension(1);
+    }
+
+    TypeReference& vectorTypeArgument()
+    {
+        ASSERT(isVector());
+        return WTF::get<Ref<AST::TypeReference>>(typeArguments()[0]);
+    }
+
+    unsigned vectorSize()
+    {
+        ASSERT(isVector());
+        return WTF::get<AST::ConstantExpression>(typeArguments()[1]).integerLiteral().value();
+    }
+
+    TypeReference& matrixTypeArgument()
+    {
+        ASSERT(isMatrix());
+        return WTF::get<Ref<AST::TypeReference>>(typeArguments()[0]);
     }
 
     void setIsInt() { m_isInt = true; }

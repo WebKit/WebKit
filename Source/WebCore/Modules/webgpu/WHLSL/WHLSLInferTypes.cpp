@@ -127,10 +127,6 @@ RefPtr<AST::UnnamedType> matchAndCommit(AST::ResolvableType& resolvableType1, AS
         resolvableType2.resolve(downcast<AST::UnsignedIntegerLiteralType>(resolvableType2).preferredType());
         return &downcast<AST::UnsignedIntegerLiteralType>(resolvableType1).preferredType();
     }
-    if (is<AST::NullLiteralType>(resolvableType1) && is<AST::NullLiteralType>(resolvableType2)) {
-        // FIXME: Trying to match nullptr and nullptr fails.
-        return nullptr;
-    }
     return nullptr;
 }
 
@@ -151,10 +147,6 @@ RefPtr<AST::UnnamedType> commit(AST::ResolvableType& resolvableType)
         auto& unsignedIntegerLiteralType = downcast<AST::UnsignedIntegerLiteralType>(resolvableType);
         resolvableType.resolve(unsignedIntegerLiteralType.preferredType());
         return &unsignedIntegerLiteralType.preferredType();
-    }
-    if (is<AST::NullLiteralType>(resolvableType)) {
-        // FIXME: Trying to match nullptr and nullptr fails.
-        return nullptr;
     }
     return nullptr;
 }

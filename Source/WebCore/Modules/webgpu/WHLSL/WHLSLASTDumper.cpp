@@ -302,12 +302,6 @@ void ASTDumper::visit(AST::FloatLiteral& floatLiteral)
     m_out.print(floatLiteral.value());
 }
 
-void ASTDumper::visit(AST::NullLiteral& nullLiteral)
-{
-    m_out.print("null");
-    visit(nullLiteral.type());
-}
-
 void ASTDumper::visit(AST::BooleanLiteral& booleanLiteral)
 {
     if (booleanLiteral.value())
@@ -325,10 +319,6 @@ void ASTDumper::visit(AST::UnsignedIntegerLiteralType&)
 }
 
 void ASTDumper::visit(AST::FloatLiteralType&)
-{
-}
-
-void ASTDumper::visit(AST::NullLiteralType&)
 {
 }
 
@@ -425,7 +415,6 @@ void ASTDumper::visit(AST::Expression& expression)
     bool skipParens = is<AST::BooleanLiteral>(expression)
         || is<AST::FloatLiteral>(expression)
         || is<AST::IntegerLiteral>(expression)
-        || is<AST::NullLiteral>(expression)
         || is<AST::UnsignedIntegerLiteral>(expression)
         || is<AST::EnumerationMemberLiteral>(expression)
         || is<AST::CommaExpression>(expression)

@@ -17,11 +17,11 @@ whlslTests.vectorIndexLoad = async () => {
             int2 x;
             x.x = 20;
             x.y = 10;
-            x[5000] = 20;
+            x[5000] = 40;
             return x[0] / x[1] + x[5000];
         }
     `;
-    assert_equals(await callIntFunction(program,  "foo", []), 2);
+    assert_equals(await callIntFunction(program,  "foo", []), 40/10 + 40);
 };
 
 runTests(whlslTests);

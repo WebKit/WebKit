@@ -34,34 +34,10 @@ namespace WebCore {
 
 namespace WHLSL {
 
-#if !ASSERT_DISABLED
-// If a high-level construct somehow manages to live on when we're lowered, it's a high zombie.
-class HighZombieFinder : public Visitor {
-private:
-    void visit(AST::DotExpression&) override
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    void visit(AST::IndexExpression&) override
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    void visit(AST::ReadModifyWriteExpression&) override
-    {
-        ASSERT_NOT_REACHED();
-    }
-};
-#endif
-
-void findHighZombies(Program& program)
+void findHighZombies(Program&)
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(program);
-#else
-    HighZombieFinder().Visitor::visit(program);
-#endif
+    // FIXME: Bring this phase back once we add a new property resolver
+    // https://bugs.webkit.org/show_bug.cgi?id=201251
 }
 
 }

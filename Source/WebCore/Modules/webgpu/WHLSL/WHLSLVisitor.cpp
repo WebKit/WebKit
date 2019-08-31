@@ -192,8 +192,6 @@ void Visitor::visit(AST::ConstantExpression& constantExpression)
         checkErrorAndVisit(unsignedIntegerLiteral);
     }, [&](AST::FloatLiteral& floatLiteral) {
         checkErrorAndVisit(floatLiteral);
-    }, [&](AST::NullLiteral& nullLiteral) {
-        checkErrorAndVisit(nullLiteral);
     }, [&](AST::BooleanLiteral& booleanLiteral) {
         checkErrorAndVisit(booleanLiteral);
     }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) {
@@ -238,11 +236,6 @@ void Visitor::visit(AST::FloatLiteral& floatLiteral)
     checkErrorAndVisit(floatLiteral.type());
 }
 
-void Visitor::visit(AST::NullLiteral& nullLiteral)
-{
-    checkErrorAndVisit(nullLiteral.type());
-}
-
 void Visitor::visit(AST::BooleanLiteral&)
 {
 }
@@ -266,12 +259,6 @@ void Visitor::visit(AST::FloatLiteralType& floatLiteralType)
     if (floatLiteralType.maybeResolvedType())
         checkErrorAndVisit(floatLiteralType.resolvedType());
     checkErrorAndVisit(floatLiteralType.preferredType());
-}
-
-void Visitor::visit(AST::NullLiteralType& nullLiteralType)
-{
-    if (nullLiteralType.maybeResolvedType())
-        checkErrorAndVisit(nullLiteralType.resolvedType());
 }
 
 void Visitor::visit(AST::EnumerationMemberLiteral&)
@@ -398,9 +385,6 @@ void Visitor::visit(AST::Expression& expression)
         break;
     case AST::Expression::Kind::MakePointer:
         checkErrorAndVisit(downcast<AST::MakePointerExpression>(expression));
-        break;
-    case AST::Expression::Kind::NullLiteral:
-        checkErrorAndVisit(downcast<AST::NullLiteral>(expression));
         break;
     case AST::Expression::Kind::Dot:
         checkErrorAndVisit(downcast<AST::DotExpression>(expression));

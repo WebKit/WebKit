@@ -58,6 +58,12 @@ public:
         return *m_boolType;
     }
 
+    AST::NativeTypeDeclaration& boolVectorTypeForSize(unsigned size) const
+    {
+        RELEASE_ASSERT(size == 2 || size == 3 || size == 4);
+        return *m_vectorBool[size - 2];
+    }
+
     AST::NativeTypeDeclaration& uintType() const
     {
         ASSERT(m_uintType);
@@ -82,6 +88,12 @@ public:
         return *m_vectorUint[2];
     }
 
+    AST::NativeTypeDeclaration& uintVectorTypeForSize(unsigned size) const
+    {
+        RELEASE_ASSERT(size == 2 || size == 3 || size == 4);
+        return *m_vectorUint[size - 2];
+    }
+
     AST::NativeTypeDeclaration& int2Type() const
     {
         ASSERT(m_vectorInt[0]);
@@ -92,6 +104,12 @@ public:
     {
         ASSERT(m_vectorInt[2]);
         return *m_vectorInt[2];
+    }
+
+    AST::NativeTypeDeclaration& intVectorTypeForSize(unsigned size) const
+    {
+        RELEASE_ASSERT(size == 2 || size == 3 || size == 4);
+        return *m_vectorInt[size - 2];
     }
 
     AST::NativeTypeDeclaration& samplerType() const
@@ -122,6 +140,12 @@ public:
     {
         ASSERT(m_vectorFloat[2]);
         return *m_vectorFloat[2];
+    }
+
+    AST::NativeTypeDeclaration& floatVectorTypeForSize(unsigned size) const
+    {
+        RELEASE_ASSERT(size == 2 || size == 3 || size == 4);
+        return *m_vectorFloat[size - 2];
     }
 
     // These functions may have been pruned from the AST if they are unused.

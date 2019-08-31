@@ -316,10 +316,8 @@ Modules/webgpu/WHLSL/WHLSLChecker.cpp
 Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp
 Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp
 Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp
-Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp
 Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp
 Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp
-Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp
 Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp
 Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp
 Modules/webgpu/WHLSL/WHLSLNameContext.cpp
@@ -331,6 +329,7 @@ Modules/webgpu/WHLSL/WHLSLVisitor.cpp
 Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp
 Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp
 Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp
+Modules/webgpu/WHLSL/WHLSLProgram.cpp
 Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp
 Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp
 Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp
@@ -347,7 +346,6 @@ Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp
-Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLStatement.cpp
 Modules/webgpu/WHLSL/AST/WHLSLType.cpp

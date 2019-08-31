@@ -58,7 +58,6 @@ public:
         // ResolvableTypes
         FloatLiteral,
         IntegerLiteral,
-        NullLiteral,
         UnsignedIntegerLiteral,
     };
 
@@ -93,7 +92,6 @@ public:
 
     bool isFloatLiteralType() const { return kind() == Kind::FloatLiteral; }
     bool isIntegerLiteralType() const { return kind() == Kind::IntegerLiteral; }
-    bool isNullLiteralType() const { return kind() == Kind::NullLiteral; }
     bool isUnsignedIntegerLiteralType() const { return kind() == Kind::UnsignedIntegerLiteral; }
 
     Type& unifyNode();

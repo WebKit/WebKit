@@ -15,22 +15,17 @@ whlslTests.incrementSetter = async () =>
     let program = `
         struct Foo {
             int z;
-        }
-        int operator.w(Foo foo) {
-            return 8;
-        }
-        Foo operator.w=(Foo foo, int value) {
-            foo.z = value;
-            return foo;
+            int w;
         }
         int bar() {
             Foo foo;
             foo.z = 3;
+            foo.w = 1;
             int value = foo.w++;
             return value*100 + foo.z*10 + foo.w;
         }
     `;
-    assert_equals(await callIntFunction(program, "bar", []), 898);
+    assert_equals(await callIntFunction(program, "bar", []), 100 + 30 + 2);
 }
 
 runTests(whlslTests);

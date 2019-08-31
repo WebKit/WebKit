@@ -67,20 +67,28 @@ compute void computeShader(device float[] buffer : register(u0), float3 threadID
         return;
 
     fourtyTwo[1337] = 50;
+    if (fourtyTwo.x != 50)
+        return;
+
+    fourtyTwo[1337] = 42;
     foo[1] = fourtyTwo;
     if (!allEqual(foo, 42))
         return;
 
     fourtyTwo[1000000] = 50;
+    if (fourtyTwo.x != 50)
+        return;
+
+    fourtyTwo[1337] = 42;
     foo[1] = fourtyTwo;
     if (!allEqual(foo, 42))
         return;
 
-    float3 shouldBeZero = foo[100000];
-    if (shouldBeZero.x != 0 || shouldBeZero.y != 0 || shouldBeZero.z != 0)
+    float3 shouldBeFourtyTwo = foo[100000];
+    if (shouldBeFourtyTwo.x != 42 || shouldBeFourtyTwo.y != 42 || shouldBeFourtyTwo.z != 42)
         return;
 
-    if (fourtyTwo[10000000] != 0)
+    if (fourtyTwo[10000000] != 42)
         return;
 
     buffer[uint(threadID.x)] = buffer[uint(threadID.x)] * 2.0;
@@ -145,7 +153,7 @@ async function start(device) {
         && resultsFloat32Array[7] == 8)
         testPassed("");
     else
-        testFailed("");
+        testFailed("not correct");
     resultsBuffer.unmap();
 }
 window.jsTestIsAsync = true;

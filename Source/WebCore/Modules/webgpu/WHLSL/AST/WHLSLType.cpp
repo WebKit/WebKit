@@ -71,9 +71,6 @@ void Type::destroy(Type& type)
     case Kind::IntegerLiteral:
         delete &downcast<IntegerLiteralType>(type);
         break;
-    case Kind::NullLiteral:
-        delete &downcast<NullLiteralType>(type);
-        break;
     case Kind::UnsignedIntegerLiteral:
         delete &downcast<UnsignedIntegerLiteralType>(type);
         break;
@@ -115,9 +112,6 @@ void Type::destruct(Type& type)
     case Kind::IntegerLiteral:
         downcast<IntegerLiteralType>(type).~IntegerLiteralType();
         break;
-    case Kind::NullLiteral:
-        downcast<NullLiteralType>(type).~NullLiteralType();
-        break;
     case Kind::UnsignedIntegerLiteral:
         downcast<UnsignedIntegerLiteralType>(type).~UnsignedIntegerLiteralType();
         break;
@@ -157,8 +151,6 @@ bool ResolvableType::canResolve(const Type& type) const
         return downcast<FloatLiteralType>(*this).canResolve(type);
     case Kind::IntegerLiteral:
         return downcast<IntegerLiteralType>(*this).canResolve(type);
-    case Kind::NullLiteral:
-        return downcast<NullLiteralType>(*this).canResolve(type);
     case Kind::UnsignedIntegerLiteral:
         return downcast<UnsignedIntegerLiteralType>(*this).canResolve(type);
     default:
@@ -173,8 +165,6 @@ unsigned ResolvableType::conversionCost(const UnnamedType& type) const
         return downcast<FloatLiteralType>(*this).conversionCost(type);
     case Kind::IntegerLiteral:
         return downcast<IntegerLiteralType>(*this).conversionCost(type);
-    case Kind::NullLiteral:
-        return downcast<NullLiteralType>(*this).conversionCost(type);
     case Kind::UnsignedIntegerLiteral:
         return downcast<UnsignedIntegerLiteralType>(*this).conversionCost(type);
     default:

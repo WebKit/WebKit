@@ -1,4 +1,3 @@
 
-PASS simpleGetter 
-PASS simpleSetter 
+PASS simplePropertyGet 
 

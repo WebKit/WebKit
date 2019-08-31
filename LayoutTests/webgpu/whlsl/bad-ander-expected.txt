@@ -1,9 +1,0 @@
-
-PASS indexAnderDoesntReturnPointer 
-PASS indexAnderDoesntTakeReference 
-PASS anderDoesntReturnPointer 
-PASS anderDoesntTakeReference 
-PASS anderWithBadIndex 
-PASS anderWithNothingWrong 
-PASS anderWithWrongNumberOfArguments 
-

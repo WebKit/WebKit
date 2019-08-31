@@ -85,6 +85,8 @@ public:
         return m_nameContext.add(m_nativeTypeDeclarations.last());
     }
 
+    bool isValidVectorProperty(String);
+
     NameContext& nameContext() { return m_nameContext; }
     Intrinsics& intrinsics() { return m_intrinsics; }
     const Intrinsics& intrinsics() const { return m_intrinsics; }

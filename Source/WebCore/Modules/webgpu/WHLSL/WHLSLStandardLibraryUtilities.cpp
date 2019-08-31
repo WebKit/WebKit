@@ -66,14 +66,6 @@ private:
         Visitor::visit(callExpression);
     }
 
-    void visit(AST::PropertyAccessExpression& propertyAccessExpression) override
-    {
-        m_functionNames.add(propertyAccessExpression.getterFunctionName());
-        m_functionNames.add(propertyAccessExpression.setterFunctionName());
-        m_functionNames.add(propertyAccessExpression.anderFunctionName());
-        Visitor::visit(propertyAccessExpression);
-    }
-
     HashSet<String> m_functionNames;
 };
 

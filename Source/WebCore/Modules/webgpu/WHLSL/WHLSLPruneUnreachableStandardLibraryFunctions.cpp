@@ -51,23 +51,6 @@ public:
             visit(downcast<AST::FunctionDefinition>(callExpression.function()));
     }
 
-    void visit(AST::PropertyAccessExpression& expression) override
-    {
-        auto visitFunction = [&] (AST::FunctionDeclaration* function) {
-            if (!function)
-                return;
-            if (is<AST::FunctionDefinition>(*function))
-                visit(downcast<AST::FunctionDefinition>(*function));
-        };
-
-        visitFunction(expression.getterFunction());
-        visitFunction(expression.anderFunction());
-        visitFunction(expression.threadAnderFunction());
-        visitFunction(expression.setterFunction());
-
-        Visitor::visit(expression);
-    }
-
     HashSet<AST::FunctionDefinition*> takeReachableFunctions() { return WTFMove(m_reachableFunctions); }
 
 private:

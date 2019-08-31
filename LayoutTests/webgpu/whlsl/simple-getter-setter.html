@@ -10,43 +10,15 @@
 <script>
 const whlslTests = {};
 
-whlslTests.simpleGetter = async () => {
+whlslTests.simplePropertyGet = async () => {
     let program = `
         struct Foo {
             int x;
-        }
-        int operator.y(Foo foo)
-        {
-            return foo.x;
         }
         int foo()
         {
             Foo foo;
             foo.x = 7804;
-            return foo.y;
-        }
-    `;
-    assert_equals(await callIntFunction(program, "foo", []), 7804);
-};
-
-whlslTests.simpleSetter = async () => {
-    let program = `
-        struct Foo {
-            int x;
-        }
-        int operator.y(Foo foo)
-        {
-            return foo.x;
-        }
-        Foo operator.y=(Foo foo, int value)
-        {
-            foo.x = value;
-            return foo;
-        }
-        int foo()
-        {
-            Foo foo;
-            foo.y = 7804;
             return foo.x;
         }
     `;

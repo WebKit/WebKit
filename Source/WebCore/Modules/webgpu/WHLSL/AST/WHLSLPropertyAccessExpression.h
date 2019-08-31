@@ -53,45 +53,12 @@ public:
     PropertyAccessExpression(const PropertyAccessExpression&) = delete;
     PropertyAccessExpression(PropertyAccessExpression&&) = default;
 
-    String getterFunctionName() const;
-    String setterFunctionName() const;
-    String anderFunctionName() const;
-
-    FunctionDeclaration* getterFunction() { return m_getterFunction; }
-    FunctionDeclaration* anderFunction() { return m_anderFunction; }
-    FunctionDeclaration* threadAnderFunction() { return m_threadAnderFunction; }
-    FunctionDeclaration* setterFunction() { return m_setterFunction; }
-
-    void setGetterFunction(FunctionDeclaration* getterFunction)
-    {
-        m_getterFunction = getterFunction;
-    }
-
-    void setAnderFunction(FunctionDeclaration* anderFunction)
-    {
-        m_anderFunction = anderFunction;
-    }
-
-    void setThreadAnderFunction(FunctionDeclaration* threadAnderFunction)
-    {
-        m_threadAnderFunction = threadAnderFunction;
-    }
-
-    void setSetterFunction(FunctionDeclaration* setterFunction)
-    {
-        m_setterFunction = setterFunction;
-    }
-
     Expression& base() { return m_base; }
     UniqueRef<Expression>& baseReference() { return m_base; }
     UniqueRef<Expression> takeBase() { return WTFMove(m_base); }
 
 private:
     UniqueRef<Expression> m_base;
-    FunctionDeclaration* m_getterFunction { nullptr };
-    FunctionDeclaration* m_anderFunction { nullptr };
-    FunctionDeclaration* m_threadAnderFunction { nullptr };
-    FunctionDeclaration* m_setterFunction { nullptr };
 };
 
 } // namespace AST

@@ -12,7 +12,7 @@ const whlslTests = {};
 
 whlslTests.setterWithMatchedType = async () =>
 {
-    const program = `
+    await checkFail(`
         int operator.foo(int)
         {
             return 5;
@@ -30,10 +30,7 @@ whlslTests.setterWithMatchedType = async () =>
             int x;
             return x.foo;
         }
-    `;
-
-    assert_equals(await callIntFunction(program, "foo", []), 543);
-    //assert_equals(await callIntFunction(program, "bar", []), 5);
+    `);
 }
 
 whlslTests.setterWithNoGetterOverload = async () =>
@@ -56,7 +53,7 @@ whlslTests.setterWithNoGetterOverload = async () =>
 
 whlslTests.setterWithNoGetterOverloadFixed = async () =>
 {
-    const program =`
+    await checkFail(`
         struct Bar { }
         int operator.foo(Bar)
         {
@@ -75,14 +72,12 @@ whlslTests.setterWithNoGetterOverloadFixed = async () =>
             bar.foo = 52;
             return bar.foo;
         }
-    `;
-    assert_equals(await callIntFunction(program, "foo", []), 534);
-    assert_equals(await callIntFunction(program, "bar", []), 534);
+    `);
 }
 
 whlslTests.recursiveSetters = async () =>
 {
-    let program = `
+    await checkFail(`
         struct Foo {
             int x;
             int y;
@@ -101,8 +96,7 @@ whlslTests.recursiveSetters = async () =>
             foo.bar.c = 8;
             return foo.x*10 + foo.y;
         }
-    `;
-    assert_equals(await callIntFunction(program, "f", []), 83);
+    `);
 }
 
 whlslTests.loneSetter = async () =>

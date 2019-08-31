@@ -14,7 +14,7 @@ bool test1() {
         return false;
     if (array[0] != 42)
         return false;
-    if (array[120213] != 0)
+    if (array[120213] != 42)
         return false;
 
     array[0] = 1337;
@@ -35,7 +35,7 @@ bool test2() {
         return false;
     if (array[0] != 42)
         return false;
-    if (array[12374217] != 0)
+    if (array[12374217] != 42)
         return false;
     
     *ptr = 666;
@@ -87,16 +87,17 @@ bool test3() {
 }
 
 bool test4() {
-    thread int* ptr = null;
+    int x = 42;
+    thread int* ptr = &x;
 
     thread int[] array = @ptr;
-    if (array.length != 0)
+    if (array.length != 1)
         return false;
 
-    if (array[0] != 0)
+    if (array[0] != 42)
         return false;
 
-    if (array[100000] != 0)
+    if (array[100000] != 42)
         return false;
 
     return true;

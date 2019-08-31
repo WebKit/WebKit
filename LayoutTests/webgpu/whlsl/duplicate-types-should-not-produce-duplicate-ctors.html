@@ -19,16 +19,20 @@ typedef XYZ3 = XYZ;
 
 [numthreads(2, 1, 1)]
 compute void computeShader(device float[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
-    thread int* x;
-    thread int* y;
-    thread float* f1;
-    thread float* f2;
+    int value;
+    float value2;
+    int[10] value3;
+
+    thread int* x = &value;
+    thread int* y = &value;
+    thread float* f1 = &value2;
+    thread float* f2 = &value2;
     XYZ1 a;
     XYZ2 b;
     XYZ3 c;
-    thread int[] intArrayRef1;
-    thread int[] intArrayRef2;
-    if (*x == *y && x == y && x == null && f1 == null && *f1 == 0) {
+    thread int[] intArrayRef1 = @value3;
+    thread int[] intArrayRef2 = @value3;
+    if (*x == *y && x == y) {
         buffer[uint(threadID.x)] = buffer[uint(threadID.x)] * 2.0;
     }
 }

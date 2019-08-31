@@ -31,7 +31,6 @@
 #include "WHLSLEnumerationMemberLiteral.h"
 #include "WHLSLFloatLiteral.h"
 #include "WHLSLIntegerLiteral.h"
-#include "WHLSLNullLiteral.h"
 #include "WHLSLUnsignedIntegerLiteral.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Variant.h>
@@ -63,11 +62,6 @@ public:
     {
     }
 
-    ConstantExpression(NullLiteral&& nullLiteral)
-        : m_variant(WTFMove(nullLiteral))
-    {
-    }
-
     ConstantExpression(BooleanLiteral&& booleanLiteral)
         : m_variant(WTFMove(booleanLiteral))
     {
@@ -90,12 +84,12 @@ public:
         return WTF::get<IntegerLiteral>(m_variant);
     }
 
-    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<IntegerLiteral, UnsignedIntegerLiteral, FloatLiteral, NullLiteral, BooleanLiteral, EnumerationMemberLiteral>&>()))
+    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<IntegerLiteral, UnsignedIntegerLiteral, FloatLiteral, BooleanLiteral, EnumerationMemberLiteral>&>()))
     {
         return WTF::visit(visitor, m_variant);
     }
 
-    template <typename Visitor> auto visit(const Visitor& visitor) const -> decltype(WTF::visit(visitor, std::declval<Variant<IntegerLiteral, UnsignedIntegerLiteral, FloatLiteral, NullLiteral, BooleanLiteral, EnumerationMemberLiteral>&>()))
+    template <typename Visitor> auto visit(const Visitor& visitor) const -> decltype(WTF::visit(visitor, std::declval<Variant<IntegerLiteral, UnsignedIntegerLiteral, FloatLiteral, BooleanLiteral, EnumerationMemberLiteral>&>()))
     {
         return WTF::visit(visitor, m_variant);
     }
@@ -108,8 +102,6 @@ public:
             return unsignedIntegerLiteral.clone();
         }, [&](const FloatLiteral& floatLiteral) -> ConstantExpression {
             return floatLiteral.clone();
-        }, [&](const NullLiteral& nullLiteral) -> ConstantExpression {
-            return nullLiteral.clone();
         }, [&](const BooleanLiteral& booleanLiteral) -> ConstantExpression {
             return booleanLiteral.clone();
         }, [&](const EnumerationMemberLiteral& enumerationMemberLiteral) -> ConstantExpression {
@@ -127,8 +119,6 @@ public:
             value = unsignedIntegerLiteral.value();
         }, [&](const FloatLiteral& floatLiteral) {
             value = floatLiteral.value();
-        }, [&](const NullLiteral&) {
-            result = WTF::holds_alternative<NullLiteral>(other.m_variant);
         }, [&](const BooleanLiteral& booleanLiteral) {
             if (WTF::holds_alternative<BooleanLiteral>(other.m_variant)) {
                 const auto& otherBooleanLiteral = WTF::get<BooleanLiteral>(other.m_variant);
@@ -152,8 +142,6 @@ public:
             result = value == unsignedIntegerLiteral.value();
         }, [&](const FloatLiteral& floatLiteral) {
             result = value == floatLiteral.value();
-        }, [&](const NullLiteral&) {
-            result = false;
         }, [&](const BooleanLiteral&) {
             result = false;
         }, [&](const EnumerationMemberLiteral&) {
@@ -169,7 +157,6 @@ private:
         IntegerLiteral,
         UnsignedIntegerLiteral,
         FloatLiteral,
-        NullLiteral,
         BooleanLiteral,
         EnumerationMemberLiteral
         > m_variant;

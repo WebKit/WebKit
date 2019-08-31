@@ -72,9 +72,6 @@ void Expression::destroy(Expression& expression)
     case Expression::Kind::MakePointer:
         delete &downcast<MakePointerExpression>(expression);
         break;
-    case Expression::Kind::NullLiteral:
-        delete &downcast<NullLiteral>(expression);
-        break;
     case Expression::Kind::Dot:
         delete &downcast<DotExpression>(expression);
         break;
@@ -138,9 +135,6 @@ void Expression::destruct(Expression& expression)
     case Expression::Kind::MakePointer:
         downcast<MakePointerExpression>(expression).~MakePointerExpression();
         break;
-    case Expression::Kind::NullLiteral:
-        downcast<NullLiteral>(expression).~NullLiteral();
-        break;
     case Expression::Kind::Dot:
         downcast<DotExpression>(expression).~DotExpression();
         break;
@@ -166,33 +160,6 @@ void Expression::destruct(Expression& expression)
         downcast<VariableReference>(expression).~VariableReference();
         break;
     }
-}
-
-String PropertyAccessExpression::getterFunctionName() const
-{
-    if (is<DotExpression>(*this))
-        return downcast<DotExpression>(*this).getterFunctionName();
-    if (is<IndexExpression>(*this))
-        return downcast<IndexExpression>(*this).getterFunctionName();
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-String PropertyAccessExpression::setterFunctionName() const
-{
-    if (is<DotExpression>(*this))
-        return downcast<DotExpression>(*this).setterFunctionName();
-    if (is<IndexExpression>(*this))
-        return downcast<IndexExpression>(*this).setterFunctionName();
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-String PropertyAccessExpression::anderFunctionName() const
-{
-    if (is<DotExpression>(*this))
-        return downcast<DotExpression>(*this).anderFunctionName();
-    if (is<IndexExpression>(*this))
-        return downcast<IndexExpression>(*this).anderFunctionName();
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace AST

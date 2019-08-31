@@ -45,6 +45,7 @@ public:
         : PropertyAccessExpression(location, Kind::Dot, WTFMove(base))
         , m_fieldName(WTFMove(fieldName))
     {
+        UNUSED_PARAM(m_padding);
     }
 
     ~DotExpression() = default;
@@ -52,25 +53,12 @@ public:
     DotExpression(const DotExpression&) = delete;
     DotExpression(DotExpression&&) = default;
 
-    String getterFunctionName() const
-    {
-        return makeString("operator.", m_fieldName);
-    }
-
-    String setterFunctionName() const
-    {
-        return makeString("operator.", m_fieldName, "=");
-    }
-
-    String anderFunctionName() const
-    {
-        return makeString("operator&.", m_fieldName);
-    }
-
     String& fieldName() { return m_fieldName; }
 
 private:
     String m_fieldName;
+    // This is used to allow for replaceWith into a bigger type.
+    char m_padding[12];
 };
 
 } // namespace AST

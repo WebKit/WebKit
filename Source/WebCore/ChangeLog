@@ -1,3 +1,178 @@
+2019-08-30  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Remove getters/setters/anders
+        https://bugs.webkit.org/show_bug.cgi?id=201008
+
+        Reviewed by Robin Morisset.
+
+        This patch changes WHLSL in a significant way. This patch removes getters/setters/anders
+        from the language. In our experience writing WHLSL shaders, these parts of the language
+        went unused, and they added a lot of complexity to the implementation of the compiler.
+        
+        This patch now treats field accesses and array indexes as intrinsics inside the compiler.
+        This patch removes all notions of named operators, anders, and indexed operators
+        from the compiler and the standard library. The checker now intrinsically knows the
+        return type for property accesses and indexed expressions based on what the
+        base type is.
+        
+        To make this work in practice was difficult, since getters/setters/anders
+        solved a lot of the difficult problems we had in generating metal code. For
+        example, all swizzle operators were getters and setters, so assigning to a
+        swizzle fell out naturally from implementing setters. However, during metal
+        codegen, all we see is a dot expression with "xy" as a property. Our previous
+        architecture of emitting Metal code using pointers which represent lvalues
+        doesn't work because you can't take the address of a swizzle. For example,
+        "auto* x = &vector.yz" is invalid metal code.
+        
+        So, this patch changes the entire metal code generator to emit WHLSL expressions
+        as Metal expressions. To do this, I had to change a lot about how the compiler
+        was implemented:
+        - I changed the indexed accesses of matrices to return columns instead of
+        rows. This allowed WHLSL code like `mat[0].xy = 42` to be compiled into
+        the equivalent metal code of `mat[0].xy = 42`.
+        - I changed the native function inliner to emit expressions instead of
+        statements.
+        - We also simplify the language by removing null and requiring all
+        reference type variables to have an initializer. This means that
+        null is no longer a valid value, which allows us to omit null checks
+        inside the metal code generator. To make this work with array
+        accesses, we now clamp accesses instead of returning null for OOB
+        accesses.
+        
+        I've also filed one required bug as a followup. I didn't include it in this
+        patch to make it easier to review along. Currently, there are two places in
+        metal codegen where we evaluate effects twice. That will be fixed in:
+        https://bugs.webkit.org/show_bug.cgi?id=201251
+
+        Tests: webgpu/whlsl/address-of-swizzle.html
+               webgpu/whlsl/array-oob-alias.html
+               webgpu/whlsl/matrix-index-assign.html
+               webgpu/whlsl/matrix-index-order.html
+               webgpu/whlsl/oob-access-2.html
+               webgpu/whlsl/operator-syntax.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.cpp:
+        (WebCore::WHLSL::AST::Expression::destroy):
+        (WebCore::WHLSL::AST::Expression::destruct):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::getterFunctionName const): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setterFunctionName const): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::anderFunctionName const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        (WebCore::WHLSL::AST::Expression::copyTypeTo const):
+        (WebCore::WHLSL::AST::Expression::isMakePointerExpression const):
+        (WebCore::WHLSL::AST::Expression::isNullLiteral const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h:
+        (WebCore::WHLSL::AST::PropertyAccessExpression::getterFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::anderFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::threadAnderFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setterFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setGetterFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setAnderFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setThreadAnderFunction): Deleted.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setSetterFunction): Deleted.
+        (): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLType.cpp:
+        (WebCore::WHLSL::AST::Type::destroy):
+        (WebCore::WHLSL::AST::Type::destruct):
+        (WebCore::WHLSL::AST::ResolvableType::canResolve const):
+        (WebCore::WHLSL::AST::ResolvableType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h:
+        (WebCore::WHLSL::AST::Type::isIntegerLiteralType const):
+        (WebCore::WHLSL::AST::Type::isNullLiteralType const): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::HoistedVariableCollector::HoistedVariableCollector):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitLoop):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitConstantExpressionString):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValueWithNullability): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValue): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendLeftValue): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastValue): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastValueAndNullability): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastLeftValue): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp:
+        (WebCore::WHLSL::Metal::metalCodePrologue):
+        (WebCore::WHLSL::Metal::generateMetalCode):
+        (WebCore::WHLSL::Metal::metalCodeProlog): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+        (WebCore::WHLSL::Metal::vectorInnerType): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp:
+        (WebCore::WHLSL::ASTDumper::visit):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h:
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        (WebCore::WHLSL::checkDuplicateFunctions):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveByInstantiation):
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::wrappedUintType):
+        (WebCore::WHLSL::Checker::normalizedTypeForFunctionKey):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::Checker::resolveFunction):
+        (WebCore::WHLSL::Checker::assignConcreteType):
+        (WebCore::WHLSL::resolveWithOperatorLength): Deleted.
+        (WebCore::WHLSL::Checker::genericPointerType): Deleted.
+        (WebCore::WHLSL::Checker::finishVisiting): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp:
+        (WebCore::WHLSL::findHighZombies):
+        (): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp:
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::commit):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::boolVectorTypeForSize const):
+        (WebCore::WHLSL::Intrinsics::uintVectorTypeForSize const):
+        (WebCore::WHLSL::Intrinsics::intVectorTypeForSize const):
+        (WebCore::WHLSL::Intrinsics::floatVectorTypeForSize const):
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::Lexer::consumeTokenFromStream):
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseConstantExpression):
+        (WebCore::WHLSL::Parser::parseEnumerationMember):
+        (WebCore::WHLSL::Parser::parseTerm):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLProgram.cpp: Added.
+        (WebCore::WHLSL::Program::isValidVectorProperty):
+        * Modules/webgpu/WHLSL/WHLSLProgram.h:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::resolveProperties):
+        (WebCore::WHLSL::PropertyResolver::visit): Deleted.
+        (WebCore::WHLSL::wrapAnderCallArgument): Deleted.
+        (WebCore::WHLSL::anderCallArgument): Deleted.
+        (WebCore::WHLSL::setterCall): Deleted.
+        (WebCore::WHLSL::getterCall): Deleted.
+        (WebCore::WHLSL::modify): Deleted.
+        (WebCore::WHLSL::PropertyResolver::simplifyRightValue): Deleted.
+        (WebCore::WHLSL::LeftValueSimplifier::finishVisiting): Deleted.
+        (WebCore::WHLSL::LeftValueSimplifier::visit): Deleted.
+        (WebCore::WHLSL::PropertyResolver::simplifyLeftValue): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.cpp:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp:
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-08-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Pass FormattingContext to Geometry/Quirks/BlockMarginCollapsing classes

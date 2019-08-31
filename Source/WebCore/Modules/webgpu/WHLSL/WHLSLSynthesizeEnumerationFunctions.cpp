@@ -56,15 +56,6 @@ Expected<void, Error> synthesizeEnumerationFunctions(Program& program)
             auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), AST::TypeReference::wrap(location, enumerationDefinition), String(), nullptr, nullptr);
             AST::VariableDeclarations parameters;
             parameters.append(WTFMove(variableDeclaration));
-            AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, enumerationDefinition->type(), "operator.value"_str, WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
-            if (!program.append(WTFMove(nativeFunctionDeclaration)))
-                return makeUnexpected(Error("Cannot create operator.value for enum type."));
-        }
-
-        {
-            auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), AST::TypeReference::wrap(location, enumerationDefinition), String(), nullptr, nullptr);
-            AST::VariableDeclarations parameters;
-            parameters.append(WTFMove(variableDeclaration));
             AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, enumerationDefinition->type(), "operator cast"_str, WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
             if (!program.append(WTFMove(nativeFunctionDeclaration)))
                 return makeUnexpected(Error("Cannot create copy constructor for enum type."));

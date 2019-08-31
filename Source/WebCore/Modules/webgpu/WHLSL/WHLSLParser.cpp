@@ -403,8 +403,6 @@ auto Parser::parseConstantExpression() -> Expected<AST::ConstantExpression, Erro
             return makeUnexpected(value.error());
         return {{ AST::FloatLiteral({ *type }, *value) }};
     }
-    case Token::Type::Null:
-        return { AST::NullLiteral(WTFMove(*type)) };
     case Token::Type::True:
         return { AST::BooleanLiteral(WTFMove(*type), true) };
     case Token::Type::False:
@@ -875,7 +873,6 @@ auto Parser::parseEnumerationMember(int64_t defaultValue) -> Expected<AST::Enume
         }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
             value = unsignedIntegerLiteral.value();
         }, [&](AST::FloatLiteral&) {
-        }, [&](AST::NullLiteral&) {
         }, [&](AST::BooleanLiteral&) {
         }, [&](AST::EnumerationMemberLiteral&) {
         }));
@@ -2063,7 +2060,7 @@ auto Parser::parseTerm() -> Expected<UniqueRef<AST::Expression>, Error>
         return { makeUniqueRef<AST::FloatLiteral>(*type, *value) };
     }
     case Token::Type::Null:
-        return { makeUniqueRef<AST::NullLiteral>(*type) };
+        return makeUnexpected(Error("'null' is a reserved keyword.", type->codeLocation));
     case Token::Type::True:
         return { makeUniqueRef<AST::BooleanLiteral>(*type, true) };
     case Token::Type::False:

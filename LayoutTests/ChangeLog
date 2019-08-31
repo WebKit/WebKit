@@ -1,3 +1,83 @@
+2019-08-30  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Remove getters/setters/anders
+        https://bugs.webkit.org/show_bug.cgi?id=201008
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl/address-of-swizzle-expected.txt: Added.
+        * webgpu/whlsl/address-of-swizzle.html: Added.
+        * webgpu/whlsl/array-oob-alias-expected.txt: Copied from LayoutTests/webgpu/whlsl/structure-field-access-on-null-expected.txt.
+        * webgpu/whlsl/array-oob-alias.html: Copied from LayoutTests/webgpu/whlsl/structure-field-access-on-null.html.
+        * webgpu/whlsl/bad-ander-expected.txt: Removed.
+        * webgpu/whlsl/bad-ander.html: Removed.
+        * webgpu/whlsl/duplicate-types-should-not-produce-duplicate-ctors.html:
+        * webgpu/whlsl/increment-setter.html:
+        * webgpu/whlsl/index-ander-expected.txt: Removed.
+        * webgpu/whlsl/index-ander.html: Removed.
+        * webgpu/whlsl/index-setter-getter-expected.txt: Removed.
+        * webgpu/whlsl/index-setter-getter.html: Removed.
+        * webgpu/whlsl/make-array-reference.html:
+        * webgpu/whlsl/matrix-index-assign-expected.txt: Added.
+        * webgpu/whlsl/matrix-index-assign.html: Added.
+        * webgpu/whlsl/matrix-index-order-expected.txt: Added.
+        * webgpu/whlsl/matrix-index-order.html: Added.
+        * webgpu/whlsl/matrix-memory-layout.html:
+        * webgpu/whlsl/matrix.html:
+        * webgpu/whlsl/null-arg-expected.txt:
+        * webgpu/whlsl/null-arg.html:
+        * webgpu/whlsl/null-dereference-expected.txt: Removed.
+        * webgpu/whlsl/null-dereference.html: Removed.
+        * webgpu/whlsl/oob-access-2-expected.txt: Added.
+        * webgpu/whlsl/oob-access-2.html: Added.
+        * webgpu/whlsl/oob-access.html:
+        * webgpu/whlsl/operator-syntax-expected.txt: Added.
+        * webgpu/whlsl/operator-syntax.html: Added.
+        * webgpu/whlsl/operator-vector-assign.html:
+        * webgpu/whlsl/operator-vector-load.html:
+        * webgpu/whlsl/override-subscript-expected.txt: Removed.
+        * webgpu/whlsl/override-subscript.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-abstract-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-abstract-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-lvalue-3-levels-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-lvalue-3-levels.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/ander.html: Removed.
+        * webgpu/whlsl/propertyresolver/getter-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/getter.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-abstract-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-abstract-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-lvalue-3-levels-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-lvalue-3-levels.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-ander.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-getter-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-getter.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-abstract-lvalue-3-levels-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-abstract-lvalue-3-levels.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-abstract-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-abstract-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/indexer-setter.html: Removed.
+        * webgpu/whlsl/propertyresolver/setter-abstract-lvalue-3-levels-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/setter-abstract-lvalue-3-levels.html: Removed.
+        * webgpu/whlsl/propertyresolver/setter-abstract-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/setter-abstract-lvalue.html: Removed.
+        * webgpu/whlsl/propertyresolver/setter-lvalue-expected.html: Removed.
+        * webgpu/whlsl/propertyresolver/setter-lvalue.html: Removed.
+        * webgpu/whlsl/setter-spec-tests.html:
+        * webgpu/whlsl/simple-getter-setter-expected.txt:
+        * webgpu/whlsl/simple-getter-setter.html:
+        * webgpu/whlsl/structure-field-access-on-null-expected.txt: Removed.
+        * webgpu/whlsl/structure-field-access-on-null.html: Removed.
+        * webgpu/whlsl/test-harness-test.html:
+
 2019-08-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249338.

@@ -862,29 +862,6 @@ parseIdentifier:
         switch (peek()) {
         case '&':
             shift();
-            switch (peek()) {
-            case '[':
-                shift();
-                if (consume(']'))
-                    return token(Token::Type::OperatorName);
-                return token(Token::Type::Invalid);
-            case '.':
-                shift();
-                if (!isValidIdentifierStart(peek()))
-                    return token(Token::Type::Invalid);
-                shift();
-                while (isValidNonStartingIdentifierChar(peek()))
-                    shift();
-                return token(Token::Type::OperatorName);
-            default:
-                return token(Token::Type::OperatorName);
-            }
-
-        case '[':
-            shift();
-            if (!consume(']'))
-                return token(Token::Type::Invalid);
-            consume('=');
             return token(Token::Type::OperatorName);
 
         case '>':
@@ -947,15 +924,6 @@ parseIdentifier:
             shift();
             return token(Token::Type::OperatorName);
 
-        case '.':
-            shift();
-            if (!isValidIdentifierStart(peek()))
-                return token(Token::Type::Invalid);
-            shift();
-            while (isValidNonStartingIdentifierChar(peek()))
-                shift();
-            consume('=');
-            return token(Token::Type::OperatorName);
         default:
             break;
         }

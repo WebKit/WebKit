@@ -60,20 +60,20 @@ async function start(device) {
     const bufferArrayBuffer = await buffer.mapWriteAsync();
     const bufferFloat32Array = new Float32Array(bufferArrayBuffer);
     bufferFloat32Array[0] = 0;
-    bufferFloat32Array[1] = 4;
-    bufferFloat32Array[2] = 8;
-    bufferFloat32Array[3] = 12;
-    bufferFloat32Array[4] = 1;
+    bufferFloat32Array[1] = 1;
+    bufferFloat32Array[2] = 2;
+    bufferFloat32Array[3] = 3;
+    bufferFloat32Array[4] = 4;
     bufferFloat32Array[5] = 5;
-    bufferFloat32Array[6] = 9;
-    bufferFloat32Array[7] = 13;
-    bufferFloat32Array[8] = 2;
-    bufferFloat32Array[9] = 6;
+    bufferFloat32Array[6] = 6;
+    bufferFloat32Array[7] = 7;
+    bufferFloat32Array[8] = 8;
+    bufferFloat32Array[9] = 9;
     bufferFloat32Array[10] = 10;
-    bufferFloat32Array[11] = 14;
-    bufferFloat32Array[12] = 3;
-    bufferFloat32Array[13] = 7;
-    bufferFloat32Array[14] = 11;
+    bufferFloat32Array[11] = 11;
+    bufferFloat32Array[12] = 12;
+    bufferFloat32Array[13] = 13;
+    bufferFloat32Array[14] = 14;
     bufferFloat32Array[15] = 15;
     buffer.unmap();
 
@@ -98,23 +98,23 @@ async function start(device) {
     const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
     const resultsFloat32Array = new Float32Array(resultsArrayBuffer);
     if (resultsFloat32Array[0] === 1
-        && resultsFloat32Array[1] === 5
-        && resultsFloat32Array[2] === 9
-        && resultsFloat32Array[3] === 13
+        && resultsFloat32Array[1] === 2
+        && resultsFloat32Array[2] === 3
+        && resultsFloat32Array[3] === 4
 
-        && resultsFloat32Array[4] === 2
+        && resultsFloat32Array[4] === 5
         && resultsFloat32Array[5] === 6
-        && resultsFloat32Array[6] === 10
-        && resultsFloat32Array[7] === 14
+        && resultsFloat32Array[6] === 7
+        && resultsFloat32Array[7] === 8
 
-        && resultsFloat32Array[8] === 3
-        && resultsFloat32Array[9] === 7
+        && resultsFloat32Array[8] === 9
+        && resultsFloat32Array[9] === 10
         && resultsFloat32Array[10] === 11
-        && resultsFloat32Array[11] === 15
+        && resultsFloat32Array[11] === 12
 
-        && resultsFloat32Array[12] === 4
-        && resultsFloat32Array[13] === 8
-        && resultsFloat32Array[14] === 12
+        && resultsFloat32Array[12] === 13
+        && resultsFloat32Array[13] === 14
+        && resultsFloat32Array[14] === 15
         && resultsFloat32Array[15] === 16)
         testPassed("");
     else

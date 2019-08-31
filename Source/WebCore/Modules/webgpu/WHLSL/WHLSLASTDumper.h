@@ -71,12 +71,10 @@ public:
     void visit(AST::IntegerLiteral&) override;
     void visit(AST::UnsignedIntegerLiteral&) override;
     void visit(AST::FloatLiteral&) override;
-    void visit(AST::NullLiteral&) override;
     void visit(AST::BooleanLiteral&) override;
     void visit(AST::IntegerLiteralType&) override;
     void visit(AST::UnsignedIntegerLiteralType&) override;
     void visit(AST::FloatLiteralType&) override;
-    void visit(AST::NullLiteralType&) override;
     void visit(AST::EnumerationMemberLiteral&) override;
     void visit(AST::FunctionAttribute&) override;
     void visit(AST::NumThreadsFunctionAttribute&) override;

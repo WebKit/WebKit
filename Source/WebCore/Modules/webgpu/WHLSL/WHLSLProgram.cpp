@@ -24,37 +24,36 @@
  */
 
 #include "config.h"
-#include "WHLSLNullLiteralType.h"
+#include "WHLSLProgram.h"
 
 #if ENABLE(WEBGPU)
-
-#include "WHLSLReferenceType.h"
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
-
-bool NullLiteralType::canResolve(const Type& type) const
+bool Program::isValidVectorProperty(String property)
 {
-    if (!is<UnnamedType>(type))
+    if (property.length() < 1 || property.length() > 4)
         return false;
-    auto& unnamedType = downcast<UnnamedType>(type);
-    if (!is<ReferenceType>(unnamedType))
-        return false;
+
+    for (size_t i = 0; i < property.length(); ++i) {
+        switch (property[i]) {
+        case 'x':
+        case 'y':
+        case 'z':
+        case 'w':
+            break;
+        default:
+            return false;
+        }
+    }
+
     return true;
 }
 
-unsigned NullLiteralType::conversionCost(const UnnamedType&) const
-{
-    return 0;
-}
+} // namespace WHLSL
 
-} // namespace AST
+} // namespace WebCore
 
-}
-
-}
-
-#endif
+#endif // ENABLE(WEBGPU)

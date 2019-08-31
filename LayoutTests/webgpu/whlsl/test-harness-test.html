@@ -161,7 +161,7 @@ whlslTests.float4x4tests = () => {
         });
     }, "Upload a float4x4[] and store into a float4x4[].");
 
-    checkArrays("float4x4", "return float4x4(float4(0, 1, 2, 3), float4(4, 5, 6, 7), float4(8, 9, 10, 11), float4(12, 13, 14, 15));", [], float4x4expected);
+    checkArrays("float4x4", "return float4x4(float4(0, 1, 2, 3), float4(4, 5, 6, 7), float4(8, 9, 10, 11), float4(12, 13, 14, 15));", [], float4x4ColumnExpected);
     checkArrays("float4x4", "return in0;", [float4x4expected], float4x4expected);
     let multiple4x4args = [];
     for (let i = 0; i < 16; ++i) {

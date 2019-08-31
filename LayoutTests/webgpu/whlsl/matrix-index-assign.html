@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>matrix-index-assign-swizzle.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.fieldShouldBeNull = async () => {
+    const program = `
+        bool foo() {
+            float2x3 mat;
+            mat[0] = float3(10.0, 20.0, 30.0);
+
+            if (!all(mat[0] == float3(10.0, 20.0, 30.0)))
+                return false;
+
+            if (!all(mat[0].xy == float2(10.0, 20.0)))
+                return false;
+
+            if (!all(mat[0].yx == float2(20.0, 10.0)))
+                return false;
+
+            mat[0].xy = float2(1.0, 2.0);
+            if (!all(mat[0].xy == float2(1.0, 2.0)))
+                return false;
+
+            mat[0].yx.yx = float2(100.0, 200.0);
+            if (!all(mat[0].xy == float2(100.0, 200.0)))
+                return false;
+
+            return true;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

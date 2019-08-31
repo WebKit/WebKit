@@ -30,7 +30,6 @@
 
 #include "WHLSLIntegerLiteralType.h"
 #include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLNullLiteralType.h"
 #include "WHLSLProgram.h"
 #include "WHLSLTypeReference.h"
 #include "WHLSLVisitor.h"
@@ -72,11 +71,6 @@ private:
         auto* nativeTypeDeclaration = getNativeTypeDeclaration(unsignedIntegerLiteralType);
         ASSERT(nativeTypeDeclaration);
         ASSERT(nativeTypeDeclaration->canRepresentUnsignedInteger()(unsignedIntegerLiteralType.value()));
-    }
-
-    void visit(AST::NullLiteralType& nullLiteralType) override
-    {
-        ASSERT(nullLiteralType.maybeResolvedType());
     }
 };
 #endif
