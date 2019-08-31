@@ -386,8 +386,8 @@ _%label%_wide32:
 end
 
 macro op(l, fn)
-    commonOp(l, macro () end, macro (unused)
-        fn()
+    commonOp(l, macro () end, macro (size)
+        size(fn, macro() end, macro() end, macro(gen) gen() end)
     end)
 end
 

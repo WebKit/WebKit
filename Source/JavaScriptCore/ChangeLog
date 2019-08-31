@@ -1,3 +1,15 @@
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] LLInt op should not emit the same code three times
+        https://bugs.webkit.org/show_bug.cgi?id=201370
+
+        Reviewed by Mark Lam.
+
+        LLInt op macro (not llintOp macro) is used to generate some stub code like llint_program_prologue.
+        But now it generates the same code three times for narrow, wide16, and wide32. We should emit code only once.
+
+        * llint/LowLevelInterpreter.asm:
+
 2019-08-30  Mark Lam  <mark.lam@apple.com>
 
         Remove some obsolete statements that have no effect.
