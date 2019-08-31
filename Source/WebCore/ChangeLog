@@ -1,3 +1,20 @@
+2019-08-31  Chris Dumez  <cdumez@apple.com>
+
+        DocumentStorageAccess::hasStorageAccess() / requestStorageAccess() don't need to know about pageID / frameID
+        https://bugs.webkit.org/show_bug.cgi?id=201364
+
+        Reviewed by John Wilander.
+
+        DocumentStorageAccess::hasStorageAccess() / requestStorageAccess() don't need to know about pageID / frameID. pageID is
+        redundant since it is being ignored by the callee. For the frame, simply pass the frame object in.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::hasStorageAccess):
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::hasStorageAccess):
+        (WebCore::ChromeClient::requestStorageAccess):
+
 2019-08-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Transition from Geometry(formattingContext()) to formattingContext().quirks()
