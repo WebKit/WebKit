@@ -1,3 +1,17 @@
+2019-09-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix testb3 debug failures
+        https://bugs.webkit.org/show_bug.cgi?id=201382
+
+        Reviewed by Mark Lam.
+
+        Fix testb3 debug failures due to incorrect types of operations like pointer + int32.
+
+        * b3/testb3_8.cpp:
+        (testByteCopyLoop):
+        (testByteCopyLoopStartIsLoopDependent):
+        (testByteCopyLoopBoundIsLoopDependent):
+
 2019-09-01  Mark Lam  <mark.lam@apple.com>
 
         Speculative build fix for ARMv7 and MIPS.

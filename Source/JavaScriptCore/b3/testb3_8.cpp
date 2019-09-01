@@ -937,7 +937,7 @@ void testByteCopyLoop()
 
     auto* arraySrc = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     auto* arrayDst = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    auto* arraySize = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto* arraySize = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
     auto* one = root->appendNew<Const32Value>(proc, Origin(), 1);
     auto* two = root->appendNew<Const32Value>(proc, Origin(), 2);
     UpsilonValue* startingIndex = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -946,8 +946,10 @@ void testByteCopyLoop()
 
     auto* index = head->appendNew<Value>(proc, Phi, Int32, Origin());
     startingIndex->setPhi(index);
-    auto* loadIndex = head->appendNew<Value>(proc, Add, Origin(), arraySrc, head->appendNew<Value>(proc, Shl, Origin(), index, two));
-    auto* storeIndex = head->appendNew<Value>(proc, Add, Origin(), arrayDst, head->appendNew<Value>(proc, Shl, Origin(), index, two));
+    auto* loadIndex = head->appendNew<Value>(proc, Add, Origin(), arraySrc,
+        head->appendNew<Value>(proc, ZExt32, Origin(), head->appendNew<Value>(proc, Shl, Origin(), index, two)));
+    auto* storeIndex = head->appendNew<Value>(proc, Add, Origin(), arrayDst,
+        head->appendNew<Value>(proc, ZExt32, Origin(), head->appendNew<Value>(proc, Shl, Origin(), index, two)));
     head->appendNew<MemoryValue>(proc, Store, Origin(), head->appendNew<MemoryValue>(proc, Load, Int32, Origin(), loadIndex), storeIndex);
     auto* newIndex = head->appendNew<Value>(proc, Add, Origin(), index, one);
     auto* cmpValue = head->appendNew<Value>(proc, GreaterThan, Origin(), newIndex, arraySize);
@@ -991,7 +993,7 @@ void testByteCopyLoopStartIsLoopDependent()
 
     auto* arraySrc = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     auto* arrayDst = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    auto* arraySize = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto* arraySize = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
     auto* one = root->appendNew<Const32Value>(proc, Origin(), 1);
     auto* two = root->appendNew<Const32Value>(proc, Origin(), 2);
     root->appendNew<Value>(proc, Jump, Origin());
@@ -1000,8 +1002,10 @@ void testByteCopyLoopStartIsLoopDependent()
     UpsilonValue* startingIndex = head->appendNew<UpsilonValue>(proc, Origin(), head->appendNew<Const32Value>(proc, Origin(), 0));
     auto* index = head->appendNew<Value>(proc, Phi, Int32, Origin());
     startingIndex->setPhi(index);
-    auto* loadIndex = head->appendNew<Value>(proc, Add, Origin(), arraySrc, head->appendNew<Value>(proc, Shl, Origin(), index, two));
-    auto* storeIndex = head->appendNew<Value>(proc, Add, Origin(), arrayDst, head->appendNew<Value>(proc, Shl, Origin(), index, two));
+    auto* loadIndex = head->appendNew<Value>(proc, Add, Origin(), arraySrc,
+        head->appendNew<Value>(proc, ZExt32, Origin(), head->appendNew<Value>(proc, Shl, Origin(), index, two)));
+    auto* storeIndex = head->appendNew<Value>(proc, Add, Origin(), arrayDst,
+        head->appendNew<Value>(proc, ZExt32, Origin(), head->appendNew<Value>(proc, Shl, Origin(), index, two)));
     head->appendNew<MemoryValue>(proc, Store, Origin(), head->appendNew<MemoryValue>(proc, Load, Int32, Origin(), loadIndex), storeIndex);
     auto* newIndex = head->appendNew<Value>(proc, Add, Origin(), index, one);
     auto* cmpValue = head->appendNew<Value>(proc, GreaterThan, Origin(), newIndex, arraySize);
@@ -1053,8 +1057,10 @@ void testByteCopyLoopBoundIsLoopDependent()
 
     auto* index = head->appendNew<Value>(proc, Phi, Int32, Origin());
     startingIndex->setPhi(index);
-    auto* loadIndex = head->appendNew<Value>(proc, Add, Origin(), arraySrc, head->appendNew<Value>(proc, Shl, Origin(), index, two));
-    auto* storeIndex = head->appendNew<Value>(proc, Add, Origin(), arrayDst, head->appendNew<Value>(proc, Shl, Origin(), index, two));
+    auto* loadIndex = head->appendNew<Value>(proc, Add, Origin(), arraySrc,
+        head->appendNew<Value>(proc, ZExt32, Origin(), head->appendNew<Value>(proc, Shl, Origin(), index, two)));
+    auto* storeIndex = head->appendNew<Value>(proc, Add, Origin(), arrayDst,
+        head->appendNew<Value>(proc, ZExt32, Origin(), head->appendNew<Value>(proc, Shl, Origin(), index, two)));
     head->appendNew<MemoryValue>(proc, Store, Origin(), head->appendNew<MemoryValue>(proc, Load, Int32, Origin(), loadIndex), storeIndex);
     auto* newIndex = head->appendNew<Value>(proc, Add, Origin(), index, one);
     auto* cmpValue = head->appendNew<Value>(proc, GreaterThan, Origin(), newIndex, index);
