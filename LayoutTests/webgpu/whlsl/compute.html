@@ -74,6 +74,7 @@ async function start(device) {
         testFailed("");
     resultsBuffer.unmap();
 }
+
 window.jsTestIsAsync = true;
 getBasicDevice().then(function(device) {
     start(device).then(function() {
