@@ -1,3 +1,23 @@
+2019-09-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Long presses that interrupt accelerated scrolling dispatch clicks on apps linked against iOS 12 or earlier
+        https://bugs.webkit.org/show_bug.cgi?id=201346
+        <rdar://problem/54885784>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test option to allow tests to disable link previews.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+
+        Drive-by fix: also check enableLazyImageLoading when determining whether two TestOptions are the same.
+
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2019-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [WinCairo, FTW] Properly handle device scale factor

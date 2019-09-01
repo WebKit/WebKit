@@ -1402,6 +1402,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enablePageCache = parseBooleanTestHeaderValue(value);
         else if (key == "enableLazyImageLoading")
             testOptions.enableLazyImageLoading = parseBooleanTestHeaderValue(value);
+        else if (key == "allowsLinkPreview")
+            testOptions.allowsLinkPreview = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

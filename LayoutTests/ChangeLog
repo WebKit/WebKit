@@ -1,3 +1,19 @@
+2019-09-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Long presses that interrupt accelerated scrolling dispatch clicks on apps linked against iOS 12 or earlier
+        https://bugs.webkit.org/show_bug.cgi?id=201346
+        <rdar://problem/54885784>
+
+        Reviewed by Dean Jackson.
+
+        Add a couple of new layout tests to verify that using a long press gesture to interrupt momentum scrolling in a
+        web view that uses API to disable link previews does not result in a click.
+
+        * fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-main-frame-expected.txt: Added.
+        * fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-main-frame.html: Added.
+        * fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow-expected.txt: Added.
+        * fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow.html: Added.
+
 2019-09-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         HTMLImageElement::decode() should return a resolved promise for decoding non bitmap images

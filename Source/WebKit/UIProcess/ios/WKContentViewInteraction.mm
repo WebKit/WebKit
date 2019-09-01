@@ -52,6 +52,7 @@
 #import "WKFocusedFormControlView.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
+#import "WKHighlightLongPressGestureRecognizer.h"
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
@@ -755,15 +756,15 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_twoFingerDoubleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 
-    _highlightLongPressGestureRecognizer = adoptNS([[_UIWebHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
+    _highlightLongPressGestureRecognizer = adoptNS([[WKHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
     [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
     [_highlightLongPressGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+
+    [self _createAndConfigureLongPressGestureRecognizer];
 
 #if HAVE(LINK_PREVIEW)
-    if (!self._shouldUseContextMenus) {
-        [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
-        [self _createAndConfigureLongPressGestureRecognizer];
-    }
+    [self _updateLongPressAndHighlightLongPressGestures];
 #endif
 
 #if ENABLE(DATA_INTERACTION)
@@ -1004,6 +1005,23 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if ENABLE(POINTER_EVENTS)
     [self addGestureRecognizer:_touchActionGestureRecognizer.get()];
 #endif
+}
+
+- (void)_didChangeLinkPreviewAvailability
+{
+    [self _updateLongPressAndHighlightLongPressGestures];
+}
+
+- (void)_updateLongPressAndHighlightLongPressGestures
+{
+    // We only disable the highlight long press gesture in the case where UIContextMenu is available and we
+    // also allow link previews, since the context menu interaction's gestures need to take precedence over
+    // highlight long press gestures.
+    [_highlightLongPressGestureRecognizer setEnabled:!self._shouldUseContextMenus || !_webView.allowsLinkPreview];
+
+    // We only enable the long press gesture in the case where the app is linked on iOS 12 or earlier (and
+    // therefore prefers the legacy action sheet over context menus), and link previews are also enabled.
+    [_longPressGestureRecognizer setEnabled:!self._shouldUseContextMenus && _webView.allowsLinkPreview];
 }
 
 - (UIView *)unscaledView
@@ -2091,20 +2109,23 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (gestureRecognizer == _stylusSingleTapGestureRecognizer)
         return _webView._stylusTapGestureShouldCreateEditableImage;
 
-    if (gestureRecognizer == _singleTapGestureRecognizer) {
+    auto isInterruptingDecelerationForScrollViewOrAncestor = [&] (UIScrollView *scrollView) {
         UIScrollView *mainScroller = _webView.scrollView;
-        UIView *view = [_singleTapGestureRecognizer lastTouchedScrollView] ?: mainScroller;
+        UIView *view = scrollView ?: mainScroller;
         while (view) {
             if ([view isKindOfClass:UIScrollView.class] && [(UIScrollView *)view _isInterruptingDeceleration])
-                return NO;
+                return YES;
 
             if (mainScroller == view)
                 break;
 
             view = view.superview;
         }
-        return YES;
-    }
+        return NO;
+    };
+
+    if (gestureRecognizer == _singleTapGestureRecognizer)
+        return !isInterruptingDecelerationForScrollViewOrAncestor([_singleTapGestureRecognizer lastTouchedScrollView]);
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
         || gestureRecognizer == _doubleTapGestureRecognizer
@@ -2123,6 +2144,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer) {
+        if (isInterruptingDecelerationForScrollViewOrAncestor([_highlightLongPressGestureRecognizer lastTouchedScrollView]))
+            return NO;
+
         if (hasFocusedElement(_focusedElementInformation)) {
             // This is a different element than the focused one.
             // Prevent the gesture if there is no node.

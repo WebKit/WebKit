@@ -1267,6 +1267,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         [_contentView _registerPreview];
     else
         [_contentView _unregisterPreview];
+    [_contentView _didChangeLinkPreviewAvailability];
 #endif // HAVE(LINK_PREVIEW)
 #endif // PLATFORM(IOS_FAMILY)
 }

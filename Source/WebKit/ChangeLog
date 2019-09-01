@@ -1,3 +1,84 @@
+2019-09-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Long presses that interrupt accelerated scrolling dispatch clicks on apps linked against iOS 12 or earlier
+        https://bugs.webkit.org/show_bug.cgi?id=201346
+        <rdar://problem/54885784>
+
+        Reviewed by Dean Jackson.
+
+        For apps that are linked on or after iOS 13, we add a context menu interaction to the content view, which
+        requires us to disable (or avoid adding) the highlight long press gesture recognizer. However, for apps that are
+        linked on the iOS 12 SDK or prior, this gesture is still present, and fires when long pressing for (roughly) up
+        to 0.75 seconds if a tap gesture was not recognized instead. Firing this gesture sends a click event to the
+        page; this brings back some form of <rdar://problem/53889373>, but only when holding for slightly longer than a
+        normal tap, and also only in apps linked on iOS 12 or earlier. To fix this, we apply a similar solution as in
+        r248433 and detect whether a long press gesture interrupted scroll view deceleration in
+        -gestureRecognizerShouldBegin:. If so, we return NO to avoid clicking. See per-method comments below for more
+        details.
+
+        Testing this bug as-is was tricky, since there's no way in layout tests to simulate being linked on or before a
+        given SDK version. Luckily, recall that:
+        1. This bug occurs when the highlight gesture recognizer is enabled and added to the content view.
+        2. The highlight gesture recognizer only needs to be disabled or removed when context menu interaction is added.
+        As such, we should be able to restore the highlight gesture recognizer by suppressing the context menu
+        interaction in an app linked-on-or-after iOS 13, by setting allowsLinkPreview to NO. Unfortunately, this doesn't
+        quite work, since we currently always avoid adding the highlight gesture recognizer if the app is linked on
+        iOS 13 or later.
+
+        However, this means that the highlight gesture recognizer is absent from the content view in apps linked against
+        iOS 13 that disable link previews, even though its absence is not required. This means that long pressing a
+        clickable element in a web view that disables link previews does not show a tap highlight on iOS 13, whereas it
+        would on iOS 12; this is a regression, albeit a very subtle one. To fix this subtle issue and make it possible
+        to write a test for this bug, we refactor some logic for creating and configuring the highlight long press
+        gesture, such that we now unconditionally add the highlight gesture, but only enable it in apps linked on or
+        after iOS 13 if link previews (i.e. context menu interaction) are not allowed.
+
+        Test: fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow.html
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setAllowsLinkPreview:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+
+        Refactor our gesture setup logic to always create and add the long press and highlight long press gestures, but
+        conditionally disable them based on whether or not (1) the context menu is available, and (2) WKWebView's
+        allowsLinkPreview property.
+
+        (-[WKContentView _didChangeLinkPreviewAvailability]):
+        (-[WKContentView _updateLongPressAndHighlightLongPressGestures]):
+
+        Add a new helper to update the enabled state of the long press and highlight long press gestures, by consulting
+        -_shouldUseContextMenu and -allowsLinkPreview. This is called when setting up the gestures, as well as whenever
+        -allowsLinkPreview changes.
+
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+
+        Factor out logic to ascend the view hierarchy in search of a UIScrollView that was interrupted while
+        decelerating into a local lambda function; use this for both the highlight gesture and the single tap gesture,
+        to determine whether they should begin.
+
+        * UIProcess/ios/WKHighlightLongPressGestureRecognizer.h: Added.
+        * UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm: Added.
+
+        In order to remember the UIScrollView (if any) tracked by the highlight long press gesture, we subclass
+        _UIWebHighlightLongPressGestureRecognizer. While UILongPressGestureRecognizer does have SPI to ask for a list of
+        UITouches, by the time the gesture has been recognized and the gesture delegates are invoked, these UITouches
+        no longer correspond to UIViews. As such, the only time we have access to the list of UITouches with their
+        UIViews is during the touches* subclass hooks.
+
+        (-[WKHighlightLongPressGestureRecognizer reset]):
+
+        Clear out the tracked UIScrollView here, when the gesture is reset (i.e. after ending, or being canceled).
+
+        (-[WKHighlightLongPressGestureRecognizer touchesBegan:withEvent:]):
+
+        Remember the last touched UIScrollView here.
+
+        (-[WKHighlightLongPressGestureRecognizer lastTouchedScrollView]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [WinCairo, FTW] Properly handle device scale factor
