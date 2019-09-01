@@ -1,3 +1,18 @@
+2019-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [WinCairo, FTW] Properly handle device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=201361
+
+        Reviewed by Don Olmstead.
+
+        Update the Direct2D ImageBuffer/ImageBufferData classes to correctly handle
+        the device scale factor.
+
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::putByteArray):
+
 2019-08-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         EXIF orientation should be respected when rendering images 

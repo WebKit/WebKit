@@ -45,6 +45,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/GDIUtilities.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
@@ -246,6 +247,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
 
     WebProcessPool* processPool = pageConfiguration->processPool();
     m_page = processPool->createWebPage(*m_pageClient, WTFMove(pageConfiguration));
+    m_page->setIntrinsicDeviceScaleFactor(WebCore::deviceScaleFactorForWindow(parentWindow));
     m_page->initializeWebPage();
 
     IntSize windowSize(rect.right - rect.left, rect.bottom - rect.top);

@@ -172,14 +172,12 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
 
     Checked<int> originx = sourceRect.x();
     Checked<int> destx = (Checked<int>(destPoint.x()) + sourceRect.x());
-    destx *= resolutionScale;
     ASSERT(destx.unsafeGet() >= 0);
     ASSERT(destx.unsafeGet() < size.width());
     ASSERT(originx.unsafeGet() >= 0);
     ASSERT(originx.unsafeGet() <= sourceRect.maxX());
 
     Checked<int> endx = (Checked<int>(destPoint.x()) + sourceRect.maxX());
-    endx *= resolutionScale;
     ASSERT(endx.unsafeGet() <= size.width());
 
     Checked<int> width = sourceRect.width();
@@ -187,14 +185,12 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
 
     Checked<int> originy = sourceRect.y();
     Checked<int> desty = (Checked<int>(destPoint.y()) + sourceRect.y());
-    desty *= resolutionScale;
     ASSERT(desty.unsafeGet() >= 0);
     ASSERT(desty.unsafeGet() < size.height());
     ASSERT(originy.unsafeGet() >= 0);
     ASSERT(originy.unsafeGet() <= sourceRect.maxY());
 
     Checked<int> endy = (Checked<int>(destPoint.y()) + sourceRect.maxY());
-    endy *= resolutionScale;
     ASSERT(endy.unsafeGet() <= size.height());
 
     Checked<int> height = sourceRect.height();

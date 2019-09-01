@@ -1,3 +1,15 @@
+2019-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [WinCairo, FTW] Properly handle device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=201361
+
+        Reviewed by Don Olmstead.
+
+        Reset zoom to 1.0; device scale is handled elsewhere.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::resetZoom):
+
 2019-08-30  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org Timeline] Add notify rerender API for timeline

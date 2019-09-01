@@ -1,3 +1,18 @@
+2019-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [WinCairo, FTW] Properly handle device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=201361
+
+        Reviewed by Don Olmstead.
+
+        Update the WebView and WebProcess to correctly handle
+        the device scale factor.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Tell the page the current device scale factor.
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMainWin): Tell the process to be aware of device scale.
+
 2019-08-31  Chris Dumez  <cdumez@apple.com>
 
         DocumentStorageAccess::hasStorageAccess() / requestStorageAccess() don't need to know about pageID / frameID
