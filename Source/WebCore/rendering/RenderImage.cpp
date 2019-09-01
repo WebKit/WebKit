@@ -617,11 +617,9 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         return ImageDrawResult::DidNothing;
 
     HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
-    CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
 
     // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();
-    InterpolationQuality interpolation = image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationDefault;
 
 #if USE(CG)
     if (is<PDFDocumentImage>(image))
@@ -631,8 +629,14 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (is<BitmapImage>(image))
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
-    auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
-    auto drawResult = paintInfo.context().drawImage(*img, rect, { compositeOperator, BlendMode::Normal, decodingMode, imageOrientation(), interpolation });
+    ImagePaintingOptions options = {
+        imageElement ? imageElement->compositeOperator() : CompositeSourceOver,
+        decodingModeForImageDraw(*image, paintInfo),
+        imageOrientation(),
+        image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationDefault
+    };
+
+    auto drawResult = paintInfo.context().drawImage(*img, rect, options);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
 

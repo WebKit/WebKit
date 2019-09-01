@@ -66,7 +66,7 @@ String PDFDocumentImage::filenameExtension() const
     return "pdf";
 }
 
-FloatSize PDFDocumentImage::size() const
+FloatSize PDFDocumentImage::size(ImageOrientation) const
 {
     FloatSize expandedCropBoxSize = FloatSize(expandedIntSize(m_cropBox.size()));
 

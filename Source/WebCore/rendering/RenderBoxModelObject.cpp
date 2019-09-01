@@ -947,15 +947,20 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         geometry.clip(LayoutRect(pixelSnappedRect));
         RefPtr<Image> image;
         if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : this, geometry.tileSize()))) {
-            auto compositeOp = op == CompositeSourceOver ? bgLayer.composite() : op;
             context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskSourceType::Luminance);
 
             if (is<BitmapImage>(image))
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
 
-            auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
-            auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
-            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), { compositeOp, bgLayer.blendMode(), decodingMode, interpolation });
+            ImagePaintingOptions options = {
+                op == CompositeSourceOver ? bgLayer.composite() : op,
+                bgLayer.blendMode(),
+                decodingModeForImageDraw(*image, paintInfo),
+                ImageOrientation::FromImage,
+                chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize())
+            };
+
+            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->isCachedImage());
                 bgImage->cachedImage()->addClientWaitingForAsyncDecoding(*this);

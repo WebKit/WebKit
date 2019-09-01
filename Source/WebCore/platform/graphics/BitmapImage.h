@@ -81,8 +81,7 @@ public:
     Optional<IntPoint> hotSpot() const override { return m_source->hotSpot(); }
 
     // FloatSize due to override.
-    FloatSize size() const override { return m_source->size(); }
-    IntSize sizeRespectingOrientation() const { return m_source->sizeRespectingOrientation(); }
+    FloatSize size(ImageOrientation orientation = ImageOrientation::FromImage) const override { return m_source->size(orientation); }
     Color singlePixelSolidColor() const override { return m_source->singlePixelSolidColor(); }
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
     DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source->frameDecodingStatusAtIndex(index); }

@@ -94,39 +94,36 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
         
 RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orientation)
 {
-    FloatSize size = image->size();
-
     if (is<BitmapImage>(*image)) {
         BitmapImage& bitmapImage = downcast<BitmapImage>(*image);
-        IntSize sizeRespectingOrientation = bitmapImage.sizeRespectingOrientation();
 
         if (orientation == ImageOrientation::FromImage)
             orientation = bitmapImage.orientationForCurrentFrame();
 
         if (orientation != ImageOrientation::None) {
             // Construct a correctly-rotated copy of the image to use as the drag image.
-            FloatRect destRect(FloatPoint(), sizeRespectingOrientation);
-
-            RetainPtr<NSImage> rotatedDragImage = adoptNS([[NSImage alloc] initWithSize:(NSSize)(sizeRespectingOrientation)]);
+            FloatSize imageSize = image->size(orientation);
+            RetainPtr<NSImage> rotatedDragImage = adoptNS([[NSImage alloc] initWithSize:(NSSize)(imageSize)]);
             [rotatedDragImage lockFocus];
 
             // ImageOrientation uses top-left coordinates, need to flip to bottom-left, apply...
-            CGAffineTransform transform = CGAffineTransformMakeTranslation(0, destRect.height());
+            CGAffineTransform transform = CGAffineTransformMakeTranslation(0, imageSize.height());
             transform = CGAffineTransformScale(transform, 1, -1);
-            transform = CGAffineTransformConcat(orientation.transformFromDefault(sizeRespectingOrientation), transform);
+            transform = CGAffineTransformConcat(orientation.transformFromDefault(imageSize), transform);
 
             if (orientation.usesWidthAsHeight())
-                destRect = FloatRect(destRect.x(), destRect.y(), destRect.height(), destRect.width());
+                imageSize = imageSize.transposedSize();
 
             // ...and flip back.
-            transform = CGAffineTransformTranslate(transform, 0, destRect.height());
+            transform = CGAffineTransformTranslate(transform, 0, imageSize.height());
             transform = CGAffineTransformScale(transform, 1, -1);
 
             RetainPtr<NSAffineTransform> cocoaTransform = adoptNS([[NSAffineTransform alloc] init]);
             [cocoaTransform setTransformStruct:*(NSAffineTransformStruct*)&transform];
             [cocoaTransform concat];
 
-            [image->snapshotNSImage() drawInRect:destRect fromRect:NSMakeRect(0, 0, size.width(), size.height()) operation:NSCompositingOperationSourceOver fraction:1.0];
+            FloatRect imageRect(FloatPoint(), imageSize);
+            [image->snapshotNSImage() drawInRect:imageRect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
 
             [rotatedDragImage unlockFocus];
 
@@ -134,8 +131,9 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
         }
     }
 
+    FloatSize imageSize = image->size();
     auto dragImage = image->snapshotNSImage();
-    [dragImage setSize:(NSSize)size];
+    [dragImage setSize:(NSSize)imageSize];
     return dragImage;
 }
     

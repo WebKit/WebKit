@@ -43,7 +43,7 @@ public:
 
     bool isSVGImage() const final { return true; }
 
-    FloatSize size() const final;
+    FloatSize size(ImageOrientation = ImageOrientation::FromImage) const final;
 
     bool usesContainerSize() const final { return m_image->usesContainerSize(); }
     bool hasRelativeWidth() const final { return m_image->hasRelativeWidth(); }

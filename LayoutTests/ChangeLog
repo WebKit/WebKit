@@ -1,3 +1,43 @@
+2019-08-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        EXIF orientation should be respected when rendering images
+        https://bugs.webkit.org/show_bug.cgi?id=201123
+
+        Reviewed by Simon Fraser.
+
+        Existing tests are made ref-tests. New tests were added to cover more
+        cases for drawing images.
+
+        * fast/images/exif-orientation-background-expected.html: Added.
+        * fast/images/exif-orientation-background.html: Added.
+        * fast/images/exif-orientation-canvas-expected.html: Added.
+        * fast/images/exif-orientation-canvas.html: Added.
+        * fast/images/exif-orientation-composited-expected.html: Added.
+        * fast/images/exif-orientation-composited-expected.txt: Removed.
+        * fast/images/exif-orientation-composited.html:
+        * fast/images/exif-orientation-content-expected.html: Added.
+        * fast/images/exif-orientation-content.html: Added.
+        * fast/images/exif-orientation-css-expected.txt: Removed.
+        * fast/images/exif-orientation-css.html: Removed.
+        * fast/images/exif-orientation-element-expected.html: Added.
+        * fast/images/exif-orientation-element-object-fit-expected.html: Added.
+        * fast/images/exif-orientation-element-object-fit.html: Added.
+        * fast/images/exif-orientation-element.html: Added.
+        * fast/images/exif-orientation-expected.txt: Removed.
+        * fast/images/exif-orientation-image-document-expected.html: Added.
+        * fast/images/exif-orientation-image-document-expected.txt: Removed.
+        * fast/images/exif-orientation-image-document.html:
+        * fast/images/exif-orientation-image-object-expected.html: Added.
+        * fast/images/exif-orientation-image-object.html: Added.
+        * fast/images/exif-orientation-svg-feimage-expected.html: Added.
+        * fast/images/exif-orientation-svg-feimage.html: Added.
+        * fast/images/exif-orientation-svg-image-expected.html: Added.
+        * fast/images/exif-orientation-svg-image.html: Added.
+        * fast/images/exif-orientation.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/images/exif-orientation-composited-expected.png: Removed.
+        * platform/win/TestExpectations:
+
 2019-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a test to ensure that a tap in editable content shows the callout bar if the selection did not change

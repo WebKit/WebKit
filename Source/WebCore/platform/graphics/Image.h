@@ -111,7 +111,7 @@ public:
     virtual bool hasRelativeHeight() const { return false; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    virtual FloatSize size() const = 0;
+    virtual FloatSize size(ImageOrientation = ImageOrientation::FromImage) const = 0;
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }

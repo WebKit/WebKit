@@ -15,89 +15,68 @@
         width: 52px;
         height: 102px;
     }
-    img { 
-        -webkit-transform: translateZ(0);
+    object {
         border: 1px solid black;
     }
 </style>
 <body>
-    <b>The images of the composited &lt;img&gt; elements should be rotated respecting their EXIF orientation.</b>
+    <b>The images of the &lt;object&gt; elements should be rotated respecting their EXIF orientation.</b>
     <br>
     <br>
     <div class="container">
         <div class="horizontal">
-            <img id="img1" src="resources/exif-orientation-1-ul.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-1-ul.jpg"></object>
         </div>
         <br>Normal
     </div>
     <div class="container">
         <div class="horizontal">
-            <img id="img2" src="resources/exif-orientation-2-ur.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-2-ur.jpg"></object>
         </div>
         <br>Flipped horizontally
     </div>
     <div class="container">
         <div class="horizontal">
-            <img id="img3" src="resources/exif-orientation-3-lr.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-3-lr.jpg"></object>
         </div>
         <br>Rotated 180&deg;
     </div>
     <div class="container">
         <div class="horizontal">
-            <img id="img4" src="resources/exif-orientation-4-lol.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-4-lol.jpg"></object>
         </div>
         <br>Flipped vertically
     </div>
     <br>
     <div class="container">
         <div class="vertical">
-            <img id="img5" src="resources/exif-orientation-5-lu.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-5-lu.jpg"></object>
         </div>
         <br>Rotated 90&deg; CCW and flipped vertically
     </div>
     <div class="container">
         <div class="vertical">
-            <img id="img6" src="resources/exif-orientation-6-ru.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-6-ru.jpg"></object>
         </div>
         <br>Rotated 90&deg; CCW
     </div>
     <div class="container">
         <div class="vertical">
-            <img id="img7" src="resources/exif-orientation-7-rl.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-7-rl.jpg"></object>
         </div>
         <br>Rotated 90&deg; CW and flipped vertically
     </div>
     <div class="container">
         <div class="vertical">
-            <img id="img8" src="resources/exif-orientation-8-llo.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-8-llo.jpg"></object>
         </div>
         <br>Rotated 90&deg; CW
     </div>
     <br>
     <div class="container">
         <div class="horizontal">
-            <img id="img9" src="resources/exif-orientation-9-u.jpg">
+            <object type="image/jpeg" data="resources/exif-orientation-9-u.jpg"></object>
         </div>
         <br>Undefined (invalid value)
     </div>
-    <br>
-    <ul id="console"></ul>
-    <script>
-        function log(str) {
-            var li = document.createElement("li");
-            li.appendChild(document.createTextNode(str));
-            var console = document.getElementById("console");
-            console.appendChild(li);
-        }
-
-          function imageSize(el) {
-            var computedStyle = window.getComputedStyle(el);
-            return computedStyle.width + " by " + computedStyle.height;
-        }
-
-         window.addEventListener('load', (event) => {
-            for(var i = 1; i <= 9; i++)
-                log("img" + i + " size = " + imageSize(document.getElementById("img" + i)));
-        });
-    </script>
 </body>

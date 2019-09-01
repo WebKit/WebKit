@@ -1578,18 +1578,20 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         downcast<BitmapImage>(*image).updateFromSettings(document.settings());
     }
 
+    ImagePaintingOptions options = { op, blendMode, ImageOrientation::FromImage };
+
     if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, { op, blendMode });
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(op)) {
         fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op);
         didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
         clearCanvas();
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, { op, blendMode });
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
         didDrawEntireCanvas();
     } else {
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, { op, blendMode });
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
         didDraw(normalizedDstRect);
     }
     

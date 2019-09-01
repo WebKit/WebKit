@@ -63,10 +63,8 @@ ImageSource::ImageSource(NativeImagePtr&& nativeImage)
 
     m_decodedSize = m_frames[0].frameBytes();
 
-    // The assumption is the memory image will be displayed with the default
-    // orientation. So set m_sizeRespectingOrientation to be the same as m_size.
     m_size = m_frames[0].size();
-    m_sizeRespectingOrientation = m_size;
+    m_orientation = ImageOrientation(ImageOrientation::None);
 }
 
 ImageSource::~ImageSource()
@@ -559,20 +557,27 @@ Optional<IntPoint> ImageSource::hotSpot()
     return metadata<Optional<IntPoint>, (&ImageDecoder::hotSpot)>(WTF::nullopt, &m_hotSpot);
 }
 
-IntSize ImageSource::size()
+ImageOrientation ImageSource::orientation()
 {
+    return frameMetadataAtIndexCacheIfNeeded<ImageOrientation>(0, (&ImageFrame::orientation), &m_orientation, ImageFrame::Caching::Metadata);
+}
+
+IntSize ImageSource::size(ImageOrientation orientation)
+{
+    IntSize size;
 #if !USE(CG)
     // It's possible that we have decoded the metadata, but not frame contents yet. In that case ImageDecoder claims to
     // have the size available, but the frame cache is empty. Return the decoder size without caching in such case.
     if (m_frames.isEmpty() && isDecoderAvailable())
-        return m_decoder->size();
+        size = m_decoder->size();
+    else
 #endif
-    return frameMetadataAtIndexCacheIfNeeded<IntSize>(0, (&ImageFrame::size), &m_size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
-}
+        size = frameMetadataAtIndexCacheIfNeeded<IntSize>(0, (&ImageFrame::size), &m_size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
+    
+    if (orientation == ImageOrientation::FromImage)
+        orientation = this->orientation();
 
-IntSize ImageSource::sizeRespectingOrientation()
-{
-    return frameMetadataAtIndexCacheIfNeeded<IntSize>(0, (&ImageFrame::sizeRespectingOrientation), &m_sizeRespectingOrientation, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
+    return orientation.usesWidthAsHeight() ? size.transposedSize() : size;
 }
 
 Color ImageSource::singlePixelSolidColor()

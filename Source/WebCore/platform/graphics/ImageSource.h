@@ -93,9 +93,10 @@ public:
     String uti();
     String filenameExtension();
     Optional<IntPoint> hotSpot();
+    ImageOrientation orientation();
 
     // Image metadata which is calculated from the first ImageFrame.
-    WEBCORE_EXPORT IntSize size();
+    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::FromImage);
     IntSize sizeRespectingOrientation();
     Color singlePixelSolidColor();
     SubsamplingLevel maximumSubsamplingLevel();
@@ -196,7 +197,7 @@ private:
 
     // Image metadata which is calculated from the first ImageFrame.
     Optional<IntSize> m_size;
-    Optional<IntSize> m_sizeRespectingOrientation;
+    Optional<ImageOrientation> m_orientation;
     Optional<Color> m_singlePixelSolidColor;
     Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 };

@@ -2944,8 +2944,6 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailu
 
 webkit.org/b/120839 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
-
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
