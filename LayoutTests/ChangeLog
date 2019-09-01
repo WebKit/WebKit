@@ -1,3 +1,14 @@
+2019-09-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        HTMLImageElement::decode() should return a resolved promise for decoding non bitmap images
+        https://bugs.webkit.org/show_bug.cgi?id=201243
+
+        Reviewed by Youenn Fablet.
+
+        * fast/images/decode-non-bitmap-image-resolve-expected.txt: Added.
+        * fast/images/decode-non-bitmap-image-resolve.html: Added.
+        * fast/images/resources/green-100x100.svg: Added.
+
 2019-08-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         EXIF orientation should be respected when rendering images

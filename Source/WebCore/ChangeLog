@@ -1,3 +1,25 @@
+2019-09-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        HTMLImageElement::decode() should return a resolved promise for decoding non bitmap images
+        https://bugs.webkit.org/show_bug.cgi?id=201243
+
+        Reviewed by Youenn Fablet.
+
+        The specs: https://html.spec.whatwg.org/multipage/embedded-content.html#dom-img-decode
+        states that, decode() should resolve the pending promise if the decoding
+        was requested for a non bitmap image.
+
+        Test: fast/images/decode-non-bitmap-image-resolve.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::resolveDecodePromises):
+        (WebCore::rejectDecodePromises):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::decode):
+        (WebCore::ImageLoader::decodeError): Deleted.
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::hasPendingDecodePromises const):
+
 2019-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [WinCairo, FTW] Properly handle device scale factor
