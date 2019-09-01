@@ -1,3 +1,13 @@
+2019-09-01  Mark Lam  <mark.lam@apple.com>
+
+        Speculative build fix for ARMv7 and MIPS.
+        https://bugs.webkit.org/show_bug.cgi?id=201389
+
+        Not reviewed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] LLInt op should not emit the same code three times
