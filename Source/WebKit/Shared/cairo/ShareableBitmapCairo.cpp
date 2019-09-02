@@ -71,13 +71,12 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
     RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), m_size);
+    cairoSurfaceSetDeviceScale(surface.get(), scaleFactor, scaleFactor);
     FloatRect destRect(dstPoint, srcRect.size());
-    FloatRect srcRectScaled(srcRect);
-    srcRectScaled.scale(scaleFactor);
 
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();
-    Cairo::drawSurface(*context.platformContext(), surface.get(), destRect, srcRectScaled, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
+    Cairo::drawSurface(*context.platformContext(), surface.get(), destRect, srcRect, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
 }
 
 RefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()

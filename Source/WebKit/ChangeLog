@@ -1,5 +1,20 @@
 2019-09-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Cairo] out-of-bounds read in ShareableBitmap::paint if a fractional device scale factor is used
+        https://bugs.webkit.org/show_bug.cgi?id=196340
+
+        Reviewed by Brent Fulgham.
+
+        In ShareableBitmap::paint, srcRectScaled can be out-of-bounds of
+        the surface if a fractional device scale factor is used.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint): Use cairoSurfaceSetDeviceScale
+        to set a device scale factor to the surface instead of multiplying
+        srcRect with a device scale factor.
+
+2019-09-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Unreviewed, rolling out r249366.
 
         WinCairo WebKit2 crashes in some websites and the device scale
