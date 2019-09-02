@@ -6400,7 +6400,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
 
         if (is<RenderText>(child)) {
             const auto& renderText = downcast<RenderText>(child);
-            if (renderText.linesBoundingBox().isEmpty())
+            if (!renderText.hasRenderedText())
                 continue;
 
             if (renderer.style().userSelect() != UserSelect::None)
