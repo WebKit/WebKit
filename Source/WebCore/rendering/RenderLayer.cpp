@@ -4454,6 +4454,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     // foreground phase. Since scrolled contents are moved by repainting in this
     // case, the outline won't get 'dragged along'.
     bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion
+        && (renderer().view().printing() || renderer().view().hasRenderersWithOutline())
         && ((isPaintingScrollingContent && isPaintingCompositedBackground)
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion;
