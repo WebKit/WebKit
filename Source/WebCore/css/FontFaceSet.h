@@ -57,6 +57,7 @@ public:
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFaceSet>>;
     ReadyPromise& ready() { return m_readyPromise; }
+    void didFirstLayout();
 
     CSSFontFaceSet& backing() { return m_backing; }
 
@@ -115,6 +116,7 @@ private:
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     ReadyPromise m_readyPromise;
+    bool m_isFirstLayoutDone { true };
 };
 
 }
