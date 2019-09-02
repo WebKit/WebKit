@@ -139,7 +139,7 @@ EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDe
         m_parameterVariables.uncheckedAppend(m_generateNextVariableName());
 }
 
-void EntryPointScaffolding::emitResourceHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent)
+void EntryPointScaffolding::emitResourceHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent, ShaderStage shaderStage)
 {
     for (size_t i = 0; i < m_layout.size(); ++i) {
         stringBuilder.append(indent, "struct ", m_namedBindGroups[i].structName, " {\n");
@@ -147,25 +147,43 @@ void EntryPointScaffolding::emitResourceHelperTypes(StringBuilder& stringBuilder
             IndentationScope scope(indent);
             Vector<std::pair<unsigned, String>> structItems;
             for (size_t j = 0; j < m_layout[i].bindings.size(); ++j) {
-                auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
-                if (iterator == m_resourceMap.end())
+                auto& binding = m_layout[i].bindings[j];
+                if (!binding.visibility.contains(shaderStage))
                     continue;
-                auto& type = m_entryPointItems.inputs[iterator->value].unnamedType->unifyNode();
-                if (is<AST::UnnamedType>(type) && is<AST::ReferenceType>(downcast<AST::UnnamedType>(type))) {
-                    auto& referenceType = downcast<AST::ReferenceType>(downcast<AST::UnnamedType>(type));
-                    auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
-                    auto addressSpace = toString(referenceType.addressSpace());
-                    auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
-                    auto index = m_namedBindGroups[i].namedBindings[j].index;
-                    structItems.append(std::make_pair(index, makeString(addressSpace, " ", mangledTypeName, "* ", elementName, " [[id(", index, ")]];")));
-                    if (auto lengthInformation = m_namedBindGroups[i].namedBindings[j].lengthInformation)
-                        structItems.append(std::make_pair(lengthInformation->index, makeString("uint2 ", lengthInformation->elementName, " [[id(", lengthInformation->index, ")]];")));
-                } else if (is<AST::NamedType>(type) && is<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type))) {
-                    auto& namedType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type));
-                    auto mangledTypeName = m_typeNamer.mangledNameForType(namedType);
-                    auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
-                    auto index = m_namedBindGroups[i].namedBindings[j].index;
-                    structItems.append(std::make_pair(index, makeString(mangledTypeName, ' ', elementName, " [[id(", index, ")]];")));
+
+                auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
+                auto index = m_namedBindGroups[i].namedBindings[j].index;
+                if (auto lengthInformation = m_namedBindGroups[i].namedBindings[j].lengthInformation)
+                    structItems.append(std::make_pair(lengthInformation->index, makeString("uint2 ", lengthInformation->elementName, " [[id(", lengthInformation->index, ")]];")));
+
+                auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
+                if (iterator != m_resourceMap.end()) {
+                    auto& type = m_entryPointItems.inputs[iterator->value].unnamedType->unifyNode();
+                    if (is<AST::UnnamedType>(type) && is<AST::ReferenceType>(downcast<AST::UnnamedType>(type))) {
+                        auto& referenceType = downcast<AST::ReferenceType>(downcast<AST::UnnamedType>(type));
+                        auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
+                        auto addressSpace = toString(referenceType.addressSpace());
+                        structItems.append(std::make_pair(index, makeString(addressSpace, " ", mangledTypeName, "* ", elementName, " [[id(", index, ")]];")));
+                    } else if (is<AST::NamedType>(type) && is<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type))) {
+                        auto& namedType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(type));
+                        auto mangledTypeName = m_typeNamer.mangledNameForType(namedType);
+                        structItems.append(std::make_pair(index, makeString(mangledTypeName, ' ', elementName, " [[id(", index, ")]];")));
+                    }
+                } else {
+                    // The binding doesn't appear in the shader source.
+                    // However, we must still emit a placeholder, so successive items in the argument buffer struct have the correct offset.
+                    // Because the binding doesn't appear in the shader source, we don't know which exact type the bind point should have.
+                    // Therefore, we must synthesize a type out of thin air.
+                    WTF::visit(WTF::makeVisitor([&](UniformBufferBinding) {
+                        structItems.append(std::make_pair(index, makeString("constant void* ", elementName, " [[id(", index, ")]];")));
+                    }, [&](SamplerBinding) {
+                        structItems.append(std::make_pair(index, makeString("sampler ", elementName, " [[id(", index, ")]];")));
+                    }, [&](TextureBinding) {
+                        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=201384 We don't know which texture type the binding represents. This is no good very bad.
+                        structItems.append(std::make_pair(index, makeString("texture2d<float> ", elementName, " [[id(", index, ")]];")));
+                    }, [&](StorageBufferBinding) {
+                        structItems.append(std::make_pair(index, makeString("device void* ", elementName, " [[id(", index, ")]];")));
+                    }), binding.binding);
                 }
             }
             std::sort(structItems.begin(), structItems.end(), [](const std::pair<unsigned, String>& left, const std::pair<unsigned, String>& right) {
@@ -425,7 +443,7 @@ void VertexEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder, 
     }
     stringBuilder.append(indent, "};\n\n");
     
-    emitResourceHelperTypes(stringBuilder, indent);
+    emitResourceHelperTypes(stringBuilder, indent, ShaderStage::Vertex);
 }
 
 void VertexEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName, Indentation<4> indent)
@@ -530,7 +548,7 @@ void FragmentEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder
     }
     stringBuilder.append(indent, "};\n\n");
 
-    emitResourceHelperTypes(stringBuilder, indent);
+    emitResourceHelperTypes(stringBuilder, indent, ShaderStage::Fragment);
 }
 
 void FragmentEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName, Indentation<4> indent)
@@ -580,7 +598,7 @@ ComputeEntryPointScaffolding::ComputeEntryPointScaffolding(AST::FunctionDefiniti
 
 void ComputeEntryPointScaffolding::emitHelperTypes(StringBuilder& stringBuilder, Indentation<4> indent)
 {
-    emitResourceHelperTypes(stringBuilder, indent);
+    emitResourceHelperTypes(stringBuilder, indent, ShaderStage::Compute);
 }
 
 void ComputeEntryPointScaffolding::emitSignature(StringBuilder& stringBuilder, MangledFunctionName functionName, Indentation<4> indent)

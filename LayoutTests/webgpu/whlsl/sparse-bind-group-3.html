@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+const shaderSource = `
+[numthreads(1, 1, 1)]
+compute void computeShader(device float[] buffer : register(u1)) {
+    buffer[0] = 17;
+}
+`;
+
+async function start(device) {
+    const shaderModule = device.createShaderModule({code: shaderSource});
+    const computeStage = {module: shaderModule, entryPoint: "computeShader"};
+
+    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 0, type: "storage-buffer"}, {binding: 1, visibility: 7, type: "storage-buffer"}]};
+    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
+    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+
+    const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
+    const computePipeline = device.createComputePipeline(computePipelineDescriptor);
+
+    const size = Float32Array.BYTES_PER_ELEMENT * 1;
+
+    const buffer1 = device.createBuffer({size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ});
+    const buffer2 = device.createBuffer({size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ});
+
+    const bindGroup = device.createBindGroup({layout: bindGroupLayout, bindings: [{binding: 0, resource: {buffer: buffer1, size}}, {binding: 1, resource: {buffer: buffer2, size}}]});
+
+    const commandEncoder = device.createCommandEncoder(); // {}
+    const computePassEncoder = commandEncoder.beginComputePass();
+    computePassEncoder.setPipeline(computePipeline);
+    computePassEncoder.setBindGroup(0, bindGroup);
+    computePassEncoder.dispatch(1, 1, 1);
+    computePassEncoder.endPass();
+    const commandBuffer = commandEncoder.finish();
+    device.getQueue().submit([commandBuffer]);
+
+    const resultsArrayBuffer = await buffer2.mapReadAsync();
+    const resultsFloat32Array = new Float32Array(resultsArrayBuffer);
+    if (resultsFloat32Array[0] == 17)
+        testPassed("");
+    else
+        testFailed("");
+    buffer2.unmap();
+}
+
+window.jsTestIsAsync = true;
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        finishJSTest();
+    }, function() {
+        testFailed("");
+        finishJSTest();
+    });
+}, function() {
+    testPassed("");
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

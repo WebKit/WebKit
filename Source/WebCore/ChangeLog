@@ -1,3 +1,35 @@
+2019-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Resources don't work when only a subset of a bind group is referenced by a shader
+        https://bugs.webkit.org/show_bug.cgi?id=201383
+
+        Reviewed by Dean Jackson.
+
+        Bind groups correspond to argument buffers in Metal. Both the Metal API and Metal Shading Language
+        have to agree on the layout of exactly which resources lie at which byte offsets within an argument
+        buffer.
+
+        Before this patch, we only emitted code for the items in the argument buffer that were actually
+        referenced by the shader source code. However, because these items are held inside a struct, if
+        we omit one item from the middle of the struct, the byte offets of all the successive items would
+        be wrong. This means that the Metal API and the shader would disagree about how to access these
+        resources, making the resources inaccessible (and causing security problems).
+
+        Tests: webgpu/whlsl/sparse-bind-group-2.html
+               webgpu/whlsl/sparse-bind-group-3.html
+               webgpu/whlsl/sparse-bind-group.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitResourceHelperTypes):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitHelperTypes):
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp:
+        (WebCore::WHLSL::matchResources):
+        (WebCore::WHLSL::matchVertexAttributes):
+        (WebCore::WHLSL::matchColorAttachments):
+
 2019-09-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r249369.

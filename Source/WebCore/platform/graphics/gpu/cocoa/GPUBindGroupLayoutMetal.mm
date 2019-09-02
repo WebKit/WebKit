@@ -84,6 +84,7 @@ static RetainPtr<MTLArgumentDescriptor> argumentDescriptor(MTLDataType dataType,
     mtlArgument = adoptNS([MTLArgumentDescriptor new]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=201384 This needs to set the "textureType" field
     [mtlArgument setDataType:dataType];
     [mtlArgument setIndex:index];
     return mtlArgument;
