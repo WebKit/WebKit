@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 #if USE(GSTREAMER_GL)
 #if USE(LIBEPOXY)
@@ -300,10 +301,12 @@ protected:
     ImageOrientation m_videoSourceOrientation;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    Lock m_protectionMutex;
-    Condition m_protectionCondition;
+    BinarySemaphore m_cdmAttachmentSemaphore;
     RefPtr<const CDMInstance> m_cdmInstance;
+
+    Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
     HashSet<uint32_t> m_handledProtectionEvents;
+
     bool m_waitingForKey { false };
 #endif
 

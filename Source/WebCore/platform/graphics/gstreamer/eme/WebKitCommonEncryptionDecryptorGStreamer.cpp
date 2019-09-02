@@ -293,10 +293,7 @@ static bool isCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt* self)
         // requests are useful here.
         if (context) {
             const GValue* value = gst_structure_get_value(gst_context_get_structure(context.get()), "cdm-instance");
-            // Capture the CDMInstance into a separate variable to avoid missing a refcount.
-            CDMInstance* instance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
-            // ... And force a refcount bump using operator=.
-            priv->cdmInstance = instance;
+            priv->cdmInstance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
             if (priv->cdmInstance)
                 GST_DEBUG_OBJECT(self, "received a new CDM instance %p, refcount %u", priv->cdmInstance.get(), priv->cdmInstance->refCount());
             else
