@@ -106,6 +106,8 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralT
         this.__deletedViaDeleteKeyboardShortcut = true;
 
         WI.domDebuggerManager.removeDOMBreakpoint(this.representedObject);
+
+        return true;
     }
 
     onenter()

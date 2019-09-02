@@ -995,38 +995,20 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
     {
         console.assert(selectedTreeElement.selected);
 
-        let treeElementToSelect = null;
-        function checkIfSelectionAdjustmentNeeded(treeElement) {
-            if (!treeElement)
-                return;
-
-            let representedObjects = [
-                WI.debuggerManager.allExceptionsBreakpoint,
-                WI.debuggerManager.uncaughtExceptionsBreakpoint,
-                WI.debuggerManager.assertionFailuresBreakpoint,
-            ];
-            if (representedObjects.includes(treeElement.representedObject))
-                treeElementToSelect = selectedTreeElement.nextSibling;
-        }
-        checkIfSelectionAdjustmentNeeded(selectedTreeElement);
-
-        if (selectedTreeElement instanceof WI.ResourceTreeElement || selectedTreeElement instanceof WI.ScriptTreeElement) {
-            checkIfSelectionAdjustmentNeeded(selectedTreeElement.previousSibling);
-
+        if (!WI.debuggerManager.isBreakpointRemovable(selectedTreeElement.representedObject)) {
+            let treeElementToSelect = selectedTreeElement.nextSelectableSibling;
+            if (treeElementToSelect) {
+                const omitFocus = true;
+                const selectedByUser = true;
+                treeElementToSelect.select(omitFocus, selectedByUser);
+            }
+        } else if (selectedTreeElement instanceof WI.ResourceTreeElement || selectedTreeElement instanceof WI.ScriptTreeElement) {
             let breakpoints = this._breakpointsBeneathTreeElement(selectedTreeElement);
             this._removeAllBreakpoints(breakpoints);
         } else if (selectedTreeElement.representedObject === DebuggerSidebarPanel.__windowEventTargetRepresentedObject) {
-            checkIfSelectionAdjustmentNeeded(selectedTreeElement.previousSibling);
-
             let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow);
             for (let eventBreakpoint of eventBreakpointsOnWindow)
                 WI.domManager.removeBreakpointForEventListener(eventBreakpoint.eventListener);
-        }
-
-        if (treeElementToSelect) {
-            const omitFocus = true;
-            const selectedByUser = true;
-            treeElementToSelect.select(omitFocus, selectedByUser);
         }
 
         return true;
@@ -1595,6 +1577,21 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         }
         if (setting)
             setting.value = !!treeElement.parent;
+
+        if (event.type === WI.TreeOutline.Event.ElementRemoved) {
+            let selectedTreeElement = this._breakpointsContentTreeOutline.selectedTreeElement;
+            console.assert(selectedTreeElement);
+            if (selectedTreeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint || !WI.debuggerManager.isBreakpointRemovable(selectedTreeElement.representedObject)) {
+                const skipUnrevealed = true;
+                const dontPopulate = true;
+                let treeElementToSelect = selectedTreeElement.traverseNextTreeElement(skipUnrevealed, dontPopulate);
+                if (treeElementToSelect) {
+                    const omitFocus = true;
+                    const selectedByUser = true;
+                    treeElementToSelect.select(omitFocus, selectedByUser);
+                }
+            }
+        }
     }
 
     _populateCreateBreakpointContextMenu(contextMenu)

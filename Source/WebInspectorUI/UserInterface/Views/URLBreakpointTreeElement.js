@@ -94,6 +94,8 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
         this.__deletedViaDeleteKeyboardShortcut = true;
 
         WI.domDebuggerManager.removeURLBreakpoint(this.representedObject);
+
+        return true;
     }
 
     onenter()
