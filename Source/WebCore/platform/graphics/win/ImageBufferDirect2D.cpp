@@ -324,15 +324,12 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
 
     IntRect scaledSourceRect = sourceRect;
     IntSize scaledSourceSize = sourceSize;
-    IntPoint scaledDestPoint = destPoint;
-
     if (coordinateSystem == LogicalCoordinateSystem) {
         scaledSourceRect.scale(m_resolutionScale);
         scaledSourceSize.scale(m_resolutionScale);
-        scaledDestPoint.scale(m_resolutionScale);
     }
 
-    m_data.putData(source, bufferFormat, scaledSourceSize, scaledSourceRect, scaledDestPoint, internalSize(), context().isAcceleratedContext());
+    m_data.putData(source, bufferFormat, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), 1);
 }
 
 String ImageBuffer::toDataURL(const String&, Optional<double>, PreserveResolution) const

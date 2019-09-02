@@ -46,9 +46,6 @@ int WebProcessMainWin(int argc, char** argv)
     // WebProcess uses DirectX
     HRESULT hr = ::CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     RELEASE_ASSERT(SUCCEEDED(hr));
-
-    ::SetProcessDPIAware();
-
     return AuxiliaryProcessMain<WebProcess, WebProcessMain>(argc, argv);
 }
 
