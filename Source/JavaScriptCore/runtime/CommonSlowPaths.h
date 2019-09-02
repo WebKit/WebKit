@@ -323,7 +323,6 @@ SLOW_PATH_HIDDEN_DECL(slow_path_create_direct_arguments);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_scoped_arguments);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_cloned_arguments);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_this);
-SLOW_PATH_HIDDEN_DECL(slow_path_enter);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_callee);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_throw_tdz_error);

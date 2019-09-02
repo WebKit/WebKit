@@ -86,7 +86,6 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     case op_create_direct_arguments:
     case op_create_cloned_arguments:
     case op_get_rest_length:
-    case op_check_traps:
     case op_get_argument:
     case op_nop:
     case op_unreachable:
@@ -346,7 +345,6 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     case op_profile_control_flow:
     case op_put_to_arguments:
     case op_set_function_name:
-    case op_check_traps:
     case op_log_shadow_chicken_prologue:
     case op_log_shadow_chicken_tail:
     case op_yield:

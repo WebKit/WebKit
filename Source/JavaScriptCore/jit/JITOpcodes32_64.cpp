@@ -1002,21 +1002,6 @@ void JIT::emit_op_debug(const Instruction* currentInstruction)
     noDebuggerRequests.link(this);
 }
 
-
-void JIT::emit_op_enter(const Instruction* currentInstruction)
-{
-    emitEnterOptimizationCheck();
-    
-    // Even though JIT code doesn't use them, we initialize our constant
-    // registers to zap stale pointers, to avoid unnecessarily prolonging
-    // object lifetime and increasing GC pressure.
-    for (int i = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); i < m_codeBlock->numVars(); ++i)
-        emitStore(virtualRegisterForLocal(i).offset(), jsUndefined());
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_enter);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_get_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetScope>();

@@ -352,8 +352,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     allocateAndEmitScope();
 
-    emitCheckTraps();
-
     const FunctionStack& functionStack = programNode->functionStack();
 
     for (auto* function : functionStack)
@@ -473,8 +471,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     allocateAndEmitScope();
 
-    emitCheckTraps();
-    
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
         ASSERT(parseMode != SourceParseMode::GeneratorBodyMode);
         ASSERT(!isAsyncFunctionBodyParseMode(parseMode));
@@ -882,8 +878,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     allocateAndEmitScope();
 
-    emitCheckTraps();
-    
     for (FunctionMetadataNode* function : evalNode->functionStack()) {
         m_codeBlock->addFunctionDecl(makeFunction(function));
         m_functionsToInitialize.append(std::make_pair(function, TopLevelFunctionVariable));
@@ -968,8 +962,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     allocateAndEmitScope();
 
-    emitCheckTraps();
-    
     m_calleeRegister.setIndex(CallFrameSlot::callee);
 
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
@@ -1397,17 +1389,11 @@ void BytecodeGenerator::emitEnter()
 void BytecodeGenerator::emitLoopHint()
 {
     OpLoopHint::emit(this);
-    emitCheckTraps();
 }
 
 void BytecodeGenerator::emitJump(Label& target)
 {
     OpJmp::emit(this, target.bind(this));
-}
-
-void BytecodeGenerator::emitCheckTraps()
-{
-    OpCheckTraps::emit(this);
 }
 
 void ALWAYS_INLINE BytecodeGenerator::rewind()

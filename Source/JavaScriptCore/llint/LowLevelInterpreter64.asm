@@ -510,19 +510,23 @@ macro loadConstantOrVariableCell(size, index, value, slow)
     btqnz value, tagMask, slow
 end
 
-macro writeBarrierOnOperandWithReload(size, get, cellFieldName, reloadAfterSlowPath)
-    get(cellFieldName, t1)
-    loadConstantOrVariableCell(size, t1, t2, .writeBarrierDone)
+macro writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
     skipIfIsRememberedOrInEden(
-        t2,
+        cell,
         macro()
             push PB, PC
-            move t2, a1 # t2 can be a0 (not on 64 bits, but better safe than sorry)
+            move cell, a1 # cell can be a0
             move cfr, a0
             cCall2Void(_llint_write_barrier_slow)
             pop PC, PB
             reloadAfterSlowPath()
         end)
+end
+
+macro writeBarrierOnOperandWithReload(size, get, cellFieldName, reloadAfterSlowPath)
+    get(cellFieldName, t1)
+    loadConstantOrVariableCell(size, t1, t2, .writeBarrierDone)
+    writeBarrierOnCellWithReload(t2, reloadAfterSlowPath)
 .writeBarrierDone:
 end
 
@@ -545,15 +549,7 @@ macro writeBarrierOnGlobal(size, get, valueFieldName, loadMacro)
     btpz t0, .writeBarrierDone
 
     loadMacro(t3)
-    skipIfIsRememberedOrInEden(
-        t3,
-        macro()
-            push PB, PC
-            move cfr, a0
-            move t3, a1
-            cCall2Void(_llint_write_barrier_slow)
-            pop PC, PB
-        end)
+    writeBarrierOnCellWithReload(t3, macro() end)
 .writeBarrierDone:
 end
 
@@ -686,8 +682,8 @@ end
 _llint_op_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
-    loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
-    loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
+    loadp CodeBlock[cfr], t3                // t3<CodeBlock> = cfr.CodeBlock
+    loadi CodeBlock::m_numVars[t3], t2      // t2<size_t> = t3<CodeBlock>.m_numVars
     subq CalleeSaveSpaceAsVirtualRegisters, t2
     move cfr, t1
     subq CalleeSaveSpaceAsVirtualRegisters * 8, t1
@@ -700,9 +696,16 @@ _llint_op_enter:
     addq 1, t2
     btqnz t2, .opEnterLoop
 .opEnterDone:
-    callSlowPath(_slow_path_enter)
+    writeBarrierOnCellWithReload(t3, macro ()
+        loadp CodeBlock[cfr], t3 # Reload CodeBlock
+    end)
+    loadp CodeBlock::m_vm[t3], t1
+    btbnz VM::m_traps + VMTraps::m_needTrapHandling[t1], .handleTraps
+.afterHandlingTraps:
     dispatchOp(narrow, op_enter)
-
+.handleTraps:
+    callTrapHandler(_llint_throw_from_slow_path_trampoline)
+    jmp .afterHandlingTraps
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)
     get(m_index, t2)

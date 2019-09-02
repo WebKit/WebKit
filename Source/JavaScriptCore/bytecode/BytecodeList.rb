@@ -1093,8 +1093,6 @@ op :yield,
         argument: VirtualRegister,
     }
 
-op :check_traps
-
 op :log_shadow_chicken_prologue,
     args: {
         scope: VirtualRegister,
