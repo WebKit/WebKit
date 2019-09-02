@@ -1,3 +1,62 @@
+2019-08-29  Mark Lam  <mark.lam@apple.com>
+
+        Remove a bad assertion in ByteCodeParser::inlineCall().
+        https://bugs.webkit.org/show_bug.cgi?id=201292
+        <rdar://problem/54121659>
+
+        Reviewed by Michael Saboff.
+
+        In the DFG bytecode parser, we've already computed the inlining cost of a candidate
+        inlining target, and determine that it is worth inlining before invoking
+        ByteCodeParser::inlineCall().  However, in ByteCodeParser::inlineCall(), it
+        recomputes the inlining cost again only for the purpose of asserting that it isn't
+        too high.
+
+        Not consider a badly written test that does the following:
+
+            function bar() {
+                ...
+                foo(); // Call in a hot loop here.
+                ...
+            }
+
+            bar(); // <===== foo is inlineable into bar here.
+            noInline(foo); // <===== Change mind, and make foo not inlineable.
+            bar();
+
+        With this bad test, the following racy scenario can occur:
+
+        1. the first invocation of bar() gets hot, and a concurrent compile is kicked off.
+        2. the compiler thread computes foo()'s inliningCost() and determines that it is
+           worthy to be inlined, and will imminently call inlineCall().
+        3. the mutator calls the noInline() test utility on foo(), thereby making it NOT
+           inlineable.
+        4. the compiler thread calls inlineCall().  In inlineCall(), it re-computes the
+           inliningCost for foo() and now finds that it is not inlineable.  An assertion
+           failure follows.
+
+        Technically, the test is in error because noInline() shouldn't be used that way.
+        However, fuzzers that are not clued into noInline()'s proper usage may generate
+        code like this.
+
+        On the other hand, ByteCodeParser::inlineCall() should not be recomputing that the
+        inlining cost and asserting on it.  The only reason inlineCall() is invoked is
+        because it was already previously determined that a target function is inlineable
+        based on its inlining cost.  Today, in practice, I don't think we have any real
+        world condition where the mutator can affect the inlining cost of a target
+        function midway through execution.  So, this assertion isn't a problem if no one
+        writes a test that abuses noInline().  However, should things change such that the
+        mutator is able to affect the inlining cost of a target function, then it is
+        incorrect for the compiler to assume that the inlining cost is immutable.  Once
+        the compiler decides to inline a function, it should just follow through.
+
+        This patch removes this assertion in ByteCodeParser::inlineCall().  It is an
+        annoyance at best (for fuzzers), and at worst, incorrect if the mutator gains the
+        ability to affect the inlining cost of a target function.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+
 2019-08-28  Mark Lam  <mark.lam@apple.com>
 
         DFG/FTL: We should prefetch structures and do a loadLoadFence before doing PrototypeChainIsSane checks.
