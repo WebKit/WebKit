@@ -845,22 +845,20 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     return IDBError { };
 }
 
-uint64_t SQLiteIDBBackingStore::databasesSizeForFolder(const String& folder)
+uint64_t SQLiteIDBBackingStore::databasesSizeForDirectory(const String& directory)
 {
     uint64_t diskUsage = 0;
-    for (auto& directory : FileSystem::listDirectory(folder, "*")) {
-        for (auto& file : FileSystem::listDirectory(directory, "*.sqlite3"_s))
+    for (auto& dbDirectory : FileSystem::listDirectory(directory, "*")) {
+        for (auto& file : FileSystem::listDirectory(dbDirectory, "*.sqlite3"_s))
             diskUsage += SQLiteFileSystem::getDatabaseFileSize(file);
     }
     return diskUsage;
 }
 
-uint64_t SQLiteIDBBackingStore::databasesSizeForOrigin() const
+uint64_t SQLiteIDBBackingStore::databaseSize() const
 {
-    auto databaseRootDirectory = this->databaseRootDirectoryIsolatedCopy();
-    String oldVersionOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v0");
-    String newVersionOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v1");
-    return databasesSizeForFolder(oldVersionOriginDirectory) + databasesSizeForFolder(newVersionOriginDirectory);
+    ASSERT(!isMainThread());
+    return SQLiteFileSystem::getDatabaseFileSize(fullDatabasePath());
 }
 
 IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
@@ -2591,6 +2589,11 @@ SQLiteStatement* SQLiteIDBBackingStore::cachedStatement(SQLiteIDBBackingStore::S
     }
 
     return m_cachedStatements[static_cast<size_t>(sql)].get();
+}
+
+void SQLiteIDBBackingStore::close()
+{
+    closeSQLiteDB();
 }
 
 void SQLiteIDBBackingStore::closeSQLiteDB()

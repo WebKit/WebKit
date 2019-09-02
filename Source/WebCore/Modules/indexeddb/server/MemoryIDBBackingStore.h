@@ -79,8 +79,6 @@ public:
     bool supportsSimultaneousTransactions() final { return true; }
     bool isEphemeral() final { return true; }
 
-    uint64_t databasesSizeForOrigin() const final;
-
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
 
@@ -88,6 +86,9 @@ public:
 
 private:
     RefPtr<MemoryObjectStore> takeObjectStoreByIdentifier(uint64_t identifier);
+    
+    uint64_t databaseSize() const final;
+    void close() final;
 
     IDBDatabaseIdentifier m_identifier;
     PAL::SessionID m_sessionID;

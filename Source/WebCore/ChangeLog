@@ -1,3 +1,51 @@
+2019-08-30  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: update size of database when database operation is completed
+        https://bugs.webkit.org/show_bug.cgi?id=201057
+
+        Reviewed by Youenn Fablet.
+
+        Currently when a database operation was completed, we re-computed the disk usage of the origin. This computation 
+        listed all databases in the origin directory and read the size of each database file, which was very inefficient 
+        because the completed operation should only affect one database.
+
+        This patch makes UniqueIDBDatabase keep track of database size and reports size change to QuotaUser.
+
+        Tested PerformanceTests/IndexedDB/basic/objectstore-add.html on release build minibrowser. This change makes
+        the test over 50% faster.
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::QuotaUser::increaseSpaceUsed):
+        (WebCore::IDBServer::IDBServer::QuotaUser::decreaseSpaceUsed):
+        (WebCore::IDBServer::IDBServer::computeSpaceUsedForOrigin):
+        (WebCore::IDBServer::IDBServer::increaseSpaceUsed):
+        (WebCore::IDBServer::IDBServer::decreaseSpaceUsed):
+        (WebCore::IDBServer::IDBServer::setSpaceUsed): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::databaseSize const):
+        (WebCore::IDBServer::MemoryIDBBackingStore::close):
+        (WebCore::IDBServer::MemoryIDBBackingStore::databasesSizeForOrigin const): Deleted.
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForDirectory):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseSize const):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::close):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForFolder): Deleted.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForOrigin const): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::shutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::updateSpaceUsedIfNeeded):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2019-08-30  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Replaying the video should update currentTime

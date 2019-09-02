@@ -595,10 +595,14 @@ void MemoryIDBBackingStore::deleteBackingStore()
     // The in-memory IDB backing store doesn't need to do any cleanup when it is deleted.
 }
 
-uint64_t MemoryIDBBackingStore::databasesSizeForOrigin() const
+uint64_t MemoryIDBBackingStore::databaseSize() const
 {
     // FIXME: Implement this.
     return 0;
+}
+
+void MemoryIDBBackingStore::close()
+{
 }
 
 } // namespace IDBServer

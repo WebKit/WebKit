@@ -99,7 +99,8 @@ public:
     virtual bool supportsSimultaneousTransactions() = 0;
     virtual bool isEphemeral() = 0;
 
-    virtual uint64_t databasesSizeForOrigin() const = 0;
+    virtual void close() = 0;
+    virtual uint64_t databaseSize() const = 0;
 
     virtual bool hasTransaction(const IDBResourceIdentifier&) const = 0;
 protected:
