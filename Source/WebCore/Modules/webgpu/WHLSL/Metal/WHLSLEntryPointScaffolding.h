@@ -64,7 +64,7 @@ public:
 protected:
     EntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&, TypeNamer&, EntryPointItems&, HashMap<Binding*, size_t>& resourceMap, Layout&, std::function<MangledVariableName()>&& generateNextVariableName);
 
-    void emitResourceHelperTypes(StringBuilder&, Indentation<4>, ShaderStage);
+    void emitResourceHelperTypes(StringBuilder&, Indentation<4>);
 
     enum class IncludePrecedingComma {
         Yes,
