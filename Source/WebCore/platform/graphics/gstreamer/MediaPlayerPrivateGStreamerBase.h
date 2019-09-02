@@ -88,7 +88,8 @@ class TextureMapperPlatformLayerProxy;
 
 void registerWebKitGStreamerElements();
 
-class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateGStreamerBase>
+// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
+class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateGStreamerBase, WeakPtrFactoryInitialization::Eager>
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)
     , public Nicosia::ContentLayerTextureMapperImpl::Client
