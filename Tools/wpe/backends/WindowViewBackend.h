@@ -41,6 +41,9 @@ public:
     virtual ~WindowViewBackend();
 
 private:
+    void createViewTexture();
+    void resize(uint32_t width, uint32_t height);
+
     void displayBuffer(struct wpe_fdo_egl_exported_image*) override;
 
     static const struct wl_registry_listener s_registryListener;
@@ -91,6 +94,11 @@ private:
         } repeatData;
 
     } m_seatData;
+
+    struct {
+        uint32_t width;
+        uint32_t height;
+    } m_initialSize;
 
     struct wl_display* m_display { nullptr };
     struct wl_compositor* m_compositor { nullptr };

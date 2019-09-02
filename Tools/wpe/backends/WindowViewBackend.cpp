@@ -437,7 +437,7 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
     [](void* data, struct zxdg_toplevel_v6*, int32_t width, int32_t height, struct wl_array* states)
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
-        wpe_view_backend_dispatch_set_size(window.backend(), width, height);
+        window.resize(std::max(0, width), std::max(0, height));
 
         bool isFocused = false;
         // FIXME: It would be nice if the following loop could use
@@ -478,6 +478,9 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
 WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
 {
+    m_initialSize.width = width;
+    m_initialSize.height = height;
+
     m_display = wl_display_connect(nullptr);
     if (!m_display)
         return;
@@ -573,16 +576,8 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
         glBindAttribLocation(m_program, 1, "texture");
         m_textureUniform = glGetUniformLocation(m_program, "u_texture");
     }
-    {
-        glGenTextures(1, &m_viewTexture);
-        glBindTexture(GL_TEXTURE_2D, m_viewTexture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
+
+    createViewTexture();
 }
 
 WindowViewBackend::~WindowViewBackend()
@@ -636,6 +631,39 @@ const struct wl_callback_listener WindowViewBackend::s_frameListener = {
     }
 };
 
+void WindowViewBackend::createViewTexture()
+{
+    glGenTextures(1, &m_viewTexture);
+    glBindTexture(GL_TEXTURE_2D, m_viewTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void WindowViewBackend::resize(uint32_t width, uint32_t height)
+{
+    if (!width)
+        width = m_initialSize.width;
+    if (!height)
+        height = m_initialSize.height;
+
+    if (width == m_width && height == m_height)
+        return;
+
+    m_width = width;
+    m_height = height;
+
+    wl_egl_window_resize(m_eglWindow, m_width, m_height, 0, 0);
+    wpe_view_backend_dispatch_set_size(backend(), m_width, m_height);
+
+    if (m_viewTexture)
+        glDeleteTextures(1, &m_viewTexture);
+    createViewTexture();
+}
+
 void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
 {
     if (!m_eglContext)
@@ -643,6 +671,7 @@ void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
 
     eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext);
 
+    glViewport(0, 0, m_width, m_height);
     glClearColor(1, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
