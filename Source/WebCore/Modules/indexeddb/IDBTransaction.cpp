@@ -446,7 +446,9 @@ void IDBTransaction::operationCompletedOnServer(const IDBResultData& data, IDBCl
     ASSERT(&operation.originThread() == &Thread::current());
 
     m_completedOnServerQueue.append({ &operation, data });
-    scheduleCompletedOperationTimer();
+
+    if (!m_currentlyCompletingRequest)
+        scheduleCompletedOperationTimer();
 }
 
 void IDBTransaction::scheduleCompletedOperationTimer()
