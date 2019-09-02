@@ -95,7 +95,6 @@ private:
     void clearFailedLoadURL();
 
     bool hasPendingDecodePromises() const { return !m_decodingPromises.isEmpty(); }
-    void decodeError(const char*);
     void decode();
     
     void timerFired();
@@ -105,7 +104,7 @@ private:
     Timer m_derefElementTimer;
     RefPtr<Element> m_protectedElement;
     AtomString m_failedLoadURL;
-    Vector<RefPtr<DeferredPromise>, 1> m_decodingPromises;
+    Vector<RefPtr<DeferredPromise>> m_decodingPromises;
     bool m_hasPendingBeforeLoadEvent : 1;
     bool m_hasPendingLoadEvent : 1;
     bool m_hasPendingErrorEvent : 1;
