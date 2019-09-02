@@ -1,3 +1,33 @@
+2019-09-01  Youenn Fablet  <youenn@apple.com>
+
+        Abstract out LibWebRTCSocketClient so that rtc sockets can be implemented without libwebrtc sockets
+        https://bugs.webkit.org/show_bug.cgi?id=201302
+
+        Reviewed by Alex Christensen.
+
+        Introduce NetworkRTCProvider::Socket to be able to implement RTC socket support with non libwebrtc API
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::proxyInfoFromSession):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        (WebKit::NetworkRTCProvider::addSocket):
+        (WebKit::NetworkRTCProvider::takeSocket):
+        (WebKit::NetworkRTCProvider::newConnection):
+        (WebKit::NetworkRTCProvider::closeListeningSockets):
+        (WebKit::NetworkRTCProvider::callSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.mm:
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCSocket.cpp:
+        (WebKit::NetworkRTCSocket::sendTo):
+        (WebKit::NetworkRTCSocket::close):
+        (WebKit::NetworkRTCSocket::setOption):
+
 2019-09-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Cairo] out-of-bounds read in ShareableBitmap::paint if a fractional device scale factor is used

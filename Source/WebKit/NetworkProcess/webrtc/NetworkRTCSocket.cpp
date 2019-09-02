@@ -29,7 +29,6 @@
 #if USE(LIBWEBRTC)
 
 #include "DataReference.h"
-#include "LibWebRTCSocketClient.h"
 #include "NetworkRTCProvider.h"
 #include "RTCPacketOptions.h"
 #include <WebCore/SharedBuffer.h>
@@ -46,21 +45,21 @@ NetworkRTCSocket::NetworkRTCSocket(uint64_t identifier, NetworkRTCProvider& rtcP
 void NetworkRTCSocket::sendTo(const IPC::DataReference& data, RTCNetwork::SocketAddress&& socketAddress, RTCPacketOptions&& options)
 {
     auto buffer = WebCore::SharedBuffer::create(data.data(), data.size());
-    m_rtcProvider.callSocket(m_identifier, [buffer = WTFMove(buffer), socketAddress = WTFMove(socketAddress), options = WTFMove(options.options)](LibWebRTCSocketClient& client) {
-        client.sendTo(buffer.get(), socketAddress.value, options);
+    m_rtcProvider.callSocket(m_identifier, [buffer = WTFMove(buffer), socketAddress = WTFMove(socketAddress), options = WTFMove(options.options)](auto& socket) {
+        socket.sendTo(buffer.get(), socketAddress.value, options);
     });
 }
 
 void NetworkRTCSocket::close()
 {
-    m_rtcProvider.callSocket(m_identifier, [](LibWebRTCSocketClient& socket) {
+    m_rtcProvider.callSocket(m_identifier, [](auto& socket) {
         socket.close();
     });
 }
     
 void NetworkRTCSocket::setOption(int option, int value)
 {
-    m_rtcProvider.callSocket(m_identifier, [option, value](LibWebRTCSocketClient& socket) {
+    m_rtcProvider.callSocket(m_identifier, [option, value](auto& socket) {
         socket.setOption(option, value);
     });
 }

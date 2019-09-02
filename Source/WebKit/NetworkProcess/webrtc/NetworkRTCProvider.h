@@ -27,7 +27,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "LibWebRTCSocketClient.h"
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
@@ -42,6 +41,15 @@
 namespace IPC {
 class Connection;
 class Decoder;
+}
+
+namespace rtc {
+class SocketAddress;
+struct PacketOptions;
+}
+
+namespace WebCore {
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -59,16 +67,29 @@ public:
     void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }
     void didReceiveNetworkRTCSocketMessage(IPC::Connection&, IPC::Decoder&);
 
-    std::unique_ptr<LibWebRTCSocketClient> takeSocket(uint64_t);
+    class Socket {
+    public:
+        virtual ~Socket() = default;
+
+        enum class Type : uint8_t { UDP, ServerTCP, ClientTCP, ServerConnectionTCP };
+        virtual Type type() const  = 0;
+        virtual uint64_t identifier() const = 0;
+
+        virtual void close() = 0;
+        virtual void setOption(int option, int value) = 0;
+        virtual void sendTo(const WebCore::SharedBuffer&, const rtc::SocketAddress&, const rtc::PacketOptions&) = 0;
+    };
+
+    std::unique_ptr<Socket> takeSocket(uint64_t);
     void resolverDone(uint64_t);
 
     void close();
 
-    void callSocket(uint64_t, Function<void(LibWebRTCSocketClient&)>&&);
+    void callSocket(uint64_t, Function<void(Socket&)>&&);
     void callOnRTCNetworkThread(Function<void()>&&);
     void sendFromMainThread(Function<void(IPC::Connection&)>&&);
 
-    void newConnection(LibWebRTCSocketClient&, std::unique_ptr<rtc::AsyncPacketSocket>&&);
+    void newConnection(Socket&, std::unique_ptr<rtc::AsyncPacketSocket>&&);
 
     void closeListeningSockets(Function<void()>&&);
     void authorizeListeningSockets() { m_isListeningSocketAuthorized = true; }
@@ -84,16 +105,16 @@ private:
     void createResolver(uint64_t, const String&);
     void stopResolver(uint64_t);
 
-    void addSocket(uint64_t, std::unique_ptr<LibWebRTCSocketClient>&&);
+    void addSocket(uint64_t, std::unique_ptr<Socket>&&);
 
-    void createSocket(uint64_t identifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, LibWebRTCSocketClient::Type);
+    void createSocket(uint64_t identifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, Socket::Type);
 
     void OnMessage(rtc::Message*);
 
     static rtc::ProxyInfo proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&);
 
     HashMap<uint64_t, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
-    HashMap<uint64_t, std::unique_ptr<LibWebRTCSocketClient>> m_sockets;
+    HashMap<uint64_t, std::unique_ptr<Socket>> m_sockets;
     NetworkConnectionToWebProcess* m_connection;
     bool m_isStarted { true };
 
