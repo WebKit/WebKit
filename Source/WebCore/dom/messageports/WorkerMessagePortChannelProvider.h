@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,19 @@
 #pragma once
 
 #include "MessagePortChannelProvider.h"
-#include "MessagePortChannelRegistry.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class MessagePortChannelProviderImpl : public MessagePortChannelProvider {
+class WorkerGlobalScope;
+
+class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    MessagePortChannelProviderImpl();
-    ~MessagePortChannelProviderImpl() final;
+    explicit WorkerMessagePortChannelProvider(WorkerGlobalScope&);
+    ~WorkerMessagePortChannelProvider();
 
 private:
     void createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote) final;
@@ -46,9 +51,11 @@ private:
 
     void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) final;
 
-    void performActionOnMainThread(Function<void()>&&);
+    WorkerGlobalScope& m_scope;
 
-    MessagePortChannelRegistry m_registry;
+    uint64_t m_lastCallbackIdentifier { 0 };
+    HashMap<uint64_t, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;
+    HashMap<uint64_t, CompletionHandler<void(HasActivity)>> m_activityCallbacks;
 };
 
 } // namespace WebCore

@@ -28,7 +28,6 @@
 
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
-#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -73,19 +72,19 @@ void UIMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&)
+void UIMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier&)
+void UIMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts&, const MessagePortIdentifier&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier&, Function<void(HasActivity)>&&)
+void UIMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier&, CompletionHandler<void(HasActivity)>&&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();

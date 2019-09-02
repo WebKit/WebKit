@@ -463,6 +463,13 @@ WorkerCacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
     return *m_cacheStorageConnection;
 }
 
+MessagePortChannelProvider& WorkerGlobalScope::messagePortChannelProvider()
+{
+    if (!m_messagePortChannelProvider)
+        m_messagePortChannelProvider = makeUnique<WorkerMessagePortChannelProvider>(*this);
+    return *m_messagePortChannelProvider;
+}
+
 void WorkerGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
 {
     ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), WTFMove(promise));

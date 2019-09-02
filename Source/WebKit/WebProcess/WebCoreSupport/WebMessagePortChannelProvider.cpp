@@ -70,18 +70,14 @@ void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifie
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::MessagePortClosed(port), 0);
 }
 
-void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& completionHandler)
+void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& completionHandler)
 {
-    static std::atomic<uint64_t> currentHandlerIdentifier;
+    ASSERT(isMainThread());
+    static uint64_t currentHandlerIdentifier;
     uint64_t identifier = ++currentHandlerIdentifier;
 
-    {
-        Locker<Lock> locker(m_takeAllMessagesCallbackLock);
-        auto result = m_takeAllMessagesCallbacks.ensure(identifier, [completionHandler = WTFMove(completionHandler)]() mutable {
-            return WTFMove(completionHandler);
-        });
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
+    ASSERT(!m_takeAllMessagesCallbacks.contains(identifier));
+    m_takeAllMessagesCallbacks.add(identifier, WTFMove(completionHandler));
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::TakeAllMessagesForPort(port, identifier), 0);
 }
@@ -90,10 +86,7 @@ void WebMessagePortChannelProvider::didTakeAllMessagesForPort(Vector<MessageWith
 {
     ASSERT(isMainThread());
 
-    Locker<Lock> locker(m_takeAllMessagesCallbackLock);
     auto callback = m_takeAllMessagesCallbacks.take(messageCallbackIdentifier);
-    locker.unlockEarly();
-
     ASSERT(callback);
     callback(WTFMove(messages), [messageBatchIdentifier] {
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidDeliverMessagePortMessages(messageBatchIdentifier), 0);
@@ -104,17 +97,14 @@ void WebMessagePortChannelProvider::didCheckRemotePortForActivity(uint64_t callb
 {
     ASSERT(isMainThread());
 
-    Locker<Lock> locker(m_remoteActivityCallbackLock);
     auto callback = m_remoteActivityCallbacks.take(callbackIdentifier);
-    locker.unlockEarly();
-
     ASSERT(callback);
     callback(hasActivity ? HasActivity::Yes : HasActivity::No);
 }
 
-void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
+void WebMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts& message, const MessagePortIdentifier& remoteTarget)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::PostMessageToRemote(WTFMove(message), remoteTarget), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::PostMessageToRemote(message, remoteTarget), 0);
 }
 
 void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier& identifier, uint64_t callbackIdentifier)
@@ -128,16 +118,15 @@ void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const Messa
     ASSERT_NOT_REACHED();
 }
 
-void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, Function<void(HasActivity)>&& completionHandler)
+void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& completionHandler)
 {
-    static std::atomic<uint64_t> currentHandlerIdentifier;
+    ASSERT(isMainThread());
+
+    static uint64_t currentHandlerIdentifier;
     uint64_t identifier = ++currentHandlerIdentifier;
 
-    {
-        Locker<Lock> locker(m_remoteActivityCallbackLock);
-        ASSERT(!m_remoteActivityCallbacks.contains(identifier));
-        m_remoteActivityCallbacks.set(identifier, WTFMove(completionHandler));
-    }
+    ASSERT(!m_remoteActivityCallbacks.contains(identifier));
+    m_remoteActivityCallbacks.set(identifier, WTFMove(completionHandler));
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::CheckRemotePortForActivity(remoteTarget, identifier), 0);
 }

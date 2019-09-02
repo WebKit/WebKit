@@ -48,17 +48,17 @@ private:
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote) final;
     void messagePortDisentangled(const WebCore::MessagePortIdentifier& local) final;
     void messagePortClosed(const WebCore::MessagePortIdentifier& local) final;
-    void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, Function<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>&&) final;
-    void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier& remoteTarget) final;
+    void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>&&) final;
+    void postMessageToRemote(const WebCore::MessageWithMessagePorts&, const WebCore::MessagePortIdentifier& remoteTarget) final;
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, WebCore::ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) final;
 
     // To be called only in the UI process
-    void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, Function<void(HasActivity)>&& callback) final;
+    void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
 
     Lock m_takeAllMessagesCallbackLock;
-    HashMap<uint64_t, Function<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;
+    HashMap<uint64_t, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;
     Lock m_remoteActivityCallbackLock;
-    HashMap<uint64_t, Function<void(HasActivity)>> m_remoteActivityCallbacks;
+    HashMap<uint64_t, CompletionHandler<void(HasActivity)>> m_remoteActivityCallbacks;
 };
 
 } // namespace WebKit

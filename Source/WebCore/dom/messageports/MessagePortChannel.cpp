@@ -147,7 +147,7 @@ bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, 
     return false;
 }
 
-void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& port, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
+void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
 {
     ASSERT(isMainThread());
 
@@ -182,7 +182,7 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
     });
 }
 
-void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier& remotePort, Function<void(MessagePortChannelProvider::HasActivity)>&& callback)
+void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier& remotePort, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
 {
     ASSERT(isMainThread());
     ASSERT(remotePort == m_ports[0] || remotePort == m_ports[1]);
@@ -207,7 +207,7 @@ void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier&
         return;
     }
 
-    auto outerCallback = Function<void(MessagePortChannelProvider::HasActivity)> { [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (MessagePortChannelProvider::HasActivity hasActivity) mutable {
+    CompletionHandler<void(MessagePortChannelProvider::HasActivity)> outerCallback = [this, protectedThis = makeRef(*this), callback = WTFMove(callback)](auto hasActivity) mutable {
         if (hasActivity == MessagePortChannelProvider::HasActivity::Yes) {
             callback(hasActivity);
             return;
@@ -219,7 +219,7 @@ void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier&
             hasActivity = MessagePortChannelProvider::HasActivity::Yes;
 
         callback(hasActivity);
-    } };
+    };
 
     m_registry.provider().checkProcessLocalPortForActivity(remotePort, *m_processes[i], WTFMove(outerCallback));
 }

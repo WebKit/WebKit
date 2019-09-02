@@ -7166,6 +7166,8 @@
 		41103AA91E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeIncomingAudioSourceCocoa.h; sourceTree = "<group>"; };
 		41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingAudioSource.cpp; sourceTree = "<group>"; };
 		41103AAA1E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingAudioSourceCocoa.cpp; sourceTree = "<group>"; };
+		41114A7A2317B39E00B56007 /* WorkerMessagePortChannelProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkerMessagePortChannelProvider.h; sourceTree = "<group>"; };
+		41114A7C2317B39E00B56007 /* WorkerMessagePortChannelProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerMessagePortChannelProvider.cpp; sourceTree = "<group>"; };
 		4112B53F1F9F9C9B00E67875 /* ServiceWorkerThreadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerThreadProxy.h; sourceTree = "<group>"; };
 		4112B5411F9F9C9C00E67875 /* ServiceWorkerThreadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerThreadProxy.cpp; sourceTree = "<group>"; };
 		41189EF71AD8232800B90A0D /* ReadableStreamDefaultController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultController.idl; sourceTree = "<group>"; };
@@ -18842,6 +18844,8 @@
 				51ECC3F1200587B500483EAE /* MessagePortChannelRegistry.h */,
 				51A748E12005D0E00075BA68 /* MessageWithMessagePorts.cpp */,
 				51A748E02005D0E00075BA68 /* MessageWithMessagePorts.h */,
+				41114A7C2317B39E00B56007 /* WorkerMessagePortChannelProvider.cpp */,
+				41114A7A2317B39E00B56007 /* WorkerMessagePortChannelProvider.h */,
 			);
 			path = messageports;
 			sourceTree = "<group>";

@@ -8282,4 +8282,9 @@ void Document::setApplePayIsActive()
 
 #endif
 
+MessagePortChannelProvider& Document::messagePortChannelProvider()
+{
+    return MessagePortChannelProvider::singleton();
+}
+
 } // namespace WebCore

@@ -1,3 +1,25 @@
+2019-09-02  Youenn Fablet  <youenn@apple.com>
+
+        Introduce WorkerMessagePortChannelRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=201333
+
+        Reviewed by Alex Christensen.
+
+        By introducing WorkerMessagePortChannelRegistry, we are making
+        sure UIMessagePortChannelProvider is only called from the main thread.
+        This will help when moving the registry to network process.
+
+        * UIProcess/UIMessagePortChannelProvider.cpp:
+        (WebKit::UIMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebKit::UIMessagePortChannelProvider::checkRemotePortForActivity):
+        * UIProcess/UIMessagePortChannelProvider.h:
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp:
+        (WebKit::WebMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebKit::WebMessagePortChannelProvider::didTakeAllMessagesForPort):
+        (WebKit::WebMessagePortChannelProvider::didCheckRemotePortForActivity):
+        (WebKit::WebMessagePortChannelProvider::checkRemotePortForActivity):
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.h:
+
 2019-09-01  Youenn Fablet  <youenn@apple.com>
 
         Abstract out LibWebRTCSocketClient so that rtc sockets can be implemented without libwebrtc sockets

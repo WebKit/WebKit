@@ -1,3 +1,62 @@
+2019-09-02  Youenn Fablet  <youenn@apple.com>
+
+        Introduce WorkerMessagePortChannelRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=201333
+
+        Reviewed by Alex Christensen.
+
+        This patch introduces a dedicated registry for workers.
+        This registry will hop to the main thread and use the
+        regular main thread registry to do the actual processing.
+
+        Covered by existing tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::messagePortChannelProvider):
+        * dom/Document.h:
+        * dom/MessageChannel.cpp:
+        (WebCore::MessageChannel::MessageChannel):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::entangle):
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::disentangle):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::hasPendingActivity const):
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::takeAllMessagesForPort):
+        (WebCore::MessagePortChannel::checkRemotePortForActivity):
+        * dom/messageports/MessagePortChannel.h:
+        * dom/messageports/MessagePortChannelProvider.cpp:
+        (WebCore::MessagePortChannelProvider::singleton):
+        (WebCore::MessagePortChannelProvider::fromContext):
+        * dom/messageports/MessagePortChannelProvider.h:
+        * dom/messageports/MessagePortChannelProviderImpl.cpp:
+        (WebCore::MessagePortChannelProviderImpl::takeAllMessagesForPort):
+        (WebCore::MessagePortChannelProviderImpl::checkRemotePortForActivity):
+        * dom/messageports/MessagePortChannelProviderImpl.h:
+        * dom/messageports/MessagePortChannelRegistry.cpp:
+        (WebCore::MessagePortChannelRegistry::takeAllMessagesForPort):
+        (WebCore::MessagePortChannelRegistry::checkRemotePortForActivity):
+        * dom/messageports/MessagePortChannelRegistry.h:
+        * dom/messageports/WorkerMessagePortChannelProvider.cpp: Added.
+        (WebCore::WorkerMessagePortChannelProvider::WorkerMessagePortChannelProvider):
+        (WebCore::WorkerMessagePortChannelProvider::~WorkerMessagePortChannelProvider):
+        (WebCore::WorkerMessagePortChannelProvider::createNewMessagePortChannel):
+        (WebCore::WorkerMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote):
+        (WebCore::WorkerMessagePortChannelProvider::messagePortDisentangled):
+        (WebCore::WorkerMessagePortChannelProvider::messagePortClosed):
+        (WebCore::WorkerMessagePortChannelProvider::postMessageToRemote):
+        (WebCore::WorkerMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebCore::WorkerMessagePortChannelProvider::checkRemotePortForActivity):
+        (WebCore::WorkerMessagePortChannelProvider::checkProcessLocalPortForActivity):
+        * dom/messageports/WorkerMessagePortChannelProvider.h: Added.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::messagePortChannelProvider):
+        * workers/WorkerGlobalScope.h:
+
 2019-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Resources don't work when only a subset of a bind group is referenced by a shader

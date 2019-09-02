@@ -141,7 +141,7 @@ bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&
     return channel->postMessageToRemote(WTFMove(message), remoteTarget);
 }
 
-void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentifier& port, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
+void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
 {
     ASSERT(isMainThread());
 
@@ -157,7 +157,7 @@ void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentif
     channel->takeAllMessagesForPort(port, WTFMove(callback));
 }
 
-void MessagePortChannelRegistry::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, Function<void(MessagePortChannelProvider::HasActivity)>&& callback)
+void MessagePortChannelRegistry::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
 {
     ASSERT(isMainThread());
 

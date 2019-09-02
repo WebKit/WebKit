@@ -157,6 +157,7 @@ class MediaPlaybackTarget;
 class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
+class MessagePortChannelProvider;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
@@ -1528,6 +1529,8 @@ public:
 #if !ASSERT_DISABLED
     bool inHitTesting() const { return m_inHitTesting; }
 #endif
+
+    MessagePortChannelProvider& messagePortChannelProvider();
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };

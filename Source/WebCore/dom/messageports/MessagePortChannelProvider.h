@@ -26,16 +26,18 @@
 #pragma once
 
 #include "ProcessIdentifier.h"
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class ScriptExecutionContext;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 
 class MessagePortChannelProvider {
 public:
+    static MessagePortChannelProvider& fromContext(ScriptExecutionContext&);
     static MessagePortChannelProvider& singleton();
     WEBCORE_EXPORT static void setSharedProvider(MessagePortChannelProvider&);
 
@@ -47,19 +49,15 @@ public:
     virtual void messagePortDisentangled(const MessagePortIdentifier& local) = 0;
     virtual void messagePortClosed(const MessagePortIdentifier& local) = 0;
     
-    // FIXME: Ideally the callback would be a CompletionHandler but it is always called on the caller's
-    // thread at the moment.
-    virtual void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) = 0;
+    virtual void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) = 0;
 
-    virtual void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) = 0;
+    virtual void postMessageToRemote(const MessageWithMessagePorts&, const MessagePortIdentifier& remoteTarget) = 0;
 
     enum class HasActivity {
         Yes,
         No,
     };
-    // FIXME: Ideally the callback would be a CompletionHandler but it is always called on the caller's
-    // thread at the moment.
-    virtual void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, Function<void(HasActivity)>&& callback) = 0;
+    virtual void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) = 0;
 
     // Operations that the coordinating process performs (e.g. the UIProcess)
     virtual void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) = 0;

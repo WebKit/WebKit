@@ -35,6 +35,7 @@
 #include <wtf/URL.h>
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerEventQueue.h"
+#include "WorkerMessagePortChannelProvider.h"
 #include "WorkerScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
@@ -73,6 +74,7 @@ public:
 #endif
 
     WorkerCacheStorageConnection& cacheStorageConnection();
+    MessagePortChannelProvider& messagePortChannelProvider();
 
     WorkerScriptController* script() { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
@@ -210,7 +212,7 @@ private:
 
     PAL::SessionID m_sessionID;
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
-
+    std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
     unsigned long m_uniqueIdentifier { 1 };
 };
 
