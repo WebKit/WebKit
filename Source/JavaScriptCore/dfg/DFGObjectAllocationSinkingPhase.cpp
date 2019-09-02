@@ -2266,10 +2266,21 @@ private:
         case NamedPropertyPLoc: {
             Allocation& allocation = m_heap.getAllocation(location.base());
 
-            Vector<RegisteredStructure> structures;
-            structures.appendRange(allocation.structures().begin(), allocation.structures().end());
             unsigned identifierNumber = location.info();
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+
+            Vector<RegisteredStructure> structures;
+            for (RegisteredStructure structure : allocation.structures()) {
+                // This structure set is conservative. This set can include Structure which does not have a legit property.
+                // We filter out such an apparently inappropriate structures here since MultiPutByOffset assumes all the structures
+                // have valid corresponding offset for the given property.
+                if (structure->getConcurrently(uid) != invalidOffset)
+                    structures.append(structure);
+            }
+
+            // Since we filter structures, it is possible that we no longer have any structures here. In this case, we emit ForceOSRExit.
+            if (structures.isEmpty())
+                return m_graph.addNode(ForceOSRExit, origin.takeValidExit(canExit));
 
             std::sort(
                 structures.begin(),

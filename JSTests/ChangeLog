@@ -1,3 +1,14 @@
+2019-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ObjectAllocationSinkingPhase wrongly deals with always-taken branches during interpretation
+        https://bugs.webkit.org/show_bug.cgi?id=198650
+
+        Reviewed by Saam Barati.
+
+        * stress/object-allocation-sinking-interpretation-can-interpret-edges-that-can-be-proven-unreachable-in-ai.js:
+        (main.v0):
+        (main):
+
 2019-08-28  Mark Lam  <mark.lam@apple.com>
 
         DFG/FTL: We should prefetch structures and do a loadLoadFence before doing PrototypeChainIsSane checks.
