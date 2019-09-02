@@ -1,3 +1,14 @@
+2019-08-30  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] New API to remove a filter from an user content manager given its identifier
+        https://bugs.webkit.org/show_bug.cgi?id=200479
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (testUserContentManagerContentFilter): Test also the new
+        webkit_user_content_manager_remove_filter_by_id() public API function.
+
 2019-08-30  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] loadingChanged signal parameter is unusable

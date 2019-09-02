@@ -492,6 +492,12 @@ static void testUserContentManagerContentFilter(WebViewTest* test, gconstpointer
     webkit_user_content_manager_remove_filter(test->m_userContentManager.get(), filter);
     g_assert_false(isCSSBlockedForURLAtPath(test, somePath));
 
+    webkit_user_content_manager_add_filter(test->m_userContentManager.get(), filter);
+    g_assert_true(isCSSBlockedForURLAtPath(test, somePath));
+
+    webkit_user_content_manager_remove_filter_by_id(test->m_userContentManager.get(), webkit_user_content_filter_get_identifier(filter));
+    g_assert_false(isCSSBlockedForURLAtPath(test, somePath));
+
     webkit_user_content_filter_unref(filter);
 }
 
