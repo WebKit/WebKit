@@ -56,7 +56,7 @@ public:
     void scheduleOrWriteMemoryStore(ForceImmediateWrite);
 
 private:
-    String storageDirectoryPath() const;
+    String storageDirectoryPathIsolatedCopy() const;
     String resourceLogFilePath() const;
 
     void startMonitoringDisk();

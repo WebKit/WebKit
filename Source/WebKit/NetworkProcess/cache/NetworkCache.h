@@ -139,7 +139,7 @@ public:
 
     void dumpContentsToFile();
 
-    String recordsPath() const;
+    String recordsPathIsolatedCopy() const;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }

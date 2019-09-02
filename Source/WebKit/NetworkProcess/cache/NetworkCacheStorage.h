@@ -113,9 +113,9 @@ public:
     static const unsigned lastStableVersion = 13;
 #endif
 
-    String basePath() const;
+    String basePathIsolatedCopy() const;
     String versionPath() const;
-    String recordsPath() const;
+    String recordsPathIsolatedCopy() const;
 
     const Salt& salt() const { return m_salt; }
 

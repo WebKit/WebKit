@@ -86,11 +86,11 @@ public:
     void readTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
 
     // Internal engine support
-    String stringIdentifier() const;
-    String displayName() const;
-    String expectedVersion() const;
+    String stringIdentifierIsolatedCopy() const;
+    String displayNameIsolatedCopy() const;
+    String expectedVersionIsolatedCopy() const;
     unsigned long long estimatedSize() const;
-    String fileName() const;
+    String fileNameIsolatedCopy() const;
     DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 

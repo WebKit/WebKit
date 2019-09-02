@@ -130,7 +130,7 @@ private:
 
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
     
-    String databaseDirectoryPath() const { return m_databaseDirectoryPath.isolatedCopy(); }
+    String databaseDirectoryPathIsolatedCopy() const { return m_databaseDirectoryPath.isolatedCopy(); }
 
     void performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
     void didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);

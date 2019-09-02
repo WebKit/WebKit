@@ -31,7 +31,7 @@
     EnabledAtRuntime=WebSQL,
 ] interface SQLError {
     readonly attribute unsigned long code;
-    readonly attribute DOMString message;
+    [ImplementedAs=messageIsolatedCopy] readonly attribute DOMString message;
 
     // SQLErrorCode: used only in the async DB API
     const unsigned short UNKNOWN_ERR = 0;

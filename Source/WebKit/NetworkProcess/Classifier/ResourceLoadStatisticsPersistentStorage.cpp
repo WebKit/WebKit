@@ -76,14 +76,14 @@ ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorag
         writeMemoryStoreToDisk();
 }
 
-String ResourceLoadStatisticsPersistentStorage::storageDirectoryPath() const
+String ResourceLoadStatisticsPersistentStorage::storageDirectoryPathIsolatedCopy() const
 {
     return m_storageDirectoryPath.isolatedCopy();
 }
 
 String ResourceLoadStatisticsPersistentStorage::resourceLogFilePath() const
 {
-    String storagePath = storageDirectoryPath();
+    String storagePath = storageDirectoryPathIsolatedCopy();
     if (storagePath.isEmpty())
         return emptyString();
 
@@ -122,7 +122,7 @@ void ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics()
 {
     ASSERT(!RunLoop::isMain());
 
-    String storagePath = storageDirectoryPath();
+    String storagePath = storageDirectoryPathIsolatedCopy();
     ASSERT(!storagePath.isEmpty());
 
     if (!FileSystem::fileExists(storagePath)) {

@@ -57,7 +57,7 @@ public:
     void synchronize();
 
 private:
-    String blobDirectoryPath() const;
+    String blobDirectoryPathIsolatedCopy() const;
     String blobPathForHash(const SHA1::Digest&) const;
 
     const String m_blobDirectoryPath;

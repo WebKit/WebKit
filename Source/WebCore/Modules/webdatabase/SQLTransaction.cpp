@@ -265,7 +265,8 @@ void SQLTransaction::openTransactionAndPreflight()
         return;
     }
 
-    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty() && (m_database->expectedVersion() != actualVersion);
+    auto expectedVersion = m_database->expectedVersionIsolatedCopy();
+    m_hasVersionMismatch = !expectedVersion.isEmpty() && expectedVersion != actualVersion;
 
     // Spec 4.3.2.3: Perform preflight steps, jumping to the error callback if they fail
     if (m_wrapper && !m_wrapper->performPreflight(*this)) {
