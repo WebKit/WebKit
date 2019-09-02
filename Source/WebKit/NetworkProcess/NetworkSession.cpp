@@ -92,7 +92,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
         else
             SandboxExtension::consumePermanently(parameters.networkCacheDirectoryExtensionHandle);
 
-        m_cache = NetworkCache::Cache::open(networkProcess, networkCacheDirectory, networkProcess.cacheOptions());
+        m_cache = NetworkCache::Cache::open(networkProcess, networkCacheDirectory, networkProcess.cacheOptions(), m_sessionID);
         if (!m_cache)
             RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
     }

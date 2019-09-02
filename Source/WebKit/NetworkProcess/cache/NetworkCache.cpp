@@ -59,7 +59,7 @@ static const AtomString& resourceType()
     return resource;
 }
 
-RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options)
+RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
 {
     auto storage = Storage::open(cachePath, options.contains(CacheOption::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal);
 
@@ -68,7 +68,7 @@ RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePat
     if (!storage)
         return nullptr;
 
-    return adoptRef(*new Cache(networkProcess, storage.releaseNonNull(), options));
+    return adoptRef(*new Cache(networkProcess, storage.releaseNonNull(), options, sessionID));
 }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -78,9 +78,10 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<CacheOption> options)
+Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
     : m_storage(WTFMove(storage))
     , m_networkProcess(networkProcess)
+    , m_sessionID(sessionID)
 {
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (options.contains(CacheOption::SpeculativeRevalidation)) {
