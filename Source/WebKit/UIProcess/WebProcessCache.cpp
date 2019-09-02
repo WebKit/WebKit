@@ -66,7 +66,7 @@ bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
     }
 
     auto sessionID = process.websiteDataStore().sessionID();
-    if (sessionID != PAL::SessionID::defaultSessionID() && !process.processPool().hasPagesUsingWebsiteDataStore(process.websiteDataStore())) {
+    if (sessionID.isEphemeral() && !process.processPool().hasPagesUsingWebsiteDataStore(process.websiteDataStore())) {
         RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because this session has been destroyed", this, process.processIdentifier());
         return false;
     }
