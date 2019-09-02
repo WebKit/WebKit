@@ -79,7 +79,6 @@ static uint64_t generateCallbackID()
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
-    , m_numPendingConnectionRequests(0)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     , m_customProtocolManagerProxy(*this)
 #endif
@@ -104,8 +103,8 @@ NetworkProcessProxy::~NetworkProcessProxy()
     if (m_downloadProxyMap)
         m_downloadProxyMap->invalidate();
 
-    for (auto& reply : m_pendingConnectionReplies)
-        reply.second({ });
+    for (auto& request : m_connectionRequests.values())
+        request.reply({ });
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -135,13 +134,14 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
-    m_pendingConnectionReplies.append(std::make_pair(makeWeakPtr(webProcessProxy), WTFMove(reply)));
-
-    if (state() == State::Launching) {
-        m_numPendingConnectionRequests++;
+    m_connectionRequests.add(++m_connectionRequestIdentifier, ConnectionRequest { makeWeakPtr(webProcessProxy), WTFMove(reply) });
+    if (state() == State::Launching)
         return;
-    }
+    openNetworkProcessConnection(m_connectionRequestIdentifier, webProcessProxy);
+}
 
+void NetworkProcessProxy::openNetworkProcessConnection(uint64_t connectionRequestIdentifier, WebProcessProxy& webProcessProxy)
+{
     bool isServiceWorkerProcess = false;
     RegistrableDomain registrableDomain;
 #if ENABLE(SERVICE_WORKER)
@@ -151,7 +151,28 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
     }
 #endif
 
-    connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(isServiceWorkerProcess, registrableDomain), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection()->sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), isServiceWorkerProcess, registrableDomain }, [this, weakThis = makeWeakPtr(this), webProcessProxy = makeWeakPtr(webProcessProxy), connectionRequestIdentifier](auto&& connectionIdentifier) mutable {
+        if (!weakThis)
+            return;
+
+        if (!connectionIdentifier) {
+            // Network process probably crashed, the connection request should have been moved.
+            ASSERT(m_connectionRequests.isEmpty());
+            return;
+        }
+
+        ASSERT(m_connectionRequests.contains(connectionRequestIdentifier));
+        auto request = m_connectionRequests.take(connectionRequestIdentifier);
+
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
+        request.reply(*connectionIdentifier);
+#elif OS(DARWIN)
+        MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
+        request.reply(IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND });
+#else
+        notImplemented();
+#endif
+    }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void NetworkProcessProxy::synthesizeAppIsBackground(bool background)
@@ -230,18 +251,18 @@ void NetworkProcessProxy::networkProcessCrashed()
 {
     clearCallbackStates();
 
-    Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> pendingReplies;
-    pendingReplies.reserveInitialCapacity(m_pendingConnectionReplies.size());
-    for (auto& reply : m_pendingConnectionReplies) {
-        if (reply.first)
-            pendingReplies.append(std::make_pair(makeRefPtr(reply.first.get()), WTFMove(reply.second)));
+    Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> pendingRequests;
+    pendingRequests.reserveInitialCapacity(m_connectionRequests.size());
+    for (auto& request : m_connectionRequests.values()) {
+        if (request.webProcess)
+            pendingRequests.uncheckedAppend(std::make_pair(makeRefPtr(request.webProcess.get()), WTFMove(request.reply)));
         else
-            reply.second({ });
+            request.reply({ });
     }
-    m_pendingConnectionReplies.clear();
+    m_connectionRequests.clear();
 
     // Tell the network process manager to forget about this network process proxy. This will cause us to be deleted.
-    m_processPool.networkProcessCrashed(*this, WTFMove(pendingReplies));
+    m_processPool.networkProcessCrashed(*this, WTFMove(pendingRequests));
 }
 
 void NetworkProcessProxy::clearCallbackStates()
@@ -296,23 +317,6 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 
 void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
-}
-
-void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Attachment& connectionIdentifier)
-{
-    ASSERT(!m_pendingConnectionReplies.isEmpty());
-
-    // Grab the first pending connection reply.
-    auto reply = m_pendingConnectionReplies.takeFirst().second;
-
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-    reply(connectionIdentifier);
-#elif OS(DARWIN)
-    MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier.port()));
-    reply(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
-#else
-    notImplemented();
-#endif
 }
 
 void NetworkProcessProxy::processAuthenticationChallenge(PAL::SessionID sessionID, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
@@ -394,10 +398,13 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
         return;
     }
 
-    for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
-        connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(false, { }), 0);
-    
-    m_numPendingConnectionRequests = 0;
+    auto connectionRequests = WTFMove(m_connectionRequests);
+    for (auto& connectionRequest : connectionRequests.values()) {
+        if (connectionRequest.webProcess)
+            getNetworkProcessConnection(*connectionRequest.webProcess, WTFMove(connectionRequest.reply));
+        else
+            connectionRequest.reply({ });
+    }
 
 #if PLATFORM(COCOA)
     if (m_processPool.processSuppressionEnabled())

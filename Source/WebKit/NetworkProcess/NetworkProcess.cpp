@@ -160,7 +160,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     NetworkStateNotifier::singleton().addListener([weakThis = makeWeakPtr(*this)](bool isOnLine) {
         if (!weakThis)
             return;
-        for (auto& webProcessConnection : weakThis->m_webProcessConnections)
+        for (auto& webProcessConnection : weakThis->m_webProcessConnections.values())
             webProcessConnection->setOnLineState(isOnLine);
     });
 
@@ -187,10 +187,8 @@ DownloadManager& NetworkProcess::downloadManager()
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess& connection)
 {
-    auto count = m_webProcessConnections.removeAllMatching([&] (const auto& c) {
-        return c.ptr() == &connection;
-    });
-    ASSERT_UNUSED(count, count == 1);
+    ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
+    m_webProcessConnections.remove(connection.webProcessIdentifier());
 }
 
 bool NetworkProcess::shouldTerminate()
@@ -384,16 +382,11 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerProcess, WebCore::RegistrableDomain&& registrableDomain)
+static inline Optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> createIPCConnectionToWebProcess()
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-
-    auto connection = NetworkConnectionToWebProcess::create(*this, socketPair.server);
-    m_webProcessConnections.append(WTFMove(connection));
-
-    IPC::Attachment clientSocket(socketPair.client);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientSocket), 0);
+    return std::make_pair(socketPair.server, IPC::Attachment { socketPair.client });
 #elif OS(DARWIN)
     // Create the listening port.
     mach_port_t listeningPort = MACH_PORT_NULL;
@@ -406,37 +399,43 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
         RELEASE_LOG_ERROR(Process, "NetworkProcess::createNetworkConnectionToWebProcess: Could not allocate mach port, returned port was invalid");
         CRASH();
     }
-
-    // Create a listening connection.
-    auto connection = NetworkConnectionToWebProcess::create(*this, IPC::Connection::Identifier(listeningPort));
-    m_webProcessConnections.append(WTFMove(connection));
-
-    IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
+    return std::make_pair(IPC::Connection::Identifier { listeningPort }, IPC::Attachment { listeningPort, MACH_MSG_TYPE_MAKE_SEND });
 #elif OS(WINDOWS)
     IPC::Connection::Identifier serverIdentifier, clientIdentifier;
     if (!IPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
         LOG_ERROR("Failed to create server and client identifiers");
         CRASH();
     }
-
-    auto connection = NetworkConnectionToWebProcess::create(*this, serverIdentifier);
-    m_webProcessConnections.append(WTFMove(connection));
-
-    IPC::Attachment clientSocket(clientIdentifier);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientSocket), 0);
+    return std::make_pair(serverIdentifier, IPC::Attachment { clientIdentifier });
 #else
     notImplemented();
+    return { };
 #endif
+}
 
-    if (!m_webProcessConnections.isEmpty())
-        m_webProcessConnections.last()->setOnLineState(NetworkStateNotifier::singleton().onLine());
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, bool isServiceWorkerProcess, WebCore::RegistrableDomain&& registrableDomain, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
+{
+    auto ipcConnection = createIPCConnectionToWebProcess();
+    if (!ipcConnection) {
+        completionHandler({ });
+        return;
+    }
+
+    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, ipcConnection->first);
+    auto& connection = newConnection.get();
+
+    ASSERT(!m_webProcessConnections.contains(identifier));
+    m_webProcessConnections.add(identifier, WTFMove(newConnection));
+
+    completionHandler(WTFMove(ipcConnection->second));
+
+    connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
     
 #if ENABLE(SERVICE_WORKER)
-    if (isServiceWorkerProcess && !m_webProcessConnections.isEmpty()) {
+    if (isServiceWorkerProcess) {
         ASSERT(parentProcessHasServiceWorkerEntitlement());
         ASSERT(m_waitingForServerToContextProcessConnection);
-        auto contextConnection = WebSWServerToContextConnection::create(*this, registrableDomain, m_webProcessConnections.last()->connection());
+        auto contextConnection = WebSWServerToContextConnection::create(*this, registrableDomain, connection.connection());
         auto addResult = m_serverToContextConnections.add(WTFMove(registrableDomain), contextConnection.copyRef());
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
@@ -450,7 +449,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
     UNUSED_PARAM(registrableDomain);
 #endif
 
-    m_storageManagerSet->addConnection(m_webProcessConnections.last()->connection());
+    m_storageManagerSet->addConnection(connection.connection());
 }
 
 void NetworkProcess::clearCachedCredentials()
@@ -2082,7 +2081,7 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
     platformPrepareToSuspend([callbackAggregator] { });
     platformSyncAllCookies([callbackAggregator] { });
 
-    for (auto& connection : m_webProcessConnections)
+    for (auto& connection : m_webProcessConnections.values())
         connection->cleanupForSuspension([callbackAggregator] { });
 
 #if ENABLE(SERVICE_WORKER)
@@ -2156,7 +2155,7 @@ void NetworkProcess::resume()
 #endif
 
     platformProcessDidResume();
-    for (auto& connection : m_webProcessConnections)
+    for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 
 #if ENABLE(SERVICE_WORKER)

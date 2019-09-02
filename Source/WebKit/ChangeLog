@@ -1,5 +1,45 @@
 2019-09-02  Youenn Fablet  <youenn@apple.com>
 
+        Make NetworkConnectionToWebProcess keyed by their WebProcess identifier
+        https://bugs.webkit.org/show_bug.cgi?id=201300
+
+        Reviewed by Alex Christensen.
+
+        Make sure to create each NetworkConnectionToWebProcess for a given WebProcess.
+        Pass the process identifier at creation time.
+        This will allow to have the message registry be moved to NetworkProcess
+        so as to check port activity between processes.
+        This identifier might also be used in the future for other connections like
+        service worker context/client/server identifiers.
+
+        No observable change of behavior.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::create):
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::webProcessIdentifier const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removeNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithAsyncReply):
+        Allow to pass send options.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        Make use of async reply to simplify the handling of lambdas.
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
+2019-09-02  Youenn Fablet  <youenn@apple.com>
+
         Introduce WorkerMessagePortChannelRegistry
         https://bugs.webkit.org/show_bug.cgi?id=201333
 

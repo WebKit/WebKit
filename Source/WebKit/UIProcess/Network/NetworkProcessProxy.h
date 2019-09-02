@@ -212,7 +212,6 @@ private:
 
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
-    void didCreateNetworkConnectionToWebProcess(const IPC::Attachment&);
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebCore::PageIdentifier, const Optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, uint64_t challengeID);
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
@@ -250,12 +249,18 @@ private:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
+    void openNetworkProcessConnection(uint64_t connectionRequestIdentifier, WebProcessProxy&);
+
     void processAuthenticationChallenge(PAL::SessionID, Ref<AuthenticationChallengeProxy>&&);
 
     WebProcessPool& m_processPool;
-    
-    unsigned m_numPendingConnectionRequests;
-    Deque<std::pair<WeakPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
+
+    struct ConnectionRequest {
+        WeakPtr<WebProcessProxy> webProcess;
+        Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply reply;
+    };
+    uint64_t m_connectionRequestIdentifier { 0 };
+    HashMap<uint64_t, ConnectionRequest> m_connectionRequests;
 
     HashMap<uint64_t, CompletionHandler<void(WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
     HashMap<uint64_t, CompletionHandler<void()>> m_pendingDeleteWebsiteDataCallbacks;

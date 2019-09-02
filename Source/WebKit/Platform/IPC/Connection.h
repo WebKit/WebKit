@@ -183,15 +183,15 @@ public:
 
     void postConnectionDidCloseOnConnectionWorkQueue();
 
-    template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0);
+    template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { });
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { });
     template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { });
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { });
     
     template<typename T, typename C, typename U>
-    void sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID = { })
+    void sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID = { }, OptionSet<SendOption> sendOptions = { })
     {
-        sendWithAsyncReply<T, C>(WTFMove(message), WTFMove(completionHandler), destinationID.toUInt64());
+        sendWithAsyncReply<T, C>(WTFMove(message), WTFMove(completionHandler), destinationID.toUInt64(), sendOptions);
     }
     
     template<typename T, typename U>
@@ -444,7 +444,7 @@ void addAsyncReplyHandler(Connection&, uint64_t, CompletionHandler<void(Decoder*
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection&, uint64_t);
 
 template<typename T, typename C>
-void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID)
+void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -452,7 +452,7 @@ void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t
     uint64_t listenerID = nextAsyncReplyHandlerID();
     encoder->encode(listenerID);
     encoder->encode(message.arguments());
-    sendMessage(WTFMove(encoder), { });
+    sendMessage(WTFMove(encoder), sendOptions);
     addAsyncReplyHandler(*this, listenerID, [completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
         if (decoder && !decoder->isInvalid())
             T::callReply(*decoder, WTFMove(completionHandler));
