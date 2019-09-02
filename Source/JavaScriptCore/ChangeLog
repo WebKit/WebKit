@@ -1,5 +1,22 @@
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Generate new.target register only when it is used
+        https://bugs.webkit.org/show_bug.cgi?id=201335
+
+        Reviewed by Mark Lam.
+
+        Since bytecode generator knows whether new.target register can be used, we should emit and use new.target register
+        only when it is actually required.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::newTarget):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::needsNewTargetRegisterForThisScope const):
+
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DFG ByteCodeParser should not copy JIT-related part of SimpleJumpTable
         https://bugs.webkit.org/show_bug.cgi?id=201331
 

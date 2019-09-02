@@ -1,5 +1,20 @@
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Generate new.target register only when it is used
+        https://bugs.webkit.org/show_bug.cgi?id=201335
+
+        Reviewed by Mark Lam.
+
+        * stress/ensure-new-register-allocated.js: Added.
+        (shouldBe):
+        (basic):
+        (arrow):
+        (Base):
+        (Derived):
+        (evaluate):
+
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DFG ByteCodeParser should not copy JIT-related part of SimpleJumpTable
         https://bugs.webkit.org/show_bug.cgi?id=201331
 
