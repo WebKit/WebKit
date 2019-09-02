@@ -56,31 +56,27 @@ testXMLType("foo`bar/baz+xml", true);
 testXMLType("foo#bar/baz+xml", true);
 testXMLType("foo&bar/baz+xml", true);
 testXMLType("foo*bar/baz+xml", true);
+testXMLType("foo bar/baz+xml", true);
+testXMLType("foo[bar/baz+xml", true);
+testXMLType("foo]bar/baz+xml", true);
+testXMLType("foo(bar/baz+xml", true);
+testXMLType("foo)bar/baz+xml", true);
+testXMLType("foo<bar/baz+xml", true);
+testXMLType("foo>bar/baz+xml", true);
+testXMLType("foo@bar/baz+xml", true);
+testXMLType("foo,bar/baz+xml", true);
+testXMLType("foo;bar/baz+xml", true);
+testXMLType("foo:bar/baz+xml", true);
+testXMLType("foo\\bar/baz+xml", true);
+testXMLType('foo"bar/baz+xml', true);
+testXMLType("foo/bar/baz+xml", true);
+testXMLType("foo?bar/baz+xml", true);
+testXMLType("foo=bar/baz+xml", true);
+
+testXMLType("invalid", true);
 
 // non-xml types
 testXMLType("text/html", false);
 testXMLType("image/png", false);
-
-
-// invalid types
-testXMLType("invalid", false);
-
-testXMLType("foo bar/baz+xml", false);
-
-testXMLType("foo[bar/baz+xml", false);
-testXMLType("foo]bar/baz+xml", false);
-testXMLType("foo(bar/baz+xml", false);
-testXMLType("foo)bar/baz+xml", false);
-testXMLType("foo<bar/baz+xml", false);
-testXMLType("foo>bar/baz+xml", false);
-testXMLType("foo@bar/baz+xml", false);
-testXMLType("foo,bar/baz+xml", false);
-testXMLType("foo;bar/baz+xml", false);
-testXMLType("foo:bar/baz+xml", false);
-testXMLType("foo\\bar/baz+xml", false);
-testXMLType('foo"bar/baz+xml', false);
-testXMLType("foo/bar/baz+xml", false);
-testXMLType("foo?bar/baz+xml", false);
-testXMLType("foo=bar/baz+xml", false);
 
 </script>

@@ -1,3 +1,18 @@
+2019-08-31  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest: responseXML returns null if the Content-Type is valid (end in +xml) in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=46146
+
+        Reviewed by Youenn Fablet.
+
+        Adjust test to match the specification: make response MIME type fallback to
+        text/xml in case mimeType could not be extracted.
+
+        Behavior matches Firefox.
+
+        * http/tests/xmlhttprequest/supported-xml-content-types-expected.txt:
+        * http/tests/xmlhttprequest/supported-xml-content-types.html:
+
 2019-08-31  Frederic Wang  <fwang@igalia.com>
 
         Fix interpretation of fraction shifts

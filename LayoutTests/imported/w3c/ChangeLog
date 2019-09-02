@@ -1,3 +1,14 @@
+2019-08-31  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest: responseXML returns null if the Content-Type is valid (end in +xml) in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=46146
+
+        Reviewed by Youenn Fablet.
+
+        Updated expected result.
+
+        * web-platform-tests/xhr/responsexml-media-type-expected.txt:
+
 2019-08-31  Frederic Wang  <fwang@igalia.com>
 
         Fix interpretation of fraction shifts
