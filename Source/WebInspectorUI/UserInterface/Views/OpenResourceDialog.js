@@ -301,7 +301,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             for (let resource of currentFrame.resourceCollection)
                 this._addResource(resource, suppressFilterUpdate);
 
-            frames.push(...currentFrame.childFrameCollection);
+            frames.pushAll(currentFrame.childFrameCollection);
         }
     }
 

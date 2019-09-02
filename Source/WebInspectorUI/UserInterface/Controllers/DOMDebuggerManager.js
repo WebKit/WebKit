@@ -246,11 +246,12 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         let frames = [mainFrame];
         while (frames.length) {
             let frame = frames.shift();
+
             let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(frame.id);
             if (domBreakpointNodeIdentifierMap)
-                resolvedBreakpoints = resolvedBreakpoints.concat(Array.from(domBreakpointNodeIdentifierMap.values()));
+                resolvedBreakpoints.pushAll(domBreakpointNodeIdentifierMap.values());
 
-            frames.push(...frame.childFrameCollection);
+            frames.pushAll(frame.childFrameCollection);
         }
 
         return resolvedBreakpoints;
@@ -294,8 +295,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             while (children.length) {
                 let child = children.pop();
                 if (child.children)
-                    children = children.concat(child.children);
-                breakpoints = breakpoints.concat(this.domBreakpointsForNode(child));
+                    children.pushAll(child.children);
+                breakpoints.pushAll(this.domBreakpointsForNode(child));
             }
         }
 

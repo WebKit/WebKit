@@ -1,5 +1,77 @@
 2019-08-29  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: replace uses of `Array.prototype.concat` with `Array.prototype.push`
+        https://bugs.webkit.org/show_bug.cgi?id=201082
+
+        Reviewed by Joseph Pecoraro.
+
+        `x = x.concat(y)` is very slow, as `x` has to be fully copied in order to add `y` to it.
+        Introduce `Array.prototype.pushIterable`, which iterates the given `iterable` and adds each
+        item to the `this` array.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype.get domBreakpoints):
+        (WI.DOMDebuggerManager.prototype.domBreakpointsInSubtree):
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded.receivedPropertyNames):
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions):
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forProperty):
+        (WI.CSSKeywordCompletions.forProperty.addKeywordsForName):
+        (WI.CSSKeywordCompletions.forFunction):
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.recordingProgress):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._updateStyleCascade):
+        (WI.DOMNodeStyles.prototype._collectStylesInCascadeOrder):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.prototype.get sourceCodeTimelines):
+        (WI.TimelineRecording.prototype.initializeCallingContextTrees):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype._getPropertyDescriptorsResolver):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype.get currentRepresentedObjects):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._visibleChildren):
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.get filterableData):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView.prototype.get selectionPathComponents):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WI.IndexedDatabaseObjectStoreContentView.prototype._fetchMoreData.processEntries):
+        * UserInterface/Views/NavigationItem.js:
+        (WI.NavigationItem.prototype.get _classNames):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype._updateProperties):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addResourcesForFrame):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WI.OverviewTimelineView.prototype._loadExistingRecords):
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView.prototype.get navigationItems):
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/ResourceSecurityContentView.js:
+        (WI.ResourceSecurityContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WI.ScriptClusterTimelineView.prototype.get selectionPathComponents):
+        * UserInterface/Views/ScrubberNavigationItem.js:
+        (WI.ScrubberNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._addGradientTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addColorTokens.pushPossibleColorToken):
+        (WI.SpreadsheetStyleProperty.prototype._addTimingFunctionTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.selfOrDescendant):
+        * UserInterface/Views/View.js:
+        (WI.View._visitViewTreeForLayout):
+
+2019-08-29  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION (r248873): Debugger: pressing delete on a breakpoint will also delete any resource/element parent immediately before it in the list
         https://bugs.webkit.org/show_bug.cgi?id=200939
 

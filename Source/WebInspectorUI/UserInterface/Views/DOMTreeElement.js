@@ -1628,7 +1628,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             visibleChildren.push(beforePseudoElement);
 
         if (node.childNodeCount && node.children)
-            visibleChildren = visibleChildren.concat(node.children);
+            visibleChildren.pushAll(node.children);
 
         var afterPseudoElement = node.afterPseudoElement();
         if (afterPseudoElement)

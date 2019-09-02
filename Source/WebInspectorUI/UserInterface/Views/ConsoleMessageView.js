@@ -262,7 +262,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                         var prefixedFormatString = WI.UIString("Trace: %s").format(this._message.parameters[0].description);
                         args = [prefixedFormatString].concat(this._message.parameters.slice(1));
                     } else
-                        args = args.concat(this._message.parameters);
+                        args.pushAll(this._message.parameters);
                 }
                 this._appendFormattedArguments(element, args);
                 return;
@@ -274,7 +274,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                         var prefixedFormatString = WI.UIString("Assertion Failed: %s").format(this._message.parameters[0].description);
                         args = [prefixedFormatString].concat(this._message.parameters.slice(1));
                     } else
-                        args = args.concat(this._message.parameters);
+                        args.pushAll(this._message.parameters);
                 }
                 this._appendFormattedArguments(element, args);
                 return;
@@ -300,7 +300,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             case WI.ConsoleMessage.MessageType.Timing: {
                 let args = [this._message.messageText];
                 if (this._extraParameters)
-                    args = args.concat(this._extraParameters);
+                    args.pushAll(this._extraParameters);
                 this._appendFormattedArguments(element, args);
                 return;
             }
@@ -345,7 +345,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
                             let args = [WI.UIString("Could not capture screenshot"), this._message.messageText];
                             if (this._extraParameters)
-                                args = args.concat(this._extraParameters);
+                                args.pushAll(this._extraParameters);
                             this._appendFormattedArguments(element, args);
                         });
                     }
@@ -359,7 +359,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                     else
                         args.push(this._message.messageText);
                     if (this._extraParameters)
-                        args = args.concat(this._extraParameters);
+                        args.pushAll(this._extraParameters);
                     this._appendFormattedArguments(element, args);
                     return;
                 }

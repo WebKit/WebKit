@@ -580,7 +580,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 if (gradient)
                     newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Gradient, rawTokens, gradient));
                 else
-                    newTokens.push(...rawTokens);
+                    newTokens.pushAll(rawTokens);
 
                 gradientStartIndex = NaN;
             } else if (isNaN(gradientStartIndex))
@@ -599,7 +599,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             if (color)
                 newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Color, rawTokens, color));
             else
-                newTokens.push(...rawTokens);
+                newTokens.pushAll(rawTokens);
         };
 
         let colorFunctionStartIndex = NaN;
@@ -666,7 +666,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 if (valueObject)
                     newTokens.push(this._createInlineSwatch(inlineSwatchType, rawTokens, valueObject));
                 else
-                    newTokens.push(...rawTokens);
+                    newTokens.pushAll(rawTokens);
 
                 startIndex = NaN;
             } else if (isNaN(startIndex))
@@ -702,20 +702,20 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     let contents = [];
                     let fallbackStartIndex = rawTokens.findIndex((value, i) => i > variableNameIndex + 1 && /\bm-css\b/.test(value.type));
                     if (fallbackStartIndex !== -1) {
-                        contents = contents.concat(rawTokens.slice(0, fallbackStartIndex));
-                        contents = contents.concat(this._replaceSpecialTokens(rawTokens.slice(fallbackStartIndex, i)));
+                        contents.pushAll(rawTokens.slice(0, fallbackStartIndex));
+                        contents.pushAll(this._replaceSpecialTokens(rawTokens.slice(fallbackStartIndex, i)));
                     } else
-                        contents = contents.concat(rawTokens.slice(0, i));
+                        contents.pushAll(rawTokens.slice(0, i));
                     contents.push(token);
 
                     let text = rawTokens.reduce((accumulator, token) => accumulator + token.value, "");
                     if (this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(text))
                         newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Variable, contents));
                     else
-                        newTokens = newTokens.concat(contents);
+                        newTokens.pushAll(contents);
                 } else {
                     this._hasInvalidVariableValue = true;
-                    newTokens.push(...rawTokens);
+                    newTokens.pushAll(rawTokens);
                 }
 
                 startIndex = NaN;

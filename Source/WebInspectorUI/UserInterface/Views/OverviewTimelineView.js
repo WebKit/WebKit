@@ -225,12 +225,12 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         if (this._shouldGroupBySourceCode) {
             let networkTimeline = this._recording.timelines.get(WI.TimelineRecord.Type.Network);
             if (networkTimeline)
-                this._pendingRepresentedObjects = this._pendingRepresentedObjects.concat(networkTimeline.records.map((record) => record.resource));
+                this._pendingRepresentedObjects.pushAll(networkTimeline.records.map((record) => record.resource));
 
-            this._pendingRepresentedObjects = this._pendingRepresentedObjects.concat(this._recording.sourceCodeTimelines);
+            this._pendingRepresentedObjects.pushAll(this._recording.sourceCodeTimelines);
         } else {
             for (let timeline of this._relevantTimelines)
-                this._pendingRepresentedObjects = this._pendingRepresentedObjects.concat(timeline.records);
+                this._pendingRepresentedObjects.pushAll(timeline.records);
         }
 
         this.needsLayout();

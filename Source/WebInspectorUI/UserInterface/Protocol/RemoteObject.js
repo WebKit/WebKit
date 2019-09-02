@@ -628,14 +628,11 @@ WI.RemoteObject = class RemoteObject
             return;
         }
 
-        let descriptors = properties.map((payload) => {
-            return WI.PropertyDescriptor.fromPayload(payload, false, this._target);
-        });
+        let descriptors = properties.map((payload) => WI.PropertyDescriptor.fromPayload(payload, false, this._target));
 
         if (internalProperties) {
-            descriptors = descriptors.concat(internalProperties.map((payload) => {
-                return WI.PropertyDescriptor.fromPayload(payload, true, this._target);
-            }));
+            for (let payload of internalProperties)
+                descriptors.push(WI.PropertyDescriptor.fromPayload(payload, true, this._target));
         }
 
         callback(descriptors);

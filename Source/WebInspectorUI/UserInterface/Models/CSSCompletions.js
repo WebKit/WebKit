@@ -42,7 +42,7 @@ WI.CSSCompletions = class CSSCompletions
         // properties when initialized from the protocol for CSSCompletions.cssNameCompletions.
         // Or it may just a list of strings when quickly initialized for other completion purposes.
         if (properties.length && typeof properties[0] === "string")
-            this._values = this._values.concat(properties);
+            this._values.pushAll(properties);
         else {
             for (var property of properties) {
                 var propertyName = property.name;
@@ -52,7 +52,7 @@ WI.CSSCompletions = class CSSCompletions
 
                 let aliases = property.aliases;
                 if (aliases)
-                    this._values = this._values.concat(aliases);
+                    this._values.pushAll(aliases);
 
                 var longhands = property.longhands;
                 if (longhands) {

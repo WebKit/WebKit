@@ -510,7 +510,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             if (predicate(treeElement))
                 return treeElement;
 
-            treeElements = treeElements.concat(treeElement.children);
+            treeElements.pushAll(treeElement.children);
         }
 
         return false;

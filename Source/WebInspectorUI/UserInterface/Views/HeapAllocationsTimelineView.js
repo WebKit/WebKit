@@ -217,7 +217,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         }
 
         if (this._contentViewContainer.currentContentView)
-            components = components.concat(this._contentViewContainer.currentContentView.selectionPathComponents);
+            components.pushAll(this._contentViewContainer.currentContentView.selectionPathComponents);
 
         return components;
     }

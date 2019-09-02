@@ -39,12 +39,12 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
         let isNotPrefixed = name.charAt(0) !== "-";
 
         if (name in WI.CSSKeywordCompletions._propertyKeywordMap)
-            acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._propertyKeywordMap[name]);
+            acceptedKeywords.pushAll(WI.CSSKeywordCompletions._propertyKeywordMap[name]);
         else if (isNotPrefixed && ("-webkit-" + name) in WI.CSSKeywordCompletions._propertyKeywordMap)
-            acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._propertyKeywordMap["-webkit-" + name]);
+            acceptedKeywords.pushAll(WI.CSSKeywordCompletions._propertyKeywordMap["-webkit-" + name]);
 
         if (WI.CSSKeywordCompletions.isColorAwareProperty(name))
-            acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
+            acceptedKeywords.pushAll(WI.CSSKeywordCompletions._colors);
 
         // Only suggest "inherit" on inheritable properties even though it is valid on all properties.
         if (WI.CSSKeywordCompletions.InheritedProperties.has(name))
@@ -67,7 +67,7 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
 
     if (acceptedKeywords.includes(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder) && WI.CSSCompletions.cssNameCompletions) {
         acceptedKeywords.remove(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder);
-        acceptedKeywords = acceptedKeywords.concat(WI.CSSCompletions.cssNameCompletions.values);
+        acceptedKeywords.pushAll(WI.CSSCompletions.cssNameCompletions.values);
     }
 
     return new WI.CSSCompletions(Array.from(new Set(acceptedKeywords)), true);
@@ -107,16 +107,16 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
     if (functionName === "var")
         suggestions = [];
     else if (functionName === "calc" || functionName === "min" || functionName === "max")
-        suggestions = suggestions.concat(["calc()", "min()", "max()"]);
+        suggestions.push("calc()", "min()", "max()");
     else if (functionName === "env")
-        suggestions = suggestions.concat(["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"]);
+        suggestions.push("safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left");
     else if (functionName === "image-set")
         suggestions.push("url()");
     else if (functionName === "repeat")
-        suggestions = suggestions.concat(["auto", "auto-fill", "auto-fit", "min-content", "max-content"]);
+        suggestions.push("auto", "auto-fill", "auto-fit", "min-content", "max-content");
     else if (functionName.endsWith("gradient")) {
-        suggestions = suggestions.concat(["to", "left", "right", "top", "bottom"]);
-        suggestions = suggestions.concat(WI.CSSKeywordCompletions._colors);
+        suggestions.push("to", "left", "right", "top", "bottom");
+        suggestions.pushAll(WI.CSSKeywordCompletions._colors);
     }
 
     return new WI.CSSCompletions(suggestions, true);
