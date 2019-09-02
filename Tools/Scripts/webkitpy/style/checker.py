@@ -154,6 +154,14 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming"]),
 
     ([
+      # The WPEQtView class can't rely on the readability/parameter_name rule,
+      # because omitting parameter names for QML signals leads to runtime
+      # errors.
+      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt', 'WPEQtView.h'),
+    ],
+    ["-readability/parameter_name"]),
+
+    ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
       os.path.join('Source', 'JavaScriptCore', 'API', 'glib'),
