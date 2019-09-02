@@ -171,7 +171,12 @@ ImageOrientation ImageDecoderDirect2D::frameOrientationAtIndex(size_t index) con
     if (!SUCCEEDED(hr))
         return ImageOrientation::None;
 
-    // FIXME: Identify image type, and ask proper orientation.
+    PROPVARIANT value;
+    PropVariantInit(&value);
+    hr = metadata->GetMetadataByName(L"System.Photo.Orientation", &value);
+    if (SUCCEEDED(hr))
+        return ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal));
+
     return ImageOrientation::None;
 }
 
@@ -192,16 +197,6 @@ Seconds ImageDecoderDirect2D::frameDurationAtIndex(size_t index) const
 
 bool ImageDecoderDirect2D::frameAllowSubsamplingAtIndex(size_t index) const
 {
-    if (!m_nativeDecoder)
-        return false;
-
-    COMPtr<IWICBitmapFrameDecode> frame;
-    HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
-    if (!SUCCEEDED(hr))
-        return false;
-
-    // FIXME: Figure out correct image format-specific query for subsampling check.
-    notImplemented();
     return true;
 }
 
@@ -215,8 +210,19 @@ bool ImageDecoderDirect2D::frameHasAlphaAtIndex(size_t index) const
     if (!SUCCEEDED(hr))
         return false;
 
-    // FIXME: Figure out correct image format-specific query for alpha check.
-    notImplemented();
+    COMPtr<IWICMetadataQueryReader> metadata;
+    hr = frame->GetMetadataQueryReader(&metadata);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    GUID containerFormat;
+    hr = metadata->GetContainerFormat(&containerFormat);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    if (::IsEqualGUID(GUID_ContainerFormatJpeg, containerFormat))
+        return false;
+
     return true;
 }
 

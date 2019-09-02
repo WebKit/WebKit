@@ -224,7 +224,7 @@ COMPtr<ID2D1BitmapRenderTarget> createBitmapRenderTargetOfSize(const IntSize& si
 
     COMPtr<ID2D1BitmapRenderTarget> bitmapContext;
     auto desiredSize = D2D1::SizeF(size.width(), size.height());
-    D2D1_SIZE_U pixelSize = size;
+    D2D1_SIZE_U pixelSize = D2D1::SizeU(clampTo<unsigned>(deviceScaleFactor * size.width()), clampTo<unsigned>(deviceScaleFactor * size.height()));
     HRESULT hr = renderTarget->CreateCompatibleRenderTarget(&desiredSize, &pixelSize, nullptr, D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_GDI_COMPATIBLE, &bitmapContext);
     if (!SUCCEEDED(hr))
         return nullptr;

@@ -1,3 +1,33 @@
+2019-09-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] NativeImagePtr is drawn with invalid scaling
+        https://bugs.webkit.org/show_bug.cgi?id=201391
+
+        Reviewed by Don Olmstead.
+
+        The current implementation of FTW improperly applies scaling factors to native images,
+        resulting in blocky images (in some cases).
+
+        This patch corrects the handling of native images, corrects a bug in bitmap render
+        context scaling, and retrieves more data from the ImageDecoder's metadata system.
+
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::createBitmapRenderTargetOfSize): Supply an appropriately sized
+        pixel dimension for non-unity scale factors.
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Include the scale factor when creating a
+        bitmap render target.
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoderDirect2D::frameOrientationAtIndex const): Read the orientation
+        data form the image metadata.
+        (WebCore::ImageDecoderDirect2D::frameAllowSubsamplingAtIndex const): Always return
+        true, to match the CG implementation.
+        (WebCore::ImageDecoderDirect2D::frameHasAlphaAtIndex const): Correct to match the
+        behavior of CG.
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::drawNativeImage): Pass through the Direct2DOperations helper method, which
+        handles scaling and subsampling properly.
+
 2019-09-02  Youenn Fablet  <youenn@apple.com>
 
         Introduce WorkerMessagePortChannelRegistry

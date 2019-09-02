@@ -107,10 +107,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     if (!renderTarget)
         renderTarget = GraphicsContext::defaultRenderTarget();
 
-    D2D1_SIZE_F desiredSize = FloatSize(m_logicalSize);
-    D2D1_SIZE_U pixelSize = IntSize(m_logicalSize);
-
-    auto bitmapContext = Direct2D::createBitmapRenderTargetOfSize(m_logicalSize, renderTarget);
+    auto bitmapContext = Direct2D::createBitmapRenderTargetOfSize(m_logicalSize, renderTarget, m_resolutionScale);
     if (!bitmapContext)
         return;
 

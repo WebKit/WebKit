@@ -27,6 +27,7 @@
 #include "NativeImage.h"
 
 #include "Color.h"
+#include "Direct2DOperations.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
@@ -78,9 +79,9 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return Color();
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions&)
+void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
 {
-    auto platformContext = context.platformContext();
+    auto* platformContext = context.platformContext();
 
     // Subsampling may have given us an image that is smaller than size().
     IntSize subsampledImageSize = nativeImageSize(image);
@@ -90,9 +91,8 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
     if (subsampledImageSize != srcSize)
         adjustedSrcRect = mapRect(srcRect, FloatRect({ }, srcSize), FloatRect({ }, subsampledImageSize));
 
-    float opacity = 1.0f;
-
-    platformContext->renderTarget()->DrawBitmap(image.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
+    auto& state = context.state();
+    Direct2D::drawNativeImage(*platformContext, image.get(), subsampledImageSize, destRect, adjustedSrcRect, options, state.alpha, Direct2D::ShadowState(state));
 }
 
 void clearNativeImageSubimages(const NativeImagePtr& image)
