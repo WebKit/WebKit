@@ -1,3 +1,15 @@
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG inlining CheckBadCell slow path does not assume result VirtualRegister can be invalid
+        https://bugs.webkit.org/show_bug.cgi?id=201332
+
+        Reviewed by Mark Lam.
+
+        This test is very flaky, it is hard to reproduce.
+
+        * stress/setter-inlining-resulting-bad-cell-result-virtual-register-should-be-invalid.js: Added.
+        (code):
+
 2019-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Repatch should construct CallCases and CasesValue at the same time
