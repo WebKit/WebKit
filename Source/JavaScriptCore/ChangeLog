@@ -1,5 +1,30 @@
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG ByteCodeParser should not copy JIT-related part of SimpleJumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=201331
+
+        Reviewed by Mark Lam.
+
+        SimpleJumpTable's non-JIT part is not changed after CodeBlock is finalized well. On the other hand, JIT related part is allocated on-demand.
+        For example, ctiOffsets can be grown by Baseline JIT compiler. There is race condition as follows.
+
+            1. DFG ByteCodeParser is inlining and copying SimpleJumpTable
+            2. Baseline JIT compiler is expanding JIT-related part of SimpleJumpTable
+
+        Then, (1) reads the broken Vector, and crashes. Since JIT-related part is unnecessary in (1), we should not clone that.
+        This patch adds CodeBlock::addSwitchJumpTableFromProfiledCodeBlock, which only copies non JIT-related part of the given SimpleJumpTable offered
+        by profiled CodeBlock.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addSwitchJumpTableFromProfiledCodeBlock):
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::cloneNonJITPart const):
+        (JSC::SimpleJumpTable::clear):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+
+2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DFG inlining CheckBadCell slow path does not assume result VirtualRegister can be invalid
         https://bugs.webkit.org/show_bug.cgi?id=201332
 

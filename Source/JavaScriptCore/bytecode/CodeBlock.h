@@ -598,6 +598,13 @@ public:
             return;
         m_rareData->m_switchJumpTables.clear();
     }
+#if ENABLE(DFG_JIT)
+    void addSwitchJumpTableFromProfiledCodeBlock(SimpleJumpTable& profiled)
+    {
+        createRareDataIfNecessary();
+        m_rareData->m_switchJumpTables.append(profiled.cloneNonJITPart());
+    }
+#endif
 
     size_t numberOfStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_stringSwitchJumpTables.size() : 0; }
     StringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(StringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }

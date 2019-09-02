@@ -7116,7 +7116,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         }
         for (unsigned i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i) {
             m_switchRemap[i] = byteCodeParser->m_codeBlock->numberOfSwitchJumpTables();
-            byteCodeParser->m_codeBlock->addSwitchJumpTable() = codeBlock->switchJumpTable(i);
+            byteCodeParser->m_codeBlock->addSwitchJumpTableFromProfiledCodeBlock(codeBlock->switchJumpTable(i));
         }
     } else {
         // Machine code block case.
