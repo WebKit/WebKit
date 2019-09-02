@@ -35,9 +35,7 @@ namespace WebKit {
 ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)
     : m_client(client)
     , m_launchOptions(WTFMove(launchOptions))
-    , m_processIdentifier(0)
 {
-    m_isLaunching = true;
     tracePoint(ProcessLaunchStart);
     launchProcess();
 }
