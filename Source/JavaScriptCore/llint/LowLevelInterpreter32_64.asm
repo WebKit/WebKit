@@ -546,21 +546,26 @@ macro loadConstantOrVariablePayloadUnchecked(size, index, payload)
         payload)
 end
 
-macro writeBarrierOnOperand(size, get, cellFieldName)
-    get(cellFieldName, t1)
-    loadConstantOrVariablePayload(size, t1, CellTag, t2, .writeBarrierDone)
+macro writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
     skipIfIsRememberedOrInEden(
-        t2, 
+        cell,
         macro()
             push cfr, PC
             # We make two extra slots because cCall2 will poke.
             subp 8, sp
-            move t2, a1 # t2 can be a0 on x86
+            move cell, a1 # cell can be a0
             move cfr, a0
             cCall2Void(_llint_write_barrier_slow)
             addp 8, sp
             pop PC, cfr
+            reloadAfterSlowPath()
         end)
+end
+
+macro writeBarrierOnOperand(size, get, cellFieldName)
+    get(cellFieldName, t1)
+    loadConstantOrVariablePayload(size, t1, CellTag, t2, .writeBarrierDone)
+    writeBarrierOnCellWithReload(t2, macro() end)
 .writeBarrierDone:
 end
 
@@ -580,18 +585,7 @@ macro writeBarrierOnGlobal(size, get, valueFieldName, loadMacro)
 
     loadMacro(t3)
 
-    skipIfIsRememberedOrInEden(
-        t3,
-        macro()
-            push cfr, PC
-            # We make two extra slots because cCall2 will poke.
-            subp 8, sp
-            move cfr, a0
-            move t3, a1
-            cCall2Void(_llint_write_barrier_slow)
-            addp 8, sp
-            pop PC, cfr
-        end)
+    writeBarrierOnCellWithReload(t3, macro() end)
 .writeBarrierDone:
 end
 
@@ -707,24 +701,31 @@ end
 _llint_op_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
-    loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
-    loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
+    loadp CodeBlock[cfr], t1                // t1<CodeBlock> = cfr.CodeBlock
+    loadi CodeBlock::m_numVars[t1], t2      // t2<size_t> = t1<CodeBlock>.m_numVars
     subi CalleeSaveSpaceAsVirtualRegisters, t2
     move cfr, t3
     subp CalleeSaveSpaceAsVirtualRegisters * SlotSize, t3
     btiz t2, .opEnterDone
     move UndefinedTag, t0
-    move 0, t1
     negi t2
 .opEnterLoop:
     storei t0, TagOffset[t3, t2, 8]
-    storei t1, PayloadOffset[t3, t2, 8]
+    storei 0, PayloadOffset[t3, t2, 8]
     addi 1, t2
     btinz t2, .opEnterLoop
 .opEnterDone:
-    callSlowPath(_slow_path_enter)
+    writeBarrierOnCellWithReload(t1, macro ()
+        loadp CodeBlock[cfr], t1 # Reload CodeBlock
+    end)
+    # Checking traps.
+    loadp CodeBlock::m_vm[t1], t1
+    btpnz VM::m_traps + VMTraps::m_needTrapHandling[t1], .handleTraps
+.afterHandlingTraps:
     dispatchOp(narrow, op_enter)
-
+.handleTraps:
+    callTrapHandler(_llint_throw_from_slow_path_trampoline)
+    jmp .afterHandlingTraps
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)
     get(m_index, t2)

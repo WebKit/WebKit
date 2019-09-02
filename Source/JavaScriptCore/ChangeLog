@@ -1,5 +1,55 @@
 2019-09-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Merge op_check_traps into op_enter and op_loop_hint
+        https://bugs.webkit.org/show_bug.cgi?id=201373
+
+        Reviewed by Mark Lam.
+
+        This patch removes op_check_traps. Previously we were conditionally emitting op_check_traps based on Options and Platform configurations.
+        But now we are always emitting op_check_traps. So it is not necessary to have separate bytecode as op_check_traps. We can do checking in
+        op_enter and op_loop_hint.
+
+        While this patch moves check_traps implementation to op_enter and op_loop_hint, we keep separate DFG nodes (CheckTraps or InvalidationPoint),
+        since inserted nodes are different based on configurations and options. And emitting multiple DFG nodes from one bytecode is easy.
+
+        We also inline op_enter's slow path's write-barrier emission in LLInt.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitLoopHint):
+        (JSC::BytecodeGenerator::emitCheckTraps): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::emitEnterOptimizationCheck): Deleted.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emitSlow_op_enter):
+        (JSC::JIT::emit_op_check_traps): Deleted.
+        (JSC::JIT::emitSlow_op_check_traps): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CommonSlowPaths.h:
+
+2019-09-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix testb3 debug failures
         https://bugs.webkit.org/show_bug.cgi?id=201382
 

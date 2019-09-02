@@ -575,7 +575,6 @@ namespace JSC {
         void emit_op_jbeloweq(const Instruction*);
         void emit_op_jtrue(const Instruction*);
         void emit_op_loop_hint(const Instruction*);
-        void emit_op_check_traps(const Instruction*);
         void emit_op_nop(const Instruction*);
         void emit_op_super_sampler_begin(const Instruction*);
         void emit_op_super_sampler_end(const Instruction*);
@@ -673,7 +672,7 @@ namespace JSC {
         void emitSlow_op_jnstricteq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_hint(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_enter(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mul(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_negate(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -868,12 +867,6 @@ namespace JSC {
 
         int jumpTarget(const Instruction*, int target);
         
-#if ENABLE(DFG_JIT)
-        void emitEnterOptimizationCheck();
-#else
-        void emitEnterOptimizationCheck() { }
-#endif
-
 #ifndef NDEBUG
         void printBytecodeOperandTypes(int src1, int src2);
 #endif

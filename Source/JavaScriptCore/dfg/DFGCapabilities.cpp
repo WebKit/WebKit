@@ -205,7 +205,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_jbelow:
     case op_jbeloweq:
     case op_loop_hint:
-    case op_check_traps:
     case op_nop:
     case op_ret:
     case op_end:
