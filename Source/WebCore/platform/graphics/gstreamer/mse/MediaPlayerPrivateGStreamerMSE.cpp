@@ -144,8 +144,10 @@ MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
 
 void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
 {
+    GST_DEBUG_OBJECT(pipeline(), "Seeking to %s", time.toString().utf8().data());
     m_seekTime = time;
     m_seeking = true;
+    m_isEndReached = false;
 
     webKitMediaSrcSeek(WEBKIT_MEDIA_SRC(m_source.get()), toGstClockTime(m_seekTime), m_playbackRate);
 
