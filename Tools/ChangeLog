@@ -1,3 +1,16 @@
+2019-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Deprecate nonfunctional process limit APIs
+        https://bugs.webkit.org/show_bug.cgi?id=193749
+
+        Reviewed by Žan Doberšek.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp:
+        (beforeAll):
+        (testWebProcessLimit): Deleted.
+
 2019-09-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] WindowBackend should do resizing properly
