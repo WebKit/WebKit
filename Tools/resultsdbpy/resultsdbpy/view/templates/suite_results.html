@@ -39,7 +39,7 @@ import {ToolTip} from '/assets/js/tooltip.js';
 import {DOM, REF, EventStream} from '/library/js/Ref.js';
 
 const DEFAULT_LIMIT = 100;
-const SUITES = JSON.parse('{{ suites|safe }}');    
+const SUITES = JSON.parse('{{ suites|safe }}');
 
 class MainView {
     constructor() {    
@@ -143,11 +143,7 @@ class MainView {
     }
     render(suites) {
         let children = this.children;
-        return Legend(() => {
-            for (let suite in children) {
-                children[suite].update();
-            }
-        }, true) + suites.map(suite => {
+        return suites.map(suite => {
             return `<div class="section">
                     <div class="header">
                         <div class="title">${suite}</div>
@@ -171,6 +167,11 @@ onLayoutChange.action(() => {
 
 DOM.inject(document.getElementById('app'), `${ToolTip}
 ${Drawer([
+    Legend(() => {
+        for (let suite in view.children) {
+            view.children[suite].update();
+        }
+    }, true),
     LimitSlider(() => {view.reload()}),
     BranchSelector(() => {
         CommitBank.reload();

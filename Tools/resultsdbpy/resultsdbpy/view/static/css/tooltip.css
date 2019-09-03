@@ -43,8 +43,15 @@
     border-color: #cccd transparent transparent transparent;
 }
 
+.tooltip.arrow-left {
+    border-color: transparent transparent transparent #cccd;
+}
+.tooltip.arrow-right {
+     border-color: transparent #cccd transparent  transparent;
+}
+
 .tooltip-content {
-    z-index: 50;
+    z-index: var(--middleZIndex);
     position: absolute;
     -webkit-backdrop-filter: blur(10px) brightness(88%);
     backdrop-filter: blur(10px) brightness(88%);
@@ -54,4 +61,6 @@
     font-size: var(--smallSize);
     list-style: none;
     max-width: 600px;
+    min-width: 30px;
+    min-height: 30px;
 }

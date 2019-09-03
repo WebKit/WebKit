@@ -244,7 +244,8 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
             );
         },
         onScaleLeave: (event, canvas) => {
-            if (!ToolTip.isIn({x: event.x, y: event.y}))
+            const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
+            if (!ToolTip.isIn({x: event.x, y: event.y - scrollDelta}))
                 ToolTip.unset();
         },
         // Per the birthday paradox, 10% change of collision with 7.7 million commits with 12 character commits
@@ -642,7 +643,8 @@ class TimelineFromEndpoint {
         }
 
         function onDotLeave(event, canvas) {
-            if (!ToolTip.isIn({x: event.pageX, y: event.pageY}))
+            const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
+            if (!ToolTip.isIn({x: event.pageX, y: event.pageY - scrollDelta}))
                 ToolTip.unset();
         }
 
@@ -801,41 +803,50 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
 
 function Legend(callback=null, plural=false) {
     let updateLabelEvents = new EventStream();
-    let result = `<br>
-         <div class="lengend timeline">
-            <div class="item">
-                <div class="dot success"><div class="text">${TestResultsSymbolMap.success}</div></div>
-                ${LegendLabel(
-                    updateLabelEvents,
-                    plural ? 'No unexpected results' : 'Result expected',
-                    plural ? 'All tests passed' : 'Test passed',
-                )}
-            </div>
-            <div class="item">
-                <div class="dot failed"><div class="text">${TestResultsSymbolMap.failed}</div></div>
-                ${LegendLabel(
-                    updateLabelEvents,
-                    plural ? 'Some tests unexpectedly failed' : 'Unexpectedly failed',
-                    plural ? 'Some tests failed' : 'Test failed',
-                )}
-            </div>
-            <div class="item">
-                <div class="dot timeout"><div class="text">${TestResultsSymbolMap.timedout}</div></div>
-                ${LegendLabel(
-                    updateLabelEvents,
-                    plural ? 'Some tests unexpectedly timed out' : 'Unexpectedly timed out',
-                    plural ? 'Some tests timed out' : 'Test timed out',
-                )}
-            </div>
-            <div class="item">
-                <div class="dot crash"><div class="text">${TestResultsSymbolMap.crashed}</div></div>
-                ${LegendLabel(
-                    updateLabelEvents,
-                    plural ? 'Some tests unexpectedly crashed' : 'Unexpectedly crashed',
-                    plural ? 'Some tests crashed' : 'Test crashed',
-                )}
-            </div>
-            <br>
+    const legendDetails = {
+        success: {
+            expected: plural ? 'No unexpected results' : 'Result expected',
+            unexpected: plural ? 'All tests passed' : 'Test passed',
+        },
+        failed: {
+            expected: plural ? 'Some tests unexpectedly failed' : 'Unexpectedly failed',
+            unexpected: plural ? 'Some tests failed' : 'Test failed',
+        },
+        timedout: {
+            expected: plural ? 'Some tests unexpectedly timed out' : 'Unexpectedly timed out',
+            unexpected: plural ? 'Some tests timed out' : 'Test timed out',
+        },
+        crashed: {
+            expected: plural ? 'Some tests unexpectedly crashed' : 'Unexpectedly crashed',
+            unexpected: plural ? 'Some tests crashed' : 'Test crashed',
+        },
+    };
+    let result = `<div class="lengend horizontal">
+            ${Object.keys(legendDetails).map((key) => {
+                const dot = REF.createRef({
+                    onElementMount: (element) => {
+                        element.addEventListener('mouseleave', (event) => {
+                            if (!ToolTip.isIn({x: event.x, y: event.y}))
+                                ToolTip.unset();
+                        });
+                        element.onmouseover = (event) => {
+                            if (!element.classList.contains('disabled'))
+                                return;
+                            ToolTip.setByElement(
+                                `<div class="content">
+                                    ${willFilterExpected ? legendDetails[key].expected : legendDetails[key].unexpected}
+                                </div>`,
+                                element,
+                                {orientation: ToolTip.HORIZONTAL},
+                            );
+                        };
+                    }
+                });
+                return `<div class="item">
+                        <div class="dot ${key}" ref="${dot}"><div class="text">${TestResultsSymbolMap[key]}</div></div>
+                        ${LegendLabel(updateLabelEvents, legendDetails[key].expected, legendDetails[key].unexpected)}
+                    </div>`
+            }).join('')}
         </div>`;
 
     if (callback) {
@@ -852,8 +863,8 @@ function Legend(callback=null, plural=false) {
             },
         });
 
-        result += `<div class="input" style="width:400px">
-            <label>Filter expected results</label>
+        result += `<div class="input">
+            <label style="font-size: var(--tinySize); color: var(--boldInverseColor)">Filter expected results</label>
             <label class="switch">
                 <input type="checkbox"${willFilterExpected ? ' checked': ''} ref="${swtch}">
                 <span class="slider"></span>
@@ -861,7 +872,7 @@ function Legend(callback=null, plural=false) {
         </div>`;
     }
 
-    return `<div class="content">${result}</div><br>`;
+    return `${result}`;
 }
 
 export {Legend, TimelineFromEndpoint, Expectations};

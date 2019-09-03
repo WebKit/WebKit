@@ -128,11 +128,7 @@ class SearchView {
                 }
 
                 if (diff.children)
-                    DOM.inject(element, Legend(() => {
-                        self.ref.state.children.forEach((child) => {
-                            child.timeline.update();
-                        });
-                    }, false) + diff.children.map(renderChild).join(''));
+                    DOM.inject(element, diff.children.map(renderChild).join(''));
                 if (diff.prepending) {
                     diff.prepending.forEach(child => {
                         DOM.after(element.firstElementChild, renderChild(child));
@@ -227,6 +223,11 @@ DOM.inject(
     document.getElementById('app'),
     `${ToolTip}
     ${Drawer([
+        Legend(() => {
+            view.children.forEach((child) => {
+                child.timeline.update();
+            });
+        }, false),
         LimitSlider(() => {view.reload()}),
         BranchSelector(() => {
             CommitBank.reload();

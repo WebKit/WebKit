@@ -74,8 +74,13 @@ function Drawer(controls = [], onCollapseChange) {
             sidebarControl.onclick = () => {
                 if (element.style.display)
                     element.style.display = null;
-                else
+                else {
+                    for (let node of element.children) {
+                        if (node.classList.contains("list"))
+                            setEnableRecursive(node, true);
+                    }
                     element.style.display = 'block';
+                }
             }
         }
     });

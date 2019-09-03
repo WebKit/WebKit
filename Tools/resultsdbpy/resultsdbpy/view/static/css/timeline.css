@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.dot.timeout {
+.dot.timedout {
     background-color: var(--orangeLight);
 }
 
-.dot.crash {
+.dot.crashed {
     background-color: var(--purpleLight);
 }
