@@ -166,9 +166,7 @@ function BranchSelector(callback) {
         </div>`;
 }
 
-function LimitSlider(callback, max = 1000, defaultValue = 100) {
-    const maxRange = 1000;
-    const scale = (Math.log(max) - Math.log(1)) / maxRange;
+function LimitSlider(callback, max = 10000, defaultValue = 1000) {
     const limitModifier = new QueryModifier('limit');
     const startingValue = limitModifier.current().length ? limitModifier.current()[limitModifier.current().length -1]:defaultValue;
 
@@ -190,17 +188,17 @@ function LimitSlider(callback, max = 1000, defaultValue = 100) {
         state: startingValue,
         onElementMount: (element) => {
             element.oninput = () => {
-                const newLimit = Math.ceil(Math.exp(Math.log(1) + scale * element.value));
+                const newLimit = Math.ceil(element.value);
                 limitModifier.replace(newLimit);
                 numberRef.setState(newLimit);
                 callback();
             }
         },
-        onStateUpdate: (element, state) => {element.value = (Math.log(state) - Math.log(1)) / scale;}
+        onStateUpdate: (element, state) => {element.value = state;}
     });
     return `<div class="input">
             <label style="color:var(--boldInverseColor)">Limit:</label>
-            <input type="range" min="0" max="${maxRange}" ref="${sliderRef}" style="background:var(--boldInverseColor)"></input>
+            <input type="range" min="0" max="${max}" ref="${sliderRef}" style="background:var(--boldInverseColor)"></input>
             <input type="number" min="1" ref="${numberRef}" pattern="^[0-9]"></input>
         </div>`
 }
