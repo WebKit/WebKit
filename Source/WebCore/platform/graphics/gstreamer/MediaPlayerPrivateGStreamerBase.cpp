@@ -216,6 +216,53 @@ public:
         texture.updateContents(srcData, WebCore::IntRect(0, 0, m_size.width(), m_size.height()), WebCore::IntPoint(0, 0), stride);
     }
 
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> platformLayerBuffer()
+    {
+        if (!m_hasMappedTextures)
+            return nullptr;
+
+        using Buffer = TextureMapperPlatformLayerBuffer;
+
+        if ((GST_VIDEO_INFO_IS_RGB(&m_videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) == 1))
+            return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(m_videoFrame.data[0]) } }, m_size, m_flags, GraphicsContext3D::RGBA);
+
+        if (GST_VIDEO_INFO_IS_YUV(&m_videoFrame.info)) {
+            if (GST_VIDEO_INFO_N_COMPONENTS(&m_videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) > 3)
+                return nullptr;
+
+            unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info);
+            std::array<GLuint, 3> planes;
+            std::array<unsigned, 3> yuvPlane;
+            std::array<unsigned, 3> yuvPlaneOffset;
+            for (unsigned i = 0; i < numberOfPlanes; ++i)
+                planes[i] = *static_cast<GLuint*>(m_videoFrame.data[i]);
+            for (unsigned i = 0; i < 3; ++i) {
+                yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(&m_videoFrame.info, i);
+                yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&m_videoFrame.info, i);
+            }
+
+            std::array<GLfloat, 9> yuvToRgb;
+            if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&m_videoFrame.info), GST_VIDEO_COLORIMETRY_BT709)) {
+                yuvToRgb = {
+                    1.164f,  0.0f,    1.787f,
+                    1.164f, -0.213f, -0.531f,
+                    1.164f,  2.112f,  0.0f
+                };
+            } else {
+                // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
+                yuvToRgb = {
+                    1.164f,  0.0f,    1.596f,
+                    1.164f, -0.391f, -0.813f,
+                    1.164f,  2.018f,  0.0f
+                };
+            }
+
+            return makeUnique<Buffer>( Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } }, m_size, m_flags, GraphicsContext3D::RGBA);
+        }
+
+        return nullptr;
+    }
+
 private:
     GstBuffer* m_buffer;
     GstVideoFrame m_videoFrame { };
@@ -732,57 +779,11 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 
             std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, !m_usingFallbackVideoSink);
 
-            using Buffer = TextureMapperPlatformLayerBuffer;
-            std::unique_ptr<Buffer> layerBuffer;
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
             if (frameHolder->hasMappedTextures()) {
-                auto& videoFrame = frameHolder->videoFrame();
-                [&] {
-                    if ((GST_VIDEO_INFO_IS_RGB(&videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&videoFrame.info) == 1)) {
-                        layerBuffer = makeUnique<Buffer>(
-                            Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(videoFrame.data[0]) } },
-                            frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
-                        return;
-                    }
-
-                    if (GST_VIDEO_INFO_IS_YUV(&videoFrame.info)) {
-                        if (GST_VIDEO_INFO_N_COMPONENTS(&videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&videoFrame.info) > 3)
-                            return;
-
-                        unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&videoFrame.info);
-                        std::array<GLuint, 3> planes;
-                        std::array<unsigned, 3> yuvPlane;
-                        std::array<unsigned, 3> yuvPlaneOffset;
-                        for (unsigned i = 0; i < numberOfPlanes; ++i)
-                            planes[i] = *static_cast<GLuint*>(videoFrame.data[i]);
-                        for (unsigned i = 0; i < 3; ++i) {
-                            yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(&videoFrame.info, i);
-                            yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&videoFrame.info, i);
-                        }
-
-                        std::array<GLfloat, 9> yuvToRgb;
-                        if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoFrame.info), GST_VIDEO_COLORIMETRY_BT709)) {
-                            yuvToRgb = {
-                                1.164f,  0.0f,    1.787f,
-                                1.164f, -0.213f, -0.531f,
-                                1.164f,  2.112f,  0.0f
-                            };
-                        } else {
-                            // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
-                            yuvToRgb = {
-                                1.164f,  0.0f,    1.596f,
-                                1.164f, -0.391f, -0.813f,
-                                1.164f,  2.018f,  0.0f
-                            };
-                        }
-
-                        layerBuffer = makeUnique<Buffer>(Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } },
-                            frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
-                    }
-                }();
-
+                layerBuffer = frameHolder->platformLayerBuffer();
                 if (!layerBuffer)
                     return;
-
                 layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
             } else {
                 layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
@@ -993,8 +994,8 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
 
     std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
 
-    auto textureID = frameHolder->textureID();
-    if (!textureID)
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = frameHolder->platformLayerBuffer();
+    if (!layerBuffer)
         return false;
 
     auto size = frameHolder->size();
@@ -1004,7 +1005,9 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
     if (!m_videoTextureCopier)
         m_videoTextureCopier = makeUnique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
 
-    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(textureID, size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation);
+    frameHolder->waitForCPUSync();
+
+    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation);
 }
 
 NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
@@ -1020,8 +1023,8 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
 
     std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
 
-    auto textureID = frameHolder->textureID();
-    if (!textureID)
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = frameHolder->platformLayerBuffer();
+    if (!layerBuffer)
         return nullptr;
 
     auto size = frameHolder->size();
@@ -1034,7 +1037,9 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     if (!m_videoTextureCopier)
         m_videoTextureCopier = makeUnique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
 
-    if (!m_videoTextureCopier->copyVideoTextureToPlatformTexture(textureID, size, 0, GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, false, m_videoSourceOrientation))
+    frameHolder->waitForCPUSync();
+
+    if (!m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, 0, GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, false, m_videoSourceOrientation))
         return nullptr;
 
     return adoptRef(cairo_gl_surface_create_for_texture(context->cairoDevice(), CAIRO_CONTENT_COLOR_ALPHA, m_videoTextureCopier->resultTexture(), size.width(), size.height()));
