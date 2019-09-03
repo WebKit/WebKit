@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<base href="http://www.example.com/">
+<svg>
+    <linearGradient id="paint">
+        <stop stop-color="green"/>
+    </linearGradient>
+    <linearGradient id="inheritedPaint" href="#paint"/>
+    <rect width="100" height="100" fill="url(#paint) red"/>
+    <rect x="100" width="100" height="100" fill="url(#inheritedPaint) red"/>
+</svg>

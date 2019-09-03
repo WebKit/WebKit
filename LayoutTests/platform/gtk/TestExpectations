@@ -3020,6 +3020,8 @@ webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure 
 webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure Crash ]
 webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
 
+webkit.org/b/113849 svg/custom/local-url-reference-marker.html [ ImageOnlyFailure ]
+
 # Test marked in TestExpectations as failing on non-retina displays, passing on GTK port
 webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 

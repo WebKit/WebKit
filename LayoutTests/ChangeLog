@@ -1,3 +1,52 @@
+2019-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [SVG] fragment-only url 'url(#fragment)' should be resolved against the current document with regardless to HTML <base> element
+        https://bugs.webkit.org/show_bug.cgi?id=189499
+        <rdar://problem/44466206>
+
+        Reviewed by Said Abou-Hallawa.
+
+        These test cases are imported from Blink's commit, and modified for WebKit.
+        <https://chromium.googlesource.com/chromium/src/+/e7d7225c33aa7fc42ee390125b01df9167fad106%5E%21/>
+
+        * TestExpectations:
+        * css3/filters/effect-reference-local-url-with-base-expected.html: Added.
+        * css3/filters/effect-reference-local-url-with-base.html: Added.
+        * css3/filters/effect-reference.html:
+        * css3/masking/clip-path-reference-local-url-with-base-expected.html: Added.
+        * css3/masking/clip-path-reference-local-url-with-base.html: Added.
+        * http/tests/svg/local-url-with-valid-base-and-resource-expected.html: Added.
+        * http/tests/svg/local-url-with-valid-base-and-resource.html: Added.
+        * http/tests/svg/resources/red100x100.svg: Added.
+        * platform/gtk/TestExpectations: Marked svg/custom/local-url-reference-marker.html as ImageOnlyFailure for Bug 113849.
+        * platform/wpe/TestExpectations: Ditto.
+        * svg/animations/local-url-target-reference-expected.html: Added.
+        * svg/animations/local-url-target-reference.html: Added.
+        * svg/custom/linking-base-external-reference-expected.txt: Removed. This was a test for old spec.
+        * svg/custom/linking-base-external-reference.xhtml: Ditto.
+        * svg/custom/local-url-reference-clip-path-expected.html: Added.
+        * svg/custom/local-url-reference-clip-path.html: Added.
+        * svg/custom/local-url-reference-fill-expected.html: Added.
+        * svg/custom/local-url-reference-fill.html: Added.
+        * svg/custom/local-url-reference-filter-expected.html: Added.
+        * svg/custom/local-url-reference-filter.html: Added.
+        * svg/custom/local-url-reference-marker-expected.html: Added.
+        * svg/custom/local-url-reference-marker.html: Added.
+        * svg/custom/local-url-reference-mask-expected.html: Added.
+        * svg/custom/local-url-reference-mask.html: Added.
+        * svg/custom/local-url-reference-pattern-expected.html: Added.
+        * svg/custom/local-url-reference-pattern.html: Added.
+        * svg/custom/local-url-reference-radial-gradient-expected.html: Added.
+        * svg/custom/local-url-reference-radial-gradient.html: Added.
+        * svg/custom/local-url-reference-srcdoc-expected.html: Added.
+        * svg/custom/local-url-reference-srcdoc.html: Added.
+        * svg/custom/local-url-reference-stroke-expected.html: Added.
+        * svg/custom/local-url-reference-stroke.html: Added.
+        * svg/custom/local-url-reference-use-expected.html: Added.
+        * svg/custom/local-url-reference-use.html: Added.
+        * svg/text/textpath-local-url-reference-expected.html: Added.
+        * svg/text/textpath-local-url-reference.html: Added.
+
 2019-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Resources don't work when only a subset of a bind group is referenced by a shader

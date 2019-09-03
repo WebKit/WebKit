@@ -1,5 +1,36 @@
 2019-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [SVG] fragment-only url 'url(#fragment)' should be resolved against the current document with regardless to HTML <base> element
+        https://bugs.webkit.org/show_bug.cgi?id=189499
+        <rdar://problem/44466206>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Fragment-only URL 'url(#fragment)' should be resolved against the
+        current document even if HTML <base> element is specified.
+        Spec: <https://drafts.csswg.org/css-values/#local-urls>
+
+        Tests: css3/filters/effect-reference-local-url-with-base.html
+               css3/masking/clip-path-reference-local-url-with-base.html
+               http/tests/svg/local-url-with-valid-base-and-resource.html
+               svg/animations/local-url-target-reference.html
+               svg/custom/local-url-reference-clip-path.html
+               svg/custom/local-url-reference-fill.html
+               svg/custom/local-url-reference-filter.html
+               svg/custom/local-url-reference-marker.html
+               svg/custom/local-url-reference-mask.html
+               svg/custom/local-url-reference-pattern.html
+               svg/custom/local-url-reference-radial-gradient.html
+               svg/custom/local-url-reference-srcdoc.html
+               svg/custom/local-url-reference-stroke.html
+               svg/custom/local-url-reference-use.html
+               svg/text/textpath-local-url-reference.html
+
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::fragmentIdentifierFromIRIString): Return the fragment if the URL starts with '#'.
+
+2019-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win] Remove a unused PlatformWheelEvent constructor
         https://bugs.webkit.org/show_bug.cgi?id=201398
 
