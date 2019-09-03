@@ -1,3 +1,19 @@
+=================
+WebKitGTK 2.25.92
+=================
+
+What's new in WebKitGTK+ 2.25.92?
+
+  - Add WEBKIT_USE_SINGLE_WEB_PROCESS environment variable to force single process model in all WebKitWebContext.
+    This is a temporary solution for applications still depending on the single process mode behavior. It will be
+    only available in 2.26 series.
+  - Add new API to remove a filter from an user content manager given its identifier.
+  - Add support for HSTS.
+  - Several improvements and bug fixes in MSE media player.
+  - Fix building without unified sources.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish, Ukrainian.
+
 ================
 WebKitGTK 2.25.4
 ================

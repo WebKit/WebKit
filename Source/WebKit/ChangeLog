@@ -1,5 +1,11 @@
 2019-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.92 release
+
+        * gtk/NEWS: Add release notes for 2.25.92.
+
+2019-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add an env var to force single process model
 
         WEBKIT_USE_SINGLE_WEB_PROCESS=1 can now be used to force the single process model. This is a temporary solution
