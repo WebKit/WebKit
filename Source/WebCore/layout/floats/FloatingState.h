@@ -50,20 +50,12 @@ public:
     void append(const Box& layoutBox);
     void remove(const Box& layoutBox);
 
-    bool isEmpty() const { return m_floats.isEmpty(); }
-
     const Box& root() const { return *m_formattingContextRoot; }
 
     Optional<PositionInContextRoot> top(const Box& formattingContextRoot) const;
     Optional<PositionInContextRoot> leftBottom(const Box& formattingContextRoot) const;
     Optional<PositionInContextRoot> rightBottom(const Box& formattingContextRoot) const;
     Optional<PositionInContextRoot> bottom(const Box& formattingContextRoot) const;
-
-    struct Constraints {
-        Optional<PointInContextRoot> left;
-        Optional<PointInContextRoot> right;
-    };
-    Constraints constraints(PositionInContextRoot verticalPosition, const Box& formattingContextRoot) const;
 
     class FloatItem {
     public:
@@ -83,7 +75,7 @@ public:
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }
-    const FloatItem* last() const { return isEmpty() ? nullptr : &m_floats.last(); }
+    const FloatItem* last() const { return floats().isEmpty() ? nullptr : &m_floats.last(); }
 
 private:
     friend class FloatingContext;

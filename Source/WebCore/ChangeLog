@@ -1,3 +1,38 @@
+2019-09-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Move FloatingState::constraints to FloatingContext
+        https://bugs.webkit.org/show_bug.cgi?id=201393
+        <rdar://problem/54939361>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for transitioning the floating codebase to use the formatting context for
+        retrieving display boxes. Now FloatingContext (just like any other formatting context) holds on to the formatting
+        context root.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout):
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFormattingContextRoot const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::constraints const):
+        * layout/floats/FloatingContext.h:
+        (WebCore::Layout::FloatingContext::isEmpty const):
+        (WebCore::Layout::FloatingContext::root const):
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const): Deleted.
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::last const):
+        (WebCore::Layout::FloatingState::isEmpty const): Deleted.
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+
 2019-09-03  Chris Lord  <clord@igalia.com>
 
         [GStreamer] Add support to copy YUV video textures into images

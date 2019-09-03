@@ -282,18 +282,18 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
     auto& formattingContext = this->formattingContext();
     auto& formattingRoot = this->formattingRoot();
     auto& formattingRootDisplayBox = formattingContext.displayBoxForLayoutBox(formattingRoot);
-    auto& floatingState = layoutState.establishedFormattingState(formattingRoot).floatingState();
+    auto floatingContext = FloatingContext { formattingRoot, layoutState.establishedFormattingState(formattingRoot).floatingState() };
 
     auto lineLogicalTop = formattingRootDisplayBox.contentBoxTop();
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
 
     auto applyFloatConstraint = [&](auto& lineInput) {
         // Check for intruding floats and adjust logical left/available width for this line accordingly.
-        if (floatingState.isEmpty())
+        if (floatingContext.isEmpty())
             return;
         auto availableWidth = lineInput.initialConstraints.availableLogicalWidth;
         auto lineLogicalLeft = lineInput.initialConstraints.logicalTopLeft.x();
-        auto floatConstraints = floatingState.constraints({ lineLogicalTop }, formattingRoot);
+        auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && floatConstraints.left->x <= formattingRootDisplayBox.contentBoxLeft())
             floatConstraints.left = { };
@@ -365,7 +365,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
     auto& formattingContext = this->formattingContext();
     auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(formattingRoot()));
     auto& floatingState = formattingState.floatingState();
-    auto floatingContext = FloatingContext { floatingState };
+    auto floatingContext = FloatingContext { formattingRoot(), floatingState };
 
     // Move floats to their final position.
     for (auto floatItem : floats) {

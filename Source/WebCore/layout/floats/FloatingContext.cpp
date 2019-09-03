@@ -150,8 +150,9 @@ static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
 }
 #endif
 
-FloatingContext::FloatingContext(FloatingState& floatingState)
-    : m_floatingState(floatingState)
+FloatingContext::FloatingContext(const Container& formattingContextRoot, FloatingState& floatingState)
+    : m_root(makeWeakPtr(formattingContextRoot))
+    , m_floatingState(floatingState)
 {
 }
 
@@ -160,7 +161,7 @@ Point FloatingContext::positionForFloat(const Box& layoutBox) const
     ASSERT(layoutBox.isFloatingPositioned());
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
-    if (m_floatingState.isEmpty()) {
+    if (isEmpty()) {
         auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
         auto alignWithContainingBlock = [&]() -> Position {
@@ -190,7 +191,7 @@ Optional<Point> FloatingContext::positionForFormattingContextRoot(const Box& lay
     ASSERT(!layoutBox.hasFloatClear());
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
-    if (m_floatingState.isEmpty())
+    if (isEmpty())
         return { };
 
     FloatAvoider floatAvoider = { layoutBox, m_floatingState, layoutState() };
@@ -204,7 +205,7 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
     ASSERT(layoutBox.isBlockLevelBox());
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
-    if (m_floatingState.isEmpty())
+    if (isEmpty())
         return { };
 
     auto bottom = [&](Optional<PositionInContextRoot> floatBottom) -> ClearancePosition {
@@ -251,19 +252,68 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
     };
 
     auto clear = layoutBox.style().clear();
-    auto& formattingContextRoot = layoutBox.formattingContextRoot();
-
     if (clear == Clear::Left)
-        return bottom(m_floatingState.leftBottom(formattingContextRoot));
+        return bottom(m_floatingState.leftBottom(root()));
 
     if (clear == Clear::Right)
-        return bottom(m_floatingState.rightBottom(formattingContextRoot));
+        return bottom(m_floatingState.rightBottom(root()));
 
     if (clear == Clear::Both)
-        return bottom(m_floatingState.bottom(formattingContextRoot));
+        return bottom(m_floatingState.bottom(root()));
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+FloatingContext::Constraints FloatingContext::constraints(PositionInContextRoot verticalPosition) const
+{
+    if (isEmpty())
+        return { };
+
+    // 1. Convert vertical position if this floating context is inherited.
+    // 2. Find the inner left/right floats at verticalPosition.
+    // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
+    auto coordinateMappingIsRequired = &floatingState().root() != &root();
+    auto adjustedPosition = Point { 0, verticalPosition };
+    LayoutSize adjustingDelta;
+
+    if (coordinateMappingIsRequired) {
+        adjustedPosition = FormattingContext::mapPointToAncestor(layoutState(), adjustedPosition, root(), downcast<Container>(floatingState().root()));
+        adjustingDelta = { adjustedPosition.x, adjustedPosition.y - verticalPosition };
+    }
+
+    Constraints constraints;
+    auto& floats = floatingState().floats();
+    for (auto index = floats.size() - 1; --index;) {
+        auto& floatItem = floats[index];
+
+        if (constraints.left && floatItem.isLeftPositioned())
+            continue;
+
+        if (constraints.right && !floatItem.isLeftPositioned())
+            continue;
+
+        auto rect = floatItem.rectWithMargin();
+        if (!(rect.top() <= adjustedPosition.y && adjustedPosition.y < rect.bottom()))
+            continue;
+
+        if (floatItem.isLeftPositioned())
+            constraints.left = PointInContextRoot { rect.right(), rect.bottom() };
+        else
+            constraints.right = PointInContextRoot { rect.left(), rect.bottom() };
+
+        if (constraints.left && constraints.right)
+            break;
+    }
+
+    if (coordinateMappingIsRequired) {
+        if (constraints.left)
+            constraints.left->move(-adjustingDelta);
+
+        if (constraints.right)
+            constraints.right->move(-adjustingDelta);
+    }
+    return constraints;
 }
 
 static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const FloatingState::FloatList& floats)

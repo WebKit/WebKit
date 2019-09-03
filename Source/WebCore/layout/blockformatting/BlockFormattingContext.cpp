@@ -62,7 +62,7 @@ void BlockFormattingContext::layout()
 
     auto& formattingRoot = downcast<Container>(root());
     LayoutQueue layoutQueue;
-    FloatingContext floatingContext(formattingState().floatingState());
+    auto floatingContext = FloatingContext { formattingRoot, formattingState().floatingState() };
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
     if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
@@ -123,13 +123,12 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     // Normally the available width for an in-flow block level box is the width of the containing block's content box.
     // However (and can't find it anywhere in the spec) non-floating positioned float avoider block level boxes are constrained by existing floats.
     ASSERT(layoutBox.isFloatAvoider());
-    auto& floatingState = floatingContext.floatingState();
-    if (floatingState.isEmpty())
+    if (floatingContext.isEmpty())
         return { };
     // Vertical static position is not computed yet, so let's just estimate it for now.
     auto& formattingRoot = downcast<Container>(root());
     auto verticalPosition = FormattingContext::mapTopToAncestor(layoutState(), layoutBox, formattingRoot);
-    auto constraints = floatingState.constraints({ verticalPosition }, formattingRoot);
+    auto constraints = floatingContext.constraints({ verticalPosition });
     if (!constraints.left && !constraints.right)
         return { };
     auto& containingBlock = downcast<Container>(*layoutBox.containingBlock());
@@ -296,7 +295,7 @@ void BlockFormattingContext::computeEstimatedVerticalPositionForFormattingRoot(c
 void BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear(const FloatingContext& floatingContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.hasFloatClear());
-    if (floatingContext.floatingState().isEmpty())
+    if (floatingContext.isEmpty())
         return;
     // The static position with clear requires margin esitmation to see if clearance is needed.
     computeEstimatedVerticalPosition(layoutBox);
@@ -341,7 +340,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
     ASSERT(!layoutBox.hasFloatClear());
     ASSERT(hasPrecomputedMarginBefore(layoutBox));
 
-    if (floatingContext.floatingState().isEmpty())
+    if (floatingContext.isEmpty())
         return;
 
     if (auto adjustedPosition = floatingContext.positionForFormattingContextRoot(layoutBox))

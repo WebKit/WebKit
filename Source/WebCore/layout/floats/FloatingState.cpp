@@ -109,56 +109,6 @@ void FloatingState::append(const Box& layoutBox)
     return m_floats.insert(0, newFloatItem);
 }
 
-FloatingState::Constraints FloatingState::constraints(PositionInContextRoot verticalPosition, const Box& formattingContextRoot) const
-{
-    if (isEmpty())
-        return { };
-
-    // 1. Convert vertical position if this floating context is inherited.
-    // 2. Find the inner left/right floats at verticalPosition.
-    // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
-    auto coordinateMappingIsRequired = &root() != &formattingContextRoot;
-    auto adjustedPosition = Point { 0, verticalPosition };
-    LayoutSize adjustingDelta;
-
-    if (coordinateMappingIsRequired) {
-        adjustedPosition = FormattingContext::mapPointToAncestor(m_layoutState, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
-        adjustingDelta = { adjustedPosition.x, adjustedPosition.y - verticalPosition };
-    }
-
-    Constraints constraints;
-    for (int index = m_floats.size() - 1; index >= 0; --index) {
-        auto& floatItem = m_floats[index];
-
-        if (constraints.left && floatItem.isLeftPositioned())
-            continue;
-
-        if (constraints.right && !floatItem.isLeftPositioned())
-            continue;
-
-        auto rect = floatItem.rectWithMargin();
-        if (!(rect.top() <= adjustedPosition.y && adjustedPosition.y < rect.bottom()))
-            continue;
-
-        if (floatItem.isLeftPositioned())
-            constraints.left = PointInContextRoot { rect.right(), rect.bottom() };
-        else
-            constraints.right = PointInContextRoot { rect.left(), rect.bottom() };
-
-        if (constraints.left && constraints.right)
-            break;
-    }
-
-    if (coordinateMappingIsRequired) {
-        if (constraints.left)
-            constraints.left->move(-adjustingDelta);
-
-        if (constraints.right)
-            constraints.right->move(-adjustingDelta);
-    }
-    return constraints;
-}
-
 Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const
 {
     if (m_floats.isEmpty())

@@ -46,7 +46,7 @@ class LayoutState;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(FloatingState&);
+    FloatingContext(const Container& formattingContextRoot, FloatingState&);
 
     FloatingState& floatingState() const { return m_floatingState; }
 
@@ -59,12 +59,22 @@ public:
     };
     ClearancePosition verticalPositionWithClearance(const Box&) const;
 
+    bool isEmpty() const { return m_floatingState.floats().isEmpty(); }
+
+    struct Constraints {
+        Optional<PointInContextRoot> left;
+        Optional<PointInContextRoot> right;
+    };
+    Constraints constraints(PositionInContextRoot verticalPosition) const;
+
 private:
     LayoutState& layoutState() const { return m_floatingState.layoutState(); }
+    const Container& root() const { return *m_root; }
 
     void findPositionForFloatBox(FloatBox&) const;
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
+    WeakPtr<const Container> m_root;
     FloatingState& m_floatingState;
 };
 
