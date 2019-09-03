@@ -66,6 +66,8 @@ public:
         Optional<PointInContextRoot> right;
     };
     Constraints constraints(PositionInContextRoot verticalPosition) const;
+    void append(const Box&);
+    void remove(const Box&);
 
 private:
     LayoutState& layoutState() const { return m_floatingState.layoutState(); }

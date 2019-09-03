@@ -180,7 +180,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     // Float related final positioning.
     if (layoutBox.isFloatingPositioned()) {
         computeFloatingPosition(floatingContext, layoutBox);
-        floatingContext.floatingState().append(layoutBox);
+        floatingContext.append(layoutBox);
     } else if (layoutBox.establishesBlockFormattingContext())
         computePositionToAvoidFloats(floatingContext, layoutBox);
 }

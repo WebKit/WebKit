@@ -341,6 +341,16 @@ FloatingContext::Constraints FloatingContext::constraints(PositionInContextRoot 
     return constraints;
 }
 
+void FloatingContext::append(const Box& floatBox)
+{
+    floatingState().append(FloatingState::FloatItem { floatBox, FormattingContext::mapBoxToAncestor(layoutState(), floatBox, downcast<Container>(floatingState().root())) });
+}
+
+void FloatingContext::remove(const Box& floatBox)
+{
+    floatingState().remove(floatBox);
+}
+
 static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const FloatingState::FloatList& floats)
 {
     Optional<PositionInContextRoot> bottomMost;

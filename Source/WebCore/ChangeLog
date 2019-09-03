@@ -1,5 +1,31 @@
 2019-09-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] FloatingState should not need to query for display boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=201408
+        <rdar://problem/54958348>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for transitioning the floating codebase to use the formatting context for
+        retrieving display boxes.
+        FloatingContext should be responsible for adding/removing the new/existing float boxes to the state.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::append):
+        (WebCore::Layout::FloatingContext::remove):
+        * layout/floats/FloatingContext.h:
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::append):
+        (WebCore::Layout::belongsToThisFloatingContext): Deleted.
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::horizontalMargin const):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+
+2019-09-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floats] Do not pass FloatingState to FloatItem
         https://bugs.webkit.org/show_bug.cgi?id=201406
         <rdar://problem/54957097>

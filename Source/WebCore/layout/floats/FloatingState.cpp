@@ -51,21 +51,6 @@ FloatingState::FloatingState(LayoutState& layoutState, const Box& formattingCont
 {
 }
 
-#ifndef NDEBUG
-static bool belongsToThisFloatingContext(const Box& layoutBox, const Box& floatingStateRoot)
-{
-    auto& formattingContextRoot = layoutBox.formattingContextRoot();
-    if (&formattingContextRoot == &floatingStateRoot)
-        return true;
-
-    // Maybe the layout box belongs to an inline formatting context that inherits the floating state from the parent (block) formatting context. 
-    if (!formattingContextRoot.establishesInlineFormattingContext())
-        return false;
-
-    return &formattingContextRoot.formattingContextRoot() == &floatingStateRoot;
-}
-#endif
-
 void FloatingState::remove(const Box& layoutBox)
 {
     for (size_t index = 0; index < m_floats.size(); ++index) {
@@ -77,36 +62,33 @@ void FloatingState::remove(const Box& layoutBox)
     ASSERT_NOT_REACHED();
 }
 
-void FloatingState::append(const Box& layoutBox)
+void FloatingState::append(FloatItem floatItem)
 {
     ASSERT(is<Container>(*m_formattingContextRoot));
-    ASSERT(belongsToThisFloatingContext(layoutBox, *m_formattingContextRoot));
-    ASSERT(is<Container>(*m_formattingContextRoot));
 
-    auto newFloatItem = FloatItem { layoutBox, FormattingContext::mapBoxToAncestor(layoutState(), layoutBox, downcast<Container>(root()))};
     if (m_floats.isEmpty())
-        return m_floats.append(newFloatItem);
+        return m_floats.append(floatItem);
 
-    auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
-    auto isLeftPositioned = layoutBox.isLeftFloatingPositioned();
+    auto isLeftPositioned = floatItem.isLeftPositioned();
     // When adding a new float item to the list, we have to ensure that it is definitely the left(right)-most item.
     // Normally it is, but negative horizontal margins can push the float box beyond another float box.
     // Float items in m_floats list should stay in horizontal position order (left/right edge) on the same vertical position.
-    auto hasNegativeHorizontalMargin = (isLeftPositioned && displayBox.marginStart() < 0) || (!isLeftPositioned && displayBox.marginEnd() < 0);
+    auto horizontalMargin = floatItem.horizontalMargin();
+    auto hasNegativeHorizontalMargin = (isLeftPositioned && horizontalMargin.start < 0) || (!isLeftPositioned && horizontalMargin.end < 0);
     if (!hasNegativeHorizontalMargin)
-        return m_floats.append(newFloatItem);
+        return m_floats.append(floatItem);
 
     for (int i = m_floats.size() - 1; i >= 0; --i) {
         auto& floatItem = m_floats[i];
         if (isLeftPositioned != floatItem.isLeftPositioned())
             continue;
-        if (newFloatItem.rectWithMargin().top() < floatItem.rectWithMargin().bottom())
+        if (floatItem.rectWithMargin().top() < floatItem.rectWithMargin().bottom())
             continue;
-        if ((isLeftPositioned && newFloatItem.rectWithMargin().right() >= floatItem.rectWithMargin().right())
-            || (!isLeftPositioned && newFloatItem.rectWithMargin().left() <= floatItem.rectWithMargin().left()))
-            return m_floats.insert(i + 1, newFloatItem);
+        if ((isLeftPositioned && floatItem.rectWithMargin().right() >= floatItem.rectWithMargin().right())
+            || (!isLeftPositioned && floatItem.rectWithMargin().left() <= floatItem.rectWithMargin().left()))
+            return m_floats.insert(i + 1, floatItem);
     }
-    return m_floats.insert(0, newFloatItem);
+    return m_floats.insert(0, floatItem);
 }
 
 Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const

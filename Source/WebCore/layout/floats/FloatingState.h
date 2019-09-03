@@ -38,6 +38,7 @@ namespace WebCore {
 
 namespace Layout {
 
+class FloatingContext;
 class FormattingState;
 class LayoutState;
 
@@ -46,9 +47,6 @@ class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
     static Ref<FloatingState> create(LayoutState& layoutState, const Box& formattingContextRoot) { return adoptRef(*new FloatingState(layoutState, formattingContextRoot)); }
-
-    void append(const Box& layoutBox);
-    void remove(const Box& layoutBox);
 
     const Box& root() const { return *m_formattingContextRoot; }
 
@@ -67,6 +65,7 @@ public:
         bool isDescendantOfFormattingRoot(const Box&) const;
 
         Display::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
+        UsedHorizontalMargin horizontalMargin() const { return m_absoluteDisplayBox.horizontalMargin(); }
         PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
 
     private:
@@ -80,6 +79,9 @@ public:
 private:
     friend class FloatingContext;
     FloatingState(LayoutState&, const Box& formattingContextRoot);
+
+    void append(FloatItem);
+    void remove(const Box& layoutBox);
 
     LayoutState& layoutState() const { return m_layoutState; }
 
