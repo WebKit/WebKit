@@ -1,3 +1,17 @@
+2019-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WebCore] Resource usage accounting should accept non KERN_SUCCESS
+        https://bugs.webkit.org/show_bug.cgi?id=201409
+
+        Reviewed by Andreas Kling.
+
+        While iterating threads, we are not suspending these threads. Underlying threads can have gone
+        at any time and we will get non KERN_SUCCESS error code when a thread has gone. We should ignore
+        these threads.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::threadInfos):
+
 2019-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [SVG] fragment-only url 'url(#fragment)' should be resolved against the current document with regardless to HTML <base> element

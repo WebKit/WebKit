@@ -87,6 +87,8 @@ static Vector<ThreadInfo> threadInfos()
     if (kr != KERN_SUCCESS)
         return { };
 
+    // Since we collect thread usage without suspending threads, threads retrieved by task_threads can have gone while iterating
+    // them to get usage information. If a thread has gone, a system call returns non KERN_SUCCESS, and we just ignore these threads.
     Vector<ThreadInfo> infos;
     for (mach_msg_type_number_t i = 0; i < threadCount; ++i) {
         MachSendRight sendRight = MachSendRight::adopt(threadList[i]);
@@ -94,21 +96,18 @@ static Vector<ThreadInfo> threadInfos()
         thread_info_data_t threadInfo;
         mach_msg_type_number_t threadInfoCount = THREAD_INFO_MAX;
         kr = thread_info(sendRight.sendRight(), THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&threadInfo), &threadInfoCount);
-        ASSERT(kr == KERN_SUCCESS);
         if (kr != KERN_SUCCESS)
             continue;
 
         thread_identifier_info_data_t threadIdentifierInfo;
         mach_msg_type_number_t threadIdentifierInfoCount = THREAD_IDENTIFIER_INFO_COUNT;
         kr = thread_info(sendRight.sendRight(), THREAD_IDENTIFIER_INFO, reinterpret_cast<thread_info_t>(&threadIdentifierInfo), &threadIdentifierInfoCount);
-        ASSERT(kr == KERN_SUCCESS);
         if (kr != KERN_SUCCESS)
             continue;
 
         thread_extended_info_data_t threadExtendedInfo;
         mach_msg_type_number_t threadExtendedInfoCount = THREAD_EXTENDED_INFO_COUNT;
         kr = thread_info(sendRight.sendRight(), THREAD_EXTENDED_INFO, reinterpret_cast<thread_info_t>(&threadExtendedInfo), &threadExtendedInfoCount);
-        ASSERT(kr == KERN_SUCCESS);
         if (kr != KERN_SUCCESS)
             continue;
 
@@ -117,6 +116,7 @@ static Vector<ThreadInfo> threadInfos()
         if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
             usage = threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
 
+        // FIXME: dispatch_queue_t can be destroyed concurrently while we are accessing to it here. We should not use it.
         String threadName = String(threadExtendedInfo.pth_name);
         String dispatchQueueName;
         if (threadIdentifierInfo.dispatch_qaddr) {
