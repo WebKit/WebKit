@@ -1,3 +1,33 @@
+2019-09-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Do not pass FloatingState to FloatAvoider/FloatBox
+        https://bugs.webkit.org/show_bug.cgi?id=201405
+        <rdar://problem/54956381>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for transitioning the floating codebase to use the formatting context for
+        retrieving display boxes. Now FloatAvoiders/FloatBoxes don't need the FloatingState to compute absolute display boxes.
+
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::initialHorizontalPosition const):
+        (WebCore::Layout::FloatAvoider::overflowsContainingBlock const):
+        (WebCore::Layout::FloatAvoider::rectInContainingBlock const):
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::floatingState const): Deleted.
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::FloatBox):
+        (WebCore::Layout::FloatBox::initialVerticalPosition const):
+        * layout/floats/FloatBox.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::mapToFormattingContextRoot):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFormattingContextRoot const):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::LayoutPoint::isZero const):
+
 2019-09-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Enable WebAuthn by default for MobileSafari and SafariViewService

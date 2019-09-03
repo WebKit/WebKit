@@ -150,6 +150,25 @@ static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
 }
 #endif
 
+struct AbsoluteCoordinateValuesForFloatAvoider {
+    Display::Box displayBox;
+    LayoutPoint containingBlockTopLeft;
+    HorizontalEdges containingBlockContentBox;
+};
+static AbsoluteCoordinateValuesForFloatAvoider mapToFormattingContextRoot(const Box& layoutBox, const Container& formattingContextRoot, const LayoutState& layoutState)
+{
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto displayBox = FormattingContext::mapBoxToAncestor(layoutState, layoutBox, formattingContextRoot);
+
+    if (&containingBlock == &formattingContextRoot) {
+        auto containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(containingBlock);
+        return { displayBox, { }, {  containingBlockDisplayBox.contentBoxLeft(), containingBlockDisplayBox.contentBoxRight() } };
+    }
+    auto containingBlockAbsoluteDisplayBox = FormattingContext::mapBoxToAncestor(layoutState, containingBlock, formattingContextRoot);
+    auto containingBlockLeft = containingBlockAbsoluteDisplayBox.left();
+    return { displayBox, containingBlockAbsoluteDisplayBox.topLeft(), { containingBlockLeft + containingBlockAbsoluteDisplayBox.contentBoxLeft(), containingBlockLeft + containingBlockAbsoluteDisplayBox.contentBoxRight() } };
+}
+
 FloatingContext::FloatingContext(const Container& formattingContextRoot, FloatingState& floatingState)
     : m_root(makeWeakPtr(formattingContextRoot))
     , m_floatingState(floatingState)
@@ -179,7 +198,12 @@ Point FloatingContext::positionForFloat(const Box& layoutBox) const
     }
 
     // Find the top most position where the float box fits.
-    FloatBox floatBox = { layoutBox, m_floatingState, layoutState() };
+    auto absoluteDisplayBoxCoordinates = mapToFormattingContextRoot(layoutBox, downcast<Container>(m_floatingState.root()), layoutState());
+
+    Optional<LayoutUnit> previousFloatAbsoluteTop;
+    if (!isEmpty())
+        previousFloatAbsoluteTop = floatingState().floats().last().rectWithMargin().top();
+    auto floatBox = FloatBox { layoutBox, absoluteDisplayBoxCoordinates.displayBox, absoluteDisplayBoxCoordinates.containingBlockTopLeft, absoluteDisplayBoxCoordinates.containingBlockContentBox, previousFloatAbsoluteTop };
     findPositionForFloatBox(floatBox);
     return floatBox.rectInContainingBlock().topLeft();
 }
@@ -194,7 +218,8 @@ Optional<Point> FloatingContext::positionForFormattingContextRoot(const Box& lay
     if (isEmpty())
         return { };
 
-    FloatAvoider floatAvoider = { layoutBox, m_floatingState, layoutState() };
+    auto absoluteDisplayBoxCoordinates = mapToFormattingContextRoot(layoutBox, downcast<Container>(m_floatingState.root()), layoutState());
+    auto floatAvoider = FloatAvoider { layoutBox, absoluteDisplayBoxCoordinates.displayBox, absoluteDisplayBoxCoordinates.containingBlockTopLeft, absoluteDisplayBoxCoordinates.containingBlockContentBox };
     findPositionForFormattingContextRoot(floatAvoider);
     return { floatAvoider.rectInContainingBlock().topLeft() };
 }

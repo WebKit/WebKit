@@ -44,6 +44,7 @@ public:
     explicit LayoutPoint(const LayoutSize& size) : m_x(size.width()), m_y(size.height()) { }
 
     static LayoutPoint zero() { return LayoutPoint(); }
+    bool isZero() const { return !m_x && !m_y; }
 
     LayoutUnit x() const { return m_x; }
     LayoutUnit y() const { return m_y; }
