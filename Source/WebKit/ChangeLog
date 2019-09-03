@@ -1,5 +1,15 @@
 2019-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Add an env var to force single process model
+
+        WEBKIT_USE_SINGLE_WEB_PROCESS=1 can now be used to force the single process model. This is a temporary solution
+        for applications still depending on the single process mode behavior. It will be only available in 2.26 series.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+
+2019-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE][GTK] Deprecate nonfunctional process limit APIs
         https://bugs.webkit.org/show_bug.cgi?id=193749
 

@@ -347,6 +347,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     } else if (!priv->localStorageDirectory.isNull())
         configuration.setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.data()));
 
+    const char* useSingleWebProcess = getenv("WEBKIT_USE_SINGLE_WEB_PROCESS");
+    if (useSingleWebProcess && strcmp(useSingleWebProcess, "0"))
+        configuration.setUsesSingleWebProcess(true);
     priv->processPool = WebProcessPool::create(configuration);
 
     if (!priv->websiteDataManager)
