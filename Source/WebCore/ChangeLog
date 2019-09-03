@@ -1,5 +1,21 @@
 2019-09-03  Chris Lord  <clord@igalia.com>
 
+        [GStreamer] Add support to copy YUV video textures into images
+        https://bugs.webkit.org/show_bug.cgi?id=200922
+
+        Reviewed by Philippe Normand and Xabier Rodriguez-Calvar.
+
+        Use gst_gl_color_convert to convert to RGB before using ImageGStreamer
+        with gstreamer-gl.
+
+        No new tests, not changing behavior.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
+2019-09-03  Chris Lord  <clord@igalia.com>
+
         [GStreamer] Add support to copy YUV video textures into platform textures
         https://bugs.webkit.org/show_bug.cgi?id=200914
 

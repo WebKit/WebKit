@@ -296,6 +296,10 @@ protected:
     GRefPtr<GstContext> m_glDisplayElementContext;
     GRefPtr<GstContext> m_glAppElementContext;
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
+
+    GRefPtr<GstGLColorConvert> m_colorConvert;
+    GRefPtr<GstCaps> m_colorConvertInputCaps;
+    GRefPtr<GstCaps> m_colorConvertOutputCaps;
 #endif
 
     ImageOrientation m_videoSourceOrientation;

@@ -969,6 +969,50 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
+#if USE(GSTREAMER_GL)
+    // Ensure the input is RGBA. We handle YUV video natively, so we need to do
+    // this conversion on-demand here.
+    GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
+    if (UNLIKELY(!GST_IS_BUFFER(buffer)))
+        return;
+
+    GstCaps* caps = gst_sample_get_caps(m_sample.get());
+
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps))
+        return;
+
+    if (!GST_VIDEO_INFO_IS_RGB(&videoInfo)) {
+        if (!m_colorConvert) {
+            GstMemory* mem = gst_buffer_peek_memory(buffer, 0);
+            GstGLContext* context = ((GstGLBaseMemory*)mem)->context;
+            m_colorConvert = adoptGRef(gst_gl_color_convert_new(context));
+        }
+
+        if (!m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), caps)) {
+            m_colorConvertInputCaps = caps;
+            m_colorConvertOutputCaps = adoptGRef(gst_caps_copy(caps));
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+            const gchar* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "RGBA" : "BGRx";
+#else
+            const gchar* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "RGBA" : "RGBx";
+#endif
+            gst_caps_set_simple(m_colorConvertOutputCaps.get(), "format", G_TYPE_STRING, formatString, nullptr);
+            if (!gst_gl_color_convert_set_caps(m_colorConvert.get(), caps, m_colorConvertOutputCaps.get()))
+                return;
+        }
+
+        GRefPtr<GstBuffer> rgbBuffer = adoptGRef(gst_gl_color_convert_perform(m_colorConvert.get(), buffer));
+        if (UNLIKELY(!GST_IS_BUFFER(rgbBuffer.get())))
+            return;
+
+        const GstStructure* info = gst_sample_get_info(m_sample.get());
+        m_sample = adoptGRef(gst_sample_new(rgbBuffer.get(), m_colorConvertOutputCaps.get(),
+            gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
+    }
+#endif
+
     auto gstImage = ImageGStreamer::createImage(m_sample.get());
     if (!gstImage)
         return;
