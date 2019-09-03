@@ -59,7 +59,7 @@ public:
 
     class FloatItem {
     public:
-        FloatItem(const Box&, const FloatingState&);
+        FloatItem(const Box&, Display::Box absoluteDisplayBox);
 
         bool operator==(const Box& layoutBox) const { return m_layoutBox.get() == &layoutBox; }
 

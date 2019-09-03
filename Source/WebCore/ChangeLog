@@ -1,5 +1,21 @@
 2019-09-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floats] Do not pass FloatingState to FloatItem
+        https://bugs.webkit.org/show_bug.cgi?id=201406
+        <rdar://problem/54957097>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for transitioning the floating codebase to use the formatting context for
+        retrieving display boxes. Now FloatItems don't need the FloatingState to compute absolute display boxes.  
+
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        (WebCore::Layout::FloatingState::append):
+        * layout/floats/FloatingState.h:
+
+2019-09-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floats] Do not pass FloatingState to FloatAvoider/FloatBox
         https://bugs.webkit.org/show_bug.cgi?id=201405
         <rdar://problem/54956381>

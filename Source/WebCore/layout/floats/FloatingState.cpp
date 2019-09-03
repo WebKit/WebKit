@@ -39,9 +39,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
-FloatingState::FloatItem::FloatItem(const Box& layoutBox, const FloatingState& floatingState)
+FloatingState::FloatItem::FloatItem(const Box& layoutBox, Display::Box absoluteDisplayBox)
     : m_layoutBox(makeWeakPtr(layoutBox))
-    , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutState(), layoutBox, downcast<Container>(floatingState.root())))
+    , m_absoluteDisplayBox(absoluteDisplayBox)
 {
 }
 
@@ -83,7 +83,7 @@ void FloatingState::append(const Box& layoutBox)
     ASSERT(belongsToThisFloatingContext(layoutBox, *m_formattingContextRoot));
     ASSERT(is<Container>(*m_formattingContextRoot));
 
-    auto newFloatItem = FloatItem { layoutBox, *this };
+    auto newFloatItem = FloatItem { layoutBox, FormattingContext::mapBoxToAncestor(layoutState(), layoutBox, downcast<Container>(root()))};
     if (m_floats.isEmpty())
         return m_floats.append(newFloatItem);
 
