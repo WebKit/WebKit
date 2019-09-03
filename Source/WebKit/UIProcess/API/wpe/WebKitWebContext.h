@@ -67,11 +67,7 @@ typedef enum {
 
 /**
  * WebKitProcessModel:
- * @WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS: Use a single process to
- *   perform content rendering. The process is shared among all the
- *   #WebKitWebView instances created by the application: if the process
- *   hangs or crashes all the web views in the application will be affected.
- *   This is the default process model, and it should suffice for most cases.
+ * @WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS: Deprecated 2.26.
  * @WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES: Use one process
  *   for each #WebKitWebView, while still allowing for some of them to
  *   share a process in certain situations. The main advantage
@@ -193,11 +189,11 @@ webkit_web_context_set_cache_model                  (WebKitWebContext           
 WEBKIT_API WebKitCacheModel
 webkit_web_context_get_cache_model                  (WebKitWebContext              *context);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_web_context_set_web_process_count_limit      (WebKitWebContext              *context,
                                                      guint                          limit);
 
-WEBKIT_API guint
+WEBKIT_DEPRECATED guint
 webkit_web_context_get_web_process_count_limit      (WebKitWebContext              *context);
 
 WEBKIT_API void

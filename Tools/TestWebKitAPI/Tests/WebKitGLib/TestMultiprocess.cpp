@@ -61,11 +61,11 @@ public:
         m_webViews[index] = Test::adoptView(Test::createWebView(m_webContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webViews[index].get()));
 
-        m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-
         webkit_web_view_load_html(m_webViews[index].get(), "<html></html>", nullptr);
         g_signal_connect(m_webViews[index].get(), "load-changed", G_CALLBACK(loadChanged), this);
         g_main_loop_run(m_mainLoop);
+
+        m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
     }
 
     unsigned webProcessPid(unsigned index)
@@ -248,34 +248,10 @@ static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* te
     g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, 1);
 }
 
-static void testWebProcessLimit(MultiprocessTest* test, gconstpointer)
-{
-    g_assert_cmpuint(webkit_web_context_get_web_process_count_limit(test->m_webContext.get()), ==, 0);
-
-    webkit_web_context_set_web_process_count_limit(test->m_webContext.get(), 1);
-    g_assert_cmpuint(webkit_web_context_get_web_process_count_limit(test->m_webContext.get()), ==, 1);
-
-    // Create two web views but there should be only one web process.
-    for (unsigned i = 0; i < numViews; i++) {
-        test->loadWebViewAndWaitUntilLoaded(i);
-        g_assert_true(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
-    }
-
-    g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, 1);
-}
-
 void beforeAll()
 {
     // Check that default setting is the one stated in the documentation
-    g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()),
-        ==, WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
-
-    webkit_web_context_set_process_model(webkit_web_context_get_default(),
-        WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
-
-    // Check that the getter returns the newly-set value
-    g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()),
-        ==, WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+    g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()), ==, WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
     bus = new WebKitTestBus();
     if (!bus->run())
@@ -283,7 +259,6 @@ void beforeAll()
 
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
-    MultiprocessTest::add("WebKitWebContext", "web-process-limit", testWebProcessLimit);
 }
 
 void afterAll()
