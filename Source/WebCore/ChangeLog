@@ -1,3 +1,23 @@
+2019-09-03  Rob Buis  <rbuis@igalia.com>
+
+        Remove support for load/error on link=prefetch
+        https://bugs.webkit.org/show_bug.cgi?id=201348
+
+        Reviewed by Youenn Fablet.
+
+        Remove support for firing load/error on link=prefetch
+        to address tracking concerns.
+
+        Tests: http/wpt/prefetch/load-events-dynamic.html
+               http/wpt/prefetch/load-events.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::linkLoaded):
+        (WebCore::HTMLLinkElement::linkLoadingErrored):
+        * html/HTMLLinkElement.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::addPrefetchLoadEventListener):
+
 2019-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WebCore] Resource usage accounting should accept non KERN_SUCCESS

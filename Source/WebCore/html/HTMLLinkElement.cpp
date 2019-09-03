@@ -488,12 +488,14 @@ DOMTokenList& HTMLLinkElement::sizes()
 void HTMLLinkElement::linkLoaded()
 {
     m_loadedResource = true;
-    linkLoadEventSender().dispatchEventSoon(*this);
+    if (!m_relAttribute.isLinkPrefetch || m_allowPrefetchLoadAndErrorForTesting)
+        linkLoadEventSender().dispatchEventSoon(*this);
 }
 
 void HTMLLinkElement::linkLoadingErrored()
 {
-    linkErrorEventSender().dispatchEventSoon(*this);
+    if (!m_relAttribute.isLinkPrefetch || m_allowPrefetchLoadAndErrorForTesting)
+        linkErrorEventSender().dispatchEventSoon(*this);
 }
 
 bool HTMLLinkElement::sheetLoaded()

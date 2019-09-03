@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body onload="setTimeout(t.done(), 100);">
+<script>
+    var t = async_test('Makes sure that prefetch does not fire beforeload, error or load events.');
+</script>
+<link rel="prefetch" onbeforeload="assert_unreached('Beforeload should not be fired.')" onload="assert_unreached('Load should not be fired.')" onerror="assert_unreached('Error should not be fired.')">
+</body>

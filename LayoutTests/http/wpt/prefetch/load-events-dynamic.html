@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+var t = async_test('Makes sure that dynamically added prefetch does not fire beforeload, error or load events.');
+t.step(function() {
+    onload = t.step_func(function() { setTimeout(t.done(), 100); });
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.onbeforeload = t.step_func(function() {
+        assert_unreached("Beforeload should not be fired.")
+    })
+    link.onload = t.step_func(function() {
+        assert_unreached("Load should not be fired.")
+    })
+    link.onerror = t.step_func(function() {
+        assert_unreached("Error should not be fired.")
+    })
+    link.addEventListener("beforeload", function() {
+        assert_unreached("Beforeload should not be fired.")
+    });
+    link.addEventListener("load", function() {
+        assert_unreached("Load should not be fired.")
+    });
+    link.addEventListener("error", function() {
+        assert_unreached("Error should not be fired.")
+    });
+    document.body.appendChild(link);
+});
+</script>
+</body>

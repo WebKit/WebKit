@@ -9,8 +9,16 @@ function loadAfterPrefetch()
 {
      window.location.assign('http://localhost:8000/cache/resources/prefetched-main-resource.php');
 }
+
+function runTest() {
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = "http://localhost:8000/cache/resources/prefetched-main-resource.php";
+    if (internals)
+        internals.addPrefetchLoadEventListener(link, () => { loadAfterPrefetch(); });
+    document.body.appendChild(link);
+}
 </script>
-<body>
-<link rel="prefetch" href="http://localhost:8000/cache/resources/prefetched-main-resource.php" onload="loadAfterPrefetch();">
+<body onload="runTest()">
 </body>
 </html>

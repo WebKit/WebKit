@@ -1,3 +1,0 @@
-
-PASS Makes sure that dynamically added prefetch does not call beforeload. 
-

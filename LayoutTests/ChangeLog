@@ -1,3 +1,25 @@
+2019-09-03  Rob Buis  <rbuis@igalia.com>
+
+        Remove support for load/error on link=prefetch
+        https://bugs.webkit.org/show_bug.cgi?id=201348
+
+        Reviewed by Youenn Fablet.
+
+        Adjust beforeload tests to also test load/error events.
+
+        * http/tests/cache/link-prefetch-main-resource-iframe.html:
+        * http/tests/cache/link-prefetch-main-resource.html:
+        * http/wpt/prefetch/beforeload-dynamic-expected.txt: Removed.
+        * http/wpt/prefetch/beforeload-expected.txt: Removed.
+        * http/wpt/prefetch/load-events-dynamic-expected.txt: Added.
+        * http/wpt/prefetch/load-events-dynamic.html: Renamed from LayoutTests/http/wpt/prefetch/beforeload-dynamic.html.
+        * http/wpt/prefetch/load-events-expected.txt: Added.
+        * http/wpt/prefetch/load-events.html: Renamed from LayoutTests/http/wpt/prefetch/beforeload.html.
+        * http/wpt/prefetch/resources/navigate-skip-disk-cache.html:
+        * http/wpt/prefetch/resources/navigate.html:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [SVG] fragment-only url 'url(#fragment)' should be resolved against the current document with regardless to HTML <base> element

@@ -1,5 +1,5 @@
 <html>
-<body>
+<body onload="runTest()">
 <div id="result"></div>
 <script>
 
@@ -32,7 +32,14 @@ window.onmessage = function(message)
     document.getElementById('result').textContent = message.data;
 }
 
+function runTest() {
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = "http://localhost:8000/cache/resources/prefetched-main-resource-iframe.php";
+    if (internals)
+        internals.addPrefetchLoadEventListener(link, () => { loadAfterPrefetch(); });
+    document.body.appendChild(link);
+}
 </script>
-<link rel="prefetch" href="http://localhost:8000/cache/resources/prefetched-main-resource-iframe.php" onload="setTimeout(loadAfterPrefetch, 0);">
 </body>
 </html>

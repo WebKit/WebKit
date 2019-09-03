@@ -78,6 +78,8 @@ public:
     bool isApplicationManifest() const { return m_relAttribute.isApplicationManifest; }
 #endif
 
+    void allowPrefetchLoadAndErrorForTesting() { m_allowPrefetchLoadAndErrorForTesting = true; }
+
 private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
@@ -141,6 +143,7 @@ private:
     bool m_firedLoad;
     bool m_loadedResource;
     bool m_isHandlingBeforeLoad { false };
+    bool m_allowPrefetchLoadAndErrorForTesting { false };
 
     PendingSheetType m_pendingSheetType;
     String m_integrityMetadataForPendingSheetRequest;

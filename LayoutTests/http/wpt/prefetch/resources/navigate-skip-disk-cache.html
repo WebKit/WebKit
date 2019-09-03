@@ -6,7 +6,7 @@
   var link = document.createElement("link");
   link.rel = "prefetch";
   link.href = get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/main-resource-skip-disk-cache.py";
-  document.body.appendChild(link);
   internals.addPrefetchLoadEventListener(link, () => { window.location = get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/main-resource-skip-disk-cache.py" });
+  document.body.appendChild(link);
 </script>
 </body>
