@@ -74,7 +74,7 @@ RefPtr<PreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(cons
     if (!webPage)
         return nullptr;
 
-    return WebPreviewLoaderClient::create(fileName, uti, webPage->pageID());
+    return WebPreviewLoaderClient::create(fileName, uti, webPage->identifier());
 }
 #endif
 

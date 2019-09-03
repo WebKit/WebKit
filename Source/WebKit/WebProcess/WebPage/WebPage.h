@@ -291,7 +291,7 @@ public:
     static WebPage& fromCorePage(WebCore::Page&);
 
     WebCore::Page* corePage() const { return m_page.get(); }
-    WebCore::PageIdentifier pageID() const { return m_pageID; }
+    WebCore::PageIdentifier identifier() const { return m_identifier; }
     StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64()); }
     PAL::SessionID sessionID() const { return m_page->sessionID(); }
     bool usesEphemeralSession() const { return m_page->usesEphemeralSession(); }
@@ -1621,7 +1621,7 @@ private:
 
     void updateMockAccessibilityElementAfterCommittingLoad();
 
-    WebCore::PageIdentifier m_pageID;
+    WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;

@@ -43,7 +43,7 @@ namespace WebKit {
 WebPaymentCoordinator::WebPaymentCoordinator(WebPage& webPage)
     : m_webPage(webPage)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebPaymentCoordinator::messageReceiverName(), m_webPage.pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebPaymentCoordinator::messageReceiverName(), m_webPage.identifier(), *this);
 }
 
 WebPaymentCoordinator::~WebPaymentCoordinator()
@@ -96,7 +96,7 @@ bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vecto
         linkIconURLStrings.append(linkIconURL.string());
 
     bool result;
-    if (!sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(m_webPage.pageID(), m_webPage.sessionID(), originatingURL.string(), linkIconURLStrings, paymentRequest), Messages::WebPaymentCoordinatorProxy::ShowPaymentUI::Reply(result)))
+    if (!sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(m_webPage.identifier(), m_webPage.sessionID(), originatingURL.string(), linkIconURLStrings, paymentRequest), Messages::WebPaymentCoordinatorProxy::ShowPaymentUI::Reply(result)))
         return false;
 
     return result;
@@ -168,7 +168,7 @@ IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 
 uint64_t WebPaymentCoordinator::messageSenderDestinationID() const
 {
-    return m_webPage.pageID().toUInt64();
+    return m_webPage.identifier().toUInt64();
 }
 
 void WebPaymentCoordinator::validateMerchant(const String& validationURLString)

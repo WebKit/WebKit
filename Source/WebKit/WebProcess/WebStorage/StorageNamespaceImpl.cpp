@@ -119,7 +119,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
     if (auto networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
         networkProcessConnection->connection().send(Messages::StorageManagerSet::CloneSessionStorageNamespace(newPage.sessionID(), m_storageNamespaceID, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier()), 0);
 
-    return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier(), WebPage::fromCorePage(newPage).pageID(), m_topLevelOrigin.get(), m_quotaInBytes, newPage.sessionID()));
+    return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier(), WebPage::fromCorePage(newPage).identifier(), m_topLevelOrigin.get(), m_quotaInBytes, newPage.sessionID()));
 }
 
 void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID sessionID)

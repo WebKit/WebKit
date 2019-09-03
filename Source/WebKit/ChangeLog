@@ -1,3 +1,145 @@
+2019-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Rename WebPage::pageID() to WebPage::identifier()
+        https://bugs.webkit.org/show_bug.cgi?id=201428
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/API/Cocoa/WKBrowsingContextHandle.mm:
+        (-[WKBrowsingContextHandle _initWithPage:]):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::WebPaymentCoordinator):
+        (WebKit::WebPaymentCoordinator::showPaymentUI):
+        (WebKit::WebPaymentCoordinator::messageSenderDestinationID const):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::WebAuthenticatorCoordinator):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        (WebKit::WebChromeClient::focusedFrameChanged):
+        (WebKit::WebChromeClient::createWindow):
+        (WebKit::WebChromeClient::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        (WebKit::WebChromeClient::toolbarsVisible):
+        (WebKit::WebChromeClient::statusbarVisible):
+        (WebKit::WebChromeClient::menubarVisible):
+        (WebKit::WebChromeClient::wrapCryptoKey const):
+        (WebKit::WebChromeClient::unwrapCryptoKey const):
+        (WebKit::WebChromeClient::signedPublicKeyAndChallengeString const):
+        * WebProcess/WebCoreSupport/WebColorChooser.cpp:
+        (WebKit::WebColorChooser::WebColorChooser):
+        (WebKit::WebColorChooser::reattachColorChooser):
+        (WebKit::WebColorChooser::setSelectedColor):
+        (WebKit::WebColorChooser::endChooser):
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp:
+        (WebKit::WebDataListSuggestionPicker::handleKeydownWithIdentifier):
+        (WebKit::WebDataListSuggestionPicker::close):
+        (WebKit::WebDataListSuggestionPicker::displayWithActivationType):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::pageID const):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::show):
+        (WebKit::WebPopupMenu::hide):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::saveRecentSearches):
+        (WebKit::WebSearchPopupMenu::loadRecentSearches):
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::createPreviewLoaderClient):
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::TextCheckingControllerProxy):
+        (WebKit::TextCheckingControllerProxy::~TextCheckingControllerProxy):
+        * WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp:
+        (WebKit::WebRemoteObjectRegistry::WebRemoteObjectRegistry):
+        (WebKit::WebRemoteObjectRegistry::close):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage):
+        (WebKit::EventDispatcher::removeScrollingTreeForPage):
+        (WebKit::EventDispatcher::clearQueuedTouchEventsForPage):
+        (WebKit::EventDispatcher::getQueuedTouchEventsForPage):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::RemoteScrollingCoordinator):
+        (WebKit::RemoteScrollingCoordinator::~RemoteScrollingCoordinator):
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::sendMessageToBackend):
+        (WebKit::RemoteWebInspectorUI::changeSheetRect):
+        (WebKit::RemoteWebInspectorUI::startWindowDrag):
+        (WebKit::RemoteWebInspectorUI::bringToFront):
+        (WebKit::RemoteWebInspectorUI::closeWindow):
+        (WebKit::RemoteWebInspectorUI::reopen):
+        (WebKit::RemoteWebInspectorUI::resetState):
+        (WebKit::RemoteWebInspectorUI::openInNewTab):
+        (WebKit::RemoteWebInspectorUI::save):
+        (WebKit::RemoteWebInspectorUI::append):
+        (WebKit::RemoteWebInspectorUI::showCertificate):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::ViewGestureGeometryCollector):
+        (WebKit::ViewGestureGeometryCollector::~ViewGestureGeometryCollector):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListCount const):
+        (WebKit::WebBackForwardListProxy::forwardListCount const):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openLocalInspectorFrontend):
+        (WebKit::WebInspector::closeFrontendConnection):
+        (WebKit::WebInspector::bringToFront):
+        (WebKit::WebInspector::elementSelectionChanged):
+        (WebKit::WebInspector::timelineRecordingChanged):
+        (WebKit::WebInspector::setMockCaptureDevicesEnabledOverride):
+        (WebKit::WebInspector::updateDockingAvailability):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        (WebKit::WebPage::messageSenderDestinationID const):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::WebPage::setFixedLayoutSize):
+        (WebKit::WebPage::freezeLayerTree):
+        (WebKit::WebPage::unfreezeLayerTree):
+        (WebKit::WebPage::restoreSessionInternal):
+        (WebKit::WebPage::setCurrentHistoryItemForReattach):
+        (WebKit::WebPage::updateIsInWindow):
+        (WebKit::WebPage::setActivityState):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::hasStorageAccess):
+        (WebKit::WebPage::requestStorageAccess):
+        (WebKit::WebPage::textInputContextsInRect):
+        (WebKit::WebPage::elementForTextInputContext):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::identifier const):
+        (WebKit::WebPage::pageID const): Deleted.
+        * WebProcess/WebPage/WebPageInspectorTarget.cpp:
+        (WebKit::WebPageInspectorTarget::identifier const):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase setWebPage:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::transformObjectsToHandles):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::copy):
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::PlaybackSessionManager):
+        (WebKit::PlaybackSessionManager::~PlaybackSessionManager):
+        (WebKit::PlaybackSessionManager::invalidate):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::VideoFullscreenManager):
+        (WebKit::VideoFullscreenManager::~VideoFullscreenManager):
+        (WebKit::VideoFullscreenManager::invalidate):
+
 2019-09-03  Antoine Quint  <graouts@apple.com>
 
         [iOS] Treat a two-finger single tap as if the user tapped with the Cmd key pressed

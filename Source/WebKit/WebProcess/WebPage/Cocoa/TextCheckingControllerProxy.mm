@@ -57,12 +57,12 @@ using namespace WebCore;
 TextCheckingControllerProxy::TextCheckingControllerProxy(WebPage& page)
     : m_page(page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page.pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page.identifier(), *this);
 }
 
 TextCheckingControllerProxy::~TextCheckingControllerProxy()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page.pageID());
+    WebProcess::singleton().removeMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page.identifier());
 }
 
 static OptionSet<DocumentMarker::MarkerType> relevantMarkerTypes()

@@ -67,7 +67,7 @@ WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
 {
     auto& webPage = WebPage::fromCorePage(page);
-    return StorageNamespaceImpl::createSessionStorageNamespace(webPage.sessionStorageNamespaceIdentifier(), webPage.pageID(), quota, page.sessionID());
+    return StorageNamespaceImpl::createSessionStorageNamespace(webPage.sessionStorageNamespaceIdentifier(), webPage.identifier(), quota, page.sessionID());
 }
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota, PAL::SessionID sessionID)

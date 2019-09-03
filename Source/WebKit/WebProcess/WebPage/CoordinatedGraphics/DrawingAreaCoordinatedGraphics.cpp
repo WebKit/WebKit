@@ -545,7 +545,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
 
     // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because ThreadedDisplayRefreshMonitor
     // is driven by the ThreadedCompositor of the drawing area), give each page a unique DisplayID derived from WebPage's unique ID.
-    m_webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - m_webPage.pageID().toUInt64());
+    m_webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - m_webPage.identifier().toUInt64());
 
     ASSERT(!m_layerTreeHost);
     if (m_previousLayerTreeHost) {

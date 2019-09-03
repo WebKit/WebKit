@@ -249,7 +249,7 @@ private:
         }
 
         webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
-        resourceRequest.setInitiatingPageID(page.pageID());
+        resourceRequest.setInitiatingPageID(page.identifier());
 
         API::Dictionary::MapType message;
         message.set(String::fromUTF8("Page"), &page);
@@ -764,7 +764,7 @@ guint64 webkit_web_page_get_id(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
-    return webPage->priv->webPage->pageID().toUInt64();
+    return webPage->priv->webPage->identifier().toUInt64();
 }
 
 /**

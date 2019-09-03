@@ -143,7 +143,7 @@
     m_page = page;
 
     if (page) {
-        m_pageID = page->pageID();
+        m_pageID = page->identifier();
 
         auto* frame = page->mainFrame();
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;

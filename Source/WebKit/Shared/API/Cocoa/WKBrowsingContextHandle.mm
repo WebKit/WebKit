@@ -39,7 +39,7 @@
 
 - (id)_initWithPage:(WebKit::WebPage&)page
 {
-    return [self _initWithPageProxyID:page.webPageProxyIdentifier() andWebPageID:page.pageID()];
+    return [self _initWithPageProxyID:page.webPageProxyIdentifier() andWebPageID:page.identifier()];
 }
 
 - (id)_initWithPageProxyID:(WebKit::WebPageProxyIdentifier)pageProxyID andWebPageID:(WebCore::PageIdentifier)webPageID

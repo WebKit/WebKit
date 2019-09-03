@@ -40,7 +40,7 @@ namespace WebKit {
 WebAuthenticatorCoordinator::WebAuthenticatorCoordinator(WebPage& webPage)
     : m_webPage(webPage)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebAuthenticatorCoordinator::messageReceiverName(), m_webPage.pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebAuthenticatorCoordinator::messageReceiverName(), m_webPage.identifier(), *this);
 }
 
 WebAuthenticatorCoordinator::~WebAuthenticatorCoordinator()

@@ -51,12 +51,12 @@ RemoteScrollingCoordinator::RemoteScrollingCoordinator(WebPage* page)
     : AsyncScrollingCoordinator(page->corePage())
     , m_webPage(page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_webPage->pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_webPage->identifier(), *this);
 }
 
 RemoteScrollingCoordinator::~RemoteScrollingCoordinator()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_webPage->pageID());
+    WebProcess::singleton().removeMessageReceiver(Messages::RemoteScrollingCoordinator::messageReceiverName(), m_webPage->identifier());
 }
 
 void RemoteScrollingCoordinator::scheduleTreeStateCommit()

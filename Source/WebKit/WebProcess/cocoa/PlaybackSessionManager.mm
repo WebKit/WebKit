@@ -170,7 +170,7 @@ Ref<PlaybackSessionManager> PlaybackSessionManager::create(WebPage& page)
 PlaybackSessionManager::PlaybackSessionManager(WebPage& page)
     : m_page(&page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), page.pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), page.identifier(), *this);
 }
 
 PlaybackSessionManager::~PlaybackSessionManager()
@@ -187,13 +187,13 @@ PlaybackSessionManager::~PlaybackSessionManager()
     m_clientCounts.clear();
 
     if (m_page)
-        WebProcess::singleton().removeMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), m_page->pageID());
+        WebProcess::singleton().removeMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), m_page->identifier());
 }
 
 void PlaybackSessionManager::invalidate()
 {
     ASSERT(m_page);
-    WebProcess::singleton().removeMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), m_page->pageID());
+    WebProcess::singleton().removeMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), m_page->identifier());
     m_page = nullptr;
 }
 

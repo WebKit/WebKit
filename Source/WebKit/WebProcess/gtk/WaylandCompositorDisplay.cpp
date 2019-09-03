@@ -58,7 +58,7 @@ void WaylandCompositorDisplay::bindSurfaceToPage(struct wl_surface* surface, Web
     if (!m_webkitgtk)
         return;
 
-    wl_webkitgtk_bind_surface_to_page(reinterpret_cast<struct wl_webkitgtk*>(m_webkitgtk.get()), surface, page.pageID().toUInt64());
+    wl_webkitgtk_bind_surface_to_page(reinterpret_cast<struct wl_webkitgtk*>(m_webkitgtk.get()), surface, page.identifier().toUInt64());
     wl_display_roundtrip(m_display);
 }
 

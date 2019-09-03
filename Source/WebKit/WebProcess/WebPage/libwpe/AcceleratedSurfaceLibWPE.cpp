@@ -91,7 +91,7 @@ uint64_t AcceleratedSurfaceLibWPE::window() const
 
 uint64_t AcceleratedSurfaceLibWPE::surfaceID() const
 {
-    return m_webPage.pageID().toUInt64();
+    return m_webPage.identifier().toUInt64();
 }
 
 void AcceleratedSurfaceLibWPE::clientResize(const IntSize& size)

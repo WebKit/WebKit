@@ -521,7 +521,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     WebPage* webPage = webFrame ? webFrame->page() : nullptr;
 
-    auto pageID = webPage ? webPage->pageID() : PageIdentifier { };
+    auto pageID = webPage ? webPage->identifier() : PageIdentifier { };
     auto frameID = webFrame ? webFrame->frameID() : FrameIdentifier { };
     auto sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
 
@@ -670,7 +670,7 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 
     NetworkResourceLoadParameters parameters { webPage->sessionID() };
     parameters.request = ResourceRequest { url };
-    parameters.webPageID = webPage->pageID();
+    parameters.webPageID = webPage->identifier();
     parameters.webFrameID = webFrame->frameID();
     parameters.parentPID = presentingApplicationPID();
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;

@@ -1754,7 +1754,7 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
                 return API::FrameHandle::createAutoconverting(static_cast<const WebFrame&>(object).frameID());
 
             case API::Object::Type::BundlePage:
-                return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).webPageProxyIdentifier(), static_cast<const WebPage&>(object).pageID());
+                return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).webPageProxyIdentifier(), static_cast<const WebPage&>(object).identifier());
 
             case API::Object::Type::BundlePageGroup: {
                 WebPageGroupData pageGroupData;
