@@ -1,3 +1,19 @@
+2019-09-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Enable WebAuthn by default for MobileSafari and SafariViewService
+        https://bugs.webkit.org/show_bug.cgi?id=201369
+        <rdar://problem/54903724>
+
+        Reviewed by Brent Fulgham.
+
+        Communications to security keys require entitlements, which are not guaranteed to be present in third party
+        WKWebView clients. Therefore, only enable WebAuthn by default for MobileSafari and SafariViewService.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebAuthenticationEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2019-09-03  Chris Dumez  <cdumez@apple.com>
 
         Rename WebPage::pageID() to WebPage::identifier()

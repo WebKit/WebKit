@@ -1,3 +1,16 @@
+2019-09-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Enable WebAuthn by default for MobileSafari and SafariViewService
+        https://bugs.webkit.org/show_bug.cgi?id=201369
+        <rdar://problem/54903724>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isSafariViewService):
+        Adds a way to detect SafariViewService.
+
 2019-09-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make "clips compositing descendants" an indirect compositing reason
