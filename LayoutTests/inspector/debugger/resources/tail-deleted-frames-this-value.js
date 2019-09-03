@@ -6,12 +6,12 @@ function a() {
 }
 function b() {
     let y = 40;
-    return a.call({aThis: 2});
+    return a.call({aThis: 3});
 }
 function c() {
     let z = 60;
-    return b.call({bThis: 1}); 
+    return b.call({bThis: 2}); 
 }
 function startABC() {
-    c.call({cThis: 0});
+    c.call({cThis: 1});
 }

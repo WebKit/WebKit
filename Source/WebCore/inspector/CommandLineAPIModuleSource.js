@@ -28,11 +28,11 @@
 
 //# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js
 
-(function (InjectedScriptHost, inspectedGlobalObject, injectedScriptId, injectedScript, RemoteObject, CommandLineAPIHost) {
+(function (InjectedScriptHost, inspectedGlobalObject, injectedScriptId, injectedScript, {RemoteObject, CommandLineAPI}, CommandLineAPIHost) {
 
 // FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overridden built-ins
 
-injectedScript.setInspectObject(function(object) {
+injectedScript._inspectObject = function(object) {
     if (arguments.length === 0)
         return;
 
@@ -53,13 +53,13 @@ injectedScript.setInspectObject(function(object) {
     }
 
     CommandLineAPIHost.inspect(objectId, hints);
-});
+};
 
-injectedScript.addCommandLineAPIGetter("0", function() {
+CommandLineAPI.getters["0"] = function() {
     return CommandLineAPIHost.inspectedObject();
-});
+};
 
-injectedScript.addCommandLineAPIMethod("copy", function(object) {
+CommandLineAPI.methods["copy"] = function(object) {
     let string = null;
 
     let subtype = RemoteObject.subtype(object);
@@ -70,23 +70,23 @@ injectedScript.addCommandLineAPIMethod("copy", function(object) {
     else if (injectedScript.isPrimitiveValue(object))
         string = "" + object;
     else if (typeof object === "symbol")
-        string = String(object);
+        string = inspectedGlobalObject.String(object);
     else if (typeof object === "function")
         string = "" + object;
     else {
         try {
-            string = JSON.stringify(object, null, "  ");
+            string = inspectedGlobalObject.JSON.stringify(object, null, "  ");
         } catch {
             string = "" + object;
         }
     }
 
     CommandLineAPIHost.copyText(string);
-});
+};
 
-injectedScript.addCommandLineAPIMethod("getEventListeners", function(target) {
+CommandLineAPI.methods["getEventListeners"] = function(target) {
     return CommandLineAPIHost.getEventListeners(target);
-});
+};
 
 function normalizeEventTypes(types) {
     if (types === undefined)
@@ -115,7 +115,7 @@ function logEvent(event)
     inspectedGlobalObject.console.log(event.type, event);
 }
 
-injectedScript.addCommandLineAPIMethod("monitorEvents", function(object, types) {
+CommandLineAPI.methods["monitorEvents"] = function(object, types) {
     if (!object || !object.addEventListener || !object.removeEventListener)
         return;
     types = normalizeEventTypes(types);
@@ -123,22 +123,22 @@ injectedScript.addCommandLineAPIMethod("monitorEvents", function(object, types) 
         object.removeEventListener(types[i], logEvent, false);
         object.addEventListener(types[i], logEvent, false);
     }
-});
+};
 
-injectedScript.addCommandLineAPIMethod("unmonitorEvents", function(object, types) {
+CommandLineAPI.methods["unmonitorEvents"] = function(object, types) {
     if (!object || !object.addEventListener || !object.removeEventListener)
         return;
     types = normalizeEventTypes(types);
     for (let i = 0; i < types.length; ++i)
         object.removeEventListener(types[i], logEvent, false);
-});
+};
 
 if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
     function canQuerySelectorOnNode(node) {
         return node && InjectedScriptHost.subtype(node) === "node" && (node.nodeType === inspectedGlobalObject.Node.ELEMENT_NODE || node.nodeType === inspectedGlobalObject.Node.DOCUMENT_NODE || node.nodeType === inspectedGlobalObject.Node.DOCUMENT_FRAGMENT_NODE);
     }
 
-    injectedScript.addCommandLineAPIMethod("$", function(selector, start) {
+    CommandLineAPI.methods["$"] = function(selector, start) {
         if (canQuerySelectorOnNode(start))
             return start.querySelector(selector);
 
@@ -155,32 +155,35 @@ if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
         }
 
         return result;
-    });
+    };
 
-    injectedScript.addCommandLineAPIMethod("$$", function(selector, start) {
+    CommandLineAPI.methods["$$"] = function(selector, start) {
         if (canQuerySelectorOnNode(start))
-            return Array.from(start.querySelectorAll(selector));
-        return Array.from(inspectedGlobalObject.document.querySelectorAll(selector));
-    });
+            return inspectedGlobalObject.Array.from(start.querySelectorAll(selector));
+        return inspectedGlobalObject.Array.from(inspectedGlobalObject.document.querySelectorAll(selector));
+    };
 
-    injectedScript.addCommandLineAPIMethod("$x", function(xpath, context) {
+    CommandLineAPI.methods["$x"] = function(xpath, context) {
         let doc = (context && context.ownerDocument) || inspectedGlobalObject.document;
-        var result = doc.evaluate(xpath, context || doc, null, XPathResult.ANY_TYPE, null);
+        let result = doc.evaluate(xpath, context || doc, null, inspectedGlobalObject.XPathResult.ANY_TYPE, null);
         switch (result.resultType) {
-        case XPathResult.NUMBER_TYPE:
+        case inspectedGlobalObject.XPathResult.NUMBER_TYPE:
             return result.numberValue;
-        case XPathResult.STRING_TYPE:
+        case inspectedGlobalObject.XPathResult.STRING_TYPE:
             return result.stringValue;
-        case XPathResult.BOOLEAN_TYPE:
+        case inspectedGlobalObject.XPathResult.BOOLEAN_TYPE:
             return result.booleanValue;
-        default:
-            var nodes = [];
-            var node;
-            while (node = result.iterateNext())
-                nodes.push(node);
-            return nodes;
         }
-    });
+
+        let nodes = [];
+        let node = null;
+        while (node = result.iterateNext())
+            nodes.push(node);
+        return nodes;
+    };
 }
+
+for (let name in CommandLineAPI.methods)
+    CommandLineAPI.methods[name].toString = function() { return "function " + name + "() { [Command Line API] }"; };
 
 })

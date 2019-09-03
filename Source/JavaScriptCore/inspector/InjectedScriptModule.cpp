@@ -72,6 +72,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         function.appendArgument(name());
         function.appendArgument(source());
         function.appendArgument(host(injectedScriptManager, injectedScript.scriptState()));
+        hadException = false;
         resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
         if (hadException) {
             WTFLogAlways("Failed to parse/execute %s!", name().ascii().data());
