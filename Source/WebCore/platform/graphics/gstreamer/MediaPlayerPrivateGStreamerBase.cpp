@@ -55,6 +55,7 @@
 
 #if USE(GSTREAMER_GL)
 #define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::NoConvert
+#define GST_GL_CAPS_FORMAT "{ RGBx, RGBA, I420, Y444, YV12, Y41B, Y42B, NV12, NV21, VUYA }"
 
 #include <gst/app/gstappsink.h>
 
@@ -145,8 +146,10 @@ public:
 
         if (gstGLEnabled) {
             m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
-            if (m_isMapped)
+            if (m_isMapped) {
                 m_textureID = *reinterpret_cast<GLuint*>(m_videoFrame.data[0]);
+                m_hasMappedTextures = true;
+            }
         } else
 #else
         UNUSED_PARAM(flags);
@@ -171,10 +174,22 @@ public:
         gst_video_frame_unmap(&m_videoFrame);
     }
 
+    virtual void waitForCPUSync()
+    {
+        GstGLSyncMeta* meta = gst_buffer_get_gl_sync_meta(m_buffer);
+        if (meta) {
+            GstMemory* mem = gst_buffer_peek_memory(m_buffer, 0);
+            GstGLContext* context = ((GstGLBaseMemory*)mem)->context;
+            gst_gl_sync_meta_wait_cpu(meta, context);
+        }
+    }
+
     const IntSize& size() const { return m_size; }
     bool hasAlphaChannel() const { return m_hasAlphaChannel; }
     TextureMapperGL::Flags flags() const { return m_flags; }
     GLuint textureID() const { return m_textureID; }
+    bool hasMappedTextures() const { return m_hasMappedTextures; }
+    const GstVideoFrame& videoFrame() const { return m_videoFrame; }
 
     void updateTexture(BitmapTextureGL& texture)
     {
@@ -209,6 +224,7 @@ private:
     TextureMapperGL::Flags m_flags { };
     GLuint m_textureID { 0 };
     bool m_isMapped { false };
+    bool m_hasMappedTextures { false };
 };
 #endif
 
@@ -716,10 +732,57 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 
             std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, !m_usingFallbackVideoSink);
 
-            GLuint textureID = frameHolder->textureID();
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
-            if (textureID) {
-                layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
+            using Buffer = TextureMapperPlatformLayerBuffer;
+            std::unique_ptr<Buffer> layerBuffer;
+            if (frameHolder->hasMappedTextures()) {
+                auto& videoFrame = frameHolder->videoFrame();
+                [&] {
+                    if ((GST_VIDEO_INFO_IS_RGB(&videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&videoFrame.info) == 1)) {
+                        layerBuffer = makeUnique<Buffer>(
+                            Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(videoFrame.data[0]) } },
+                            frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
+                        return;
+                    }
+
+                    if (GST_VIDEO_INFO_IS_YUV(&videoFrame.info)) {
+                        if (GST_VIDEO_INFO_N_COMPONENTS(&videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&videoFrame.info) > 3)
+                            return;
+
+                        unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&videoFrame.info);
+                        std::array<GLuint, 3> planes;
+                        std::array<unsigned, 3> yuvPlane;
+                        std::array<unsigned, 3> yuvPlaneOffset;
+                        for (unsigned i = 0; i < numberOfPlanes; ++i)
+                            planes[i] = *static_cast<GLuint*>(videoFrame.data[i]);
+                        for (unsigned i = 0; i < 3; ++i) {
+                            yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(&videoFrame.info, i);
+                            yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&videoFrame.info, i);
+                        }
+
+                        std::array<GLfloat, 9> yuvToRgb;
+                        if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoFrame.info), GST_VIDEO_COLORIMETRY_BT709)) {
+                            yuvToRgb = {
+                                1.164f,  0.0f,    1.787f,
+                                1.164f, -0.213f, -0.531f,
+                                1.164f,  2.112f,  0.0f
+                            };
+                        } else {
+                            // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
+                            yuvToRgb = {
+                                1.164f,  0.0f,    1.596f,
+                                1.164f, -0.391f, -0.813f,
+                                1.164f,  2.018f,  0.0f
+                            };
+                        }
+
+                        layerBuffer = makeUnique<Buffer>(Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } },
+                            frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
+                    }
+                }();
+
+                if (!layerBuffer)
+                    return;
+
                 layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
             } else {
                 layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
@@ -1078,8 +1141,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
     GstElement* appsink = createGLAppSink();
 
     // glsinkbin is not used because it includes glcolorconvert which only process RGBA,
-    // but in the future it would be possible to render YUV formats too:
-    // https://bugs.webkit.org/show_bug.cgi?id=132869
+    // but we can display YUV formats too.
 
     if (!appsink || !upload || !colorconvert) {
         GST_WARNING("Failed to create GstGL elements");
@@ -1098,7 +1160,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 
     gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, appsink, nullptr);
 
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGBA", nullptr));
+    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
     gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
     g_object_set(appsink, "caps", caps.get(), nullptr);
 

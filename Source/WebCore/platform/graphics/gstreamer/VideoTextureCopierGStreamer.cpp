@@ -35,7 +35,7 @@ VideoTextureCopierGStreamer::VideoTextureCopierGStreamer(ColorConversion colorCo
     ASSERT(previousContext);
     PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->makeContextCurrent();
 
-    m_shaderProgram = TextureMapperShaderProgram::create(TextureMapperShaderProgram::Texture);
+    m_shaderProgram = TextureMapperShaderProgram::create(TextureMapperShaderProgram::TextureRGB);
 
     glGenFramebuffers(1, &m_framebuffer);
     glGenTextures(1, &m_resultTexture);

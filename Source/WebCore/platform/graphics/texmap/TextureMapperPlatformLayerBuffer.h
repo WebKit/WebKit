@@ -31,6 +31,7 @@
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayer.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -39,9 +40,24 @@ class TextureMapperPlatformLayerBuffer : public TextureMapperPlatformLayer {
     WTF_MAKE_FAST_ALLOCATED();
 public:
     TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&&, TextureMapperGL::Flags = 0);
+
     TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize&, TextureMapperGL::Flags, GLint internalFormat);
 
-    virtual ~TextureMapperPlatformLayerBuffer() = default;
+    struct RGBTexture {
+        GLuint id;
+    };
+    struct YUVTexture {
+        unsigned numberOfPlanes;
+        std::array<GLuint, 3> planes;
+        std::array<unsigned, 3> yuvPlane;
+        std::array<unsigned, 3> yuvPlaneOffset;
+        std::array<GLfloat, 9> yuvToRgbMatrix;
+    };
+    using TextureVariant = WTF::Variant<RGBTexture, YUVTexture>;
+
+    TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, TextureMapperGL::Flags, GLint internalFormat);
+
+    virtual ~TextureMapperPlatformLayerBuffer();
 
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) final;
 
@@ -57,6 +73,8 @@ public:
     public:
         UnmanagedBufferDataHolder() = default;
         virtual ~UnmanagedBufferDataHolder() = default;
+
+        virtual void waitForCPUSync() = 0;
     };
 
     bool hasManagedTexture() const { return m_hasManagedTexture; }
@@ -79,6 +97,7 @@ private:
     RefPtr<BitmapTexture> m_texture;
     MonotonicTime m_timeLastUsed;
 
+    TextureVariant m_variant;
     GLuint m_textureID;
     IntSize m_size;
     GLint m_internalFormat;

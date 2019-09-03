@@ -45,7 +45,7 @@ namespace WebCore {
 class TextureMapperShaderProgram : public RefCounted<TextureMapperShaderProgram> {
 public:
     enum Option {
-        Texture          = 1L << 0,
+        TextureRGB       = 1L << 0,
         Rect             = 1L << 1,
         SolidColor       = 1L << 2,
         Opacity          = 1L << 3,
@@ -61,7 +61,11 @@ public:
         BlurFilter       = 1L << 14,
         AlphaBlur        = 1L << 15,
         ContentTexture   = 1L << 16,
-        ManualRepeat     = 1L << 17
+        ManualRepeat     = 1L << 17,
+        TextureYUV       = 1L << 18,
+        TextureNV12      = 1L << 19,
+        TextureNV21      = 1L << 20,
+        TexturePackedYUV = 1L << 21,
     };
 
     typedef unsigned Options;
@@ -80,7 +84,11 @@ public:
     TEXMAP_DECLARE_UNIFORM(opacity)
     TEXMAP_DECLARE_UNIFORM(color)
     TEXMAP_DECLARE_UNIFORM(expandedQuadEdgesInScreenSpace)
+    TEXMAP_DECLARE_UNIFORM(yuvToRgb)
     TEXMAP_DECLARE_SAMPLER(sampler)
+    TEXMAP_DECLARE_SAMPLER(samplerY)
+    TEXMAP_DECLARE_SAMPLER(samplerU)
+    TEXMAP_DECLARE_SAMPLER(samplerV)
     TEXMAP_DECLARE_SAMPLER(mask)
 
     TEXMAP_DECLARE_UNIFORM(filterAmount)

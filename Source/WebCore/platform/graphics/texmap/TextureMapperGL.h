@@ -30,6 +30,8 @@
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperGLHeaders.h"
 #include "TransformationMatrix.h"
+#include <array>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -64,6 +66,9 @@ public:
     void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) override;
     void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, unsigned exposedEdges) override;
     virtual void drawTexture(GLuint texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, const std::array<GLfloat, 9>& yuvToRgbMatrix, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 9>& yuvToRgbMatrix, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTexturePackedYUV(GLuint texture, const std::array<GLfloat, 9>& yuvToRgbMatrix, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
     void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&, bool) override;
     void clearColor(const Color&) override;
 
@@ -84,6 +89,7 @@ public:
 
 private:
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, Flags);
 
     void drawUnitRect(TextureMapperShaderProgram&, GLenum drawingMode);
