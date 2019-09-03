@@ -62,7 +62,7 @@ void BlockFormattingContext::layout()
 
     auto& formattingRoot = downcast<Container>(root());
     LayoutQueue layoutQueue;
-    auto floatingContext = FloatingContext { formattingRoot, formattingState().floatingState() };
+    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
     if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
@@ -127,7 +127,7 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
         return { };
     // Vertical static position is not computed yet, so let's just estimate it for now.
     auto& formattingRoot = downcast<Container>(root());
-    auto verticalPosition = FormattingContext::mapTopToAncestor(layoutState(), layoutBox, formattingRoot);
+    auto verticalPosition = mapTopToAncestor(layoutBox, formattingRoot);
     auto constraints = floatingContext.constraints({ verticalPosition });
     if (!constraints.left && !constraints.right)
         return { };
@@ -139,8 +139,8 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     LayoutUnit containingBlockRight = containingBlockDisplayBox.right();
     if (&containingBlock != &formattingRoot) {
         // Move containing block left/right to the root's coordinate system.
-        containingBlockLeft = FormattingContext::mapLeftToAncestor(layoutState(), containingBlock, formattingRoot);
-        containingBlockRight = FormattingContext::mapRightToAncestor(layoutState(), containingBlock, formattingRoot);
+        containingBlockLeft = mapLeftToAncestor(containingBlock, formattingRoot);
+        containingBlockRight = mapRightToAncestor(containingBlock, formattingRoot);
     }
     auto containingBlockContentBoxLeft = containingBlockLeft + containingBlockDisplayBox.borderLeft() + containingBlockDisplayBox.paddingLeft().valueOr(0);
     auto containingBlockContentBoxRight = containingBlockRight - containingBlockDisplayBox.borderRight() + containingBlockDisplayBox.paddingRight().valueOr(0);

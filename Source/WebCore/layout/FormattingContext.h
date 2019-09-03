@@ -61,12 +61,12 @@ public:
     };
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
 
-    static Display::Box mapBoxToAncestor(const LayoutState&, const Box&, const Container& ancestor);
-    static LayoutUnit mapTopToAncestor(const LayoutState&, const Box&, const Container& ancestor);
-    static LayoutUnit mapLeftToAncestor(const LayoutState&, const Box&, const Container& ancestor);
-    static LayoutUnit mapRightToAncestor(const LayoutState&, const Box&, const Container& ancestor);
-    static Point mapPointToAncestor(const LayoutState&, Point, const Container& from, const Container& to);
-    static Point mapPointToDescendent(const LayoutState&, Point, const Container& from, const Container& to);
+    Display::Box mapBoxToAncestor(const Box&, const Container& ancestor) const;
+    LayoutUnit mapTopToAncestor(const Box&, const Container& ancestor) const;
+    LayoutUnit mapLeftToAncestor(const Box&, const Container& ancestor) const;
+    LayoutUnit mapRightToAncestor(const Box&, const Container& ancestor) const;
+    Point mapPointToAncestor(Point, const Container& from, const Container& to) const;
+    Point mapPointToDescendent(Point, const Container& from, const Container& to) const;
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
@@ -75,12 +75,13 @@ public:
     Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const { return layoutState().displayBoxForLayoutBox(layoutBox); }
     bool hasDisplayBox(const Box& layoutBox) const { return layoutState().hasDisplayBox(layoutBox); }
 
+    const Box& root() const { return *m_root; }
+
 protected:
     using LayoutQueue = Vector<const Box*>;
 
     LayoutState& layoutState() const;
     FormattingState& formattingState() const { return m_formattingState; }
-    const Box& root() const { return *m_root; }
 
     void computeBorderAndPadding(const Box&, Optional<UsedHorizontalValues> = WTF::nullopt);
 

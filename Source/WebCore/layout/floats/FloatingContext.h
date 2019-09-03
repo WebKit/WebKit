@@ -28,6 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatingState.h"
+#include "FormattingContext.h"
+#include "LayoutContainer.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 
@@ -37,7 +39,6 @@ namespace Layout {
 
 class FloatAvoider;
 class Box;
-class Container;
 class FloatingPair;
 class LayoutState;
 
@@ -46,7 +47,7 @@ class LayoutState;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(const Container& formattingContextRoot, FloatingState&);
+    FloatingContext(const FormattingContext&, FloatingState&);
 
     FloatingState& floatingState() const { return m_floatingState; }
 
@@ -71,12 +72,13 @@ public:
 
 private:
     LayoutState& layoutState() const { return m_floatingState.layoutState(); }
-    const Container& root() const { return *m_root; }
+    const FormattingContext& formattingContext() const { return m_formattingContext; }
+    const Container& root() const { return downcast<Container>(formattingContext().root()); }
 
     void findPositionForFloatBox(FloatBox&) const;
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
-    WeakPtr<const Container> m_root;
+    const FormattingContext& m_formattingContext;
     FloatingState& m_floatingState;
 };
 
