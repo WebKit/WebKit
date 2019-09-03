@@ -6921,6 +6921,7 @@ TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
 {
     switch (reason) {
     case IndirectCompositingReason::None: ts << "none"; break;
+    case IndirectCompositingReason::Clipping: ts << "clipping"; break;
     case IndirectCompositingReason::Stacking: ts << "stacking"; break;
     case IndirectCompositingReason::OverflowScrollPositioning: ts << "overflow positioning"; break;
     case IndirectCompositingReason::Overlap: ts << "overlap"; break;

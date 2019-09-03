@@ -1014,22 +1014,18 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     ASSERT(!layer.hasNotIsolatedCompositedBlendingDescendants() || layer.hasNotIsolatedBlendingDescendants());
 #endif
     // Now check for reasons to become composited that depend on the state of descendant layers.
-    IndirectCompositingReason indirectCompositingReason;
-    if (!willBeComposited && canBeComposited(layer)
-        && requiresCompositingForIndirectReason(layer, currentState.subtreeIsCompositing, anyDescendantHas3DTransform, layerPaintsIntoProvidedBacking, indirectCompositingReason)) {
-        layer.setIndirectCompositingReason(indirectCompositingReason);
-        layerWillCompositePostDescendants();
+    if (!willBeComposited && canBeComposited(layer)) {
+        auto indirectReason = computeIndirectCompositingReason(layer, currentState.subtreeIsCompositing, anyDescendantHas3DTransform, layerPaintsIntoProvidedBacking);
+        if (indirectReason != IndirectCompositingReason::None) {
+            layer.setIndirectCompositingReason(indirectReason);
+            layerWillCompositePostDescendants();
+        }
     }
-    
+
     if (layer.reflectionLayer()) {
         // FIXME: Shouldn't we call computeCompositingRequirements to handle a reflection overlapping with another renderer?
         layer.reflectionLayer()->setIndirectCompositingReason(willBeComposited ? IndirectCompositingReason::Stacking : IndirectCompositingReason::None);
     }
-
-    // setHasCompositingDescendant() may have changed the answer to needsToBeComposited() when clipping, so test that now.
-    bool isCompositedClippingLayer = canBeComposited(layer) && clipsCompositingDescendants(layer);
-    if (isCompositedClippingLayer & !willBeComposited)
-        layerWillCompositePostDescendants();
 
     // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
     // to be composited, then we can drop out of compositing mode altogether. However, don't drop out of compositing mode
@@ -2321,7 +2317,6 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(renderer)
         || requiresCompositingForAnimation(renderer)
-        || clipsCompositingDescendants(*renderer.layer())
         || requiresCompositingForPosition(renderer, *renderer.layer(), queryData)
         || requiresCompositingForCanvas(renderer)
         || requiresCompositingForFilters(renderer)
@@ -2448,9 +2443,6 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibility::Hidden))
         reasons.add(CompositingReason::BackfaceVisibilityHidden);
 
-    if (clipsCompositingDescendants(*renderer.layer()))
-        reasons.add(CompositingReason::ClipsCompositingDescendants);
-
     if (requiresCompositingForAnimation(renderer))
         reasons.add(CompositingReason::Animation);
 
@@ -2468,6 +2460,9 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
 
     switch (renderer.layer()->indirectCompositingReason()) {
     case IndirectCompositingReason::None:
+        break;
+    case IndirectCompositingReason::Clipping:
+        reasons.add(CompositingReason::ClipsCompositingDescendants);
         break;
     case IndirectCompositingReason::Stacking:
         reasons.add(CompositingReason::Stacking);
@@ -3042,42 +3037,36 @@ bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const Render
     return layer.hasCompositedScrollableOverflow();
 }
 
-// FIXME: why doesn't this handle the clipping cases?
-bool RenderLayerCompositor::requiresCompositingForIndirectReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, IndirectCompositingReason& reason) const
+IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const
 {
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
     auto& renderer = layer.renderer();
-    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection())) {
-        reason = IndirectCompositingReason::GraphicalEffect;
-        return true;
-    }
+    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection()))
+        return IndirectCompositingReason::GraphicalEffect;
 
     // A layer with preserve-3d or perspective only needs to be composited if there are descendant layers that
     // will be affected by the preserve-3d or perspective.
     if (has3DTransformedDescendants) {
-        if (renderer.style().transformStyle3D() == TransformStyle3D::Preserve3D) {
-            reason = IndirectCompositingReason::Preserve3D;
-            return true;
-        }
+        if (renderer.style().transformStyle3D() == TransformStyle3D::Preserve3D)
+            return IndirectCompositingReason::Preserve3D;
     
-        if (renderer.style().hasPerspective()) {
-            reason = IndirectCompositingReason::Perspective;
-            return true;
-        }
+        if (renderer.style().hasPerspective())
+            return IndirectCompositingReason::Perspective;
     }
 
     // If this layer scrolls independently from the layer that it would paint into, it needs to get composited.
     if (!paintsIntoProvidedBacking && layer.hasCompositedScrollingAncestor()) {
         auto* paintDestination = layer.paintOrderParent();
-        if (paintDestination && layerScrollBehahaviorRelativeToCompositedAncestor(layer, *paintDestination) != ScrollPositioningBehavior::None) {
-            reason = IndirectCompositingReason::OverflowScrollPositioning;
-            return true;
-        }
+        if (paintDestination && layerScrollBehahaviorRelativeToCompositedAncestor(layer, *paintDestination) != ScrollPositioningBehavior::None)
+            return IndirectCompositingReason::OverflowScrollPositioning;
     }
 
-    reason = IndirectCompositingReason::None;
-    return false;
+    // Check for clipping last; if compositing just for clipping, the layer doesn't need its own backing store.
+    if (hasCompositedDescendants && clipsCompositingDescendants(layer))
+        return IndirectCompositingReason::Clipping;
+
+    return IndirectCompositingReason::None;
 }
 
 bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle)
