@@ -1,3 +1,16 @@
+2019-09-03  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Treat a two-finger single tap as if the user tapped with the Cmd key pressed
+        https://bugs.webkit.org/show_bug.cgi?id=201420
+        <rdar://problem/53207786>
+
+        Reviewed by Simon Fraser.
+
+        Add a new event that checks that a two-finger single tap on a clickable element yields a "click" event with the metaKey flag set to true.
+
+        * fast/events/ios/click-event-two-finger-single-tap-meta-key-expected.txt: Added.
+        * fast/events/ios/click-event-two-finger-single-tap-meta-key.html: Added.
+
 2019-09-03  Rob Buis  <rbuis@igalia.com>
 
         Remove support for load/error on link=prefetch

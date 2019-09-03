@@ -137,6 +137,7 @@ public:
     virtual void liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback) { notImplemented(); }
     virtual void singleTapAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
     virtual void singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback) { notImplemented(); }
+    virtual void twoFingerSingleTapAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
     virtual void doubleTapAtPoint(long x, long y, float delay, JSValueRef callback) { notImplemented(); }
     virtual void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback) { notImplemented(); }
     virtual void longPressAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
