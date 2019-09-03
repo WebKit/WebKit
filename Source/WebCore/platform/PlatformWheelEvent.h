@@ -156,7 +156,6 @@ public:
 
 #if PLATFORM(WIN)
     PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isMouseHWheel);
-    PlatformWheelEvent(HWND, const FloatSize& delta, const FloatPoint& location);
 #endif
 
 protected:

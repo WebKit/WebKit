@@ -72,28 +72,6 @@ static int verticalScrollLines()
     return scrollLines;
 }
 
-PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const FloatPoint& location)
-    : PlatformEvent(PlatformEvent::Wheel, false, false, false, false, WallTime::fromRawSeconds(::GetTickCount() * 0.001))
-    , m_directionInvertedFromDevice(false)
-{
-    m_deltaX = delta.width();
-    m_deltaY = delta.height();
-
-    m_wheelTicksX = m_deltaX;
-    m_wheelTicksY = m_deltaY;
-
-    // Global Position is just x, y location of event
-    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
-    m_globalPosition = flooredIntPoint(location);
-    m_globalPosition.scale(inverseScaleFactor, inverseScaleFactor);
-
-    // Position needs to be translated to our client
-    POINT point;
-    ScreenToClient(hWnd, &point);
-    m_position = point;
-    m_position.scale(inverseScaleFactor, inverseScaleFactor);
-}
-
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
     : PlatformEvent(PlatformEvent::Wheel, wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, WallTime::fromRawSeconds(::GetTickCount() * 0.001))
     , m_position(positionForEvent(hWnd, lParam))

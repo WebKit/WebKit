@@ -1,3 +1,16 @@
+2019-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Remove a unused PlatformWheelEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=201398
+
+        Reviewed by Don Olmstead.
+
+        No behavior change.
+
+        * platform/PlatformWheelEvent.h:
+        * platform/win/WheelEventWin.cpp:
+        Removed a unused PlatformWheelEvent constructor.
+
 2019-09-02  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] NativeImagePtr is drawn with invalid scaling
