@@ -136,27 +136,10 @@ ViewBackend::ViewBackend(uint32_t width, uint32_t height)
     wpe_loader_init("libWPEBackend-fdo-1.0.so");
 }
 
-ViewBackend::~ViewBackend()
+ViewBackend::~ViewBackend() = default;
+
+bool ViewBackend::initialize(EGLDisplay eglDisplay)
 {
-    if (m_exportable)
-        wpe_view_backend_exportable_fdo_destroy(m_exportable);
-
-    if (m_eglContext)
-        eglDestroyContext(m_eglDisplay, m_eglContext);
-}
-
-bool ViewBackend::initialize()
-{
-    if (m_eglDisplay == EGL_NO_DISPLAY)
-        return false;
-
-    eglInitialize(m_eglDisplay, nullptr, nullptr);
-
-    if (!eglBindAPI(EGL_OPENGL_ES_API))
-        return false;
-
-    wpe_fdo_initialize_for_egl_display(m_eglDisplay);
-
     static const EGLint configAttributes[13] = {
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
         EGL_RED_SIZE, 1,
@@ -169,12 +152,12 @@ bool ViewBackend::initialize()
 
     {
         EGLint count = 0;
-        if (!eglGetConfigs(m_eglDisplay, nullptr, 0, &count) || count < 1)
+        if (!eglGetConfigs(eglDisplay, nullptr, 0, &count) || count < 1)
             return false;
 
         EGLConfig* configs = g_new0(EGLConfig, count);
         EGLint matched = 0;
-        if (eglChooseConfig(m_eglDisplay, configAttributes, configs, count, &matched) && !!matched)
+        if (eglChooseConfig(eglDisplay, configAttributes, configs, count, &matched) && !!matched)
             m_eglConfig = configs[0];
         g_free(configs);
     }
@@ -184,7 +167,7 @@ bool ViewBackend::initialize()
         EGL_NONE
     };
 
-    m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAttributes);
+    m_eglContext = eglCreateContext(eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAttributes);
     if (!m_eglContext)
         return false;
 
@@ -204,6 +187,17 @@ bool ViewBackend::initialize()
     initializeAccessibility();
 
     return true;
+}
+
+void ViewBackend::deinitialize(EGLDisplay eglDisplay)
+{
+    m_inputClient = nullptr;
+
+    if (m_eglContext)
+        eglDestroyContext(eglDisplay, m_eglContext);
+
+    if (m_exportable)
+        wpe_view_backend_exportable_fdo_destroy(m_exportable);
 }
 
 void ViewBackend::initializeAccessibility()

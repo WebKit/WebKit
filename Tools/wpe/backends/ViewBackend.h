@@ -64,7 +64,9 @@ public:
 protected:
     ViewBackend(uint32_t width, uint32_t height);
 
-    bool initialize();
+    bool initialize(EGLDisplay);
+    void deinitialize(EGLDisplay);
+
     void initializeAccessibility();
     void updateAccessibilityState(uint32_t);
 
@@ -80,7 +82,6 @@ protected:
 
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
-    EGLDisplay m_eglDisplay { nullptr };
     EGLContext m_eglContext { nullptr };
     EGLConfig m_eglConfig;
     struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };

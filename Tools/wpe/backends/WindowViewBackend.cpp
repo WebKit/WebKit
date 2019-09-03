@@ -29,6 +29,7 @@
 #include <cstring>
 #include <linux/input.h>
 #include <memory>
+#include <mutex>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -46,6 +47,35 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, st
 #endif
 
 namespace WPEToolingBackends {
+
+struct WaylandEGLConnection {
+    struct wl_display* display { nullptr };
+    EGLDisplay eglDisplay { EGL_NO_DISPLAY };
+
+    static const WaylandEGLConnection& singleton()
+    {
+        static std::once_flag s_onceFlag;
+        static WaylandEGLConnection s_connection;
+        std::call_once(s_onceFlag,
+            [] {
+                s_connection.display = wl_display_connect(nullptr);
+                if (!s_connection.display)
+                    return;
+
+                EGLDisplay eglDisplay = eglGetDisplay(s_connection.display);
+                if (eglDisplay == EGL_NO_DISPLAY)
+                    return;
+
+                if (!eglInitialize(eglDisplay, nullptr, nullptr) || !eglBindAPI(EGL_OPENGL_ES_API))
+                    return;
+
+                s_connection.eglDisplay = eglDisplay;
+                wpe_fdo_initialize_for_egl_display(s_connection.eglDisplay);
+            });
+
+        return s_connection;
+    }
+};
 
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
 
@@ -481,18 +511,17 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     m_initialSize.width = width;
     m_initialSize.height = height;
 
-    m_display = wl_display_connect(nullptr);
-    if (!m_display)
+    auto& connection = WaylandEGLConnection::singleton();
+    if (!connection.display)
         return;
 
-    m_eglDisplay = eglGetDisplay(m_display);
-    if (!initialize())
+    if (connection.eglDisplay == EGL_NO_DISPLAY || !initialize(connection.eglDisplay))
         return;
 
     {
-        auto* registry = wl_display_get_registry(m_display);
+        auto* registry = wl_display_get_registry(connection.display);
         wl_registry_add_listener(registry, &s_registryListener, this);
-        wl_display_roundtrip(m_display);
+        wl_display_roundtrip(connection.display);
 
         if (m_xdg)
             zxdg_shell_v6_add_listener(m_xdg, &s_xdgWmBaseListener, nullptr);
@@ -504,9 +533,9 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     m_eventSource = g_source_new(&EventSource::sourceFuncs, sizeof(EventSource));
     {
         auto& source = *reinterpret_cast<EventSource*>(m_eventSource);
-        source.display = m_display;
+        source.display = connection.display;
 
-        source.pfd.fd = wl_display_get_fd(m_display);
+        source.pfd.fd = wl_display_get_fd(connection.display);
         source.pfd.events = G_IO_IN | G_IO_ERR | G_IO_HUP;
         source.pfd.revents = 0;
         g_source_add_poll(&source.source, &source.pfd);
@@ -533,11 +562,11 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
 
     auto createPlatformWindowSurface =
         reinterpret_cast<PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC>(eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT"));
-    m_eglSurface = createPlatformWindowSurface(m_eglDisplay, m_eglConfig, m_eglWindow, nullptr);
+    m_eglSurface = createPlatformWindowSurface(connection.eglDisplay, m_eglConfig, m_eglWindow, nullptr);
     if (!m_eglSurface)
         return;
 
-    if (!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
+    if (!eglMakeCurrent(connection.eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         return;
 
     imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
@@ -582,6 +611,8 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
 
 WindowViewBackend::~WindowViewBackend()
 {
+    auto& connection = WaylandEGLConnection::singleton();
+
     if (m_eventSource) {
         g_source_destroy(m_eventSource);
         g_source_unref(m_eventSource);
@@ -609,10 +640,12 @@ WindowViewBackend::~WindowViewBackend()
         wl_compositor_destroy(m_compositor);
 
     if (m_eglSurface)
-        eglDestroySurface(m_eglDisplay, m_eglSurface);
+        eglDestroySurface(connection.eglDisplay, m_eglSurface);
 
     if (m_display)
         wl_display_disconnect(m_display);
+
+    deinitialize(connection.eglDisplay);
 }
 
 const struct wl_callback_listener WindowViewBackend::s_frameListener = {
@@ -669,7 +702,8 @@ void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
     if (!m_eglContext)
         return;
 
-    eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext);
+    auto& connection = WaylandEGLConnection::singleton();
+    eglMakeCurrent(connection.eglDisplay, m_eglSurface, m_eglSurface, m_eglContext);
 
     glViewport(0, 0, m_width, m_height);
     glClearColor(1, 0, 0, 1);
@@ -712,7 +746,7 @@ void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
     struct wl_callback* callback = wl_surface_frame(m_surface);
     wl_callback_add_listener(callback, &s_frameListener, this);
 
-    eglSwapBuffers(m_eglDisplay, m_eglSurface);
+    eglSwapBuffers(connection.eglDisplay, m_eglSurface);
 }
 
 void WindowViewBackend::handleKeyEvent(uint32_t key, uint32_t state, uint32_t time)

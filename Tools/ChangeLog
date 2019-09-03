@@ -1,3 +1,36 @@
+2019-09-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Make view backends multi-view-friendly
+        https://bugs.webkit.org/show_bug.cgi?id=201415
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have the Wayland EGL connection for WindowViewBackend instances managed
+        through a per-process singleton, allowing multiple backend objects
+        use it for different views. HeadlessViewBackend already does this, but
+        the code there is refurbished into a singleton structure.
+
+        The ViewBackend classes are adjusted to work with the backend-specific
+        EGLDisplay objects (as constructed through the backend-specific EGL
+        connection approach).
+
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessEGLConnection::singleton):
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::createSnapshot):
+        (WPEToolingBackends::getEGLDisplay): Deleted.
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::initialize):
+        (WPEToolingBackends::ViewBackend::deinitialize):
+        (WPEToolingBackends::ViewBackend::~ViewBackend): Deleted.
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WaylandEGLConnection::singleton):
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::~WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::displayBuffer):
+
 2019-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] Deprecate nonfunctional process limit APIs

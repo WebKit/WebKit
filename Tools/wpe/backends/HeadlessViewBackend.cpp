@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <fcntl.h>
+#include <mutex>
 #include <unistd.h>
 
 // This include order is necessary to enforce the GBM EGL platform.
@@ -44,35 +45,45 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, st
 
 namespace WPEToolingBackends {
 
+struct HeadlessEGLConnection {
+    EGLDisplay eglDisplay { EGL_NO_DISPLAY };
+
+    static const HeadlessEGLConnection& singleton()
+    {
+        static std::once_flag s_onceFlag;
+        static HeadlessEGLConnection s_connection;
+        std::call_once(s_onceFlag,
+            [] {
+                EGLDisplay eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+                if (eglDisplay == EGL_NO_DISPLAY)
+                    return;
+
+                if (!eglInitialize(eglDisplay, nullptr, nullptr) || !eglBindAPI(EGL_OPENGL_ES_API))
+                    return;
+
+                s_connection.eglDisplay = eglDisplay;
+                wpe_fdo_initialize_for_egl_display(s_connection.eglDisplay);
+            });
+
+        return s_connection;
+    }
+};
+
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
 
 // Keep this in sync with wtf/glib/RunLoopSourcePriority.h.
 static int kRunLoopSourcePriorityDispatcher = -70;
 
-static EGLDisplay getEGLDisplay()
-{
-    static EGLDisplay s_display = EGL_NO_DISPLAY;
-    if (s_display == EGL_NO_DISPLAY) {
-        EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (display == EGL_NO_DISPLAY)
-            return EGL_NO_DISPLAY;
-
-        s_display = display;
-    }
-
-    return s_display;
-}
-
 HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
 {
-    m_eglDisplay = getEGLDisplay();
-    if (!initialize())
+    auto& connection = HeadlessEGLConnection::singleton();
+    if (connection.eglDisplay == EGL_NO_DISPLAY || !initialize(connection.eglDisplay))
         return;
 
     addActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
 
-    if (!eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
+    if (!eglMakeCurrent(connection.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
         return;
 
     imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
@@ -92,6 +103,13 @@ HeadlessViewBackend::~HeadlessViewBackend()
         g_source_destroy(m_updateSource);
         g_source_unref(m_updateSource);
     }
+
+    if (m_lockedImage)
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_lockedImage);
+    if (m_pendingImage)
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_pendingImage);
+
+    deinitialize(HeadlessEGLConnection::singleton().eglDisplay);
 }
 
 cairo_surface_t* HeadlessViewBackend::createSnapshot()
@@ -107,7 +125,7 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     uint8_t* buffer = new uint8_t[4 * m_width * m_height];
     bool successfulSnapshot = false;
 
-    if (!eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
+    if (!eglMakeCurrent(HeadlessEGLConnection::singleton().eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
         return nullptr;
 
     GLuint imageTexture;
