@@ -1,3 +1,27 @@
+2019-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        Null deref under -[WKWebView _addUpdateVisibleContentRectPreCommitHandler]'s handler block
+        https://bugs.webkit.org/show_bug.cgi?id=201436
+        <rdar://problem/40640475>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]):
+        (-[WKWebView _addUpdateVisibleContentRectPreCommitHandler]):
+        We crash sending a message to a deallocated WKWebView inside the handler block
+        passed to +[CATransaction addCommitHandler:]. This seems impossible, because
+        we carefully retain it, but it's possible that it could be the result of
+        the handler block being installed under -dealloc (in which case retaining
+        the WKWebView wouldn't actually extend its lifetime). -[WKWebView dealloc]
+        is fairly sizable, and it's hard to follow all paths from it, so instead
+        add a RELEASE_LOG_FAULT, so we'll get simulated crash logs, and bail,
+        so we'll stop actually crashing (if this is the cause).
+
+        This is just a speculative fix, but a hopeful one, since intentionally calling
+        -_addUpdateVisibleContentRectPreCommitHandler: from dealloc yields a similar-looking
+        crash under the handler block.
+
 2019-09-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Enable WebAuthn by default for MobileSafari and SafariViewService
