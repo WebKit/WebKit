@@ -81,10 +81,10 @@ public:
     void updateConfigurationAfterStyleChange();
 
     // Returns true if layer configuration changed.
-    bool updateConfiguration();
+    bool updateConfiguration(const RenderLayer* compositingAncestor);
 
     // Update graphics layer position and bounds.
-    void updateGeometry();
+    void updateGeometry(const RenderLayer* compositingAncestor);
 
     // Update state the requires that descendant layers have been updated.
     void updateAfterDescendants();
@@ -385,7 +385,7 @@ private:
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;
-    LayoutRect computePrimaryGraphicsLayerRect(const LayoutRect& parentGraphicsLayerRect) const;
+    LayoutRect computePrimaryGraphicsLayerRect(const RenderLayer* compositedAncestor, const LayoutRect& parentGraphicsLayerRect) const;
 
     RenderLayer& m_owningLayer;
     

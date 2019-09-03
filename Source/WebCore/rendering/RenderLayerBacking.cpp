@@ -831,7 +831,7 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
     updateCustomAppearance(style);
 }
 
-bool RenderLayerBacking::updateConfiguration()
+bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAncestor)
 {
     ASSERT(!m_owningLayer.normalFlowListDirty());
     ASSERT(!m_owningLayer.zOrderListsDirty());
@@ -865,7 +865,7 @@ bool RenderLayerBacking::updateConfiguration()
     if (updateDescendantClippingLayer(needsDescendantsClippingLayer))
         layerConfigChanged = true;
 
-    auto* compositingAncestor = m_owningLayer.ancestorCompositingLayer();
+    ASSERT(compositingAncestor == m_owningLayer.ancestorCompositingLayer());
     if (updateAncestorClipping(compositor.clippedByAncestor(m_owningLayer, compositingAncestor), compositingAncestor))
         layerConfigChanged = true;
 
@@ -1026,8 +1026,9 @@ static LayoutSize computeOffsetFromAncestorGraphicsLayer(const RenderLayer* comp
 
 class ComputedOffsets {
 public:
-    ComputedOffsets(const RenderLayer& renderLayer, const LayoutRect& localRect, const LayoutRect& parentGraphicsLayerRect, const LayoutRect& primaryGraphicsLayerRect)
+    ComputedOffsets(const RenderLayer& renderLayer, const RenderLayer* compositingAncestor, const LayoutRect& localRect, const LayoutRect& parentGraphicsLayerRect, const LayoutRect& primaryGraphicsLayerRect)
         : m_renderLayer(renderLayer)
+        , m_compositingAncestor(compositingAncestor)
         , m_location(localRect.location())
         , m_parentGraphicsLayerOffset(toLayoutSize(parentGraphicsLayerRect.location()))
         , m_primaryGraphicsLayerOffset(toLayoutSize(primaryGraphicsLayerRect.location()))
@@ -1053,9 +1054,8 @@ private:
     LayoutSize fromAncestorGraphicsLayer()
     {
         if (!m_fromAncestorGraphicsLayer) {
-            auto* compositedAncestor = m_renderLayer.ancestorCompositingLayer();
-            LayoutPoint localPointInAncestorRenderLayerCoords = m_renderLayer.convertToLayerCoords(compositedAncestor, m_location, RenderLayer::AdjustForColumns);
-            m_fromAncestorGraphicsLayer = computeOffsetFromAncestorGraphicsLayer(compositedAncestor, localPointInAncestorRenderLayerCoords, m_deviceScaleFactor);
+            LayoutPoint localPointInAncestorRenderLayerCoords = m_renderLayer.convertToLayerCoords(m_compositingAncestor, m_location, RenderLayer::AdjustForColumns);
+            m_fromAncestorGraphicsLayer = computeOffsetFromAncestorGraphicsLayer(m_compositingAncestor, localPointInAncestorRenderLayerCoords, m_deviceScaleFactor);
         }
         return m_fromAncestorGraphicsLayer.value();
     }
@@ -1065,6 +1065,7 @@ private:
     Optional<LayoutSize> m_fromPrimaryGraphicsLayer;
     
     const RenderLayer& m_renderLayer;
+    const RenderLayer* m_compositingAncestor;
     // Location is relative to the renderer.
     const LayoutPoint m_location;
     const LayoutSize m_parentGraphicsLayerOffset;
@@ -1072,9 +1073,9 @@ private:
     float m_deviceScaleFactor;
 };
 
-LayoutRect RenderLayerBacking::computePrimaryGraphicsLayerRect(const LayoutRect& parentGraphicsLayerRect) const
+LayoutRect RenderLayerBacking::computePrimaryGraphicsLayerRect(const RenderLayer* compositedAncestor, const LayoutRect& parentGraphicsLayerRect) const
 {
-    ComputedOffsets compositedBoundsOffset(m_owningLayer, compositedBounds(), parentGraphicsLayerRect, { });
+    ComputedOffsets compositedBoundsOffset(m_owningLayer, compositedAncestor, compositedBounds(), parentGraphicsLayerRect, { });
     return LayoutRect(encloseRectToDevicePixels(LayoutRect(toLayoutPoint(compositedBoundsOffset.fromParentGraphicsLayer()), compositedBounds().size()),
         deviceScaleFactor()));
 }
@@ -1112,7 +1113,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
     return parentGraphicsLayerRect;
 }
 
-void RenderLayerBacking::updateGeometry()
+void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 {
     ASSERT(!m_owningLayer.normalFlowListDirty());
     ASSERT(!m_owningLayer.zOrderListsDirty());
@@ -1138,7 +1139,7 @@ void RenderLayerBacking::updateGeometry()
     updateBlendMode(style);
 #endif
 
-    auto* compositedAncestor = m_owningLayer.ancestorCompositingLayer();
+    ASSERT(compositedAncestor == m_owningLayer.ancestorCompositingLayer());
     LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor);
 
     if (m_ancestorClippingStack) {
@@ -1168,10 +1169,10 @@ void RenderLayerBacking::updateGeometry()
         parentGraphicsLayerRect = lastClipLayerRect;
     }
 
-    LayoutRect primaryGraphicsLayerRect = computePrimaryGraphicsLayerRect(parentGraphicsLayerRect);
+    LayoutRect primaryGraphicsLayerRect = computePrimaryGraphicsLayerRect(compositedAncestor, parentGraphicsLayerRect);
 
-    ComputedOffsets compositedBoundsOffset(m_owningLayer, compositedBounds(), parentGraphicsLayerRect, primaryGraphicsLayerRect);
-    ComputedOffsets rendererOffset(m_owningLayer, { }, parentGraphicsLayerRect, primaryGraphicsLayerRect);
+    ComputedOffsets compositedBoundsOffset(m_owningLayer, compositedAncestor, compositedBounds(), parentGraphicsLayerRect, primaryGraphicsLayerRect);
+    ComputedOffsets rendererOffset(m_owningLayer, compositedAncestor, { }, parentGraphicsLayerRect, primaryGraphicsLayerRect);
 
     m_compositedBoundsOffsetFromGraphicsLayer = compositedBoundsOffset.fromPrimaryGraphicsLayer();
 
@@ -1281,7 +1282,7 @@ void RenderLayerBacking::updateGeometry()
 
     if (m_owningLayer.reflectionLayer() && m_owningLayer.reflectionLayer()->isComposited()) {
         auto* reflectionBacking = m_owningLayer.reflectionLayer()->backing();
-        reflectionBacking->updateGeometry();
+        reflectionBacking->updateGeometry(&m_owningLayer);
         
         // The reflection layer has the bounds of m_owningLayer.reflectionLayer(),
         // but the reflected layer is the bounds of this layer, so we need to position it appropriately.
