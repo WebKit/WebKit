@@ -147,6 +147,31 @@ static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResul
     g_main_loop_quit(data->mainLoop);
 }
 
+static void webViewClose(WebKitWebView* webView, gpointer)
+{
+    g_object_unref(webView);
+}
+
+static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer)
+{
+    auto backend = createViewBackend(1280, 720);
+    struct wpe_view_backend* wpeBackend = backend->backend();
+    if (!wpeBackend)
+        return nullptr;
+
+    auto* viewBackend = webkit_web_view_backend_new(wpeBackend,
+        [](gpointer data) {
+            delete static_cast<WPEToolingBackends::ViewBackend*>(data);
+        }, backend.release());
+
+    auto* newWebView = webkit_web_view_new_with_related_view(viewBackend, webView);
+    webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
+
+    g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), nullptr);
+
+    return newWebView;
+}
+
 int main(int argc, char *argv[])
 {
 #if ENABLE_DEVELOPER_MODE
@@ -270,7 +295,8 @@ int main(int argc, char *argv[])
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
-    g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), NULL);
+    g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
+    g_signal_connect(webView, "create", G_CALLBACK(createWebView), nullptr);
 
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
