@@ -100,6 +100,9 @@ void TableFormattingContext::layout()
             initializeDisplayBoxToBlank(displayBoxForLayoutBox(row.box()));
         }
     }
+    // FIXME: This is temporary only. Size table sections properly.
+    for (auto& section : childrenOfType<Box>(downcast<Container>(root())))
+        initializeDisplayBoxToBlank(layoutState.displayBoxForLayoutBox(section));
 }
 
 FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()

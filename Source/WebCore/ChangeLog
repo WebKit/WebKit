@@ -1,5 +1,18 @@
 2019-09-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Initialize <thead><tbody><tfoot> display boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=201235
+        <rdar://problem/54807060>
+
+        Reviewed by Antti Koivisto.
+
+        Set them as blank for now.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout const):
+
+2019-09-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floating] Replace all LayoutState::displayBoxForLayoutBox() calls with FormattingContext::displayBoxForLayoutBox()
         https://bugs.webkit.org/show_bug.cgi?id=201414
         <rdar://problem/54963302>
