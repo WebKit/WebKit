@@ -1,5 +1,33 @@
 2019-09-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Address review comments after r249364
+        https://bugs.webkit.org/show_bug.cgi?id=201432
+
+        Reviewed by Simon Fraser.
+
+        Fix the <img> CSS width properties by adding the "px" units. 
+
+        * fast/images/exif-orientation-background-expected.html:
+        * fast/images/exif-orientation-canvas-expected.html:
+        * fast/images/exif-orientation-canvas.html:
+        * fast/images/exif-orientation-composited-expected.html:
+        * fast/images/exif-orientation-composited.html:
+        Remove the CSS border to enable the composited image code path.
+
+        * fast/images/exif-orientation-content-expected.html:
+        * fast/images/exif-orientation-element-expected.html:
+        * fast/images/exif-orientation-element.html:
+        * fast/images/exif-orientation-image-document-expected.html:
+        * fast/images/exif-orientation-image-document.html:
+        * fast/images/exif-orientation-image-object-expected.html:
+        * fast/images/exif-orientation-image-object.html:
+        * fast/images/exif-orientation-svg-feimage-expected.html:
+        * fast/images/exif-orientation-svg-feimage.html:
+        * fast/images/exif-orientation-svg-image-expected.html:
+        * fast/images/exif-orientation-svg-image.html:
+
+2019-09-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         REGRESSION (r249364): Layout Test webgpu/texture-triangle-strip.html is Failing
         https://bugs.webkit.org/show_bug.cgi?id=201425
 

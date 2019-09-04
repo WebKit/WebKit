@@ -8,28 +8,21 @@
         vertical-align: top;
     }
     div.horizontal {
-        width: 102;
-        height: 52px;
+        width: 100px;
+        height: 50px;
     }
     div.vertical {
-        width: 52px;
-        height: 102px;
+        width: 50px;
+        height: 100px;
     }
     img { 
         -webkit-transform: translateZ(0);
-        border: 1px solid black;
     }
 </style>
 <body>
     <b>The images of the composited &lt;img&gt; elements should be rotated respecting their EXIF orientation.</b>
     <br>
     <br>
-    <div class="container">
-        <div class="horizontal">
-            <img id="img1" src="resources/exif-orientation-1-ul.jpg">
-        </div>
-        <br>Normal
-    </div>
     <div class="container">
         <div class="horizontal">
             <img id="img2" src="resources/exif-orientation-2-ur.jpg">
@@ -74,13 +67,6 @@
         <br>Rotated 90&deg; CW
     </div>
     <br>
-    <div class="container">
-        <div class="horizontal">
-            <img id="img9" src="resources/exif-orientation-9-u.jpg">
-        </div>
-        <br>Undefined (invalid value)
-    </div>
-    <br>
     <ul id="console"></ul>
     <script>
         function log(str) {
@@ -96,7 +82,7 @@
         }
 
          window.addEventListener('load', (event) => {
-            for(var i = 1; i <= 9; i++)
+            for(var i = 2; i <= 8; i++)
                 log("img" + i + " size = " + imageSize(document.getElementById("img" + i)));
         });
     </script>
