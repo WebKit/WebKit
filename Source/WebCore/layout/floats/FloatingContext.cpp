@@ -425,7 +425,7 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
     auto displayBox = mapToFloatingStateRoot(floatAvoider);
 
     if (&containingBlock == &floatingState().root()) {
-        auto containingBlockDisplayBox = formattingContext().displayBoxForLayoutBox(containingBlock);
+        auto containingBlockDisplayBox = formattingContext().displayBoxForLayoutBox(containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext);
         return { displayBox, { }, {  containingBlockDisplayBox.contentBoxLeft(), containingBlockDisplayBox.contentBoxRight() } };
     }
     auto containingBlockAbsoluteDisplayBox = mapToFloatingStateRoot(containingBlock);
@@ -436,10 +436,10 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
 Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto& displayBox = formattingContext().displayBoxForLayoutBox(floatBox);
+    auto& displayBox = formattingContext().displayBoxForLayoutBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext);
     auto topLeft = displayBox.topLeft();
     for (auto* containingBlock = floatBox.containingBlock(); containingBlock && containingBlock != &floatingStateRoot; containingBlock = containingBlock->containingBlock())
-        topLeft.moveBy(formattingContext().displayBoxForLayoutBox(*containingBlock).topLeft());
+        topLeft.moveBy(formattingContext().displayBoxForLayoutBox(*containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
 
     auto mappedDisplayBox = Display::Box(displayBox);
     mappedDisplayBox.setTopLeft(topLeft);
@@ -449,9 +449,9 @@ Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
 LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto top = formattingContext().displayBoxForLayoutBox(floatBox).top();
+    auto top = formattingContext().displayBoxForLayoutBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext).top();
     for (auto* container = floatBox.containingBlock(); container && container != &floatingStateRoot; container = container->containingBlock())
-        top += formattingContext().displayBoxForLayoutBox(*container).top();
+        top += formattingContext().displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).top();
     return top;
 }
 
@@ -463,7 +463,7 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
         return position;
     auto mappedPosition = position;
     for (auto* container = &from; container && container != &to; container = container->containingBlock())
-        mappedPosition.moveBy(formattingContext().displayBoxForLayoutBox(*container).topLeft());
+        mappedPosition.moveBy(formattingContext().displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
     return mappedPosition;
 }
 

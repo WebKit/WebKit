@@ -120,8 +120,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         bottom = lineBoxes.last().logicalBottom();
     } else if (formattingRootContainer.establishesBlockFormattingContext() || layoutBox.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
-            auto& firstDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
-            auto& lastDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+            auto& firstDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild(), EscapeType::AccessChildFormattingContext);
+            auto& lastDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild(), EscapeType::AccessChildFormattingContext);
             top = firstDisplayBox.rectWithMargin().top();
             bottom = lastDisplayBox.rectWithMargin().bottom();
         }
@@ -205,18 +205,18 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     LayoutUnit top;
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         // Add sibling offset
-        auto& previousInFlowDisplayBox = formattingContext.displayBoxForLayoutBox(*previousInFlowSibling);
+        auto& previousInFlowDisplayBox = formattingContext.displayBoxForLayoutBox(*previousInFlowSibling, FormattingContext::EscapeType::AccessChildFormattingContext);
         top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.nonCollapsedMarginAfter();
     } else {
         ASSERT(layoutBox.parent());
-        top = formattingContext.displayBoxForLayoutBox(*layoutBox.parent()).contentBoxTop();
+        top = formattingContext.displayBoxForLayoutBox(*layoutBox.parent(), FormattingContext::EscapeType::AccessChildFormattingContext).contentBoxTop();
     }
 
     // Resolve top all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container);
+        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessChildFormattingContext);
         // Display::Box::top is the border box top position in its containing block's coordinate system.
         top += displayBox.top();
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
@@ -234,19 +234,19 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
     ASSERT(layoutBox.parent());
-    auto left = formattingContext.displayBoxForLayoutBox(*layoutBox.parent()).contentBoxLeft();
+    auto left = formattingContext.displayBoxForLayoutBox(*layoutBox.parent(), FormattingContext::EscapeType::AccessChildFormattingContext).contentBoxLeft();
 
     // Resolve left all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container);
+        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessChildFormattingContext);
         // Display::Box::left is the border box left position in its containing block's coordinate system.
         left += displayBox.left();
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxLeft = formattingContext.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
+    auto paddingBoxLeft = formattingContext.displayBoxForLayoutBox(containingBlock, FormattingContext::EscapeType::AccessChildFormattingContext).paddingBoxLeft();
     return left - paddingBoxLeft;
 }
 

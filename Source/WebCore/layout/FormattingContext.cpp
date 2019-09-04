@@ -183,6 +183,63 @@ LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutB
     return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).right(), *layoutBox.containingBlock(), downcast<Container>(root()));
 }
 
+Display::Box& FormattingContext::displayBoxForLayoutBox(const Box& layoutBox, Optional<EscapeType> escapeType) const
+{
+    UNUSED_PARAM(escapeType);
+
+#ifndef NDEBUG
+    auto isOkToAccessDisplayBox = [&] {
+        // 1. Highly common case of accessing the formatting root's display box itself. This is formatting context escaping in the strict sense, since
+        // the formatting context root box lives in the parent formatting context.
+        // This happens e.g. when a block level box box needs to stretch horizontally and checks its containing block for horizontal space (this should probably be limited to reading horizontal constraint values).
+        if (&layoutBox == &root())
+            return true;
+
+        // 2. Special case when accessing the ICB's display box
+        if (layoutBox.isInitialContainingBlock()) {
+            // There has to be a valid reason to access the ICB.
+            if (!escapeType)
+                return false;
+            return *escapeType == EscapeType::AccessParentFormattingContext || *escapeType == EscapeType::AccessAncestorFormattingContext;
+        }
+
+        // 3. Most common case of accessing box/containing block display box within the same formatting context tree.
+        if (&layoutBox.formattingContextRoot() == &root())
+            return true;
+
+        if (!escapeType)
+            return false;
+
+        // 4. Accessing child formatting context subtree is relatively rare. It happens when e.g a shrink to fit (out-of-flow block level) box checks the content width.
+        // Checking the content width means to get display boxes from the established formatting context (we try to access display boxes in a child formatting context)
+        if (*escapeType == EscapeType::AccessChildFormattingContext && &layoutBox.formattingContextRoot().formattingContextRoot() == &root())
+            return true;
+
+        // 5. Float box top/left values are mapped relative to the FloatState's root. Inline formatting contexts(A) inherit floats from parent
+        // block formatting contexts(B). Floats in these inline formatting contexts(A) need to be mapped to the parent, block formatting context(B).
+        if (*escapeType == EscapeType::AccessParentFormattingContext && &layoutBox.formattingContextRoot() == &root().formattingContextRoot())
+            return true;
+
+        // 6. Finding the first containing block with fixed height quirk. See Quirks::heightValueOfNearestContainingBlockWithFixedHeight
+        if (*escapeType == EscapeType::AccessAncestorFormattingContext) {
+            auto& targetFormattingRoot = layoutBox.formattingContextRoot();
+            auto* ancestorFormattingContextRoot = &root().formattingContextRoot();
+            while (true) {
+                if (&targetFormattingRoot == ancestorFormattingContextRoot)
+                    return true;
+                if (ancestorFormattingContextRoot->isInitialContainingBlock())
+                    return false;
+                ancestorFormattingContextRoot = &ancestorFormattingContextRoot->formattingContextRoot();
+            }
+
+        }
+        return false;
+    };
+#endif
+    ASSERT(isOkToAccessDisplayBox());
+    return layoutState().displayBoxForLayoutBox(layoutBox);
+}
+
 #ifndef NDEBUG
 void FormattingContext::validateGeometryConstraintsAfterLayout() const
 {

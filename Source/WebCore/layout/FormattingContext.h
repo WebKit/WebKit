@@ -69,7 +69,12 @@ public:
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
 
-    Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const { return layoutState().displayBoxForLayoutBox(layoutBox); }
+    enum class EscapeType {
+        AccessChildFormattingContext,
+        AccessParentFormattingContext,
+        AccessAncestorFormattingContext
+    };
+    Display::Box& displayBoxForLayoutBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
     bool hasDisplayBox(const Box& layoutBox) const { return layoutState().hasDisplayBox(layoutBox); }
 
     const Box& root() const { return *m_root; }
