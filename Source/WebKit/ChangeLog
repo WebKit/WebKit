@@ -1,5 +1,21 @@
 2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248698. rdar://problem/55001378
+
+    Fix the build when ENABLE(APPLE_PAY) is false.
+    
+    * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248698 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-14  Andy Estes  <aestes@apple.com>
+
+            Fix the build when ENABLE(APPLE_PAY) is false.
+
+            * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+
+2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248692. rdar://problem/55001378
 
     [Cocoa] Add some WKA extension points

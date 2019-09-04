@@ -43,7 +43,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
-#else
+#elif ENABLE(APPLE_PAY)
 namespace IPC {
 static bool finishDecoding(Decoder&, WebCore::ApplePaySessionPaymentRequest&) { return true; }
 static void finishEncoding(Encoder&, const WebCore::ApplePaySessionPaymentRequest&) { }
