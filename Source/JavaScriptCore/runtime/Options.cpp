@@ -601,6 +601,11 @@ void Options::initialize()
                 }
             }
 #endif
+
+#if CPU(X86_64) && OS(DARWIN)
+            Options::dumpZappedCellCrashData() =
+                (hwPhysicalCPUMax() >= 4) && (hwL3CacheSize() >= static_cast<int64_t>(6 * MB));
+#endif
         });
 }
 

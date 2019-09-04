@@ -124,6 +124,7 @@ public:
     template<typename Functor> void forEachLiveCell(HeapIterationScope&, const Functor&);
     template<typename Functor> void forEachDeadCell(HeapIterationScope&, const Functor&);
     template<typename Functor> void forEachBlock(const Functor&);
+    template<typename Functor> void forEachSubspace(const Functor&);
 
     void shrink();
     void freeBlock(MarkedBlock::Handle*);
@@ -239,6 +240,16 @@ void MarkedSpace::forEachDirectory(const Functor& functor)
             return;
     }
 }
+
+template<typename Functor>
+void MarkedSpace::forEachSubspace(const Functor& functor)
+{
+    for (auto subspace : m_subspaces) {
+        if (functor(*subspace) == IterationStatus::Done)
+            return;
+    }
+}
+
 
 ALWAYS_INLINE size_t MarkedSpace::optimalSizeFor(size_t bytes)
 {

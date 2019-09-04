@@ -146,8 +146,6 @@ public:
         
         void unsweepWithNoNewlyAllocated();
         
-        void zap(const FreeList&);
-        
         void shrink();
             
         void visitWeakSet(SlotVisitor&);
@@ -200,6 +198,10 @@ public:
         void didAddToDirectory(BlockDirectory*, size_t index);
         void didRemoveFromDirectory();
         
+        void* start() const { return &m_block->atoms()[0]; }
+        void* end() const { return &m_block->atoms()[m_endAtom]; }
+        bool contains(void* p) const { return start() <= p && p < end(); }
+
         void dumpState(PrintStream&);
         
     private:

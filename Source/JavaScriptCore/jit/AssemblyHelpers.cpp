@@ -546,7 +546,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
         
     // The object is half-allocated: we have what we know is a fresh object, but
     // it's still on the GC's free list.
-    loadPtr(Address(resultGPR), scratchGPR);
+    loadPtr(Address(resultGPR, FreeCell::offsetOfScrambledNext()), scratchGPR);
     storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()));
         
     done.link(this);
