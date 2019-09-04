@@ -583,9 +583,9 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessPool::ClearWebProcessHasUploads { Process::identifier() }, 0);
 }
 
-void WebLoaderStrategy::pageLoadCompleted(PageIdentifier webPageID)
+void WebLoaderStrategy::pageLoadCompleted(Page& page)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(webPageID), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page).identifier()), 0);
 }
 
 static uint64_t generateLoadIdentifier()

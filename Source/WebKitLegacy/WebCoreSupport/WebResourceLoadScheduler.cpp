@@ -111,7 +111,7 @@ void WebResourceLoadScheduler::loadResourceSynchronously(FrameLoader& frameLoade
     ResourceHandle::loadResourceSynchronously(frameLoader.networkingContext(), request, options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use, error, response, data);
 }
 
-void WebResourceLoadScheduler::pageLoadCompleted(PageIdentifier)
+void WebResourceLoadScheduler::pageLoadCompleted(Page&)
 {
 }
 

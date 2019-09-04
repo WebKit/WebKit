@@ -1,3 +1,14 @@
+2019-09-03  Chris Dumez  <cdumez@apple.com>
+
+        FrameLoader::FrameProgressTracker::progressCompleted() does not need a pageID
+        https://bugs.webkit.org/show_bug.cgi?id=201431
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::pageLoadCompleted):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2019-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Use DirectX SharedResource as basis for SharedBitmap
