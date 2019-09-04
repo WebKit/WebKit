@@ -282,6 +282,7 @@
     {
       "name": "Style-EWS",
       "shortname": "style",
+      "icon": "testOnly",
       "factory": "StyleFactory",
       "platform": "*",
       "workernames": ["ews151"]
@@ -296,6 +297,7 @@
     {
       "name": "GTK-Webkit2-EWS",
       "shortname": "gtk",
+      "icon": "buildOnly",
       "factory": "GTKFactory",
       "platform": "gtk",
       "configuration": "release",
@@ -305,6 +307,7 @@
     {
       "name": "iOS-12-Build-EWS",
       "shortname": "ios",
+      "icon": "buildOnly",
       "factory": "iOSBuildFactory",
       "platform": "ios-12",
       "configuration": "release",
@@ -314,6 +317,7 @@
     {
       "name": "iOS-12-Simulator-Build-EWS",
       "shortname": "ios-sim",
+      "icon": "buildOnly",
       "factory": "iOSBuildFactory",
       "platform": "ios-simulator-12",
       "configuration": "release",
@@ -324,6 +328,7 @@
     {
       "name": "iOS-12-Simulator-WK2-Tests-EWS",
       "shortname": "ios-wk2",
+      "icon": "testOnly",
       "factory": "iOSTestsFactory",
       "platform": "ios-simulator-12",
       "configuration": "release",
@@ -333,6 +338,7 @@
     {
       "name": "macOS-High-Sierra-Release-Build-EWS",
       "shortname": "mac",
+      "icon": "buildOnly",
       "factory": "macOSBuildFactory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -343,6 +349,7 @@
     {
       "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
       "shortname": "mac-wk1",
+      "icon": "testOnly",
       "factory": "macOSWK1Factory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -352,6 +359,7 @@
     {
       "name": "macOS-High-Sierra-Release-WK2-Tests-EWS",
       "shortname": "mac-wk2",
+      "icon": "testOnly",
       "factory": "macOSWK2Factory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -361,6 +369,7 @@
     {
       "name": "macOS-High-Sierra-Debug-Build-EWS",
       "shortname": "mac-debug",
+      "icon": "buildOnly",
       "factory": "macOSBuildFactory",
       "platform": "mac-highsierra",
       "configuration": "debug",
@@ -371,6 +380,7 @@
     {
       "name": "macOS-High-Sierra-Debug-WK1-Tests-EWS",
       "shortname": "mac-debug-wk1",
+      "icon": "testOnly",
       "factory": "macOSWK1Factory",
       "platform": "mac-highsierra",
       "configuration": "debug",
@@ -380,6 +390,7 @@
     {
       "name": "Windows-EWS",
       "shortname": "win",
+      "icon": "buildAndTest",
       "factory": "WindowsFactory",
       "configuration": "release",
       "architectures": ["x86_64"],
@@ -389,6 +400,7 @@
     {
       "name": "WinCairo-EWS",
       "shortname": "wincairo",
+      "icon": "buildOnly",
       "factory": "WinCairoFactory",
       "configuration": "release",
       "architectures": ["x86_64"],
@@ -398,6 +410,7 @@
     {
       "name": "WPE-EWS",
       "shortname": "wpe",
+      "icon": "buildOnly",
       "factory": "WPEFactory",
       "platform": "wpe",
       "configuration": "release",
@@ -407,6 +420,7 @@
     {
       "name": "JSC-Tests-EWS",
       "shortname": "jsc",
+      "icon": "buildAndTest",
       "factory": "JSCTestsFactory",
       "platform": "jsc-only",
       "configuration": "release",
@@ -415,6 +429,7 @@
     {
       "name": "Bindings-Tests-EWS",
       "shortname": "bindings",
+      "icon": "testOnly",
       "factory": "BindingsFactory",
       "platform": "*",
       "workernames": ["ews151"]
@@ -422,6 +437,7 @@
     {
       "name": "WebKitPy-Tests-EWS",
       "shortname": "webkitpy",
+      "icon": "testOnly",
       "factory": "WebKitPyFactory",
       "platform": "*",
       "workernames": ["ews151"]
@@ -429,6 +445,7 @@
     {
       "name": "WebKitPerl-Tests-EWS",
       "shortname": "webkitperl",
+      "icon": "testOnly",
       "factory": "WebKitPerlFactory",
       "platform": "*",
       "workernames": ["ews151"]
@@ -436,6 +453,7 @@
     {
       "name": "API-Tests-iOS-Simulator-EWS",
       "shortname": "api-ios",
+      "icon": "testOnly",
       "factory": "APITestsFactory",
       "platform": "*",
       "workernames": ["ews156", "ews157", "ews158", "ews159"]
@@ -443,6 +461,7 @@
     {
       "name": "API-Tests-macOS-EWS",
       "shortname": "api-mac",
+      "icon": "testOnly",
       "factory": "APITestsFactory",
       "platform": "*",
       "workernames": ["ews119", "ews150", "ews153", "ews155"]
@@ -450,6 +469,7 @@
     {
       "name": "Services-EWS",
       "shortname": "services",
+      "icon": "testOnly",
       "factory": "ServicesFactory",
       "platform": "*",
       "workernames": ["ews151"]

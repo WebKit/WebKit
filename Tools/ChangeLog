@@ -1,3 +1,25 @@
+2019-09-04  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS bubbles should indicate builder vs tester
+        https://bugs.webkit.org/show_bug.cgi?id=201253
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Add icons to the bubbles appropriately.
+        (StatusBubble._is_tester_queue): Method to determine if the queue is tester queue.
+        (StatusBubble._is_builder_queue): Method to determine if the queue is builder queue.
+        (StatusBubble.get):
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.fetch_config): Method to fetch the config from Buildbot server.
+        (Buildbot.update_icons_for_queues_mapping): Method to update the icons for queues mapping.
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (FetchLoop.run): Update the icons for queues mapping.
+        * BuildSlaveSupport/ews-build/config.json: Add icon information for the queues.
+        * BuildSlaveSupport/ews-build/loadConfig.py: Remove 'icon' key from builder before passing it to Buildbot.
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py: .
+        (test_builder_keys): Update unit-test accordingly. Also minor drive-by fix to improve failure string formatting.
+
 2019-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] IsoTLSLayout and AllIsoHeaps registration is racy with derived class initialization with virtual functions

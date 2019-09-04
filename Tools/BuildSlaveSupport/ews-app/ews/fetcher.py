@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ class FetchLoop():
 
     def run(self):
         while True:
+            Buildbot.update_icons_for_queues_mapping()
             try:
                 BugzillaPatchFetcher().fetch()
             except Exception as e:

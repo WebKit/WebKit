@@ -59,11 +59,19 @@ class StatusBubble(View):
                      '^Cleaned and updated working directory$', '^Checked out required revision$',
                      '^Validated patch$', '^Killed old processes$', '^Configured build$', '^OS:.*Xcode:', '(skipped)']
     DAYS_TO_CHECK = 3
+    BUILDER_ICON = u'\U0001f6e0'
+    TESTER_ICON = u'\U0001f9ea'
 
-    def _build_bubble(self, patch, queue):
+    def _build_bubble(self, patch, queue, hide_icons=False):
         bubble = {
             'name': queue,
         }
+        if hide_icons == False:
+            if self._is_tester_queue(queue):
+                bubble['name'] = StatusBubble.TESTER_ICON + '  ' + bubble['name']
+            if self._is_builder_queue(queue):
+                bubble['name'] = StatusBubble.BUILDER_ICON + '  ' + bubble['name']
+
         build, is_parent_build = self.get_latest_build_for_queue(patch, queue, self._get_parent_queue(queue))
         if not self._should_show_bubble_for_build(build):
             return None
@@ -139,6 +147,14 @@ class StatusBubble(View):
                 bubble['details_message'] += '\n\n' + timestamp
 
         return bubble
+
+    def _is_tester_queue(self, queue):
+        icon = Buildbot.icons_for_queues_mapping.get(queue)
+        return icon in ['testOnly', 'buildAndTest']
+
+    def _is_builder_queue(self, queue):
+        icon = Buildbot.icons_for_queues_mapping.get(queue)
+        return icon in ['buildOnly', 'buildAndTest']
 
     def _get_parent_queue(self, queue):
         return StatusBubble.QUEUE_TRIGGERS.get(queue)
@@ -230,7 +246,7 @@ class StatusBubble(View):
         processed_patches = set([build.patch for build in recent_builds])
         return len(previously_sent_patches - processed_patches) + 1
 
-    def _build_bubbles_for_patch(self, patch):
+    def _build_bubbles_for_patch(self, patch, hide_icons=False):
         show_submit_to_ews = True
         failed_to_apply = False  # TODO: https://bugs.webkit.org/show_bug.cgi?id=194598
         bubbles = []
@@ -242,7 +258,7 @@ class StatusBubble(View):
             if not self._should_show_bubble_for_queue(queue):
                 continue
 
-            bubble = self._build_bubble(patch, queue)
+            bubble = self._build_bubble(patch, queue, hide_icons)
             if bubble:
                 show_submit_to_ews = False
                 bubbles.append(bubble)
@@ -251,9 +267,10 @@ class StatusBubble(View):
 
     @xframe_options_exempt
     def get(self, request, patch_id):
+        hide_icons = request.GET.get('hide_icons', False)
         patch_id = int(patch_id)
         patch = Patch.get_patch(patch_id)
-        bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_patch(patch)
+        bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_patch(patch, hide_icons)
 
         template_values = {
             'bubbles': bubbles,

@@ -39,11 +39,11 @@ class ConfigDotJSONTest(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         config = json.load(open(os.path.join(cwd, 'config.json')))
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
-                              'defaultProperties', 'env', 'factory', 'locks', 'name', 'platform', 'properties', 'shortname', 'tags',
+                              'defaultProperties', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties', 'shortname', 'tags',
                               'triggers', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
-                self.assertTrue(key in valid_builder_keys, 'Unexpected key {} for builder {}'.format(key, builder.get('name')))
+                self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
 
 
 class TagsForBuilderTeest(unittest.TestCase):
