@@ -52,6 +52,7 @@
     (iokit-property "AlwaysNeedsVelocityCalculated")
     (iokit-property "Apple(DisplayType|GVAKeyDoesNotExist|IntelMEVABundleName|Sense)")
     (iokit-property "CFBundleIdentifier")
+    (iokit-property "CFBundleIdentifierKernel") ;; <rdar://problem/54347503>
     (iokit-property-regex #"^Display(ParameterHandlerUsesCharPtr|ProductID|Routing|SerialNumber|VendorID)")
     (iokit-property "Development")
     (iokit-property "DeviceEqID")
@@ -90,6 +91,7 @@
     (iokit-property "IOGLBundleName")
     (iokit-property-regex #"^IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler|VTCapabilities)")
     (iokit-property-regex "^IOGVA[A-Z]+(De|En)code")
+    (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
     (iokit-property "IOI2CTransactionTypes")
     (iokit-property "IOKitDebug")
     (iokit-property "IOMACAddress") ;; For some Flash players
