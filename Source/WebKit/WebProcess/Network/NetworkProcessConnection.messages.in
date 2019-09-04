@@ -29,4 +29,7 @@ messages -> NetworkProcessConnection LegacyReceiver {
     DidFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError error, WebCore::ResourceResponse response)
     DidFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError error)
     SetOnLineState(bool isOnLine);
+
+    CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port) -> (WebCore::MessagePortChannelProvider::HasActivity hasActivity) Async
+    MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 }

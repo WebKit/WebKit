@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,24 +30,25 @@
 
 namespace WebKit {
 
-class UIMessagePortChannelProvider : public WebCore::MessagePortChannelProvider {
+class NetworkProcess;
+
+class NetworkMessagePortChannelProvider : public WebCore::MessagePortChannelProvider {
 public:
-    static UIMessagePortChannelProvider& singleton();
+    explicit NetworkMessagePortChannelProvider(NetworkProcess&);
     WebCore::MessagePortChannelRegistry& registry() { return m_registry; }
 
 private:
-    UIMessagePortChannelProvider();
-    ~UIMessagePortChannelProvider() final;
-
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote) final;
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote) final;
     void messagePortDisentangled(const WebCore::MessagePortIdentifier& local) final;
     void messagePortClosed(const WebCore::MessagePortIdentifier& local) final;
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>&&) final;
     void postMessageToRemote(const WebCore::MessageWithMessagePorts&, const WebCore::MessagePortIdentifier& remoteTarget) final;
+
     void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, WebCore::ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) final;
 
+    NetworkProcess& m_networkProcess;
     WebCore::MessagePortChannelRegistry m_registry;
 };
 

@@ -139,6 +139,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if PLATFORM(IOS_FAMILY)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
+    , m_messagePortChannelProvider(*this)
 {
     NetworkProcessPlatformStrategies::initialize();
 
@@ -2691,6 +2692,11 @@ void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, Comp
 void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection)
 {
     m_storageManagerSet->removeConnection(connection);
+}
+
+NetworkConnectionToWebProcess* NetworkProcess::webProcessConnection(ProcessIdentifier identifier) const
+{
+    return m_webProcessConnections.get(identifier);
 }
 
 } // namespace WebKit

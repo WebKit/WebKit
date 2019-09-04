@@ -32,6 +32,7 @@
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkProcessMessages.h"
 #include "ServiceWorkerClientFetch.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -109,9 +110,7 @@ void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorke
 
 void WebSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
 {
-    // FIXME: Temporarily pipe the SW postMessage messages via the UIProcess since this is where the MessagePort registry lives
-    // and this avoids races.
-    WebProcess::singleton().send(Messages::WebProcessPool::PostMessageToServiceWorker(destinationIdentifier, WTFMove(message), sourceIdentifier, serverConnectionIdentifier()), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkProcess::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), sourceIdentifier, serverConnectionIdentifier() }, 0);
 }
 
 void WebSWClientConnection::registerServiceWorkerClient(const SecurityOrigin& topOrigin, const WebCore::ServiceWorkerClientData& data, const Optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, const String& userAgent)

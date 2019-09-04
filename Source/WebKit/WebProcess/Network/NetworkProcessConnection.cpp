@@ -57,6 +57,7 @@
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
+#include <WebCore/MessagePort.h>
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
 
@@ -289,6 +290,16 @@ SWServerConnectionIdentifier NetworkProcessConnection::initializeSWClientConnect
 
     return identifier;
 }
-
 #endif
+
+void NetworkProcessConnection::messagesAvailableForPort(const WebCore::MessagePortIdentifier& messagePortIdentifier)
+{
+    WebProcess::singleton().messagesAvailableForPort(messagePortIdentifier);
+}
+
+void NetworkProcessConnection::checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier& messagePortIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
+{
+    callback(WebCore::MessagePort::isExistingMessagePortLocallyReachable(messagePortIdentifier) ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
+}
+
 } // namespace WebKit

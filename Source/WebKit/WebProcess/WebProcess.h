@@ -286,6 +286,8 @@ public:
 
     bool areAllPagesThrottleable() const;
 
+    void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
+
 private:
     WebProcess();
     ~WebProcess();
@@ -354,11 +356,6 @@ private:
 
     void mainThreadPing();
     void backgroundResponsivenessPing();
-
-    void didTakeAllMessagesForPort(Vector<WebCore::MessageWithMessagePorts>&& messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier);
-    void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, uint64_t callbackIdentifier);
-    void didCheckRemotePortForActivity(uint64_t callbackIdentifier, bool hasActivity);
-    void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
 
 #if ENABLE(GAMEPAD)
     void setInitialGamepads(const Vector<GamepadData>&);

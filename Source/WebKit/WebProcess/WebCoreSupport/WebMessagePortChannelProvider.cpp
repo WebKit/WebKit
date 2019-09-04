@@ -26,8 +26,9 @@
 #include "config.h"
 #include "WebMessagePortChannelProvider.h"
 
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
 #include <WebCore/MessagePort.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
@@ -50,66 +51,43 @@ WebMessagePortChannelProvider::~WebMessagePortChannelProvider()
     ASSERT_NOT_REACHED();
 }
 
+static inline IPC::Connection& networkProcessConnection()
+{
+    return WebProcess::singleton().ensureNetworkProcessConnection().connection();
+}
+
 void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::CreateNewMessagePortChannel(port1, port2), 0);
+    networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::CreateNewMessagePortChannel { port1, port2 }, 0);
 }
 
 void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::EntangleLocalPortInThisProcessToRemote(local, remote), 0);
+    networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& port)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::MessagePortDisentangled(port), 0);
+    networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& port)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::MessagePortClosed(port), 0);
+    networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
 }
 
 void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& completionHandler)
 {
-    ASSERT(isMainThread());
-    static uint64_t currentHandlerIdentifier;
-    uint64_t identifier = ++currentHandlerIdentifier;
-
-    ASSERT(!m_takeAllMessagesCallbacks.contains(identifier));
-    m_takeAllMessagesCallbacks.add(identifier, WTFMove(completionHandler));
-
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::TakeAllMessagesForPort(port, identifier), 0);
-}
-
-void WebMessagePortChannelProvider::didTakeAllMessagesForPort(Vector<MessageWithMessagePorts>&& messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier)
-{
-    ASSERT(isMainThread());
-
-    auto callback = m_takeAllMessagesCallbacks.take(messageCallbackIdentifier);
-    ASSERT(callback);
-    callback(WTFMove(messages), [messageBatchIdentifier] {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidDeliverMessagePortMessages(messageBatchIdentifier), 0);
-    });
-}
-
-void WebMessagePortChannelProvider::didCheckRemotePortForActivity(uint64_t callbackIdentifier, bool hasActivity)
-{
-    ASSERT(isMainThread());
-
-    auto callback = m_remoteActivityCallbacks.take(callbackIdentifier);
-    ASSERT(callback);
-    callback(hasActivity ? HasActivity::Yes : HasActivity::No);
+    networkProcessConnection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::TakeAllMessagesForPort { port }, [completionHandler = WTFMove(completionHandler)](auto&& messages, uint64_t messageBatchIdentifier) mutable {
+        completionHandler(WTFMove(messages), [messageBatchIdentifier] {
+            networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::DidDeliverMessagePortMessages { messageBatchIdentifier }, 0);
+        });
+    }, 0);
 }
 
 void WebMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts& message, const MessagePortIdentifier& remoteTarget)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::PostMessageToRemote(message, remoteTarget), 0);
-}
-
-void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier& identifier, uint64_t callbackIdentifier)
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidCheckProcessLocalPortForActivity { callbackIdentifier, MessagePort::isExistingMessagePortLocallyReachable(identifier) }, 0);
+    networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
 }
 
 void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&)
@@ -120,15 +98,9 @@ void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const Messa
 
 void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& completionHandler)
 {
-    ASSERT(isMainThread());
-
-    static uint64_t currentHandlerIdentifier;
-    uint64_t identifier = ++currentHandlerIdentifier;
-
-    ASSERT(!m_remoteActivityCallbacks.contains(identifier));
-    m_remoteActivityCallbacks.set(identifier, WTFMove(completionHandler));
-
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::CheckRemotePortForActivity(remoteTarget, identifier), 0);
+    networkProcessConnection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CheckRemotePortForActivity { remoteTarget }, [completionHandler = WTFMove(completionHandler)](bool hasActivity) mutable {
+        completionHandler(hasActivity ? HasActivity::Yes : HasActivity::No);
+    }, 0);
 }
 
 } // namespace WebKit

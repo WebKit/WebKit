@@ -26,8 +26,6 @@
 #pragma once
 
 #include <WebCore/MessagePortChannelProvider.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -36,10 +34,6 @@ class WebMessagePortChannelProvider : public WebCore::MessagePortChannelProvider
 public:
     static WebMessagePortChannelProvider& singleton();
 
-    void didTakeAllMessagesForPort(Vector<WebCore::MessageWithMessagePorts>&& messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier);
-    void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, uint64_t callbackIdentifier);
-    void didCheckRemotePortForActivity(uint64_t callbackIdentifier, bool hasActivity);
-    
 private:
     WebMessagePortChannelProvider();
     ~WebMessagePortChannelProvider() final;
@@ -52,13 +46,7 @@ private:
     void postMessageToRemote(const WebCore::MessageWithMessagePorts&, const WebCore::MessagePortIdentifier& remoteTarget) final;
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, WebCore::ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) final;
 
-    // To be called only in the UI process
     void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
-
-    Lock m_takeAllMessagesCallbackLock;
-    HashMap<uint64_t, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;
-    Lock m_remoteActivityCallbackLock;
-    HashMap<uint64_t, CompletionHandler<void(HasActivity)>> m_remoteActivityCallbacks;
 };
 
 } // namespace WebKit

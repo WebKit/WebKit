@@ -83,4 +83,13 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier) Synchronous
 #endif
+
+    CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)
+    EntangleLocalPortInThisProcessToRemote(struct WebCore::MessagePortIdentifier local, struct WebCore::MessagePortIdentifier remote)
+    MessagePortDisentangled(struct WebCore::MessagePortIdentifier local)
+    MessagePortClosed(struct WebCore::MessagePortIdentifier local)
+    TakeAllMessagesForPort(struct WebCore::MessagePortIdentifier port) -> (Vector<WebCore::MessageWithMessagePorts> messages, uint64_t messageBatchIdentifier) Async
+    PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote)
+    CheckRemotePortForActivity(struct WebCore::MessagePortIdentifier port) -> (bool hasActivity) Async
+    DidDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
 }

@@ -27,8 +27,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+OBJC_CLASS NSArray;
+OBJC_CLASS NSDictionary;
+
 #include "APIObject.h"
 #include "InteractionInformationAtPosition.h"
+#include <wtf/RetainPtr.h>
 
 namespace API {
 

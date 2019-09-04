@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "ShareableResource.h"
 #include "WebIDBConnectionToServer.h"
+#include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -45,6 +46,8 @@ namespace WebCore {
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+struct MessagePortIdentifier;
+struct MessageWithMessagePorts;
 }
 
 namespace WebKit {
@@ -92,6 +95,9 @@ private:
     void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
     void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);
     void setOnLineState(bool isOnLine);
+
+    void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>&&);
+    void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // Message handlers.

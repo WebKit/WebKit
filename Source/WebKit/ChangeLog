@@ -1,3 +1,79 @@
+2019-09-04  Youenn Fablet  <youenn@apple.com>
+
+        Move MessageRegistry to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=201299
+
+        Reviewed by Alex Christensen.
+
+        Move message registry to NetworkProcess.
+        Take benefit of this move to use async reply IPC as much as possible.
+        This also allows to remove the IPC message to UIProcess when doing postMessage with service workers.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::createNewMessagePortChannel):
+        (WebKit::NetworkConnectionToWebProcess::entangleLocalPortInThisProcessToRemote):
+        (WebKit::NetworkConnectionToWebProcess::messagePortDisentangled):
+        (WebKit::NetworkConnectionToWebProcess::messagePortClosed):
+        (WebKit::NetworkConnectionToWebProcess::nextMessageBatchIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::takeAllMessagesForPort):
+        (WebKit::NetworkConnectionToWebProcess::didDeliverMessagePortMessages):
+        (WebKit::NetworkConnectionToWebProcess::postMessageToRemote):
+        (WebKit::NetworkConnectionToWebProcess::checkRemotePortForActivity):
+        (WebKit::NetworkConnectionToWebProcess::checkProcessLocalPortForActivity):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkMessagePortChannelProvider.cpp: Added.
+        (WebKit::NetworkMessagePortChannelProvider::NetworkMessagePortChannelProvider):
+        (WebKit::NetworkMessagePortChannelProvider::createNewMessagePortChannel):
+        (WebKit::NetworkMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote):
+        (WebKit::NetworkMessagePortChannelProvider::messagePortDisentangled):
+        (WebKit::NetworkMessagePortChannelProvider::messagePortClosed):
+        (WebKit::NetworkMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebKit::NetworkMessagePortChannelProvider::postMessageToRemote):
+        (WebKit::NetworkMessagePortChannelProvider::checkRemotePortForActivity):
+        (WebKit::NetworkMessagePortChannelProvider::checkProcessLocalPortForActivity):
+        * NetworkProcess/NetworkMessagePortChannelProvider.h: Added.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::m_messagePortChannelProvider):
+        (WebKit::NetworkProcess::webProcessConnection const):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::messagePortChannelRegistry):
+        * Sources.txt:
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::shutDown):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::initializeSWClientConnection):
+        (WebKit::NetworkProcessConnection::messagesAvailableForPort):
+        (WebKit::NetworkProcessConnection::checkProcessLocalPortForActivity):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::postMessageToServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::postMessageToServiceWorkerClient):
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp:
+        (WebKit::networkProcessConnection):
+        (WebKit::WebMessagePortChannelProvider::createNewMessagePortChannel):
+        (WebKit::WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote):
+        (WebKit::WebMessagePortChannelProvider::messagePortDisentangled):
+        (WebKit::WebMessagePortChannelProvider::messagePortClosed):
+        (WebKit::WebMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebKit::WebMessagePortChannelProvider::postMessageToRemote):
+        (WebKit::WebMessagePortChannelProvider::checkRemotePortForActivity):
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.h:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-09-03  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Unable to open local file from favorites bar

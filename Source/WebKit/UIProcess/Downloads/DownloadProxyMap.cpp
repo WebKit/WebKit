@@ -29,6 +29,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
+#include "Logging.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"

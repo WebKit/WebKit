@@ -67,3 +67,15 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::MessagePortChannelProvider::HasActivity> {
+    using values = EnumValues<
+        WebCore::MessagePortChannelProvider::HasActivity,
+        WebCore::MessagePortChannelProvider::HasActivity::No,
+        WebCore::MessagePortChannelProvider::HasActivity::Yes
+    >;
+};
+
+}

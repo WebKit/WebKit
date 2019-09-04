@@ -85,7 +85,6 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "TextInputContext.h"
-#include "UIMessagePortChannelProvider.h"
 #include "URLSchemeTaskParameters.h"
 #include "UndoOrRedo.h"
 #include "UserMediaPermissionRequestProxy.h"

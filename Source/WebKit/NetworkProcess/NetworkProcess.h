@@ -31,6 +31,7 @@
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
+#include "NetworkMessagePortChannelProvider.h"
 #include "SandboxExtension.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
@@ -346,7 +347,10 @@ public:
 
     const String& diskCacheDirectory() const { return m_diskCacheDirectory; }
     const OptionSet<NetworkCache::CacheOption>& cacheOptions() const { return m_cacheOptions; }
-    
+
+    NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
+    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelProvider.registry(); }
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -569,6 +573,7 @@ private:
     HashMap<IPC::Connection::UniqueID, PAL::SessionID> m_sessionByConnection;
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
+    NetworkMessagePortChannelProvider m_messagePortChannelProvider;
 };
 
 } // namespace WebKit

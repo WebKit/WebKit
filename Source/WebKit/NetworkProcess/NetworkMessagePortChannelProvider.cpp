@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,81 +24,71 @@
  */
 
 #include "config.h"
-#include "UIMessagePortChannelProvider.h"
+#include "NetworkMessagePortChannelProvider.h"
 
-#include "WebProcessMessages.h"
-#include "WebProcessProxy.h"
+#include "NetworkConnectionToWebProcess.h"
+#include "NetworkProcess.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-UIMessagePortChannelProvider& UIMessagePortChannelProvider::singleton()
-{
-    static UIMessagePortChannelProvider* provider = new UIMessagePortChannelProvider;
-    return *provider;
-}
-
-UIMessagePortChannelProvider::UIMessagePortChannelProvider()
-    : m_registry(*this)
+NetworkMessagePortChannelProvider::NetworkMessagePortChannelProvider(NetworkProcess& networkProcess)
+    : m_networkProcess(networkProcess)
+    , m_registry(*this)
 {
 }
 
-UIMessagePortChannelProvider::~UIMessagePortChannelProvider()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void UIMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier&, const MessagePortIdentifier&)
+void NetworkMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier&, const MessagePortIdentifier&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier&, const MessagePortIdentifier&)
+void NetworkMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier&, const MessagePortIdentifier&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier&)
+void NetworkMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier&)
+void NetworkMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&)
+void NetworkMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts&, const MessagePortIdentifier&)
+void NetworkMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts&, const MessagePortIdentifier&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier&, CompletionHandler<void(HasActivity)>&&)
+void NetworkMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier&, CompletionHandler<void(HasActivity)>&&)
 {
     // Should never be called in the UI process provider.
     ASSERT_NOT_REACHED();
 }
 
-void UIMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier& port, ProcessIdentifier processIdentifier, CompletionHandler<void(HasActivity)>&& completionHandler)
+void NetworkMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier& port, ProcessIdentifier processIdentifier, CompletionHandler<void(HasActivity)>&& completionHandler)
 {
-    auto* process = WebProcessProxy::processForIdentifier(processIdentifier);
-    if (!process) {
+    auto* connection = m_networkProcess.webProcessConnection(processIdentifier);
+    if (!connection) {
         completionHandler(HasActivity::No);
         return;
     }
 
-    process->checkProcessLocalPortForActivity(port, WTFMove(completionHandler));
+    connection->checkProcessLocalPortForActivity(port, WTFMove(completionHandler));
 }
 
 } // namespace WebKit
