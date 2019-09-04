@@ -414,6 +414,7 @@ auto SectionParser::parseElement() -> PartialResult
 // This function will be changed to be RELEASE_ASSERT_NOT_REACHED once we switch our parsing infrastructure to the streaming parser.
 auto SectionParser::parseCode() -> PartialResult
 {
+    m_info->codeSectionSize = length();
     uint32_t count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Code section's count");
     WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Code section's count is too big ", count);
