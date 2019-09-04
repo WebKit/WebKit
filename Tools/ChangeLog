@@ -1,3 +1,22 @@
+2019-09-03  Dean Jackson  <dino@apple.com>
+
+        Test for ContextMenus with images
+        https://bugs.webkit.org/show_bug.cgi?id=201437
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test for ContextMenus that trigger on images, and make
+        sure that they ask for alternate URLs (added in r249171).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (contextMenuWebViewDriver):
+        (-[TestContextMenuImageUIDelegate _webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuImageUIDelegate _webView:alternateURLFromImage:userInfo:]):
+        (-[TestContextMenuImageUIDelegate webView:contextMenuWillPresentForElement:]):
+        (-[TestContextMenuImageUIDelegate webView:contextMenuForElement:willCommitWithAnimator:]):
+        (-[TestContextMenuImageUIDelegate webView:contextMenuDidEndForElement:]):
+        (TEST):
+
 2019-09-03  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Move legend into sidebar
