@@ -1,3 +1,72 @@
+2019-09-04  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249147. rdar://problem/55001178
+
+    Removing fullscreen element in rAF() callback after requestFullscreen() can leave fullscreen in inconsistent state.
+    https://bugs.webkit.org/show_bug.cgi?id=201101
+    <rdar://problem/54164587>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: fullscreen/full-screen-request-removed-with-raf.html
+    
+    Add a new state variable, m_pendingFullscreenElement, to track which element is about to
+    become the fullscreen element, so that when elements are removed or cancelFullscreen() is
+    called, the state machine inside the fullscreen algorithm can cancel effectively.
+    
+    * dom/FullscreenManager.cpp:
+    (WebCore::FullscreenManager::requestFullscreenForElement):
+    (WebCore::FullscreenManager::cancelFullscreen):
+    (WebCore::FullscreenManager::exitFullscreen):
+    (WebCore::FullscreenManager::willEnterFullscreen):
+    (WebCore::FullscreenManager::willExitFullscreen):
+    (WebCore::FullscreenManager::didExitFullscreen):
+    (WebCore::FullscreenManager::adjustFullscreenElementOnNodeRemoval):
+    (WebCore::FullscreenManager::clear):
+    (WebCore::FullscreenManager::fullscreenElementRemoved): Deleted.
+    * dom/FullscreenManager.h:
+    
+    Source/WebKit:
+    
+    Add more state to track in which direction the animation is flowing to allow in-process
+    animations to be cancelled more gracefully.
+    
+    * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+    (-[WKFullScreenWindowController enterFullScreen]):
+    (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+    (-[WKFullScreenWindowController requestExitFullScreen]):
+    (-[WKFullScreenWindowController exitFullScreen]):
+    * WebProcess/cocoa/VideoFullscreenManager.h:
+    (WebKit::VideoFullscreenInterfaceContext::animationState const):
+    (WebKit::VideoFullscreenInterfaceContext::setAnimationState):
+    (WebKit::VideoFullscreenInterfaceContext::isAnimating const): Deleted.
+    (WebKit::VideoFullscreenInterfaceContext::setIsAnimating): Deleted.
+    * WebProcess/cocoa/VideoFullscreenManager.mm:
+    (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+    (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+    (WebKit::VideoFullscreenManager::didEnterFullscreen):
+    (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+    
+    LayoutTests:
+    
+    * fullscreen/full-screen-request-removed-with-raf-expected.txt: Added.
+    * fullscreen/full-screen-request-removed-with-raf.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249147 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-26  Jer Noble  <jer.noble@apple.com>
+
+            Removing fullscreen element in rAF() callback after requestFullscreen() can leave fullscreen in inconsistent state.
+            https://bugs.webkit.org/show_bug.cgi?id=201101
+            <rdar://problem/54164587>
+
+            Reviewed by Eric Carlson.
+
+            * fullscreen/full-screen-request-removed-with-raf-expected.txt: Added.
+            * fullscreen/full-screen-request-removed-with-raf.html: Added.
+
 2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r249339. rdar://problem/55001170
