@@ -1,3 +1,25 @@
+2019-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Implement SampleLevel(), SampleBias(), and SampleGrad()
+        https://bugs.webkit.org/show_bug.cgi?id=201385
+
+        Reviewed by Dean Jackson.
+
+        These are used in the Babylon.js demo.
+
+        Tests: webgpu/whlsl/textures-sample-bias.html
+               webgpu/whlsl/textures-sample-grad.html
+               webgpu/whlsl/textures-sample-level.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::sampleType):
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::addFullTexture):
+        (WebCore::WHLSL::Intrinsics::addDepthTexture):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-09-03  Chris Dumez  <cdumez@apple.com>
 
         FrameLoader::FrameProgressTracker::progressCompleted() does not need a pageID

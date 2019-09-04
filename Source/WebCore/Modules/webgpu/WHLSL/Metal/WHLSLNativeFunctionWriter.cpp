@@ -110,6 +110,26 @@ static const char* vectorSuffix(int vectorLength)
     }
 }
 
+enum class SampleType {
+    Sample,
+    SampleLevel,
+    SampleBias,
+    SampleGrad
+};
+
+static Optional<SampleType> sampleType(const String& functionName)
+{
+    if (functionName == "Sample")
+        return SampleType::Sample;
+    if (functionName == "SampleLevel")
+        return SampleType::SampleLevel;
+    if (functionName == "SampleBias")
+        return SampleType::SampleBias;
+    if (functionName == "SampleGrad")
+        return SampleType::SampleGrad;
+    return WTF::nullopt;
+}
+
 void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDeclaration& nativeFunctionDeclaration, const Vector<MangledVariableName>& args, MangledVariableName resultName, TypeNamer& typeNamer)
 {
     auto asMatrixType = [&] (AST::UnnamedType& unnamedType) -> AST::NativeTypeDeclaration* {
@@ -343,8 +363,21 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         return;
     }
 
-    if (nativeFunctionDeclaration.name() == "Sample") {
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 3 || nativeFunctionDeclaration.parameters().size() == 4);
+    if (auto sampleType = WHLSL::Metal::sampleType(nativeFunctionDeclaration.name())) {
+        size_t baseArgumentCount = 0;
+        switch (*sampleType) {
+        case SampleType::Sample:
+            baseArgumentCount = 3;
+            break;
+        case SampleType::SampleLevel:
+        case SampleType::SampleBias:
+            baseArgumentCount = 4;
+            break;
+        case SampleType::SampleGrad:
+            baseArgumentCount = 5;
+            break;
+        }
+        ASSERT(nativeFunctionDeclaration.parameters().size() == baseArgumentCount || nativeFunctionDeclaration.parameters().size() == baseArgumentCount + 1);
         
         auto& textureType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(nativeFunctionDeclaration.parameters()[0]->type()->unifyNode()));
         auto& locationType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(nativeFunctionDeclaration.parameters()[2]->type()->unifyNode()));
@@ -352,16 +385,37 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         auto& returnType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(nativeFunctionDeclaration.type().unifyNode()));
         auto returnVectorLength = vectorLength(returnType);
 
-        stringBuilder.append(
-            args[0], ".sample(", args[1], ", ");
+        int argumentIndex = 0;
+        stringBuilder.append(args[argumentIndex], ".sample(", args[argumentIndex + 1], ", ");
+        argumentIndex += 2;
 
         if (textureType.isTextureArray()) {
             ASSERT(locationVectorLength > 1);
-            stringBuilder.append(args[2], '.', "xyzw"_str.substring(0, locationVectorLength - 1), ", ", args[2], '.', "xyzw"_str.substring(locationVectorLength - 1, 1));
+            stringBuilder.append(args[argumentIndex], '.', "xyzw"_str.substring(0, locationVectorLength - 1), ", ", args[argumentIndex], '.', "xyzw"_str.substring(locationVectorLength - 1, 1));
+            ++argumentIndex;
         } else
-            stringBuilder.append(args[2]);
-        if (nativeFunctionDeclaration.parameters().size() == 4)
-            stringBuilder.append(", ", args[3]);
+            stringBuilder.append(args[argumentIndex++]);
+
+        switch (*sampleType) {
+        case SampleType::Sample:
+            break;
+        case SampleType::SampleLevel:
+            stringBuilder.append(", level(", args[argumentIndex++], ")");
+            break;
+        case SampleType::SampleBias:
+            stringBuilder.append(", bias(", args[argumentIndex++], ")");
+            break;
+        case SampleType::SampleGrad:
+            if (textureType.isCubeTexture())
+                stringBuilder.append(", gradientcube(", args[argumentIndex], ", ", args[argumentIndex + 1], ")");
+            else
+                stringBuilder.append(", gradient2d(", args[argumentIndex], ", ", args[argumentIndex + 1], ")");
+            argumentIndex += 2;
+            break;
+        }
+
+        if (nativeFunctionDeclaration.parameters().size() == baseArgumentCount + 1)
+            stringBuilder.append(", ", args[argumentIndex++]);
         stringBuilder.append(")");
         if (!textureType.isDepthTexture())
             stringBuilder.append(".", "xyzw"_str.substring(0, returnVectorLength));
@@ -507,21 +561,6 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
 
         stringBuilder.append(')');
         return;
-    }
-
-    if (nativeFunctionDeclaration.name() == "SampleBias") {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
-        notImplemented();
-    }
-
-    if (nativeFunctionDeclaration.name() == "SampleGrad") {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
-        notImplemented();
-    }
-
-    if (nativeFunctionDeclaration.name() == "SampleLevel") {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
-        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "Gather") {

@@ -67,6 +67,7 @@ public:
     bool isTextureArray() const { return m_isTextureArray; }
     bool isDepthTexture() const { return m_isDepthTexture; }
     bool isWritableTexture() const { return m_isWritableTexture; }
+    bool isCubeTexture() const { return m_isCubeTexture; }
     uint textureDimension() const { return m_textureDimension; }
     bool isSigned() const { return m_isSigned; }
     const std::function<bool(int)>& canRepresentInteger() const { return m_canRepresentInteger; }
@@ -122,6 +123,7 @@ public:
     void setIsTextureArray() { m_isTextureArray = true; }
     void setIsDepthTexture() { m_isDepthTexture = true; }
     void setIsWritableTexture() { m_isWritableTexture = true; }
+    void setIsCubeTexture() { m_isCubeTexture = true; }
     void setTextureDimension(uint textureDimension) { m_textureDimension = textureDimension; }
     void setIsSigned() { m_isSigned = true; }
     void setCanRepresentInteger(std::function<bool(int)>&& canRepresent) { m_canRepresentInteger = WTFMove(canRepresent); }
@@ -153,6 +155,7 @@ private:
     bool m_isTextureArray { false };
     bool m_isDepthTexture { false };
     bool m_isWritableTexture { false };
+    bool m_isCubeTexture { false };
     bool m_isSigned { false };
 };
 

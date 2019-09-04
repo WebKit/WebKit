@@ -231,6 +231,8 @@ bool Intrinsics::addFullTexture(AST::NativeTypeDeclaration& nativeTypeDeclaratio
         nativeTypeDeclaration.setTextureDimension(2);
     if (nativeTypeDeclaration.name() == "Texture3D" || nativeTypeDeclaration.name() == "RWTexture3D")
         nativeTypeDeclaration.setTextureDimension(3);
+    if (nativeTypeDeclaration.name() == "TextureCube")
+        nativeTypeDeclaration.setIsCubeTexture();
     m_fullTextures[textureTypeIndex][innerTypeIndex][vectorLength - 1] = &nativeTypeDeclaration;
     return true;
 }
@@ -252,6 +254,8 @@ void Intrinsics::addDepthTexture(AST::NativeTypeDeclaration& nativeTypeDeclarati
     nativeTypeDeclaration.setIsOpaqueType();
     if (texture == m_textureDepth2DArray)
         nativeTypeDeclaration.setIsTextureArray();
+    if (texture == m_textureDepthCube)
+        nativeTypeDeclaration.setIsCubeTexture();
     nativeTypeDeclaration.setTextureDimension(2);
     nativeTypeDeclaration.setIsDepthTexture();
     texture[innerTypeIndex] = &nativeTypeDeclaration;
