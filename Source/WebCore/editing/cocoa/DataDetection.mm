@@ -363,7 +363,8 @@ static void buildQuery(DDScanQueryRef scanQuery, Range* contextRange)
     // Build the scan query adding separators.
     // For each fragment the iterator increment is stored as metadata.
     for (TextIterator iterator(contextRange); !iterator.atEnd(); iterator.advance(), iteratorCount++) {
-        size_t currentTextLength = iterator.text().length();
+        StringView currentText = iterator.text();
+        size_t currentTextLength = currentText.length();
         if (!currentTextLength) {
             softLink_DataDetectorsCore_DDScanQueryAddSeparator(scanQuery, DDTextCoalescingTypeHardBreak);
             if (iteratorCount > maxFragmentWithHardBreak)
@@ -371,7 +372,8 @@ static void buildQuery(DDScanQueryRef scanQuery, Range* contextRange)
             continue;
         }
         // Test for white space nodes, we're coalescing them.
-        const UniChar* currentCharPtr = iterator.text().upconvertedCharacters();
+        auto currentTextUpconvertedCharacters = currentText.upconvertedCharacters();
+        const UniChar* currentCharPtr = currentTextUpconvertedCharacters.get();
         
         bool containsOnlyWhiteSpace = true;
         bool hasTab = false;
@@ -410,8 +412,8 @@ static void buildQuery(DDScanQueryRef scanQuery, Range* contextRange)
             continue;
         }
         
-        RetainPtr<CFStringRef> currentText = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, iterator.text().upconvertedCharacters(), iterator.text().length()));
-        softLink_DataDetectorsCore_DDScanQueryAddTextFragment(scanQuery, currentText.get(), CFRangeMake(0, currentTextLength), (void *)iteratorCount, (DDTextFragmentMode)0, DDTextCoalescingTypeNone);
+        auto currentTextCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, currentTextUpconvertedCharacters.get(), currentTextLength));
+        softLink_DataDetectorsCore_DDScanQueryAddTextFragment(scanQuery, currentTextCFString.get(), CFRangeMake(0, currentTextLength), (void *)iteratorCount, (DDTextFragmentMode)0, DDTextCoalescingTypeNone);
         fragmentCount++;
     }
 }

@@ -1,3 +1,42 @@
+2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249115. rdar://problem/55001212
+
+    Don't compute upconverted characters twice in buildQuery() in DataDetection.mm
+    <https://webkit.org/b/201144>
+    <rdar://problem/54689399>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    * editing/cocoa/DataDetection.mm:
+    (WebCore::buildQuery): Extract common variables to prevent double
+    conversion for 8-bit strings.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add
+    DataDetectorsTestIOS.mm to the project.
+    * TestWebKitAPI/Tests/ios/DataDetectorsTestIOS.mm: Add a new
+    test for Data Detectors for phone numbers.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249115 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-26  David Kilzer  <ddkilzer@apple.com>
+
+            Don't compute upconverted characters twice in buildQuery() in DataDetection.mm
+            <https://webkit.org/b/201144>
+            <rdar://problem/54689399>
+
+            Reviewed by Brent Fulgham.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add
+            DataDetectorsTestIOS.mm to the project.
+            * TestWebKitAPI/Tests/ios/DataDetectorsTestIOS.mm: Add a new
+            test for Data Detectors for phone numbers.
+
 2019-08-28  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r249224. rdar://problem/54819205
