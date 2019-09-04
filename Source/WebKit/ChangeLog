@@ -1,5 +1,13 @@
 2019-09-04  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed minor follow-up fix after r249501 to address crashes in debug.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::isDeletedValue):
+
+2019-09-04  Chris Dumez  <cdumez@apple.com>
+
         Expose WebPageProxy identifier to the Network Process
         https://bugs.webkit.org/show_bug.cgi?id=201467
 
