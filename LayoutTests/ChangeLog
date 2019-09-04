@@ -1,5 +1,26 @@
 2019-09-03  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION (r249132): [macOS WK2] Layout Test inspector/layers/layerTreeDidChange.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=201435
+
+        Reviewed by Joseph Pecoraro.
+
+        r249132 changed the `InspectorLayerTreeAgent` to reset the flag that controls whether the
+        frontend should be notified about layer changes when `disable` is called, which happens when
+        Web Inspector disconnects.
+
+        Sometimes, a layer change event can be "in flight" when this happens, meaning that the Web
+        Inspector frontend can receive a layer change event before it requests the new layer data.
+
+        This is normally handled by the Web Inspector UI, as the associated DOM node would no longer
+        exist, so the UI paths would early return.
+
+        * inspector/layers/layerTreeDidChange.html:
+        Only listen for layer change events once we've triggered a guaranteed layer update, as any
+        "in flight" events from previous tests could be incorrectly logged as part of this test.
+
+2019-09-03  Devin Rousso  <drousso@apple.com>
+
         REGRESSION (r249078): Flaky crash in com.apple.JavaScriptCore: Inspector::InjectedScriptModule::ensureInjected
         https://bugs.webkit.org/show_bug.cgi?id=201201
         <rdar://problem/54771560>

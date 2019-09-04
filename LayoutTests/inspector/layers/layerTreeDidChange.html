@@ -30,20 +30,9 @@ function test()
         description: "Check that layerTreeDidChange is able to be dispatched once LayerTree.commands.layersForNode is called.",
         test(resolve, reject) {
             let layerTreeDidChangeCount = 0;
-            let handleLayerTreeDidChange = WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, (event) => {
-                ++layerTreeDidChangeCount;
-
-                InspectorTest.log("Layer tree changed");
-
-                if (layerTreeDidChangeCount === 1) {
-                    WI.layerTreeManager.layersForNode(documentNode, (layers) => {
-                        InspectorTest.log("Creating layer...");
-                        InspectorTest.evaluateInPage(`addCompositedLayer()`);
-                    });
-                }
-            });
-
             let testPageDidAppendChildCount = 0;
+
+            let handleLayerTreeDidChange = null;
             let handleTestPageDidAppendChild = InspectorTest.addEventListener("TestPageDidAppendChild", (event) => {
                 ++testPageDidAppendChildCount;
 
@@ -58,6 +47,19 @@ function test()
             });
 
             WI.layerTreeManager.layersForNode(documentNode, (layers) => {
+                handleLayerTreeDidChange = WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, (event) => {
+                    ++layerTreeDidChangeCount;
+
+                    InspectorTest.log("Layer tree changed");
+
+                    if (layerTreeDidChangeCount === 1) {
+                        WI.layerTreeManager.layersForNode(documentNode, (layers) => {
+                            InspectorTest.log("Creating layer...");
+                            InspectorTest.evaluateInPage(`addCompositedLayer()`);
+                        });
+                    }
+                });
+
                 InspectorTest.log("Creating layer...");
                 InspectorTest.evaluateInPage(`addCompositedLayer()`);
             });
