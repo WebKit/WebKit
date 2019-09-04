@@ -1,3 +1,44 @@
+2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r248793. rdar://problem/55001191
+
+    [JSC] Promise.prototype.finally should accept non-promise objects
+    https://bugs.webkit.org/show_bug.cgi?id=200829
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/promise-finally-should-accept-non-promise-objects.js: Added.
+    (shouldBe):
+    (Thenable):
+    (Thenable.prototype.then):
+    
+    Source/JavaScriptCore:
+    
+    According to the Promise.prototype.finally spec step 2[1], we should check @isObject instead of @isPromise,
+    since Promise.prototype.finally should accept thenable objects that are defined by user libraries (like, bluebird for example).
+    This patch changes this check to the specified one.
+    
+    [1]: https://tc39.es/proposal-promise-finally/
+    
+    * builtins/PromisePrototype.js:
+    (finally):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248793 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Promise.prototype.finally should accept non-promise objects
+            https://bugs.webkit.org/show_bug.cgi?id=200829
+
+            Reviewed by Mark Lam.
+
+            * stress/promise-finally-should-accept-non-promise-objects.js: Added.
+            (shouldBe):
+            (Thenable):
+            (Thenable.prototype.then):
+
 2019-08-18  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r248800. rdar://problem/54454996

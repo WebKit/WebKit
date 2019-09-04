@@ -68,8 +68,8 @@ function finally(onFinally)
 {
     "use strict";
 
-    if (!@isPromise(this))
-        @throwTypeError("|this| is not a Promise");
+    if (!@isObject(this))
+        @throwTypeError("|this| is not a object");
 
     const constructor = @speciesConstructor(this, @Promise);
 
