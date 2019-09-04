@@ -1,3 +1,32 @@
+2019-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macCatalyst] Unable to upload non-image files using drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=201438
+
+        Reviewed by Tim Horton.
+
+        On recent builds of macOS 10.15, NSItemProviders that are produced when dropping files from Finder into a
+        macCatalyst app no longer contain `kUTTypeFileURL` as a registered type identifier. This means that the current
+        heuristic for figuring out whether or not an item provider can be represented as a file upload is broken, since
+        it thinks all dropped content is inline data.
+
+        On iOS, we treat an NSItemProvider as an "uploaded" file as long as it hasn't been explicitly marked as inline
+        data, such as a dragged selection from a native text field. However, on macCatalyst, all item providers return
+        preferredPresentationStyle of UIPreferredPresentationStyleUnspecified, regardless of the source, so this check
+        is useless on macCatalyst since it would consider all dropped content as a file upload (text selections, plain
+        URLs, etc.).
+
+        Luckily, NSItemProvider's -suggestedName is now populated in recent macOS builds, which means we have a much
+        stronger (and more robust) hint that a dropped item provider is actually a file. For the time being, use this
+        instead of always returning `NO`.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderLoadResult canBeRepresentedAsFileUpload]):
+
+        Make a minor tweak to move the UIPreferredPresentationStyleInline check to shared code, such that when
+        <rdar://55002929> is fixed, our code will automatically correctly treat inline item providers that have been
+        explicitly marked as such.
+
 2019-09-03  Antti Koivisto  <antti@apple.com>
 
         Remove redundant painting phase arguments from GraphicsLayerClient functions

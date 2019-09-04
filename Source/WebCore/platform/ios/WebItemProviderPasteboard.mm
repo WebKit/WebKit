@@ -383,10 +383,18 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     if ([_itemProvider web_containsFileURLAndFileUploadContent])
         return YES;
 
+    if ([_itemProvider preferredPresentationStyle] == UIPreferredPresentationStyleInline)
+        return NO;
+
 #if PLATFORM(MACCATALYST)
-    return NO;
+    // On macCatalyst, -preferredPresentationStyle always returns UIPreferredPresentationStyleUnspecified,
+    // even when the preferredPresentationStyle is set to something other than unspecified using the setter.
+    // This means we're unable to avoid exposing item providers that have been marked as inline data as files
+    // to the page -- see <rdar://55002929> for more details. In the meantime, only expose item providers as
+    // files if they have explicitly been given a suggested file name.
+    return [_itemProvider suggestedName].length;
 #else
-    return [_itemProvider preferredPresentationStyle] != UIPreferredPresentationStyleInline;
+    return YES;
 #endif
 }
 
