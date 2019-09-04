@@ -1,3 +1,47 @@
+2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249026. rdar://problem/55001375
+
+    Crash may happen when an SVG <feImage> element references the root <svg> element
+    https://bugs.webkit.org/show_bug.cgi?id=201014
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    When an <feImage> references an <svg> element as its target image but
+    this <svg> element is also one of the ancestors of the <feImage>, the
+    parent <filter> should not be applied.
+    
+    Test: svg/filters/filter-image-ref-root.html
+    
+    * svg/SVGFEImageElement.cpp:
+    (WebCore::SVGFEImageElement::build const):
+    
+    LayoutTests:
+    
+    Ensure the cyclic reference between the <feImage> renderer and its
+    ancestor <svg> root renderer is broken.
+    
+    * svg/filters/filter-image-ref-root-expected.txt: Added.
+    * svg/filters/filter-image-ref-root.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249026 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Crash may happen when an SVG <feImage> element references the root <svg> element
+            https://bugs.webkit.org/show_bug.cgi?id=201014
+
+            Reviewed by Ryosuke Niwa.
+
+            Ensure the cyclic reference between the <feImage> renderer and its
+            ancestor <svg> root renderer is broken.
+
+            * svg/filters/filter-image-ref-root-expected.txt: Added.
+            * svg/filters/filter-image-ref-root.html: Added.
+
 2019-08-28  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r249156. rdar://problem/54775048
