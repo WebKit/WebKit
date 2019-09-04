@@ -1,3 +1,21 @@
+2019-09-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r249364): Layout Test webgpu/texture-triangle-strip.html is Failing
+        https://bugs.webkit.org/show_bug.cgi?id=201425
+
+        Reviewed by Myles C. Maxfield.
+
+        The orientation of webgpu/resources/blue-checkered.png is OriginRightTop.
+        Because r249364 made the image orientation respected everywhere including
+        the canvas drawImage(), the expected result does not match the output of
+        the test anymore.
+
+        The fix is to change the the expected result to match the image drawing
+        when the image orientation is respected.
+
+        * webgpu/js/webgpu-functions.js:
+        (drawGreenAndBlueCheckerboardInSoftware):
+
 2019-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Implement SampleLevel(), SampleBias(), and SampleGrad()
