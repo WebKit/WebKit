@@ -1,3 +1,19 @@
+2019-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove unused ScrollingTreeOverflowScrollProxyNode implementation
+        https://bugs.webkit.org/show_bug.cgi?id=201376
+
+        Reviewed by Simon Fraser.
+
+        Remove the unused ScrollingTreeOverflowScrollProxyNode implementation
+        and header files that were added in r246723 but are not included in any
+        build. Cocoa-specific implementation remains untouched, and other
+        scrolling systems should be providing their own (as is the case with
+        other types of nodes).
+
+        * page/scrolling/ScrollingTreeOverflowScrollProxyNode.cpp: Removed.
+        * page/scrolling/ScrollingTreeOverflowScrollProxyNode.h: Removed.
+
 2019-09-04  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Sound is down-pitched when playing video from YLE Areena
