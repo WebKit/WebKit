@@ -2776,9 +2776,9 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
-    OptionSet<PaintBehavior> paintBehavior, OptionSet<GraphicsLayerPaintingPhase> paintingPhase)
+    OptionSet<PaintBehavior> paintBehavior)
 {
-    if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && paintingPhase != OptionSet<GraphicsLayerPaintingPhase>(GraphicsLayerPaintingPhase::ChildClippingMask)) {
+    if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && graphicsLayer->paintingPhase() != OptionSet<GraphicsLayerPaintingPhase>(GraphicsLayerPaintingPhase::ChildClippingMask)) {
 #if !PLATFORM(IOS_FAMILY) && !OS(WINDOWS)
         // FIXME: Looks like the CALayer tree is out of sync with the GraphicsLayer heirarchy
         // when pages are restored from the PageCache.
@@ -2788,26 +2788,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         return;
     }
 
-    OptionSet<RenderLayer::PaintLayerFlag> paintFlags;
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Background))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingBackgroundPhase);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Foreground))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingForegroundPhase);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Mask))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingMaskPhase);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::ClipPath))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingClipPathPhase);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::ChildClippingMask))
-        paintFlags.add(RenderLayer::PaintLayerPaintingChildClippingMaskPhase);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
-        paintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingScrollingPhase);
-
-    if (graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
-        paintFlags.add({ RenderLayer::PaintLayerPaintingRootBackgroundOnly, RenderLayer::PaintLayerPaintingCompositingForegroundPhase }); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
-    else if (compositor().fixedRootBackgroundLayer())
-        paintFlags.add(RenderLayer::PaintLayerPaintingSkipRootBackground);
+    auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
 #ifndef NDEBUG
     RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&renderer());
@@ -2848,7 +2829,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
             RenderLayer::PaintLayerPaintingCompositingBackgroundPhase,
             RenderLayer::PaintLayerPaintingCompositingForegroundPhase };
 
-        if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
+        if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
 
         for (auto& layerWeakPtr : m_backingSharingLayers)
@@ -2856,6 +2837,34 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     }
 
     compositor().didPaintBacking(this);
+}
+
+OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(const GraphicsLayer& graphicsLayer) const
+{
+    OptionSet<RenderLayer::PaintLayerFlag> paintFlags;
+
+    auto paintingPhase = graphicsLayer.paintingPhase();
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Background))
+        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingBackgroundPhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Foreground))
+        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingForegroundPhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Mask))
+        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingMaskPhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::ClipPath))
+        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingClipPathPhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::ChildClippingMask))
+        paintFlags.add(RenderLayer::PaintLayerPaintingChildClippingMaskPhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
+        paintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll))
+        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingScrollingPhase);
+
+    if (&graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
+        paintFlags.add({ RenderLayer::PaintLayerPaintingRootBackgroundOnly, RenderLayer::PaintLayerPaintingCompositingForegroundPhase }); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
+    else if (compositor().fixedRootBackgroundLayer())
+        paintFlags.add(RenderLayer::PaintLayerPaintingSkipRootBackground);
+
+    return paintFlags;
 }
 
 #if ENABLE(POINTER_EVENTS)
@@ -2978,7 +2987,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, OptionSet<GraphicsLayerPaintingPhase> paintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -3003,7 +3012,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         || graphicsLayer == m_childClippingMaskLayer.get()
         || graphicsLayer == m_scrolledContentsLayer.get()) {
 
-        if (!paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
+        if (!graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
@@ -3014,7 +3023,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         if (layerPaintBehavior == GraphicsLayerPaintFirstTilePaint)
             behavior.add(PaintBehavior::TileFirstPaint);
 
-        paintIntoLayer(graphicsLayer, context, dirtyRect, behavior, paintingPhase);
+        paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 
         if (renderer().settings().visibleDebugOverlayRegions() & NonFastScrollableRegion) // Piggy-back off the setting that shows touch handler regions.
             paintDebugOverlays(graphicsLayer, context);

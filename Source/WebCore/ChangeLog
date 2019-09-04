@@ -1,3 +1,34 @@
+2019-09-03  Antti Koivisto  <antti@apple.com>
+
+        Remove redundant painting phase arguments from GraphicsLayerClient functions
+        https://bugs.webkit.org/show_bug.cgi?id=201443
+
+        Reviewed by Simon Fraser.
+
+        It is available from the GraphicsLayer.
+
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::paintContents):
+        * page/PageOverlayController.h:
+        * page/mac/ServicesOverlayController.h:
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::paintContents):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::paintContents):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintFlagsForLayer const):
+
+        Factor into a function.
+
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderLayerCompositor.h:
+
 2019-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Implement SampleLevel(), SampleBias(), and SampleGrad()

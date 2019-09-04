@@ -508,7 +508,7 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const F
     FloatRect clipRect(clip);
     clipRect.move(offset);
 
-    client().paintContents(this, context, m_paintingPhase, clipRect, layerPaintBehavior);
+    client().paintContents(this, context, clipRect, layerPaintBehavior);
 }
 
 FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect)
