@@ -197,7 +197,10 @@ bool WebPage::isTransparentOrFullyClipped(const Element& element) const
         return false;
 
     auto* enclosingLayer = renderer->enclosingLayer();
-    return enclosingLayer && enclosingLayer->isTransparentOrFullyClippedRespectingParentFrames();
+    if (enclosingLayer && enclosingLayer->isTransparentRespectingParentFrames())
+        return true;
+
+    return renderer->hasNonEmptyVisibleRectRespectingParentFrames();
 }
 
 void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
