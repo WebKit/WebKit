@@ -150,7 +150,6 @@ struct TestOptions {
             || contentMode != options.contentMode
             || enableAppNap != options.enableAppNap
             || enablePageCache != options.enablePageCache
-            || enableLazyImageLoading != options.enableLazyImageLoading
             || allowsLinkPreview != options.allowsLinkPreview)
             return false;
 
