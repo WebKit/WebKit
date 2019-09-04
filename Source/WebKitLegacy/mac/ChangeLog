@@ -1,3 +1,17 @@
+2019-09-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused SPI that accesses MemoryCache directly
+        https://bugs.webkit.org/show_bug.cgi?id=201468
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebCache.h:
+        * Misc/WebCache.mm:
+        (+[WebCache addImageToCache:forURL:]): Deleted.
+        (+[WebCache addImageToCache:forURL:forFrame:]): Deleted.
+        (+[WebCache removeImageFromCacheForURL:]): Deleted.
+        (+[WebCache removeImageFromCacheForURL:forFrame:]): Deleted.
+
 2019-08-30  Keith Rollin  <krollin@apple.com>
 
         Remove AppKitCompatibilityDeclarations.h

@@ -36,11 +36,6 @@
 #if TARGET_OS_IPHONE
 + (void)emptyInMemoryResources;
 + (void)sizeOfDeadResources:(int *)resources;
-// SPI to add a CGImageRef directly to the WebCore cache.
-+ (bool)addImageToCache:(CGImageRef)image forURL:(NSURL *)url;
-+ (bool)addImageToCache:(CGImageRef)image forURL:(NSURL *)url forFrame:(WebFrame *)frame;
-+ (void)removeImageFromCacheForURL:(NSURL *)url;
-+ (void)removeImageFromCacheForURL:(NSURL *)url forFrame:(WebFrame *)frame;
 + (CGImageRef)imageForURL:(NSURL *)url;
 #endif
 + (void)setDisabled:(BOOL)disabled;

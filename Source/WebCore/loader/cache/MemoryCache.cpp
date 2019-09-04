@@ -204,52 +204,6 @@ unsigned MemoryCache::liveCapacity() const
     return m_capacity - deadCapacity();
 }
 
-static CachedImageClient& dummyCachedImageClient()
-{
-    static NeverDestroyed<CachedImageClient> client;
-    return client;
-}
-
-bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const String& domainForCachePartition, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
-{
-    ASSERT(image);
-    removeImageFromCache(url, domainForCachePartition); // Remove cache entry if it already exists.
-
-    auto bitmapImage = BitmapImage::create(WTFMove(image), nullptr);
-    auto cachedImage = makeUnique<CachedImage>(url, bitmapImage.ptr(), sessionID, cookieJar, domainForCachePartition);
-
-    cachedImage->addClient(dummyCachedImageClient());
-    cachedImage->setDecodedSize(bitmapImage->decodedSize());
-
-    return add(*cachedImage.release());
-}
-
-void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCachePartition)
-{
-    auto* resources = sessionResourceMap(PAL::SessionID::defaultSessionID());
-    if (!resources)
-        return;
-
-    auto key = std::make_pair(url, ResourceRequest::partitionName(domainForCachePartition));
-
-    CachedResource* resource = resources->get(key);
-    if (!resource)
-        return;
-
-    // A resource exists and is not a manually cached image, so just remove it.
-    if (!is<CachedImage>(*resource) || !downcast<CachedImage>(*resource).isManuallyCached()) {
-        remove(*resource);
-        return;
-    }
-
-    // Removing the last client of a CachedImage turns the resource
-    // into a dead resource which will eventually be evicted when
-    // dead resources are pruned. That might be immediately since
-    // removing the last client triggers a MemoryCache::prune, so the
-    // resource may be deleted after this call.
-    downcast<CachedImage>(*resource).removeClient(dummyCachedImageClient());
-}
-
 void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources)
 {
     unsigned capacity = shouldDestroyDecodedDataForAllLiveResources ? 0 : liveCapacity();
