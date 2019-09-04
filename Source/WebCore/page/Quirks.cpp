@@ -376,6 +376,18 @@ Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarg
     if (equalLettersIgnoringASCIICase(host, "desmos.com") || host.endsWithIgnoringASCIICase(".desmos.com"))
         return Event::IsCancelable::No;
 
+    if (equalLettersIgnoringASCIICase(host, "airtable.com") || host.endsWithIgnoringASCIICase(".airtable.com")) {
+        // We want to limit simulated mouse events to elements under <div id="paneContainer"> to allow for column re-ordering and multiple cell selection.
+        if (is<Node>(target)) {
+            auto* node = downcast<Node>(target);
+            if (auto* paneContainer = node->treeScope().getElementById(AtomString("paneContainer"))) {
+                if (paneContainer->contains(node))
+                    return Event::IsCancelable::Yes;
+            }
+        }
+        return { };
+    }
+
     return Event::IsCancelable::Yes;
 }
 
