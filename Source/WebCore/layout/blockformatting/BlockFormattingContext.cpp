@@ -127,7 +127,7 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
         return { };
     // Vertical static position is not computed yet, so let's just estimate it for now.
     auto& formattingRoot = downcast<Container>(root());
-    auto verticalPosition = mapTopToAncestor(layoutBox, formattingRoot);
+    auto verticalPosition = mapTopToFormattingContextRoot(layoutBox);
     auto constraints = floatingContext.constraints({ verticalPosition });
     if (!constraints.left && !constraints.right)
         return { };
@@ -139,8 +139,8 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     LayoutUnit containingBlockRight = containingBlockDisplayBox.right();
     if (&containingBlock != &formattingRoot) {
         // Move containing block left/right to the root's coordinate system.
-        containingBlockLeft = mapLeftToAncestor(containingBlock, formattingRoot);
-        containingBlockRight = mapRightToAncestor(containingBlock, formattingRoot);
+        containingBlockLeft = mapLeftToFormattingContextRoot(containingBlock);
+        containingBlockRight = mapRightToFormattingContextRoot(containingBlock);
     }
     auto containingBlockContentBoxLeft = containingBlockLeft + containingBlockDisplayBox.borderLeft() + containingBlockDisplayBox.paddingLeft().valueOr(0);
     auto containingBlockContentBoxRight = containingBlockRight - containingBlockDisplayBox.borderRight() + containingBlockDisplayBox.paddingRight().valueOr(0);

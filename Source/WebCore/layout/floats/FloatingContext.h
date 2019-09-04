@@ -78,6 +78,12 @@ private:
     void findPositionForFloatBox(FloatBox&) const;
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
+    struct AbsoluteCoordinateValuesForFloatAvoider;
+    AbsoluteCoordinateValuesForFloatAvoider absoluteDisplayBoxCoordinates(const Box&) const;
+    Display::Box mapToFloatingStateRoot(const Box&) const;
+    LayoutUnit mapTopToFloatingStateRoot(const Box&) const;
+    Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
+
     const FormattingContext& m_formattingContext;
     FloatingState& m_floatingState;
 };

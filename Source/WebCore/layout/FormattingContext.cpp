@@ -160,60 +160,27 @@ static LayoutUnit mapHorizontalPositionToAncestor(const FormattingContext& forma
 }
 
 // FIXME: turn these into templates.
-LayoutUnit FormattingContext::mapLeftToAncestor(const Box& layoutBox, const Container& ancestor) const
+LayoutUnit FormattingContext::mapTopToFormattingContextRoot(const Box& layoutBox) const
 {
     ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).left(), *layoutBox.containingBlock(), ancestor);
-}
-
-LayoutUnit FormattingContext::mapRightToAncestor(const Box& layoutBox, const Container& ancestor) const
-{
-    ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).right(), *layoutBox.containingBlock(), ancestor);
-}
-
-Display::Box FormattingContext::mapBoxToAncestor(const Box& layoutBox, const Container& ancestor) const
-{
-    ASSERT(layoutBox.isContainingBlockDescendantOf(ancestor));
-    auto& displayBox = displayBoxForLayoutBox(layoutBox);
-    auto topLeft = displayBox.topLeft();
-    for (auto* containingBlock = layoutBox.containingBlock(); containingBlock && containingBlock != &ancestor; containingBlock = containingBlock->containingBlock())
-        topLeft.moveBy(displayBoxForLayoutBox(*containingBlock).topLeft());
-
-    auto mappedDisplayBox = Display::Box(displayBox);
-    mappedDisplayBox.setTopLeft(topLeft);
-    return mappedDisplayBox;
-}
-
-LayoutUnit FormattingContext::mapTopToAncestor(const Box& layoutBox, const Container& ancestor) const
-{
-    ASSERT(layoutBox.isContainingBlockDescendantOf(ancestor));
+    auto& formattingContextRoot = downcast<Container>(root());
+    ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
     auto top = displayBoxForLayoutBox(layoutBox).top();
-    for (auto* container = layoutBox.containingBlock(); container && container != &ancestor; container = container->containingBlock())
+    for (auto* container = layoutBox.containingBlock(); container && container != &formattingContextRoot; container = container->containingBlock())
         top += displayBoxForLayoutBox(*container).top();
     return top;
 }
 
-Point FormattingContext::mapPointToAncestor(Point position, const Container& from, const Container& to) const
+LayoutUnit FormattingContext::mapLeftToFormattingContextRoot(const Box& layoutBox) const
 {
-    if (&from == &to)
-        return position;
-    ASSERT(from.isContainingBlockDescendantOf(to));
-    auto mappedPosition = position;
-    for (auto* container = &from; container && container != &to; container = container->containingBlock())
-        mappedPosition.moveBy(displayBoxForLayoutBox(*container).topLeft());
-    return mappedPosition;
+    ASSERT(layoutBox.containingBlock());
+    return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).left(), *layoutBox.containingBlock(), downcast<Container>(root()));
 }
 
-Point FormattingContext::mapPointToDescendent(Point point, const Container& from, const Container& to) const
+LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutBox) const
 {
-    // "point" is in the coordinate system of the "from" container.
-    if (&from == &to)
-        return point;
-    ASSERT(to.isContainingBlockDescendantOf(from));
-    for (auto* container = &to; container && container != &from; container = container->containingBlock())
-        point.moveBy(displayBoxForLayoutBox(*container).topLeft());
-    return point;
+    ASSERT(layoutBox.containingBlock());
+    return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).right(), *layoutBox.containingBlock(), downcast<Container>(root()));
 }
 
 #ifndef NDEBUG

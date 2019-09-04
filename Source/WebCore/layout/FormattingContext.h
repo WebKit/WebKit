@@ -61,12 +61,9 @@ public:
     };
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
 
-    Display::Box mapBoxToAncestor(const Box&, const Container& ancestor) const;
-    LayoutUnit mapTopToAncestor(const Box&, const Container& ancestor) const;
-    LayoutUnit mapLeftToAncestor(const Box&, const Container& ancestor) const;
-    LayoutUnit mapRightToAncestor(const Box&, const Container& ancestor) const;
-    Point mapPointToAncestor(Point, const Container& from, const Container& to) const;
-    Point mapPointToDescendent(Point, const Container& from, const Container& to) const;
+    LayoutUnit mapTopToFormattingContextRoot(const Box&) const;
+    LayoutUnit mapLeftToFormattingContextRoot(const Box&) const;
+    LayoutUnit mapRightToFormattingContextRoot(const Box&) const;
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }

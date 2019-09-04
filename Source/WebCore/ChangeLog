@@ -1,3 +1,42 @@
+2019-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::map* functions are too generic.
+        https://bugs.webkit.org/show_bug.cgi?id=201447
+        <rdar://problem/55005733>
+
+        Reviewed by Antti Koivisto.
+
+        We don't need such generic mapping functions yet. This patch is also in preparation for
+        asserting on formatting context escaping. 
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::mapTopToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapLeftToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapRightToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapLeftToAncestor const): Deleted.
+        (WebCore::Layout::FormattingContext::mapRightToAncestor const): Deleted.
+        (WebCore::Layout::FormattingContext::mapBoxToAncestor const): Deleted.
+        (WebCore::Layout::FormattingContext::mapTopToAncestor const): Deleted.
+        (WebCore::Layout::FormattingContext::mapPointToAncestor const): Deleted.
+        (WebCore::Layout::FormattingContext::mapPointToDescendent const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFormattingContextRoot const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::constraints const):
+        (WebCore::Layout::FloatingContext::append):
+        (WebCore::Layout::FloatingContext::absoluteDisplayBoxCoordinates const):
+        (WebCore::Layout::FloatingContext::mapToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapTopToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot const):
+        (WebCore::Layout::mapToFormattingContextRoot): Deleted.
+        * layout/floats/FloatingContext.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-09-04  Antoine Quint  <graouts@apple.com>
 
         [iPadOS] Unable to change sheets on Airtable.com
