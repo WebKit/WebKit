@@ -1,3 +1,15 @@
+2019-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Disambiguate a symbol used in JSDollarVM.
+        https://bugs.webkit.org/show_bug.cgi?id=201466
+        <rdar://problem/51826672>
+
+        Reviewed by Tadeu Zagallo.
+
+        This was causing a build issue on some internal build.
+
+        * tools/JSDollarVM.cpp:
+
 2019-09-03  Mark Lam  <mark.lam@apple.com>
 
         Assertions in JSArrayBufferView::byteOffset() are only valid for the mutator thread.
