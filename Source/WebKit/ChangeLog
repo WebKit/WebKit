@@ -1,3 +1,21 @@
+2019-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Re-enable iOS WKWebView printing API
+        https://bugs.webkit.org/show_bug.cgi?id=201392
+        <rdar://problem/54690252>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webViewPrintFormatter]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        * UIProcess/_WKWebViewPrintFormatterInternal.h:
+        * UIProcess/ios/WKContentView.mm:
+        _WKWwebViewPrintFormatter was disabled during bringup because requisite
+        UIKit bits were missing, but they are not anymore (and have not been for
+        quite some time), so remove these unnecessary platform ifdefs.
+
 2019-09-04  Patrick Griffis  <pgriffis@igalia.com>
 
         [WPE][GTK] Fix sandbox parsing DISPLAY on X11

@@ -199,7 +199,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 @end
 #endif
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#if PLATFORM(IOS_FAMILY)
 @interface WKWebView (_WKWebViewPrintFormatter)
 @property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
 @end

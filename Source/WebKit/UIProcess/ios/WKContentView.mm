@@ -689,8 +689,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #pragma mark Printing
 
-#if !PLATFORM(MACCATALYST)
-
 @interface WKContentView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
 
@@ -756,7 +754,5 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 }
 
 @end
-
-#endif // !PLATFORM(MACCATALYST)
 
 #endif // PLATFORM(IOS_FAMILY)

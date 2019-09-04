@@ -26,7 +26,7 @@
 #import "config.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandle.h"
@@ -116,4 +116,4 @@
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#endif // PLATFORM(IOS_FAMILY)
