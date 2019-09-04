@@ -1,3 +1,19 @@
+2019-09-04  Rob Buis  <rbuis@igalia.com>
+
+        Allow checking whether image was created from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=200662
+
+        Reviewed by Darin Adler.
+
+        No behavior change.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::create):
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::createdByParser const):
+        * html/HTMLTagNames.in:
+
 2019-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove unused ScrollingTreeOverflowScrollProxyNode implementation

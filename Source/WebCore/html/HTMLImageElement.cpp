@@ -68,7 +68,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
 
 using namespace HTMLNames;
 
-HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
     : HTMLElement(tagName, document)
     , m_imageLoader(*this)
     , m_form(nullptr)
@@ -76,6 +76,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_compositeOperator(CompositeSourceOver)
     , m_imageDevicePixelRatio(1.0f)
     , m_experimentalImageMenuEnabled(false)
+    , m_createdByParser(createdByParser)
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
@@ -86,9 +87,9 @@ Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
     return adoptRef(*new HTMLImageElement(imgTag, document));
 }
 
-Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
-    return adoptRef(*new HTMLImageElement(tagName, document, form));
+    return adoptRef(*new HTMLImageElement(tagName, document, form, createdByParser));
 }
 
 HTMLImageElement::~HTMLImageElement()
