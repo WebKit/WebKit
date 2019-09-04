@@ -1,3 +1,16 @@
+2019-09-03  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Add compute-boids to WebGPU demo page
+        https://bugs.webkit.org/show_bug.cgi?id=201416
+
+        Reviewed by Dean Jackson.
+
+        Add the compute-boids demo for use with STP 91.
+
+        * demos/webgpu/compute-boids.html: Added.
+        * demos/webgpu/index.html:
+        * demos/webgpu/resources/compute-boids.png: Added.
+
 2019-08-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Fix up demos on and add compute demo to webkit.org/demos
