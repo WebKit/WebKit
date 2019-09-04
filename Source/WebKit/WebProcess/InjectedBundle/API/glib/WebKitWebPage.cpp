@@ -249,7 +249,7 @@ private:
         }
 
         webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
-        resourceRequest.setInitiatingPageID(page.identifier());
+        resourceRequest.setInitiatingPageID(page.webPageProxyIdentifier().toUInt64());
 
         API::Dictionary::MapType message;
         message.set(String::fromUTF8("Page"), &page);

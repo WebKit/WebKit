@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkActivityTracker.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -47,6 +48,7 @@ public:
     }
 
     PAL::SessionID sessionID;
+    WebPageProxyIdentifier webPageProxyID;
     WebCore::PageIdentifier webPageID;
     WebCore::FrameIdentifier webFrameID;
     RefPtr<WebCore::SecurityOrigin> topOrigin;

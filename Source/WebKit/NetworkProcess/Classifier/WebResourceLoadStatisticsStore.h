@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "StorageAccessStatus.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebsiteDataType.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -126,7 +127,7 @@ public:
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier);
-    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);

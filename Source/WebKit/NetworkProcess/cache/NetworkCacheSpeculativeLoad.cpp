@@ -53,8 +53,9 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
     NetworkLoadParameters parameters { cache.sessionID() };
-    parameters.webPageID = globalFrameID.first;
-    parameters.webFrameID = globalFrameID.second;
+    parameters.webPageProxyID = globalFrameID.webPageProxyID;
+    parameters.webPageID = globalFrameID.webPageID;
+    parameters.webFrameID = globalFrameID.frameID;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;

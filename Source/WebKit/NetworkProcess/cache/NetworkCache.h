@@ -28,6 +28,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceResponse.h>
@@ -86,7 +87,29 @@ enum class UseDecision {
     NoDueToExpiredRedirect
 };
 
-using GlobalFrameID = std::pair<WebCore::PageIdentifier, WebCore::FrameIdentifier>; // FIXME: Use GlobalFrameIdentifier.
+struct GlobalFrameID {
+    WebPageProxyIdentifier webPageProxyID;
+    WebCore::PageIdentifier webPageID;
+    WebCore::FrameIdentifier frameID;
+    
+    unsigned hash() const;
+};
+
+inline unsigned GlobalFrameID::hash() const
+{
+    unsigned hashes[2];
+    hashes[0] = WTF::intHash(webPageID.toUInt64());
+    hashes[1] = WTF::intHash(frameID.toUInt64());
+
+    return StringHasher::hashMemory(hashes, sizeof(hashes));
+}
+
+inline bool operator==(const GlobalFrameID& a, const GlobalFrameID& b)
+{
+    // No need to check webPageProxyID since webPageIDs are globally unique and a given WebPage is always
+    // associated with the same WebPageProxy.
+    return a.webPageID == b.webPageID &&  a.frameID == b.frameID;
+}
 
 enum class CacheOption : uint8_t {
     // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
@@ -176,3 +199,25 @@ private:
 
 } // namespace NetworkCache
 } // namespace WebKit
+
+namespace WTF {
+
+struct GlobalFrameIDHash {
+    static unsigned hash(const WebKit::NetworkCache::GlobalFrameID& key) { return key.hash(); }
+    static bool equal(const WebKit::NetworkCache::GlobalFrameID& a, const WebKit::NetworkCache::GlobalFrameID& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<> struct HashTraits<WebKit::NetworkCache::GlobalFrameID> : GenericHashTraits<WebKit::NetworkCache::GlobalFrameID> {
+    static WebKit::NetworkCache::GlobalFrameID emptyValue() { return { }; }
+
+    static void constructDeletedValue(WebKit::NetworkCache::GlobalFrameID& slot) { slot.webPageProxyID = makeObjectIdentifier<WebKit::WebPageProxyIdentifierType>(std::numeric_limits<uint64_t>::max()); }
+
+    static bool isDeletedValue(const WebKit::NetworkCache::GlobalFrameID& slot) { return slot.webPageProxyID.toUInt64() == std::numeric_limits<uint64_t>::max(); }
+};
+
+template<> struct DefaultHash<WebKit::NetworkCache::GlobalFrameID> {
+    typedef GlobalFrameIDHash Hash;
+};
+
+}

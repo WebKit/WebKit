@@ -353,7 +353,8 @@ public:
     virtual void forcePageTransitionIfNeeded() { }
 
     // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
-    virtual bool isEmptyFrameLoaderClient() { return false; }
+    virtual bool isEmptyFrameLoaderClient() const { return false; }
+    virtual bool isServiceWorkerFrameLoaderClient() const { return false; }
 
 #if USE(QUICK_LOOK)
     virtual RefPtr<PreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;

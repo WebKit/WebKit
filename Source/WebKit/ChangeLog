@@ -1,3 +1,115 @@
+2019-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Expose WebPageProxy identifier to the Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=201467
+
+        Reviewed by Geoffrey Garen.
+
+        Expose WebPageProxy identifier to the Network Process (similarly to WebPage / WebFrame identifiers)
+        so that it can use it whenever it IPCs the UIProcess. The IPCs from the network process were the
+        last one requiring the UIProcess to lookup a WebPageProxy object from a WebPageIdentifier (rather
+        than a WebPageProxyIdentifier).
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didCommitCrossSiteLoadWithDataTransfer):
+        (WebKit::NetworkProcess::logDiagnosticMessage):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithValue):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::didReceiveChallenge):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::GlobalFrameID::hash const):
+        (WebKit::NetworkCache::operator==):
+        (WTF::GlobalFrameIDHash::hash):
+        (WTF::GlobalFrameIDHash::equal):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::emptyValue):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::isDeletedValue):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::logSpeculativeLoadingDiagnosticMessage):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::shouldCoalesceChallenge const):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessage):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithValue):
+        (WebKit::NetworkProcessProxy::requestStorageAccessConfirm):
+        (WebKit::NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer):
+        (WebKit::NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource):
+        (WebKit::NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::start):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::isServiceWorkerPageID const):
+        (WebKit::WebProcessPool::didCommitCrossSiteLoadWithDataTransfer):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient):
+        (WebKit::ServiceWorkerFrameLoaderClient::createDocumentLoader):
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        (isType):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::webPageProxyID const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestStorageAccess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-09-04  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Re-enable iOS WKWebView printing API

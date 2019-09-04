@@ -53,6 +53,7 @@ Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool&
 ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, const RegistrableDomain& registrableDomain, WebsiteDataStore& store)
     : WebProcessProxy { pool, &store, IsPrewarmed::No }
     , m_registrableDomain(registrableDomain)
+    , m_serviceWorkerPageProxyID(WebPageProxyIdentifier::generate())
     , m_serviceWorkerPageID(PageIdentifier::generate())
 {
 }
@@ -77,7 +78,7 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, Optional<PAL::SessionID> initialSessionID)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerPageID, store, initialSessionID.valueOr(PAL::SessionID::defaultSessionID()) }, 0);
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerPageProxyID, m_serviceWorkerPageID, store, initialSessionID.valueOr(PAL::SessionID::defaultSessionID()) }, 0);
 }
 
 void ServiceWorkerProcessProxy::setUserAgent(const String& userAgent)

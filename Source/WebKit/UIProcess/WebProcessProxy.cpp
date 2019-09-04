@@ -349,17 +349,6 @@ WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
     return globalPageMap().get(pageID);
 }
 
-// FIXME: Ideally, we'd get rid of all the callers and drop this function.
-WebPageProxy* WebProcessProxy::webPageFromCorePageIdentifier(WebCore::PageIdentifier webPageID)
-{
-    for (auto& page : globalPageMap().values()) {
-        if (page->webPageID() == webPageID)
-            return page;
-    }
-
-    return nullptr;
-}
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
 {

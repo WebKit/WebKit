@@ -29,7 +29,9 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebSWContextManagerConnectionMessages.h"
+#include <WebCore/EmptyFrameLoaderClient.h>
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -51,7 +53,7 @@ struct WebPreferencesStore;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
 public:
-    WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&);
+    WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&);
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -98,6 +100,7 @@ private:
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;
     uint64_t m_pageGroupID;
+    WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
     uint64_t m_previousServiceWorkerID { 0 };
 
@@ -113,6 +116,39 @@ private:
     bool m_isThrottleable { true };
 };
 
+class ServiceWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {
+public:
+    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection&, PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+
+    void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
+    
+    WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
+    Optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
+    Optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
+
+private:
+    Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) final;
+
+    void frameLoaderDestroyed() final { m_connection.removeFrameLoaderClient(*this); }
+
+    bool shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long) final { return true; }
+    bool isServiceWorkerFrameLoaderClient() const final { return true; }
+
+    PAL::SessionID sessionID() const final { return m_sessionID; }
+    String userAgent(const URL&) final { return m_userAgent; }
+
+    WebSWContextManagerConnection& m_connection;
+    PAL::SessionID m_sessionID;
+    WebPageProxyIdentifier m_webPageProxyID;
+    WebCore::PageIdentifier m_pageID;
+    WebCore::FrameIdentifier m_frameID;
+    String m_userAgent;
+};
+
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ServiceWorkerFrameLoaderClient)
+    static bool isType(const WebCore::FrameLoaderClient& frameLoaderClient) { return frameLoaderClient.isServiceWorkerFrameLoaderClient(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SERVICE_WORKER)

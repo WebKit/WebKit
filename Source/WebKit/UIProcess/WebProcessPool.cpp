@@ -2208,12 +2208,12 @@ void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& 
 #endif
 }
 
-bool WebProcessPool::isServiceWorkerPageID(PageIdentifier pageID) const
+bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
 {
 #if ENABLE(SERVICE_WORKER)
     // FIXME: This is inefficient.
     for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-        if (serviceWorkerProcess->pageID() == pageID)
+        if (serviceWorkerProcess->webPageProxyID() == pageID)
             return true;
     }
 #endif
@@ -2496,12 +2496,12 @@ void WebProcessPool::clearCurrentModifierStateForTesting()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, PageIdentifier pageID)
+void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID)
 {
     if (!m_networkProcess)
         return;
 
-    m_networkProcess->didCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, pageID);
+    m_networkProcess->didCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, webPageProxyID, webPageID);
 }
 #endif
 

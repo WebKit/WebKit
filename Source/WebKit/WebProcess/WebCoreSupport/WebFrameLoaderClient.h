@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameLoaderClient.h>
 
 namespace PAL {
@@ -51,6 +52,7 @@ public:
 
     void applyToDocumentLoader(WebsitePoliciesData&&);
 
+    Optional<WebPageProxyIdentifier> webPageProxyID() const;
     Optional<WebCore::PageIdentifier> pageID() const final;
     Optional<WebCore::FrameIdentifier> frameID() const final;
     PAL::SessionID sessionID() const final;

@@ -52,7 +52,7 @@ public:
         String referrer;
         String userAgent;
         PAL::SessionID sessionID;
-        WebCore::PageIdentifier pageID;
+        WebPageProxyIdentifier webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;

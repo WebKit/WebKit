@@ -158,6 +158,10 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     auto& frameLoaderClient = resourceLoader.frameLoader()->client();
 
     WebResourceLoader::TrackingParameters trackingParameters;
+    if (auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoaderClient))
+        trackingParameters.webPageProxyID = webFrameLoaderClient->webPageProxyID().valueOr(WebPageProxyIdentifier { });
+    else if (is<ServiceWorkerFrameLoaderClient>(frameLoaderClient))
+        trackingParameters.webPageProxyID = downcast<ServiceWorkerFrameLoaderClient>(frameLoaderClient).webPageProxyID();
     trackingParameters.pageID = frameLoaderClient.pageID().valueOr(PageIdentifier { });
     trackingParameters.frameID = frameLoaderClient.frameID().valueOr(FrameIdentifier { });
     trackingParameters.resourceID = identifier;
@@ -268,6 +272,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     NetworkResourceLoadParameters loadParameters { sessionID };
     loadParameters.identifier = identifier;
+    loadParameters.webPageProxyID = trackingParameters.webPageProxyID;
     loadParameters.webPageID = trackingParameters.pageID;
     loadParameters.webFrameID = trackingParameters.frameID;
     loadParameters.parentPID = presentingApplicationPID();
@@ -521,6 +526,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     WebPage* webPage = webFrame ? webFrame->page() : nullptr;
 
+    auto webPageProxyID = webPage ? webPage->webPageProxyIdentifier() : WebPageProxyIdentifier { };
     auto pageID = webPage ? webPage->identifier() : PageIdentifier { };
     auto frameID = webFrame ? webFrame->frameID() : FrameIdentifier { };
     auto sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
@@ -542,6 +548,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
 
     NetworkResourceLoadParameters loadParameters { sessionID };
     loadParameters.identifier = resourceLoadIdentifier;
+    loadParameters.webPageProxyID = webPageProxyID;
     loadParameters.webPageID = pageID;
     loadParameters.webFrameID = frameID;
     loadParameters.parentPID = presentingApplicationPID();
@@ -670,6 +677,7 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 
     NetworkResourceLoadParameters parameters { webPage->sessionID() };
     parameters.request = ResourceRequest { url };
+    parameters.webPageProxyID = webPage->webPageProxyIdentifier();
     parameters.webPageID = webPage->identifier();
     parameters.webFrameID = webFrame->frameID();
     parameters.parentPID = presentingApplicationPID();

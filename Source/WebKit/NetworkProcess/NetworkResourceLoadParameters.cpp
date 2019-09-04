@@ -35,6 +35,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << sessionID;
     encoder << identifier;
+    encoder << webPageProxyID;
     encoder << webPageID;
     encoder << webFrameID;
     encoder << parentPID;
@@ -118,6 +119,12 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
 
     if (!decoder.decode(result.identifier))
         return WTF::nullopt;
+        
+    Optional<WebPageProxyIdentifier> webPageProxyID;
+    decoder >> webPageProxyID;
+    if (!webPageProxyID)
+        return WTF::nullopt;
+    result.webPageProxyID = *webPageProxyID;
 
     Optional<PageIdentifier> webPageID;
     decoder >> webPageID;

@@ -112,6 +112,14 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
 {
 }
 
+Optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
+{
+    if (m_frame && m_frame->page())
+        return m_frame->page()->webPageProxyIdentifier();
+
+    return WTF::nullopt;
+}
+
 Optional<PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     if (m_frame && m_frame->page())
