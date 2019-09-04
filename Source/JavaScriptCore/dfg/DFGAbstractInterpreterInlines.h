@@ -3257,8 +3257,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetTypedArrayByteOffset: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
         if (view) {
-            setConstant(node, jsNumber(view->byteOffset()));
-            break;
+            Optional<unsigned> byteOffset = view->byteOffsetConcurrently();
+            if (byteOffset) {
+                setConstant(node, jsNumber(*byteOffset));
+                break;
+            }
         }
         setNonCellTypeForNode(node, SpecInt32Only);
         break;

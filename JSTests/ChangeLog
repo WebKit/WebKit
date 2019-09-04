@@ -1,3 +1,13 @@
+2019-09-03  Mark Lam  <mark.lam@apple.com>
+
+        Assertions in JSArrayBufferView::byteOffset() are only valid for the mutator thread.
+        https://bugs.webkit.org/show_bug.cgi?id=201309
+        <rdar://problem/54832121>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/JSArrayBufferView-byteOffset-is-racy-from-compiler-thread.js: Added.
+
 2019-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Generate new.target register only when it is used

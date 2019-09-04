@@ -43,8 +43,12 @@ inline bool JSArrayBufferView::isShared()
     }
 }
 
-inline ArrayBuffer* JSArrayBufferView::possiblySharedBuffer()
+template<JSArrayBufferView::Requester requester>
+inline ArrayBuffer* JSArrayBufferView::possiblySharedBufferImpl()
 {
+    if (requester == ConcurrentThread)
+        ASSERT(m_mode != FastTypedArray && m_mode != OversizeTypedArray);
+
     switch (m_mode) {
     case WastefulTypedArray:
         return existingBufferInButterfly();
@@ -56,6 +60,11 @@ inline ArrayBuffer* JSArrayBufferView::possiblySharedBuffer()
     }
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+inline ArrayBuffer* JSArrayBufferView::possiblySharedBuffer()
+{
+    return possiblySharedBufferImpl<Mutator>();
 }
 
 inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
@@ -71,20 +80,43 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
     return result;
 }
 
-inline unsigned JSArrayBufferView::byteOffset()
+template<JSArrayBufferView::Requester requester, typename ResultType>
+inline ResultType JSArrayBufferView::byteOffsetImpl()
 {
     if (!hasArrayBuffer())
         return 0;
-    
-    ArrayBuffer* buffer = possiblySharedBuffer();
-    ASSERT(!vector() == !buffer->data());
-    
+
+    if (requester == ConcurrentThread)
+        WTF::loadLoadFence();
+
+    ArrayBuffer* buffer = possiblySharedBufferImpl<requester>();
+    if (requester == Mutator) {
+        ASSERT(!isCompilationThread());
+        ASSERT(!vector() == !buffer->data());
+    }
+
     ptrdiff_t delta =
         bitwise_cast<uint8_t*>(vector()) - static_cast<uint8_t*>(buffer->data());
-    
+
     unsigned result = static_cast<unsigned>(delta);
-    ASSERT(static_cast<ptrdiff_t>(result) == delta);
+    if (requester == Mutator)
+        ASSERT(static_cast<ptrdiff_t>(result) == delta);
+    else {
+        if (static_cast<ptrdiff_t>(result) != delta)
+            return { };
+    }
+
     return result;
+}
+
+inline unsigned JSArrayBufferView::byteOffset()
+{
+    return byteOffsetImpl<Mutator, unsigned>();
+}
+
+inline Optional<unsigned> JSArrayBufferView::byteOffsetConcurrently()
+{
+    return byteOffsetImpl<ConcurrentThread, Optional<unsigned>>();
 }
 
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM& vm, JSValue value)
