@@ -162,8 +162,10 @@ public:
         emitInst(0x00000000);
     }
     
-    template <typename CopyFunction>
-    static void fillNops(void* base, size_t size, CopyFunction copy)
+    using CopyFunction = void*(&)(void*, const void*, size_t);
+
+    template <CopyFunction copy>
+    static void fillNops(void* base, size_t size)
     {
         UNUSED_PARAM(copy);
         RELEASE_ASSERT(!(size % sizeof(int32_t)));

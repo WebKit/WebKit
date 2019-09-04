@@ -122,7 +122,7 @@ extern JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy;
 
 #endif // ENABLE(SEPARATED_WX_HEAP)
 
-static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
     static constexpr size_t instructionSize = sizeof(unsigned);

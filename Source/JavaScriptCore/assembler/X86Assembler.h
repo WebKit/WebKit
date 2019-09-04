@@ -3952,8 +3952,10 @@ public:
         m_formatter.oneByteOp(OP_NOP);
     }
 
-    template <typename CopyFunction>
-    static void fillNops(void* base, size_t size, CopyFunction copy)
+    using CopyFunction = void*(&)(void*, const void*, size_t);
+
+    template <CopyFunction copy>
+    static void fillNops(void* base, size_t size)
     {
         UNUSED_PARAM(copy);
 #if CPU(X86_64)

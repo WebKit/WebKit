@@ -959,6 +959,14 @@ public:
         m_linkTasks.append(createSharedTask<void(LinkBuffer&)>(functor));
     }
 
+#if COMPILER(GCC)
+    // Workaround for GCC demanding that memcpy "must be the name of a function with external linkage".
+    static void* memcpy(void* dst, const void* src, size_t size)
+    {
+        return std::memcpy(dst, src, size);
+    }
+#endif
+
     void emitNops(size_t memoryToFillWithNopsInBytes)
     {
 #if CPU(ARM64)
@@ -970,7 +978,7 @@ public:
         size_t startCodeSize = buffer.codeSize();
         size_t targetCodeSize = startCodeSize + memoryToFillWithNopsInBytes;
         buffer.ensureSpace(memoryToFillWithNopsInBytes);
-        AssemblerType::fillNops(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes, memcpy);
+        AssemblerType::template fillNops<memcpy>(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes);
         buffer.setCodeSize(targetCodeSize);
 #endif
     }
