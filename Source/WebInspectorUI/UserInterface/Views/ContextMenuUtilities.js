@@ -204,114 +204,116 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
 
     contextMenu.appendSeparator();
 
-    if (domNode.isCustomElement()) {
-        contextMenu.appendItem(WI.UIString("Jump to Definition"), () => {
-            function didGetFunctionDetails(error, response) {
-                if (error)
-                    return;
-
-                let location = response.location;
-                let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, WI.mainTarget);
-                if (!sourceCode)
-                    return;
-
-                let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
-                WI.showSourceCodeLocation(sourceCodeLocation, {
-                    ignoreNetworkTab: true,
-                    ignoreSearchTab: true,
-                });
-            }
-
-            WI.RemoteObject.resolveNode(domNode).then((remoteObject) => {
-                remoteObject.getProperty("constructor", (error, result, wasThrown) => {
+    if (!options.disallowEditing) {
+        if (domNode.isCustomElement()) {
+            contextMenu.appendItem(WI.UIString("Jump to Definition"), () => {
+                function didGetFunctionDetails(error, response) {
                     if (error)
                         return;
-                    if (result.type === "function")
-                        remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
-                    result.release();
-                });
-                remoteObject.release();
-            });
-        });
 
-        contextMenu.appendSeparator();
-    }
+                    let location = response.location;
+                    let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, WI.mainTarget);
+                    if (!sourceCode)
+                        return;
 
-    if (WI.cssManager.canForcePseudoClasses() && domNode.attached) {
-        contextMenu.appendSeparator();
-
-        let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes", "A context menu item to force (override) a DOM node's pseudo-classes"));
-
-        let enabledPseudoClasses = domNode.enabledPseudoClasses;
-        WI.CSSManager.ForceablePseudoClasses.forEach((pseudoClass) => {
-            let enabled = enabledPseudoClasses.includes(pseudoClass);
-            pseudoSubMenu.appendCheckboxItem(pseudoClass.capitalize(), () => {
-                domNode.setPseudoClassEnabled(pseudoClass, !enabled);
-            }, enabled);
-        });
-    }
-
-    if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && attached) {
-        contextMenu.appendSeparator();
-
-        WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, domNode, options);
-    }
-
-    contextMenu.appendSeparator();
-
-    if (!options.excludeLogElement && !domNode.isInUserAgentShadowTree() && !domNode.isPseudoElement()) {
-        let label = isElement ? WI.UIString("Log Element", "Log (print) DOM element to Console") : WI.UIString("Log Node", "Log (print) DOM node to Console");
-        contextMenu.appendItem(label, () => {
-            WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
-                let text = isElement ? WI.UIString("Selected Element", "Selected DOM element") : WI.UIString("Selected Node", "Selected DOM node");
-                const addSpecialUserLogClass = true;
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
-            });
-        });
-    }
-
-    if (!options.excludeRevealElement && window.DOMAgent && attached) {
-        contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
-            WI.domManager.inspectElement(domNode.id);
-        });
-    }
-
-    if (WI.settings.experimentalEnableLayersTab.value && window.LayerTreeAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
-            WI.showLayersTab({nodeToSelect: domNode});
-        });
-    }
-
-    if (window.PageAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
-            PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
-                if (error) {
-                    const target = WI.mainTarget;
-                    const source = WI.ConsoleMessage.MessageSource.Other;
-                    const level = WI.ConsoleMessage.MessageLevel.Error;
-                    let consoleMessage = new WI.ConsoleMessage(target, source, level, error);
-                    consoleMessage.shouldRevealConsole = true;
-
-                    WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
-                    return;
+                    let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
+                    WI.showSourceCodeLocation(sourceCodeLocation, {
+                        ignoreNetworkTab: true,
+                        ignoreSearchTab: true,
+                    });
                 }
 
-                WI.FileUtilities.save({
-                    url: WI.FileUtilities.inspectorURLForFilename(WI.FileUtilities.screenshotString() + ".png"),
-                    content: parseDataURL(dataURL).data,
-                    base64Encoded: true,
+                WI.RemoteObject.resolveNode(domNode).then((remoteObject) => {
+                    remoteObject.getProperty("constructor", (error, result, wasThrown) => {
+                        if (error)
+                            return;
+                        if (result.type === "function")
+                            remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
+                        result.release();
+                    });
+                    remoteObject.release();
                 });
             });
-        });
-    }
 
-    if (isElement && attached) {
-        contextMenu.appendItem(WI.UIString("Scroll into View", "Scroll selected DOM node into view on the inspected web page"), () => {
-            domNode.scrollIntoView();
-        });
-    }
+            contextMenu.appendSeparator();
+        }
 
-    contextMenu.appendSeparator();
+        if (WI.cssManager.canForcePseudoClasses() && domNode.attached) {
+            contextMenu.appendSeparator();
+
+            let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes", "A context menu item to force (override) a DOM node's pseudo-classes"));
+
+            let enabledPseudoClasses = domNode.enabledPseudoClasses;
+            WI.CSSManager.ForceablePseudoClasses.forEach((pseudoClass) => {
+                let enabled = enabledPseudoClasses.includes(pseudoClass);
+                pseudoSubMenu.appendCheckboxItem(pseudoClass.capitalize(), () => {
+                    domNode.setPseudoClassEnabled(pseudoClass, !enabled);
+                }, enabled);
+            });
+        }
+
+        if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && attached) {
+            contextMenu.appendSeparator();
+
+            WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, domNode, options);
+        }
+
+        contextMenu.appendSeparator();
+
+        if (!options.excludeLogElement && !domNode.isInUserAgentShadowTree() && !domNode.isPseudoElement()) {
+            let label = isElement ? WI.UIString("Log Element", "Log (print) DOM element to Console") : WI.UIString("Log Node", "Log (print) DOM node to Console");
+            contextMenu.appendItem(label, () => {
+                WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
+                    let text = isElement ? WI.UIString("Selected Element", "Selected DOM element") : WI.UIString("Selected Node", "Selected DOM node");
+                    const addSpecialUserLogClass = true;
+                    WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+                });
+            });
+        }
+
+        if (!options.excludeRevealElement && window.DOMAgent && attached) {
+            contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
+                WI.domManager.inspectElement(domNode.id);
+            });
+        }
+
+        if (WI.settings.experimentalEnableLayersTab.value && window.LayerTreeAgent && attached) {
+            contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
+                WI.showLayersTab({nodeToSelect: domNode});
+            });
+        }
+
+        if (window.PageAgent && attached) {
+            contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
+                PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
+                    if (error) {
+                        const target = WI.mainTarget;
+                        const source = WI.ConsoleMessage.MessageSource.Other;
+                        const level = WI.ConsoleMessage.MessageLevel.Error;
+                        let consoleMessage = new WI.ConsoleMessage(target, source, level, error);
+                        consoleMessage.shouldRevealConsole = true;
+
+                        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+                        return;
+                    }
+
+                    WI.FileUtilities.save({
+                        url: WI.FileUtilities.inspectorURLForFilename(WI.FileUtilities.screenshotString() + ".png"),
+                        content: parseDataURL(dataURL).data,
+                        base64Encoded: true,
+                    });
+                });
+            });
+        }
+
+        if (isElement && attached) {
+            contextMenu.appendItem(WI.UIString("Scroll into View", "Scroll selected DOM node into view on the inspected web page"), () => {
+                domNode.scrollIntoView();
+            });
+        }
+
+        contextMenu.appendSeparator();
+    }
 };
 
 WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, options = {})

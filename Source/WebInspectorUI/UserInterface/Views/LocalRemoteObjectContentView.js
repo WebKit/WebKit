@@ -23,41 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.JSONContentView = class JSONContentView extends WI.ContentView
+WI.LocalRemoteObjectContentView = class LocalRemoteObjectContentView extends WI.ContentView
 {
-    constructor(json, representedObject)
+    constructor(representedObject)
     {
-        console.assert(typeof json === "string" && json.isJSON());
-
         super(representedObject);
 
-        this._json = json;
         this._remoteObject = null;
         this._spinnerTimeout = undefined;
 
-        this.element.classList.add("json");
+        this.element.classList.add("local-remote-object");
     }
 
     // Protected
+
+    get expression()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    renderRemoteObject(remoteObject)
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
 
     initialLayout()
     {
         super.initialLayout();
 
-        const options = {
-            expression: "(" + this._json + ")",
+        let target = WI.assumingMainTarget();
+        let options = {
+            expression: "(" + this.expression + ")",
             doNotPauseOnExceptionsAndMuteConsole: true,
             generatePreview: true,
         };
-        RuntimeAgent.evaluate.invoke(options, (error, result, wasThrown) => {
+        target.RuntimeAgent.evaluate.invoke(options, (error, result, wasThrown) => {
             console.assert(!error);
             console.assert(!wasThrown);
 
             this._remoteObject = WI.RemoteObject.fromPayload(result);
-
-            let objectTree = new WI.ObjectTreeView(this._remoteObject);
-            objectTree.showOnlyJSON();
-            objectTree.expand();
 
             if (this._spinnerTimeout) {
                 clearTimeout(this._spinnerTimeout);
@@ -65,7 +69,8 @@ WI.JSONContentView = class JSONContentView extends WI.ContentView
             }
 
             this.element.removeChildren();
-            this.element.appendChild(objectTree.element);
+
+            this.renderRemoteObject(this._remoteObject);
         });
     }
 

@@ -23,7 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.json {
-    padding: 10px;
-    overflow: scroll;
-}
+WI.LocalJSONContentView = class LocalJSONContentView extends WI.LocalRemoteObjectContentView
+{
+    constructor(json, representedObject)
+    {
+        console.assert(typeof json === "string" && json.isJSON());
+
+        super(representedObject);
+
+        this._json = json;
+    }
+
+    // Protected
+
+    get expression()
+    {
+        return this._json;
+    }
+
+    renderRemoteObject(remoteObject)
+    {
+        let objectTree = new WI.ObjectTreeView(remoteObject);
+        objectTree.showOnlyJSON();
+        objectTree.expand();
+
+        this.element.appendChild(objectTree.element);
+    }
+};

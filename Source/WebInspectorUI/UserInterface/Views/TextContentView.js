@@ -25,9 +25,9 @@
 
 WI.TextContentView = class TextContentView extends WI.ContentView
 {
-    constructor(string, mimeType)
+    constructor(string, mimeType, representedObject)
     {
-        super(string);
+        super(representedObject || string);
 
         this.element.classList.add("text");
 

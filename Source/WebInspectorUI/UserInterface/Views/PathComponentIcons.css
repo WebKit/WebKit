@@ -75,6 +75,10 @@
     content: url(../Images/DOMNode.svg);
 }
 
+.object-icon .icon {
+    content: url(../Images/Object.svg);
+}
+
 .function-icon .icon {
     content: url(../Images/Function.svg);
 }

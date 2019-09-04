@@ -1,5 +1,93 @@
 2019-09-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: provide a way to view XML/HTML/SVG resource responses as a DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=201046
+        <rdar://problem/54446087>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WI.ResourceClusterContentView):
+        (WI.ResourceClusterContentView.prototype.showRequest):
+        (WI.ResourceClusterContentView.prototype.showResponse):
+        (WI.ResourceClusterContentView.prototype.get customRequestDOMContentView): Added.
+        (WI.ResourceClusterContentView.prototype.get customRequestJSONContentView): Added.
+        (WI.ResourceClusterContentView.prototype.get customResponseDOMContentView): Added.
+        (WI.ResourceClusterContentView.prototype.get customResponseJSONContentView): Added.
+        (WI.ResourceClusterContentView.prototype.get customResponseTextContentView): Added.
+        (WI.ResourceClusterContentView.prototype._createPathComponent): Added.
+        (WI.ResourceClusterContentView.prototype._canShowCustomRequestContentView):
+        (WI.ResourceClusterContentView.prototype._canShowCustomResponseContentView):
+        (WI.ResourceClusterContentView.prototype._contentViewForResourceType):
+        (WI.ResourceClusterContentView.prototype._pathComponentForContentView):
+        (WI.ResourceClusterContentView.prototype._identifierForContentView):
+        (WI.ResourceClusterContentView.prototype._showContentViewForIdentifier):
+        (WI.ResourceClusterContentView.prototype._resourceLoadingDidFinish):
+        (WI.ResourceClusterContentView.prototype._canUseDOMContentViewForContent): Added.
+        (WI.ResourceClusterContentView.prototype._normalizeMIMETypeForDOM): Added.
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomRequestContentViews): Added.
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomResponseContentViews): Added.
+        (WI.ResourceClusterContentView.createPathComponent): Deleted.
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomRequestContentView): Deleted.
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomResponseContentView): Deleted.
+        * UserInterface/Base/Main.js:
+        (WI.showResourceRequest):
+        * UserInterface/Views/PathComponentIcons.css:
+        (.object-icon .icon): Added.
+        * UserInterface/Main.html:
+        * UserInterface/Views/SVGImageResourceClusterContentView.js: Removed.
+        Reworked to allow more than one custom request/response content view at the same time. As
+        such, merge the `WI.SVGImageResourceClusterContentView` into this class.
+
+        * UserInterface/Views/LocalRemoteObjectContentView.js: Added.
+        (WI.LocalRemoteObjectContentView):
+        (WI.LocalRemoteObjectContentView.prototype.get expression):
+        (WI.LocalRemoteObjectContentView.prototype.renderRemoteObject):
+        (WI.LocalRemoteObjectContentView.prototype.initialLayout):
+        (WI.LocalRemoteObjectContentView.prototype.attached):
+        (WI.LocalRemoteObjectContentView.prototype.closed):
+        * UserInterface/Views/LocalRemoteObjectContentView.css: Added.
+        (.content-view.local-remote-object):
+        * UserInterface/Views/LocalDOMContentView.js: Added.
+        (WI.LocalDOMContentView):
+        (WI.LocalDOMContentView.prototype.get expression):
+        (WI.LocalDOMContentView.prototype.renderRemoteObject):
+        * UserInterface/Views/LocalJSONContentView.js: Added.
+        (WI.LocalJSONContentView):
+        (WI.LocalJSONContentView.prototype.get expression):
+        (WI.LocalJSONContentView.prototype.renderRemoteObject):
+        * UserInterface/Views/JSONContentView.js: Removed.
+        * UserInterface/Views/JSONContentView.css: Removed.
+        Rework `WI.JSONContentView` into a more generic set of classes that render an object we send
+        to the inspected page for instrumentation.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        (WI.DOMTreeOutline.prototype._onmousemove):
+        (WI.DOMTreeOutline.prototype._onmouseout):
+        (WI.DOMTreeOutline.prototype._ondragstart):
+        (WI.DOMTreeOutline.prototype._ondragover):
+        (WI.DOMTreeOutline.prototype._ondragleave):
+        (WI.DOMTreeOutline.prototype._ondragend):
+        (WI.DOMTreeOutline.prototype._hideElements):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        Ensure that interactions that would modify the DOM tree only happen when editable. If the
+        `WI.DOMTreeOutline` represents a "local" `WI.DOMNode` (one that's been sent to the inspected
+        page for instrumentation, and shouldn't be part of the main #document), don't allow any
+        editing actions to be performed.
+
+        * UserInterface/Views/TextContentView.js:
+        (WI.TextContentView):
+        Allow a `representedObject` object to be provided and used instead of the given `string`.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/Object.svg: Added.
+
+2019-09-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: implement blackboxing of script resources
         https://bugs.webkit.org/show_bug.cgi?id=17240
         <rdar://problem/5732847>
