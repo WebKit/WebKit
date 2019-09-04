@@ -6023,6 +6023,15 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref<WebPageProxy> protect(*this);
 
+    // If the page is controlled by automation, entering a nested run loop while the menu is open
+    // can hang the page / WebDriver test. Pretend to show and immediately dismiss the context menu.
+    if (auto* automationSession = process().processPool().automationSession()) {
+        if (m_controlledByAutomation && automationSession->isSimulatingUserInteraction()) {
+            m_process->send(Messages::WebPage::ContextMenuHidden(), m_webPageID);
+            return;
+        }
+    }
+
     // Discard any enqueued mouse events that have been delivered to the UIProcess whilst the WebProcess is still processing the
     // MouseDown event that triggered this ShowContextMenu message. This can happen if we take too long to enter the nested runloop.
     ASSERT(isProcessingMouseEvents());

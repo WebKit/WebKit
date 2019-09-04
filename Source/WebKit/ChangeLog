@@ -1,3 +1,25 @@
+2019-09-04  Brian Burg  <bburg@apple.com>
+
+        Selenium test 'interactions_tests.py::testContextClick' is hanging
+        https://bugs.webkit.org/show_bug.cgi?id=201161
+        <rdar://problem/54728541>
+
+        Reviewed by Chris Dumez.
+
+        A web page should not show native context menus if user interactions are being simulated for WebDriver.
+        Showing a native context menu spawns a nested run loop. Since there's no way to interact
+        with native UI via WebDriver, the test will hang until the context menu is manually dismissed.
+
+        To fix this, pretend to show the context menu in UIProcess and dismiss it immediately.
+        This is necessary to trigger oncontextmenu events appropriately and resume handling mouse events.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu): Hook into isControlledByAutomation here.
+        We could short circuit this on the WebProcess side, but the check would be more crude
+        and suppress context menus even if user interaction isn't being simulated. This would be
+        problematic for a user who wants to interrupt their test session and interact with it.
+        The main use case for this is right clicking on the test page and choose "Inspect".
+
 2019-09-04  Youenn Fablet  <youenn@apple.com>
 
         Abstract out WebSocketChannel message queue
