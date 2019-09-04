@@ -519,6 +519,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     fileapi/FileList.h
     fileapi/FileReaderLoader.h
     fileapi/FileReaderLoaderClient.h
+    fileapi/NetworkSendQueue.h
 
     history/BackForwardClient.h
     history/BackForwardController.h
