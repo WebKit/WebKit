@@ -1070,6 +1070,12 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         if (process.hasAssumedReadAccessToURL(resourceDirectoryURL))
             return;
 
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+        if (SandboxExtension::createHandleForReadByPid(resourceDirectoryURL.fileSystemPath(), process.processIdentifier(), sandboxExtensionHandle)) {
+            m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+            return;
+        }
+#endif
         if (SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
             m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
             return;
