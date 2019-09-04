@@ -294,10 +294,16 @@ static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
 static void bindX11(Vector<CString>& args)
 {
     const char* display = g_getenv("DISPLAY");
-    if (!display || display[0] != ':' || !g_ascii_isdigit(const_cast<char*>(display)[1]))
-        display = ":0";
-    GUniquePtr<char> x11File(g_strdup_printf("/tmp/.X11-unix/X%s", display + 1));
-    bindIfExists(args, x11File.get(), BindFlags::ReadWrite);
+    if (display && display[0] == ':' && g_ascii_isdigit(const_cast<char*>(display)[1])) {
+        const char* displayNumber = &display[1];
+        const char* displayNumberEnd = displayNumber;
+        while (g_ascii_isdigit(*displayNumberEnd))
+            displayNumberEnd++;
+
+        GUniquePtr<char> displayString(g_strndup(displayNumber, displayNumberEnd - displayNumber));
+        GUniquePtr<char> x11File(g_strdup_printf("/tmp/.X11-unix/X%s", displayString.get()));
+        bindIfExists(args, x11File.get(), BindFlags::ReadWrite);
+    }
 
     const char* xauth = g_getenv("XAUTHORITY");
     if (!xauth) {

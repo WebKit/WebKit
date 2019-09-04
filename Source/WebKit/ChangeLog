@@ -1,3 +1,15 @@
+2019-09-04  Patrick Griffis  <pgriffis@igalia.com>
+
+        [WPE][GTK] Fix sandbox parsing DISPLAY on X11
+        https://bugs.webkit.org/show_bug.cgi?id=201462
+
+        Reviewed by Michael Catanzaro.
+
+        On some setups the DISPLAY env var was incorrectly parsed.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindX11):
+
 2019-09-04  Brian Burg  <bburg@apple.com>
 
         Selenium test 'interactions_tests.py::testContextClick' is hanging
