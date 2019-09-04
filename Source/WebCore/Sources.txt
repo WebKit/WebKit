@@ -1338,6 +1338,8 @@ inspector/InspectorFrontendHost.cpp
 inspector/InspectorHistory.cpp
 inspector/InspectorInstrumentation.cpp
 inspector/InspectorInstrumentationCookie.cpp
+inspector/InspectorInstrumentationPublic.cpp
+inspector/InspectorInstrumentationWebKit.cpp
 inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorShaderProgram.cpp

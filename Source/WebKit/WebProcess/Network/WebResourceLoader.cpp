@@ -39,6 +39,8 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
+#include <WebCore/InspectorInstrumentationWebKit.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
@@ -139,6 +141,40 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
         };
     }
 
+    if (InspectorInstrumentationWebKit::shouldInterceptResponse(m_coreLoader->frame(), response)) {
+        unsigned long interceptedRequestIdentifier = m_coreLoader->identifier();
+        m_interceptController.beginInterceptingResponse(interceptedRequestIdentifier);
+        InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<SharedBuffer> overrideData) mutable {
+            if (!m_coreLoader || !m_coreLoader->identifier()) {
+                RELEASE_LOG_IF_ALLOWED("didReceiveResponse: not continuing intercept load because no coreLoader or no ID (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
+                m_interceptController.continueResponse(interceptedRequestIdentifier);
+                return;
+            }
+
+            m_coreLoader->didReceiveResponse(inspectorResponse, [this, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler), overrideData = WTFMove(overrideData)]() mutable {
+                if (policyDecisionCompletionHandler)
+                    policyDecisionCompletionHandler();
+
+                if (!m_coreLoader || !m_coreLoader->identifier()) {
+                    m_interceptController.continueResponse(interceptedRequestIdentifier);
+                    return;
+                }
+
+                RefPtr<WebCore::ResourceLoader> protectedCoreLoader = m_coreLoader;
+                if (!overrideData)
+                    m_interceptController.continueResponse(interceptedRequestIdentifier);
+                else {
+                    m_interceptController.interceptedResponse(interceptedRequestIdentifier);
+                    if (unsigned bufferSize = overrideData->size())
+                        protectedCoreLoader->didReceiveBuffer(overrideData.releaseNonNull(), bufferSize, DataPayloadWholeResource);
+                    WebCore::NetworkLoadMetrics emptyMetrics;
+                    protectedCoreLoader->didFinishLoading(emptyMetrics);
+                }
+            });
+        });
+        return;
+    }
+
     m_coreLoader->didReceiveResponse(response, WTFMove(policyDecisionCompletionHandler));
 }
 
@@ -146,6 +182,13 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
+
+    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
+        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), data, encodedDataLength]() mutable {
+            didReceiveData(data, encodedDataLength);
+        });
+        return;
+    }
 
     if (!m_numBytesReceived) {
         RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
@@ -160,6 +203,13 @@ void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkL
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", length = %zd)", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID, m_numBytesReceived);
 
+    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
+        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), networkLoadMetrics]() mutable {
+            didFinishResourceLoad(networkLoadMetrics);
+        });
+        return;
+    }
+
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Load should not be able to finish before we've validated the response");
     m_coreLoader->didFinishLoading(networkLoadMetrics);
 }
@@ -168,6 +218,13 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFailResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("didFailResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
+
+    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
+        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), error]() mutable {
+            didFailResourceLoad(error);
+        });
+        return;
+    }
 
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Load should not be able to finish before we've validated the response");
 

@@ -1370,6 +1370,7 @@
 		A55BA8261BA25CFD007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55BA8211BA25BB8007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp */; };
 		A55BA82B1BA38E61007CD33D /* WebInspectorUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8281BA38E1E007CD33D /* WebInspectorUtilities.h */; };
 		A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */; };
+		A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */ = {isa = PBXBuildFile; fileRef = A5860E70230F67DE00461AAE /* WebResourceInterceptController.h */; };
 		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
 		A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5C0F0AB2000658200536536 /* _WKInspectorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0AA2000656E00536536 /* _WKInspectorWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4111,6 +4112,8 @@
 		A55BA8281BA38E1E007CD33D /* WebInspectorUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUtilities.h; sourceTree = "<group>"; };
 		A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorFrontendAPIDispatcher.cpp; sourceTree = "<group>"; };
 		A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontendAPIDispatcher.h; sourceTree = "<group>"; };
+		A5860E6F230F67DE00461AAE /* WebResourceInterceptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceInterceptController.cpp; path = Network/WebResourceInterceptController.cpp; sourceTree = "<group>"; };
+		A5860E70230F67DE00461AAE /* WebResourceInterceptController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebResourceInterceptController.h; path = Network/WebResourceInterceptController.h; sourceTree = "<group>"; };
 		A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFileUploadPanel.h; path = ios/forms/WKFileUploadPanel.h; sourceTree = "<group>"; };
 		A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFileUploadPanel.mm; path = ios/forms/WKFileUploadPanel.mm; sourceTree = "<group>"; };
 		A5C0F0A52000654400536536 /* _WKNSWindowExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSWindowExtras.mm; sourceTree = "<group>"; };
@@ -6698,6 +6701,8 @@
 				51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */,
 				51ABF65616392F1500132A7A /* WebLoaderStrategy.cpp */,
 				51ABF65716392F1500132A7A /* WebLoaderStrategy.h */,
+				A5860E6F230F67DE00461AAE /* WebResourceInterceptController.cpp */,
+				A5860E70230F67DE00461AAE /* WebResourceInterceptController.h */,
 				510AFFB716542048001BA05E /* WebResourceLoader.cpp */,
 				510AFFB816542048001BA05E /* WebResourceLoader.h */,
 				510AFFCE16542CBD001BA05E /* WebResourceLoader.messages.in */,
@@ -10202,6 +10207,7 @@
 				0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */,
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
+				A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */,
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
 				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
 				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,

@@ -107,12 +107,8 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.Popover
         });
 
         this._codeMirror.addKeyMap({
-            "Enter": () => {
-                this.dismiss();
-            },
-            "Esc": () => {
-                this.dismiss();
-            },
+            "Enter": () => { this.dismiss(); },
+            "Esc": () => { this.dismiss(); },
         });
 
         this._updateEditor();

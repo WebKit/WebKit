@@ -248,8 +248,12 @@ WI.ContextMenu = class ContextMenu extends WI.ContextSubMenuItem
 
     _itemSelected(id)
     {
-        if (this._handlers[id])
-            this._handlers[id].call(this);
+        try {
+            if (this._handlers[id])
+                this._handlers[id].call(this);
+        } catch (e) {
+            WI.reportInternalError(e);
+        }
     }
 };
 

@@ -101,6 +101,9 @@ WI.ContentView = class ContentView extends WI.View
                 return WI.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
         }
 
+        if (representedObject instanceof WI.LocalResourceOverride)
+            return WI.ContentView.createFromRepresentedObject(representedObject.localResource);
+
         if (representedObject instanceof WI.DOMStorageObject)
             return new WI.DOMStorageContentView(representedObject, extraArguments);
 
@@ -252,6 +255,9 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.SourceCodeSearchMatchObject)
             return representedObject.sourceCode;
 
+        if (representedObject instanceof WI.LocalResourceOverride)
+            return representedObject.localResource;
+
         return representedObject;
     }
 
@@ -277,6 +283,8 @@ WI.ContentView = class ContentView extends WI.View
             return true;
         if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage)
             return representedObject.sourceCodeLocation;
+        if (representedObject instanceof WI.LocalResourceOverride)
+            return true;
         if (representedObject instanceof WI.DOMStorageObject)
             return true;
         if (representedObject instanceof WI.CookieStorageObject)

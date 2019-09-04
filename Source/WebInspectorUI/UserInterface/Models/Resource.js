@@ -178,13 +178,23 @@ WI.Resource = class Resource extends WI.SourceCode
         }
     }
 
-    static classNameForResource(resource)
+    static classNamesForResource(resource)
     {
+        let classes = [];
+
+        let isOverride = resource.isLocalResourceOverride;
+        let wasOverridden = resource.responseSource === WI.Resource.ResponseSource.InspectorOverride;
+        let shouldBeOverridden = resource.isLoading() && WI.networkManager.localResourceOverrideForURL(resource.url);
+        if (isOverride || wasOverridden || shouldBeOverridden)
+            classes.push("override");
+
         if (resource.type === WI.Resource.Type.Other) {
             if (resource.requestedByteRange)
-                return "resource-type-range";
-        }
-        return resource.type;
+                classes.push("resource-type-range");
+        } else
+            classes.push(resource.type)
+
+        return classes;
     }
 
     static displayNameForProtocol(protocol)
@@ -254,6 +264,8 @@ WI.Resource = class Resource extends WI.SourceCode
             return WI.Resource.ResponseSource.DiskCache;
         case NetworkAgent.ResponseSource.ServiceWorker:
             return WI.Resource.ResponseSource.ServiceWorker;
+        case NetworkAgent.ResponseSource.InspectorOverride:
+            return WI.Resource.ResponseSource.InspectorOverride;
         default:
             console.error("Unknown response source type", source);
             return WI.Resource.ResponseSource.Unknown;
@@ -357,6 +369,13 @@ WI.Resource = class Resource extends WI.SourceCode
         return this._type === Resource.Type.Script;
     }
 
+    get supportsScriptBlackboxing()
+    {
+        if (this.isLocalResourceOverride)
+            return false;
+        return super.supportsScriptBlackboxing;
+    }
+
     get displayName()
     {
         return WI.displayNameForURL(this._url, this.urlComponents);
@@ -421,6 +440,11 @@ WI.Resource = class Resource extends WI.SourceCode
     isMainResource()
     {
         return this._parentFrame ? this._parentFrame.mainResource === this : false;
+    }
+
+    get isLocalResourceOverride()
+    {
+        return false;
     }
 
     addInitiatedResource(resource)
@@ -1039,6 +1063,25 @@ WI.Resource = class Resource extends WI.SourceCode
         cookie[WI.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 
+    async createLocalResourceOverride(initialContent)
+    {
+        console.assert(!this.isLocalResourceOverride)
+        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+
+        let {rawContent, rawBase64Encoded} = await this.requestContent();
+        let content = initialContent !== undefined ? initialContent : rawContent;
+
+        return WI.LocalResourceOverride.create({
+            url: this.url,
+            mimeType: this.mimeType,
+            content,
+            base64Encoded: rawBase64Encoded,
+            statusCode: this.statusCode,
+            statusText: this.statusText,
+            headers: this.responseHeaders,
+        });
+    }
+
     generateCURLCommand()
     {
         function escapeStringPosix(str) {
@@ -1190,6 +1233,7 @@ WI.Resource.ResponseSource = {
     MemoryCache: Symbol("memory-cache"),
     DiskCache: Symbol("disk-cache"),
     ServiceWorker: Symbol("service-worker"),
+    InspectorOverride: Symbol("inspector-override"),
 };
 
 WI.Resource.NetworkPriority = {
@@ -1209,8 +1253,9 @@ WI.settings.resourceGroupingMode = new WI.Setting("resource-grouping-mode", WI.R
 WI.Resource._mimeTypeMap = {
     "text/html": WI.Resource.Type.Document,
     "text/xml": WI.Resource.Type.Document,
-    "text/plain": WI.Resource.Type.Document,
     "application/xhtml+xml": WI.Resource.Type.Document,
+
+    "text/plain": WI.Resource.Type.Other,
 
     "text/css": WI.Resource.Type.StyleSheet,
     "text/xsl": WI.Resource.Type.StyleSheet,

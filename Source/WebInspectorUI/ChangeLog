@@ -1,3 +1,308 @@
+2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
+        https://bugs.webkit.org/show_bug.cgi?id=201262
+        <rdar://problem/13108764>
+
+        Reviewed by Devin Rousso.
+
+        This adds a new "Local Overrides" section to the Sources tab sidebar
+        which will allow users to provide their own resource content for text
+        resources. Users can clone a resource, and provide their own content
+        (by editing in Web Inspector) and new requests for those particular
+        URLs will get the substitute content.
+
+        Overrides are based on a particular URL (ignoring fragment). They
+        can override: status code, status text, response headers, content,
+        and MIME Type (Content-Type).
+
+        * Tools/CodeMirrorModes/index.html: Added.
+        * Tools/CodeMirrorModes/styles.css: Added.
+        Debug tool for CodeMirror editors and our custom CodeMirror modes.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * Localizations/en.lproj/localizedStrings.js:
+        New files and strings.
+
+        * UserInterface/Base/HTTPUtilities.js: Added.
+        (WI.httpStatusTextForStatusCode):
+        Translate between typical status codes and status text.
+
+        * UserInterface/Base/ObjectStore.js:
+        (WI.ObjectStore._open):
+        New persistent store for local resource overrides.
+
+        * UserInterface/Base/Main.js:
+        (WI.showLocalResourceOverride):
+        Convenience for showing an override file.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseURL):
+        Avoid uncaught exceptions with the URL constructor for common WebKit internal sourceURL strings.
+        
+        (WI.urlWithoutFragment):
+        Strip a fragment from a URL.
+
+        * UserInterface/Controllers/HARBuilder.js:
+        (WI.HARBuilder.fetchType):
+        (WI.HARBuilder.responseSourceFromHARFetchType):
+        Handle new custom response types.
+
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WI.NetworkObserver.prototype.responseIntercepted):
+        (WI.NetworkObserver):
+        New events.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager):
+        (WI.NetworkManager.supportsLocalResourceOverrides):
+        (WI.NetworkManager.prototype.initializeTarget):
+        (WI.NetworkManager.prototype.get localResourceOverrides):
+        (WI.NetworkManager.prototype.get interceptionEnabled):
+        (WI.NetworkManager.prototype.set interceptionEnabled):
+        (WI.NetworkManager.prototype.addLocalResourceOverride):
+        (WI.NetworkManager.prototype.removeLocalResourceOverride):
+        (WI.NetworkManager.prototype.localResourceOverrideForURL):
+        (WI.NetworkManager.prototype.canBeOverridden):
+        (WI.NetworkManager.prototype.responseIntercepted):
+        (WI.NetworkManager.prototype._handleResourceContentDidChange):
+        (WI.NetworkManager.prototype._persistLocalResourceOverrideSoonAfterContentChange):
+        (WI.NetworkManager.prototype._saveLocalResourceOverrides):
+        (WI.NetworkManager.prototype._extraDomainsActivated):
+        (WI.NetworkManager.prototype.localResourceForURL): Deleted.
+        Handle saving and restoring local resource overrides.
+        Handle responding to a `responseIntercepted` Network protocol event.
+
+        * UserInterface/Models/LocalResource.js:
+        (WI.LocalResource.fromJSON):
+        (WI.LocalResource.prototype.toJSON):
+        (WI.LocalResource.prototype.get localContent):
+        (WI.LocalResource.prototype.get localContentIsBase64Encoded):
+        (WI.LocalResource.prototype.isLocalResourceOverride):
+        (WI.LocalResource.prototype.updateOverrideContent):
+        Allow a LocalResource to identify itself as an "override".
+
+        * UserInterface/Models/LocalResourceOverride.js: Added.
+        (WI.LocalResourceOverride.prototype.create):
+        (WI.LocalResourceOverride.fromJSON):
+        (WI.LocalResourceOverride.prototype.toJSON):
+        (WI.LocalResourceOverride.prototype.get url):
+        (WI.LocalResourceOverride.prototype.get localResource):
+        (WI.LocalResourceOverride.prototype.get disabled):
+        (WI.LocalResourceOverride.prototype.set disabled):
+        (WI.LocalResourceOverride.prototype.saveIdentityToCookie):
+        (WI.LocalResourceOverride):
+        Model object for a LocalResourceOverride. This has LocalResource content
+        and an enabled/disabled state.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.classNamesForResource):
+        (WI.Resource.responseSourceFromPayload):
+        (WI.Resource.prototype.isLocalResourceOverride):
+        (WI.Resource.prototype.async.createLocalResourceOverride):
+        (WI.Resource.classNameForResource): Deleted.
+        Convenience functions and icon updates.
+
+        * UserInterface/Views/SourcesTabContentView.js:
+        (WI.SourcesTabContentView.prototype.canShowRepresentedObject):
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        (WI.ContentView.isViewable):
+        Handle new represented object type.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WI.SourcesNavigationSidebarPanel.prototype.willDismissPopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissLocalOverridePopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissEventBreakpointPopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissURLBreakpointPopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._addLocalResourceOverride):
+        (WI.SourcesNavigationSidebarPanel.prototype._removeLocalResourceOverride):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleLocalResourceOverrideAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleLocalResourceOverrideRemoved):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .warning-banner):
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container, .local-overrides)):
+        (.sidebar > .panel.navigation.sources > .content > .local-overrides):
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container)): Deleted.
+        Hide and show Local Overrides section.
+
+        * UserInterface/Views/LocalResourceOverrideTreeElement.css:
+        (.item.resource.override .status > div):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js: Added.
+        (WI.LocalResourceOverrideTreeElement):
+        (WI.LocalResourceOverrideTreeElement.prototype.canSelectOnMouseDown):
+        (WI.LocalResourceOverrideTreeElement.prototype.populateContextMenu):
+        (WI.LocalResourceOverrideTreeElement.prototype.willDismissPopover):
+        TreeElement for a Local Resource Override.
+
+        * UserInterface/Views/CodeMirrorLocalOverrideURLMode.css:
+        (.cm-s-default .cm-local-override-url-bad-scheme):
+        (.cm-s-default .cm-local-override-url-fragment):
+        * UserInterface/Views/CodeMirrorLocalOverrideURLMode.js: Added.
+        (tokenBase):
+        (return.startState):
+        (return.token):
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObject):
+
+        * UserInterface/Views/ContextMenu.js:
+        (WI.ContextMenu.prototype._itemSelected):
+        (WI.ContextMenu):
+        Better debugging for exceptions in context menu handlers.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        (WI.appendContextMenuItemsForURL):
+        Context menu items for Local Resource Overrides.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.startEditingNode):
+        (WI.DataGrid.prototype._startEditingNodeAtColumnIndex):
+        (WI.DataGrid.prototype._startEditing):
+        (WI.DataGrid.prototype._contextMenuInDataTable):
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode):
+        (WI.DataGridNode.prototype.get editable):
+        (WI.DataGridNode.prototype.set editable):
+        Improve DataGrid editing functionality.
+        Allow a node to not be editable.
+        Allow adding a new node and starting to edit in one action.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype.treeElementForRepresentedObject):
+        Do not provide overrides in the Debugger tab.
+
+        * UserInterface/Views/LocalResourceOverrideLabelView.css:
+        (.local-resource-override-label-view):
+        (.local-resource-override-label-view > div):
+        (.local-resource-override-label-view > div > .label):
+        (.local-resource-override-label-view > div > .url):
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/LocalResourceOverrideLabelView.js:
+        (WI.LocalResourceOverrideLabelView):
+        (WI.LocalResourceOverrideLabelView.prototype.initialLayout):
+        * UserInterface/Views/LocalResourceOverridePopover.css: Added.
+        (.popover .local-resource-override-popover-content):
+        (.popover .local-resource-override-popover-content > label.toggle):
+        (.popover .local-resource-override-popover-content > table):
+        (.popover .local-resource-override-popover-content > table > tr > th):
+        (.popover .local-resource-override-popover-content > table > tr > td):
+        (.popover .local-resource-override-popover-content .editor):
+        (.popover .local-resource-override-popover-content .editor > .CodeMirror):
+        (.popover .local-resource-override-popover-content .editor.url):
+        (.popover .local-resource-override-popover-content .editor.mime):
+        (.popover .local-resource-override-popover-content .editor.status):
+        (.popover .local-resource-override-popover-content .editor.status-text):
+        (.popover .local-resource-override-popover-content .add-header):
+        (@media (prefers-color-scheme: dark)):
+        New banner view for a local resource override itself.
+        Shows the URL being overriden.
+
+        * UserInterface/Views/LocalResourceOverrideWarningView.css:
+        (.local-resource-override-warning-view):
+        (.local-resource-override-warning-view[hidden]):
+        (.local-resource-override-warning-view > div):
+        (.local-resource-override-warning-view > div > button):
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/LocalResourceOverrideWarningView.js: Added.
+        (WI.LocalResourceOverrideWarningView):
+        (WI.LocalResourceOverrideWarningView.prototype.attached):
+        (WI.LocalResourceOverrideWarningView.prototype.detached):
+        (WI.LocalResourceOverrideWarningView.prototype._updateContent):
+        (WI.LocalResourceOverrideWarningView.prototype._handleLocalResourceOverrideChanged):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.pruneStaleResourceTreeElements):
+        New banner view for a resource that has been overridden.
+        Allows jumping to the override itself.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js: Added.
+        (WI.LocalResourceOverridePopover):
+        (WI.LocalResourceOverridePopover.prototype.get serializedData):
+        (WI.LocalResourceOverridePopover.prototype.show.addDataGridNodeForHeader):
+        (WI.LocalResourceOverridePopover.prototype.show):
+        (WI.LocalResourceOverridePopover.prototype._createEditor):
+        (WI.LocalResourceOverridePopover.prototype._defaultURL):
+        (WI.LocalResourceOverridePopover.prototype._presentOverTargetElement):
+        New popover for creating or editing a Local Resource Override.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        Consider searching overrides.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search.changed > .banner):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .warning-banner):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-warning-level):
+        Use a new variable for a common warning color.
+
+        * UserInterface/Images/NavigationItemNetworkOverride.svg: Added.
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.canBeFormatted):
+        (WI.SourceCodeTextEditor.prototype.get _supportsDebugging):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .warning-banner):
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container, .local-overrides)):
+        (.sidebar > .panel.navigation.sources > .content > .local-overrides):
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container)): Deleted.
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor):
+        * UserInterface/Views/TextResourceContentView.css:
+        (.content-view.resource.text):
+        (.content-view.resource.text > .text-editor):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        (WI.TextResourceContentView.prototype.get navigationItems):
+        (WI.TextResourceContentView.prototype.closed):
+        (WI.TextResourceContentView.prototype._contentWillPopulate):
+        (WI.TextResourceContentView.prototype._contentDidPopulate):
+        (WI.TextResourceContentView.prototype.async._handleCreateLocalResourceOverride):
+        (WI.TextResourceContentView.prototype._handleRemoveLocalResourceOverride):
+        (WI.TextResourceContentView.prototype._handleLocalResourceOverrideChanged):
+        (WI.TextResourceContentView.prototype._textEditorContentDidChange):
+        (WI.TextResourceContentView.prototype._shouldBeEditable):
+        Allow Text resources to create a local resource override.
+        Support for Image resources will come separately.
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._responseSourceDisplayString):
+        Handle new response type.
+
+        * UserInterface/Controllers/CSSManager.js:
+        Avoid extra handling for Local Resource Overrides.
+
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.override .icon):
+        * UserInterface/Views/ResourceSizesContentView.js:
+        (WI.ResourceSizesContentView.prototype.initialLayout):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype.iconClassNames):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype._updateResource):
+        (WI.ResourceTreeElement.prototype._updateIcon):
+        (WI.ResourceTreeElement.prototype._responseReceived):
+        (WI.ResourceTreeElement):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WI.TimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._populateTransferSizeCell):
+        (WI.NetworkTableContentView.prototype._generateSortComparator):
+        Better Resource icons all over for overrides.
+
+        * UserInterface/Views/URLBreakpointPopover.js:
+        (WI.URLBreakpointPopover.prototype._createEditor):
+        Code cleanup.
+
 2019-09-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to view XML/HTML/SVG resource responses as a DOM tree

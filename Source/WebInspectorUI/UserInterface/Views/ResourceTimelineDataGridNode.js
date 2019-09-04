@@ -162,7 +162,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
 
     iconClassNames()
     {
-        return [WI.ResourceTreeElement.ResourceIconStyleClassName, this.resource.type];
+        return [WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(this.resource)];
     }
 
     appendContextMenuItems(contextMenu)

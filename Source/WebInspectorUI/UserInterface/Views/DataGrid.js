@@ -389,6 +389,15 @@ WI.DataGrid = class DataGrid extends WI.View
         }
     }
 
+    startEditingNode(node)
+    {
+        console.assert(this._editCallback);
+        if (this._editing || this._editingNode)
+            return;
+
+        this._startEditingNodeAtColumnIndex(node, 0);
+    }
+
     _updateScrollListeners()
     {
         if (this._inline || this._variableHeightRows) {
@@ -524,16 +533,21 @@ WI.DataGrid = class DataGrid extends WI.View
 
         var element = this._editingNode.element.children[columnIndex];
         WI.startEditing(element, this._startEditingConfig(element));
+
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     }
 
     _startEditing(target)
     {
-        var element = target.closest("td");
+        let element = target.closest("td");
         if (!element)
             return;
 
-        this._editingNode = this.dataGridNodeFromNode(target);
+        let node = this.dataGridNodeFromNode(target);
+        if (!node.editable)
+            return;
+
+        this._editingNode = node;
         if (!this._editingNode) {
             if (!this.placeholderNode)
                 return;
@@ -1651,7 +1665,7 @@ WI.DataGrid = class DataGrid extends WI.View
                 if (this.dataGrid._editCallback) {
                     if (gridNode === this.placeholderNode)
                         contextMenu.appendItem(WI.UIString("Add New"), this._startEditing.bind(this, event.target));
-                    else {
+                    else if (gridNode.editable) {
                         let element = event.target.closest("td");
                         let columnIdentifier = element.__columnIdentifier;
                         let columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
@@ -1659,7 +1673,7 @@ WI.DataGrid = class DataGrid extends WI.View
                     }
                 }
 
-                if (this.dataGrid._deleteCallback && gridNode !== this.placeholderNode)
+                if (this.dataGrid._deleteCallback && gridNode !== this.placeholderNode && gridNode.editable)
                     contextMenu.appendItem(WI.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
             }
 

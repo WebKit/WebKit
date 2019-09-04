@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function getURL() {
+    TestPage.dispatchEventToFrontend("TestURL", {
+        url: document.URL.substring(0, document.URL.lastIndexOf("/")) + "/resources/data.json"
+    });
+}
+function triggerOverrideLoad() {
+    fetch("resources/data.json").then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("LocalResourceOverride.ContinueResponse");
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.ContinueResponse",
+        description: "Test an override continue response to let the original load complete.",
+        async test() {
+            // Setup interception.
+            await Promise.all([
+                InspectorProtocol.awaitCommand({method: "Network.enable", params: {}}),
+                InspectorProtocol.awaitCommand({method: "Network.setInterceptionEnabled", params: {enabled: true}}),
+            ]);
+
+            // Get URL to override and override it.
+            let [event] = await Promise.all([
+                ProtocolTest.awaitEvent("TestURL"),
+                ProtocolTest.evaluateInPage(`getURL()`),
+            ]);
+            await InspectorProtocol.awaitCommand({method: "Network.addInterception", params: {url: event.data.url, stage: "response"}});
+
+            // Fetch URL and intercept it.
+            let [messageObject] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.responseIntercepted"}),
+                ProtocolTest.evaluateInPage(`triggerOverrideLoad()`),
+            ]);
+            ProtocolTest.pass("Intercepted response.");
+
+            // Let the load continue.
+            await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.responseReceived"}),
+                InspectorProtocol.awaitCommand({method: "Network.interceptContinue", params: {requestId: messageObject.params.requestId}}),
+            ]);
+            ProtocolTest.pass("Response received.");
+
+            // Remove override.
+            await InspectorProtocol.awaitCommand({method: "Network.removeInterception", params: {url: event.data.url, stage: "response"}});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test an override continue response to let the original load complete.</p>
+</body>
+</html>

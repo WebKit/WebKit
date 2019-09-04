@@ -31,7 +31,8 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
         const title = null;
         const subtitle = null;
-        super(resource, ["resource", WI.ResourceTreeElement.ResourceIconStyleClassName, WI.Resource.classNameForResource(resource)], title, subtitle, representedObject || resource);
+        let styleClassNames = ["resource", WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(resource)];
+        super(resource, styleClassNames, title, subtitle, representedObject || resource);
 
         if (allowDirectoryAsName)
             this._allowDirectoryAsName = allowDirectoryAsName;
@@ -120,6 +121,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
             this._resource.removeEventListener(WI.Resource.Event.TypeDidChange, this._typeDidChange, this);
             this._resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, this.updateStatus, this);
             this._resource.removeEventListener(WI.Resource.Event.LoadingDidFail, this.updateStatus, this);
+            this._resource.removeEventListener(WI.Resource.Event.ResponseReceived, this._responseReceived, this);
         }
 
         this._updateSourceCode(resource);
@@ -130,10 +132,12 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         resource.addEventListener(WI.Resource.Event.TypeDidChange, this._typeDidChange, this);
         resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this.updateStatus, this);
         resource.addEventListener(WI.Resource.Event.LoadingDidFail, this.updateStatus, this);
+        resource.addEventListener(WI.Resource.Event.ResponseReceived, this._responseReceived, this);
 
         this._updateTitles();
         this.updateStatus();
         this._updateToolTip();
+        this._updateIcon();
     }
 
     // Protected
@@ -166,9 +170,17 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         this.mainTitle = this.mainTitleText;
 
         if (!this._hideOrigin) {
-            // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
-            var subtitle = parentResourceHost !== urlComponents.host || frame && frame.isMainFrame() && isMainResource ? WI.displayNameForHost(urlComponents.host) : null;
-            this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+            if (this._resource.isLocalResourceOverride) {
+                // Show the host for a local resource override if it is different from the main frame.
+                let localResourceOverrideHost = urlComponents.host;
+                let mainFrameHost = (WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource) ? WI.networkManager.mainFrame.mainResource.urlComponents.host : null;
+                let subtitle = localResourceOverrideHost !== mainFrameHost ? localResourceOverrideHost : null;
+                this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+            } else {
+                // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
+                let subtitle = (parentResourceHost !== urlComponents.host || (frame && frame.isMainFrame() && isMainResource)) ? WI.displayNameForHost(urlComponents.host) : null;
+                this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+            }
         }
 
         if (oldMainTitle !== this.mainTitle)
@@ -222,6 +234,17 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         this.tooltip = this._resource.displayURL;
     }
 
+    _updateIcon()
+    {
+        let isOverride = this._resource.isLocalResourceOverride;
+        let wasOverridden = this._resource.responseSource === WI.Resource.ResponseSource.InspectorOverride;
+
+        if (isOverride || wasOverridden)
+            this.addClassName("override");
+        else
+            this.removeClassName("override");
+    }
+
     _urlDidChange(event)
     {
         this._updateTitles();
@@ -234,6 +257,11 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         this.addClassName(this._resource.type);
 
         this.callFirstAncestorFunction("descendantResourceTreeElementTypeDidChange", [this, event.data.oldType]);
+    }
+
+    _responseReceived(event)
+    {
+        this._updateIcon();
     }
 };
 

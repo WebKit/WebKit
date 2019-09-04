@@ -185,7 +185,7 @@
 }
 
 .console-warning-level {
-    background-color: hsl(50, 100%, 94%);
+    background-color: var(--warning-color);
     border-color: hsl(40, 100%, 90%);
 }
 

@@ -1,3 +1,44 @@
+2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
+        https://bugs.webkit.org/show_bug.cgi?id=201262
+        <rdar://problem/13108764>
+
+        Reviewed by Devin Rousso.
+
+        When interception is enabled, Network requests that match any of the configured
+        interception patterns will be paused on the backend and allowed to be modified
+        by the frontend.
+
+        Currently the only time a network request can be intercepted is during the
+        HTTP response. However, this intercepting interface is mean to extend to
+        HTTP requests as well.
+
+        When a response is to be intercepted a new event is sent to the frontend:
+
+          `Network.responseIntercepted` event
+
+        With a `requestId` to identify that network request. The frontend
+        must respond with one of the following commands to continue:
+
+          `Network.interceptContinue`     - proceed with the response unmodified
+          `Network.interceptWithResponse` - provide a response
+
+        The response is paused in the meantime.
+
+        * inspector/protocol/Network.json:
+        New interfaces for intercepting network responses and suppling override content.
+
+        * Scripts/generate-combined-inspector-json.py:
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification.load_specification):
+        Complete allowing comments in JSON protocol files.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator._generate_invocation_for_command):
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        Allow optional enums in ObjC interfaces.
+
 2019-09-03  Mark Lam  <mark.lam@apple.com>
 
         Structure::storedPrototype() and storedPrototypeObject() should assert with isCompilationThread(), not !isMainThread().

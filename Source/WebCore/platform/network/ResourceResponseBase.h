@@ -41,7 +41,7 @@ class ResourceResponse;
 
 bool isScriptAllowedByNosniff(const ResourceResponse&);
 
-// Do not use this class directly, use the class ResponseResponse instead
+// Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -142,7 +142,7 @@ public:
     WEBCORE_EXPORT Optional<WallTime> lastModified() const;
     const ParsedContentRange& contentRange() const;
 
-    enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache };
+    enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, InspectorOverride };
     WEBCORE_EXPORT Source source() const;
     void setSource(Source source)
     {

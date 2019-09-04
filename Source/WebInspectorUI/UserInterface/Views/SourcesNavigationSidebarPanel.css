@@ -57,7 +57,8 @@
     padding: 11px 6px;
     font-size: 11px;
     text-align: center;
-    background-color: hsl(50, 100%, 94%);
+    color: var(--yellow-highlight-text-color);
+    background-color: var(--yellow-highlight-background-color);
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -65,8 +66,12 @@
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container) {
+.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container, .local-overrides-container) {
     border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.navigation.sources > .content > .local-overrides {
+    border-width: 1px !important;
 }
 
 .sidebar > .panel.navigation.sources > .content .details-section {
@@ -125,7 +130,7 @@
         --details-section-header-top: 0;
     }
 
-    .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container) {
+    .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container, .local-overrides-container) {
         height: 100%;
         overflow-y: auto;
     }
@@ -142,6 +147,12 @@
         max-height: fit-content;
     }
 
+    .sidebar > .panel.navigation.sources > .content > .local-overrides-container {
+        flex-grow: 1;
+        flex-shrink: 3;
+        max-height: fit-content;
+    }
+
     .sidebar > .panel.navigation.sources > .content > .resources-container {
         flex-grow: 1;
         flex-shrink: 3;
@@ -151,11 +162,3 @@
 .sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon {
     content: url(../Images/TypeObject.svg);
 }
-
-@media (prefers-color-scheme: dark) {
-    .sidebar > .panel.navigation.sources > .content > .warning-banner {
-        color: var(--yellow-highlight-text-color);
-        background-color: var(--yellow-highlight-background-color);
-    }
-}
-

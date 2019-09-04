@@ -43,10 +43,37 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
 
-        this._localResourcesMap = new Map;
+        this._localResourceOverrideMap = new Map;
+        this._harImportLocalResourceMap = new Set;
+
+        this._pendingLocalResourceOverrideSaves = null;
+        this._saveLocalResourceOverridesDebouncer = null;
+
+        // FIXME: Provide dedicated UI to toggle Network Interception globally?
+        this._interceptionEnabled = WI.settings.experimentalEnableSourcesTab.value || !!window.InspectorTest;
 
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
+
+        if (NetworkManager.supportsLocalResourceOverrides()) {
+            WI.Resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleResourceContentDidChange, this);
+            WI.LocalResourceOverride.addEventListener(WI.LocalResourceOverride.Event.DisabledChanged, this._handleResourceOverrideDisabledChanged, this);
+
+            WI.Target.registerInitializationPromise((async () => {
+                let serializedLocalResourceOverrides = await WI.objectStores.localResourceOverrides.getAll();
+
+                this._restoringLocalResourceOverrides = true;
+                for (let serializedLocalResourceOverride of serializedLocalResourceOverrides) {
+                    let localResourceOverride = WI.LocalResourceOverride.fromJSON(serializedLocalResourceOverride);
+
+                    const key = null;
+                    WI.objectStores.localResourceOverrides.associateObject(localResourceOverride, key, serializedLocalResourceOverride);
+
+                    this.addLocalResourceOverride(localResourceOverride);
+                }
+                this._restoringLocalResourceOverrides = false;
+            })());            
+        }
     }
 
     // Static
@@ -71,6 +98,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
     }
 
+    static supportsLocalResourceOverrides()
+    {
+        return window.NetworkAgent && InspectorBackend.domains.Network && InspectorBackend.domains.Network.setInterceptionEnabled;
+    }
+
     // Target
 
     initializeTarget(target)
@@ -89,6 +121,17 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
             if (target.NetworkAgent.setResourceCachingDisabled)
                 target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+
+            // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
+            if (target.NetworkAgent.setInterceptionEnabled) {
+                if (this._interceptionEnabled)
+                    target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
+
+                for (let [url, localResourceOverride] of this._localResourceOverrideMap) {
+                    if (!localResourceOverride.disabled)
+                        target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                }
+            }
         }
 
         if (target.type === WI.Target.Type.Worker)
@@ -111,6 +154,30 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     get frames()
     {
         return Array.from(this._frameIdentifierMap.values());
+    }
+
+    get localResourceOverrides()
+    {
+        return Array.from(this._localResourceOverrideMap.values());
+    }
+
+    get interceptionEnabled()
+    {
+        return this._interceptionEnabled;
+    }
+
+    set interceptionEnabled(enabled)
+    {
+        if (this._interceptionEnabled === enabled)
+            return;
+
+        this._interceptionEnabled = enabled;
+
+        for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
+            if (target.NetworkAgent && target.NetworkAgent.setInterceptionEnabled)
+                target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
+        }
     }
 
     frameForIdentifier(frameId)
@@ -165,9 +232,98 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         loadAndParseSourceMap();
     }
 
-    localResourceForURL(url)
+    addLocalResourceOverride(localResourceOverride)
     {
-        return this._localResourcesMap.get(url);
+        console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
+
+        console.assert(!this._localResourceOverrideMap.get(localResourceOverride.url), "Already had an existing local resource override.");
+        this._localResourceOverrideMap.set(localResourceOverride.url, localResourceOverride);
+
+        if (!this._restoringLocalResourceOverrides)
+            WI.objectStores.localResourceOverrides.putObject(localResourceOverride);
+
+        if (!localResourceOverride.disabled) {
+            // COMPATIBILITY (iOS 13.0): Network.addInterception did not exist.
+            for (let target of WI.targets) {
+                if (target.NetworkAgent && target.NetworkAgent.addInterception)
+                    target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+            }
+        }
+
+        this.dispatchEventToListeners(WI.NetworkManager.Event.LocalResourceOverrideAdded, {localResourceOverride});
+    }
+
+    removeLocalResourceOverride(localResourceOverride)
+    {
+        console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
+
+        if (!this._localResourceOverrideMap.delete(localResourceOverride.url)) {
+            console.assert(false, "Attempted to remove a local resource override that was not known.");
+            return;
+        }
+
+        if (this._pendingLocalResourceOverrideSaves)
+            this._pendingLocalResourceOverrideSaves.delete(localResourceOverride);
+
+        if (!this._restoringLocalResourceOverrides)
+            WI.objectStores.localResourceOverrides.deleteObject(localResourceOverride);
+
+        if (!localResourceOverride.disabled) {
+            // COMPATIBILITY (iOS 13.0): Network.removeInterception did not exist.
+            for (let target of WI.targets) {
+                if (target.NetworkAgent && target.NetworkAgent.removeInterception)
+                    target.NetworkAgent.removeInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+            }
+        }
+
+        this.dispatchEventToListeners(WI.NetworkManager.Event.LocalResourceOverrideRemoved, {localResourceOverride});
+    }
+
+    localResourceOverrideForURL(url)
+    {
+        return this._localResourceOverrideMap.get(url);
+    }
+
+    canBeOverridden(resource)
+    {
+        if (!(resource instanceof WI.Resource))
+            return false;
+
+        if (resource instanceof WI.SourceMapResource)
+            return false;
+
+        if (resource.isLocalResourceOverride)
+            return false;
+
+        const schemes = ["http:", "https:", "file:"];
+        if (!schemes.some((scheme) => resource.url.startsWith(scheme)))
+            return false;
+
+        let existingOverride = this.localResourceOverrideForURL(resource.url);
+        if (existingOverride)
+            return false;
+
+        switch (resource.type) {
+        case WI.Resource.Type.Document:
+        case WI.Resource.Type.StyleSheet:
+        case WI.Resource.Type.Script:
+        case WI.Resource.Type.XHR:
+        case WI.Resource.Type.Fetch:
+        case WI.Resource.Type.Image:
+        case WI.Resource.Type.Font:
+        case WI.Resource.Type.Other:
+            break;
+        case WI.Resource.Type.Ping:
+        case WI.Resource.Type.Beacon:
+            // Responses aren't really expected for Ping/Beacon.
+            return false;
+        case WI.Resource.Type.WebSocket:
+            // Non-HTTP traffic.
+            console.assert(false, "Scheme check above should have been sufficient.");
+            return false;
+        }
+
+        return true;
     }
 
     resourceForURL(url)
@@ -228,7 +384,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         for (let entry of json.log.entries) {
             let localResource = WI.LocalResource.fromHAREntry(entry, mainResourceSentWalltime);
-            this._localResourcesMap.set(localResource.url, localResource);
+            this._harImportLocalResourceMap.add(localResource);
             localResources.push(localResource);
         }
 
@@ -650,6 +806,30 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
+    responseIntercepted(target, requestId, response)
+    {
+        let url = WI.urlWithoutFragment(response.url);
+        let localResourceOverride = this._localResourceOverrideMap.get(url);
+        if (!localResourceOverride || localResourceOverride.disabled) {
+            target.NetworkAgent.interceptContinue(requestId);
+            return;
+        }
+
+        let localResource = localResourceOverride.localResource;
+        let content = localResource.localContent;
+        let base64Encoded = localResource.localContentIsBase64Encoded;
+        let {mimeType, statusCode, statusText, responseHeaders} = localResource;
+
+        if (isNaN(statusCode))
+            statusCode = undefined;
+        if (!statusText)
+            statusText = undefined;
+        if (!responseHeaders)
+            responseHeaders = undefined;
+
+        target.NetworkAgent.interceptWithResponse(requestId, content, base64Encoded, mimeType, statusCode, statusText, responseHeaders);
+    }
+
     // RuntimeObserver
 
     executionContextCreated(contextPayload)
@@ -1050,6 +1230,63 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
     }
 
+    _handleResourceContentDidChange(event)
+    {
+        let resource = event.target;
+        if (!(resource instanceof WI.Resource))
+            return;
+
+        if (!resource.isLocalResourceOverride)
+            return;
+
+        let localResourceOverride = this.localResourceOverrideForURL(resource.url);
+        console.assert(localResourceOverride);
+        if (!localResourceOverride)
+            return;
+
+        let localResource = localResourceOverride.localResource;
+        let content = localResource.content;
+        let base64Encoded = localResource.localContentIsBase64Encoded;
+        let mimeType = localResource.mimeType;
+        localResource.updateOverrideContent(content, base64Encoded, mimeType, {suppressEvent: true});
+
+        this._persistLocalResourceOverrideSoonAfterContentChange(localResourceOverride);
+    }
+
+    _persistLocalResourceOverrideSoonAfterContentChange(localResourceOverride)
+    {
+        if (!this._saveLocalResourceOverridesDebouncer) {
+            this._pendingLocalResourceOverrideSaves = new Set;
+            this._saveLocalResourceOverridesDebouncer = new Debouncer(() => {
+                for (let localResourceOverride of this._pendingLocalResourceOverrideSaves) {
+                    console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
+                    WI.objectStores.localResourceOverrides.putObject(localResourceOverride);
+                }
+            });
+        }
+
+        this._pendingLocalResourceOverrideSaves.add(localResourceOverride);
+        this._saveLocalResourceOverridesDebouncer.delayForTime(500);
+    }
+
+    _handleResourceOverrideDisabledChanged(event)
+    {
+        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+
+        let localResourceOverride = event.target;
+        WI.objectStores.localResourceOverrides.putObject(localResourceOverride);
+
+        // COMPATIBILITY (iOS 13.0): Network.addInterception / Network.removeInterception did not exist.
+        for (let target of WI.targets) {
+            if (target.NetworkAgent) {
+                if (localResourceOverride.disabled)
+                    target.NetworkAgent.removeInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                else
+                    target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+            }
+        }
+    }
+
     _extraDomainsActivated(event)
     {
         if (event.data.domains.includes("Page") && window.PageAgent)
@@ -1070,4 +1307,6 @@ WI.NetworkManager.Event = {
     FrameWasAdded: "network-manager-frame-was-added",
     FrameWasRemoved: "network-manager-frame-was-removed",
     MainFrameDidChange: "network-manager-main-frame-did-change",
+    LocalResourceOverrideAdded: "network-manager-local-resource-override-added",
+    LocalResourceOverrideRemoved: "network-manager-local-resource-override-removed",
 };

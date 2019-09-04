@@ -1,0 +1,8 @@
+Test an override continue response to let the original load complete.
+
+
+== Running test suite: LocalResourceOverride.ContinueResponse
+-- Running test case: LocalResourceOverride.ContinueResponse
+PASS: Intercepted response.
+PASS: Response received.
+

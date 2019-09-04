@@ -33,10 +33,11 @@
 //     response: { mimeType, headers, statusCode, statusText, failureReasonText, content, base64Encoded }
 //     metrics: { responseSource, protocol, priority, remoteAddress, connectionIdentifier, sizes }
 //     timing: { startTime, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd }
+//     isLocalResourceOverride: <boolean>
 
 WI.LocalResource = class LocalResource extends WI.Resource
 {
-    constructor({request, response, metrics, timing})
+    constructor({request, response, metrics, timing, isLocalResourceOverride})
     {
         console.assert(request);
         console.assert(typeof request.url === "string");
@@ -77,10 +78,17 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this._localContent = response.content;
         this._localContentIsBase64Encoded = response.base64Encoded;
 
+        // LocalResource specific.
+        this._isLocalResourceOverride = isLocalResourceOverride || false;
+
         // Finalize WI.Resource.
         this._finished = true;
         this._failed = false; // FIXME: How should we denote a failure? Assume from status code / failure reason?
         this._cached = false; // FIXME: How should we denote cached? Assume from response source?
+
+        // Finalize WI.SourceCode.
+        this._originalRevision = new WI.SourceCodeRevision(this, this._localContent);
+        this._currentRevision = this._originalRevision;
     }
 
     // Static
@@ -197,7 +205,40 @@ WI.LocalResource = class LocalResource extends WI.Resource
         });
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        return new WI.LocalResource(json);
+    }
+
+    toJSON(key)
+    {
+        return {
+            request: {
+                url: this.url,
+            },
+            response: {
+                headers: this.responseHeaders,
+                mimeType: this.mimeType,
+                statusCode: this.statusCode,
+                statusText: this.statusText,
+                content: this._localContent,
+                base64Encoded: this._localContentIsBase64Encoded,
+            },
+            isLocalResourceOverride: this._isLocalResourceOverride,
+        };
+    }
+
     // Public
+
+    get localContent() { return this._localContent; }
+    get localContentIsBase64Encoded() { return this._localContentIsBase64Encoded; }
+
+    get isLocalResourceOverride()
+    {
+        return this._isLocalResourceOverride;
+    }
 
     hasContent()
     {
@@ -217,6 +258,23 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
         this._localContent = content;
         this._localContentIsBase64Encoded = base64Encoded;
+    }
+
+    updateOverrideContent(content, base64Encoded, mimeType, options = {})
+    {
+        console.assert(this._isLocalResourceOverride);
+
+        if (content !== undefined && this._localContent !== content)
+            this._localContent = content;
+
+        if (base64Encoded !== undefined && this._localContentIsBase64Encoded !== base64Encoded)
+            this._localContentIsBase64Encoded = base64Encoded;
+
+        if (mimeType !== undefined && mimeType !== this._mimeType) {
+            let oldMIMEType = this._mimeType;
+            this._mimeType = mimeType;
+            this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
+        }
     }
 
     // Protected

@@ -1331,6 +1331,14 @@ WI.showRepresentedObject = function(representedObject, cookie, options = {})
     tabContentView.showRepresentedObject(representedObject, cookie);
 };
 
+WI.showLocalResourceOverride = function(localResourceOverride)
+{
+    console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
+    const cookie = null;
+    const options = {ignoreNetworkTab: true, ignoreSearchTab: true};
+    WI.showRepresentedObject(localResourceOverride, cookie, options);
+};
+
 WI.showMainFrameDOMTree = function(nodeToSelect, options = {})
 {
     console.assert(WI.networkManager.mainFrame);

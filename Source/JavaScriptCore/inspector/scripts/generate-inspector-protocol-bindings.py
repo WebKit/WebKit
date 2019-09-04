@@ -124,7 +124,8 @@ def generate_from_specification(primary_specification_filepath=None,
     def load_specification(protocol, filepath, isSupplemental=False):
         try:
             with open(filepath, "r") as input_file:
-                parsed_json = json.loads(re.sub(r"/\*.+?\*/", "", input_file.read()))
+                regex = re.compile(r"\/\*.*?\*\/", re.DOTALL)
+                parsed_json = json.loads(re.sub(regex, "", input_file.read()))
                 protocol.parse_specification(parsed_json, isSupplemental)
         except ValueError as e:
             raise Exception("Error parsing valid JSON in file: " + filepath + "\nParse error: " + str(e))

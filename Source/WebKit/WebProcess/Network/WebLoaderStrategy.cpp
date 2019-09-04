@@ -757,6 +757,7 @@ bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& resp
     case ResourceResponse::Source::MemoryCache:
     case ResourceResponse::Source::MemoryCacheAfterValidation:
     case ResourceResponse::Source::ServiceWorker:
+    case ResourceResponse::Source::InspectorOverride:
         return false;
     case ResourceResponse::Source::DiskCache:
     case ResourceResponse::Source::DiskCacheAfterValidation:

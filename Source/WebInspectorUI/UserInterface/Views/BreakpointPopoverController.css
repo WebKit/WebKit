@@ -43,7 +43,6 @@
 }
 
 .popover .edit-breakpoint-popover-content > table > tr > th {
-    width: 1px; /* Shrink to fit. */
     font-weight: bold;
     line-height: 23px;
     text-align: end;
@@ -58,7 +57,7 @@
 
 .edit-breakpoint-popover-condition {
     width: 100%;
-    padding: 4px 0 2px 0;
+    padding: 4px 0 2px;
     -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: var(--background-color-code);

@@ -130,6 +130,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._callStackContainer.classList.add("call-stack-container");
         this._callStackContainer.appendChild(this._callStackSection.element);
 
+        this._localResourceOverridesTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._localResourceOverridesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
+
+        let localResourceOverridesRow = new WI.DetailsSectionRow;
+        localResourceOverridesRow.element.appendChild(this._localResourceOverridesTreeOutline.element);
+
+        let localResourceOverridesGroup = new WI.DetailsSectionGroup([localResourceOverridesRow]);
+        this._localResourceOverridesSection = new WI.DetailsSection("local-overrides", WI.UIString("Local Overrides"), [localResourceOverridesGroup]);
+
+        this._localResourceOverridesContainer = document.createElement("div");
+        this._localResourceOverridesContainer.classList.add("local-overrides-container");
+        this._localResourceOverridesContainer.appendChild(this._localResourceOverridesSection.element);
+
         this._mainTargetTreeElement = null;
         this._activeCallFrameTreeElement = null;
 
@@ -259,6 +272,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
 
+        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideAdded, this);
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideRemoved, this._handleLocalResourceOverrideRemoved, this);
+        }
+
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.EventBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
@@ -323,6 +341,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._updateCallStackTreeOutline();
 
         this._handleResourceGroupingModeChanged();
+
+        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+            for (let localResourceOverride of WI.networkManager.localResourceOverrides)
+                this._addLocalResourceOverride(localResourceOverride);
+        }
 
         if (WI.domDebuggerManager.supported) {
             if (WI.settings.showAllAnimationFramesBreakpoint.value)
@@ -419,6 +442,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         // A custom implementation is needed for this since the frames are populated lazily.
 
+        if (representedObject instanceof WI.LocalResourceOverride)
+            return this._localResourceOverridesTreeOutline.findTreeElement(localResource);
+
+        if (representedObject instanceof WI.LocalResource) {
+            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(representedObject.url);
+            return this._localResourceOverridesTreeOutline.findTreeElement(localResourceOverride);
+        }
+
         if (!this._mainFrameTreeElement && (representedObject instanceof WI.Resource || representedObject instanceof WI.Frame || representedObject instanceof WI.Collection)) {
             // All resources are under the main frame, so we need to return early if we don't have the main frame yet.
             return null;
@@ -514,7 +545,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, (event) => {
             let treeElement = event.data.element;
-            let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection];
+            let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection, this._localResourceOverridesSection];
             let detailsSection = detailsSections.find((detailsSection) => detailsSection.element.contains(treeElement.listItemElement));
             if (!detailsSection)
                 return;
@@ -593,17 +624,74 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     willDismissPopover(popover)
     {
+        if (popover instanceof WI.LocalResourceOverridePopover) {
+            this._willDismissLocalOverridePopover(popover);
+            return;
+        }
+
+        if (popover instanceof WI.EventBreakpointPopover) {
+            this._willDismissEventBreakpointPopover(popover);
+            return;
+        }
+
+        if (popover instanceof WI.URLBreakpointPopover) {
+            this._willDismissURLBreakpointPopover(popover);
+            return;
+        }
+
+        console.assert();
+    }
+
+    // Private
+
+    _willDismissLocalOverridePopover(popover)
+    {
+        let serializedData = popover.serializedData;
+        if (!serializedData) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let {url, mimeType, statusCode, statusText, headers} = serializedData;
+
+        // Do not conflict with an existing override.
+        let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
+        if (existingOverride) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let localResourceOverride = WI.LocalResourceOverride.create({
+            url,
+            mimeType,
+            statusCode,
+            statusText,
+            headers,
+            content: "",
+            base64Encoded: false,
+        });
+
+        WI.networkManager.addLocalResourceOverride(localResourceOverride);
+        WI.showLocalResourceOverride(localResourceOverride);
+    }
+
+    _willDismissEventBreakpointPopover(popover)
+    {
         let breakpoint = popover.breakpoint;
         if (!breakpoint)
             return;
 
-        if (breakpoint instanceof WI.EventBreakpoint)
-            WI.domDebuggerManager.addEventBreakpoint(breakpoint);
-        else if (breakpoint instanceof WI.URLBreakpoint)
-            WI.domDebuggerManager.addURLBreakpoint(breakpoint);
+        WI.domDebuggerManager.addEventBreakpoint(breakpoint);
     }
 
-    // Private
+    _willDismissURLBreakpointPopover(popover)
+    {
+        let breakpoint = popover.breakpoint;
+        if (!breakpoint)
+            return;
+
+        WI.domDebuggerManager.addURLBreakpoint(breakpoint);
+    }
 
     _filterByResourcesWithIssues(treeElement)
     {
@@ -1138,6 +1226,43 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._addIssue(issue, sourceCode);
     }
 
+    _addLocalResourceOverride(localResourceOverride)
+    {
+        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+
+        if (this._localResourceOverridesTreeOutline.findTreeElement(localResourceOverride))
+            return;
+
+        let parentTreeElement = this._localResourceOverridesTreeOutline;
+        let resourceTreeElement = new WI.LocalResourceOverrideTreeElement(localResourceOverride.localResource, localResourceOverride);
+        let index = insertionIndexForObjectInListSortedByFunction(resourceTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
+        parentTreeElement.insertChild(resourceTreeElement, index);
+
+        if (!this._localResourceOverridesContainer.parentNode)
+            this.contentView.element.insertBefore(this._localResourceOverridesContainer, this._resourcesNavigationBar.element);
+    }
+
+    _removeLocalResourceOverride(localResourceOverride)
+    {
+        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+
+        let resourceTreeElement = this._localResourceOverridesTreeOutline.findTreeElement(localResourceOverride);
+        if (!resourceTreeElement)
+            return;
+
+        let wasSelected = resourceTreeElement.selected;
+
+        let parentTreeElement = this._localResourceOverridesTreeOutline;
+        parentTreeElement.removeChild(resourceTreeElement);
+
+        if (!parentTreeElement.children.length) {
+            this._localResourceOverridesContainer.remove();
+
+            if (wasSelected && WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource)
+                WI.showRepresentedObject(WI.networkManager.mainFrame.mainResource);
+        }
+    }
+
     _updateTemporarilyDisabledBreakpointsButtons()
     {
         let breakpointsDisabledTemporarily = WI.debuggerManager.breakpointsDisabledTemporarily;
@@ -1542,6 +1667,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
             return;
 
+        if (treeElement instanceof WI.LocalResourceOverrideTreeElement) {
+            WI.showRepresentedObject(treeElement.representedObject.localResource);
+            return;
+        }
+
         if (treeElement instanceof WI.FolderTreeElement
             || treeElement instanceof WI.OriginTreeElement
             || treeElement instanceof WI.ResourceTreeElement
@@ -1720,6 +1850,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 popover.show(this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
             });
         }
+
+        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WI.UIString("Local Override\u2026"), () => {
+                let popover = new WI.LocalResourceOverridePopover(this);
+                popover.show(null, this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+            });
+        }
     }
 
     _populateCreateResourceContextMenu(contextMenu)
@@ -1825,6 +1963,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._updateMainFrameTreeElement(frame);
 
         this._addResourcesRecursivelyForFrame(frame);
+    }
+
+    _handleLocalResourceOverrideAdded(event)
+    {
+        this._addLocalResourceOverride(event.data.localResourceOverride);
+    }
+
+    _handleLocalResourceOverrideRemoved(event)
+    {
+        this._removeLocalResourceOverride(event.data.localResourceOverride);
     }
 
     _handleDebuggerBreakpointAdded(event)

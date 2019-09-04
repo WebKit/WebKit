@@ -495,6 +495,13 @@ http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 http/tests/inspector/network/resource-sizes-memory-cache.html [ Failure ]
 http/tests/inspector/network/har/har-page.html [ Failure ]
 
+# Local Overrides not available in WebKit1
+http/tests/inspector/network/local-resource-override-basic.html [ Failure ]
+http/tests/inspector/network/local-resource-override-main-resource.html [ Failure ]
+http/tests/inspector/network/local-resource-override-script-tag.html [ Failure ]
+http/tests/inspector/network/resource-response-inspector-override.html [ Failure ]
+inspector/network/local-resource-override-continue-response.html [ Skip ]
+
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]

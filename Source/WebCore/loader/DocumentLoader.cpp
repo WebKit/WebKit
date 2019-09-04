@@ -882,8 +882,8 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
         mainResourceLoader->markInAsyncResponsePolicyCheck();
     auto requestIdentifier = PolicyCheckIdentifier::create();
     frameLoader()->checkContentPolicy(m_response, requestIdentifier, [this, protectedThis = makeRef(*this), mainResourceLoader = WTFMove(mainResourceLoader),
-        completionHandler = completionHandlerCaller.release(), requestIdentifier] (PolicyAction policy, PolicyCheckIdentifier responseIdentifeir) mutable {
-        RELEASE_ASSERT(responseIdentifeir.isValidFor(requestIdentifier));
+        completionHandler = completionHandlerCaller.release(), requestIdentifier] (PolicyAction policy, PolicyCheckIdentifier responseIdentifier) mutable {
+        RELEASE_ASSERT(responseIdentifier.isValidFor(requestIdentifier));
         continueAfterContentPolicy(policy);
         if (mainResourceLoader)
             mainResourceLoader->didReceiveResponsePolicy();

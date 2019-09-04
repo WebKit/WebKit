@@ -492,12 +492,16 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             // Check all the ResourceTreeElements at the top level to make sure their Resource still has a parentFrame in the frame hierarchy.
             // If the parentFrame is no longer in the frame hierarchy we know it was removed due to a navigation or some other page change and
             // we should remove the issues for that resource.
-            for (var i = contentTreeOutline.children.length - 1; i >= 0; --i) {
-                var treeElement = contentTreeOutline.children[i];
+            for (let i = contentTreeOutline.children.length - 1; i >= 0; --i) {
+                let treeElement = contentTreeOutline.children[i];
                 if (!(treeElement instanceof WI.ResourceTreeElement))
                     continue;
 
-                var resource = treeElement.resource;
+                // Local Overrides are never stale resources.
+                let resource = treeElement.resource;
+                if (resource.isLocalResourceOverride)
+                    continue;
+
                 if (!resource.parentFrame || resource.parentFrame.isDetached())
                     contentTreeOutline.removeChildAtIndex(i, true, true);
             }

@@ -205,13 +205,14 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             in_param_name = 'in_%s' % parameter.parameter_name
             objc_in_param_expression = 'o_%s' % in_param_name
             if not parameter.is_optional:
-                # FIXME: we don't handle optional enum values in commands here because it isn't used anywhere yet.
-                # We'd need to change the delegate's signature to take Optional for optional enum values.
                 if isinstance(parameter.type, EnumType):
                     objc_in_param_expression = '%s.value()' % objc_in_param_expression
 
                 pairs.append('%s:%s' % (parameter.parameter_name, objc_in_param_expression))
             else:
+                if isinstance(parameter.type, EnumType):
+                    objc_in_param_expression = '%s.value()' % objc_in_param_expression
+
                 optional_expression = '(%s ? &%s : nil)' % (in_param_name, objc_in_param_expression)
                 pairs.append('%s:%s' % (parameter.parameter_name, optional_expression))
         return '    [m_delegate %s%s];' % (command.command_name, ' '.join(pairs))

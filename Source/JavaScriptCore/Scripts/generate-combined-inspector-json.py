@@ -26,6 +26,7 @@
 import glob
 import json
 import os
+import re
 import sys
 
 if len(sys.argv) < 2:
@@ -57,7 +58,8 @@ for file in files:
     string = open(file).read()
 
     try:
-        dictionary = json.loads(string)
+        regex = re.compile(r"\/\*.*?\*\/", re.DOTALL)
+        dictionary = json.loads(re.sub(regex, "", string))
         if not "domain" in dictionary:
             raise Exception("File \"%s\" does not contains a \"domain\" key." % file)
     except ValueError:

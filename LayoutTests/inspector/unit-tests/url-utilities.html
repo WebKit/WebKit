@@ -46,6 +46,8 @@ function test()
             }
 
             testInvalid("a");
+            testInvalid("__WebInspectorInternal__");
+            testInvalid("__WebTest__");
             testInvalid("/http://example.com");
 
             testValid("http://example.com", {
@@ -535,6 +537,47 @@ function test()
                 {url: "http://user@pass:example.com/"},
             ]);
         },
+    });
+
+    suite.addTestCase({
+        name: "WI.urlWithoutFragment",
+        test() {
+            function test(url, expected) {
+                InspectorTest.expectEqual(WI.urlWithoutFragment(url), expected, `Removing fragment of '${url}' should be '${expected}'.`);
+            }
+
+            function testBoth(url, expected) {
+                const urlWithFrag = url + "#frag";
+                InspectorTest.expectEqual(WI.urlWithoutFragment(url), expected, `Removing fragment of '${url}' should be '${expected}'.`);
+                InspectorTest.expectEqual(WI.urlWithoutFragment(urlWithFrag), expected, `Removing fragment of '${urlWithFrag}' should be '${expected}'.`);
+            }
+
+            testBoth("http://example.com", "http://example.com/");
+            testBoth("https://example.com", "https://example.com/");
+            testBoth("ftp://example.com", "ftp://example.com/");
+            
+            testBoth("http://example.com/", "http://example.com/");
+            testBoth("http://example.com/path", "http://example.com/path");
+            testBoth("http://example.com/path/a/b/", "http://example.com/path/a/b/");
+            testBoth("http://example.com/path/a/b/?", "http://example.com/path/a/b/?");
+            testBoth("http://example.com/path/a/b/?s=1", "http://example.com/path/a/b/?s=1");
+            testBoth("http://example.com/path/a/b/?s=1&t=2", "http://example.com/path/a/b/?s=1&t=2");
+            testBoth("http://example.com?", "http://example.com/?");
+            testBoth("http://example.com?s=1", "http://example.com/?s=1");
+            testBoth("http://example.com?s=1&t=2", "http://example.com/?s=1&t=2");
+
+            test("http://example.com#", "http://example.com/");
+            test("http://example.com/#", "http://example.com/");
+            test("http://example.com/path#", "http://example.com/path");
+            test("http://example.com/path/#", "http://example.com/path/");
+            test("http://example.com/path?#", "http://example.com/path?");
+            test("http://example.com/path/?#", "http://example.com/path/?");
+
+            test("#hash", "about:blank");
+            test("invalid", "invalid");
+
+            return true;
+        }
     });
 
     suite.addTestCase({

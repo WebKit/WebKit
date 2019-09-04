@@ -70,11 +70,23 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     if (!(sourceCode instanceof WI.SourceCode))
         return;
 
+    if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.networkManager.canBeOverridden(sourceCode)) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WI.UIString("Create Local Override"), async () => {
+                let resource = sourceCode;
+                let localResourceOverride = await resource.createLocalResourceOverride();
+                WI.networkManager.addLocalResourceOverride(localResourceOverride);
+                WI.showLocalResourceOverride(localResourceOverride);
+            });
+        }
+    }
+
     contextMenu.appendSeparator();
 
     WI.appendContextMenuItemsForURL(contextMenu, sourceCode.url, {sourceCode, location});
 
-    if (sourceCode instanceof WI.Resource) {
+    if (sourceCode instanceof WI.Resource && !sourceCode.isLocalResourceOverride) {
         if (sourceCode.urlComponents.scheme !== "data") {
             contextMenu.appendItem(WI.UIString("Copy as cURL"), () => {
                 InspectorFrontendHost.copyText(sourceCode.generateCURLCommand());
@@ -91,10 +103,10 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
                     InspectorFrontendHost.copyText(sourceCode.stringifyHTTPResponse());
                 });
             }
-
-            contextMenu.appendSeparator();
         }
     }
+
+    contextMenu.appendSeparator();
 
     contextMenu.appendItem(WI.UIString("Save File"), () => {
         sourceCode.requestContent().then(() => {
@@ -108,7 +120,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendSeparator();
 
-    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script))) {
+    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script && !sourceCode.isLocalResourceOverride))) {
         let existingBreakpoint = WI.debuggerManager.breakpointForSourceCodeLocation(location);
         if (existingBreakpoint) {
             contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
@@ -159,6 +171,7 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
                 });
             }
         }
+
         if (!WI.isShowingNetworkTab()) {
             contextMenu.appendItem(WI.UIString("Reveal in Network Tab"), () => {
                 showResourceWithOptions({preferredTabType: WI.NetworkTabContentView.Type});

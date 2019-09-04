@@ -81,8 +81,6 @@ namespace {
 static HashSet<InstrumentingAgents*>* s_instrumentingAgentsSet = nullptr;
 }
 
-int InspectorInstrumentation::s_frontendCounter = 0;
-
 void InspectorInstrumentation::firstFrontendCreated()
 {
     platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(true);
@@ -826,6 +824,26 @@ void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cac
         if (InspectorNetworkAgent* inspectorNetworkAgent = instrumentingAgent->inspectorNetworkAgent())
             inspectorNetworkAgent->willDestroyCachedResource(cachedResource);
     }
+}
+
+bool InspectorInstrumentation::willInterceptRequestImpl(InstrumentingAgents& instrumentingAgents, const ResourceRequest& request)
+{
+    if (auto* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        return networkAgent->willInterceptRequest(request);
+    return false;
+}
+
+bool InspectorInstrumentation::shouldInterceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response)
+{
+    if (auto* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        return networkAgent->shouldInterceptResponse(response);
+    return false;
+}
+
+void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+{
+    if (auto* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->interceptResponse(response, identifier, WTFMove(handler));
 }
 
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.

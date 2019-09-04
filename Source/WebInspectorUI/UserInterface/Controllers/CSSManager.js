@@ -633,6 +633,10 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (resource === this._ignoreResourceContentDidChangeEventForResource)
             return;
 
+        // Ignore changes to resource overrides, those are not live on the page.
+        if (resource.isLocalResourceOverride)
+            return;
+
         // Ignore if it isn't a CSS style sheet.
         if (resource.type !== WI.Resource.Type.StyleSheet || resource.syntheticMIMEType !== "text/css")
             return;

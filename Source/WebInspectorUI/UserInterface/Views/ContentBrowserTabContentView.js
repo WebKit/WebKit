@@ -315,9 +315,12 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
         let treeElement = this.treeElementForRepresentedObject(representedObject);
 
-        if (treeElement)
-            treeElement.revealAndSelect(true, false, true);
-        else if (this.navigationSidebarPanel && this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement)
+        if (treeElement) {
+            const omitFocus = true;
+            const selectedByUser = false;
+            const suppressNotification = false;
+            treeElement.revealAndSelect(omitFocus, selectedByUser, suppressNotification);
+        } else if (this.navigationSidebarPanel && this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement)
             this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
     }
 

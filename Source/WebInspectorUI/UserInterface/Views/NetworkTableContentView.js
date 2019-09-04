@@ -638,7 +638,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         createIconElement();
 
-        cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);
+        cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(resource));
 
         if (WI.settings.groupMediaRequestsByDOMNode.value && resource.initiatorNode) {
             let nodeEntry = this._domNodeEntries.get(resource.initiatorNode);
@@ -657,7 +657,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         cell.title = resource.url;
-        cell.classList.add(WI.Resource.classNameForResource(resource));
+        cell.classList.add(...WI.Resource.classNamesForResource(resource));
     }
 
     _populateDomainCell(cell, entry)
@@ -752,6 +752,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (responseSource === WI.Resource.ResponseSource.ServiceWorker) {
             cell.classList.add("cache-type");
             cell.textContent = WI.UIString("(service worker)");
+            return;
+        }
+        if (responseSource === WI.Resource.ResponseSource.InspectorOverride) {
+            cell.classList.add("cache-type");
+            cell.textContent = WI.UIString("(inspector override)");
             return;
         }
 
@@ -1030,6 +1035,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                     transferSizeA = -10;
                 else if (sourceA === WI.Resource.ResponseSource.ServiceWorker)
                     transferSizeA = -5;
+                else if (sourceA === WI.Resource.ResponseSource.InspectorOverride)
+                    transferSizeA = -3;
 
                 let sourceB = b.resource.responseSource;
                 if (sourceB === WI.Resource.ResponseSource.MemoryCache)
@@ -1038,6 +1045,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                     transferSizeB = -10;
                 else if (sourceB === WI.Resource.ResponseSource.ServiceWorker)
                     transferSizeB = -5;
+                else if (sourceB === WI.Resource.ResponseSource.InspectorOverride)
+                    transferSizeB = -3;
 
                 return transferSizeA - transferSizeB;
             };

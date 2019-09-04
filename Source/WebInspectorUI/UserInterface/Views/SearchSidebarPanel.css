@@ -60,7 +60,8 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
     padding: 6px;
     text-align: center;
     font-size: 11px;
-    background-color: hsl(50, 100%, 94%);
+    color: var(--yellow-highlight-text-color);
+    background-color: var(--yellow-highlight-background-color);
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
@@ -72,11 +73,4 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
 
 .sidebar > .panel.navigation.search.changed > :matches(.content, .message-text-view) {
     top: calc(var(--navigation-bar-height) + 40px - 1px);
-}
-
-@media (prefers-color-scheme: dark) {
-    .sidebar > .panel.navigation.search.changed > .banner {
-        background-color: var(--yellow-highlight-background-color);
-        color: var(--yellow-highlight-text-color);
-    }
 }

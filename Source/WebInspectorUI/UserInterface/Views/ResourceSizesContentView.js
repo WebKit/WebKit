@@ -129,7 +129,7 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
         resourceSection.className = "subsection large";
 
         let resourceComponents = createSizeComponents(resourceSection, WI.UIString("Resource Size"), null, WI.UIString("Compression:"), WI.UIString("MIME Type:"));
-        resourceComponents.container.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, this._resource.type);
+        resourceComponents.container.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(this._resource));
         resourceComponents.imageElement.classList.add("icon");
         this._resourceBytesElement = resourceComponents.bytesElement;
         this._resourceBytesSuffixElement = resourceComponents.suffixElement;

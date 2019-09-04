@@ -109,6 +109,10 @@ function parseURL(url)
         return result;
     }
 
+    // Internal sourceURLs will fail in URL constructor anyways.
+    if (isWebKitInternalScript(url))
+        return result;
+
     let parsed = null;
     try {
         parsed = new URL(url);
@@ -283,6 +287,26 @@ WI.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
     const middleChunk = multiline ? `\n${ellipsis}\n` : ellipsis;
     const lastChunk = data.slice(-Math.floor(dataURIMaxSize / 2));
     return header + firstChunk + middleChunk + lastChunk;
+};
+
+WI.urlWithoutFragment = function(urlString)
+{
+    try {
+        let url = new URL(urlString);
+        if (url.hash) {
+            url.hash = "";
+            return url.toString();
+        }
+
+        // URL.toString with an empty hash leaves the hash symbol, so we strip it.
+        let result = url.toString();
+        if (result.endsWith("#"))
+            return result.substring(0, result.length - 1);
+
+        return result;
+    } catch { }
+
+    return urlString;
 };
 
 WI.displayNameForHost = function(host)

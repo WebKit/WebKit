@@ -1,3 +1,37 @@
+2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
+        https://bugs.webkit.org/show_bug.cgi?id=201262
+        <rdar://problem/13108764>
+
+        Reviewed by Devin Rousso.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        New sources.
+
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        On receiving a response, check with the inspector if an active
+        frontend will override the response content.
+
+        * WebProcess/Network/WebResourceInterceptController.h:
+        * WebProcess/Network/WebResourceInterceptController.cpp:
+        (WebKit::WebResourceInterceptController::isIntercepting const):
+        (WebKit::WebResourceInterceptController::beginInterceptingResponse):
+        (WebKit::WebResourceInterceptController::continueResponse):
+        (WebKit::WebResourceInterceptController::interceptedResponse):
+        (WebKit::WebResourceInterceptController::defer):
+        Buffer networking callbacks for an ongoing intercept.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::havePerformedSecurityChecks const):
+        Handle new response source.
+
 2019-09-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed minor follow-up fix after r249501 to address crashes in debug.

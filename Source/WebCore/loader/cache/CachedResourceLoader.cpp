@@ -55,6 +55,7 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTTPHeaderField.h"
+#include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
@@ -799,6 +800,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (Document* document = this->document())
         request.upgradeInsecureRequestIfNeeded(*document);
 
+    if (InspectorInstrumentation::willInterceptRequest(frame(), request.resourceRequest()))
+        request.setCachingPolicy(CachingPolicy::DisallowCaching);
+
     request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
     URL url = request.resourceRequest().url();
 
@@ -1379,6 +1383,9 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request)
 {
+    if (InspectorInstrumentation::willInterceptRequest(frame(), request.resourceRequest()))
+        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, request.resourceRequest().url(), "Inspector intercept"_s });
+
     if (request.charset().isEmpty() && (type == CachedResource::Type::Script || type == CachedResource::Type::CSSStyleSheet))
         request.setCharset(m_document->charset());
 

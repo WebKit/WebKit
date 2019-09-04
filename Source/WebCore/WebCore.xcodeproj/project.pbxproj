@@ -3060,6 +3060,8 @@
 		A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2E1864CB8400843B10 /* WebInjectedScriptManager.h */; };
 		A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */; };
 		A584FE3C1864E2D800843B10 /* JSCommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */; };
+		A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = A5860E6B230DE2E100461AAE /* InspectorInstrumentationPublic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A5860E68230DE2E000461AAE /* InspectorInstrumentationWebKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A58C59D11E382EAE0047859C /* JSPerformanceMark.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C59CD1E382EA90047859C /* JSPerformanceMark.h */; };
 		A58C59D31E382EB20047859C /* JSPerformanceMeasure.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C59CF1E382EA90047859C /* JSPerformanceMeasure.h */; };
 		A593CF8B1840535200BFCE27 /* InspectorWebAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF8A1840535200BFCE27 /* InspectorWebAgentBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11424,6 +11426,10 @@
 		A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CommandLineAPIHost.idl; sourceTree = "<group>"; };
 		A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCommandLineAPIHost.cpp; sourceTree = "<group>"; };
 		A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCommandLineAPIHost.h; sourceTree = "<group>"; };
+		A5860E68230DE2E000461AAE /* InspectorInstrumentationWebKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationWebKit.h; sourceTree = "<group>"; };
+		A5860E6A230DE2E100461AAE /* InspectorInstrumentationPublic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationPublic.cpp; sourceTree = "<group>"; };
+		A5860E6B230DE2E100461AAE /* InspectorInstrumentationPublic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationPublic.h; sourceTree = "<group>"; };
+		A5860E6C230DE2E200461AAE /* InspectorInstrumentationWebKit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationWebKit.cpp; sourceTree = "<group>"; };
 		A58C59CC1E382EA90047859C /* JSPerformanceMark.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceMark.cpp; sourceTree = "<group>"; };
 		A58C59CD1E382EA90047859C /* JSPerformanceMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceMark.h; sourceTree = "<group>"; };
 		A58C59CE1E382EA90047859C /* JSPerformanceMeasure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceMeasure.cpp; sourceTree = "<group>"; };
@@ -17038,6 +17044,10 @@
 				20D629251253690B00081543 /* InspectorInstrumentation.h */,
 				A5840E1A187B74D500843B10 /* InspectorInstrumentationCookie.cpp */,
 				A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */,
+				A5860E6A230DE2E100461AAE /* InspectorInstrumentationPublic.cpp */,
+				A5860E6B230DE2E100461AAE /* InspectorInstrumentationPublic.h */,
+				A5860E6C230DE2E200461AAE /* InspectorInstrumentationWebKit.cpp */,
+				A5860E68230DE2E000461AAE /* InspectorInstrumentationWebKit.h */,
 				504AACCB1834455900E3D9BC /* InspectorNodeFinder.cpp */,
 				504AACCC1834455900E3D9BC /* InspectorNodeFinder.h */,
 				7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */,
@@ -32289,10 +32299,12 @@
 				07D60928214C5BFD00E7396C /* WindowDisplayCaptureSourceMac.h in Headers */,
 				BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */,
 				7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */,
+				A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */,
 				463521AD2081092A00C28922 /* WindowProxy.h in Headers */,
 				E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */,
 				501BAAA913950E2C00F7ACEB /* WindRule.h in Headers */,
 				A14832BE187F64CC00DA63A6 /* WKContentObservation.h in Headers */,
+				A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */,
 				A14832BF187F652C00DA63A6 /* WKGraphics.h in Headers */,
 				A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */,
 				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,

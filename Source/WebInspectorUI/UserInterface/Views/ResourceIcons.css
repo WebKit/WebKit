@@ -27,6 +27,10 @@
     content: image-set(url(../Images/DocumentGeneric.png) 1x, url(../Images/DocumentGeneric@2x.png) 2x);
 }
 
+.resource-icon.override .icon {
+    filter: invert() hue-rotate(260deg);
+}
+
 .resource-icon.resource-type-document .icon {
     content: image-set(url(../Images/DocumentMarkup.png) 1x, url(../Images/DocumentMarkup@2x.png) 2x);
 }

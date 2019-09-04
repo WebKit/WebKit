@@ -6,6 +6,14 @@ Test Invalid: a
 PASS: Should not be a complete URL
 PASS: URL constructor thinks this is invalid
 
+Test Invalid: __WebInspectorInternal__
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Invalid: __WebTest__
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
 Test Invalid: /http://example.com
 PASS: Should not be a complete URL
 PASS: URL constructor thinks this is invalid
@@ -459,6 +467,40 @@ PASS: Display name of 'a' should be 'a'.
 PASS: Display name of 'http://' should be 'http://'.
 PASS: Display name of 'http://example.com:65537' should be 'http://example.com:65537'.
 PASS: Display name of 'http://user@pass:example.com/' should be 'http://user@pass:example.com/'.
+
+-- Running test case: WI.urlWithoutFragment
+PASS: Removing fragment of 'http://example.com' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com#frag' should be 'http://example.com/'.
+PASS: Removing fragment of 'https://example.com' should be 'https://example.com/'.
+PASS: Removing fragment of 'https://example.com#frag' should be 'https://example.com/'.
+PASS: Removing fragment of 'ftp://example.com' should be 'ftp://example.com/'.
+PASS: Removing fragment of 'ftp://example.com#frag' should be 'ftp://example.com/'.
+PASS: Removing fragment of 'http://example.com/' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/#frag' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/path' should be 'http://example.com/path'.
+PASS: Removing fragment of 'http://example.com/path#frag' should be 'http://example.com/path'.
+PASS: Removing fragment of 'http://example.com/path/a/b/' should be 'http://example.com/path/a/b/'.
+PASS: Removing fragment of 'http://example.com/path/a/b/#frag' should be 'http://example.com/path/a/b/'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?' should be 'http://example.com/path/a/b/?'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?#frag' should be 'http://example.com/path/a/b/?'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1' should be 'http://example.com/path/a/b/?s=1'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1#frag' should be 'http://example.com/path/a/b/?s=1'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1&t=2' should be 'http://example.com/path/a/b/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1&t=2#frag' should be 'http://example.com/path/a/b/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com?' should be 'http://example.com/?'.
+PASS: Removing fragment of 'http://example.com?#frag' should be 'http://example.com/?'.
+PASS: Removing fragment of 'http://example.com?s=1' should be 'http://example.com/?s=1'.
+PASS: Removing fragment of 'http://example.com?s=1#frag' should be 'http://example.com/?s=1'.
+PASS: Removing fragment of 'http://example.com?s=1&t=2' should be 'http://example.com/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com?s=1&t=2#frag' should be 'http://example.com/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com#' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/#' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/path#' should be 'http://example.com/path'.
+PASS: Removing fragment of 'http://example.com/path/#' should be 'http://example.com/path/'.
+PASS: Removing fragment of 'http://example.com/path?#' should be 'http://example.com/path?'.
+PASS: Removing fragment of 'http://example.com/path/?#' should be 'http://example.com/path/?'.
+PASS: Removing fragment of '#hash' should be 'about:blank'.
+PASS: Removing fragment of 'invalid' should be 'invalid'.
 
 -- Running test case: WI.h2Authority
 PASS: HTTP/2 :authority of 'http://example.com' should be 'example.com'.

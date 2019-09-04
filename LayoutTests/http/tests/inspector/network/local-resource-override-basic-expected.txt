@@ -1,0 +1,150 @@
+Test for some LocalResourceOverride loads.
+
+
+== Running test suite: LocalResourceOverride
+-- Running test case: LocalResourceOverride.None
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: <not-InspectorOverride>
+Response Headers:
+  Accept-Ranges: <filtered>
+  Connection: <filtered>
+  Content-Length: 29
+  Content-Type: text/plain
+  Date: <filtered>
+  ETag: <filtered>
+  Keep-Alive: <filtered>
+  Last-Modified: <filtered>
+  Server: <filtered>
+Content: default override.txt content
+
+
+-- Running test case: LocalResourceOverride.Text
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 987 Override Status Text
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Override-Header-1: Override-Header-Value-1
+  X-Override-Header-2: Override-Header-Value-2
+Content: PASS - OVERRIDDEN TEXT
+
+-- Running test case: LocalResourceOverride.JavaScript
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: application/javascript
+Status: 200 Super OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: application/javascript
+  X-Custom-Header: Header value
+Content: /* PASS */ (function() { /* OVERRIDDEN */ })();
+
+-- Running test case: LocalResourceOverride.Image
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: image/png
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: image/png
+Content: [base64] PGRhdGE+
+
+-- Running test case: LocalResourceOverride.URL.QueryString
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt?s=1
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt?s=2
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?s=2
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
+-- Running test case: LocalResourceOverride.URL.Fragment
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt#frag
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
+-- Running test case: LocalResourceOverride.Enabled
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
+-- Running test case: LocalResourceOverride.Disabled
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: <not-InspectorOverride>
+Response Headers:
+  Accept-Ranges: <filtered>
+  Connection: <filtered>
+  Content-Length: 29
+  Content-Type: text/plain
+  Date: <filtered>
+  ETag: <filtered>
+  Keep-Alive: <filtered>
+  Last-Modified: <filtered>
+  Server: <filtered>
+Content: default override.txt content
+
+
+-- Running test setup.
+-- Running test case: LocalResourceOverride.GlobalDisabled
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: <not-InspectorOverride>
+Response Headers:
+  Accept-Ranges: <filtered>
+  Connection: <filtered>
+  Content-Length: 29
+  Content-Type: text/plain
+  Date: <filtered>
+  ETag: <filtered>
+  Keep-Alive: <filtered>
+  Last-Modified: <filtered>
+  Server: <filtered>
+Content: default override.txt content
+
+-- Running test teardown.
+
+-- Running test case: LocalResourceOverride.URL.Fragment
+PASS: LocalResourceOverride creation should strip fragments.
+

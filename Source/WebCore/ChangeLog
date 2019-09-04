@@ -1,3 +1,90 @@
+2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
+        https://bugs.webkit.org/show_bug.cgi?id=201262
+        <rdar://problem/13108764>
+
+        Reviewed by Devin Rousso.
+
+        Tests: http/tests/inspector/network/local-resource-override-basic.html
+               http/tests/inspector/network/local-resource-override-main-resource.html
+               http/tests/inspector/network/local-resource-override-script-tag.html
+               http/tests/inspector/network/resource-response-inspector-override.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Headers.cmake:
+        New files.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInterceptRequestImpl):
+        (WebCore::InspectorInstrumentation::shouldInterceptResponseImpl):
+        (WebCore::InspectorInstrumentation::interceptResponseImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::hasFrontends):
+        (WebCore::InspectorInstrumentation::willInterceptRequest):
+        (WebCore::InspectorInstrumentation::shouldInterceptResponse):
+        (WebCore::InspectorInstrumentation::interceptResponse):
+        (WebCore::InspectorInstrumentation::frontendCreated):
+        (WebCore::InspectorInstrumentation::frontendDeleted):
+        * inspector/InspectorInstrumentationPublic.cpp:
+        * inspector/InspectorInstrumentationPublic.h:
+        * inspector/InspectorInstrumentationWebKit.cpp:
+        (WebCore::InspectorInstrumentationWebKit::shouldInterceptResponseInternal):
+        (WebCore::InspectorInstrumentationWebKit::interceptResponseInternal):
+        * inspector/InspectorInstrumentationWebKit.h: Added.
+        (WebCore::InspectorInstrumentationWebKit::shouldInterceptResponse):
+        (WebCore::InspectorInstrumentationWebKit::interceptResponse):
+        Provide a slim InspectorInstrumentation API that can be used in the WebKit
+        layer without a ton of includes.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::responseSource):
+        (WebCore::InspectorNetworkAgent::disable):
+        (WebCore::InspectorNetworkAgent::continuePendingResponses):
+        (WebCore::InspectorNetworkAgent::setInterceptionEnabled):
+        (WebCore::InspectorNetworkAgent::addInterception):
+        (WebCore::InspectorNetworkAgent::removeInterception):
+        (WebCore::InspectorNetworkAgent::willInterceptRequest):
+        (WebCore::InspectorNetworkAgent::shouldInterceptResponse):
+        (WebCore::InspectorNetworkAgent::interceptResponse):
+        (WebCore::InspectorNetworkAgent::interceptContinue):
+        (WebCore::InspectorNetworkAgent::interceptWithResponse):
+        Manage a list of URLs that will be intercepted and send
+        intercepts to an active frontend for response content.
+
+        * inspector/agents/InspectorNetworkAgent.h:
+        (WebCore::InspectorNetworkAgent::PendingInterceptResponse::PendingInterceptResponse):
+        (WebCore::InspectorNetworkAgent::PendingInterceptResponse::~PendingInterceptResponse):
+        (WebCore::InspectorNetworkAgent::PendingInterceptResponse::originalResponse):
+        (WebCore::InspectorNetworkAgent::PendingInterceptResponse::respondWithOriginalResponse):
+        (WebCore::InspectorNetworkAgent::PendingInterceptResponse::respond):
+        Callback for an eventual intercept response.
+
+        * platform/network/ResourceResponseBase.h:
+        New ResponseSource - Inspector Override.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        * testing/Internals.cpp:
+        (WebCore::responseSourceToString):
+        Handle new response sources.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::preload):
+        Avoid preloading or using the cache for URLs that would be intercepted
+        by an active Inspector frontend.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::remove):
+        Assertion to help detect if we ever get override content into the MemoryCache.
+
+        * loader/ResourceLoader.h:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/ResourceLoader.cpp:
+        Fix typos.
+
 2019-09-04  Chris Dumez  <cdumez@apple.com>
 
         Expose WebPageProxy identifier to the Network Process

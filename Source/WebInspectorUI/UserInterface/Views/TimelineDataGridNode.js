@@ -115,8 +115,7 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
 
         if (value instanceof WI.SourceCodeLocation) {
             if (value.sourceCode instanceof WI.Resource) {
-                cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);
-                cell.classList.add(value.sourceCode.type);
+                cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(value.sourceCode));
             } else if (value.sourceCode instanceof WI.Script) {
                 if (value.sourceCode.url) {
                     cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);
@@ -162,8 +161,7 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
                 if (isAnonymousFunction) {
                     // For anonymous functions we show the resource or script icon and name.
                     if (callFrame.sourceCodeLocation.sourceCode instanceof WI.Resource) {
-                        cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);
-                        cell.classList.add(callFrame.sourceCodeLocation.sourceCode.type);
+                        cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(callFrame.sourceCodeLocation.sourceCode));
                     } else if (callFrame.sourceCodeLocation.sourceCode instanceof WI.Script) {
                         if (callFrame.sourceCodeLocation.sourceCode.url) {
                             cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);

@@ -44,6 +44,7 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
+#include "InspectorInstrumentationPublic.h"
 #include "OffscreenCanvas.h"
 #include "Page.h"
 #include "StorageArea.h"
@@ -51,6 +52,7 @@
 #include "WorkerInspectorController.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <initializer_list>
+#include <wtf/CompletionHandler.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RefPtr.h>
 
@@ -88,6 +90,7 @@ class ResourceResponse;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class ShadowRoot;
+class SharedBuffer;
 class TimerBase;
 #if ENABLE(WEBGL)
 class WebGLProgram;
@@ -98,8 +101,6 @@ class WorkerInspectorProxy;
 enum class StorageType;
 
 struct WebSocketFrame;
-
-#define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!InspectorInstrumentation::hasFrontends())) return value;
 
 class InspectorInstrumentation {
 public:
@@ -219,6 +220,10 @@ public:
     static void defaultAppearanceDidChange(Page&, bool useDarkAppearance);
     static void willDestroyCachedResource(CachedResource&);
 
+    static bool willInterceptRequest(const Frame*, const ResourceRequest&);
+    static bool shouldInterceptResponse(const Frame&, const ResourceResponse&);
+    static void interceptResponse(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
     static void addMessageToConsole(WorkerGlobalScope&, std::unique_ptr<Inspector::ConsoleMessage>);
 
@@ -288,7 +293,7 @@ public:
 
     static void frontendCreated();
     static void frontendDeleted();
-    static bool hasFrontends() { return s_frontendCounter; }
+    static bool hasFrontends() { return InspectorInstrumentationPublic::hasFrontends(); }
 
     static void firstFrontendCreated();
     static void lastFrontendDeleted();
@@ -404,6 +409,10 @@ private:
     static void defaultAppearanceDidChangeImpl(InstrumentingAgents&, bool useDarkAppearance);
     static void willDestroyCachedResourceImpl(CachedResource&);
 
+    static bool willInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
+    static bool shouldInterceptResponseImpl(InstrumentingAgents&, const ResourceResponse&);
+    static void interceptResponseImpl(InstrumentingAgents&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, const String& label);
@@ -469,8 +478,8 @@ private:
     static InstrumentingAgents& instrumentingAgentsForPage(Page&);
     static InstrumentingAgents& instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope&);
 
-    static InstrumentingAgents* instrumentingAgentsForFrame(Frame&);
-    static InstrumentingAgents* instrumentingAgentsForFrame(Frame*);
+    static InstrumentingAgents* instrumentingAgentsForFrame(const Frame&);
+    static InstrumentingAgents* instrumentingAgentsForFrame(const Frame*);
     static InstrumentingAgents* instrumentingAgentsForContext(ScriptExecutionContext*);
     static InstrumentingAgents* instrumentingAgentsForContext(ScriptExecutionContext&);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document&);
@@ -479,8 +488,6 @@ private:
     static InstrumentingAgents* instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope*);
 
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
-
-    WEBCORE_EXPORT static int s_frontendCounter;
 };
 
 inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
@@ -1199,6 +1206,29 @@ inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& 
     willDestroyCachedResourceImpl(cachedResource);
 }
 
+inline bool InspectorInstrumentation::willInterceptRequest(const Frame* frame, const ResourceRequest& request)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return willInterceptRequestImpl(*instrumentingAgents, request);
+    return false;
+}
+
+inline bool InspectorInstrumentation::shouldInterceptResponse(const Frame& frame, const ResourceResponse& response)
+{
+    ASSERT(InspectorInstrumentationPublic::hasFrontends());
+    if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return shouldInterceptResponseImpl(*instrumentingAgents, response);
+    return false;
+}
+
+inline void InspectorInstrumentation::interceptResponse(const Frame& frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+{
+    ASSERT(InspectorInstrumentation::shouldInterceptResponse(frame, response));
+    if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        interceptResponseImpl(*instrumentingAgents, response, identifier, WTFMove(handler));
+}
+
 inline void InspectorInstrumentation::didOpenDatabase(Database& database)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1546,12 +1576,12 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
     return nullptr;
 }
 
-inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(Frame* frame)
+inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(const Frame* frame)
 {
     return frame ? instrumentingAgentsForFrame(*frame) : nullptr;
 }
 
-inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(Frame& frame)
+inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(const Frame& frame)
 {
     return instrumentingAgentsForPage(frame.page());
 }
@@ -1593,18 +1623,18 @@ inline InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForWork
 inline void InspectorInstrumentation::frontendCreated()
 {
     ASSERT(isMainThread());
-    s_frontendCounter++;
+    ++InspectorInstrumentationPublic::s_frontendCounter;
 
-    if (s_frontendCounter == 1)
+    if (InspectorInstrumentationPublic::s_frontendCounter == 1)
         InspectorInstrumentation::firstFrontendCreated();
 }
 
 inline void InspectorInstrumentation::frontendDeleted()
 {
     ASSERT(isMainThread());
-    s_frontendCounter--;
+    --InspectorInstrumentationPublic::s_frontendCounter;
 
-    if (!s_frontendCounter)
+    if (!InspectorInstrumentationPublic::s_frontendCounter)
         InspectorInstrumentation::lastFrontendDeleted();
 }
 

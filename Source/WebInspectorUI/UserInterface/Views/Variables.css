@@ -88,10 +88,15 @@
     --panel-background-color: hsl(0, 0%, 93%);
     --panel-background-color-light: hsl(0, 0%, 96%);
 
+    --warning-color: hsl(50, 100%, 94%);
     --warning-background-color: hsl(43, 97%, 84%);
     --warning-background-color-secondary: hsl(51, 87%, 93%);
+
     --error-background-color: hsl(11, 100%, 80%);
     --error-background-color-secondary: hsl(15, 100%, 90%);
+
+    --yellow-highlight-background-color: var(--warning-color);
+    --yellow-highlight-text-color: var(--text-color);
 
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
     --console-prompt-min-height: 30px;

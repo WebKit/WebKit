@@ -73,7 +73,7 @@
                 { "name": "statusText", "type": "string", "description": "HTTP response status text." },
                 { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." },
                 { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." },
-                { "name": "source", "type": "string", "enum": ["unknown", "network", "memory-cache", "disk-cache", "service-worker"], "description": "Specifies where the response came from." },
+                { "name": "source", "type": "string", "enum": ["unknown", "network", "memory-cache", "disk-cache", "service-worker", "inspector-override"], "description": "Specifies where the response came from." },
                 { "name": "requestHeaders", "$ref": "Headers", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." },
                 { "name": "timing", "$ref": "ResourceTiming", "optional": true, "description": "Timing information for the given request." },
                 { "name": "security", "$ref": "Security.Security", "optional": true, "description": "The security information for the given request." }
@@ -149,6 +149,12 @@
                 { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type only." },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "Set if the load was triggered by a DOM node, in addition to the other initiator information." }
             ]
+        },
+        {
+            "id": "NetworkStage",
+            "type": "string",
+            "description": "Different stages of a network request.",
+            "enum": ["response"]
         }
     ],
     "commands": [
@@ -218,6 +224,49 @@
             ],
             "returns": [
                 { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given node." }
+            ]
+        },
+        {
+            "name": "setInterceptionEnabled",
+            "description": "Enable interception of network requests.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "addInterception",
+            "description": "Add an interception.",
+            "parameters": [
+                { "name": "url", "type": "string" },
+                { "name": "stage", "$ref": "NetworkStage", "optional": true, "description": "If not present this applies to all network stages." }
+            ]
+        },
+        {
+            "name": "removeInterception",
+            "description": "Remove an interception.",
+            "parameters": [
+                { "name": "url", "type": "string" },
+                { "name": "stage", "$ref": "NetworkStage", "optional": true, "description": "If not present this applies to all network stages." }
+            ]
+        },
+        {
+            "name": "interceptContinue",
+            "description": "Continue an interception with no modifications.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." }
+            ]
+        },
+        {
+            "name": "interceptWithResponse",
+            "description": "Provide response content for an intercepted response.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to modify." },
+                { "name": "content", "type": "string" },
+                { "name": "base64Encoded", "type": "boolean", "description": "True, if content was sent as base64." },
+                { "name": "mimeType", "type": "string", "optional": true, "description": "MIME Type for the data." },
+                { "name": "status", "type": "integer", "optional": true, "description": "HTTP response status code. Pass through original values if unmodified." },
+                { "name": "statusText", "type": "string", "optional": true, "description": "HTTP response status text. Pass through original values if unmodified." },
+                { "name": "headers", "$ref": "Headers", "optional": true, "description": "HTTP response headers. Pass through original values if unmodified." }
             ]
         }
     ],
@@ -292,6 +341,14 @@
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                 { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
                 { "name": "resource", "$ref": "CachedResource", "description": "Cached resource data." }
+            ]
+        },
+        {
+            "name": "responseIntercepted",
+            "description": "Fired when HTTP response has been intercepted. The frontend must response with <code>Network.interceptContinue</code> or <code>Network.interceptWithRespons</code>` to continue this response.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },
+                { "name": "response", "$ref": "Response", "description": "Original response content that would proceed if this is continued." }
             ]
         },
         {

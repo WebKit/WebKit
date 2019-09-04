@@ -106,4 +106,9 @@ WI.NetworkObserver = class NetworkObserver
     {
         // FIXME: Not implemented.
     }
+
+    responseIntercepted(requestId, response)
+    {
+        WI.networkManager.responseIntercepted(this.target, requestId, response);
+    }
 };

@@ -315,6 +315,9 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     treeElementForRepresentedObject(representedObject)
     {
+        if (representedObject instanceof WI.LocalResource)
+            return null;
+
         // The main resource is used as the representedObject instead of Frame in our tree.
         if (representedObject instanceof WI.Frame)
             representedObject = representedObject.mainResource;

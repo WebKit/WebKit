@@ -37,7 +37,7 @@
 .popover .url-breakpoint-content > .editor-wrapper > .editor {
     width: 180px;
     -webkit-margin-start: 4px;
-    padding: 4px 0 2px 0;
+    padding: 4px 0 2px;
     -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: var(--background-color-code);

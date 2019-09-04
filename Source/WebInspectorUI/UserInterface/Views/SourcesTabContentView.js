@@ -69,6 +69,7 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
             || representedObject instanceof WI.ScriptCollection
             || representedObject instanceof WI.CSSStyleSheet
             || representedObject instanceof WI.CSSStyleSheetCollection
+            || representedObject instanceof WI.LocalResourceOverride
             || super.canShowRepresentedObject(representedObject);
     }
 

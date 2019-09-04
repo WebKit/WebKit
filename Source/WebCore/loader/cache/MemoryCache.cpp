@@ -396,6 +396,8 @@ void MemoryCache::remove(CachedResource& resource)
         auto key = std::make_pair(resource.url(), resource.cachePartition());
 
         if (resource.inCache()) {
+            ASSERT_WITH_MESSAGE(resource.response().source() != ResourceResponse::Source::InspectorOverride, "InspectorOverride responses should not get into the MemoryCache");
+
             // Remove resource from the resource map.
             resources->remove(key);
             resource.setInCache(false);

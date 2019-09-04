@@ -1,3 +1,32 @@
+2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
+        https://bugs.webkit.org/show_bug.cgi?id=201262
+        <rdar://problem/13108764>
+
+        Reviewed by Devin Rousso.
+
+        * http/tests/inspector/network/local-resource-override-basic-expected.txt: Added.
+        * http/tests/inspector/network/local-resource-override-basic.html: Added.
+        * http/tests/inspector/network/local-resource-override-main-resource-expected.txt: Added.
+        * http/tests/inspector/network/local-resource-override-main-resource.html: Added.
+        * http/tests/inspector/network/local-resource-override-script-tag-expected.txt: Added.
+        * http/tests/inspector/network/local-resource-override-script-tag.html: Added.
+        * http/tests/inspector/network/resource-response-inspector-override-expected.txt: Added.
+        * http/tests/inspector/network/resource-response-inspector-override.html: Added.
+        * http/tests/inspector/network/resources/override.js: Added.
+        * http/tests/inspector/network/resources/override.txt: Added.
+        * inspector/network/local-resource-override-continue-response-expected.txt: Added.
+        * inspector/network/local-resource-override-continue-response.html: Added.
+        Tests for overrides.
+
+        * inspector/unit-tests/url-utilities-expected.txt:
+        * inspector/unit-tests/url-utilities.html:
+        Test WI.urlWithoutFragment.
+
+        * platform/mac-wk1/TestExpectations:
+        WebKitLegacy does not support overrides.
+
 2019-09-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Address review comments after r249364

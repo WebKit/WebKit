@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -77,6 +77,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
@@ -312,6 +313,8 @@ static Inspector::Protocol::Network::Response::Source responseSource(ResourceRes
         return Inspector::Protocol::Network::Response::Source::DiskCache;
     case ResourceResponse::Source::ServiceWorker:
         return Inspector::Protocol::Network::Response::Source::ServiceWorker;
+    case ResourceResponse::Source::InspectorOverride:
+        return Inspector::Protocol::Network::Response::Source::InspectorOverride;
     }
 
     ASSERT_NOT_REACHED();
@@ -827,11 +830,22 @@ void InspectorNetworkAgent::enable()
 void InspectorNetworkAgent::disable(ErrorString&)
 {
     m_enabled = false;
+    m_interceptionEnabled = false;
+    m_interceptResponseURLs.clear();
     m_instrumentingAgents.setInspectorNetworkAgent(nullptr);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
 
+    continuePendingResponses();
+
     setResourceCachingDisabled(false);
+}
+
+void InspectorNetworkAgent::continuePendingResponses()
+{
+    for (auto& pendingInterceptResponse : m_pendingInterceptResponses.values())
+        pendingInterceptResponse->respondWithOriginalResponse();
+    m_pendingInterceptResponses.clear();
 }
 
 void InspectorNetworkAgent::setExtraHTTPHeaders(ErrorString&, const JSON::Object& headers)
@@ -981,6 +995,152 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
 
     String objectGroupName = objectGroup ? *objectGroup : String();
     result = injectedScript.wrapObject(webSocketAsScriptValue(state, webSocket), objectGroupName);
+}
+
+void InspectorNetworkAgent::setInterceptionEnabled(ErrorString& errorString, bool enabled)
+{
+    if (m_interceptionEnabled == enabled) {
+        errorString = m_interceptionEnabled ? "Interception already enabled"_s : "Interception already disabled"_s;
+        return;
+    }
+
+    m_interceptionEnabled = enabled;
+
+    if (!m_interceptionEnabled)
+        continuePendingResponses();
+}
+
+void InspectorNetworkAgent::addInterception(ErrorString& errorString, const String& url, const String* networkStageString)
+{
+    if (networkStageString) {
+        auto networkStage = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Network::NetworkStage>(*networkStageString);
+        if (!networkStage) {
+            errorString = makeString("Unknown networkStage: "_s, *networkStageString);
+            return;
+        }
+    }
+
+    // FIXME: Support intercepting requests.
+
+    if (!m_interceptResponseURLs.add(url).isNewEntry)
+        errorString = "Intercept for given url already exists"_s;
+}
+
+void InspectorNetworkAgent::removeInterception(ErrorString& errorString, const String& url, const String* networkStageString)
+{
+    if (networkStageString) {
+        auto networkStage = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Network::NetworkStage>(*networkStageString);
+        if (!networkStage) {
+            errorString = makeString("Unknown networkStage: "_s, *networkStageString);
+            return;
+        }
+    }
+
+    // FIXME: Support intercepting requests.
+
+    if (!m_interceptResponseURLs.remove(url))
+        errorString = "Missing intercept for given url"_s;
+}
+
+bool InspectorNetworkAgent::willInterceptRequest(const ResourceRequest& request)
+{
+    if (!m_interceptionEnabled)
+        return false;
+
+    URL requestURL = request.url();
+    requestURL.removeFragmentIdentifier();
+
+    String url = requestURL.string();
+    if (url.isEmpty())
+        return false;
+
+    return m_interceptResponseURLs.contains(url);
+}
+
+bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& response)
+{
+    if (!m_interceptionEnabled)
+        return false;
+
+    URL responseURL = response.url();
+    responseURL.removeFragmentIdentifier();
+
+    String url = responseURL.string();
+    if (url.isEmpty())
+        return false;
+
+    return m_interceptResponseURLs.contains(url);
+}
+
+void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+{
+    ASSERT(m_enabled);
+    ASSERT(m_interceptionEnabled);
+
+    String requestId = IdentifiersFactory::requestId(identifier);
+    if (m_pendingInterceptResponses.contains(requestId)) {
+        ASSERT_NOT_REACHED();
+        handler(response, nullptr);
+        return;
+    }
+
+    m_pendingInterceptResponses.set(requestId, makeUnique<PendingInterceptResponse>(response, WTFMove(handler)));
+
+    m_frontendDispatcher->responseIntercepted(requestId, buildObjectForResourceResponse(response, nullptr));
+}
+
+void InspectorNetworkAgent::interceptContinue(ErrorString& errorString, const String& requestId)
+{
+    auto pendingInterceptResponse = m_pendingInterceptResponses.take(requestId);
+    if (!pendingInterceptResponse) {
+        errorString = "Missing pending intercept response for given requestId"_s;
+        return;
+    }
+
+    pendingInterceptResponse->respondWithOriginalResponse();
+}
+
+void InspectorNetworkAgent::interceptWithResponse(ErrorString& errorString, const String& requestId, const String& content, bool base64Encoded, const String* mimeType, const int* status, const String* statusText, const JSON::Object* headers)
+{
+    auto pendingInterceptResponse = m_pendingInterceptResponses.take(requestId);
+    if (!pendingInterceptResponse) {
+        errorString = "Missing pending intercept response for given requestId"_s;
+        return;
+    }
+
+    ResourceResponse overrideResponse(pendingInterceptResponse->originalResponse());
+    overrideResponse.setSource(ResourceResponse::Source::InspectorOverride);
+
+    if (status)
+        overrideResponse.setHTTPStatusCode(*status);
+    if (statusText)
+        overrideResponse.setHTTPStatusText(*statusText);
+    if (mimeType)
+        overrideResponse.setMimeType(*mimeType);
+    if (headers) {
+        HTTPHeaderMap explicitHeaders;
+        for (auto& [key, value] : *headers) {
+            String headerValue;
+            if (value->asString(headerValue))
+                explicitHeaders.add(key, headerValue);
+        }
+        overrideResponse.setHTTPHeaderFields(WTFMove(explicitHeaders));
+        overrideResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, overrideResponse.mimeType());
+    }
+
+    RefPtr<SharedBuffer> overrideData;
+    if (base64Encoded) {
+        Vector<uint8_t> buffer;
+        if (!base64Decode(content, buffer)) {
+            errorString = "Unable to decode given content"_s;
+            pendingInterceptResponse->respondWithOriginalResponse();
+            return;
+        }
+        overrideData = SharedBuffer::create(WTFMove(buffer));
+    } else
+        overrideData = SharedBuffer::create(content.utf8().data(), content.utf8().length());
+
+    pendingInterceptResponse->respond(overrideResponse, overrideData);
 }
 
 bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)

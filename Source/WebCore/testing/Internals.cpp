@@ -704,6 +704,8 @@ static String responseSourceToString(const ResourceResponse& response)
         return "Memory cache after validation";
     case ResourceResponse::Source::ApplicationCache:
         return "Application cache";
+    case ResourceResponse::Source::InspectorOverride:
+        return "Inspector override";
     }
     ASSERT_NOT_REACHED();
     return "Error";

@@ -67,7 +67,7 @@ WI.ObjectStore = class ObjectStore
 
         WI.ObjectStore._databaseCallbacks = [callback];
 
-        const version = 3; // Increment this for every edit to `WI.objectStores`.
+        const version = 4; // Increment this for every edit to `WI.objectStores`.
 
         let databaseRequest = window.indexedDB.open(WI.ObjectStore._databaseName, version);
         databaseRequest.addEventListener("upgradeneeded", (event) => {
@@ -245,4 +245,5 @@ WI.objectStores = {
     domBreakpoints: new WI.ObjectStore("dom-debugger-dom-breakpoints", {keyPath: "__id"}),
     eventBreakpoints: new WI.ObjectStore("dom-debugger-event-breakpoints", {keyPath: "__id"}),
     urlBreakpoints: new WI.ObjectStore("dom-debugger-url-breakpoints", {keyPath: "__id"}),
+    localResourceOverrides: new WI.ObjectStore("local-resource-overrides", {keyPath: "__id"}),
 };

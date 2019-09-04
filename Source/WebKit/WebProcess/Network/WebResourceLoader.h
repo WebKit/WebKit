@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include "ShareableResource.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebResourceInterceptController.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -82,7 +83,6 @@ private:
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
     void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
-    void didRetrieveDerivedData(const String& type, const IPC::DataReference&);
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didBlockAuthenticationChallenge();
@@ -95,6 +95,7 @@ private:
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     TrackingParameters m_trackingParameters;
+    WebResourceInterceptController m_interceptController;
     size_t m_numBytesReceived { 0 };
 
 #if !ASSERT_DISABLED

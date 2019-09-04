@@ -33,6 +33,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         this._hidden = false;
         this._selected = false;
         this._copyable = true;
+        this._editable = true;
         this._shouldRefreshChildren = true;
         this._data = data || {};
         this.hasChildren = hasChildren || false;
@@ -78,6 +79,16 @@ WI.DataGridNode = class DataGridNode extends WI.Object
     set copyable(x)
     {
         this._copyable = x;
+    }
+
+    get editable()
+    {
+        return this._editable;
+    }
+
+    set editable(x)
+    {
+        this._editable = x;
     }
 
     get element()

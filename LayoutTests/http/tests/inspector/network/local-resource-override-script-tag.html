@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LocalResourceOverride.Script");
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.Script.Tag",
+        description: "<script> load uses override content on next page load",
+        async test() {
+            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create({
+                url: "http://127.0.0.1:8000/inspector/network/resources/override.js",
+                mimeType: "text/javascript",
+                content: `alert("OVERRIDDEN override.js TEXT"); TestPage.dispatchEventToFrontend("OverrideContentDidLoad");`,
+                base64Encoded: false,
+                statusCode: 200,
+                statusText: "OK",
+                headers: {},
+            }));
+
+            await InspectorTest.reloadPage({ignoreCache: false, revalidateAllResources: true});
+            await InspectorTest.awaitEvent("OverrideContentDidLoad");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test a LocalResourceOverride overriding a &lt;script&gt; load.</p>
+<script src="resources/override.js"></script>
+</body>
+</html>

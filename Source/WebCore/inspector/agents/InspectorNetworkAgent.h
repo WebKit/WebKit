@@ -88,6 +88,11 @@ public:
     void loadResource(const String& frameId, const String& url, Ref<LoadResourceCallback>&&) final;
     void getSerializedCertificate(ErrorString&, const String& requestId, String* serializedCertificate) final;
     void resolveWebSocket(ErrorString&, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) final;
+    void setInterceptionEnabled(ErrorString&, bool enabled) final;
+    void addInterception(ErrorString&, const String& url, const String* networkStageString) final;
+    void removeInterception(ErrorString&, const String& url, const String* networkStageString) final;
+    void interceptContinue(ErrorString&, const String& requestId) final;
+    void interceptWithResponse(ErrorString&, const String& requestId, const String& content, bool base64Encoded, const String* mimeType, const int* status, const String* statusText, const JSON::Object* headers) final;
 
     // InspectorInstrumentation
     void willRecalculateStyle();
@@ -114,6 +119,9 @@ public:
     void mainFrameNavigated(DocumentLoader&);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void didScheduleStyleRecalculation(Document&);
+    bool willInterceptRequest(const ResourceRequest&);
+    bool shouldInterceptResponse(const ResourceResponse&);
+    void interceptResponse(const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
     void searchInRequest(ErrorString&, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
@@ -133,6 +141,8 @@ private:
 
     void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType);
 
+    void continuePendingResponses();
+
     WebSocket* webSocketForRequestId(const String& requestId);
 
     RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*, Optional<const ResourceRequest&> = WTF::nullopt);
@@ -143,19 +153,63 @@ private:
 
     double timestamp();
 
+    class PendingInterceptResponse {
+        WTF_MAKE_NONCOPYABLE(PendingInterceptResponse);
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        PendingInterceptResponse(const ResourceResponse& originalResponse, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& completionHandler)
+            : m_originalResponse(originalResponse)
+            , m_completionHandler(WTFMove(completionHandler))
+        { }
+
+        ~PendingInterceptResponse()
+        {
+            ASSERT(m_responded);
+        }
+
+        ResourceResponse originalResponse() { return m_originalResponse; }
+
+        void respondWithOriginalResponse()
+        {
+            respond(m_originalResponse, nullptr);
+        }
+
+        void respond(const ResourceResponse& response, RefPtr<SharedBuffer> data)
+        {
+            ASSERT(!m_responded);
+            if (m_responded)
+                return;
+
+            m_responded = true;
+
+            m_completionHandler(response, data);
+        }
+
+    private:
+        ResourceResponse m_originalResponse;
+        CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)> m_completionHandler;
+        bool m_responded { false };
+    };
+
     std::unique_ptr<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
+
+    std::unique_ptr<NetworkResourcesData> m_resourcesData;
+
+    HashMap<String, String> m_extraRequestHeaders;
+    HashSet<unsigned long> m_hiddenRequestIdentifiers;
+
+    HashSet<String> m_interceptResponseURLs;
+    HashMap<String, std::unique_ptr<PendingInterceptResponse>> m_pendingInterceptResponses;
 
     // FIXME: InspectorNetworkAgent should not be aware of style recalculation.
     RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;
     bool m_isRecalculatingStyle { false };
 
-    std::unique_ptr<NetworkResourcesData> m_resourcesData;
     bool m_enabled { false };
     bool m_loadingXHRSynchronously { false };
-    HashMap<String, String> m_extraRequestHeaders;
-    HashSet<unsigned long> m_hiddenRequestIdentifiers;
+    bool m_interceptionEnabled { false };
 };
 
 } // namespace WebCore

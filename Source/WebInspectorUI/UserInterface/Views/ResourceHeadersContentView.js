@@ -232,6 +232,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             return WI.UIString("Disk Cache");
         case WI.Resource.ResponseSource.ServiceWorker:
             return WI.UIString("Service Worker");
+        case WI.Resource.ResponseSource.InspectorOverride:
+            return WI.UIString("Inspector Override");
         case WI.Resource.ResponseSource.Unknown:
         default:
             return null;
