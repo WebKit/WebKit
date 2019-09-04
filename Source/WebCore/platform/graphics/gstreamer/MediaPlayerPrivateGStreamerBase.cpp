@@ -174,6 +174,7 @@ public:
         gst_video_frame_unmap(&m_videoFrame);
     }
 
+#if USE(GSTREAMER_GL)
     virtual void waitForCPUSync()
     {
         GstGLSyncMeta* meta = gst_buffer_get_gl_sync_meta(m_buffer);
@@ -183,6 +184,7 @@ public:
             gst_gl_sync_meta_wait_cpu(meta, context);
         }
     }
+#endif // USE(GSTREAMER_GL)
 
     const IntSize& size() const { return m_size; }
     bool hasAlphaChannel() const { return m_hasAlphaChannel; }
