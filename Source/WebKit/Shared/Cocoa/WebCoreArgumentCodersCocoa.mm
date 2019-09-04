@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,15 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIFont.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
+#else
+namespace IPC {
+static bool finishDecoding(Decoder&, WebCore::ApplePaySessionPaymentRequest&) { return true; }
+static void finishEncoding(Encoder&, const WebCore::ApplePaySessionPaymentRequest&) { }
+}
 #endif
 
 namespace IPC {
@@ -181,6 +190,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, cons
     encoder << request.applicationData();
     encoder << request.supportedCountries();
     encoder.encodeEnum(request.requester());
+    finishEncoding(encoder, request);
 }
 
 bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, ApplePaySessionPaymentRequest& request)
@@ -262,6 +272,9 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
     if (!decoder.decodeEnum(requester))
         return false;
     request.setRequester(requester);
+
+    if (!finishDecoding(decoder, request))
+        return false;
 
     return true;
 }

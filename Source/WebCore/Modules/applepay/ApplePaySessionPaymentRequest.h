@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,10 @@
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePaySessionPaymentRequestAdditions.h>
+#endif
 
 namespace WebCore {
 
@@ -137,6 +141,11 @@ public:
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 
+#if defined(APPLEPAYSESSIONPAYMENTREQUEST_PUBLIC_ADDITIONS)
+APPLEPAYSESSIONPAYMENTREQUEST_PUBLIC_ADDITIONS
+#undef APPLEPAYSESSIONPAYMENTREQUEST_PUBLIC_ADDITIONS
+#endif
+
 private:
     unsigned m_version { 0 };
 
@@ -162,6 +171,11 @@ private:
     Vector<String> m_supportedCountries;
 
     Requester m_requester { Requester::ApplePayJS };
+
+#if defined(APPLEPAYSESSIONPAYMENTREQUEST_PRIVATE_ADDITIONS)
+APPLEPAYSESSIONPAYMENTREQUEST_PRIVATE_ADDITIONS
+#undef APPLEPAYSESSIONPAYMENTREQUEST_PRIVATE_ADDITIONS
+#endif
 };
 
 struct PaymentError {

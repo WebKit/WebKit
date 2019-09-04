@@ -33,6 +33,14 @@
 #import "PaymentMethod.h"
 #import <pal/spi/cocoa/PassKitSPI.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PaymentCocoaAdditions.mm>
+#else
+namespace WebCore {
+static void finishConverting(PKPayment *, ApplePayPayment&) { }
+}
+#endif
+
 namespace WebCore {
 
 static ApplePayPayment::Token convert(PKPaymentToken *paymentToken)
@@ -63,6 +71,8 @@ static ApplePayPayment convert(unsigned version, PKPayment *payment)
         result.billingContact = PaymentContact(payment.billingContact).toApplePayPaymentContact(version);
     if (payment.shippingContact)
         result.shippingContact = PaymentContact(payment.shippingContact).toApplePayPaymentContact(version);
+
+    finishConverting(payment, result);
 
     return result;
 }

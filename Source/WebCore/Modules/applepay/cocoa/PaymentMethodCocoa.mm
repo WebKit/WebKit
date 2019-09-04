@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,14 @@
 #import "ApplePayPaymentMethod.h"
 #import "ApplePayPaymentMethodType.h"
 #import <pal/spi/cocoa/PassKitSPI.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PaymentMethodCocoaAdditions.mm>
+#else
+namespace WebCore {
+static void finishConverting(PKPaymentMethod *, ApplePayPaymentMethod&) { }
+}
+#endif
 
 namespace WebCore {
 
@@ -97,6 +105,8 @@ static ApplePayPaymentMethod convert(PKPaymentMethod *paymentMethod)
 
     result.type = convert(paymentMethod.type);
     result.paymentPass = convert(paymentMethod.paymentPass);
+
+    finishConverting(paymentMethod, result);
 
     return result;
 }
