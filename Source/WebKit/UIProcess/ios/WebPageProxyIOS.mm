@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WebPageProxy.h"
+#import "VersionChecks.h"
 
 #if PLATFORM(IOS_FAMILY)
 
