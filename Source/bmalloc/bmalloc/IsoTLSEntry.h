@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,43 @@
 
 #pragma once
 
+#include "BAssert.h"
 #include "BMalloced.h"
+#include "IsoTLSLayout.h"
+#include <climits>
 
 namespace bmalloc {
 
 class IsoTLS;
-class IsoTLSLayout;
+
+template<typename Entry>
+class IsoTLSEntryHolder {
+    MAKE_BMALLOCED;
+    IsoTLSEntryHolder(const IsoTLSEntryHolder&) = delete;
+    IsoTLSEntryHolder& operator=(const IsoTLSEntryHolder&) = delete;
+public:
+    template<typename... Args>
+    IsoTLSEntryHolder(Args&&... args)
+        : m_entry(std::forward<Args>(args)...)
+    {
+        IsoTLSLayout::get()->add(&m_entry);
+        RELEASE_BASSERT(m_entry.offset() != UINT_MAX);
+    }
+
+    inline const Entry& operator*() const { m_entry; }
+    inline Entry& operator*() { m_entry; }
+    inline const Entry* operator->() const { return &m_entry; }
+    inline Entry* operator->() { return &m_entry; }
+
+private:
+    Entry m_entry;
+};
 
 class BEXPORT IsoTLSEntry {
     MAKE_BMALLOCED;
+    IsoTLSEntry(const IsoTLSEntry&) = delete;
+    IsoTLSEntry& operator=(const IsoTLSEntry&) = delete;
 public:
-    IsoTLSEntry(size_t alignment, size_t size);
     virtual ~IsoTLSEntry();
     
     size_t offset() const { return m_offset; }
@@ -50,6 +76,9 @@ public:
     
     template<typename Func>
     void walkUpToInclusive(IsoTLSEntry*, const Func&);
+
+protected:
+    IsoTLSEntry(size_t alignment, size_t size);
     
 private:
     friend class IsoTLS;
@@ -65,10 +94,11 @@ private:
 template<typename EntryType>
 class DefaultIsoTLSEntry : public IsoTLSEntry {
 public:
-    DefaultIsoTLSEntry();
     ~DefaultIsoTLSEntry();
     
 protected:
+    DefaultIsoTLSEntry();
+
     // This clones src onto dst and then destructs src. Therefore, entry destructors cannot do
     // scavenging.
     void move(void* src, void* dst) override;

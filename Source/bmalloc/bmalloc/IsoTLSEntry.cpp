@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "IsoTLSEntry.h"
 
 #include "BAssert.h"
-#include "IsoTLSLayout.h"
 #include "PerProcess.h"
 #include <climits>
 
@@ -37,8 +36,6 @@ IsoTLSEntry::IsoTLSEntry(size_t alignment, size_t size)
     , m_alignment(alignment)
     , m_size(size)
 {
-    IsoTLSLayout::get()->add(this);
-    RELEASE_BASSERT(m_offset != UINT_MAX);
 }
 
 IsoTLSEntry::~IsoTLSEntry()

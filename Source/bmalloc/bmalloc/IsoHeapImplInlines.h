@@ -34,11 +34,10 @@ namespace bmalloc {
 
 template<typename Config>
 IsoHeapImpl<Config>::IsoHeapImpl()
-    : lock(PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->lock)
+    : lock((*PerProcess<IsoTLSEntryHolder<IsoTLSDeallocatorEntry<Config>>>::get())->lock)
     , m_inlineDirectory(*this)
     , m_allocator(*this)
 {
-    addToAllIsoHeaps();
 }
 
 template<typename Config>
@@ -120,13 +119,13 @@ size_t IsoHeapImpl<Config>::freeableMemory()
 template<typename Config>
 unsigned IsoHeapImpl<Config>::allocatorOffset()
 {
-    return m_allocator.offset();
+    return m_allocator->offset();
 }
 
 template<typename Config>
 unsigned IsoHeapImpl<Config>::deallocatorOffset()
 {
-    return PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->offset();
+    return (*PerProcess<IsoTLSEntryHolder<IsoTLSDeallocatorEntry<Config>>>::get())->offset();
 }
 
 template<typename Config>

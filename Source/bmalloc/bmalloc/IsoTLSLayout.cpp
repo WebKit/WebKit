@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,15 +39,19 @@ void IsoTLSLayout::add(IsoTLSEntry* entry)
 {
     static Mutex addingMutex;
     RELEASE_BASSERT(!entry->m_next);
+    // IsoTLSLayout::head() does not take a lock. So we should emit memory fence to make sure that newly added entry is initialized when it is chained to this linked-list.
+    // Emitting memory fence here is OK since this function is not frequently called.
     std::lock_guard<Mutex> locking(addingMutex);
     if (m_head) {
         RELEASE_BASSERT(m_tail);
         entry->m_offset = roundUpToMultipleOf(entry->alignment(), m_tail->extent());
+        std::atomic_thread_fence(std::memory_order_seq_cst);
         m_tail->m_next = entry;
         m_tail = entry;
     } else {
         RELEASE_BASSERT(!m_tail);
         entry->m_offset = 0;
+        std::atomic_thread_fence(std::memory_order_seq_cst);
         m_head = entry;
         m_tail = entry;
     }

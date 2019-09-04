@@ -1,3 +1,53 @@
+2019-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoTLSLayout and AllIsoHeaps registration is racy with derived class initialization with virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=201448
+
+        Reviewed by Mark Lam.
+
+        In the base class of IsoTLSEntry and IsoHeapImplBase, we register each instance with the per-process linked-list singleton to
+        offer a way to iterate all these instances. But since derived classes of IsoTLSEntry and IsoHeapImplBase have virtual functions,
+        the instance is not fully instantiated yet when executing the base constructor! In particular, the register instance needs vtable pointer
+        initialization in the derived constructor.
+
+        So, there is a race condition,
+
+        1. IsoTLSEntry adds itself to the global linked-list.
+        2. IsoTLSEntry's derived class is initializing the instance including vtable pointer, this happens because base and derived classes have virtual functions.
+        3. While doing (2), other thread iterates instances through (1)'s linked-list and call virtual functions
+
+        Then, crash happens because the instance vtable pointer hasn't been set to the derived class' vtable yet. IsoHeapImpl has the same problem.
+        This issue causes some crashes in bmalloc::Scavenger::scavenge / bmalloc::IsoTLS::ensureEntries.
+
+        In this patch,
+
+        1. We introduce IsoTLSEntryHolder, which initialize the TLS entry. And after fully initializing it, the holder registers the entry with the IsoTLSLayout singleton.
+        2. We call IsoHeapImplBase::addToAllIsoHeaps after IsoHeapImpl is fully initialized.
+        3. We put memory barrier in IsoTLSLayout since IsoTLSLayout::head does not take a lock.
+        4. We add unit-test that reliably reproduces IsoHeapImpl crash if we run this test ~10 times!
+
+        * bmalloc/AllIsoHeaps.h:
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::IsoHeapImpl):
+        (bmalloc::IsoHeapImpl<Config>::allocatorOffset):
+        (bmalloc::IsoHeapImpl<Config>::deallocatorOffset):
+        * bmalloc/IsoHeapInlines.h:
+        (bmalloc::api::IsoHeap<Type>::initialize):
+        * bmalloc/IsoTLSAllocatorEntry.h:
+        * bmalloc/IsoTLSDeallocatorEntry.h:
+        * bmalloc/IsoTLSEntry.cpp:
+        (bmalloc::IsoTLSEntry::IsoTLSEntry):
+        * bmalloc/IsoTLSEntry.h:
+        (bmalloc::IsoTLSEntryHolder::IsoTLSEntryHolder):
+        (bmalloc::IsoTLSEntryHolder::operator* const):
+        (bmalloc::IsoTLSEntryHolder::operator*):
+        (bmalloc::IsoTLSEntryHolder::operator-> const):
+        (bmalloc::IsoTLSEntryHolder::operator->):
+        * bmalloc/IsoTLSLayout.cpp:
+        (bmalloc::IsoTLSLayout::add):
+        * bmalloc/IsoTLSLayout.h:
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Update .xcconfig symbols to reflect the current set of past and future product versions.

@@ -1,3 +1,13 @@
+2019-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoTLSLayout and AllIsoHeaps registration is racy with derived class initialization with virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=201448
+
+        Reviewed by Mark Lam.
+
+        * TestWebKitAPI/Tests/WTF/bmalloc/IsoHeap.cpp:
+        (TEST):
+
 2019-09-03  Dean Jackson  <dino@apple.com>
 
         Test for ContextMenus with images

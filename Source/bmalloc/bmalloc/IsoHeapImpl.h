@@ -37,6 +37,8 @@ class AllIsoHeaps;
 
 class BEXPORT IsoHeapImplBase {
     MAKE_BMALLOCED;
+    IsoHeapImplBase(const IsoHeapImplBase&) = delete;
+    IsoHeapImplBase& operator=(const IsoHeapImplBase&) = delete;
 public:
     static constexpr unsigned maxAllocationFromShared = 8;
     static constexpr unsigned maxAllocationFromSharedMask = (1U << maxAllocationFromShared) - 1U;
@@ -52,9 +54,10 @@ public:
     void scavengeNow();
     static void finishScavenging(Vector<DeferredDecommit>&);
 
+    void addToAllIsoHeaps();
+
 protected:
     IsoHeapImplBase();
-    void addToAllIsoHeaps();
 
     friend class IsoSharedPage;
     friend class AllIsoHeaps;
@@ -116,7 +119,7 @@ public:
     void* allocateFromShared(const std::lock_guard<Mutex>&, bool abortOnFailure);
     
     // It's almost always the caller's responsibility to grab the lock. This lock comes from the
-    // PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->lock. That's pretty weird, and we don't
+    // (*PerProcess<IsoTLSEntryHolder<IsoTLSDeallocatorEntry<Config>>>::get())->lock. That's pretty weird, and we don't
     // try to disguise the fact that it's weird. We only do that because heaps in the same size class
     // share the same deallocator log, so it makes sense for them to also share the same lock to
     // amortize lock acquisition costs.
@@ -137,7 +140,7 @@ private:
     bool m_isInlineDirectoryEligibleOrDecommitted { true };
     IsoDirectoryPage<Config>* m_firstEligibleOrDecommitedDirectory { nullptr };
     
-    IsoTLSAllocatorEntry<Config> m_allocator;
+    IsoTLSEntryHolder<IsoTLSAllocatorEntry<Config>> m_allocator;
 };
 
 } // namespace bmalloc
