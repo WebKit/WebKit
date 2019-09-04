@@ -157,63 +157,92 @@ sub generateBindings
         my $document = $parser->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
 
         foreach my $interface (@{$document->interfaces}) {
-            if (!$interface->isPartial || $interface->type->name eq $targetInterfaceName) {
-                my $targetDataNode;
-                my @targetGlobalContexts;
-                foreach my $interface (@{$targetDocument->interfaces}) {
-                    if ($interface->type->name eq $targetInterfaceName) {
-                        $targetDataNode = $interface;
-                        my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
-                        $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-                        @targetGlobalContexts = split(",", $exposedAttribute);
-                        last;
-                    }
+            next unless !$interface->isPartial || $interface->type->name eq $targetInterfaceName;
+
+            my $targetDataNode;
+            my @targetGlobalContexts;
+            foreach my $interface (@{$targetDocument->interfaces}) {
+                if ($interface->type->name eq $targetInterfaceName) {
+                    $targetDataNode = $interface;
+                    my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
+                    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+                    @targetGlobalContexts = split(",", $exposedAttribute);
+                    last;
                 }
-                die "Not found an interface ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
+            }
+            die "Not found an interface ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
 
-                # Support for attributes of partial interfaces.
-                foreach my $attribute (@{$interface->attributes}) {
-                    next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
+            # Support for attributes of partial interfaces.
+            foreach my $attribute (@{$interface->attributes}) {
+                next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
 
-                    # Record that this attribute is implemented by $interfaceName.
-                    $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
+                # Record that this attribute is implemented by $interfaceName.
+                $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
 
-                    # Add interface-wide extended attributes to each attribute.
-                    foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                        $attribute->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                    }
-                    push(@{$targetDataNode->attributes}, $attribute);
+                # Add interface-wide extended attributes to each attribute.
+                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
+                    $attribute->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
+                push(@{$targetDataNode->attributes}, $attribute);
+            }
 
-                # Support for methods of partial interfaces.
-                foreach my $operation (@{$interface->operations}) {
-                    next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
+            # Support for methods of partial interfaces.
+            foreach my $operation (@{$interface->operations}) {
+                next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
 
-                    # Record that this method is implemented by $interfaceName.
-                    $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                # Record that this method is implemented by $interfaceName.
+                $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
-                    # Add interface-wide extended attributes to each method.
-                    foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                        $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                    }
-                    push(@{$targetDataNode->operations}, $operation);
+                # Add interface-wide extended attributes to each method.
+                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
+                    $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
+                push(@{$targetDataNode->operations}, $operation);
+            }
 
-                # Support for constants of partial interfaces.
-                foreach my $constant (@{$interface->constants}) {
-                    next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
+            # Support for constants of partial interfaces.
+            foreach my $constant (@{$interface->constants}) {
+                next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
 
-                    # Record that this constant is implemented by $interfaceName.
-                    $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                # Record that this constant is implemented by $interfaceName.
+                $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
-                    # Add interface-wide extended attributes to each constant.
-                    foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                        $constant->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                    }
-                    push(@{$targetDataNode->constants}, $constant);
+                # Add interface-wide extended attributes to each constant.
+                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
+                    $constant->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
-            } else {
-                die "$idlFile is not a supplemental dependency of $targetIdlFile. There maybe a bug in the supplemental dependency generator (preprocess-idls.pl).\n";
+                push(@{$targetDataNode->constants}, $constant);
+            }
+        }
+
+        foreach my $dictionary (@{$document->dictionaries}) {
+            next unless $dictionary->isPartial && $dictionary->type->name eq $targetInterfaceName;
+
+            my $targetDataNode;
+            my @targetGlobalContexts;
+            foreach my $dictionary (@{$targetDocument->dictionaries}) {
+                if ($dictionary->type->name eq $targetInterfaceName) {
+                    $targetDataNode = $dictionary;
+                    my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
+                    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+                    @targetGlobalContexts = split(",", $exposedAttribute);
+                    last;
+                }
+            }
+            die "Could not find dictionary ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
+
+            # Support for members of partial dictionaries
+            foreach my $member (@{$dictionary->members}) {
+                next unless shouldPropertyBeExposed($member, \@targetGlobalContexts);
+
+                # Record that this member is implemented by $interfaceName.
+                $member->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+
+                # Add interface-wide extended attributes to each member.
+                foreach my $extendedAttributeName (keys %{$dictionary->extendedAttributes}) {
+                    $member->extendedAttributes->{$extendedAttributeName} = $dictionary->extendedAttributes->{$extendedAttributeName};
+                }
+                push(@{$targetDataNode->members}, $member);
             }
         }
     }

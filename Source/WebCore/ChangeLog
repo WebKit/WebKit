@@ -1,3 +1,66 @@
+2019-09-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r248275. rdar://problem/55001373
+
+    [WebIDL] Support partial dictionaries and conditional dictionary members
+    https://bugs.webkit.org/show_bug.cgi?id=200441
+    
+    Reviewed by Alex Christensen.
+    
+    Added new bindings tests.
+    
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GenerateDictionaryImplementationContent):
+    * bindings/scripts/IDLParser.pm:
+    (parsePartialDefinition):
+    (parsePartialInterface): Deleted.
+    (parsePartialDictionary): Deleted.
+    * bindings/scripts/generate-bindings.pl:
+    (generateBindings):
+    * bindings/scripts/preprocess-idls.pl:
+    (getPartialNamesFromIDL):
+    (getPartialInterfaceNameFromIDL): Deleted.
+    * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+    (WebCore::convertDictionary<TestEventConstructor::Init>):
+    * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+    (WebCore::convertDictionary<DictionaryImplName>):
+    (WebCore::convertDictionaryToJS):
+    * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+    * bindings/scripts/test/TestStandaloneDictionary.idl:
+    * bindings/scripts/test/TestSupplemental.idl:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248275 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-05  Andy Estes  <aestes@apple.com>
+
+            [WebIDL] Support partial dictionaries and conditional dictionary members
+            https://bugs.webkit.org/show_bug.cgi?id=200441
+
+            Reviewed by Alex Christensen.
+
+            Added new bindings tests.
+
+            * bindings/scripts/CodeGeneratorJS.pm:
+            (GenerateDictionaryImplementationContent):
+            * bindings/scripts/IDLParser.pm:
+            (parsePartialDefinition):
+            (parsePartialInterface): Deleted.
+            (parsePartialDictionary): Deleted.
+            * bindings/scripts/generate-bindings.pl:
+            (generateBindings):
+            * bindings/scripts/preprocess-idls.pl:
+            (getPartialNamesFromIDL):
+            (getPartialInterfaceNameFromIDL): Deleted.
+            * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+            (WebCore::convertDictionary<TestEventConstructor::Init>):
+            * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+            (WebCore::convertDictionary<DictionaryImplName>):
+            (WebCore::convertDictionaryToJS):
+            * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+            * bindings/scripts/test/TestStandaloneDictionary.idl:
+            * bindings/scripts/test/TestSupplemental.idl:
+
 2019-08-28  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r249156. rdar://problem/54775048

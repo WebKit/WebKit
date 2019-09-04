@@ -112,10 +112,10 @@ foreach my $idlFile (sort keys %idlFileHash) {
 foreach my $idlFile (sort keys %idlFileHash) {
     my $fullPath = Cwd::realpath($idlFile);
     my $idlFileContents = getFileContents($fullPath);
-    # Handle partial interfaces.
-    my $partialInterfaceName = getPartialInterfaceNameFromIDL($idlFileContents);
-    if ($partialInterfaceName) {
-        $supplementalDependencies{$fullPath} = [$partialInterfaceName];
+    # Handle partial names.
+    my $partialNames = getPartialNamesFromIDL($idlFileContents);
+    if (@{$partialNames}) {
+        $supplementalDependencies{$fullPath} = $partialNames;
         next;
     }
 
@@ -333,13 +333,14 @@ sub getFileContents
     return join('', @lines);
 }
 
-sub getPartialInterfaceNameFromIDL
+sub getPartialNamesFromIDL
 {
     my $fileContents = shift;
-
-    if ($fileContents =~ /partial\s+interface\s+(\w+)/gs) {
-        return $1;
+    my @partialNames = ();
+    while ($fileContents =~ /partial\s+(interface|dictionary)\s+(\w+)/mg) {
+        push(@partialNames, $2);
     }
+    return \@partialNames;
 }
 
 # identifier-A implements identifier-B;
