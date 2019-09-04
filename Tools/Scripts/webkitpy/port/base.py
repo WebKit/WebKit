@@ -267,12 +267,11 @@ class Port(object):
 
     def environment_for_api_tests(self):
         build_root_path = str(self._build_path())
-        return {
-            'DYLD_LIBRARY_PATH': build_root_path,
-            '__XPC_DYLD_LIBRARY_PATH': build_root_path,
-            'DYLD_FRAMEWORK_PATH': build_root_path,
-            '__XPC_DYLD_FRAMEWORK_PATH': build_root_path,
-        }
+        environment = self.setup_environ_for_server()
+        for name in ['DYLD_LIBRARY_PATH', '__XPC_DYLD_LIBRARY_PATH', 'DYLD_FRAMEWORK_PATH', '__XPC_DYLD_FRAMEWORK_PATH']:
+            self._append_value_colon_separated(environment, name, build_root_path)
+
+        return environment
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
@@ -964,9 +963,9 @@ class Port(object):
 
     @staticmethod
     def _append_value_colon_separated(env, name, value):
-        assert ":" not in value
+        assert os.pathsep not in value
         if name in env and env[name]:
-            env[name] = env[name] + ":" + value
+            env[name] = env[name] + os.pathsep + value
         else:
             env[name] = value
 

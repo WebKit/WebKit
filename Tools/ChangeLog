@@ -1,3 +1,18 @@
+2019-09-04  Jonathan Bedard  <jbedard@apple.com>
+
+        run-api-tests: Add support for specifying additional environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=201311
+        <rdar://problem/54852698>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (parse_args): Add --additional-env-var flag.
+        * Scripts/webkitpy/port/base.py:
+        (Port._append_value_colon_separated): Use os.pathsep instead of ':'.
+        (Port.environment_for_api_tests): Add the values from --additional-env-var to the
+        environment.
+
 2019-09-04  Aakash Jain  <aakash_jain@apple.com>
 
         EWS bubbles should indicate builder vs tester

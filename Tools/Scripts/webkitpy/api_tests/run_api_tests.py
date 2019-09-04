@@ -136,6 +136,8 @@ def parse_args(args):
 
         optparse.make_option('--force', action='store_true', default=False,
                              help='Run all tests, even DISABLED tests'),
+        optparse.make_option('--additional-env-var', type='string', action='append', default=[],
+                             help='Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)'),
     ]))
     option_group_definitions.append(('Upload Options', upload_options()))
 
