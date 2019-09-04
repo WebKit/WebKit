@@ -695,7 +695,9 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
         return;
 
     intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
-    if (isBlacklisted(sourceID))
+
+    auto blackboxTypeIterator = m_blackboxedScripts.find(sourceID);
+    if (blackboxTypeIterator != m_blackboxedScripts.end() && blackboxTypeIterator->value == BlackboxType::Ignored)
         return;
 
     DebuggerPausedScope debuggerPausedScope(*this);
@@ -713,6 +715,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     if (!pauseNow)
         return;
 
+    bool afterBlackboxedScript = m_afterBlackboxedScript;
     clearNextPauseState();
 
     // Make sure we are not going to pause again on breakpoint actions by
@@ -736,8 +739,20 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
             m_pausingBreakpointID = breakpoint.id;
     }
 
+    if (blackboxTypeIterator != m_blackboxedScripts.end() && blackboxTypeIterator->value == BlackboxType::Deferred) {
+        m_afterBlackboxedScript = true;
+        setPauseOnNextStatement(true);
+        return;
+    }
+
     {
-        PauseReasonDeclaration reason(*this, didHitBreakpoint ? PausedForBreakpoint : m_reasonForPause);
+        auto reason = m_reasonForPause;
+        if (afterBlackboxedScript)
+            reason = PausedAfterBlackboxedScript;
+        else if (didHitBreakpoint)
+            reason = PausedForBreakpoint;
+        PauseReasonDeclaration rauseReasonDeclaration(*this, reason);
+
         handlePause(vmEntryGlobalObject, m_reasonForPause);
         scope.releaseAssertNoException();
     }
@@ -908,6 +923,7 @@ void Debugger::clearNextPauseState()
     m_pauseOnCallFrame = nullptr;
     m_pauseAtNextOpportunity = false;
     m_pauseOnStepOut = false;
+    m_afterBlackboxedScript = false;
 }
 
 void Debugger::didReachBreakpoint(CallFrame* callFrame)
@@ -928,19 +944,17 @@ DebuggerCallFrame& Debugger::currentDebuggerCallFrame()
     return *m_currentDebuggerCallFrame;
 }
 
-bool Debugger::isBlacklisted(SourceID sourceID) const
+void Debugger::setBlackboxType(SourceID sourceID, Optional<BlackboxType> type)
 {
-    return m_blacklistedScripts.contains(sourceID);
+    if (type)
+        m_blackboxedScripts.set(sourceID, type.value());
+    else
+        m_blackboxedScripts.remove(sourceID);
 }
 
-void Debugger::addToBlacklist(SourceID sourceID)
+void Debugger::clearBlackbox()
 {
-    m_blacklistedScripts.add(sourceID);
-}
-
-void Debugger::clearBlacklist()
-{
-    m_blacklistedScripts.clear();
+    m_blackboxedScripts.clear();
 }
 
 } // namespace JSC

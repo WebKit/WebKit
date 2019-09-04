@@ -118,8 +118,8 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         if (this._resource) {
             this._resource.removeEventListener(WI.Resource.Event.URLDidChange, this._urlDidChange, this);
             this._resource.removeEventListener(WI.Resource.Event.TypeDidChange, this._typeDidChange, this);
-            this._resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, this._updateStatus, this);
-            this._resource.removeEventListener(WI.Resource.Event.LoadingDidFail, this._updateStatus, this);
+            this._resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, this.updateStatus, this);
+            this._resource.removeEventListener(WI.Resource.Event.LoadingDidFail, this.updateStatus, this);
         }
 
         this._updateSourceCode(resource);
@@ -128,11 +128,11 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
         resource.addEventListener(WI.Resource.Event.URLDidChange, this._urlDidChange, this);
         resource.addEventListener(WI.Resource.Event.TypeDidChange, this._typeDidChange, this);
-        resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._updateStatus, this);
-        resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._updateStatus, this);
+        resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this.updateStatus, this);
+        resource.addEventListener(WI.Resource.Event.LoadingDidFail, this.updateStatus, this);
 
         this._updateTitles();
-        this._updateStatus();
+        this.updateStatus();
         this._updateToolTip();
     }
 
@@ -175,17 +175,13 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
             this.callFirstAncestorFunction("descendantResourceTreeElementMainTitleDidChange", [this, oldMainTitle]);
     }
 
-    populateContextMenu(contextMenu, event)
+    updateStatus()
     {
-        WI.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
+        super.updateStatus();
 
-        super.populateContextMenu(contextMenu, event);
-    }
+        if (!this._resource)
+            return;
 
-    // Private
-
-    _updateStatus()
-    {
         if (this._resource.hadLoadingError())
             this.addClassName(WI.ResourceTreeElement.FailedStyleClassName);
         else
@@ -194,14 +190,32 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         if (this._resource.isLoading()) {
             if (!this.status || !this.status[WI.ResourceTreeElement.SpinnerSymbol]) {
                 let spinner = new WI.IndeterminateProgressSpinner;
-                this.status = spinner.element;
-                this.status[WI.ResourceTreeElement.SpinnerSymbol] = true;
+                if (this.status)
+                    this.statusElement.insertAdjacentElement("afterbegin", spinner.element);
+                else
+                    this.status = spinner.element;
+                this.status[WI.ResourceTreeElement.SpinnerSymbol] = spinner.element;
             }
         } else {
-            if (this.status && this.status[WI.ResourceTreeElement.SpinnerSymbol])
-                this.status = "";
+            if (this.status && this.status[WI.ResourceTreeElement.SpinnerSymbol]) {
+                if (this.status === this.status[WI.ResourceTreeElement.SpinnerSymbol])
+                    this.status = null;
+                else {
+                    this.status[WI.ResourceTreeElement.SpinnerSymbol].remove();
+                    this.status[WI.ResourceTreeElement.SpinnerSymbol] = null;
+                }
+            }
         }
     }
+
+    populateContextMenu(contextMenu, event)
+    {
+        WI.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
+    // Private
 
     _updateToolTip()
     {

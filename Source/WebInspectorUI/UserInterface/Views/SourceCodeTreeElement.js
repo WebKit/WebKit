@@ -128,6 +128,13 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
             findAndCombineFolderChains(this.children[i], null);
     }
 
+    canSelectOnMouseDown(event)
+    {
+        if (this._toggleBlackboxedImageElement && this._toggleBlackboxedImageElement.contains(event.target))
+            return false;
+        return super.canSelectOnMouseDown(event);
+    }
+
     // Protected
 
     descendantResourceTreeElementTypeDidChange(childTreeElement, oldType)
@@ -150,6 +157,20 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
             childTreeElement.revealAndSelect(true, false, true);
     }
 
+    updateStatus()
+    {
+        if (this._sourceCode.supportsScriptBlackboxing) {
+            if (!this._toggleBlackboxedImageElement) {
+                this._toggleBlackboxedImageElement = document.createElement("img");
+                this._toggleBlackboxedImageElement.classList.add("toggle-script-blackboxed");
+                this._toggleBlackboxedImageElement.addEventListener("click", this._handleToggleBlackboxedImageElementClicked.bind(this));
+            }
+
+            this.status = this._toggleBlackboxedImageElement;
+            this._updateToggleBlackboxImageElementState();
+        }
+    }
+
     // Protected (ResourceTreeElement calls this when its Resource changes dynamically for Frames)
 
     _updateSourceCode(sourceCode)
@@ -159,12 +180,44 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         if (this._sourceCode === sourceCode)
             return;
 
-        if (this._sourceCode)
+        let oldSupportsScriptBlackboxing = false;
+
+        if (this._sourceCode) {
+            oldSupportsScriptBlackboxing = this._sourceCode.supportsScriptBlackboxing;
+
             this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this.updateSourceMapResources, this);
+        }
 
         this._sourceCode = sourceCode;
         this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this.updateSourceMapResources, this);
 
+        let newSupportsScriptBlackboxing = this._sourceCode.supportsScriptBlackboxing;
+        if (oldSupportsScriptBlackboxing !== newSupportsScriptBlackboxing) {
+            if (newSupportsScriptBlackboxing)
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BlackboxedURLsChanged, this._updateToggleBlackboxImageElementState, this);
+            else
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BlackboxedURLsChanged, this._updateToggleBlackboxImageElementState, this);
+        }
+
         this.updateSourceMapResources();
+
+        this.updateStatus();
+    }
+
+    // Private
+
+    _updateToggleBlackboxImageElementState()
+    {
+        let isBlackboxed = WI.debuggerManager.isScriptBlackboxed(this._sourceCode);
+        this._toggleBlackboxedImageElement.classList.toggle("blackboxed", isBlackboxed);
+        this._toggleBlackboxedImageElement.title = isBlackboxed ? WI.UIString("Include script when debugging") : WI.UIString("Ignore script when debugging");
+    }
+
+    _handleToggleBlackboxedImageElementClicked(event)
+    {
+        let isBlackboxed = WI.debuggerManager.isScriptBlackboxed(this._sourceCode);
+        WI.debuggerManager.setShouldBlackboxScript(this._sourceCode, !isBlackboxed);
+
+        this._updateToggleBlackboxImageElementState();
     }
 };

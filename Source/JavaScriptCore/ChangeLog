@@ -1,3 +1,49 @@
+2019-09-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: implement blackboxing of script resources
+        https://bugs.webkit.org/show_bug.cgi?id=17240
+        <rdar://problem/5732847>
+
+        Reviewed by Joseph Pecoraro.
+
+        When a script is blackboxed and the debugger attempts to pause in that script, the pause
+        reason/data will be saved and execution will continue until it has left the blackboxed
+        script. Once outside, execution is paused with the saved reason/data.
+
+        This is especially useful when debugging issues using libraries/frameworks, as it allows the
+        developer to "skip" the internal logic of the library/framework and instead focus only on
+        how they're using it.
+
+        * inspector/protocol/Debugger.json:
+        Add `setShouldBlackboxURL` command.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent):
+        (Inspector::InspectorDebuggerAgent::enable):
+        (Inspector::InspectorDebuggerAgent::updatePauseReasonAndData): Added.
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::cancelPauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::setShouldBlackboxURL): Added.
+        (Inspector::InspectorDebuggerAgent::setPauseForInternalScripts):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::didContinue):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        (Inspector::InspectorDebuggerAgent::clearPauseDetails): Added.
+        (Inspector::InspectorDebuggerAgent::clearBreakDetails): Deleted.
+        Renamed "break" to "pause" to match `Debugger` naming.
+
+        * debugger/Debugger.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::setBlackboxType): Added.
+        (JSC::Debugger::clearBlackbox): Added.
+        (JSC::Debugger::isBlacklisted const): Deleted.
+        (JSC::Debugger::addToBlacklist): Deleted.
+        (JSC::Debugger::clearBlacklist): Deleted.
+
 2019-09-03  Mark Lam  <mark.lam@apple.com>
 
         Remove the need to pass performJITMemcpy as a pointer.

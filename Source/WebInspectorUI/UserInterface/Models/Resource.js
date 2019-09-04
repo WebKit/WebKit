@@ -352,6 +352,11 @@ WI.Resource = class Resource extends WI.SourceCode
         return true;
     }
 
+    get isScript()
+    {
+        return this._type === Resource.Type.Script;
+    }
+
     get displayName()
     {
         return WI.displayNameForURL(this._url, this.urlComponents);

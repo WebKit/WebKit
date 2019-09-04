@@ -1,0 +1,105 @@
+Tests Debugger.setShouldBlackboxURL.
+
+
+== Running test suite: Debugger.setShouldBlackboxURL
+-- Running test case: Debugger.setShouldBlackboxURL.stepOver
+Evaluating 'createScripts("stepOver")'...
+Blackboxing 'stepOverMiddle.js'...
+Setting breakpoint in 'stepOverInner.js'...
+Evaluating 'stepOverOuter(10)'...
+
+Paused in 'stepOverInner:3:1'.
+Reason: 'Breakpoint'
+{
+  "breakpointId": "stepOverInner.js:3:0"
+}
+Stepping over...
+
+Paused in 'stepOverOuter:3:1'.
+Reason: 'BlackboxedScript'
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "stepOverInner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'stepOverMiddle'.
+
+-- Running test case: Debugger.setShouldBlackboxURL.PauseInCaller
+Evaluating 'createScripts("pauseInCaller")'...
+Blackboxing 'pauseInCallerInner.js'...
+Setting breakpoint in 'pauseInCallerInner.js'...
+Evaluating 'pauseInCallerOuter(10)'...
+
+Paused in 'pauseInCallerMiddle:3:1'.
+Reason: 'BlackboxedScript'
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "pauseInCallerInner.js:2:0"
+  }
+}
+Stepping over...
+
+Paused in 'pauseInCallerOuter:3:1'.
+Reason: 'other'
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'pauseInCallerInner'.
+
+-- Running test case: Debugger.setShouldBlackboxURL.PauseInCallee
+Evaluating 'createScripts("pauseInCallee")'...
+Blackboxing 'pauseInCalleeOuter.js'...
+Setting breakpoint in 'pauseInCalleeOuter.js'...
+Evaluating 'pauseInCalleeOuter(10)'...
+
+Paused in 'pauseInCalleeMiddle:2:4'.
+Reason: 'BlackboxedScript'
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "pauseInCalleeOuter.js:2:0"
+  }
+}
+Stepping over...
+
+Paused in 'pauseInCalleeMiddle:3:1'.
+Reason: 'other'
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'pauseInCalleeOuter'.
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.emptyURL
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "URL must not be empty",
+  "data": [
+    {
+      "code": -32000,
+      "message": "URL must not be empty"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.injectedScript
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"
+    }
+  ]
+}
+

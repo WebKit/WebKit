@@ -1,5 +1,19 @@
 2019-09-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: implement blackboxing of script resources
+        https://bugs.webkit.org/show_bug.cgi?id=17240
+        <rdar://problem/5732847>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/setShouldBlackboxURL.html: Added.
+        * inspector/debugger/setShouldBlackboxURL-expected.txt: Added.
+
+        * inspector/model/remote-object-api-expected.txt:
+        Update output since `WI.TestHarness.prototype.expectException` now logs the `.constructor.name`.
+
+2019-09-03  Devin Rousso  <drousso@apple.com>
+
         REGRESSION (r249132): [macOS WK2] Layout Test inspector/layers/layerTreeDidChange.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=201435
 

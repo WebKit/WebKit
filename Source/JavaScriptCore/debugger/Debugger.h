@@ -100,6 +100,7 @@ public:
         PausedAtEndOfProgram,
         PausedForBreakpoint,
         PausedForDebuggerStatement,
+        PausedAfterBlackboxedScript,
     };
     ReasonForPause reasonForPause() const { return m_reasonForPause; }
     BreakpointID pausingBreakpointID() const { return m_pausingBreakpointID; }
@@ -111,9 +112,9 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool isBlacklisted(SourceID) const;
-    void addToBlacklist(SourceID);
-    void clearBlacklist();
+    enum class BlackboxType { Deferred, Ignored };
+    void setBlackboxType(SourceID, Optional<BlackboxType>);
+    void clearBlackbox();
 
     bool isPaused() const { return m_isPaused; }
     bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
@@ -224,7 +225,7 @@ private:
     VM& m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
     HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
-    HashSet<SourceID, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blacklistedScripts;
+    HashMap<SourceID, BlackboxType, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxedScripts;
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseAtNextOpportunity : 1;
@@ -242,6 +243,7 @@ private:
     CallFrame* m_currentCallFrame { nullptr };
     unsigned m_lastExecutedLine;
     SourceID m_lastExecutedSourceID;
+    bool m_afterBlackboxedScript { false };
 
     BreakpointID m_topBreakpointID;
     BreakpointID m_pausingBreakpointID;

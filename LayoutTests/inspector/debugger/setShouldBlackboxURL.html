@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function createScripts(id) {
+    eval(
+`
+window.${id}Inner = function ${id}Inner(x) {
+    return x + 42;
+};
+//# sourceURL=${id}Inner.js
+`
+    );
+
+    eval(
+`
+window.${id}Middle = function ${id}Middle(x) {
+    return ${id}Inner(x);
+};
+//# sourceURL=${id}Middle.js
+`
+    );
+
+    eval(
+`
+window.${id}Outer = function ${id}Outer(x) {
+    return ${id}Middle(x);
+};
+//# sourceURL=${id}Outer.js
+`
+    );
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Debugger.setShouldBlackboxURL");
+
+    let sourceURLRegExpQueries = new Map;
+    let pausedFunctionNames = [];
+    let resumeCallback = null;
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(message) {
+        let sourceURL = message.params.sourceURL;
+        for (let [regExp, callback] of sourceURLRegExpQueries) {
+            if (regExp.test(sourceURL)) {
+                sourceURLRegExpQueries.delete(regExp);
+                callback(sourceURL);
+            }
+        };
+    };
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(message) {
+        let topCallFrame = message.params.callFrames[0];
+        let functionName = topCallFrame.functionName;
+        if (functionName === "global code") {
+            ProtocolTest.log("Resuming...");
+            InspectorProtocol.sendCommand(`Debugger.resume`, {}, InspectorProtocol.checkForError);
+            return;
+        }
+
+        ProtocolTest.log(`Paused in '${functionName}:${topCallFrame.location.lineNumber}:${topCallFrame.location.columnNumber}'.`);
+        ProtocolTest.log(`Reason: '${message.params.reason}'`);
+        if (message.params.data)
+            ProtocolTest.json(message.params.data);
+        pausedFunctionNames.push(functionName);
+
+        ProtocolTest.log("Stepping over...");
+        ProtocolTest.newline();
+        InspectorProtocol.sendCommand(`Debugger.stepOver`, {}, InspectorProtocol.checkForError);
+    };
+
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(message) {
+        ProtocolTest.pass("Resumed.");
+        resumeCallback();
+    };
+
+    async function setBlackbox(url) {
+        ProtocolTest.log(`Blackboxing '${url}'...`);
+        await InspectorProtocol.awaitCommand({
+            method: "Debugger.setShouldBlackboxURL",
+            params: {url, shouldBlackbox: true},
+        });
+    }
+
+    async function setBreakpoint(url, lineNumber) {
+        ProtocolTest.log(`Setting breakpoint in '${url}'...`);
+        await InspectorProtocol.awaitCommand({
+            method: "Debugger.setBreakpointByUrl",
+            params: {url, lineNumber},
+        });
+    }
+
+    async function listenForSourceParsed(sourceURLRegExp) {
+        return new Promise((resolve, reject) => {
+            sourceURLRegExpQueries.set(sourceURLRegExp, resolve);
+        });
+    }
+
+    async function evaluate(expression) {
+        ProtocolTest.log(`Evaluating '${expression}'...`);
+        return InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {expression},
+        });
+    }
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.stepOver",
+        description: "Check that stepping through a blackboxed script doesn't pause.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("stepOverMiddle"), "Should not pause in 'stepOverMiddle'.");
+                    resolve();
+                };
+            });
+
+            let [stepOverInnerSourceURL, stepOverMiddleSourceURL] = await Promise.all([
+                listenForSourceParsed(/stepOverInner\.js$/),
+                listenForSourceParsed(/stepOverMiddle\.js$/),
+                listenForSourceParsed(/stepOverOuter\.js$/),
+                evaluate(`createScripts("stepOver")`),
+            ]);
+
+            await setBlackbox(stepOverMiddleSourceURL);
+            await setBreakpoint(stepOverInnerSourceURL, 3); // last line of function, so it only pauses once
+            evaluate(`stepOverOuter(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.PauseInCaller",
+        description: "Check that the debugger will pause in the caller if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("pauseInCallerInner"), "Should not pause in 'pauseInCallerInner'.");
+                    resolve();
+                };
+            });
+
+            let [pauseInCallerInnerSourceURL] = await Promise.all([
+                listenForSourceParsed(/pauseInCallerInner\.js$/),
+                listenForSourceParsed(/pauseInCallerMiddle\.js$/),
+                listenForSourceParsed(/pauseInCallerOuter\.js$/),
+                evaluate(`createScripts("pauseInCaller")`),
+            ]);
+
+            await setBlackbox(pauseInCallerInnerSourceURL);
+            await setBreakpoint(pauseInCallerInnerSourceURL, 2);
+            evaluate(`pauseInCallerOuter(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.PauseInCallee",
+        description: "Check that the debugger will pause in the callee if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("pauseInCalleeOuter"), "Should not pause in 'pauseInCalleeOuter'.");
+                    resolve();
+                };
+            });
+
+            let [pauseInCalleeInnerSourceURL, pauseInCalleeMiddleSourceURL, pauseInCalleeOuterSourceURL] = await Promise.all([
+                listenForSourceParsed(/pauseInCalleeInner\.js$/),
+                listenForSourceParsed(/pauseInCalleeMiddle\.js$/),
+                listenForSourceParsed(/pauseInCalleeOuter\.js$/),
+                evaluate(`createScripts("pauseInCallee")`),
+            ]);
+
+            await setBlackbox(pauseInCalleeOuterSourceURL);
+            await setBreakpoint(pauseInCalleeOuterSourceURL, 2);
+            evaluate(`pauseInCalleeOuter(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.emptyURL",
+        description: "Check that an error is thrown if the given url is empty.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "", shouldBlackbox: true},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.injectedScript",
+        description: "Check that an error is thrown if the given url matches an injected script url.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "__InjectedScript__test.js", shouldBlackbox: true},
+                });
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests Debugger.setShouldBlackboxURL.</p>
+</body>
+</html>

@@ -103,6 +103,22 @@ WI.SourceCode = class SourceCode extends WI.Object
         return this.url;
     }
 
+    get isScript()
+    {
+        // Implemented by subclasses if needed.
+        return false;
+    }
+
+    get supportsScriptBlackboxing()
+    {
+        if (!this.isScript)
+            return false;
+        if (!WI.DebuggerManager.supportsBlackboxingScripts())
+            return false;
+        let contentIdentifier = this.contentIdentifier;
+        return contentIdentifier && !isWebKitInjectedScript(contentIdentifier);
+    }
+
     get sourceMaps()
     {
         return this._sourceMaps || [];

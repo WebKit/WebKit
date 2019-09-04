@@ -33,7 +33,7 @@ PASS: Fetched property value should be as expected.
 
 -- Running test case: RemoteObject.getProperty.FailureWithPromise
 PASS: Should produce an exception.
-[object Object]
+RemoteObject
 
 -- Running test case: RemoteObject.fetchProperties.Success
 PASS: Result object should contain three keys.

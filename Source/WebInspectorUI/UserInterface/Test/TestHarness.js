@@ -219,8 +219,18 @@ TestHarness = class TestHarness extends WI.Object
 
         let expectAndDumpError = (e) => {
             this.expectNotNull(e, "Should produce an exception.");
-            if (e)
+            if (!e)
+                return;
+
+            if (e instanceof Error || !(e instanceof Object))
                 this.log(e.toString());
+            else {
+                try {
+                    this.json(e);
+                } catch {
+                    this.log(e.constructor.name);
+                }
+            }
         }
 
         let error = null;

@@ -120,6 +120,11 @@ WI.Script = class Script extends WI.SourceCode
         return this._resource.mimeType;
     }
 
+    get isScript()
+    {
+        return true;
+    }
+
     get displayName()
     {
         if (this._url && !this._dynamicallyAddedScriptElement)
