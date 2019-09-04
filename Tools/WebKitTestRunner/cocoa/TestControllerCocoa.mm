@@ -175,6 +175,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 
     if (options.editable)
         m_mainWebView->setEditable(true);
+
+    m_mainWebView->platformView().allowsLinkPreview = options.allowsLinkPreview;
 }
 
 PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)

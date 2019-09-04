@@ -1398,6 +1398,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableAppNap = parseBooleanTestHeaderValue(value);
         else if (key == "enablePageCache")
             testOptions.enablePageCache = parseBooleanTestHeaderValue(value);
+        else if (key == "allowsLinkPreview")
+            testOptions.allowsLinkPreview = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

@@ -93,6 +93,7 @@ struct TestOptions {
     bool shouldPresentPopovers { true };
     bool enableAppNap { false };
     bool enablePageCache { false };
+    bool allowsLinkPreview { true };
 
     double contentInsetTop { 0 };
 
@@ -148,7 +149,9 @@ struct TestOptions {
             || contentInsetTop != options.contentInsetTop
             || contentMode != options.contentMode
             || enableAppNap != options.enableAppNap
-            || enablePageCache != options.enablePageCache)
+            || enablePageCache != options.enablePageCache
+            || enableLazyImageLoading != options.enableLazyImageLoading
+            || allowsLinkPreview != options.allowsLinkPreview)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

@@ -98,7 +98,6 @@ struct WebAutocorrectionContext;
 
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
-@class _UIWebHighlightLongPressGestureRecognizer;
 @class UIHoverGestureRecognizer;
 @class UITargetedPreview;
 @class WebEvent;
@@ -108,6 +107,7 @@ struct WebAutocorrectionContext;
 @class WKFocusedFormControlView;
 @class WKFormInputControl;
 @class WKFormInputSession;
+@class WKHighlightLongPressGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -212,7 +212,7 @@ struct WKAutoCorrectionData {
 #endif
 
     RetainPtr<WKSyntheticTapGestureRecognizer> _singleTapGestureRecognizer;
-    RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
+    RetainPtr<WKHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _longPressGestureRecognizer;
     RetainPtr<WKSyntheticTapGestureRecognizer> _doubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _nonBlockingDoubleTapGestureRecognizer;
@@ -542,6 +542,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;
 @property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange;
 @property (nonatomic, readonly) BOOL _shouldAvoidScrollingWhenFocusedContentIsVisible;
+
+- (void)_didChangeLinkPreviewAvailability;
 
 @end
 
