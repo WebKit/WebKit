@@ -4434,3 +4434,5 @@ imported/w3c/web-platform-tests/wasm [ Skip ]
 
 # Variation selectors are not implemented on Windows.
 webkit.org/b/220830 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
+
+webkit.org/b/201491 fast/block/float/float-with-anonymous-previous-sibling.html [ Pass ImageOnlyFailure ]
