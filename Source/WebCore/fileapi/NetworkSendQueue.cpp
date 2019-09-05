@@ -63,7 +63,7 @@ void NetworkSendQueue::enqueue(WebCore::Blob& blob)
 {
     auto byteLength = blob.size();
     if (!byteLength) {
-        enqueue(JSC::ArrayBuffer::create(byteLength, 1), 0, 0);
+        enqueue(JSC::ArrayBuffer::create(0U, 1), 0, 0);
         return;
     }
     m_queue.append(makeUniqueRef<BlobLoader>(m_document.get(), blob, [this] {

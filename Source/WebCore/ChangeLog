@@ -1,3 +1,24 @@
+2019-09-05  Keith Rollin  <krollin@apple.com>
+
+        Fix implicit conversion that loses precision
+        https://bugs.webkit.org/show_bug.cgi?id=201476
+        <rdar://problem/55043129>
+
+        Reviewed by Youenn Fablet, Alex Christensen.
+
+        Building for watchOS results in the following error:
+
+            .../Source/WebCore/fileapi/NetworkSendQueue.cpp:66:42: error: implicit conversion loses integer precision: 'unsigned long long' to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+                    enqueue(JSC::ArrayBuffer::create(byteLength, 1), 0, 0);
+
+        Fix this by replacing byteLength (which is known to be zero at this
+        point) with 0U.
+
+        No new tests -- no new or changed functionality.
+
+        * fileapi/NetworkSendQueue.cpp:
+        (WebCore::NetworkSendQueue::enqueue):
+
 2019-09-05  Youenn Fablet  <youenn@apple.com>
 
         Introduce WorkerSWClientConnection to make SWClientConnection mono-thread
