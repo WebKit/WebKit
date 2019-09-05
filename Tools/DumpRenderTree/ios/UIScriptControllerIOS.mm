@@ -128,6 +128,10 @@ void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRe
 {
 }
 
+void UIScriptController::twoFingerSingleTapAtPoint(long x, long y, JSValueRef callback)
+{
+}
+
 void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
 {
 }

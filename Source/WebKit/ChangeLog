@@ -1,3 +1,54 @@
+2019-09-05  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/55001140
+
+    Treat a two-finger single tap as if the user tapped with the Cmd key pressed https://bugs.webkit.org/show_bug.cgi?id=201420 <rdar://problem/53207786>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebKit:
+    
+    Set the metaKey modifier to true when generating a click event based on a two-finger single tap. This is important so that sites like Google and DuckDuckGo
+    correctly open links in their search results page in a new tab in Safari on iOS. This currently doesn't work because those sites will call preventDefault()
+    if the metaKey flag isn't set on a "click" event, and if it is set, they let the browser handle the navigation themselves.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+    
+    Tools:
+    
+    Add a new twoFingerSingleTapAtPoint() method to UIScriptController, which just calls into the existing (but unused)
+    -[HIDEventGenerator twoFingerTap:completionBlock:].
+    
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    (WTR::UIScriptController::twoFingerSingleTapAtPoint):
+    * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptControllerIOS::twoFingerSingleTapAtPoint):
+    
+    LayoutTests:
+    
+    Add a new event that checks that a two-finger single tap on a clickable element yields a "click" event with the metaKey flag set to true.
+    
+    * fast/events/ios/click-event-two-finger-single-tap-meta-key-expected.txt: Added.
+    * fast/events/ios/click-event-two-finger-single-tap-meta-key.html: Added.
+
+    2019-09-03  Antoine Quint  <graouts@apple.com>
+
+            [iOS] Treat a two-finger single tap as if the user tapped with the Cmd key pressed
+            https://bugs.webkit.org/show_bug.cgi?id=201420
+            <rdar://problem/53207786>
+
+            Reviewed by Simon Fraser.
+
+            Set the metaKey modifier to true when generating a click event based on a two-finger single tap. This is important so that sites like Google and DuckDuckGo
+            correctly open links in their search results page in a new tab in Safari on iOS. This currently doesn't work because those sites will call preventDefault()
+            if the metaKey flag isn't set on a "click" event, and if it is set, they let the browser handle the navigation themselves.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+
 2019-09-04  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r249430. rdar://problem/55027550

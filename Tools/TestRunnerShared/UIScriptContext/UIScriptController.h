@@ -83,6 +83,7 @@ public:
     void liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback);
     void singleTapAtPoint(long x, long y, JSValueRef callback);
     void singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback);
+    void twoFingerSingleTapAtPoint(long x, long y, JSValueRef callback);
     void doubleTapAtPoint(long x, long y, JSValueRef callback);
     void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback);
 

@@ -295,6 +295,18 @@ void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRe
     }];
 }
 
+void UIScriptController::twoFingerSingleTapAtPoint(long x, long y, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] twoFingerTap:location completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
