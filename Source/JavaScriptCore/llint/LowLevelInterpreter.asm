@@ -165,6 +165,7 @@ end
 
 const JSLexicalEnvironment_variables = (sizeof JSLexicalEnvironment + SlotSize - 1) & ~(SlotSize - 1)
 const DirectArguments_storage = (sizeof DirectArguments + SlotSize - 1) & ~(SlotSize - 1)
+const JSInternalFieldObjectImpl_internalFields = JSInternalFieldObjectImpl::m_internalFields
 
 const StackAlignment = constexpr (stackAlignmentBytes())
 const StackAlignmentSlots = constexpr (stackAlignmentRegisters())

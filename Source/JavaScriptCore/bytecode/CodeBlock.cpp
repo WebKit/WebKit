@@ -540,7 +540,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpToNumber, profile)
         LINK(OpToObject, profile)
         LINK(OpGetArgument, profile)
-        LINK(OpGetPromiseInternalField, profile)
+        LINK(OpGetInternalField, profile)
         LINK(OpToThis, profile)
         LINK(OpBitand, profile)
         LINK(OpBitor, profile)

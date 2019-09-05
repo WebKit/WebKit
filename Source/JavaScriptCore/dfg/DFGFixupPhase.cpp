@@ -1484,14 +1484,14 @@ private:
             
         case GetClosureVar:
         case GetFromArguments:
-        case GetPromiseInternalField: {
+        case GetInternalField: {
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
 
         case PutClosureVar:
         case PutToArguments:
-        case PutPromiseInternalField: {
+        case PutInternalField: {
             fixEdge<KnownCellUse>(node->child1());
             speculateForBarrier(node->child2());
             break;

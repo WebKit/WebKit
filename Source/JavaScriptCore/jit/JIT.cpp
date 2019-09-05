@@ -424,8 +424,8 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_getter_by_val)
         DEFINE_OP(op_put_setter_by_val)
 
-        DEFINE_OP(op_get_promise_internal_field)
-        DEFINE_OP(op_put_promise_internal_field)
+        DEFINE_OP(op_get_internal_field)
+        DEFINE_OP(op_put_internal_field)
 
         DEFINE_OP(op_ret)
         DEFINE_OP(op_rshift)

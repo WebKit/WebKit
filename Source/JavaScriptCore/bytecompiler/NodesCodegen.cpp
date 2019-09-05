@@ -1030,7 +1030,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField(Byteco
     ASSERT(index < JSPromise::numberOfInternalFields);
     ASSERT(!node->m_next);
 
-    return generator.emitGetPromiseInternalField(generator.finalDestination(dst), base.get(), index);
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_argument(BytecodeGenerator& generator, RegisterID* dst)
@@ -1115,7 +1115,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putPromiseInternalField(Byteco
 
     ASSERT(!node->m_next);
 
-    return generator.move(dst, generator.emitPutPromiseInternalField(base.get(), index, value.get()));
+    return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments(BytecodeGenerator& generator, RegisterID* dst)

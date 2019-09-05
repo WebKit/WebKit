@@ -283,8 +283,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
-    case GetPromiseInternalField:
-    case PutPromiseInternalField:
+    case GetInternalField:
+    case PutInternalField:
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:

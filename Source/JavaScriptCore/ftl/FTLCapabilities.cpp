@@ -142,8 +142,8 @@ inline CapabilityLevel canCompile(Node* node)
     case NewAsyncGeneratorFunction:
     case GetClosureVar:
     case PutClosureVar:
-    case GetPromiseInternalField:
-    case PutPromiseInternalField:
+    case GetInternalField:
+    case PutInternalField:
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:

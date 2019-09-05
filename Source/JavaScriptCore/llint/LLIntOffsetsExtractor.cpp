@@ -45,6 +45,7 @@
 #include "JSCast.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "JSInternalFieldObjectImpl.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleRecord.h"
 #include "JSObject.h"
@@ -76,6 +77,7 @@ namespace JSC {
 class LLIntOffsetsExtractor {
     // These types are useful since we can't use '<...>' syntax in LLInt offsets extraction. e.g. Vector<int>::m_data
     using Vector = WTF::Vector<int>;
+    using JSInternalFieldObjectImpl = JSC::JSInternalFieldObjectImpl<>;
     using RefCountedArray = WTF::RefCountedArray<int>;
 
 public:

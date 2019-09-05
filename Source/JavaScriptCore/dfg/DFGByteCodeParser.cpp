@@ -7049,16 +7049,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_to_index_string);
         }
 
-        case op_get_promise_internal_field: {
-            auto bytecode = currentInstruction->as<OpGetPromiseInternalField>();
-            set(bytecode.m_dst, addToGraph(GetPromiseInternalField, OpInfo(bytecode.m_index), OpInfo(getPrediction()), get(bytecode.m_base)));
-            NEXT_OPCODE(op_get_promise_internal_field);
+        case op_get_internal_field: {
+            auto bytecode = currentInstruction->as<OpGetInternalField>();
+            set(bytecode.m_dst, addToGraph(GetInternalField, OpInfo(bytecode.m_index), OpInfo(getPrediction()), get(bytecode.m_base)));
+            NEXT_OPCODE(op_get_internal_field);
         }
 
-        case op_put_promise_internal_field: {
-            auto bytecode = currentInstruction->as<OpPutPromiseInternalField>();
-            addToGraph(PutPromiseInternalField, OpInfo(bytecode.m_index), get(bytecode.m_base), get(bytecode.m_value));
-            NEXT_OPCODE(op_put_promise_internal_field);
+        case op_put_internal_field: {
+            auto bytecode = currentInstruction->as<OpPutInternalField>();
+            addToGraph(PutInternalField, OpInfo(bytecode.m_index), get(bytecode.m_base), get(bytecode.m_value));
+            NEXT_OPCODE(op_put_internal_field);
         }
             
         case op_log_shadow_chicken_prologue: {

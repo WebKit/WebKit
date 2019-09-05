@@ -401,8 +401,8 @@ namespace JSC { namespace DFG {
     macro(SetFunctionName, NodeMustGenerate) \
     macro(HasOwnProperty, NodeResultBoolean) \
     \
-    macro(GetPromiseInternalField, NodeResultJS) \
-    macro(PutPromiseInternalField, NodeMustGenerate) \
+    macro(GetInternalField, NodeResultJS) \
+    macro(PutInternalField, NodeMustGenerate) \
     \
     macro(CreateActivation, NodeResultJS) \
     macro(PushWithScope, NodeResultJS | NodeMustGenerate) \

@@ -2808,15 +2808,15 @@ RegisterID* BytecodeGenerator::emitDeleteByVal(RegisterID* dst, RegisterID* base
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitGetPromiseInternalField(RegisterID* dst, RegisterID* base, unsigned index)
+RegisterID* BytecodeGenerator::emitGetInternalField(RegisterID* dst, RegisterID* base, unsigned index)
 {
-    OpGetPromiseInternalField::emit(this, dst, base, index);
+    OpGetInternalField::emit(this, dst, base, index);
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitPutPromiseInternalField(RegisterID* base, unsigned index, RegisterID* value)
+RegisterID* BytecodeGenerator::emitPutInternalField(RegisterID* base, unsigned index, RegisterID* value)
 {
-    OpPutPromiseInternalField::emit(this, base, index, value);
+    OpPutInternalField::emit(this, base, index, value);
     return value;
 }
 

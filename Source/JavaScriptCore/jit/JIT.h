@@ -636,8 +636,8 @@ namespace JSC {
         void emit_op_get_direct_pname(const Instruction*);
         void emit_op_enumerator_structure_pname(const Instruction*);
         void emit_op_enumerator_generic_pname(const Instruction*);
-        void emit_op_get_promise_internal_field(const Instruction*);
-        void emit_op_put_promise_internal_field(const Instruction*);
+        void emit_op_get_internal_field(const Instruction*);
+        void emit_op_put_internal_field(const Instruction*);
         void emit_op_log_shadow_chicken_prologue(const Instruction*);
         void emit_op_log_shadow_chicken_tail(const Instruction*);
 

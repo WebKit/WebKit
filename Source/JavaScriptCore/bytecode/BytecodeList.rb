@@ -1129,7 +1129,7 @@ op :resolve_scope_for_hoisting_func_decl_in_eval,
         property: unsigned,
     }
 
-op :get_promise_internal_field,
+op :get_internal_field,
     args: {
         dst: VirtualRegister,
         base: VirtualRegister,
@@ -1139,7 +1139,7 @@ op :get_promise_internal_field,
         profile: ValueProfile,
     }
 
-op :put_promise_internal_field,
+op :put_internal_field,
     args: {
         base: VirtualRegister,
         index: unsigned,

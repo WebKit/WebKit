@@ -865,6 +865,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObjectFunctions.h
     runtime/JSGlobalObjectInlines.h
     runtime/JSImmutableButterfly.h
+    runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
     runtime/JSInternalPromiseDeferred.h
     runtime/JSMicrotask.h

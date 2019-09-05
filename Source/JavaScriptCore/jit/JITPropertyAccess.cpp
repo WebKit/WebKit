@@ -1236,9 +1236,9 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
         valueNotCell.link(this);
 }
 
-void JIT::emit_op_get_promise_internal_field(const Instruction* currentInstruction)
+void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpGetPromiseInternalField>();
+    auto bytecode = currentInstruction->as<OpGetInternalField>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     int dst = bytecode.m_dst.offset();
     int base = bytecode.m_base.offset();
@@ -1246,15 +1246,15 @@ void JIT::emit_op_get_promise_internal_field(const Instruction* currentInstructi
     ASSERT(index < JSPromise::numberOfInternalFields);
 
     emitGetVirtualRegister(base, regT1);
-    loadPtr(Address(regT1, JSPromise::offsetOfInternalField(index)), regT0);
+    loadPtr(Address(regT1, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)), regT0);
 
     emitValueProfilingSite(metadata);
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_put_promise_internal_field(const Instruction* currentInstruction)
+void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpPutPromiseInternalField>();
+    auto bytecode = currentInstruction->as<OpPutInternalField>();
     int base = bytecode.m_base.offset();
     int value = bytecode.m_value.offset();
     unsigned index = bytecode.m_index;
@@ -1262,7 +1262,7 @@ void JIT::emit_op_put_promise_internal_field(const Instruction* currentInstructi
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(value, regT1);
-    storePtr(regT1, Address(regT0, JSPromise::offsetOfInternalField(index)));
+    storePtr(regT1, Address(regT0, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)));
     emitWriteBarrier(base, value, ShouldFilterValue);
 }
 

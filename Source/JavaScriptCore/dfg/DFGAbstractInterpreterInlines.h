@@ -2940,11 +2940,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutClosureVar:
         break;
 
-    case GetPromiseInternalField:
+    case GetInternalField:
         makeBytecodeTopForNode(node);
         break;
 
-    case PutPromiseInternalField:
+    case PutInternalField:
         break;
 
 

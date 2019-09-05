@@ -29,6 +29,7 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "JSCInlines.h"
+#include "JSInternalFieldObjectImplInlines.h"
 #include "JSPromiseConstructor.h"
 #include "Microtask.h"
 
@@ -56,8 +57,8 @@ JSPromise::JSPromise(VM& vm, Structure* structure)
 void JSPromise::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    m_internalFields[static_cast<unsigned>(Field::Flags)].set(vm, this, jsNumber(static_cast<unsigned>(Status::Pending)));
-    m_internalFields[static_cast<unsigned>(Field::ReactionsOrResult)].set(vm, this, jsUndefined());
+    internalField(static_cast<unsigned>(Field::Flags)).set(vm, this, jsNumber(static_cast<unsigned>(Status::Pending)));
+    internalField(static_cast<unsigned>(Field::ReactionsOrResult)).set(vm, this, jsUndefined());
 }
 
 void JSPromise::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -65,12 +66,11 @@ void JSPromise::visitChildren(JSCell* cell, SlotVisitor& visitor)
     auto* thisObject = jsCast<JSPromise*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.appendValues(thisObject->m_internalFields, numberOfInternalFields);
 }
 
 auto JSPromise::status(VM&) const -> Status
 {
-    JSValue value = m_internalFields[static_cast<unsigned>(Field::Flags)].get();
+    JSValue value = internalField(static_cast<unsigned>(Field::Flags)).get();
     uint32_t flags = value.asUInt32AsAnyInt();
     return static_cast<Status>(flags & stateMask);
 }
@@ -80,12 +80,12 @@ JSValue JSPromise::result(VM& vm) const
     Status status = this->status(vm);
     if (status == Status::Pending)
         return jsUndefined();
-    return m_internalFields[static_cast<unsigned>(Field::ReactionsOrResult)].get();
+    return internalField(static_cast<unsigned>(Field::ReactionsOrResult)).get();
 }
 
 bool JSPromise::isHandled(VM&) const
 {
-    JSValue value = m_internalFields[static_cast<unsigned>(Field::Flags)].get();
+    JSValue value = internalField(static_cast<unsigned>(Field::Flags)).get();
     uint32_t flags = value.asUInt32AsAnyInt();
     return flags & isHandledFlag;
 }

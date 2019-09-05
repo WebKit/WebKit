@@ -1786,9 +1786,11 @@
 		E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D264281D38C042000BE174 /* BytecodeGraph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E334CBB521FD96A9000EB178 /* RegExpGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E337B966224324E50093A820 /* WasmCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E339700523210E0B00B0AE21 /* JSInternalFieldObjectImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E339700423210E0A00B0AE21 /* JSInternalFieldObjectImplInlines.h */; };
 		E33A94962255323000D42B06 /* RandomizingFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */; };
 		E33A94972255323300D42B06 /* FuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94922255322900D42B06 /* FuzzerAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
@@ -4867,11 +4869,13 @@
 		E3305FB020B0F78700CEB82B /* InByIdVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByIdVariant.cpp; sourceTree = "<group>"; };
 		E3305FB120B0F78800CEB82B /* InByIdVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByIdVariant.h; sourceTree = "<group>"; };
 		E3305FB220B0F78800CEB82B /* InByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByIdStatus.cpp; sourceTree = "<group>"; };
+		E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImpl.h; sourceTree = "<group>"; };
 		E334CBB221FD96A8000EB178 /* RegExpGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpGlobalData.cpp; sourceTree = "<group>"; };
 		E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpGlobalData.h; sourceTree = "<group>"; };
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
 		E337B966224324E50093A820 /* WasmCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCapabilities.h; sourceTree = "<group>"; };
+		E339700423210E0A00B0AE21 /* JSInternalFieldObjectImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImplInlines.h; sourceTree = "<group>"; };
 		E33A94922255322900D42B06 /* FuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FuzzerAgent.h; sourceTree = "<group>"; };
 		E33A94932255322900D42B06 /* RandomizingFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RandomizingFuzzerAgent.cpp; sourceTree = "<group>"; };
 		E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RandomizingFuzzerAgent.h; sourceTree = "<group>"; };
@@ -7189,6 +7193,8 @@
 				0F2B66CA17B6B5AB00A7AE3F /* JSInt16Array.h */,
 				0F2B66CB17B6B5AB00A7AE3F /* JSInt32Array.h */,
 				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
+				E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */,
+				E339700423210E0A00B0AE21 /* JSInternalFieldObjectImplInlines.h */,
 				E33F507E1B8429A400413856 /* JSInternalPromise.cpp */,
 				E33F507F1B8429A400413856 /* JSInternalPromise.h */,
 				E33F50761B84225700413856 /* JSInternalPromiseConstructor.cpp */,
@@ -9651,6 +9657,8 @@
 				0F2B66F917B6B5AB00A7AE3F /* JSInt32Array.h in Headers */,
 				0F2B66F717B6B5AB00A7AE3F /* JSInt8Array.h in Headers */,
 				A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */,
+				E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */,
+				E339700523210E0B00B0AE21 /* JSInternalFieldObjectImplInlines.h in Headers */,
 				E33F50811B8429A400413856 /* JSInternalPromise.h in Headers */,
 				E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */,
 				E33F50871B8449EF00413856 /* JSInternalPromiseConstructor.lut.h in Headers */,

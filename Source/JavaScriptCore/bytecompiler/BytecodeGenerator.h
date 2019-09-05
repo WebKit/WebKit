@@ -776,8 +776,8 @@ namespace JSC {
         RegisterID* emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
 
-        RegisterID* emitGetPromiseInternalField(RegisterID* dst, RegisterID* base, unsigned index);
-        RegisterID* emitPutPromiseInternalField(RegisterID* base, unsigned index, RegisterID* value);
+        RegisterID* emitGetInternalField(RegisterID* dst, RegisterID* base, unsigned index);
+        RegisterID* emitPutInternalField(RegisterID* base, unsigned index, RegisterID* value);
 
         void emitSuperSamplerBegin();
         void emitSuperSamplerEnd();

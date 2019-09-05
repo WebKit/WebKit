@@ -123,8 +123,8 @@ bool doesGC(Graph& graph, Node* node)
     case GetGlobalThis:
     case GetClosureVar:
     case PutClosureVar:
-    case GetPromiseInternalField:
-    case PutPromiseInternalField:
+    case GetInternalField:
+    case PutInternalField:
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:

@@ -1178,11 +1178,11 @@ private:
         case PutClosureVar:
             compilePutClosureVar();
             break;
-        case GetPromiseInternalField:
-            compileGetPromiseInternalField();
+        case GetInternalField:
+            compileGetInternalField();
             break;
-        case PutPromiseInternalField:
-            compilePutPromiseInternalField();
+        case PutInternalField:
+            compilePutInternalField();
             break;
         case GetFromArguments:
             compileGetFromArguments();
@@ -5913,8 +5913,8 @@ private:
             promise = allocateObject<JSInternalPromise>(m_node->structure(), m_out.intPtrZero, slowCase);
         else
             promise = allocateObject<JSPromise>(m_node->structure(), m_out.intPtrZero, slowCase);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)))), promise, m_heaps.JSPromise_internalFields[static_cast<unsigned>(JSPromise::Field::Flags)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), promise, m_heaps.JSPromise_internalFields[static_cast<unsigned>(JSPromise::Field::ReactionsOrResult)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)))), promise, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSPromise::Field::Flags)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), promise, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSPromise::Field::ReactionsOrResult)]);
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(promise);
         m_out.jump(continuation);
@@ -6323,8 +6323,8 @@ private:
             promise = allocateObject<JSInternalPromise>(m_out.phi(pointerType(), promiseStructure, derivedStructure), m_out.intPtrZero, slowCase);
         else
             promise = allocateObject<JSPromise>(m_out.phi(pointerType(), promiseStructure, derivedStructure), m_out.intPtrZero, slowCase);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)))), promise, m_heaps.JSPromise_internalFields[static_cast<unsigned>(JSPromise::Field::Flags)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), promise, m_heaps.JSPromise_internalFields[static_cast<unsigned>(JSPromise::Field::ReactionsOrResult)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)))), promise, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSPromise::Field::Flags)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), promise, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSPromise::Field::ReactionsOrResult)]);
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(promise);
         m_out.jump(continuation);
@@ -7504,20 +7504,20 @@ private:
             m_heaps.JSLexicalEnvironment_variables[m_node->scopeOffset().offset()]);
     }
     
-    void compileGetPromiseInternalField()
+    void compileGetInternalField()
     {
         setJSValue(
             m_out.load64(
                 lowCell(m_node->child1()),
-                m_heaps.JSPromise_internalFields[m_node->internalFieldIndex()]));
+                m_heaps.JSInternalFieldObjectImpl_internalFields[m_node->internalFieldIndex()]));
     }
 
-    void compilePutPromiseInternalField()
+    void compilePutInternalField()
     {
         m_out.store64(
             lowJSValue(m_node->child2()),
             lowCell(m_node->child1()),
-            m_heaps.JSPromise_internalFields[m_node->internalFieldIndex()]);
+            m_heaps.JSInternalFieldObjectImpl_internalFields[m_node->internalFieldIndex()]);
     }
 
     void compileGetFromArguments()

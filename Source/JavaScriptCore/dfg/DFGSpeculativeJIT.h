@@ -1448,8 +1448,8 @@ public:
     void compilePutDynamicVar(Node*);
     void compileGetClosureVar(Node*);
     void compilePutClosureVar(Node*);
-    void compileGetPromiseInternalField(Node*);
-    void compilePutPromiseInternalField(Node*);
+    void compileGetInternalField(Node*);
+    void compilePutInternalField(Node*);
     void compileCompareEqPtr(Node*);
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);

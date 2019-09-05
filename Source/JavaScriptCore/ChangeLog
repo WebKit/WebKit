@@ -1,3 +1,123 @@
+2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Generalize Get/PutPromiseInternalField for InternalFieldObjectImpl
+        https://bugs.webkit.org/show_bug.cgi?id=201513
+
+        Reviewed by Ross Kirsling.
+
+        This patch extracts JSPromise's internal fields mechanism as JSInternalFieldsObjectImpl, and make it reusable for the other objects.
+        It is preparation for using this internal fields mechanism for generators, async functions, async generators, array iterators and so on.
+
+        The profiler is telling many recompilation of Generator's resume function (including async generator's one). We are using properties
+        with private-symbols as a storage for internal state of generators. However, the spec defines that each generator from different generator-functions
+        has different [[Prototype]]. While we need to share one Generator.prototype.next function, generators tend to have different Structures due to
+        different [[Prototype]] and accessing internal fields with `get_by_id_direct` sadly becomes super megamorphic while it is not necessary.
+        And every time new Structure for new generator pops up, DFG/FTL code for generator resume function gets OSR exit or eventually this function gets
+        emits super generic code unfortunately. By using internal fields for storing these state, we can avoid this performance problem.
+
+        Bytecodes and corresponding DFG nodes are just renamed. JSPromise is now inheriting JSInternalFieldsObjectImpl, which can holds specified
+        number of internal fields. And op_get_internal_field / op_put_internal_field can access these internal fields.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetInternalField):
+        (JSC::BytecodeGenerator::emitPutInternalField):
+        (JSC::BytecodeGenerator::emitGetPromiseInternalField): Deleted.
+        (JSC::BytecodeGenerator::emitPutPromiseInternalField): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putPromiseInternalField):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasInternalFieldIndex):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetInternalField):
+        (JSC::DFG::SpeculativeJIT::compilePutInternalField):
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise):
+        (JSC::DFG::SpeculativeJIT::compileNewPromise):
+        (JSC::DFG::SpeculativeJIT::compileGetPromiseInternalField): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutPromiseInternalField): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewPromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetInternalField):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutInternalField):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPromiseInternalField): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPromiseInternalField): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_internal_field):
+        (JSC::JIT::emit_op_put_internal_field):
+        (JSC::JIT::emit_op_get_promise_internal_field): Deleted.
+        (JSC::JIT::emit_op_put_promise_internal_field): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_internal_field):
+        (JSC::JIT::emit_op_put_internal_field):
+        (JSC::JIT::emit_op_get_promise_internal_field): Deleted.
+        (JSC::JIT::emit_op_put_promise_internal_field): Deleted.
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSInternalFieldObjectImpl.h: Copied from Source/JavaScriptCore/runtime/JSPromise.h.
+        (JSC::JSInternalFieldObjectImpl::allocationSize):
+        (JSC::JSInternalFieldObjectImpl::internalField const):
+        (JSC::JSInternalFieldObjectImpl::internalField):
+        (JSC::JSInternalFieldObjectImpl::offsetOfInternalFields):
+        (JSC::JSInternalFieldObjectImpl::offsetOfInternalField):
+        (JSC::JSInternalFieldObjectImpl::JSInternalFieldObjectImpl):
+        * runtime/JSInternalFieldObjectImplInlines.h: Added.
+        (JSC::JSInternalFieldObjectImpl<passedNumberOfInternalFields>::visitChildren):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::finishCreation):
+        (JSC::JSPromise::visitChildren):
+        (JSC::JSPromise::status const):
+        (JSC::JSPromise::result const):
+        (JSC::JSPromise::isHandled const):
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::allocationSize): Deleted.
+        (JSC::JSPromise::offsetOfInternalFields): Deleted.
+        (JSC::JSPromise::offsetOfInternalField): Deleted.
+        (): Deleted.
+
 2019-09-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247463.

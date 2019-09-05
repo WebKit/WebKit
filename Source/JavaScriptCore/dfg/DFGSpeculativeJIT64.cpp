@@ -3538,13 +3538,13 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetPromiseInternalField: {
-        compileGetPromiseInternalField(node);
+    case GetInternalField: {
+        compileGetInternalField(node);
         break;
     }
 
-    case PutPromiseInternalField: {
-        compilePutPromiseInternalField(node);
+    case PutInternalField: {
+        compilePutInternalField(node);
         break;
     }
 

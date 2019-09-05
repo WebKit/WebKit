@@ -827,7 +827,7 @@ private:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
-        case GetPromiseInternalField:
+        case GetInternalField:
         case GetFromArguments:
         case LoadKeyFromMapBucket:
         case LoadValueFromMapBucket:
@@ -1270,7 +1270,7 @@ private:
         case PutByIdWithThis:
         case PutByVal:
         case PutClosureVar:
-        case PutPromiseInternalField:
+        case PutInternalField:
         case PutToArguments:
         case Return:
         case Throw:

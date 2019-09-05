@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,41 +29,13 @@
 
 namespace JSC {
 
-class JSPromise : public JSInternalFieldObjectImpl<2> {
-public:
-    using Base = JSInternalFieldObjectImpl<2>;
-
-    static JSPromise* create(VM&, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_EXPORT_INFO;
-
-    enum class Status : unsigned {
-        Pending = 0, // Making this as 0, so that, we can change the status from Pending to others without masking.
-        Fulfilled = 1,
-        Rejected = 2,
-    };
-    static constexpr uint32_t isHandledFlag = 4;
-    static constexpr uint32_t isFirstResolvingFunctionCalledFlag = 8;
-    static constexpr uint32_t stateMask = 0b11;
-
-    enum class Field : unsigned {
-        Flags = 0,
-        ReactionsOrResult = 1,
-    };
-    static_assert(numberOfInternalFields == 2);
-
-    JS_EXPORT_PRIVATE Status status(VM&) const;
-    JS_EXPORT_PRIVATE JSValue result(VM&) const;
-    JS_EXPORT_PRIVATE bool isHandled(VM&) const;
-
-    JS_EXPORT_PRIVATE static JSPromise* resolve(JSGlobalObject&, JSValue);
-
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-protected:
-    JSPromise(VM&, Structure*);
-    void finishCreation(VM&);
-};
+template<unsigned passedNumberOfInternalFields>
+void JSInternalFieldObjectImpl<passedNumberOfInternalFields>::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    auto* thisObject = jsCast<JSInternalFieldObjectImpl*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.appendValues(thisObject->m_internalFields, numberOfInternalFields);
+}
 
 } // namespace JSC

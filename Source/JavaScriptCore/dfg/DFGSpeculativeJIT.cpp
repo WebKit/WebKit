@@ -11270,7 +11270,7 @@ void SpeculativeJIT::compilePutClosureVar(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::compileGetPromiseInternalField(Node* node)
+void SpeculativeJIT::compileGetInternalField(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
     JSValueRegsTemporary result(this);
@@ -11278,11 +11278,11 @@ void SpeculativeJIT::compileGetPromiseInternalField(Node* node)
     GPRReg baseGPR = base.gpr();
     JSValueRegs resultRegs = result.regs();
 
-    m_jit.loadValue(JITCompiler::Address(baseGPR, JSPromise::offsetOfInternalField(node->internalFieldIndex())), resultRegs);
+    m_jit.loadValue(JITCompiler::Address(baseGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(node->internalFieldIndex())), resultRegs);
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compilePutPromiseInternalField(Node* node)
+void SpeculativeJIT::compilePutInternalField(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
     JSValueOperand value(this, node->child2());
@@ -11290,7 +11290,7 @@ void SpeculativeJIT::compilePutPromiseInternalField(Node* node)
     GPRReg baseGPR = base.gpr();
     JSValueRegs valueRegs = value.jsValueRegs();
 
-    m_jit.storeValue(valueRegs, JITCompiler::Address(baseGPR, JSPromise::offsetOfInternalField(node->internalFieldIndex())));
+    m_jit.storeValue(valueRegs, JITCompiler::Address(baseGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(node->internalFieldIndex())));
     noResult(node);
 }
 
@@ -12759,8 +12759,8 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
         emitAllocateJSObjectWithKnownSize<JSInternalPromise>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSInternalPromise));
     else
         emitAllocateJSObjectWithKnownSize<JSPromise>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSPromise));
-    m_jit.storeTrustedValue(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)), CCallHelpers::Address(resultGPR, JSPromise::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSPromise::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
+    m_jit.storeTrustedValue(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
+    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
     m_jit.mutatorFence(m_jit.vm());
 
     addSlowPathGenerator(slowPathCall(slowCases, this, node->isInternalPromise() ? operationCreateInternalPromise : operationCreatePromise, resultGPR, calleeGPR, TrustedImmPtr::weakPointer(m_jit.graph(), globalObject)));
@@ -12815,8 +12815,8 @@ void SpeculativeJIT::compileNewPromise(Node* node)
         emitAllocateJSObjectWithKnownSize<JSInternalPromise>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSInternalPromise));
     else
         emitAllocateJSObjectWithKnownSize<JSPromise>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSPromise));
-    m_jit.storeTrustedValue(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)), CCallHelpers::Address(resultGPR, JSPromise::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSPromise::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
+    m_jit.storeTrustedValue(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
+    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
     m_jit.mutatorFence(m_jit.vm());
 
     addSlowPathGenerator(slowPathCall(slowCases, this, node->isInternalPromise() ? operationNewInternalPromise : operationNewPromise, resultGPR, TrustedImmPtr(structure)));

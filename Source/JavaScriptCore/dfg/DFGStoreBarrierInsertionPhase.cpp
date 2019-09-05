@@ -282,7 +282,7 @@ private:
             case PutClosureVar:
             case PutToArguments:
             case SetRegExpObjectLastIndex:
-            case PutPromiseInternalField: {
+            case PutInternalField: {
                 considerBarrier(m_node->child1(), m_node->child2());
                 break;
             }

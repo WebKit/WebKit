@@ -275,8 +275,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_resolve_scope:
     case op_resolve_scope_for_hoisting_func_decl_in_eval:
     case op_new_regexp:
-    case op_get_promise_internal_field:
-    case op_put_promise_internal_field:
+    case op_get_internal_field:
+    case op_put_internal_field:
     case op_unreachable:
     case op_super_sampler_begin:
     case op_super_sampler_end:

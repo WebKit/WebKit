@@ -149,7 +149,7 @@ namespace JSC { namespace FTL {
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \
     macro(JSLexicalEnvironment_variables, JSLexicalEnvironment::offsetOfVariables(), sizeof(EncodedJSValue)) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, 0, sizeof(WriteBarrier<JSString>)) \
-    macro(JSPromise_internalFields, JSPromise::offsetOfInternalFields(), sizeof(WriteBarrier<Unknown>)) \
+    macro(JSInternalFieldObjectImpl_internalFields, JSInternalFieldObjectImpl<>::offsetOfInternalFields(), sizeof(WriteBarrier<Unknown>)) \
     macro(ScopedArguments_Storage_storage, 0, sizeof(EncodedJSValue)) \
     macro(WriteBarrierBuffer_bufferContents, 0, sizeof(JSCell*)) \
     macro(characters8, 0, sizeof(LChar)) \

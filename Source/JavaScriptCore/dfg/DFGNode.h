@@ -1286,7 +1286,7 @@ public:
 
     unsigned hasInternalFieldIndex()
     {
-        return op() == GetPromiseInternalField || op() == PutPromiseInternalField;
+        return op() == GetInternalField || op() == PutInternalField;
     }
 
     unsigned internalFieldIndex()
@@ -1699,7 +1699,7 @@ public:
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:
-        case GetPromiseInternalField:
+        case GetInternalField:
         case GetFromArguments:
         case GetArgument:
         case ArrayPop:

@@ -254,8 +254,8 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     USES(OpSwitchChar, scrutinee)
     USES(OpSwitchImm, scrutinee)
 
-    USES(OpGetPromiseInternalField, base)
-    USES(OpPutPromiseInternalField, base, value)
+    USES(OpGetInternalField, base)
+    USES(OpPutInternalField, base, value)
 
     USES(OpYield, generator, argument)
 
@@ -345,7 +345,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     case op_put_setter_by_val:
     case op_put_by_val:
     case op_put_by_val_direct:
-    case op_put_promise_internal_field:
+    case op_put_internal_field:
     case op_define_data_property:
     case op_define_accessor_property:
     case op_profile_type:
@@ -477,7 +477,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     DEFS(OpGetArgument, dst)
     DEFS(OpCreateRest, dst)
     DEFS(OpGetRestLength, dst)
-    DEFS(OpGetPromiseInternalField, dst)
+    DEFS(OpGetInternalField, dst)
 
     DEFS(OpCatch, exception, thrownValue)
 
