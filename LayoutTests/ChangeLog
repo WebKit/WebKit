@@ -1,3 +1,15 @@
+2019-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        Line artifacts in note body after viewing note with <attachment>s
+        https://bugs.webkit.org/show_bug.cgi?id=201474
+        <rdar://problem/51306108>
+
+        Reviewed by Simon Fraser.
+
+        * fast/attachment/attachment-border-should-stay-inside-attachment-expected.html: Added.
+        * fast/attachment/attachment-border-should-stay-inside-attachment.html: Added.
+        Add a test that ensures that <attachment> stays inside its bounds.
+
 2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
