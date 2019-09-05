@@ -199,6 +199,11 @@ void GraphicsLayer::clearClient()
     m_client = &EmptyGraphicsLayerClient::singleton();
 }
 
+String GraphicsLayer::debugName() const
+{
+    return name();
+}
+
 void GraphicsLayer::setClient(GraphicsLayerClient& client)
 {
     m_client = &client;

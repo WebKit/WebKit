@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=false ] -->
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            margin: 20px;
+            background-color: blue;
+            transition: opacity 10ms;
+        }
+        
+        .no-transition {
+            transition: none !important;
+            opacity: 1 !important;
+        }
+        
+        .transitioning {
+            opacity: 0.1;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            target.classList.add('transitioning');
+            document.body.offsetWidth;
+            target.classList.add('no-transition');
+            setTimeout(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 20);
+        }, false);
+    </script>
+</head>
+<body>
+    <p>This box should end up with opacity 1</p>
+    <div id="target" class="composited box"></div>
+</body>
+</html>

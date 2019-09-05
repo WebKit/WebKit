@@ -477,6 +477,47 @@
         (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
         (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
 
+2019-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Cancelled transitions on Google image search leave content with opacity 0 sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=201482
+        rdar://problem/54921036
+
+        Reviewed by Tim Horton.
+        
+        If, in a single rendering update, we started an accelerated opacity transition, and then removed
+        it, we'd still push the transition onto the CALayer with fillForwards and never remove it, so its
+        effects would last forever.
+
+        Fix by making GraphicsLayerCA::removeAnimation() remove animations from the uncomittedAnimations
+        list as well.
+        
+        Also fix layer names in debug; if a layer's primaryLayerID changed, we'd fail to rename the
+        CALayer, causing confusion when logging at layer dumps. Fix by adding the layer ID just
+        before pushing the name to the platform layer.
+
+        Some drive-by logging cleanup.
+
+        Test: legacy-animation-engine/compositing/transitions/add-remove-transition.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::debugName const):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setName):
+        (WebCore::GraphicsLayerCA::debugName const):
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::pauseAnimation):
+        (WebCore::GraphicsLayerCA::seekAnimation):
+        (WebCore::GraphicsLayerCA::removeAnimation):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationEnded):
+        (WebCore::GraphicsLayerCA::updateNames):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+
 2019-09-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FloatingState should not need to query for display boxes.

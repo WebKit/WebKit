@@ -164,6 +164,17 @@
         * inspector/debugger/resources/tail-deleted-frames-this-value.js:
         * inspector/timeline/line-column-expected.txt:
 
+2019-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Cancelled transitions on Google image search leave content with opacity 0 sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=201482
+        rdar://problem/54921036
+
+        Reviewed by Tim Horton.
+
+        * legacy-animation-engine/compositing/transitions/add-remove-transition-expected.html: Added.
+        * legacy-animation-engine/compositing/transitions/add-remove-transition.html: Added.
+
 2019-09-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Enable WebAuthn by default for MobileSafari and SafariViewService
