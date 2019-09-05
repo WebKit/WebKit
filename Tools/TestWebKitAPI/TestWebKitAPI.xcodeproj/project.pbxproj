@@ -549,7 +549,6 @@
 		7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */; };
 		7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */; };
 		7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */; };
-		7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */; };
 		7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */; };
 		7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55F119F1516834F00915916 /* AttributedString.mm */; };
 		7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00CD9F6215BE312C002DA2CE /* BackForwardList.mm */; };
@@ -1925,7 +1924,6 @@
 		7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "exif-orientation-8-llo.jpg"; sourceTree = "<group>"; };
 		751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseTrackerTest.mm; sourceTree = "<group>"; };
 		754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutoFillAvailable.mm; sourceTree = "<group>"; };
-		7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheAddImageToCacheIOS.mm; sourceTree = "<group>"; };
 		75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EphemeralSessionPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		76734997193016DC00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StopLoadingDuringDidFailProvisionalLoad.cpp; sourceTree = "<group>"; };
 		7673499A1930182E00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StopLoadingDuringDidFailProvisionalLoad_bundle.cpp; sourceTree = "<group>"; };
@@ -3060,7 +3058,6 @@
 				F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */,
 				CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
-				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
 				0F34077523037FDC0060A1A0 /* OverflowScrollViewTests.mm */,
 				F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */,
 				F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */,
@@ -4579,7 +4576,6 @@
 				07CC7DFE2266330900E39181 /* MediaBufferingPolicy.mm in Sources */,
 				CDA315981ED53651009F60D3 /* MediaPlaybackSleepAssertion.mm in Sources */,
 				CDC9442E1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm in Sources */,
-				7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */,
 				7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
 				7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
 				5C0BF88D1DD5964D00B00328 /* MemoryPressureHandler.mm in Sources */,

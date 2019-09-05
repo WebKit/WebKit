@@ -1,3 +1,15 @@
+2019-09-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unused SPI that accesses MemoryCache directly
+        https://bugs.webkit.org/show_bug.cgi?id=201468
+
+        Reviewed by Youenn Fablet.
+
+        Removed the API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/MemoryCacheAddImageToCacheIOS.mm: Removed.
+
 2019-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Mail appears to be double inverting code copied from Notes, Xcode, or Terminal.
