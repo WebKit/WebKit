@@ -420,6 +420,15 @@ TEST(EditorStateTests, ParagraphBoundary)
     EXPECT_FALSE([textInput isPosition:textInput.selectedTextRange.end atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionForward]);
 }
 
+TEST(EditorStateTests, SelectedText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_GT([[webView textInputContentView] selectedText].length, 0U);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,25 @@
+2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKContentView selectedText] returns an empty string when selecting more than 200 characters
+        https://bugs.webkit.org/show_bug.cgi?id=201471
+        <rdar://problem/55039227>
+
+        Reviewed by Tim Horton.
+
+        The fix for <rdar://problem/54308019> is contingent on -[WKContentView selectedText] returning a non-empty
+        result in the case where text is selected. However, in WebKit, if more than 200 characters are selected,
+        -selectedText ends up returning nothing.
+
+        This is due to logic added in trac.webkit.org/r167624 that was intended to return the selected text in
+        PostLayoutData's wordAtSelection, up to a maximum of 200 characters, likely for performance and/or security
+        reasons. However, instead of truncating at 200 characters, the change simply drops wordAtSelection altogether.
+        This patch fixes this issue by taking the first 200 characters of the selected text.
+
+        Test: EditorStateTests.SelectedText
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)

@@ -261,8 +261,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
             selectedText = plainTextReplacingNoBreakSpace(selectedRange.get(), TextIteratorDefaultBehavior, true);
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
-            if (selectedText.length() <= maxSelectedTextLength)
-                postLayoutData.wordAtSelection = selectedText;
+            postLayoutData.wordAtSelection = selectedText.left(maxSelectedTextLength);
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
         postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.isAllSpecialCharacters<isHTMLSpace>();
