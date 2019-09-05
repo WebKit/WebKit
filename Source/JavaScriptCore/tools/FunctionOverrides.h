@@ -27,6 +27,7 @@
 
 #include "SourceCode.h"
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -56,10 +57,11 @@ public:
     JS_EXPORT_PRIVATE static void reinstallOverrides();
 
 private:
-    void parseOverridesInFile(const char* fileName);
-    void clear() { m_entries.clear(); }
+    void parseOverridesInFile(const AbstractLocker&, const char* fileName);
+    void clear(const AbstractLocker&) { m_entries.clear(); }
 
     HashMap<String, String> m_entries;
+    Lock m_lock;
 };
 
 } // namespace JSC

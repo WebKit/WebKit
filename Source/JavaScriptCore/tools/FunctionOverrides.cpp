@@ -102,15 +102,16 @@ FunctionOverrides& FunctionOverrides::overrides()
     
 FunctionOverrides::FunctionOverrides(const char* overridesFileName)
 {
-    parseOverridesInFile(overridesFileName);
+    parseOverridesInFile(holdLock(m_lock), overridesFileName);
 }
 
 void FunctionOverrides::reinstallOverrides()
 {
     FunctionOverrides& overrides = FunctionOverrides::overrides();
+    auto locker = holdLock(overrides.m_lock);
     const char* overridesFileName = Options::functionOverrides();
-    overrides.clear();
-    overrides.parseOverridesInFile(overridesFileName);
+    overrides.clear(locker);
+    overrides.parseOverridesInFile(locker, overridesFileName);
 }
 
 static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
@@ -151,11 +152,16 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
         return false;
     String sourceBodyString = sourceString.substring(sourceBodyStart);
 
-    auto it = overrides.m_entries.find(sourceBodyString);
-    if (it == overrides.m_entries.end())
-        return false;
+    String newBody;
+    {
+        auto locker = holdLock(overrides.m_lock);
+        auto it = overrides.m_entries.find(sourceBodyString.isolatedCopy());
+        if (it == overrides.m_entries.end())
+            return false;
+        newBody = it->value.isolatedCopy();
+    }
 
-    initializeOverrideInfo(origCode, it->value, result);
+    initializeOverrideInfo(origCode, newBody, result);
     return true;
 }
 
@@ -227,7 +233,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
     FAIL_WITH_ERROR(SYNTAX_ERROR, ("'", keyword, "' clause end delimiter '", delimiter, "' not found:\n", builder.toString(), "\n", "Are you missing a '}' before the delimiter?\n"));
 }
 
-void FunctionOverrides::parseOverridesInFile(const char* fileName)
+void FunctionOverrides::parseOverridesInFile(const AbstractLocker&, const char* fileName)
 {
     if (!fileName)
         return;

@@ -1,5 +1,29 @@
 2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] FunctionOverrides should have a lock to ensure concurrent access to hash table does not happen
+        https://bugs.webkit.org/show_bug.cgi?id=201485
+
+        Reviewed by Tadeu Zagallo.
+
+        FunctionOverrides is a per-process singleton for registering overrides information. But we are accessing
+        it without taking a lock. If multiple threads with multiple VMs are accessing this concurrently, we have
+        a race issue like,
+
+        1. While one thread is adding overrides information,
+        2. Another thread is accessing this hash table.
+
+        This patch adds a lock to make sure that only one thread can access this registry.
+
+        * tools/FunctionOverrides.cpp:
+        (JSC::FunctionOverrides::FunctionOverrides):
+        (JSC::FunctionOverrides::reinstallOverrides):
+        (JSC::FunctionOverrides::initializeOverrideFor):
+        (JSC::FunctionOverrides::parseOverridesInFile):
+        * tools/FunctionOverrides.h:
+        (JSC::FunctionOverrides::clear):
+
+2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make Promise implementation faster
         https://bugs.webkit.org/show_bug.cgi?id=200898
 
