@@ -1,5 +1,14 @@
 2019-09-05  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Fix prepending search result on empty list 
+        https://bugs.webkit.org/show_bug.cgi?id=201512
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/templates/search.html:
+
+2019-09-05  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Retain certain parameters when following menu links
         https://bugs.webkit.org/show_bug.cgi?id=201463
 

@@ -131,7 +131,10 @@ class SearchView {
                     DOM.inject(element, diff.children.map(renderChild).join(''));
                 if (diff.prepending) {
                     diff.prepending.forEach(child => {
-                        DOM.after(element.firstElementChild, renderChild(child));
+                        if (element.firstElementChild)
+                            DOM.after(element.firstElementChild, renderChild(child));
+                        else
+                            DOM.inject(element, renderChild(child));
                         this.ref.state.children.unshift(child);
                     });
                 } 
