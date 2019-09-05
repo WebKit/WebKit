@@ -846,7 +846,7 @@ DataTransferItemsEnabled:
 
 CustomPasteboardDataEnabled:
   type: bool
-  defaultValue: defaultCustomPasteboardDataEnabled()
+  defaultValue: DEFAULT_CUSTOM_PASTEBOARD_DATA_ENABLED
   humanReadableName: "Custom pasteboard data"
   humanReadableDescription: "Enable custom clipboard types and better security model for clipboard API."
   webcoreBinding: RuntimeEnabledFeatures

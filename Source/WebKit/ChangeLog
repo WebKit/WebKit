@@ -1,3 +1,24 @@
+2019-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace defaultCustomPasteboardDataEnabled by an equivalent macro
+        https://bugs.webkit.org/show_bug.cgi?id=201477
+
+        Reviewed by Wenson Hsieh.
+
+        r227282 introduced defaultCustomPasteboardDataEnabled() to disable the custom pasteboard data on
+        apps linked against old SDKs. However, this had a bug that the check inside WebContent process
+        would always return true because WebContent process is always linked against the latest SDKs.
+        Because WebPreferences values aren't propagated from UI process to WebContent process unless
+        there is a value change, it meant that custom pasteboard data is always enabled.
+
+        This patch replaces this function with a simple macro which always enables the custom pasteboard
+        data on iOS family and macOS as it has always been the case before and after r227282.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCustomPasteboardDataEnabled): Deleted.
+        * Shared/WebPreferencesDefaultValues.h:
+
 2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[WKContentView selectedText] returns an empty string when selecting more than 200 characters
