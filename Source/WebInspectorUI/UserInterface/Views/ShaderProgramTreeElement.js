@@ -44,23 +44,49 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
     {
         super.onattach();
 
+        this.representedObject.addEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
+
         this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
         this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
     }
 
+    ondetach()
+    {
+        this.representedObject.removeEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
+
+        super.ondetach();
+    }
+
     canSelectOnMouseDown(event)
     {
-        return !this._statusElement.contains(event.target);
+        if (this._disabledImageElement.contains(event.target))
+            return false;
+        return super.canSelectOnMouseDown(event);
+    }
+
+    populateContextMenu(contextMenu, event)
+    {
+        let disabled = this.representedObject.disabled;
+        contextMenu.appendItem(disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program"), () => {
+            this.representedObject.disabled = !disabled;
+        });
+
+        contextMenu.appendSeparator();
+
+        super.populateContextMenu(contextMenu, event);
     }
 
     // Private
 
     _disabledImageElementClicked(event)
     {
-        this.representedObject.toggleDisabled(() => {
-            this._listItemNode.classList.toggle("disabled", !!this.representedObject.disabled);
-            this._disabledImageElement.title = this.representedObject.disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program");
-        });
+        this.representedObject.disabled = !this.representedObject.disabled;
+    }
+
+    _handleShaderProgramDisabledChanged(event)
+    {
+        this._listItemNode.classList.toggle("disabled", !!this.representedObject.disabled);
+        this._disabledImageElement.title = this.representedObject.disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program");
     }
 
     _handleMouseOver(event)

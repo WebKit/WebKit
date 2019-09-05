@@ -84,6 +84,15 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendSeparator();
 
+    if (sourceCode.supportsScriptBlackboxing) {
+        let isBlackboxed = WI.debuggerManager.isScriptBlackboxed(sourceCode);
+        contextMenu.appendItem(isBlackboxed ? WI.UIString("Include script when debugging") : WI.UIString("Ignore script when debugging"), () => {
+            WI.debuggerManager.setShouldBlackboxScript(sourceCode, !isBlackboxed);
+        });
+    }
+
+    contextMenu.appendSeparator();
+
     WI.appendContextMenuItemsForURL(contextMenu, sourceCode.url, {sourceCode, location});
 
     if (sourceCode instanceof WI.Resource && !sourceCode.isLocalResourceOverride) {

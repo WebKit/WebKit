@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ShaderProgram = class ShaderProgram
+WI.ShaderProgram = class ShaderProgram extends WI.Object
 {
     constructor(identifier, canvas)
     {
         console.assert(identifier);
         console.assert(canvas instanceof WI.Canvas);
+
+        super();
 
         this._identifier = identifier;
         this._canvas = canvas;
@@ -40,11 +42,27 @@ WI.ShaderProgram = class ShaderProgram
 
     get identifier() { return this._identifier; }
     get canvas() { return this._canvas; }
-    get disabled() { return this._disabled; }
 
     get displayName()
     {
         return WI.UIString("Program %d").format(this._uniqueDisplayNumber);
+    }
+
+    get disabled()
+    {
+        return this._disabled;
+    }
+
+    set disabled(disabled)
+    {
+        if (this._disabled === disabled)
+            return;
+
+        this._disabled = disabled;
+
+        CanvasAgent.setShaderProgramDisabled(this._identifier, disabled);
+
+        this.dispatchEventToListeners(ShaderProgram.Event.DisabledChanged);
     }
 
     requestVertexShaderSource(callback)
@@ -65,18 +83,6 @@ WI.ShaderProgram = class ShaderProgram
     updateFragmentShader(source)
     {
         this._updateShader(CanvasAgent.ShaderType.Fragment, source);
-    }
-
-    toggleDisabled(callback)
-    {
-        CanvasAgent.setShaderProgramDisabled(this._identifier, !this._disabled, (error) => {
-            console.assert(!error, error);
-            if (error)
-                return;
-
-            this._disabled = !this._disabled;
-            callback();
-        });
     }
 
     showHighlight()
@@ -120,4 +126,8 @@ WI.ShaderProgram = class ShaderProgram
 WI.ShaderProgram.ShaderType = {
     Fragment: "shader-type-fragment",
     Vertex: "shader-type-vertex",
+};
+
+WI.ShaderProgram.Event = {
+    DisabledChanged: "shader-program-disabled-changed",
 };

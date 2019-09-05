@@ -30,7 +30,7 @@
 }
 
 .tree-outline:not(.navigation-sidebar-panel-content-tree-outline) .item .status > .toggle-script-blackboxed,
-.tree-outline .item:not(:hover, .selected) .status > .toggle-script-blackboxed:not(.blackboxed) {
+.tree-outline .item:not(:hover) .status > .toggle-script-blackboxed:not(.blackboxed) {
     display: none;
 }
 

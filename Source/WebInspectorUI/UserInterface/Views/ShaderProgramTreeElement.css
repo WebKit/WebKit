@@ -23,17 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.item.shader-program .status > img {
+ .tree-outline .item.shader-program .status > img {
     width: 18px;
     margin-top: 2px;
     content: url(../Images/Hide.svg);
 }
 
-.item.shader-program.disabled:hover .status > img {
-    content: url(../Images/Show.svg);
-}
-
-.item.shader-program:not(:hover, .selected, .disabled) .status > img {
+.tree-outline .item.shader-program:not(:hover, .selected, .disabled) .status > img {
     display: none;
 }
 
@@ -41,12 +37,12 @@
     filter: invert();
 }
 
-.item.shader-program.disabled > :not(.status) {
+.tree-outline .item.shader-program.disabled .status > img {
     opacity: 0.5;
 }
 
 @media (prefers-color-scheme: dark) {
-    .item.shader-program .status > img {
+    .tree-outline .item.shader-program .status > img {
         filter: invert();
     }
 }

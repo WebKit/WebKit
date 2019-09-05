@@ -1,3 +1,47 @@
+2019-09-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: unify the interaction of show/hide status icons in Sources and Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=201470
+
+        Reviewed by Joseph Pecoraro.
+
+        Rather than "fading" the tree element's text when the underlying represented object is
+        disabled/blackboxed, we should just "fade" the icon. The "fade" shouldn't change when the
+        tree element is selected. The image of the status eye also shouldn't change depending on
+        whether the underlying represented object is disabled/blackboxed, as it being visible (even
+        if it's "faded") is already enough of an indicator.
+
+        It should also be possible to toggle the disabled/blackboxed state via the context menu.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/SourceCodeTreeElement.css:
+        (.tree-outline:not(.navigation-sidebar-panel-content-tree-outline) .item .status > .toggle-script-blackboxed, .tree-outline .item:not(:hover) .status > .toggle-script-blackboxed:not(.blackboxed)): Added.
+        (.tree-outline:not(.navigation-sidebar-panel-content-tree-outline) .item .status > .toggle-script-blackboxed, .tree-outline .item:not(:hover, .selected) .status > .toggle-script-blackboxed:not(.blackboxed)): Deleted.
+
+        * UserInterface/Models/ShaderProgram.js:
+        (WI.ShaderProgram):
+        (WI.ShaderProgram.prototype.get disabled): Added.
+        (WI.ShaderProgram.prototype.set disabled): Added.
+        (WI.ShaderProgram.prototype.toggleDisabled): Deleted.
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement.prototype.onattach):
+        (WI.ShaderProgramTreeElement.prototype.ondetach): Added.
+        (WI.ShaderProgramTreeElement.prototype.canSelectOnMouseDown):
+        (WI.ShaderProgramTreeElement.prototype.populateContextMenu): Added.
+        (WI.ShaderProgramTreeElement.prototype._disabledImageElementClicked):
+        (WI.ShaderProgramTreeElement.prototype._handleShaderProgramDisabledChanged): Added.
+        * UserInterface/Views/ShaderProgramTreeElement.css:
+        (.tree-outline .item.shader-program .status > img): Added.
+        (.tree-outline .item.shader-program:not(:hover, .selected, .disabled) .status > img): Added.
+        (.tree-outline .item.shader-program.disabled .status > img): Added.
+        (@media (prefers-color-scheme: dark) .tree-outline .item.shader-program .status > img): Added.
+        (.item.shader-program .status > img): Deleted.
+        (.item.shader-program.disabled:hover .status > img): Deleted.
+        (.item.shader-program:not(:hover, .selected, .disabled) .status > img): Deleted.
+        (.item.shader-program.disabled > :not(.status)): Deleted.
+        (@media (prefers-color-scheme: dark) .item.shader-program .status > img): Deleted.
+
 2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)
