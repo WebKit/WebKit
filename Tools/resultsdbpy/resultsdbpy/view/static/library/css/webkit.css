@@ -95,7 +95,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
   --boldInverseColor: var(--black);
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   :root {
     --tinySize: 11px;
     --fontWeight: 200;
@@ -105,7 +105,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
   }
 }
 
-@media screen and (min-width: 768px) and (orientation: landscape) {
+@media screen and (min-width: 768px) {
   :root {
     --tinySize: 12px;
     --fontWeight: 100;
@@ -304,25 +304,7 @@ a:hover {
   }
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
-  .header, .topbar {
-    flex-direction: row;
-  }
-
-  .header>.actions, .topbar>.actions {
-    border-top: none;
-  }
-
-  .header.fixed+.content, .topbar.fixed+.content {
-    margin-top: 80px;
-  }
-
-  .header.fixed>.actions, .topbar.fixed>.actions {
-    background: none;
-  }
-}
-
-@media screen and (min-width: 768px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .header, .topbar {
     flex-direction: row;
   }
@@ -354,7 +336,7 @@ a:hover {
   padding: var(--colPaddingSize) 0;
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .row {
     display: flex;
     flex-direction: row;
@@ -409,62 +391,6 @@ a:hover {
   }
 }
 
-@media screen and (min-width: 768px) and (orientation: landscape) {
-  /* For desktop: */
-  .row {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .col-1 {
-    width: 8.33%;
-  }
-
-  .col-2 {
-    width: 16.66%;
-  }
-
-  .col-3 {
-    width: 25%;
-  }
-
-  .col-4 {
-    width: 33.33%;
-  }
-
-  .col-5 {
-    width: 41.66%;
-  }
-
-  .col-6 {
-    width: 50%;
-  }
-
-  .col-7 {
-    width: 58.33%;
-  }
-
-  .col-8 {
-    width: 66.66%;
-  }
-
-  .col-9 {
-    width: 75%;
-  }
-
-  .col-10 {
-    width: 83.33%;
-  }
-
-  .col-11 {
-    width: 91.66%;
-  }
-
-  .col-12 {
-    width: 100%;
-  }
-}
-
 .hide-for-xs {
   display: none;
 }
@@ -473,23 +399,13 @@ a:hover {
   display: none;
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .hide-for-xs {
     display: block;
   }
 
   .hide-for-s {
     display: none;
-  }
-}
-
-@media screen and (min-width: 768px) and (orientation: landscape) {
-  .hide-for-s {
-    display: block;
-  }
-
-  .hide-for-xs {
-    display: block;
   }
 }
 
@@ -878,13 +794,7 @@ pre {
   width: 100%;
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
-  .section>.header {
-    flex-direction: row;
-  }
-}
-
-@media screen and (min-width: 768px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .section>.header {
     flex-direction: row;
   }
@@ -978,7 +888,7 @@ pre {
   margin-top: calc(12px * 2  + var(--largeSize) * 1.3 + var(--smallSize) * 1.3 + 12px * 2);
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .sidebar {
     display: block;
     width: 299px;
@@ -1027,7 +937,7 @@ pre {
   }
 }
 
-@media screen and (min-width: 768px) and (orientation: landscape) {
+@media screen and (min-width: 768px) {
   .sidebar {
     display: block;
     width: 310px;
@@ -1048,6 +958,10 @@ pre {
     bottom: 0;
   }
 
+  .mobile-sidebar-control.display {
+    display: none;
+  }
+
   .main {
     margin-left: 310px;
     width: calc(100% - 310px);
@@ -1056,10 +970,6 @@ pre {
   .main.left {
     margin-left: 0px;
     margin-right: 310px;
-  }
-
-  .main.under-topbar-with-actions {
-    margin-top: calc(12px * 2  + var(--largeSize) * 1.3);
   }
 }
 
@@ -1658,17 +1568,7 @@ pre {
   height: calc(100% - 12px * 2  - var(--largeSize) * 1.3 - var(--smallSize) * 1.3 - 12px * 2 );
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
-  .drawer.left.display, .drawer.right.display {
-    width: 20%;
-  }
-
-  .drawer.left.under-topbar-with-actions, .drawer.right.under-topbar-with-actions {
-    height: calc(100% - 12px * 2  - var(--largeSize) * 1.3);
-  }
-}
-
-@media screen and (min-width: 768px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .drawer.left.display, .drawer.right.display {
     width: 20%;
   }
@@ -2663,8 +2563,9 @@ a.disabled {
   display: none;
 }
 
-@media screen and (min-width: 600px) and (orientation: landscape) {
+@media screen and (min-width: 600px) {
   .desktop-control {
     display: block;
   }
 }
+

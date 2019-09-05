@@ -1,5 +1,17 @@
 2019-09-04  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Fix mobile vs desktop mode
+        https://bugs.webkit.org/show_bug.cgi?id=201441
+
+        Rubber-stamped by Aakash Jain.
+
+        We should unconditionally use desktop mode if the device screen-width
+        is large enough.
+
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+
+2019-09-04  Jonathan Bedard  <jbedard@apple.com>
+
         run-api-tests: Add support for specifying additional environment variables
         https://bugs.webkit.org/show_bug.cgi?id=201311
         <rdar://problem/54852698>
