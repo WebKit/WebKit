@@ -1,3 +1,15 @@
+2019-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r249275): [GTK][WPE] wrong page ID returned by webkit_web_view_get_page_id()
+        https://bugs.webkit.org/show_bug.cgi?id=201504
+
+        Reviewed by Michael Catanzaro.
+
+        We want to return the page identifier not the web page proxy id.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_get_page_id):
+
 2019-09-05  Pablo Saavedra  <psaavedra@igalia.com>
 
         Build failure after r249501 for ports with SERVICE_WORKER set OFF
