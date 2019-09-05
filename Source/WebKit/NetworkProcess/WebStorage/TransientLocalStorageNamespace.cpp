@@ -80,4 +80,12 @@ void TransientLocalStorageNamespace::clearAllStorageAreas()
         storageArea->clear();
 }
 
+Vector<StorageAreaIdentifier> TransientLocalStorageNamespace::storageAreaIdentifiers() const
+{
+    Vector<StorageAreaIdentifier> identifiers;
+    for (auto& storageArea : m_storageAreaMap.values())
+        identifiers.append(storageArea->identifier());
+    return identifiers;
+}
+
 } // namespace WebKit

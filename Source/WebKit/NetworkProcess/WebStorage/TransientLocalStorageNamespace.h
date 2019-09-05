@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StorageAreaIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -46,6 +47,8 @@ public:
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();
+
+    Vector<StorageAreaIdentifier> storageAreaIdentifiers() const;
 
 private:
     const unsigned m_quotaInBytes { 0 };

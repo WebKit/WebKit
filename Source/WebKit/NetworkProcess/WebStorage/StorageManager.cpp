@@ -270,4 +270,27 @@ void StorageManager::clearStorageNamespaces()
     m_sessionStorageNamespaces.clear();
 }
 
+Vector<StorageAreaIdentifier> StorageManager::allStorageAreaIdentifiers() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    Vector<StorageAreaIdentifier> identifiers;
+    for (const auto& localStorageNamespace : m_localStorageNamespaces.values()) {
+        for (auto key : localStorageNamespace->storageAreaIdentifiers())
+            identifiers.append(key);
+    }
+
+    for (const auto& trasientLocalStorageNamespace : m_transientLocalStorageNamespaces.values()) {
+        for (auto key : trasientLocalStorageNamespace->storageAreaIdentifiers())
+            identifiers.append(key);
+    }
+
+    for (const auto& sessionStorageNamespace : m_sessionStorageNamespaces.values()) {
+        for (auto key : sessionStorageNamespace->storageAreaIdentifiers())
+            identifiers.append(key);
+    }
+
+    return identifiers;
+}
+
 } // namespace WebKit

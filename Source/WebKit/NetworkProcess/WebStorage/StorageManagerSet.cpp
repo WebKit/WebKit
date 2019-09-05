@@ -78,7 +78,12 @@ void StorageManagerSet::remove(PAL::SessionID sessionID)
 
     if (m_storageManagerPaths.remove(sessionID)) {
         m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID]() {
-            m_storageManagers.remove(sessionID);
+            if (auto storageManager = m_storageManagers.get(sessionID)) {
+                for (auto storageAreaID : storageManager->allStorageAreaIdentifiers())
+                    m_storageAreas.remove(storageAreaID);
+
+                m_storageManagers.remove(sessionID);
+            }
         });
     }
 }

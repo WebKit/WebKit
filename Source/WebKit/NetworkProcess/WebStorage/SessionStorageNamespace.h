@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "StorageAreaIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/WorkQueue.h>
@@ -51,6 +52,8 @@ public:
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();
+
+    Vector<StorageAreaIdentifier> storageAreaIdentifiers() const;
 
 private:
     unsigned m_quotaInBytes { 0 };

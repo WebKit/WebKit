@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "LocalStorageDatabaseTracker.h"
+#include "StorageAreaIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageMap.h>
@@ -81,6 +82,8 @@ public:
     StorageArea* createLocalStorageArea(StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
     StorageArea* createTransientLocalStorageArea(StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
     StorageArea* createSessionStorageArea(StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+
+    Vector<StorageAreaIdentifier> allStorageAreaIdentifiers() const;
 
 private:
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(StorageNamespaceIdentifier);

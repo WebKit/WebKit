@@ -88,4 +88,12 @@ void SessionStorageNamespace::clearAllStorageAreas()
         storageArea->clear();
 }
 
+Vector<StorageAreaIdentifier> SessionStorageNamespace::storageAreaIdentifiers() const
+{
+    Vector<StorageAreaIdentifier> identifiers;
+    for (auto& storageArea : m_storageAreaMap.values())
+        identifiers.append(storageArea->identifier());
+    return identifiers;
+}
+
 } // namespace WebKit

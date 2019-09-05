@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StorageAreaIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
@@ -53,6 +54,8 @@ public:
     void clearAllStorageAreas();
 
     Vector<WebCore::SecurityOriginData> ephemeralOrigins() const;
+
+    Vector<StorageAreaIdentifier> storageAreaIdentifiers() const;
 
 private:
     StorageManager& m_storageManager;

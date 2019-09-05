@@ -81,4 +81,12 @@ Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
     return origins;
 }
 
+Vector<StorageAreaIdentifier> LocalStorageNamespace::storageAreaIdentifiers() const
+{
+    Vector<StorageAreaIdentifier> identifiers;
+    for (auto& storageArea : m_storageAreaMap.values())
+        identifiers.append(storageArea->identifier());
+    return identifiers;
+}
+
 } // namespace WebKit
