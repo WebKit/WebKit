@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- #pragma once
+#pragma once
 
 #include "FrameLoaderClient.h"
 #include <WebCore/ResourceError.h>
