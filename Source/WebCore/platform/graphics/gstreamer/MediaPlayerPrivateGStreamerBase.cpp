@@ -1430,10 +1430,10 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(CDMInstance& instance)
 
     GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-cdm-instance", FALSE));
     GstStructure* contextStructure = gst_context_writable_structure(context.get());
-    gst_structure_set(contextStructure, "cdm-instance", G_TYPE_POINTER, m_cdmInstance.get(), nullptr);
+    gst_structure_set(contextStructure, "cdm-instance", G_TYPE_POINTER, m_cdmInstance->proxyCDM().get(), nullptr);
     gst_element_set_context(GST_ELEMENT(m_pipeline.get()), context.get());
 
-    GST_DEBUG_OBJECT(m_pipeline.get(), "CDM instance %p dispatched as context", m_cdmInstance.get());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "CDM proxy instance %p dispatched as context", m_cdmInstance->proxyCDM().get());
 
     m_cdmAttachmentSemaphore.signal();
 }

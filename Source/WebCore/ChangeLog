@@ -1,3 +1,33 @@
+2019-09-05  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Introduce a Proxy CDM for thread-safe access to CDM instances from background decryption threads
+        https://bugs.webkit.org/show_bug.cgi?id=201339
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Covered by existing tests.
+
+        * platform/encryptedmedia/CDMInstance.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::isolatedKey):
+        (WebCore::ProxyCDMClearKey::isolatedKeys const):
+        (WebCore::CDMInstanceClearKey::CDMInstanceClearKey):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceAttached):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (handleKeyResponse):
+        (findAndSetKey):
+        (decrypt):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (isCDMInstanceAvailable):
+        (sinkEventHandler):
+        (setContext):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::proxyCDM const):
+        * testing/MockCDMFactory.h:
+
 2019-09-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] LayoutState should not need the initial containing block

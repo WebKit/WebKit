@@ -55,7 +55,7 @@ struct _WebKitMediaCommonEncryptionDecryptClass {
     GstBaseTransformClass parentClass;
 
     const char* protectionSystemId;
-    bool (*handleKeyResponse)(WebKitMediaCommonEncryptionDecrypt*, RefPtr<WebCore::CDMInstance>);
+    bool (*handleKeyResponse)(WebKitMediaCommonEncryptionDecrypt*, RefPtr<WebCore::ProxyCDM>);
     bool (*decrypt)(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* ivBuffer, GstBuffer* keyIDBuffer, GstBuffer* buffer, unsigned subSamplesCount, GstBuffer* subSamplesBuffer);
 };
 

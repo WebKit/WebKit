@@ -31,12 +31,12 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 
-using WebCore::CDMInstance;
+using WebCore::ProxyCDM;
 
 #define WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_CENC_DECRYPT, WebKitMediaCommonEncryptionDecryptPrivate))
 struct _WebKitMediaCommonEncryptionDecryptPrivate {
     GRefPtr<GstEvent> protectionEvent;
-    RefPtr<CDMInstance> cdmInstance;
+    RefPtr<ProxyCDM> proxyCDM;
     bool keyReceived { false };
     bool waitingForKey { false };
     Lock mutex;
@@ -284,7 +284,7 @@ static bool isCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt* self)
 
     ASSERT(priv->mutex.isLocked());
 
-    if (!priv->cdmInstance) {
+    if (!priv->proxyCDM) {
         GRefPtr<GstContext> context = adoptGRef(gst_element_get_context(GST_ELEMENT(self), "drm-cdm-instance"));
         // According to the GStreamer documentation, if we can't find the context, we should run a downstream query, then an upstream one and then send a bus
         // message. In this case that does not make a lot of sense since only the app (player) answers it, meaning that no query is going to solve it. A message
@@ -293,16 +293,16 @@ static bool isCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt* self)
         // requests are useful here.
         if (context) {
             const GValue* value = gst_structure_get_value(gst_context_get_structure(context.get()), "cdm-instance");
-            priv->cdmInstance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
-            if (priv->cdmInstance)
-                GST_DEBUG_OBJECT(self, "received a new CDM instance %p, refcount %u", priv->cdmInstance.get(), priv->cdmInstance->refCount());
+            priv->proxyCDM = value ? reinterpret_cast<ProxyCDM*>(g_value_get_pointer(value)) : nullptr;
+            if (priv->proxyCDM)
+                GST_DEBUG_OBJECT(self, "received a new CDM proxy instance %p, refcount %u", priv->proxyCDM.get(), priv->proxyCDM->refCount());
             else
                 GST_TRACE_OBJECT(self, "CDM instance was detached");
         }
     }
 
-    GST_TRACE_OBJECT(self, "CDM instance available %s", boolForPrinting(priv->cdmInstance.get()));
-    return priv->cdmInstance;
+    GST_TRACE_OBJECT(self, "CDM instance available %s", boolForPrinting(priv->proxyCDM.get()));
+    return priv->proxyCDM;
 }
 
 static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
@@ -327,7 +327,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
             break;
         }
 
-        if (klass->handleKeyResponse(self, priv->cdmInstance)) {
+        if (klass->handleKeyResponse(self, priv->proxyCDM)) {
             GST_DEBUG_OBJECT(self, "key received");
             priv->keyReceived = true;
             priv->condition.notifyOne();
@@ -384,8 +384,8 @@ static void setContext(GstElement* element, GstContext* context)
     if (gst_context_has_context_type(context, "drm-cdm-instance")) {
         const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "cdm-instance");
         LockHolder locker(priv->mutex);
-        priv->cdmInstance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
-        GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->cdmInstance.get());
+        priv->proxyCDM = value ? reinterpret_cast<ProxyCDM*>(g_value_get_pointer(value)) : nullptr;
+        GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->proxyCDM.get());
         return;
     }
 

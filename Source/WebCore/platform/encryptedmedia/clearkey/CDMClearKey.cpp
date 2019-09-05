@@ -455,7 +455,41 @@ Optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessionId) 
     return sessionId;
 }
 
+// This is for thread-safety during an architectural situation that is
+// less than ideal. The GStreamer decryptors currently need to iterate
+// all known session keys to find the key data for priming
+// GCrypt. Ideally, all decryption would be the responsibility of
+// ProxyCDM object like this one. What the background GStreamer
+// thread was doing was getting copies (i.e. ref()'s) of SharedBuffers
+// created on the main-thread. With the new safety assertions in
+// WebKit, we can no longer do this. Instead, convert the refcounted
+// SharedBuffers into Strings which can be safely copied across
+// threads.
+static ProxyCDMClearKey::Key isolatedKey(const CDMInstanceClearKey::Key& key)
+{
+    return { key.status, String(key.keyIDData->data(), key.keyIDData->size()), String(key.keyValueData->data(), key.keyValueData->size()) };
+}
+
+const Vector<ProxyCDMClearKey::Key> ProxyCDMClearKey::isolatedKeys() const
+{
+    // Return the keys of all sessions, may be copied to background threads.
+    Vector<ProxyCDMClearKey::Key> allKeys { };
+    auto locker = holdLock(m_keysMutex);
+    size_t initialCapacity = 0;
+    for (auto& keyVector : ClearKeyState::singleton().keys().values())
+        initialCapacity += keyVector.size();
+    allKeys.reserveInitialCapacity(initialCapacity);
+
+    for (auto& keyVector : ClearKeyState::singleton().keys().values()) {
+        for (auto& key : keyVector)
+            allKeys.uncheckedAppend(isolatedKey(key));
+    }
+
+    return allKeys;
+}
+
 CDMInstanceClearKey::CDMInstanceClearKey()
+    : m_proxyCDM(adoptRef(*new ProxyCDMClearKey()))
 {
 }
 
@@ -501,22 +535,6 @@ const String& CDMInstanceClearKey::keySystem() const
 RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
 {
     return adoptRef(new CDMInstanceSessionClearKey());
-}
-
-const Vector<CDMInstanceClearKey::Key> CDMInstanceClearKey::keys() const
-{
-    // Return the keys of all sessions.
-    Vector<CDMInstanceClearKey::Key> allKeys { };
-    auto locker = holdLock(m_keysMutex);
-    size_t initialCapacity = 0;
-    for (auto& key : ClearKeyState::singleton().keys().values())
-        initialCapacity += key.size();
-    allKeys.reserveInitialCapacity(initialCapacity);
-
-    for (auto& key : ClearKeyState::singleton().keys().values())
-        allKeys.appendVector(key);
-
-    return allKeys;
 }
 
 void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)

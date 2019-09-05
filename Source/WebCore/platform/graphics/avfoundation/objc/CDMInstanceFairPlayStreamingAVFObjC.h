@@ -63,6 +63,7 @@ public:
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
     SuccessValue setStorageDirectory(const String&) final;
     RefPtr<CDMInstanceSession> createSession() final;
+    RefPtr<ProxyCDM> proxyCDM() const final { return nullptr; }
 
     const String& keySystem() const final;
 

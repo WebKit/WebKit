@@ -37,12 +37,12 @@ using namespace WebCore;
 
 #define WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_CK_DECRYPT, WebKitMediaClearKeyDecryptPrivate))
 struct _WebKitMediaClearKeyDecryptPrivate {
-    RefPtr<CDMInstanceClearKey> cdmInstance;
+    RefPtr<ProxyCDMClearKey> proxyCDM;
     gcry_cipher_hd_t handle;
 };
 
 static void finalize(GObject*);
-static bool handleKeyResponse(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<CDMInstance>);
+static bool handleKeyResponse(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<ProxyCDM>);
 static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffer* keyid, GstBuffer* sample, unsigned subSamplesCount, GstBuffer* subSamples);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_clear_key_decrypt_debug_category);
@@ -112,30 +112,31 @@ static void finalize(GObject* object)
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
-static bool handleKeyResponse(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<CDMInstance> cdmInstance)
+static bool handleKeyResponse(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<ProxyCDM> proxyCDM)
 {
     WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_CK_DECRYPT(self));
-    priv->cdmInstance = downcast<CDMInstanceClearKey>(cdmInstance.get());
-    return priv->cdmInstance;
+    priv->proxyCDM = reinterpret_cast<ProxyCDMClearKey*>(proxyCDM.get());
+    return priv->proxyCDM;
 }
 
-static bool findAndSetKey(WebKitMediaClearKeyDecryptPrivate* priv, const Ref<SharedBuffer>& keyID)
+static bool findAndSetKey(WebKitMediaClearKeyDecryptPrivate* priv, const String&& keyID)
 {
-    RefPtr<SharedBuffer> keyValue;
-    for (const auto& key : priv->cdmInstance->keys()) {
-        if (*key.keyIDData == keyID) {
+    String keyValue;
+
+    for (const auto& key : priv->proxyCDM->isolatedKeys()) {
+        if (key.keyIDData == keyID) {
             keyValue = key.keyValueData;
             break;
         }
     }
 
-    if (!keyValue) {
+    if (keyValue.isEmpty()) {
         GST_ERROR_OBJECT(priv, "failed to find a decryption key");
         return false;
     }
 
-    ASSERT(keyValue->size() == CLEARKEY_SIZE);
-    if (gcry_error_t error = gcry_cipher_setkey(priv->handle, keyValue->data(), keyValue->size())) {
+    ASSERT(keyValue.sizeInBytes() == CLEARKEY_SIZE);
+    if (gcry_error_t error = gcry_cipher_setkey(priv->handle, keyValue.utf8().data(), keyValue.sizeInBytes())) {
         GST_ERROR_OBJECT(priv, "gcry_cipher_setkey failed: %s", gpg_strerror(error));
         return false;
     }
@@ -189,7 +190,7 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffe
         return false;
     }
 
-    findAndSetKey(priv, mappedKeyIdBuffer->createSharedBuffer());
+    findAndSetKey(priv, String(mappedKeyIdBuffer->data(), mappedKeyIdBuffer->size()));
 
     unsigned position = 0;
     unsigned sampleIndex = 0;

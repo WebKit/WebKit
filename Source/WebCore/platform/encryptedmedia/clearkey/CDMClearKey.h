@@ -77,6 +77,20 @@ public:
     Optional<String> sanitizeSessionId(const String&) const final;
 };
 
+class ProxyCDMClearKey final : public ProxyCDM {
+public:
+    struct Key {
+        CDMInstanceSession::KeyStatus status;
+        String keyIDData;
+        String keyValueData;
+    };
+
+    virtual ~ProxyCDMClearKey() = default;
+    const Vector<Key> isolatedKeys() const;
+private:
+    mutable Lock m_keysMutex;
+};
+
 class CDMInstanceClearKey final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceClearKey> {
 public:
     CDMInstanceClearKey();
@@ -98,10 +112,10 @@ public:
         RefPtr<SharedBuffer> keyValueData;
     };
 
-    const Vector<Key> keys() const;
+    RefPtr<ProxyCDM> proxyCDM() const final { return m_proxyCDM; }
 
 private:
-    mutable Lock m_keysMutex;
+    RefPtr<ProxyCDM> m_proxyCDM;
 };
 
 class CDMInstanceSessionClearKey final : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionClearKey> {
