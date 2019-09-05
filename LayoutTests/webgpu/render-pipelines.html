@@ -5,7 +5,7 @@
 <script src="../resources/testharnessreport.js"></script>
 <script>
 const shaderCode = `
-vertex float4 vertex_main(uint vid [[vertex_id]]) : SV_Position
+vertex float4 vertex_main(uint vid : SV_VertexID) : SV_Position
 {
     float4 v;
     switch (vid) {

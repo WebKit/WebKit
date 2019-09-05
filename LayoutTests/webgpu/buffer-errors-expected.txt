@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: GPUDevice.createBuffer(): Buffer cannot have both MAP_READ and MAP_WRITE usage!
 
 PASS GPUBuffers can be created with both read-only and STORAGE usages. 
 PASS unmap on already unmapped, mappable GPUBuffer should not generate error. 

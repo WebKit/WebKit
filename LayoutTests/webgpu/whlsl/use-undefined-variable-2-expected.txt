@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: GPUDevice.createComputePipeline(): WHLSL compile error: 4:25: Cannot find the variable declaration.
 PASS 
 PASS successfullyParsed is true
 

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: GPUBuffer.mapWriteAsync(): Invalid operation!
+CONSOLE MESSAGE: GPUBuffer.mapWriteAsync(): Invalid operation!
 
 PASS Map write, unmap, and destroy a GPUBuffer. 
 PASS Reject a map write on a buffer not created with MAP_WRITE usage. 

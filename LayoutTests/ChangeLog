@@ -1,3 +1,18 @@
+2019-09-05  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix new test results after adding console warnings
+        https://bugs.webkit.org/show_bug.cgi?id=201526
+
+        Unreviewed test expectation updates.
+
+        * webgpu/buffer-errors-expected.txt:
+        * webgpu/map-read-buffers-expected.txt:
+        * webgpu/map-write-buffers-expected.txt:
+        * webgpu/render-pipelines.html: Fix WHLSL compile error.
+        * webgpu/uncaptured-errors-expected.txt: Added.
+        * webgpu/whlsl/use-undefined-variable-2-expected.txt:
+        * webgpu/whlsl/use-undefined-variable-expected.txt:
+
 2019-09-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html is a flaky failure
