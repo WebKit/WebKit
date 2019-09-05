@@ -1995,3 +1995,5 @@ webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 # rdar://54317204 (fast/text/font-cursive-italic-cjk-2.html is failing)
 [ Catalina+ ] fast/text/font-cursive-italic-cjk-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/181837 [ Release ] imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Pass Failure ]

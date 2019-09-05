@@ -3351,3 +3351,4 @@ http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-ges
 # rdar://55081191 (Layout Test media/audio-concurrent-supported.html is a flaky failure (184612))
 media/audio-concurrent-supported.html [ Pass Failure ]
 
+webkit.org/b/181837 [ Release ] imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Pass Failure ]
