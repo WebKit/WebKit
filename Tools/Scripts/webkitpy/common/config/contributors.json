@@ -3886,8 +3886,8 @@
    },
    "Michael Catanzaro" : {
       "emails" : [
-         "mcatanzaro@igalia.com",
-         "mcatanzaro@gnome.org"
+         "mcatanzaro@gnome.org",
+         "mcatanzaro@igalia.com"
       ],
       "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",
       "nicks" : [
