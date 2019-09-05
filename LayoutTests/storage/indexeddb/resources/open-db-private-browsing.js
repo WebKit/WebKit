@@ -5,7 +5,6 @@ if (this.importScripts) {
 
 description("Simple test to open IndexedDB database in private browsing mode.");
 
-testRunner.setPrivateBrowsingEnabled(true);
 removeVendorPrefixes();
 shouldBeNull("indexedDB.open('db')");
 finishJSTest();

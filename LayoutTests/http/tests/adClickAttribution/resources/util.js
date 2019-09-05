@@ -12,7 +12,6 @@ function tearDownAndFinish() {
         testRunner.setAllowsAnySSLCertificate(false);
         testRunner.setAdClickAttributionOverrideTimerForTesting(false);
         testRunner.setAdClickAttributionConversionURLForTesting("");
-        testRunner.setPrivateBrowsingEnabled(false);
         testRunner.notifyDone();
     }
 }

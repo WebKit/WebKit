@@ -6,8 +6,9 @@ if (self.testRunner) {
         testRunner.dumpAsText();
 
     // If the test file URL ends in "-private.html", enable private browsing.
+    // FIXME: Update WKTR / DRT to do this automatically based on the test name.
     if (window.location.href.endsWith("-private.html") || self.enablePrivateBrowsing)
-        testRunner.setPrivateBrowsingEnabled(true);
+        testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 }
 
 var description, debug, didFailSomeTests, successfullyParsed;

@@ -584,6 +584,11 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
     WKPageConfigurationSetPageGroup(pageConfiguration.get(), m_pageGroup.get());
+    
+    if (options.useEphemeralSession) {
+        auto ephemeralDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
+        WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), ephemeralDataStore.get());
+    }
 
     m_userContentController = adoptWK(WKUserContentControllerCreate());
     WKPageConfigurationSetUserContentController(pageConfiguration.get(), userContentController());
@@ -1338,6 +1343,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableAttachmentElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableIntersectionObserver")
             testOptions.enableIntersectionObserver = parseBooleanTestHeaderValue(value);
+        else if (key == "useEphemeralSession")
+            testOptions.useEphemeralSession = parseBooleanTestHeaderValue(value);
         else if (key == "enableMenuItemElement")
             testOptions.enableMenuItemElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableKeygenElement")

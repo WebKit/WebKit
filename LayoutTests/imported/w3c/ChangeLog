@@ -1,3 +1,12 @@
+2019-09-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add proper layout test support for ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=201475
+
+        Reviewed by Antti Koivisto.
+
+        * IndexedDB-private-browsing/support.js:
+
 2019-09-05  Youenn Fablet  <youenn@apple.com>
 
         Introduce WorkerSWClientConnection to make SWClientConnection mono-thread

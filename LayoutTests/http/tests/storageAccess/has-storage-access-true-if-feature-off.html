@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,9 +8,6 @@
     <script>
         description("Tests that document.hasStorageAccess() returns true for a 3rd-party iframe if there is no way to request access (feature off).");
         jsTestIsAsync = true;
-
-        if (window.testRunner)
-            testRunner.setPrivateBrowsingEnabled(true);
 
         window.addEventListener("message", receiveMessage, false);
 

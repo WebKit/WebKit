@@ -14,7 +14,7 @@ promise_test(async (test) => {
 
     if (!window.testRunner)
        return Promise.reject("test requires internals API");
-    testRunner.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 
     var registration = await navigator.serviceWorker.getRegistration(scope);
     if (registration && registration.scope === scope)

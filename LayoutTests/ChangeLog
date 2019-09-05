@@ -1,3 +1,63 @@
+2019-09-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add proper layout test support for ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=201475
+
+        Reviewed by Antti Koivisto.
+
+        Update existing layout tests to either switch to the new mechanism when trivial or to rename
+        setPrivateBrowsingEnabled() to setPrivateBrowsingEnabled_DEPRECATED() when it is not.
+
+        * crypto/subtle/rsa-indexeddb-non-exportable-private.html:
+        * crypto/subtle/rsa-indexeddb-private.html:
+        * http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html:
+        * http/tests/adClickAttribution/resources/util.js:
+        (tearDownAndFinish):
+        * http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html:
+        * http/tests/cache-storage/cache-persistency.https.html:
+        * http/tests/cache-storage/cache-representation.https.html:
+        * http/tests/cache/disk-cache/disk-cache-vary-cookie.html:
+        * http/tests/cookies/private-cookie-storage.html:
+        * http/tests/media/now-playing-info-private-browsing.html:
+        * http/tests/security/appcache-in-private-browsing.html:
+        * http/tests/security/appcache-switching-private-browsing.html:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.php:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php:
+        * http/tests/security/cookies/resources/first-party-cookie-allow.xsl:
+        * http/tests/security/cookies/resources/third-party-cookie-blocking.xsl:
+        * http/tests/security/cookies/third-party-cookie-blocking-main-frame.html:
+        * http/tests/security/cookies/third-party-cookie-blocking-redirect.html:
+        * http/tests/security/cookies/third-party-cookie-blocking-user-action.html:
+        * http/tests/security/cookies/third-party-cookie-blocking.html:
+        * http/tests/security/cross-frame-access-private-browsing.html:
+        * http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html:
+        * http/tests/security/cross-origin-plugin-private-browsing-toggled.html:
+        * http/tests/security/private-browsing-http-auth.html:
+        * http/tests/security/storage-blocking-loosened-private-browsing-plugin.html:
+        * http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html:
+        * http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html:
+        * http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html:
+        * http/tests/storageAccess/has-storage-access-true-if-feature-off.html:
+        * http/tests/workers/service/resources/basic-register.js:
+        (async.test):
+        * http/tests/workers/service/serviceworker-private-browsing.https.html:
+        * http/wpt/fetch/dnt-header-after-redirection.html:
+        * platform/wk2/TestExpectations:
+        * plugins/private-browsing-mode-2.html:
+        * plugins/private-browsing-mode.html:
+        * resources/js-test.js:
+        * storage/domstorage/localstorage/private-browsing-affects-storage.html:
+        * storage/domstorage/localstorage/resources/private-browsing-1.html:
+        * storage/domstorage/localstorage/resources/private-browsing-2.html:
+        * storage/indexeddb/open-db-private-browsing.html:
+        * storage/indexeddb/resources/open-db-private-browsing.js:
+        * storage/websql/private-browsing-noread-nowrite.html:
+        * storage/websql/private-browsing-open-disabled.html:
+
 2019-09-05  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement GPUUncapturedErrorEvent

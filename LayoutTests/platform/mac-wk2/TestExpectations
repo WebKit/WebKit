@@ -477,15 +477,11 @@ webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
 ### START OF (5) Features that are not supported when NetworkProcess is enabled (i.e. they only work on Mountain Lion, and not on newer OS versions).
 
 # https://bugs.webkit.org/show_bug.cgi?id=115274
-# PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
+# PPT: testRunner.setPrivateBrowsingEnabled_DEPRECATED() doesn't work with NetworkProcess
 http/tests/security/appcache-in-private-browsing.html [ Skip ]
 http/tests/security/appcache-switching-private-browsing.html [ Skip ]
 http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
-http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Skip ]
-http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
-http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
-http/tests/security/cross-frame-access-private-browsing.html [ Skip ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]

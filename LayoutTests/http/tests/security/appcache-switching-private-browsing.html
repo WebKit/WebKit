@@ -10,11 +10,11 @@ if (window.testRunner) {
 
 function enterPrivateBrowsing(frame) {
 	if (window.testRunner)
-		testRunner.setPrivateBrowsingEnabled(true);
+		testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 	frame.contentWindow.appCacheCallback = function(result) {
 		frame.contentWindow.updateAppCache(function(result) {
-			if (window.testRunner)
-				testRunner.setPrivateBrowsingEnabled(false);
+                        if (window.testRunner)
+				testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
 			console.log(result ? 'FAIL' : 'PASS');
 			if (window.testRunner)
 				testRunner.notifyDone();

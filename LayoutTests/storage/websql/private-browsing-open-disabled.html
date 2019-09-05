@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <body>
 <div id="logger"></div>
 <script>
@@ -5,7 +6,6 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.setPrivateBrowsingEnabled(true);
 }
 
 var logger = document.getElementById("logger");

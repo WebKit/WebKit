@@ -19,7 +19,7 @@ function runTest()
         log("Back in parent window, localStorage's length is: " + localStorage.length);
         log("Back in parent window, testItem is: " + localStorage.getItem("testItem"));
         
-        testRunner.setPrivateBrowsingEnabled(false);
+        testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
 
         window.location.href = "private-browsing-3.html";
     }

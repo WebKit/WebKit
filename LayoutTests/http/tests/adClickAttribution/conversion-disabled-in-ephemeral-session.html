@@ -55,7 +55,7 @@
     function runTest() {
         if (window.testRunner) {
             if (window.location.search === "?stepTwo") {
-                testRunner.setPrivateBrowsingEnabled(true);
+                testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
                 let imageElement = document.createElement("img");
                 imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12&nonce=" + nonce;
                 imageElement.id = "pixel";

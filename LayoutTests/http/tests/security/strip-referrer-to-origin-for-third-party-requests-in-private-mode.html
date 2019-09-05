@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +9,6 @@
     description("Tests that only the origin is sent as referrer for third-party resources in private browsing mode.");
     jsTestIsAsync = true;
 
-    testRunner.setPrivateBrowsingEnabled(true);
     testRunner.dumpChildFramesAsText();
 
     function openIframe(url, onLoadHandler) {

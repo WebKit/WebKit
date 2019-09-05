@@ -12,7 +12,7 @@
     xhr.send(null);
 
     if (window.testRunner)
-        testRunner.setPrivateBrowsingEnabled(true);
+        testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 </script>
 
 <!-- This image will generate a CSP violation report. -->

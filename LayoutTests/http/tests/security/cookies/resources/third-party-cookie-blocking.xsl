@@ -8,12 +8,6 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
-
-    // Start with a clean state, as otherwise an expired cookie for this domain could affect behavior with CFNetwork.
-    // Can be removed once rdar://problem/10080130 is fixed.
-    if (testRunner.setPrivateBrowsingEnabled)
-        testRunner.setPrivateBrowsingEnabled(true);
-
     testRunner.setAlwaysAcceptCookies(false);
 }
       </script>

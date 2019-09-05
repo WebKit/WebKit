@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <!DOCTYPE html>
 <script>
 function test() {
@@ -9,10 +10,6 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
-
-    if (testRunner.setPrivateBrowsingEnabled)
-        testRunner.setPrivateBrowsingEnabled(true);
-
     testRunner.setAlwaysAcceptCookies(false);
 }
 </script>

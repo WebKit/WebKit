@@ -5,13 +5,13 @@ if (window.testRunner) {
 	testRunner.waitUntilDone();
 	testRunner.dumpAsText();
 	testRunner.dumpChildFramesAsText();
-	testRunner.setPrivateBrowsingEnabled(true);
+	testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 }
 
 function decrement() {
 	if (window.testRunner) {
 		internals.settings.setStorageBlockingPolicy('BlockAll');
-		testRunner.setPrivateBrowsingEnabled(false);
+		testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
 	}
 	for (var i = 0; i < window.frames.length; ++i)
 		window.frames[i].postMessage('blocked', '*');

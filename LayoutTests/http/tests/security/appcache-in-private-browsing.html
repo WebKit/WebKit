@@ -8,15 +8,13 @@ if (window.testRunner) {
 }
 
 function finishTest(frame) {
-	if (window.testRunner) {
-		testRunner.setPrivateBrowsingEnabled(false);
+	if (window.testRunner)
 		testRunner.notifyDone();
-	}
 }
 
 function enterPrivateBrowsing(frame) {
 	if (window.testRunner)
-		testRunner.setPrivateBrowsingEnabled(true);
+		testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 	frame.onload = finishTest;
 	frame.contentWindow.location.reload();
 }

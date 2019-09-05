@@ -20,7 +20,7 @@ function runTest()
     shouldBe("plugin1.privateBrowsingEnabled", "false");
 
     // Now enable private browsing
-    testRunner.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 
     shouldBe("plugin1.privateBrowsingEnabled", "true");
     
@@ -30,7 +30,7 @@ function runTest()
     document.body.appendChild(plugin2);
     
     shouldBe("plugin2.privateBrowsingEnabled", "true");
-    testRunner.setPrivateBrowsingEnabled(false);
+    testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
     shouldBe("plugin1.privateBrowsingEnabled", "false");
     shouldBe("plugin2.privateBrowsingEnabled", "false");
 }

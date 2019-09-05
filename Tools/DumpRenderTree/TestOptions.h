@@ -32,6 +32,7 @@ struct TestOptions {
     bool enableWebAnimationsCSSIntegration { true };
     bool useAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
+    bool useEphemeralSession { false };
     bool enableMenuItemElement { false };
     bool enableKeygenElement { false };
     bool enableModernMediaControls { true };

@@ -8,7 +8,7 @@ document.cookie = "key1=value1";
 debug("Cookies before enabling private browsing (should be key1=value1):" + document.cookie);
 testCookies("key1=value1");
 
-if (window.testRunner) { testRunner.setPrivateBrowsingEnabled(true); }
+if (window.testRunner) { testRunner.setPrivateBrowsingEnabled_DEPRECATED(true); }
 
 debug("Cookies after enabling private browsing (should be empty):" + document.cookie);
 testCookies(""); // We're using a different cookie storage now.  key1=value1 is still in the default cookie storage.
@@ -17,7 +17,7 @@ debug("Cookies after setting in private browsing (should be key2=value2):" + doc
 testCookies("key2=value2");
 clearCookies();
 
-if (window.testRunner) { testRunner.setPrivateBrowsingEnabled(false); }
+if (window.testRunner) { testRunner.setPrivateBrowsingEnabled_DEPRECATED(false); }
 
 debug("Cookies after disabling private browsing (should be key1=value1):" + document.cookie);
 testCookies("key1=value1");

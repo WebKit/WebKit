@@ -5,7 +5,7 @@ var frames = 2;
 if (window.testRunner) {
 	testRunner.dumpAsText();
 	testRunner.dumpChildFramesAsText();
-	testRunner.setPrivateBrowsingEnabled(true);
+	testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 	testRunner.waitUntilDone();
 	internals.settings.setStorageBlockingPolicy('BlockThirdParty');
 }
@@ -14,7 +14,7 @@ function decrement() {
 	--frames;
 	if (!frames) {
 		if (window.testRunner)
-			testRunner.setPrivateBrowsingEnabled(false);
+			testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
 		for (var i = 0; i < 2; ++i) {
 			var frame = document.getElementsByTagName('iframe')[i].contentWindow;
 			frame.postMessage('loaded', '*');

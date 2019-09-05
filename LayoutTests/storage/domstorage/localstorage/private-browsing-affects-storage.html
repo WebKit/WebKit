@@ -22,7 +22,7 @@ function runTest()
     localStorage.setItem("testItem", "Persistent item!");
     log("Persistent localStorage testItem is: " + localStorage.getItem("testItem"));
     
-    testRunner.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
     testRunner.setCanOpenWindows();
     
     window.location.href = "resources/private-browsing-1.html"

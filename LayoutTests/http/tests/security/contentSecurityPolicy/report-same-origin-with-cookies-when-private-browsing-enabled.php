@@ -1,13 +1,11 @@
 <?php
     header("Content-Security-Policy: img-src 'none'; report-uri /security/contentSecurityPolicy/resources/save-report.php");
 ?>
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
 <script>
-    if (window.testRunner)
-        testRunner.setPrivateBrowsingEnabled(true);
-
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/cookies/resources/setCookies.cgi", false);
     xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");

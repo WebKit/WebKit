@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <html>
 <head>
     <script src="resources/cross-frame-access.js"></script>
@@ -25,7 +26,6 @@
 
         function runTest() {
             var subFrame = window.frames[0];
-            testRunner.setPrivateBrowsingEnabled(true);
 
             try {
                 log("Attempting to violate the same-origin policy with private browsing enabled.  If this succeeds the console should not log the violation.");

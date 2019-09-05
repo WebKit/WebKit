@@ -68,7 +68,7 @@ function runPrivateBrowsingTests()
     completed = 0;
 
     if (window.testRunner)
-        testRunner.setPrivateBrowsingEnabled(true);
+        testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
     
     for (i in privateBrowsingStatements)
         theTransaction.executeSql(privateBrowsingStatements[i], [], privateBrowsingSuccessFunction, privateBrowsingErrorFunction);

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,9 +10,6 @@
 <body>
     <div id="check"></div>
     <script>
-    if (window.testRunner)
-        testRunner.setPrivateBrowsingEnabled(true);
-
     function checkCaches(hasPersistent, hasRemoved, name, value) {
         test(() => {
             var results = JSON.parse(value).origins;

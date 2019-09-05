@@ -10,7 +10,7 @@ if (window.testRunner) {
 
 function decrement() {
 	if (window.testRunner) {
-		testRunner.setPrivateBrowsingEnabled(true);
+		testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 		internals.settings.setStorageBlockingPolicy('AllowAll');
 	}
 	for (var i = 0; i < window.frames.length; ++i)
@@ -18,10 +18,8 @@ function decrement() {
 }
 
 window.onmessage = function() {
-	if (window.testRunner) {
+	if (window.testRunner)
 		testRunner.notifyDone();
-		testRunner.setPrivateBrowsingEnabled(false);
-	}
 }
 </script>
 </head>

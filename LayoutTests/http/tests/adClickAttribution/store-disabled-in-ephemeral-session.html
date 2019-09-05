@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useEphemeralSession=true ] -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,9 +12,6 @@
 <div id="output"></div>
 <script>
     prepareTest();
-
-    if (window.testRunner)
-        testRunner.setPrivateBrowsingEnabled(true);
 
     function activateElement(elementID) {
         var element = document.getElementById(elementID);

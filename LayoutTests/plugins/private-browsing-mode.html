@@ -21,7 +21,7 @@ function runTest()
     shouldBe("plugin1.cachedPrivateBrowsingEnabled", "false");
 
     // Now enable private browsing
-    testRunner.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
 
     shouldBe("plugin1.privateBrowsingEnabled", "true");
     shouldBe("plugin1.cachedPrivateBrowsingEnabled", "true");

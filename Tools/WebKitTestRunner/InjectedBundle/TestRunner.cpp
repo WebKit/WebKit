@@ -531,7 +531,7 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
     WKBundleSetJavaScriptCanAccessClipboard(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
-void TestRunner::setPrivateBrowsingEnabled(bool enabled)
+void TestRunner::setPrivateBrowsingEnabled_DEPRECATED(bool enabled)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleSetPrivateBrowsingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);

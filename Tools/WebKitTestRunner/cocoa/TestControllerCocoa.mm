@@ -160,6 +160,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 
     if (options.enableUndoManagerAPI)
         [copiedConfiguration _setUndoManagerAPIEnabled:YES];
+        
+    if (options.useEphemeralSession)
+        [copiedConfiguration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
 
     configureContentMode(copiedConfiguration.get(), options);
 

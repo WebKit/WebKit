@@ -112,7 +112,7 @@ public:
     void setNeedsStorageAccessFromFileURLsQuirk(bool);
     void setPluginsEnabled(bool);
     void setJavaScriptCanAccessClipboard(bool);
-    void setPrivateBrowsingEnabled(bool);
+    void setPrivateBrowsingEnabled_DEPRECATED(bool);
     void setPopupBlockingEnabled(bool);
     void setAuthorAndUserStylesEnabled(bool);
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);

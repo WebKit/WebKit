@@ -6,14 +6,14 @@ if (window.testRunner) {
     testRunner.setHandlesAuthenticationChallenges(true);
     testRunner.setAuthenticationUsername("webkit");
     testRunner.setAuthenticationPassword("rocks");
-    testRunner.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
     testRunner.waitUntilDone();
 }
 
 function firstFrameLoaded() {
     if (window.testRunner) {
         testRunner.setHandlesAuthenticationChallenges(false);
-    	testRunner.setPrivateBrowsingEnabled(false);
+    	testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
     }
 
     // If the username and password were in the WebCore CredentialStorage, WebKit would automatically send them out for this resource.
