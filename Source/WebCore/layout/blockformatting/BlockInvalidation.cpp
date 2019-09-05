@@ -48,14 +48,14 @@ static bool invalidationStopsAtFormattingContextBoundary(const Container& format
     return true;
 }
 
-static LayoutState::UpdateType computeUpdateType(const Box&, StyleDiff, BlockFormattingState&)
+static OptionSet<LayoutState::UpdateType> computeUpdateType(const Box&, StyleDiff, BlockFormattingState&)
 {
-    return LayoutState::UpdateType::All;
+    return LayoutState::updateAll();
 }
 
-static LayoutState::UpdateType computeUpdateTypeForAncestor(const Container&, StyleDiff, BlockFormattingState&)
+static OptionSet<LayoutState::UpdateType> computeUpdateTypeForAncestor(const Container&, StyleDiff, BlockFormattingState&)
 {
-    return LayoutState::UpdateType::All;
+    return LayoutState::updateAll();
 }
 
 InvalidationResult BlockInvalidation::invalidate(const Box& layoutBox, StyleDiff styleDiff, LayoutState& layoutState,

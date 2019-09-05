@@ -314,15 +314,15 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
     return mismtachingGeometry;
 }
 
-void LayoutState::verifyAndOutputMismatchingLayoutTree(const RenderView& renderView) const
+void LayoutState::verifyAndOutputMismatchingLayoutTree(const RenderView& renderView, const Container& initialContainingBlock) const
 {
     TextStream stream;
-    auto mismatchingGeometry = verifyAndOutputSubtree(stream, *this, renderView, initialContainingBlock());
+    auto mismatchingGeometry = verifyAndOutputSubtree(stream, *this, renderView, initialContainingBlock);
     if (!mismatchingGeometry)
         return;
 #if ENABLE(TREE_DEBUGGING)
     showRenderTree(&renderView);
-    showLayoutTree(initialContainingBlock(), this);
+    showLayoutTree(initialContainingBlock, this);
 #endif
     WTFLogAlways("%s", stream.release().utf8().data());
     ASSERT_NOT_REACHED();

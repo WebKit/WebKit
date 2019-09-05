@@ -41,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InlineInvalidation);
 
 InvalidationResult InlineInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutState& layoutState, InlineFormattingState&)
 {
-    layoutState.markNeedsUpdate(layoutBox, LayoutState::UpdateType::All);
+    layoutState.markNeedsUpdate(layoutBox);
     return { nullptr };
 }
 

@@ -41,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TableInvalidation);
 
 InvalidationResult TableInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutState& layoutState, TableFormattingState&)
 {
-    layoutState.markNeedsUpdate(layoutBox, LayoutState::UpdateType::All);
+    layoutState.markNeedsUpdate(layoutBox);
     return { nullptr };
 }
 

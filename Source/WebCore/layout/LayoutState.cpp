@@ -50,26 +50,6 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Container& initialContainingBlock)
-    : m_initialContainingBlock(makeWeakPtr(initialContainingBlock))
-{
-    // LayoutState is always initiated with the ICB.
-    ASSERT(!initialContainingBlock.parent());
-    ASSERT(initialContainingBlock.establishesBlockFormattingContext());
-
-    auto& displayBox = displayBoxForLayoutBox(initialContainingBlock);
-    displayBox.setHorizontalMargin({ });
-    displayBox.setHorizontalComputedMargin({ });
-    displayBox.setVerticalMargin({ });
-    displayBox.setBorder({ });
-    displayBox.setPadding({ });
-    displayBox.setTopLeft({ });
-    displayBox.setContentBoxHeight(LayoutUnit(initialContainingBlock.style().logicalHeight().value()));
-    displayBox.setContentBoxWidth(LayoutUnit(initialContainingBlock.style().logicalWidth().value()));
-
-    m_formattingContextRootListForLayout.add(&initialContainingBlock);
-}
-
 void LayoutState::updateLayout()
 {
     PhaseScope scope(Phase::Type::Layout);
@@ -111,8 +91,10 @@ void LayoutState::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
     m_formattingContextRootListForLayout.addVoid(invalidationRoot);
 }
 
-void LayoutState::markNeedsUpdate(const Box&, OptionSet<UpdateType>)
+void LayoutState::markNeedsUpdate(const Box& layoutBox, OptionSet<UpdateType>)
 {
+    // FIXME: This should trigger proper invalidation instead of just adding the formatting context root to the dirty list. 
+    m_formattingContextRootListForLayout.addVoid(&(layoutBox.isInitialContainingBlock() ? downcast<Container>(layoutBox) : layoutBox.formattingContextRoot()));
 }
 
 FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
@@ -193,8 +175,21 @@ std::unique_ptr<FormattingContext> LayoutState::createFormattingContext(const Bo
 
 void LayoutState::run(const RenderView& renderView)
 {
+    auto layoutState = LayoutState { };
+
     auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-    auto layoutState = LayoutState(*initialContainingBlock);
+    layoutState.createFormattingStateForFormattingRootIfNeeded(*initialContainingBlock);
+
+    auto& displayBox = layoutState.displayBoxForLayoutBox(*initialContainingBlock);
+    displayBox.setHorizontalMargin({ });
+    displayBox.setHorizontalComputedMargin({ });
+    displayBox.setVerticalMargin({ });
+    displayBox.setBorder({ });
+    displayBox.setPadding({ });
+    displayBox.setTopLeft({ });
+    displayBox.setContentBoxHeight(LayoutUnit(initialContainingBlock->style().logicalHeight().value()));
+    displayBox.setContentBoxWidth(LayoutUnit(initialContainingBlock->style().logicalWidth().value()));
+
     // Not efficient, but this is temporary anyway.
     // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
     for (auto& descendant : descendantsOfType<Box>(*initialContainingBlock)) {
@@ -212,8 +207,9 @@ void LayoutState::run(const RenderView& renderView)
         return QuirksMode::No;
     };
     layoutState.setQuirksMode(quirksMode());
+    layoutState.markNeedsUpdate(*initialContainingBlock);
     layoutState.updateLayout();
-    layoutState.verifyAndOutputMismatchingLayoutTree(renderView);
+    layoutState.verifyAndOutputMismatchingLayoutTree(renderView, *initialContainingBlock);
 }
 
 }

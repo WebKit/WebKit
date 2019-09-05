@@ -295,7 +295,7 @@ FloatingContext::Constraints FloatingContext::constraints(PositionInContextRoot 
 
     Constraints constraints;
     auto& floats = floatingState().floats();
-    for (auto index = floats.size() - 1; --index;) {
+    for (auto index = floats.size(); index--;) {
         auto& floatItem = floats[index];
 
         if (constraints.left && floatItem.isLeftPositioned())
