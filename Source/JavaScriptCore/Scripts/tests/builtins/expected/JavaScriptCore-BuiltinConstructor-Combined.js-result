@@ -34,7 +34,8 @@ namespace JSC {
 class FunctionExecutable;
 class VM;
 
-enum class ConstructAbility : unsigned;
+enum class ConstructAbility : uint8_t;
+enum class ConstructorKind : uint8_t;
 }
 
 namespace JSC {
@@ -47,9 +48,11 @@ extern const unsigned s_JSCCombinedCodeLength;
 extern const char* const s_builtinConstructorOfCode;
 extern const int s_builtinConstructorOfCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind;
 extern const char* const s_builtinConstructorFromCode;
 extern const int s_builtinConstructorFromCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind;
 
 #define JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_DATA(macro) \
     macro(of, builtinConstructorOf, 0) \
@@ -122,6 +125,7 @@ const char s_JSCCombinedCode[] = { 40, 102, 117, 110, 99, 116, 105, 111, 110, 32
 const unsigned s_JSCCombinedCodeLength = 2340;
 
 const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinConstructorFromCodeLength = 2046;
 static const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinConstructorFromCode =
@@ -129,6 +133,7 @@ s_JSCCombinedCode + 0
 ;
 
 const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinConstructorOfCodeLength = 294;
 static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinConstructorOfCode =

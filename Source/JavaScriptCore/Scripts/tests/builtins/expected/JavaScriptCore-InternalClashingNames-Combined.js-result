@@ -35,7 +35,8 @@ namespace JSC {
 class FunctionExecutable;
 class VM;
 
-enum class ConstructAbility : unsigned;
+enum class ConstructAbility : uint8_t;
+enum class ConstructorKind : uint8_t;
 }
 
 namespace JSC {
@@ -48,9 +49,11 @@ extern const unsigned s_JSCCombinedCodeLength;
 extern const char* const s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility;
+extern const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind;
 extern const char* const s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility;
+extern const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind;
 
 #define JSC_FOREACH_INTERNALCLASHINGNAMES_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, internalClashingNamesIsReadableStreamLocked, 1) \
@@ -123,6 +126,7 @@ const char s_JSCCombinedCode[] = { 40, 102, 117, 110, 99, 116, 105, 111, 110, 32
 const unsigned s_JSCCombinedCodeLength = 142;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_internalClashingNamesIsReadableStreamLockedCode =
@@ -130,6 +134,7 @@ s_JSCCombinedCode + 0
 ;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_internalClashingNamesIsReadableStreamLockedCode =

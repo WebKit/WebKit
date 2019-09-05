@@ -48,6 +48,7 @@ namespace WebCore {
 extern const char* const s_arbitraryConditionalGuardIsReadableStreamLockedCode;
 extern const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility;
+extern const JSC::ConstructorKind s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructorKind;
 
 #define WEBCORE_FOREACH_ARBITRARYCONDITIONALGUARD_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, arbitraryConditionalGuardIsReadableStreamLocked, 1) \
@@ -107,7 +108,7 @@ inline JSC::UnlinkedFunctionExecutable* ArbitraryConditionalGuardBuiltinsWrapper
         JSC::Identifier executableName = functionName##PublicName();\
         if (overriddenName)\
             executableName = JSC::Identifier::fromString(m_vm, overriddenName);\
-        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ConstructAbility), this, &m_##name##Executable);\
+        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ConstructorKind, s_##name##ConstructAbility), this, &m_##name##Executable);\
     }\
     return m_##name##Executable.get();\
 }
@@ -174,6 +175,7 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 namespace WebCore {
 
 const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_arbitraryConditionalGuardIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_arbitraryConditionalGuardIsReadableStreamLockedCode =

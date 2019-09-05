@@ -43,15 +43,19 @@ namespace JSC {
 extern const char* const s_builtinPrototypeEveryCode;
 extern const int s_builtinPrototypeEveryCodeLength;
 extern const JSC::ConstructAbility s_builtinPrototypeEveryCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinPrototypeEveryCodeConstructorKind;
 extern const char* const s_builtinPrototypeForEachCode;
 extern const int s_builtinPrototypeForEachCodeLength;
 extern const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinPrototypeForEachCodeConstructorKind;
 extern const char* const s_builtinPrototypeMatchCode;
 extern const int s_builtinPrototypeMatchCodeLength;
 extern const JSC::ConstructAbility s_builtinPrototypeMatchCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinPrototypeMatchCodeConstructorKind;
 extern const char* const s_builtinPrototypeTestCode;
 extern const int s_builtinPrototypeTestCodeLength;
 extern const JSC::ConstructAbility s_builtinPrototypeTestCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinPrototypeTestCodeConstructorKind;
 
 #define JSC_FOREACH_BUILTIN_PROTOTYPE_BUILTIN_DATA(macro) \
     macro(every, builtinPrototypeEvery, 1) \
@@ -129,6 +133,7 @@ JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 namespace JSC {
 
 const JSC::ConstructAbility s_builtinPrototypeEveryCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinPrototypeEveryCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinPrototypeEveryCodeLength = 762;
 static const JSC::Intrinsic s_builtinPrototypeEveryCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPrototypeEveryCode =
@@ -162,6 +167,7 @@ const char* const s_builtinPrototypeEveryCode =
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinPrototypeForEachCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinPrototypeForEachCodeLength = 694;
 static const JSC::Intrinsic s_builtinPrototypeForEachCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPrototypeForEachCode =
@@ -191,6 +197,7 @@ const char* const s_builtinPrototypeForEachCode =
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeMatchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinPrototypeMatchCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinPrototypeMatchCodeLength = 1238;
 static const JSC::Intrinsic s_builtinPrototypeMatchCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPrototypeMatchCode =
@@ -247,6 +254,7 @@ const char* const s_builtinPrototypeMatchCode =
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinPrototypeTestCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinPrototypeTestCodeLength = 504;
 static const JSC::Intrinsic s_builtinPrototypeTestCodeIntrinsic = JSC::RegExpTestIntrinsic;
 const char* const s_builtinPrototypeTestCode =

@@ -35,7 +35,8 @@ namespace JSC {
 class FunctionExecutable;
 class VM;
 
-enum class ConstructAbility : unsigned;
+enum class ConstructAbility : uint8_t;
+enum class ConstructorKind : uint8_t;
 }
 
 namespace JSC {
@@ -48,9 +49,11 @@ extern const unsigned s_JSCCombinedCodeLength;
 extern const char* const s_builtinPromiseRejectPromiseCode;
 extern const int s_builtinPromiseRejectPromiseCodeLength;
 extern const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinPromiseRejectPromiseCodeConstructorKind;
 extern const char* const s_builtinPromiseFulfillPromiseCode;
 extern const int s_builtinPromiseFulfillPromiseCodeLength;
 extern const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility;
+extern const JSC::ConstructorKind s_builtinPromiseFulfillPromiseCodeConstructorKind;
 
 #define JSC_FOREACH_BUILTINPROMISE_BUILTIN_DATA(macro) \
     macro(rejectPromise, builtinPromiseRejectPromise, 2) \
@@ -124,6 +127,7 @@ const char s_JSCCombinedCode[] = { 40, 102, 117, 110, 99, 116, 105, 111, 110, 32
 const unsigned s_JSCCombinedCodeLength = 825;
 
 const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinPromiseFulfillPromiseCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinPromiseFulfillPromiseCodeLength = 412;
 static const JSC::Intrinsic s_builtinPromiseFulfillPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPromiseFulfillPromiseCode =
@@ -131,6 +135,7 @@ s_JSCCombinedCode + 0
 ;
 
 const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const JSC::ConstructorKind s_builtinPromiseRejectPromiseCodeConstructorKind = JSC::ConstructorKind::None;
 const int s_builtinPromiseRejectPromiseCodeLength = 413;
 static const JSC::Intrinsic s_builtinPromiseRejectPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPromiseRejectPromiseCode =
