@@ -1,3 +1,11 @@
+2019-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r249501.
+
+        r249501 seems to have exposed the fact that EmptyFrameLoaderClient.h is missing a #pragma once.
+
+        * loader/EmptyFrameLoaderClient.h:
+
 2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make Promise implementation faster
