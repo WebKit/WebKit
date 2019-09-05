@@ -1,3 +1,18 @@
+2019-09-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: children cache are not re-computed if tab index is removed
+        https://bugs.webkit.org/show_bug.cgi?id=201502
+
+        Reviewed by Zalan Bujtas.
+
+        Test: accessibility/tabindex-removed.html
+
+        If the tabindex changes, it can potentially affect whether an element is accessible. If we don't update the children cache
+        information can be stale and lead to incorrect navigation with VoiceOver.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAttributeChange):
+
 2019-09-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Don't call PlatformMediaSessionManager methods when neither VIDEO nor WEB_AUDIO is enabled

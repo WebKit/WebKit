@@ -1,3 +1,13 @@
+2019-09-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: children cache are not re-computed if tab index is removed
+        https://bugs.webkit.org/show_bug.cgi?id=201502
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/tabindex-removed-expected.txt: Added.
+        * accessibility/tabindex-removed.html: Added.
+
 2019-09-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [AppleWin] fast/block/float/float-with-anonymous-previous-sibling.html is failing as flaky ImageOnlyFailure
