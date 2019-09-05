@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FrameLoaderClient.h"
-#include <WebCore/ResourceError.h>
+#include "ResourceError.h"
 #include <pal/SessionID.h>
 
 #if USE(QUICK_LOOK)
