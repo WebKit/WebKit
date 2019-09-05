@@ -701,31 +701,24 @@ end
 _llint_op_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
-    loadp CodeBlock[cfr], t1                // t1<CodeBlock> = cfr.CodeBlock
-    loadi CodeBlock::m_numVars[t1], t2      // t2<size_t> = t1<CodeBlock>.m_numVars
+    loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
+    loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
     subi CalleeSaveSpaceAsVirtualRegisters, t2
     move cfr, t3
     subp CalleeSaveSpaceAsVirtualRegisters * SlotSize, t3
     btiz t2, .opEnterDone
     move UndefinedTag, t0
+    move 0, t1
     negi t2
 .opEnterLoop:
     storei t0, TagOffset[t3, t2, 8]
-    storei 0, PayloadOffset[t3, t2, 8]
+    storei t1, PayloadOffset[t3, t2, 8]
     addi 1, t2
     btinz t2, .opEnterLoop
 .opEnterDone:
-    writeBarrierOnCellWithReload(t1, macro ()
-        loadp CodeBlock[cfr], t1 # Reload CodeBlock
-    end)
-    # Checking traps.
-    loadp CodeBlock::m_vm[t1], t1
-    btpnz VM::m_traps + VMTraps::m_needTrapHandling[t1], .handleTraps
-.afterHandlingTraps:
+    callSlowPath(_slow_path_enter)
     dispatchOp(narrow, op_enter)
-.handleTraps:
-    callTrapHandler(_llint_throw_from_slow_path_trampoline)
-    jmp .afterHandlingTraps
+
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)
     get(m_index, t2)

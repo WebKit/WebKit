@@ -689,8 +689,8 @@ end
 _llint_op_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
-    loadp CodeBlock[cfr], t3                // t3<CodeBlock> = cfr.CodeBlock
-    loadi CodeBlock::m_numVars[t3], t2      // t2<size_t> = t3<CodeBlock>.m_numVars
+    loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
+    loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
     subq CalleeSaveSpaceAsVirtualRegisters, t2
     move cfr, t1
     subq CalleeSaveSpaceAsVirtualRegisters * 8, t1
@@ -703,16 +703,9 @@ _llint_op_enter:
     addq 1, t2
     btqnz t2, .opEnterLoop
 .opEnterDone:
-    writeBarrierOnCellWithReload(t3, macro ()
-        loadp CodeBlock[cfr], t3 # Reload CodeBlock
-    end)
-    loadp CodeBlock::m_vm[t3], t1
-    btbnz VM::m_traps + VMTraps::m_needTrapHandling[t1], .handleTraps
-.afterHandlingTraps:
+    callSlowPath(_slow_path_enter)
     dispatchOp(narrow, op_enter)
-.handleTraps:
-    callTrapHandler(_llint_throw_from_slow_path_trampoline)
-    jmp .afterHandlingTraps
+
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)
     get(m_index, t2)

@@ -1673,16 +1673,23 @@ preOp(dec, OpDec,
 
 
 llintOp(op_loop_hint, OpLoopHint, macro (unused, unused, dispatch)
-    # CheckTraps.
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_vm[t1], t1
-    btbnz VM::m_traps + VMTraps::m_needTrapHandling[t1], .handleTraps
-.afterHandlingTraps:
     checkSwitchToJITForLoop()
     dispatch()
+end)
+
+
+llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
+    loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
+    btpnz t0, .handleTraps
+.afterHandlingTraps:
+    dispatch()
 .handleTraps:
-    callTrapHandler(_llint_throw_from_slow_path_trampoline)
+    callTrapHandler(.throwHandler)
     jmp .afterHandlingTraps
+.throwHandler:
+    jmp _llint_throw_from_slow_path_trampoline
 end)
 
 

@@ -1444,16 +1444,10 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         for (int i = 0; i < stackEntry->m_codeBlock->numVars(); ++i)
             setDirect(stackEntry->remapOperand(virtualRegisterForLocal(i)), undefined, NormalSet);
 
+        // We want to emit the SetLocals with an exit origin that points to the place we are jumping to.
         unsigned oldIndex = m_currentIndex;
         auto oldStackTop = m_inlineStackTop;
-
-        // First, we emit check-traps operation pointing to bc#0 as exit.
         m_inlineStackTop = stackEntry;
-        m_currentIndex = 0;
-        m_exitOK = true;
-        addToGraph(Options::usePollingTraps() ? CheckTraps : InvalidationPoint);
-
-        // Then, we want to emit the SetLocals with an exit origin that points to the place we are jumping to.
         m_currentIndex = opcodeLengths[op_enter];
         m_exitOK = true;
         processSetLocalQueue();
@@ -4788,11 +4782,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
         // === Function entry opcodes ===
 
         case op_enter: {
-            addToGraph(Options::usePollingTraps() ? CheckTraps : InvalidationPoint);
             Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->numVars(); ++i)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
+
             NEXT_OPCODE(op_enter);
         }
             
@@ -6727,10 +6721,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_currentBlock->isOSRTarget = true;
 
             addToGraph(LoopHint);
-            addToGraph(Options::usePollingTraps() ? CheckTraps : InvalidationPoint);
             NEXT_OPCODE(op_loop_hint);
         }
         
+        case op_check_traps: {
+            addToGraph(Options::usePollingTraps() ? CheckTraps : InvalidationPoint);
+            NEXT_OPCODE(op_check_traps);
+        }
+
         case op_nop: {
             addToGraph(Check); // We add a nop here so that basic block linking doesn't break.
             NEXT_OPCODE(op_nop);

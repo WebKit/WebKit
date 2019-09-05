@@ -932,6 +932,14 @@ SLOW_PATH_DECL(slow_path_to_primitive)
     RETURN(GET_C(bytecode.m_src).jsValue().toPrimitive(exec));
 }
 
+SLOW_PATH_DECL(slow_path_enter)
+{
+    BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    Heap::heap(codeBlock)->writeBarrier(codeBlock);
+    END();
+}
+
 SLOW_PATH_DECL(slow_path_get_enumerable_length)
 {
     BEGIN();

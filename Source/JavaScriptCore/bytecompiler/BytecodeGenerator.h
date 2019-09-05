@@ -852,6 +852,7 @@ namespace JSC {
         bool fuseTestAndJmp(RegisterID* cond, Label& target);
 
         void emitEnter();
+        void emitCheckTraps();
 
         RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);

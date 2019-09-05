@@ -875,6 +875,20 @@ void JIT::emit_op_neq_null(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
+void JIT::emit_op_enter(const Instruction*)
+{
+    // Even though CTI doesn't use them, we initialize our constant
+    // registers to zap stale pointers, to avoid unnecessarily prolonging
+    // object lifetime and increasing GC pressure.
+    size_t count = m_codeBlock->numVars();
+    for (size_t j = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); j < count; ++j)
+        emitInitRegister(virtualRegisterForLocal(j).offset());
+
+    emitWriteBarrier(m_codeBlock);
+
+    emitEnterOptimizationCheck();
+}
+
 void JIT::emit_op_get_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetScope>();
@@ -1006,41 +1020,43 @@ void JIT::emitSlow_op_instanceof_custom(const Instruction* currentInstruction, V
 
 void JIT::emit_op_loop_hint(const Instruction*)
 {
-    // Check traps.
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
-#if ENABLE(DFG_JIT)
-    // Emit the JIT optimization check:
+    // Emit the JIT optimization check: 
     if (canBeOptimized()) {
         addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
             AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     }
-#endif
 }
 
 void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    callOperation(operationHandleTraps);
 #if ENABLE(DFG_JIT)
     // Emit the slow path for the JIT optimization check:
     if (canBeOptimized()) {
-        emitJumpSlowToHot(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForLoop()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())), currentInstruction->size());
-        linkSlowCase(iter);
+        linkAllSlowCases(iter);
 
         copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
         callOperation(operationOptimize, m_bytecodeOffset);
-        emitJumpSlowToHot(branchTestPtr(Zero, returnValueGPR), currentInstruction->size());
+        Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
         if (!ASSERT_DISABLED) {
             Jump ok = branchPtr(MacroAssembler::Above, returnValueGPR, TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
             abortWithReason(JITUnreasonableLoopHintJumpTarget);
             ok.link(this);
         }
         farJump(returnValueGPR, GPRInfo::callFrameRegister);
+        noOptimizedEntry.link(this);
+
+        emitJumpSlowToHot(jump(), currentInstruction->size());
     }
 #else
     UNUSED_PARAM(currentInstruction);
+    UNUSED_PARAM(iter);
 #endif
+}
+
+void JIT::emit_op_check_traps(const Instruction*)
+{
+    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
 }
 
 void JIT::emit_op_nop(const Instruction*)
@@ -1057,46 +1073,11 @@ void JIT::emit_op_super_sampler_end(const Instruction*)
     sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
 }
 
-void JIT::emit_op_enter(const Instruction*)
+void JIT::emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
-    // Even though JIT doesn't use them, we initialize our constant
-    // registers to zap stale pointers, to avoid unnecessarily prolonging
-    // object lifetime and increasing GC pressure.
-    size_t count = m_codeBlock->numVars();
-    for (size_t i = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); i < count; ++i)
-        emitInitRegister(virtualRegisterForLocal(i).offset());
+    linkAllSlowCases(iter);
 
-    emitWriteBarrier(m_codeBlock);
-
-    // Check traps.
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
-
-#if ENABLE(DFG_JIT)
-    if (canBeOptimized())
-        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
-#endif
-}
-
-void JIT::emitSlow_op_enter(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
     callOperation(operationHandleTraps);
-#if ENABLE(DFG_JIT)
-    if (canBeOptimized()) {
-        emitJumpSlowToHot(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())), currentInstruction->size());
-        linkSlowCase(iter);
-
-        ASSERT(!m_bytecodeOffset);
-
-        copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-        callOperation(operationOptimize, m_bytecodeOffset);
-        emitJumpSlowToHot(branchTestPtr(Zero, returnValueGPR), currentInstruction->size());
-        farJump(returnValueGPR, GPRInfo::callFrameRegister);
-    }
-#else
-    UNUSED_PARAM(currentInstruction);
-#endif
 }
 
 void JIT::emit_op_new_regexp(const Instruction* currentInstruction)
