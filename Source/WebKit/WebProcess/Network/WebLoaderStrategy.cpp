@@ -160,8 +160,10 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     WebResourceLoader::TrackingParameters trackingParameters;
     if (auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoaderClient))
         trackingParameters.webPageProxyID = webFrameLoaderClient->webPageProxyID().valueOr(WebPageProxyIdentifier { });
+#if ENABLE(SERVICE_WORKER)
     else if (is<ServiceWorkerFrameLoaderClient>(frameLoaderClient))
         trackingParameters.webPageProxyID = downcast<ServiceWorkerFrameLoaderClient>(frameLoaderClient).webPageProxyID();
+#endif
     trackingParameters.pageID = frameLoaderClient.pageID().valueOr(PageIdentifier { });
     trackingParameters.frameID = frameLoaderClient.frameID().valueOr(FrameIdentifier { });
     trackingParameters.resourceID = identifier;

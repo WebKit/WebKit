@@ -1,3 +1,13 @@
+2019-09-05  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Build failure after r249501 for ports with SERVICE_WORKER set OFF
+        https://bugs.webkit.org/show_bug.cgi?id=201503
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         MobileSafari may crash when invoking the C++ lambda in -[WKContentView _shareForWebView:]
