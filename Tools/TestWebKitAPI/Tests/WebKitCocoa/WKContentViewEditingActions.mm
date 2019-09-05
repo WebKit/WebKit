@@ -31,6 +31,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -60,6 +61,14 @@ TEST(WebKit, WKContentViewEditingActions)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ("Hello world", [[UIPasteboard generalPasteboard] string]);
+}
+
+TEST(WebKit, InvokeShareWithoutSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [[webView textInputContentView] _share:nil];
+    [webView waitForNextPresentationUpdate];
 }
 
 #endif

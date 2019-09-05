@@ -1,5 +1,18 @@
 2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        MobileSafari may crash when invoking the C++ lambda in -[WKContentView _shareForWebView:]
+        https://bugs.webkit.org/show_bug.cgi?id=201479
+        <rdar://problem/51511834>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that the UI process doesn't crash when invoking `_share:` while there's no selection.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         -[WKContentView selectedText] returns an empty string when selecting more than 200 characters
         https://bugs.webkit.org/show_bug.cgi?id=201471
         <rdar://problem/55039227>

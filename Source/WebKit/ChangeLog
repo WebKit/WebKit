@@ -1,3 +1,17 @@
+2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        MobileSafari may crash when invoking the C++ lambda in -[WKContentView _shareForWebView:]
+        https://bugs.webkit.org/show_bug.cgi?id=201479
+        <rdar://problem/51511834>
+
+        Reviewed by Tim Horton.
+
+        Fix the crash by making -_shareForWebView: robust in the case where there are no selection rects
+        known in the UI process when -[WKContentView _share:] is invoked.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shareForWebView:]):
+
 2019-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace defaultCustomPasteboardDataEnabled by an equivalent macro

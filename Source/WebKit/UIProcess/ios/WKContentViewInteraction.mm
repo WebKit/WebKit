@@ -2800,13 +2800,15 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     _page->getSelectionOrContentsAsString([view](const String& string, WebKit::CallbackBase::Error error) {
         if (error != WebKit::CallbackBase::Error::None)
             return;
-        if (!string)
+
+        if (!view->_textSelectionAssistant || !string || view->_page->editorState().isMissingPostLayoutData)
             return;
 
-        CGRect presentationRect = view->_page->editorState().postLayoutData().selectionRects[0].rect();
+        auto& selectionRects = view->_page->editorState().postLayoutData().selectionRects;
+        if (selectionRects.isEmpty())
+            return;
 
-        if (view->_textSelectionAssistant)
-            [view->_textSelectionAssistant showShareSheetFor:string fromRect:presentationRect];
+        [view->_textSelectionAssistant showShareSheetFor:string fromRect:selectionRects.first().rect()];
     });
 }
 
