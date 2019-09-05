@@ -1,3 +1,49 @@
+2019-09-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (iOS 13): Bulleted list copied from Notes to Mail results in Times New Roman
+        https://bugs.webkit.org/show_bug.cgi?id=201490
+
+        Reviewed by Daniel Bates.
+
+        The bug was caused by an element in the pasted content not having any explicit font name resolving
+        to use the font-family value of `-webkit-standard`. When such an inline style is inserted into
+        Mail's WKWebView which sets a different font family, ReplaceSelectionCommand would fail to strip away,
+        making the pasted content using the default font family of Times New Roman.
+
+        Fixed the bug by stripping away font-family set to -webkit-standard in the sanitization document
+        since that's indicative of the pasted content not having any font family being specified.
+
+        In the future, we should consider making regular copy (as opposed to the copy for sanitization)
+        resolve generic font family names to concrete font names since different WKWebView might be using
+        different concrete font names. Unfortuantely, such a change is quite involved and risky since various
+        paste side code in EditingStyle that removes redundant inline styles (i.e. redundant `font-family`)
+        need to be aware of this special font family resolution.
+
+        Tests: editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.html
+               PasteHTML.DoesNotAddStandardFontFamily
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement):
+        (WebCore::EditingStyle::wrappingStyleForSerialization):
+        (WebCore::familyNameFromCSSPrimitiveValue): Added.
+        (WebCore::loneFontFamilyName): Extracted from usesForbiddenSystemFontAsOnlyFontFamilyName. Fixed
+        a bug that it was not handling the case when `font-family` property's value is a CSSPrimitiveValue
+        instead of a CSSValueList.
+        (WebCore::usesForbiddenSystemFontAsOnlyFontFamilyName): Deleted.
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization): Remove `font-family` property when
+        StandardFontFamilySerializationMode::Strip is specified and its value is `-webkit-standard`.
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator): Added
+        StandardFontFamilySerializationMode as an argument.
+        (WebCore::StyledMarkupAccumulator::appendStartTag):
+        (WebCore::StyledMarkupAccumulator::serializeNodes):
+        (WebCore::serializePreservingVisualAppearanceInternal): Ditto.
+        (WebCore::serializePreservingVisualAppearance): Use StandardFontFamilySerializationMode::Keep
+        to preserve the pre-existing behavior.
+        (WebCore::sanitizedMarkupForFragmentInDocument): Use StandardFontFamilySerializationMode::Strip
+        as this is the code used by sanitization code.
+
 2019-09-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: children cache are not re-computed if tab index is removed

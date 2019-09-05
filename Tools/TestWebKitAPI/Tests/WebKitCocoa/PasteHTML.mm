@@ -360,6 +360,33 @@ TEST(PasteHTML, StripsSystemFontNames)
         [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
 }
 
+TEST(PasteHTML, DoesNotAddStandardFontFamily)
+{
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cocoa-writer-markup-with-lists" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL]);
+
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style.fontFamily = 'Arial'"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('Hello')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('font-weight: bold')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!pastedHTML.includes('-webkit-standard')"].boolValue);
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('Hello')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('font-weight: bold')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!htmlInDataTransfer.includes('-webkit-standard')"].boolValue);
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('.s2')).fontFamily"],
+        [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('.s4')).fontFamily"],
+        [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
+}
+
 #if ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT)
 
 TEST(PasteHTML, TransformColorsOfDarkContent)

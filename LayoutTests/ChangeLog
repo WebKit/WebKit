@@ -1,3 +1,15 @@
+2019-09-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (iOS 13): Bulleted list copied from Notes to Mail results in Times New Roman
+        https://bugs.webkit.org/show_bug.cgi?id=201490
+
+        Reviewed by Daniel Bates.
+
+        Added a test to make sure -webkit-standard font family name isn't stripped away when sanitization is not in effect.
+
+        * editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family-expected.txt: Added.
+        * editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.html: Added.
+
 2019-09-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: children cache are not re-computed if tab index is removed
