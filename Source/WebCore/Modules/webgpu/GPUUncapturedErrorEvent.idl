@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,37 +22,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://gpuweb.github.io/gpuweb
 
-#pragma once
+typedef (GPUOutOfMemoryError or GPUValidationError) GPUError;
 
-#if ENABLE(WEBGPU)
-
-#include "GPURequestAdapterOptions.h"
-#include "JSDOMPromiseDeferred.h"
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class Document;
-class WebGPUDevice;
-
-class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
-public:
-    static Ref<WebGPUAdapter> create(Optional<GPURequestAdapterOptions>&&);
-
-    using DeviceRequestPromise = DOMPromiseDeferred<IDLInterface<WebGPUDevice>>;
-    void requestDevice(Document&, DeviceRequestPromise&&) const;
-    
-    const Optional<GPURequestAdapterOptions>& options() const { return m_options; }
-
-private:
-    explicit WebGPUAdapter(Optional<GPURequestAdapterOptions>&&);
-
-    Optional<GPURequestAdapterOptions> m_options;
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] dictionary GPUUncapturedErrorEventInit : EventInit {
+    required GPUError error;
 };
 
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)
+[
+    Conditional=WEBGPU,
+    Constructor(DOMString type, GPUUncapturedErrorEventInit gpuUncapturedErrorEventInitDict),
+    EnabledAtRuntime=WebGPU,
+    Exposed=Window
+] interface GPUUncapturedErrorEvent : Event {
+    readonly attribute GPUError error;
+};

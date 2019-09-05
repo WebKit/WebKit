@@ -1,3 +1,53 @@
+2019-09-05  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUUncapturedErrorEvent
+        https://bugs.webkit.org/show_bug.cgi?id=199676
+
+        Reviewed by Dean Jackson.
+
+        Implement GPUUncapturedErrorEvent and "uncapturederror" event name.
+        Add the onuncapturederror EventHandler attribute to GPUDevice.
+
+        Test: webgpu/uncaptured-errors.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUUncapturedErrorEvent.cpp:
+        (WebCore::GPUUncapturedErrorEvent::create):
+        (WebCore::GPUUncapturedErrorEvent::GPUUncapturedErrorEvent):
+        (WebCore::GPUUncapturedErrorEvent::eventInterface const):
+        * Modules/webgpu/GPUUncapturedErrorEvent.h:
+        * Modules/webgpu/GPUUncapturedErrorEvent.idl:
+        * Modules/webgpu/WebGPUAdapter.cpp: Must now provide ScriptExecutionContext to any created GPUDevice.
+        (WebCore::WebGPUAdapter::requestDevice const):
+        * Modules/webgpu/WebGPUAdapter.h:
+        * Modules/webgpu/WebGPUAdapter.idl:
+        * Modules/webgpu/WebGPUDevice.cpp: Is now an EventTarget.
+        (WebCore::WebGPUDevice::tryCreate):
+        (WebCore::WebGPUDevice::WebGPUDevice):
+        (WebCore::printValidationErrorToConsole):
+        (WebCore::WebGPUDevice::dispatchUncapturedError): Events should only be fired from the main thread.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUDeviceEventHandler.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * platform/graphics/gpu/GPUError.cpp: GPUErrors can only be created internally; creation should never fail.
+        (WebCore::createError):
+        * platform/graphics/gpu/GPUError.h:
+        * platform/graphics/gpu/GPUErrorScopes.cpp:
+        (WebCore::GPUErrorScopes::create):
+        (WebCore::GPUErrorScopes::GPUErrorScopes):
+        (WebCore::GPUErrorScopes::generateError): Use a callback for now, since GPUErrorScopes is still under platform.
+        * platform/graphics/gpu/GPUErrorScopes.h:
+        (WebCore::GPUErrorScopes::create): Deleted.
+
 2019-09-05  Antti Koivisto  <antti@apple.com>
 
         Generate event region for both the main graphics layer and the scrolled contents layer

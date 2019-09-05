@@ -35,5 +35,5 @@
     // readonly attribute WebGPULimits limits; Don't expose higher limits for now.
 
     // May reject with DOMException  // TODO: DOMException("OperationError")?
-    Promise<WebGPUDevice> requestDevice(/*GPUDeviceDescriptor descriptor*/);
+    [CallWith=Document] Promise<WebGPUDevice> requestDevice(/*GPUDeviceDescriptor descriptor*/);
 };

@@ -398,6 +398,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
     $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
+    $(WebCore)/Modules/webgpu/GPUUncapturedErrorEvent.idl \
     $(WebCore)/Modules/webgpu/GPUValidationError.idl \
     $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUVertexBufferDescriptor.idl \
@@ -418,6 +419,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
 	$(WebCore)/Modules/webgpu/WebGPUDeviceErrorScopes.idl \
+    $(WebCore)/Modules/webgpu/WebGPUDeviceEventHandler.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineLayout.idl \

@@ -28,6 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "DOMWindow.h"
+#include "Document.h"
+#include "EventNames.h"
 #include "Exception.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupBinding.h"
@@ -43,6 +46,7 @@
 #include "GPUSamplerDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUTextureDescriptor.h"
+#include "GPUUncapturedErrorEvent.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUValidationError.h"
@@ -67,23 +71,35 @@
 #include "WebGPUShaderModuleDescriptor.h"
 #include "WebGPUSwapChain.h"
 #include "WebGPUTexture.h"
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <memory>
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/MainThread.h>
 #include <wtf/Optional.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(Ref<const WebGPUAdapter>&& adapter)
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebGPUDevice);
+
+RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(ScriptExecutionContext& context, Ref<const WebGPUAdapter>&& adapter)
 {
     if (auto device = GPUDevice::tryCreate(adapter->options()))
-        return adoptRef(new WebGPUDevice(WTFMove(adapter), device.releaseNonNull()));
+        return adoptRef(new WebGPUDevice(context, WTFMove(adapter), device.releaseNonNull()));
     return nullptr;
 }
 
-WebGPUDevice::WebGPUDevice(Ref<const WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
-    : m_adapter(WTFMove(adapter))
+WebGPUDevice::WebGPUDevice(ScriptExecutionContext& context, Ref<const WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
+    : m_scriptExecutionContext(context)
+    , m_adapter(WTFMove(adapter))
     , m_device(WTFMove(device))
-    , m_errorScopes(GPUErrorScopes::create())
+    , m_errorScopes(GPUErrorScopes::create([this, weakThis = makeWeakPtr(this)] (GPUError&& error) {
+        if (weakThis)
+            dispatchUncapturedError(WTFMove(error));
+    }))
 {
+    ASSERT(m_scriptExecutionContext.isDocument());
 }
 
 Ref<WebGPUBuffer> WebGPUDevice::createBuffer(const GPUBufferDescriptor& descriptor) const
@@ -203,6 +219,31 @@ void WebGPUDevice::popErrorScope(ErrorPromise&& promise)
         promise.resolve(error);
     else
         promise.reject(Exception { OperationError, "GPUDevice::popErrorScope(): " + failMessage });
+}
+
+// Errors reported via the validation error event should also appear in the console as warnings.
+static void printValidationErrorToConsole(GPUError& error, ScriptExecutionContext& context)
+{
+    if (!WTF::holds_alternative<RefPtr<GPUValidationError>>(error))
+        return;
+
+    auto validationError = WTF::get<RefPtr<GPUValidationError>>(error);
+    if (!validationError)
+        return;
+
+    auto message = validationError->message();
+    auto consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, message);
+
+    downcast<Document>(context).addConsoleMessage(WTFMove(consoleMessage));
+}
+
+void WebGPUDevice::dispatchUncapturedError(GPUError&& error)
+{
+    printValidationErrorToConsole(error, m_scriptExecutionContext);
+
+    callOnMainThread([error = WTFMove(error), this, protectedThis = makeRef(*this)] () mutable {
+        dispatchEvent(GPUUncapturedErrorEvent::create(eventNames().uncapturederrorEvent, WTFMove(error)));
+    });
 }
 
 } // namespace WebCore

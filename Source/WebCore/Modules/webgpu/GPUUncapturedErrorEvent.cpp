@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUUncapturedErrorEvent.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPURequestAdapterOptions.h"
-#include "JSDOMPromiseDeferred.h"
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class Document;
-class WebGPUDevice;
+Ref<GPUUncapturedErrorEvent> GPUUncapturedErrorEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+{
+    return adoptRef(*new GPUUncapturedErrorEvent(type, initializer, isTrusted));
+}
 
-class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
-public:
-    static Ref<WebGPUAdapter> create(Optional<GPURequestAdapterOptions>&&);
+Ref<GPUUncapturedErrorEvent> GPUUncapturedErrorEvent::create(const AtomString& type, GPUError&& error)
+{
+    return adoptRef(*new GPUUncapturedErrorEvent(type, WTFMove(error)));
+}
 
-    using DeviceRequestPromise = DOMPromiseDeferred<IDLInterface<WebGPUDevice>>;
-    void requestDevice(Document&, DeviceRequestPromise&&) const;
-    
-    const Optional<GPURequestAdapterOptions>& options() const { return m_options; }
+GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
+    , m_error(initializer.error)
+{
+}
 
-private:
-    explicit WebGPUAdapter(Optional<GPURequestAdapterOptions>&&);
+GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(const AtomString& type, GPUError&& error)
+    : Event(type, CanBubble::No, IsCancelable::No)
+    , m_error(WTFMove(error))
+{
+}
 
-    Optional<GPURequestAdapterOptions> m_options;
-};
+EventInterface GPUUncapturedErrorEvent::eventInterface() const
+{
+    return GPUUncapturedErrorEventInterfaceType;
+}
 
 } // namespace WebCore
 

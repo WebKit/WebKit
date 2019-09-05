@@ -1,3 +1,14 @@
+2019-09-05  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUUncapturedErrorEvent
+        https://bugs.webkit.org/show_bug.cgi?id=199676
+
+        Reviewed by Dean Jackson.
+
+        Add a test to ensure GPUUncapturedErrorEvents work.
+
+        * webgpu/uncaptured-errors.html: Added.
+
 2019-09-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Layout Test imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html is failing

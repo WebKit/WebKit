@@ -49,6 +49,7 @@ VRDisplay
 VideoTrackList conditional=VIDEO_TRACK
 VisualViewport
 WebAnimation
+WebGPUDevice conditional=WEBGPU
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket
 Worker

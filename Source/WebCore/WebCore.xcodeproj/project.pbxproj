@@ -14002,6 +14002,11 @@
 		D093D225217951D400329217 /* GPUCanvasContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCanvasContext.h; sourceTree = "<group>"; };
 		D093D227217951D400329217 /* GPUCanvasContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCanvasContext.idl; sourceTree = "<group>"; };
 		D093D2292179541600329217 /* GPUCanvasContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUCanvasContext.cpp; sourceTree = "<group>"; };
+		D09AC00523171F5200187762 /* GPUUncapturedErrorEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUUncapturedErrorEvent.h; sourceTree = "<group>"; };
+		D09AC00623171F5200187762 /* GPUUncapturedErrorEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUUncapturedErrorEvent.cpp; sourceTree = "<group>"; };
+		D09AC00723171F5200187762 /* GPUUncapturedErrorEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUUncapturedErrorEvent.idl; sourceTree = "<group>"; };
+		D09AC00A231735BE00187762 /* WebGPUDeviceEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDeviceEventHandler.h; sourceTree = "<group>"; };
+		D09AC00B231735BE00187762 /* WebGPUDeviceEventHandler.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUDeviceEventHandler.idl; sourceTree = "<group>"; };
 		D09AFAFF22D02E5300C4538C /* WebGPUDeviceErrorScopes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDeviceErrorScopes.h; sourceTree = "<group>"; };
 		D09AFB0122D02E5300C4538C /* WebGPUDeviceErrorScopes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDeviceErrorScopes.cpp; sourceTree = "<group>"; };
 		D09AFB0222D0471900C4538C /* GPUErrorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUErrorFilter.h; sourceTree = "<group>"; };
@@ -25996,6 +26001,9 @@
 				D026F48B220A5B0B00AC5F49 /* GPUTextureDescriptor.idl */,
 				D0EACFAE219E30FD000FA75C /* GPUTextureFormat.idl */,
 				D026F483220A472F00AC5F49 /* GPUTextureUsage.idl */,
+				D09AC00623171F5200187762 /* GPUUncapturedErrorEvent.cpp */,
+				D09AC00523171F5200187762 /* GPUUncapturedErrorEvent.h */,
+				D09AC00723171F5200187762 /* GPUUncapturedErrorEvent.idl */,
 				D09AFB0C22D55E9000C4538C /* GPUValidationError.idl */,
 				D0D8649621BA18F4003C983C /* GPUVertexAttributeDescriptor.idl */,
 				D0D8649821BA19A7003C983C /* GPUVertexBufferDescriptor.idl */,
@@ -26046,6 +26054,8 @@
 				D09AFB0122D02E5300C4538C /* WebGPUDeviceErrorScopes.cpp */,
 				D09AFAFF22D02E5300C4538C /* WebGPUDeviceErrorScopes.h */,
 				D09AFB0322D40CC500C4538C /* WebGPUDeviceErrorScopes.idl */,
+				D09AC00A231735BE00187762 /* WebGPUDeviceEventHandler.h */,
+				D09AC00B231735BE00187762 /* WebGPUDeviceEventHandler.idl */,
 				D0C419F02183EB31009EC1DE /* WebGPUPipelineDescriptorBase.h */,
 				D0C419F12183EB31009EC1DE /* WebGPUPipelineDescriptorBase.idl */,
 				D05A99E521C9BF2C00032B75 /* WebGPUPipelineLayout.cpp */,

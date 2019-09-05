@@ -82,3 +82,4 @@ MediaEncryptedEvent conditional=ENCRYPTED_MEDIA
 MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA
 VRDisplayEvent
 PointerEvent conditional=POINTER_EVENTS
+GPUUncapturedErrorEvent conditional=WEBGPU

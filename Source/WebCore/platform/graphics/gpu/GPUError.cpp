@@ -32,16 +32,16 @@
 
 namespace WebCore {
 
-Optional<GPUError> createError(GPUErrorFilter filter, const String& message)
+GPUError createError(GPUErrorFilter filter, const String& message)
 {
     switch (filter) {
     case GPUErrorFilter::OutOfMemory:
         return GPUError(RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create()));
     case GPUErrorFilter::Validation:
         return GPUError(RefPtr<GPUValidationError>(GPUValidationError::create(message)));
-    default:
+    case GPUErrorFilter::None:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return GPUError(RefPtr<GPUValidationError>(GPUValidationError::create("Bad error!")));
     }
 }
 

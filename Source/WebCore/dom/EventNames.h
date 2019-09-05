@@ -267,6 +267,7 @@ namespace WebCore {
     macro(transitionend) \
     macro(transitionrun) \
     macro(transitionstart) \
+    macro(uncapturederror) \
     macro(unhandledrejection) \
     macro(unload) \
     macro(unmute) \

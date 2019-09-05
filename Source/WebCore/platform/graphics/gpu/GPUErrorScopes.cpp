@@ -30,6 +30,19 @@
 
 namespace WebCore {
 
+const unsigned maxUncapturedErrorEventsAllowed = 256;
+
+Ref<GPUErrorScopes> GPUErrorScopes::create(UncapturedErrorCallback&& callback)
+{
+    return adoptRef(*new GPUErrorScopes(WTFMove(callback)));
+}
+
+GPUErrorScopes::GPUErrorScopes(UncapturedErrorCallback&& callback)
+    : m_uncapturedErrorCallback(WTFMove(callback))
+    , m_numUncapturedErrorEventsAllowed(maxUncapturedErrorEventsAllowed)
+{
+}
+
 void GPUErrorScopes::pushErrorScope(GPUErrorFilter filter)
 {
     m_errorScopes.append(ErrorScope { filter, WTF::nullopt });
@@ -52,9 +65,16 @@ void GPUErrorScopes::generateError(const String& message, GPUErrorFilter filter)
         return scope.filter == GPUErrorFilter::None || scope.filter == filter;
     });
 
-    // FIXME: https://webkit.org/b/199676 Uncaptured errors need to be fired as GPUUncapturedErrorEvents.
-    if (iterator == m_errorScopes.rend())
+    if (iterator == m_errorScopes.rend()) {
+        if (!m_numUncapturedErrorEventsAllowed)
+            return;
+
+        m_uncapturedErrorCallback(createError(filter, message));
+        if (!(--m_numUncapturedErrorEventsAllowed))
+            m_uncapturedErrorCallback(createError(GPUErrorFilter::Validation, "WebGPU: Too many errors; no more error events will fire on this GPUDevice."));
+
         return;
+    }
 
     // If the scope has already captured an error, ignore this new one.
     if (iterator->error)

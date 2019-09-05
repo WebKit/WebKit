@@ -107,6 +107,7 @@ namespace WebCore {
     macro(GPUTexture) \
     macro(GPUTextureUsage) \
     macro(GPUTextureView) \
+    macro(GPUUncapturedErrorEvent) \
     macro(GPUValidationError) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
@@ -285,6 +286,7 @@ namespace WebCore {
     macro(ontouchmove) \
     macro(ontouchstart) \
     macro(ontouchforcechange) \
+    macro(onuncapturederror) \
     macro(onvrdisplayactivate) \
     macro(onvrdisplayblur) \
     macro(onvrdisplayconnect) \

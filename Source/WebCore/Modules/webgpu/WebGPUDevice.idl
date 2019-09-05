@@ -29,9 +29,8 @@ typedef sequence<any> GPUMappedBuffer;  // [GPUBuffer, ArrayBuffer]
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable,
     InterfaceName=GPUDevice
-] interface WebGPUDevice {
+] interface WebGPUDevice : EventTarget {
     readonly attribute WebGPUAdapter adapter;
 
     WebGPUBuffer createBuffer(GPUBufferDescriptor descriptor);

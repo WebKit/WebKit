@@ -29,6 +29,7 @@
 
 #include "GPUError.h"
 #include "GPUErrorFilter.h"
+#include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -39,7 +40,8 @@ namespace WebCore {
 
 class GPUErrorScopes : public RefCounted<GPUErrorScopes> {
 public:
-    static Ref<GPUErrorScopes> create() { return adoptRef(*new GPUErrorScopes); }
+    using UncapturedErrorCallback = Function<void(GPUError&&)>;
+    static Ref<GPUErrorScopes> create(UncapturedErrorCallback&&);
 
     void pushErrorScope(GPUErrorFilter);
     Optional<GPUError> popErrorScope(String& failMessage);
@@ -54,10 +56,13 @@ private:
         Optional<GPUError> error;
     };
 
-    GPUErrorScopes() = default;
+    GPUErrorScopes(UncapturedErrorCallback&&);
+
+    UncapturedErrorCallback m_uncapturedErrorCallback;
 
     Vector<ErrorScope> m_errorScopes;
     String m_prefix;
+    unsigned m_numUncapturedErrorEventsAllowed;
 };
 
 } // namespace WebCore

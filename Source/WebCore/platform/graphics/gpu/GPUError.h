@@ -29,7 +29,6 @@
 
 #include "GPUOutOfMemoryError.h"
 #include "GPUValidationError.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
@@ -40,7 +39,7 @@ enum class GPUErrorFilter;
 
 using GPUError = Variant<RefPtr<GPUOutOfMemoryError>, RefPtr<GPUValidationError>>;
 
-Optional<GPUError> createError(GPUErrorFilter, const String&);
+GPUError createError(GPUErrorFilter, const String&);
 
 } // namespace WebCore
 

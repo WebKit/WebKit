@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +27,31 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURequestAdapterOptions.h"
-#include "JSDOMPromiseDeferred.h"
-#include <wtf/Optional.h>
+#include "Event.h"
+#include "GPUError.h"
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Document;
-class WebGPUDevice;
-
-class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
+class GPUUncapturedErrorEvent final : public Event {
 public:
-    static Ref<WebGPUAdapter> create(Optional<GPURequestAdapterOptions>&&);
+    struct Init: EventInit {
+        GPUError error;
+    };
 
-    using DeviceRequestPromise = DOMPromiseDeferred<IDLInterface<WebGPUDevice>>;
-    void requestDevice(Document&, DeviceRequestPromise&&) const;
-    
-    const Optional<GPURequestAdapterOptions>& options() const { return m_options; }
+    static Ref<GPUUncapturedErrorEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<GPUUncapturedErrorEvent> create(const AtomString&, GPUError&&);
+
+    const GPUError error() const { return m_error; }
 
 private:
-    explicit WebGPUAdapter(Optional<GPURequestAdapterOptions>&&);
+    GPUUncapturedErrorEvent(const AtomString&, const Init&, IsTrusted);
+    GPUUncapturedErrorEvent(const AtomString&, GPUError&&);
 
-    Optional<GPURequestAdapterOptions> m_options;
+    // Event
+    EventInterface eventInterface() const override;
+
+    GPUError m_error;
 };
 
 } // namespace WebCore

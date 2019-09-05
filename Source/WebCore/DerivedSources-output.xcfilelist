@@ -635,6 +635,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUUncapturedErrorEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUUncapturedErrorEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUValidationError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUValidationError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.cpp
@@ -775,8 +777,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModElement.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOrForeignElement.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOrForeignElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOListElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOListElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLObjectElement.cpp
@@ -787,6 +787,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOptionElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOptionElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOptionsCollection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOptionsCollection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOrForeignElement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOrForeignElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOutputElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOutputElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLParagraphElement.cpp
@@ -1961,6 +1963,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDevice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDevice.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDeviceErrorScopes.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDeviceErrorScopes.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDeviceEventHandler.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDeviceEventHandler.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineDescriptorBase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineDescriptorBase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineLayout.cpp

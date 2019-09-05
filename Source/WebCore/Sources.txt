@@ -303,6 +303,7 @@ Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
 Modules/webgpu/GPUCanvasContext.cpp
+Modules/webgpu/GPUUncapturedErrorEvent.cpp
 Modules/webgpu/NavigatorGPU.cpp
 Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp
 Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp
@@ -2831,6 +2832,7 @@ JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
 JSGPUTextureFormat.cpp
 JSGPUTextureUsage.cpp
+JSGPUUncapturedErrorEvent.cpp
 JSGPUValidationError.cpp
 JSGPUVertexAttributeDescriptor.cpp
 JSGPUVertexBufferDescriptor.cpp
@@ -3388,6 +3390,7 @@ JSWebGPUComputePipeline.cpp
 JSWebGPUComputePipelineDescriptor.cpp
 JSWebGPUDevice.cpp
 JSWebGPUDeviceErrorScopes.cpp
+JSWebGPUDeviceEventHandler.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineLayout.cpp

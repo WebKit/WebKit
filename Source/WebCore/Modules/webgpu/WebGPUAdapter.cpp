@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "Document.h"
 #include "JSWebGPUDevice.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -43,12 +43,14 @@ WebGPUAdapter::WebGPUAdapter(Optional<GPURequestAdapterOptions>&& options)
 {
 }
 
-void WebGPUAdapter::requestDevice(DeviceRequestPromise&& promise) const
+void WebGPUAdapter::requestDevice(Document& document, DeviceRequestPromise&& promise) const
 {
-    if (auto device = WebGPUDevice::tryCreate(*this))
-        promise.resolve(device.releaseNonNull());
-    else
-        promise.reject();
+    document.postTask([protectedThis = makeRef(*this), promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
+        if (auto device = WebGPUDevice::tryCreate(context, protectedThis.get()))
+            promise.resolve(device.releaseNonNull());
+        else
+            promise.reject();
+    });
 }
 
 } // namespace WebCore

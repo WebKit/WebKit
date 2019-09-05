@@ -492,6 +492,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUTextureDescriptor.idl
     Modules/webgpu/GPUTextureFormat.idl
     Modules/webgpu/GPUTextureUsage.idl
+    Modules/webgpu/GPUUncapturedErrorEvent.idl
     Modules/webgpu/GPUValidationError.idl
     Modules/webgpu/GPUVertexAttributeDescriptor.idl
     Modules/webgpu/GPUVertexBufferDescriptor.idl
@@ -512,6 +513,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUComputePipelineDescriptor.idl
     Modules/webgpu/WebGPUDevice.idl
     Modules/webgpu/WebGPUDeviceErrorScopes.idl
+    Modules/webgpu/WebGPUDeviceEventHandler.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineLayout.idl
     Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl

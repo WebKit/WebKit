@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "EventTarget.h"
 #include "GPUDevice.h"
 #include "GPUErrorScopes.h"
 #include "JSDOMPromiseDeferred.h"
@@ -37,6 +38,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -75,9 +77,10 @@ enum class GPUErrorFilter;
 using ErrorIDLUnion = IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>>;
 using ErrorPromise = DOMPromiseDeferred<IDLNullable<ErrorIDLUnion>>;
 
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
+class WebGPUDevice : public RefCounted<WebGPUDevice>, public EventTargetWithInlineData, public CanMakeWeakPtr<WebGPUDevice> {
+    WTF_MAKE_ISO_ALLOCATED(WebGPUDevice);
 public:
-    static RefPtr<WebGPUDevice> tryCreate(Ref<const WebGPUAdapter>&&);
+    static RefPtr<WebGPUDevice> tryCreate(ScriptExecutionContext&, Ref<const WebGPUAdapter>&&);
 
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     GPUDevice& device() { return m_device.get(); }
@@ -103,8 +106,21 @@ public:
     void pushErrorScope(GPUErrorFilter filter) { m_errorScopes->pushErrorScope(filter); }
     void popErrorScope(ErrorPromise&&);
 
+    using RefCounted::ref;
+    using RefCounted::deref;
+
 private:
-    WebGPUDevice(Ref<const WebGPUAdapter>&&, Ref<GPUDevice>&&);
+    WebGPUDevice(ScriptExecutionContext&, Ref<const WebGPUAdapter>&&, Ref<GPUDevice>&&);
+
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const final { return WebGPUDeviceEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
+    void dispatchUncapturedError(GPUError&&);
+
+    ScriptExecutionContext& m_scriptExecutionContext;
 
     Ref<const WebGPUAdapter> m_adapter;
     Ref<GPUDevice> m_device;

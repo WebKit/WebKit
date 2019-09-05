@@ -346,6 +346,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUStoreOp.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureFormat.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureUsage.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUUncapturedErrorEvent.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUValidationError.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexAttributeDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexBufferDescriptor.idl
@@ -368,6 +369,7 @@ $(PROJECT_DIR)/Modules/webgpu/WebGPUComputePipeline.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUDevice.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUDeviceErrorScopes.idl
+$(PROJECT_DIR)/Modules/webgpu/WebGPUDeviceEventHandler.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUPipelineLayout.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl
