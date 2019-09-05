@@ -152,9 +152,9 @@ class MainView {
                 </div><br>`;
         }).join('');
     }
-    notifiyTimelinesRender() {
+    notifyTimelinesRender() {
         for (let suite in this.children) {
-            this.children[suite].notifiyRerender();
+            this.children[suite].notifyRerender();
         }
     }
 }
@@ -162,7 +162,7 @@ class MainView {
 let view = new MainView();
 const onLayoutChange = new EventStream();
 onLayoutChange.action(() => {
-    view.notifiyTimelinesRender();
+    view.notifyTimelinesRender();
 });
 
 DOM.inject(document.getElementById('app'), `${ToolTip}

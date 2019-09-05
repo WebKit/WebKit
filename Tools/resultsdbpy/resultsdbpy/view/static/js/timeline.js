@@ -380,6 +380,7 @@ class TimelineFromEndpoint {
         this.updates = [];
         this.xaxisUpdates = [];
         this.timelineUpdate = null;
+        this.notifyRerender = () => {};
         this.repositories = [];
 
         const self = this;
@@ -766,7 +767,7 @@ class TimelineFromEndpoint {
             top = false;
         });
 
-        const composer = FP.composer(FP.currying((updateTimeline, notifiyRerender) => {
+        const composer = FP.composer(FP.currying((updateTimeline, notifyRerender) => {
             self.timelineUpdate = (xAxises) => {
                 children.splice(0, 1);
                 if (self.repositories.length > 1)
@@ -782,7 +783,7 @@ class TimelineFromEndpoint {
                 });
                 updateTimeline(children);
             };
-            self.notifiyRerender = notifiyRerender;
+            self.notifyRerender = notifyRerender;
         }));
         return Timeline.CanvasContainer(composer, ...children);
     }

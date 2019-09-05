@@ -206,9 +206,9 @@ class SearchView {
     toString() {
         return `<div ref="${this.ref}"></div>`;
     }
-    notifiyTimelinesRender() {
+    notifyTimelinesRender() {
         this.ref.state.children.forEach(child => {
-            child.timeline.notifiyRerender();
+            child.timeline.notifyRerender();
         });
     }
 }
@@ -216,7 +216,7 @@ class SearchView {
 let view = new SearchView();
 const onLayoutChange = new EventStream();
 onLayoutChange.action(() => {
-    view.notifiyTimelinesRender();
+    view.notifyTimelinesRender();
 });
 window.onpopstate = event => {view.reload();};
 window.onpushstate = event => {view.reload();};

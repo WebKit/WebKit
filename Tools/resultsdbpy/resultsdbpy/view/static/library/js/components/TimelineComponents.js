@@ -157,7 +157,7 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
                                 scrollEventStream.replayLast();
                             },
                             /**
-                            * Notifiy Re-render
+                            * Notify Re-render
                             * @param width {number} r if undefined, it will auto detact the width change
                             */
                             (width) => {
@@ -512,7 +512,7 @@ Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter
                 element.children[1].style.display = 'none';
                 element.children[2].style.display = 'block';
             }
-            // Notifiy inside of the provider that we may changed the layout size because of expanded / unexpanded.
+            // Notify inside of the provider that we may changed the layout size because of expanded / unexpanded.
             layoutSizeMayChangeEvent.add();
         }
     });
@@ -897,13 +897,13 @@ Timeline.CanvasContainer = (exporter, ...children) => {
         return {headers, serieses};
     };
     const {headers, serieses} = upackChildren(children);
-    let composer = FP.composer(FP.currying((updateHeaders, updateSerieses, notifiyRerender) => {
+    let composer = FP.composer(FP.currying((updateHeaders, updateSerieses, notifyRerender) => {
         if (exporter)
             exporter((newChildren) => {
                 const {headers, serieses} = upackChildren(newChildren);
                 updateHeaders(headers);
                 updateSerieses(serieses);
-            }, notifiyRerender);
+            }, notifyRerender);
     }));
     return (
         `<div class="timeline">
