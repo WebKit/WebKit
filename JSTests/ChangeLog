@@ -1,3 +1,13 @@
+2019-09-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LazyClassStructure::setConstructor should not store the constructor to the global object
+        https://bugs.webkit.org/show_bug.cgi?id=201484
+        <rdar://problem/50400451>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/web-assembly-constructors-should-not-override-global-object-property.js: Added.
+
 2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not use FTLOutput::weakPointer directly

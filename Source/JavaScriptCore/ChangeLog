@@ -1,3 +1,27 @@
+2019-09-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LazyClassStructure::setConstructor should not store the constructor to the global object
+        https://bugs.webkit.org/show_bug.cgi?id=201484
+        <rdar://problem/50400451>
+
+        Reviewed by Yusuke Suzuki.
+
+        LazyClassStructure::setConstructor sets the constructor as a property of the global object.
+        This became a problem when it started being used for WebAssembly constructors, such as Module
+        and Instance, since they are properties of the WebAssembly object, not the global object. That
+        resulted in properties of the global object replaced whenever a lazy WebAssembly constructor
+        was first accessed. e.g.
+
+        globalThis.Module = x;
+        WebAssembly.Module;
+        globalThis.Module === WebAssembly.Module;
+
+        * runtime/LazyClassStructure.cpp:
+        (JSC::LazyClassStructure::Initializer::setConstructor):
+        * runtime/LazyClassStructure.h:
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperty):
+
 2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not use FTLOutput::weakPointer directly
