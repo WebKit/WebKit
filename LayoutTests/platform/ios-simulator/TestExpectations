@@ -127,4 +127,4 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 imported/w3c/web-platform-tests/wasm [ Skip ]
 
-webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
+webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
