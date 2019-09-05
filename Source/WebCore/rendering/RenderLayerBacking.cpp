@@ -1592,25 +1592,24 @@ void RenderLayerBacking::updateEventRegion()
     if (m_owningLayer.isRenderViewLayer() && !hasTouchActionElements)
         return;
 
-    GraphicsContext nullContext(nullptr);
-    RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, compositedBounds(), { }, LayoutSize());
+    auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
+        GraphicsContext nullContext(nullptr);
+        EventRegion eventRegion;
+        auto eventRegionContext = eventRegion.makeContext();
+        auto dirtyRect = enclosingIntRect(FloatRect(FloatPoint(graphicsLayer.offsetFromRenderer()), graphicsLayer.size()));
 
-    EventRegion eventRegion;
-    auto eventRegionContext = eventRegion.makeContext();
-    paintingInfo.eventRegionContext = &eventRegionContext;
+        paintIntoLayer(&graphicsLayer, nullContext, dirtyRect, { }, &eventRegionContext);
 
-    auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags() | RenderLayer::PaintLayerCollectingEventRegion;
-    m_owningLayer.paintLayerContents(nullContext, paintingInfo, paintFlags);
+        auto layerOffset = toIntSize(graphicsLayer.scrollOffset()) - roundedIntSize(graphicsLayer.offsetFromRenderer());
+        eventRegion.translate(layerOffset);
 
-    for (auto& layer : m_backingSharingLayers)
-        layer->paintLayerWithEffects(nullContext, paintingInfo, paintFlags);
+        graphicsLayer.setEventRegion(WTFMove(eventRegion));
+    };
 
-    GraphicsLayer& layerForEventRegion = m_scrolledContentsLayer ? *m_scrolledContentsLayer : *m_graphicsLayer;
+    updateEventRegionForLayer(*m_graphicsLayer);
 
-    auto layerOffset = toIntSize(layerForEventRegion.scrollOffset()) - roundedIntSize(layerForEventRegion.offsetFromRenderer());
-    eventRegion.translate(layerOffset);
-
-    layerForEventRegion.setEventRegion(WTFMove(eventRegion));
+    if (m_scrolledContentsLayer)
+        updateEventRegionForLayer(*m_scrolledContentsLayer);
 #endif
 }
 
@@ -2776,7 +2775,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
-    OptionSet<PaintBehavior> paintBehavior)
+    OptionSet<PaintBehavior> paintBehavior, EventRegionContext* eventRegionContext)
 {
     if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && graphicsLayer->paintingPhase() != OptionSet<GraphicsLayerPaintingPhase>(GraphicsLayerPaintingPhase::ChildClippingMask)) {
 #if !PLATFORM(IOS_FAMILY) && !OS(WINDOWS)
@@ -2790,33 +2789,41 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
+    if (eventRegionContext)
+        paintFlags.add(RenderLayer::PaintLayerCollectingEventRegion);
+
 #ifndef NDEBUG
     RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&renderer());
 #endif
 
     auto paintOneLayer = [&](RenderLayer& layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags) {
-        InspectorInstrumentation::willPaint(layer.renderer());
-
         FrameView::PaintingState paintingState;
-        if (layer.isRenderViewLayer())
-            renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+        if (!eventRegionContext) {
+            InspectorInstrumentation::willPaint(layer.renderer());
+
+            if (layer.isRenderViewLayer())
+                renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+        }
 
         RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
+        paintingInfo.eventRegionContext = eventRegionContext;
 
         if (&layer == &m_owningLayer) {
             layer.paintLayerContents(context, paintingInfo, paintFlags);
 
-            if (layer.containsDirtyOverlayScrollbars())
+            if (layer.containsDirtyOverlayScrollbars() && !eventRegionContext)
                 layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
         } else
             layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
 
-        if (layer.isRenderViewLayer())
-            renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
+        if (!eventRegionContext) {
+            if (layer.isRenderViewLayer())
+                renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
+
+            InspectorInstrumentation::didPaint(layer.renderer(), paintDirtyRect);
+        }
 
         ASSERT(!m_owningLayer.m_usedTransparency);
-
-        InspectorInstrumentation::didPaint(layer.renderer(), paintDirtyRect);
     };
 
     paintOneLayer(m_owningLayer, paintFlags);
@@ -2831,12 +2838,15 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
         if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
+        if (eventRegionContext)
+            sharingLayerPaintFlags.add(RenderLayer::PaintLayerCollectingEventRegion);
 
         for (auto& layerWeakPtr : m_backingSharingLayers)
             paintOneLayer(*layerWeakPtr, sharingLayerPaintFlags);
     }
 
-    compositor().didPaintBacking(this);
+    if (!eventRegionContext)
+        compositor().didPaintBacking(this);
 }
 
 OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(const GraphicsLayer& graphicsLayer) const

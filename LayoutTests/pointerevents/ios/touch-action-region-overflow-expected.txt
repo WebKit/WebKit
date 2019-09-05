@@ -12,6 +12,9 @@
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 200.00 200.00)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
           (children 1
             (GraphicsLayer
               (bounds 200.00 200.00)
@@ -36,6 +39,9 @@
         (GraphicsLayer
           (position 8.00 208.00)
           (bounds 200.00 200.00)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
           (children 1
             (GraphicsLayer
               (bounds origin 150.00 150.00)
@@ -63,6 +69,9 @@
           (position 8.00 408.00)
           (bounds 250.00 250.00)
           (drawsContent 1)
+          (event region
+            (rect (0,0) width=250 height=250)
+          )
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=25 height=25)
