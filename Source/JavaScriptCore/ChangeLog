@@ -1,3 +1,20 @@
+2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use FTLOutput::weakPointer directly
+        https://bugs.webkit.org/show_bug.cgi?id=201495
+
+        Reviewed by Filip Pizlo.
+
+        FTLOutput::weakPointer does not register the cell as a weak pointer.
+        CreatePromise's implementation is accidentally using m_out.weakPointer and hits the debug assertion.
+        While the current implementation is not posing correctness issue since these cells are live so long as JSGlobalObject is live,
+        and we register JSGlobalObject as a weakPointer, we should always use FTLLowerDFGToB3's helper function.
+        For FrozenValue, we should use frozenPointer helper function.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+
 2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, partial roll out r249372 due to JetStream2/Basic ~10% regression

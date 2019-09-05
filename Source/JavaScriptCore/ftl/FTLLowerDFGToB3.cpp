@@ -6300,7 +6300,7 @@ private:
         LBasicBlock continuation = m_out.newBlock();
 
         ValueFromBlock promiseStructure = m_out.anchor(weakStructure(m_graph.registerStructure(m_node->isInternalPromise() ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())));
-        m_out.branch(m_out.equal(callee, m_out.weakPointer(m_graph, m_node->isInternalPromise() ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())), unsure(fastAllocationCase), unsure(derivedCase));
+        m_out.branch(m_out.equal(callee, weakPointer(m_node->isInternalPromise() ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())), unsure(fastAllocationCase), unsure(derivedCase));
 
         LBasicBlock lastNext = m_out.appendTo(derivedCase, isFunctionBlock);
         m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
@@ -6530,7 +6530,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(slowPath, continuation);
-            LValue slowArray = vmCall(Int64, m_out.operation(operationNewArrayBuffer), m_callFrame, weakStructure(structure), m_out.weakPointer(m_node->cellOperand()));
+            LValue slowArray = vmCall(Int64, m_out.operation(operationNewArrayBuffer), m_callFrame, weakStructure(structure), frozenPointer(m_node->cellOperand()));
             ValueFromBlock slowResult = m_out.anchor(slowArray);
             m_out.jump(continuation);
 
@@ -6543,7 +6543,7 @@ private:
         
         setJSValue(vmCall(
             Int64, m_out.operation(operationNewArrayBuffer), m_callFrame,
-            weakStructure(structure), m_out.weakPointer(m_node->cellOperand())));
+            weakStructure(structure), frozenPointer(m_node->cellOperand())));
     }
 
     void compileNewArrayWithSize()

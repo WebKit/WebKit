@@ -1,3 +1,13 @@
+2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use FTLOutput::weakPointer directly
+        https://bugs.webkit.org/show_bug.cgi?id=201495
+
+        Reviewed by Filip Pizlo.
+
+        * stress/create-promise-weak-pointer.js: Added.
+        (foo):
+
 2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make Promise implementation faster
