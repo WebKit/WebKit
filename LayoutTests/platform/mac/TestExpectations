@@ -1749,6 +1749,7 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] css-dark-mode [ Pass ]
 [ Mojave+ ] css-dark-mode/older-systems [ Skip ]
 [ Mojave+ ] inspector/css/force-page-appearance.html [ Pass ]
+[ Mojave+ ] editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass ]
 
 # Test Dark Mode CSS support for light mode on older systems.
 [ Sierra HighSierra ] css-dark-mode/older-systems [ Pass ]

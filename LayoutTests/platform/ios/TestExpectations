@@ -3242,6 +3242,7 @@ editing/selection/ios/select-all-non-editable-text-using-keyboard.html [ Skip ]
 # Dark Mode is iOS 13 and later.
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
+editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass ]
 
 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]

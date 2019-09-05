@@ -1,0 +1,95 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<head>
+    <script src="../editing.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
+    <style>
+        :root {
+            color-scheme: dark;
+            -apple-color-filter: apple-invert-lightness();
+        }
+    </style>
+</head>
+<body>
+    <p id="description">This test checks that pasting into a color filtered dark mode document inserts light mode transformed content.</p>
+    <div id="console"></div>
+
+    <script>
+    if (window.internals)
+        internals.settings.setUseDarkAppearance(true);
+
+    let sel = document.getSelection();
+    let root = document.createElement("root");
+    document.body.appendChild(root);
+
+    function createEditable(tagName, markup) {
+        let node = document.createElement(tagName);
+        node.contentEditable = true;
+        if (markup)
+            node.innerHTML = markup;
+        return node;
+    }
+
+    function testCopyPaste(originalMarkup, expected, asList = false) {
+        let tagName = asList ? "ul" : "div";
+        let copyNode = createEditable(tagName, originalMarkup);
+        root.appendChild(copyNode);
+        copyNode.focus();
+
+        document.execCommand("SelectAll", false);
+        document.execCommand("Copy", false);
+
+        copyNode.remove();
+
+        let pasteNode = createEditable(tagName);
+        root.appendChild(pasteNode);
+
+        if (asList) {
+            pasteNode.innerHTML = "<li>Item 1</li><li>Item 2</li>";
+            pasteNode.focus();
+            moveSelectionForwardByLineCommand();
+        } else
+            pasteNode.focus();
+
+        document.execCommand("Paste", false);
+
+        pastedMarkup = pasteNode.innerHTML;
+
+        shouldBe("pastedMarkup", "'" + expected + "'");
+    }
+
+    // Transformed on paste
+    testCopyPaste("<span style=\"color: white; background-color: black\">Hello</span>", "<span style=\"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(238, 238, 238); background-color: rgb(51, 51, 51)\">Hello</span>", "<span style=\"caret-color: rgb(21, 21, 21); color: rgb(21, 21, 21); background-color: rgb(255, 255, 255);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(238, 238, 238); background-color: rgb(85, 85, 85)\">Hello</span>", "<span style=\"caret-color: rgb(21, 21, 21); color: rgb(21, 21, 21); background-color: rgb(213, 213, 213);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(170, 170, 170)\">Hello</span><span style=\"color: rgb(153, 153, 153)\">Hello 2</span>", "<span style=\"color: rgb(106, 106, 106);\">Hello</span><span style=\"color: rgb(127, 128, 127);\">Hello 2</span>");
+    testCopyPaste("<span style=\"color: rgb(153, 153, 153)\">Hello</span>", "<span style=\"caret-color: rgb(127, 128, 127); color: rgb(127, 128, 127);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(119, 119, 119)\">Hello</span>", "<span style=\"caret-color: rgb(170, 170, 170); color: rgb(170, 170, 170);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(102, 102, 102)\">Hello</span>", "<span style=\"caret-color: rgb(191, 191, 191); color: rgb(191, 191, 191);\">Hello</span>");
+
+    // Transformed list items on paste
+    testCopyPaste("<li><span style=\"color: white; background-color: black\">Hello</span></li>", "<li>Item 1</li><li><span style=\"color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);\">Hello</span></li><li>Item 2</li>", true);
+    testCopyPaste("<li style=\"color: rgb(238, 238, 238); background-color: rgb(85, 85, 85)\">Hello 1</li><li>Hello 2</li>", "<li>Item 1</li><li style=\"color: rgb(21, 21, 21); background-color: rgb(213, 213, 213);\">Hello 1</li><li>Hello 2</li><li>Item 2</li>", true);
+    testCopyPaste("<li>Hello 1</li><li style=\"color: rgb(153, 153, 153)\">Hello 2</li>", "<li>Item 1</li><li>Hello 1</li><li style=\"color: rgb(127, 128, 127);\">Hello 2</li><li>Item 2</li>", true);
+
+    // Not transformed on paste
+    testCopyPaste("<span style=\"color: rgb(101, 101, 101)\">Hello</span>", "<span style=\"caret-color: rgb(101, 101, 101); color: rgb(101, 101, 101);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(90, 90, 90)\">Hello</span>", "<span style=\"caret-color: rgb(90, 90, 90); color: rgb(90, 90, 90);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(85, 85, 85)\">Hello</span><span style=\"color: white; background-color: black\">Hello 2</span>", "<span style=\"color: rgb(85, 85, 85);\">Hello</span><span style=\"background-color: black;\">Hello 2</span>");
+    testCopyPaste("<span style=\"color: rgb(68, 68, 68)\">Hello</span>", "<span style=\"caret-color: rgb(68, 68, 68); color: rgb(68, 68, 68);\">Hello</span>");
+    testCopyPaste("<span style=\"color: rgb(68, 68, 68)\">Hello</span>", "<span style=\"caret-color: rgb(68, 68, 68); color: rgb(68, 68, 68);\">Hello</span>");
+    testCopyPaste("<span style=\"color: black\">Hello</span>", "<span style=\"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);\">Hello</span>");
+    testCopyPaste("<span style=\"color: black; background-color: white\">Hello</span>", "<span style=\"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);\">Hello</span>");
+    testCopyPaste("<span style=\"color: white; background-color: white\">Hello</span>", "<span style=\"background-color: rgb(255, 255, 255);\">Hello</span>");
+
+    // List items not transformed on paste
+    testCopyPaste("<li><span style=\"color: white; background-color: white\">Hello</span></li>", "<li>Item 1</li><li><span style=\"background-color: white;\">Hello</span></li><li>Item 2</li>", true);
+    testCopyPaste("<li style=\"color: rgb(85, 85, 85); background-color: rgb(235, 235, 235)\">Hello 1</li><li>Hello 2</li>", "<li>Item 1</li><li style=\"color: rgb(85, 85, 85); background-color: rgb(235, 235, 235);\">Hello 1</li><li>Hello 2</li><li>Item 2</li>", true);
+    testCopyPaste("<li>Hello 1</li><li style=\"color: black\">Hello 2</li>", "<li>Item 1</li><li>Hello 1</li><li style=\"color: black;\">Hello 2</li><li>Item 2</li>", true);
+
+    root.style.display = "none";
+    </script>
+
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

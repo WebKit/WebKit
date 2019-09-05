@@ -1,0 +1,27 @@
+This test checks that pasting into a color filtered dark mode document inserts light mode transformed content.
+
+PASS pastedMarkup is '<span style="caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(21, 21, 21); color: rgb(21, 21, 21); background-color: rgb(255, 255, 255);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(21, 21, 21); color: rgb(21, 21, 21); background-color: rgb(213, 213, 213);">Hello</span>'
+PASS pastedMarkup is '<span style="color: rgb(106, 106, 106);">Hello</span><span style="color: rgb(127, 128, 127);">Hello 2</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(127, 128, 127); color: rgb(127, 128, 127);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(170, 170, 170); color: rgb(170, 170, 170);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(191, 191, 191); color: rgb(191, 191, 191);">Hello</span>'
+PASS pastedMarkup is '<li>Item 1</li><li><span style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">Hello</span></li><li>Item 2</li>'
+PASS pastedMarkup is '<li>Item 1</li><li style="color: rgb(21, 21, 21); background-color: rgb(213, 213, 213);">Hello 1</li><li>Hello 2</li><li>Item 2</li>'
+PASS pastedMarkup is '<li>Item 1</li><li>Hello 1</li><li style="color: rgb(127, 128, 127);">Hello 2</li><li>Item 2</li>'
+PASS pastedMarkup is '<span style="caret-color: rgb(101, 101, 101); color: rgb(101, 101, 101);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(90, 90, 90); color: rgb(90, 90, 90);">Hello</span>'
+PASS pastedMarkup is '<span style="color: rgb(85, 85, 85);">Hello</span><span style="background-color: black;">Hello 2</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(68, 68, 68); color: rgb(68, 68, 68);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(68, 68, 68); color: rgb(68, 68, 68);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">Hello</span>'
+PASS pastedMarkup is '<span style="background-color: rgb(255, 255, 255);">Hello</span>'
+PASS pastedMarkup is '<li>Item 1</li><li><span style="background-color: white;">Hello</span></li><li>Item 2</li>'
+PASS pastedMarkup is '<li>Item 1</li><li style="color: rgb(85, 85, 85); background-color: rgb(235, 235, 235);">Hello 1</li><li>Hello 2</li><li>Item 2</li>'
+PASS pastedMarkup is '<li>Item 1</li><li>Hello 1</li><li style="color: black;">Hello 2</li><li>Item 2</li>'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

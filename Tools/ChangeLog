@@ -1,3 +1,24 @@
+2019-09-04  Timothy Hatcher  <timothy@apple.com>
+
+        Mail appears to be double inverting code copied from Notes, Xcode, or Terminal.
+        https://bugs.webkit.org/show_bug.cgi?id=201368
+        rdar://problem/40529867
+
+        Reviewed by Ryosuke Niwa.
+
+        Added Tests: PasteHTML.TransformColorsOfDarkContent, PasteHTML.DoesNotTransformColorsOfLightContent,
+            PasteRTFD.TransformColorsOfDarkContent, PasteRTFD.DoesNotTransformColorsOfLightContent
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        (createWebViewWithCustomPasteboardDataSetting): Added argument to enable color filter.
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteRTFD.mm:
+        (createWebViewWithCustomPasteboardDataEnabled): Added argument to enable color filter.
+        * TestWebKitAPI/Tests/WebKitCocoa/rich-color-filtered.html: Added.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView forceDarkMode]):
+
 2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         MobileSafari may crash when invoking the C++ lambda in -[WKContentView _shareForWebView:]

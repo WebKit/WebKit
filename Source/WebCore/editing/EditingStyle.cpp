@@ -1580,8 +1580,9 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
         return *this;
 
     bool hasColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyColor);
+    bool hasCaretColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyCaretColor);
     bool hasBackgroundColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
-    if (!hasColor && !hasBackgroundColor)
+    if (!hasColor && !hasCaretColor && !hasBackgroundColor)
         return *this;
 
     auto styleWithInvertedColors = copy();
@@ -1596,6 +1597,9 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
 
     if (hasColor)
         invertedColor(CSSPropertyColor);
+
+    if (hasCaretColor)
+        invertedColor(CSSPropertyCaretColor);
 
     if (hasBackgroundColor)
         invertedColor(CSSPropertyBackgroundColor);
