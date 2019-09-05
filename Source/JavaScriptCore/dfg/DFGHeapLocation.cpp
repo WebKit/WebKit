@@ -192,6 +192,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("WeakMapGetLoc");
         return;
 
+    case PromiseInternalFieldLoc:
+        out.print("PromiseInternalFieldLoc");
+        return;
+
     case DOMStateLoc:
         out.print("DOMStateLoc");
         return;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Caitlin Potter <caitp@igalia.com>.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +25,14 @@
  */
 
 @globalPrivate
-function asyncFunctionResume(generator, promiseCapability, sentValue, resumeMode)
+function asyncFunctionResume(generator, promise, sentValue, resumeMode)
 {
     "use strict";
-    let state = @getByIdDirectPrivate(generator, "generatorState");
-    let value = @undefined;
+
+    @assert(@isPromise(promise));
+
+    var state = @getByIdDirectPrivate(generator, "generatorState");
+    var value = @undefined;
 
     if (state === @GeneratorStateCompleted || (resumeMode !== @GeneratorResumeModeNormal && resumeMode !== @GeneratorResumeModeThrow))
         @throwTypeError("Async function illegally resumed");
@@ -38,21 +42,18 @@ function asyncFunctionResume(generator, promiseCapability, sentValue, resumeMode
         value = @getByIdDirectPrivate(generator, "generatorNext").@call(@getByIdDirectPrivate(generator, "generatorThis"), generator, state, sentValue, resumeMode, @getByIdDirectPrivate(generator, "generatorFrame"));
         if (@getByIdDirectPrivate(generator, "generatorState") === @GeneratorStateExecuting) {
             @putByIdDirectPrivate(generator, "generatorState", @GeneratorStateCompleted);
-            promiseCapability.@resolve(value);
-            return promiseCapability.@promise;
+            @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value);
+            return promise;
         }
     } catch (error) {
         @putByIdDirectPrivate(generator, "generatorState", @GeneratorStateCompleted);
-        promiseCapability.@reject(error);
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
+        return promise;
     }
 
-    let wrappedValue = @newPromiseCapability(@Promise);
-    wrappedValue.@resolve.@call(@undefined, value);
+    @resolveWithoutPromise(value,
+        function(value) { @asyncFunctionResume(generator, promise, value, @GeneratorResumeModeNormal); },
+        function(error) { @asyncFunctionResume(generator, promise, error, @GeneratorResumeModeThrow); });
 
-    wrappedValue.@promise.@then(
-        function(value) { @asyncFunctionResume(generator, promiseCapability, value, @GeneratorResumeModeNormal); },
-        function(error) { @asyncFunctionResume(generator, promiseCapability, error, @GeneratorResumeModeThrow); });
-
-    return promiseCapability.@promise;
+    return promise;
 }

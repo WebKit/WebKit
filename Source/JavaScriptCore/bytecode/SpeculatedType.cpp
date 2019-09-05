@@ -174,6 +174,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             else
                 isTop = false;
 
+            if (value & SpecPromiseObject)
+                strOut.print("PromiseObject");
+            else
+                isTop = false;
+
             if (value & SpecMapObject)
                 strOut.print("MapObject");
             else
@@ -463,6 +468,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
             return SpecFunctionWithNonDefaultHasInstance;
         return SpecFunctionWithDefaultHasInstance;
     }
+
+    if (classInfo->isSubClassOf(JSPromise::info()))
+        return SpecPromiseObject;
     
     if (isTypedView(classInfo->typedArrayStorageType))
         return speculationFromTypedArrayType(classInfo->typedArrayStorageType);
@@ -588,6 +596,8 @@ SpeculatedType speculationFromJSType(JSType type)
         return SpecRegExpObject;
     case ProxyObjectType:
         return SpecProxyObject;
+    case JSPromiseType:
+        return SpecPromiseObject;
     case JSMapType:
         return SpecMapObject;
     case JSSetType:
@@ -794,6 +804,8 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecStringObject;
     if (!strncmp(speculation, "SpecRegExpObject", strlen("SpecRegExpObject")))
         return SpecRegExpObject;
+    if (!strncmp(speculation, "SpecPromiseObject", strlen("SpecPromiseObject")))
+        return SpecPromiseObject;
     if (!strncmp(speculation, "SpecMapObject", strlen("SpecMapObject")))
         return SpecMapObject;
     if (!strncmp(speculation, "SpecSetObject", strlen("SpecSetObject")))

@@ -827,6 +827,7 @@ private:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
+        case GetPromiseInternalField:
         case GetFromArguments:
         case LoadKeyFromMapBucket:
         case LoadValueFromMapBucket:
@@ -1008,6 +1009,11 @@ private:
             setPrediction(SpecFinalObject);
             break;
         }
+
+        case CreatePromise:
+        case NewPromise:
+            setPrediction(SpecPromiseObject);
+            break;
             
         case ArraySlice:
         case NewArrayWithSpread:
@@ -1264,6 +1270,7 @@ private:
         case PutByIdWithThis:
         case PutByVal:
         case PutClosureVar:
+        case PutPromiseInternalField:
         case PutToArguments:
         case Return:
         case Throw:

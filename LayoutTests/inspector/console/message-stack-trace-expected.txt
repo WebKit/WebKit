@@ -34,8 +34,8 @@ CALL STACK:
 CALL STACK:
 0: [N] (anonymous function)
 1: [N] rejectPromise
-2: [F] (anonymous function)
-3: [N] initializePromise
+2: [N] rejectPromiseWithFirstResolvingFunctionCallCheck
+3: [F] (anonymous function)
 4: [N] Promise
 5: [F] triggerUnhandledRejectionExplicit
 

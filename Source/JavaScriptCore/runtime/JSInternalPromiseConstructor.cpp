@@ -47,27 +47,20 @@ const ClassInfo JSInternalPromiseConstructor::s_info = { "Function", &Base::s_in
 
 JSInternalPromiseConstructor* JSInternalPromiseConstructor::create(VM& vm, Structure* structure, JSInternalPromisePrototype* promisePrototype, GetterSetter* speciesSymbol)
 {
-    JSInternalPromiseConstructor* constructor = new (NotNull, allocateCell<JSInternalPromiseConstructor>(vm.heap)) JSInternalPromiseConstructor(vm, structure);
+    JSGlobalObject* globalObject = structure->globalObject();
+    FunctionExecutable* executable = promiseConstructorInternalPromiseConstructorCodeGenerator(vm);
+    JSInternalPromiseConstructor* constructor = new (NotNull, allocateCell<JSInternalPromiseConstructor>(vm.heap)) JSInternalPromiseConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, promisePrototype, speciesSymbol);
     return constructor;
 }
 
 Structure* JSInternalPromiseConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
-static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = exec->jsCallee()->globalObject(vm);
-    JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-    promise->initialize(exec, globalObject, exec->argument(0));
-    return JSValue::encode(promise);
-}
-
-JSInternalPromiseConstructor::JSInternalPromiseConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure, constructPromise, constructPromise)
+JSInternalPromiseConstructor::JSInternalPromiseConstructor(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject, Structure* structure)
+    : Base(vm, executable, globalObject, structure)
 {
 }
 

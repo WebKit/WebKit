@@ -51,7 +51,10 @@
 #include "JSFixedArray.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSImmutableButterfly.h"
+#include "JSInternalPromise.h"
+#include "JSInternalPromiseConstructor.h"
 #include "JSLexicalEnvironment.h"
+#include "JSPromiseConstructor.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "JSWithScope.h"
@@ -233,8 +236,8 @@ SLOW_PATH_DECL(slow_path_create_this)
     auto bytecode = pc->as<OpCreateThis>();
     JSObject* result;
     JSObject* constructorAsObject = asObject(GET(bytecode.m_callee).jsValue());
-    if (constructorAsObject->type() == JSFunctionType && jsCast<JSFunction*>(constructorAsObject)->canUseAllocationProfile()) {
-        JSFunction* constructor = jsCast<JSFunction*>(constructorAsObject);
+    JSFunction* constructor = jsDynamicCast<JSFunction*>(vm, constructorAsObject);
+    if (constructor && constructor->canUseAllocationProfile()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(exec).m_cachedCallee;
         if (!cachedCallee)
             cachedCallee.set(vm, exec->codeBlock(), constructor);
@@ -262,6 +265,47 @@ SLOW_PATH_DECL(slow_path_create_this)
         else
             result = constructEmptyObject(exec);
     }
+    RETURN(result);
+}
+
+SLOW_PATH_DECL(slow_path_create_promise)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpCreatePromise>();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    JSObject* constructorAsObject = asObject(GET(bytecode.m_callee).jsValue());
+
+    JSPromise* result = nullptr;
+    if (bytecode.m_isInternalPromise) {
+        Structure* structure = InternalFunction::createSubclassStructure(exec, globalObject->internalPromiseConstructor(), constructorAsObject, globalObject->internalPromiseStructure());
+        CHECK_EXCEPTION();
+        result = JSInternalPromise::create(vm, structure);
+    } else {
+        Structure* structure = InternalFunction::createSubclassStructure(exec, globalObject->promiseConstructor(), constructorAsObject, globalObject->promiseStructure());
+        CHECK_EXCEPTION();
+        result = JSPromise::create(vm, structure);
+    }
+
+    JSFunction* constructor = jsDynamicCast<JSFunction*>(vm, constructorAsObject);
+    if (constructor && constructor->canUseAllocationProfile()) {
+        WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(exec).m_cachedCallee;
+        if (!cachedCallee)
+            cachedCallee.set(vm, exec->codeBlock(), constructor);
+        else if (cachedCallee.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cachedCallee.get() != constructor)
+            cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
+    }
+    RETURN(result);
+}
+
+SLOW_PATH_DECL(slow_path_new_promise)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpNewPromise>();
+    JSPromise* result = nullptr;
+    if (bytecode.m_isInternalPromise)
+        result = JSInternalPromise::create(vm, exec->lexicalGlobalObject()->internalPromiseStructure());
+    else
+        result = JSPromise::create(vm, exec->lexicalGlobalObject()->promiseStructure());
     RETURN(result);
 }
 

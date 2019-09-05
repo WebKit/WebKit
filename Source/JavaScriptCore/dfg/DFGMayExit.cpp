@@ -101,6 +101,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case FencedStoreBarrier:
     case PutByOffset:
     case PutClosureVar:
+    case PutPromiseInternalField:
     case RecordRegExpCachedResult:
     case NukeStructureAndSetButterfly:
     case FilterCallLinkStatus:

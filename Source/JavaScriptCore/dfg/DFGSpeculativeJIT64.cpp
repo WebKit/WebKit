@@ -3473,9 +3473,19 @@ void SpeculativeJIT::compile(Node* node)
         compileCreateThis(node);
         break;
     }
+
+    case CreatePromise: {
+        compileCreatePromise(node);
+        break;
+    }
         
     case NewObject: {
         compileNewObject(node);
+        break;
+    }
+
+    case NewPromise: {
+        compileNewPromise(node);
         break;
     }
 
@@ -3525,6 +3535,16 @@ void SpeculativeJIT::compile(Node* node)
     }
     case PutClosureVar: {
         compilePutClosureVar(node);
+        break;
+    }
+
+    case GetPromiseInternalField: {
+        compileGetPromiseInternalField(node);
+        break;
+    }
+
+    case PutPromiseInternalField: {
+        compilePutPromiseInternalField(node);
         break;
     }
 

@@ -38,6 +38,9 @@
 #include "HashMapImpl.h"
 #include "JITOperations.h"
 #include "JSImmutableButterfly.h"
+#include "JSInternalPromise.h"
+#include "JSInternalPromiseConstructor.h"
+#include "JSPromiseConstructor.h"
 #include "MathCommon.h"
 #include "NumberConstructor.h"
 #include "Operations.h"
@@ -2621,13 +2624,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (JSValue base = forNode(node->child1()).m_value) {
             if (auto* function = jsDynamicCast<JSFunction*>(m_vm, base)) {
                 if (FunctionRareData* rareData = function->rareData()) {
-                    if (Structure* structure = rareData->objectAllocationStructure()) {
-                        m_graph.freeze(rareData);
-                        m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                        m_state.setFoundConstants(true);
-                        didFoldClobberWorld();
-                        setForNode(node, structure);
-                        break;
+                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                        if (Structure* structure = rareData->objectAllocationStructure()) {
+                            m_graph.freeze(rareData);
+                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                            m_state.setFoundConstants(true);
+                            didFoldClobberWorld();
+                            setForNode(node, structure);
+                            break;
+                        }
                     }
                 }
             }
@@ -2636,6 +2641,44 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecFinalObject);
         break;
     }
+
+    case CreatePromise: {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+        if (JSValue base = forNode(node->child1()).m_value) {
+            if (base == (node->isInternalPromise() ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())) {
+                m_state.setFoundConstants(true);
+                didFoldClobberWorld();
+                setForNode(node, node->isInternalPromise() ? globalObject->internalPromiseStructure() : globalObject->promiseStructure());
+                break;
+            }
+            if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+                if (FunctionRareData* rareData = function->rareData()) {
+                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                        Structure* structure = rareData->internalFunctionAllocationStructure();
+                        if (structure
+                            && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
+                            && structure->globalObject() == globalObject
+                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                            m_graph.freeze(rareData);
+                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                            m_state.setFoundConstants(true);
+                            didFoldClobberWorld();
+                            setForNode(node, structure);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        clobberWorld();
+        setTypeForNode(node, SpecPromiseObject);
+        break;
+    }
+
+    case NewPromise:
+        ASSERT(!!node->structure().get());
+        setForNode(node, node->structure());
+        break;
         
     case NewObject:
         ASSERT(!!node->structure().get());
@@ -2896,6 +2939,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case PutClosureVar:
         break;
+
+    case GetPromiseInternalField:
+        makeBytecodeTopForNode(node);
+        break;
+
+    case PutPromiseInternalField:
+        break;
+
 
     case GetRegExpObjectLastIndex:
         makeHeapTopForNode(node);

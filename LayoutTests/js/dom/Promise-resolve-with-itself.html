@@ -19,7 +19,7 @@ promise.then(function () {
 }, function (error) {
   testPassed('rejected');
   window.result = error.toString();
-  shouldBeEqualToString('result', 'TypeError: Resolve a promise with itself');
+  shouldBeEqualToString('result', 'TypeError: Cannot resolve a promise with itself');
 }).then(finishJSTest, finishJSTest);
 
 resolve(promise);

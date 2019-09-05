@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum class ConstructAbility : unsigned {
+enum class ConstructAbility : uint8_t {
     CanConstruct,
     CannotConstruct,
 };

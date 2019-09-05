@@ -59,6 +59,7 @@
 #include "JSCPtrTag.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSInternalPromise.h"
 #include "JSLexicalEnvironment.h"
 #include "JSWithScope.h"
 #include "ModuleProgramCodeBlock.h"
@@ -1375,6 +1376,22 @@ JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)
     NativeCallFrameTracer tracer(vm, exec);
 
     return constructEmptyObject(exec, structure);
+}
+
+JSCell* JIT_OPERATION operationNewPromise(ExecState* exec, Structure* structure)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSPromise::create(vm, structure);
+}
+
+JSCell* JIT_OPERATION operationNewInternalPromise(ExecState* exec, Structure* structure)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSInternalPromise::create(vm, structure);
 }
 
 JSCell* JIT_OPERATION operationNewRegexp(ExecState* exec, JSCell* regexpPtr)

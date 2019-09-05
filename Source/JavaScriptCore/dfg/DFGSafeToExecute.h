@@ -59,6 +59,7 @@ public:
         case FunctionUse:
         case FinalObjectUse:
         case RegExpObjectUse:
+        case PromiseObjectUse:
         case ProxyObjectUse:
         case DerivedArrayUse:
         case MapObjectUse:
@@ -177,6 +178,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case IdentityWithProfile:
     case ToThis:
     case CreateThis:
+    case CreatePromise:
     case ObjectCreate:
     case ObjectKeys:
     case GetCallee:
@@ -281,6 +283,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
+    case GetPromiseInternalField:
+    case PutPromiseInternalField:
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:
@@ -316,6 +320,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallForwardVarargs:
     case ConstructForwardVarargs:
     case NewObject:
+    case NewPromise:
     case NewArray:
     case NewArrayWithSize:
     case NewArrayBuffer:

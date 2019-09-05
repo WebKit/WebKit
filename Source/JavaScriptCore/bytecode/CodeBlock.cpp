@@ -540,6 +540,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpToNumber, profile)
         LINK(OpToObject, profile)
         LINK(OpGetArgument, profile)
+        LINK(OpGetPromiseInternalField, profile)
         LINK(OpToThis, profile)
         LINK(OpBitand, profile)
         LINK(OpBitor, profile)
@@ -566,6 +567,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpPutById)
         LINK(OpCreateThis)
+        LINK(OpCreatePromise)
 
         LINK(OpAdd)
         LINK(OpMul)
@@ -1289,6 +1291,19 @@ void CodeBlock::finalizeLLIntInlineCaches()
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt create_this with cached callee %p.\n", cachedFunction);
+            cacheWriteBarrier.clear();
+            break;
+        }
+        case op_create_promise: {
+            auto& metadata = curInstruction->as<OpCreatePromise>().metadata(this);
+            auto& cacheWriteBarrier = metadata.m_cachedCallee;
+            if (!cacheWriteBarrier || cacheWriteBarrier.unvalidatedGet() == JSCell::seenMultipleCalleeObjects())
+                break;
+            JSCell* cachedFunction = cacheWriteBarrier.get();
+            if (vm.heap.isMarked(cachedFunction))
+                break;
+            if (Options::verboseOSR())
+                dataLogF("Clearing LLInt create_promise with cached callee %p.\n", cachedFunction);
             cacheWriteBarrier.clear();
             break;
         }

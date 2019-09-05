@@ -55,8 +55,11 @@
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSImmutableButterfly.h"
+#include "JSInternalPromise.h"
+#include "JSInternalPromiseConstructor.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
+#include "JSPromiseConstructor.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSSet.h"
 #include "JSWeakMap.h"
@@ -373,6 +376,26 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     if (proto.isObject())
         return constructEmptyObject(exec, asObject(proto));
     return constructEmptyObject(exec);
+}
+
+JSCell* JIT_OPERATION operationCreatePromise(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Structure* structure = InternalFunction::createSubclassStructure(exec, globalObject->promiseConstructor(), constructor, globalObject->promiseStructure());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    RELEASE_AND_RETURN(scope, JSPromise::create(vm, structure));
+}
+
+JSCell* JIT_OPERATION operationCreateInternalPromise(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Structure* structure = InternalFunction::createSubclassStructure(exec, globalObject->internalPromiseConstructor(), constructor, globalObject->internalPromiseStructure());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    RELEASE_AND_RETURN(scope, JSInternalPromise::create(vm, structure));
 }
 
 JSCell* JIT_OPERATION operationCallObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget)

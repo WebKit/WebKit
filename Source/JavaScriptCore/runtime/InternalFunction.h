@@ -58,6 +58,7 @@ public:
     }
 
     static Structure* createSubclassStructure(ExecState*, JSValue newTarget, Structure*);
+    static Structure* createSubclassStructure(ExecState*, JSObject* baseCallee, JSValue newTarget, Structure*);
 
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
@@ -94,11 +95,16 @@ protected:
 
 ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue newTarget, Structure* baseClass)
 {
+    return createSubclassStructure(exec, exec->jsCallee(), newTarget, baseClass);
+}
+
+ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSObject* baseCallee, JSValue newTarget, Structure* baseClass)
+{
     // We allow newTarget == JSValue() because the API needs to be able to create classes without having a real JS frame.
     // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == exec->jsCallee()
     ASSERT(!newTarget || newTarget.isConstructor(exec->vm()));
 
-    if (newTarget && newTarget != exec->jsCallee())
+    if (newTarget && newTarget != baseCallee)
         return createSubclassStructureSlow(exec, newTarget, baseClass);
     return baseClass;
 }

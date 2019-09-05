@@ -55,6 +55,7 @@ inline To jsCast(JSValue from)
     macro(JSArray, JSType::ArrayType, JSType::DerivedArrayType) \
     macro(JSArrayBuffer, JSType::ArrayBufferType, JSType::ArrayBufferType) \
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
+    macro(JSPromise, JSType::JSPromiseType, JSType::JSPromiseType) \
     macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
     macro(JSMap, JSType::JSMapType, JSType::JSMapType) \
     macro(JSWeakSet, JSType::JSWeakSetType, JSType::JSWeakSetType) \

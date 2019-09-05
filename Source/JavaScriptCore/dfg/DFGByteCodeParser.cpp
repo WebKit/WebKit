@@ -53,8 +53,11 @@
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSImmutableButterfly.h"
+#include "JSInternalPromise.h"
+#include "JSInternalPromiseConstructor.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSPromiseConstructor.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
 #include "OpcodeInlines.h"
@@ -4871,12 +4874,90 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_this);
         }
 
+        case op_create_promise: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            auto bytecode = currentInstruction->as<OpCreatePromise>();
+            Node* callee = get(VirtualRegister(bytecode.m_callee));
+
+            bool alreadyEmitted = false;
+
+            {
+                // Attempt to convert to NewPromise first in easy case.
+                JSPromiseConstructor* promiseConstructor = callee->dynamicCastConstant<JSPromiseConstructor*>(*m_vm);
+                if (promiseConstructor == (bytecode.m_isInternalPromise ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())) {
+                    JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
+                    if (cachedFunction
+                        && cachedFunction != JSCell::seenMultipleCalleeObjects()
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)
+                        && cachedFunction == (bytecode.m_isInternalPromise ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())) {
+                        FrozenValue* frozen = m_graph.freeze(cachedFunction);
+                        addToGraph(CheckCell, OpInfo(frozen), callee);
+
+                        promiseConstructor = jsCast<JSPromiseConstructor*>(cachedFunction);
+                    }
+                }
+                if (promiseConstructor) {
+                    addToGraph(Phantom, callee);
+                    set(VirtualRegister(bytecode.m_dst), addToGraph(NewPromise, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())), OpInfo(bytecode.m_isInternalPromise)));
+                    alreadyEmitted = true;
+                }
+            }
+
+            // Derived function case.
+            if (!alreadyEmitted) {
+                JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
+                if (!function) {
+                    JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
+                    if (cachedFunction
+                        && cachedFunction != JSCell::seenMultipleCalleeObjects()
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                        ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
+
+                        FrozenValue* frozen = m_graph.freeze(cachedFunction);
+                        addToGraph(CheckCell, OpInfo(frozen), callee);
+
+                        function = static_cast<JSFunction*>(cachedFunction);
+                    }
+                }
+
+                if (function) {
+                    if (FunctionRareData* rareData = function->rareData()) {
+                        if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                            Structure* structure = rareData->internalFunctionAllocationStructure();
+                            if (structure
+                                && structure->classInfo() == (bytecode.m_isInternalPromise ? JSInternalPromise::info() : JSPromise::info())
+                                && structure->globalObject() == globalObject
+                                && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                m_graph.freeze(rareData);
+                                m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+
+                                // The callee is still live up to this point.
+                                addToGraph(Phantom, callee);
+                                set(VirtualRegister(bytecode.m_dst), addToGraph(NewPromise, OpInfo(m_graph.registerStructure(structure)), OpInfo(bytecode.m_isInternalPromise)));
+                                alreadyEmitted = true;
+                            }
+                        }
+                    }
+                }
+                if (!alreadyEmitted)
+                    set(VirtualRegister(bytecode.m_dst), addToGraph(CreatePromise, OpInfo(), OpInfo(bytecode.m_isInternalPromise), callee));
+            }
+            NEXT_OPCODE(op_create_promise);
+        }
+
         case op_new_object: {
             auto bytecode = currentInstruction->as<OpNewObject>();
             set(bytecode.m_dst,
                 addToGraph(NewObject,
                     OpInfo(m_graph.registerStructure(bytecode.metadata(codeBlock).m_objectAllocationProfile.structure()))));
             NEXT_OPCODE(op_new_object);
+        }
+
+        case op_new_promise: {
+            auto bytecode = currentInstruction->as<OpNewPromise>();
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            set(bytecode.m_dst, addToGraph(NewPromise, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())), OpInfo(bytecode.m_isInternalPromise)));
+            NEXT_OPCODE(op_new_promise);
         }
             
         case op_new_array: {
@@ -6968,6 +7049,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpToIndexString>();
             set(bytecode.m_dst, addToGraph(ToIndexString, get(bytecode.m_index)));
             NEXT_OPCODE(op_to_index_string);
+        }
+
+        case op_get_promise_internal_field: {
+            auto bytecode = currentInstruction->as<OpGetPromiseInternalField>();
+            set(bytecode.m_dst, addToGraph(GetPromiseInternalField, OpInfo(bytecode.m_index), OpInfo(getPrediction()), get(bytecode.m_base)));
+            NEXT_OPCODE(op_get_promise_internal_field);
+        }
+
+        case op_put_promise_internal_field: {
+            auto bytecode = currentInstruction->as<OpPutPromiseInternalField>();
+            addToGraph(PutPromiseInternalField, OpInfo(bytecode.m_index), get(bytecode.m_base), get(bytecode.m_value));
+            NEXT_OPCODE(op_put_promise_internal_field);
         }
             
         case op_log_shadow_chicken_prologue: {

@@ -70,6 +70,7 @@ enum LocationKind {
     MapBucketKeyLoc,
     MapBucketNextLoc,
     WeakMapGetLoc,
+    PromiseInternalFieldLoc,
     DOMStateLoc,
 };
 

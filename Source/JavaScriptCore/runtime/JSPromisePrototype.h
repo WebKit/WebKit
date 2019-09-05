@@ -40,7 +40,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
     JSPromisePrototype(VM&, Structure*);
 
 private:

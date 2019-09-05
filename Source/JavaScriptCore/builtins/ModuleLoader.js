@@ -122,7 +122,9 @@ function forceFulfillPromise(promise, value)
 {
     "use strict";
 
-    if (@getByIdDirectPrivate(promise, "promiseState") === @promiseStatePending)
+    @assert(@isPromise(promise));
+
+    if ((@getPromiseInternalField(promise, @promiseFieldFlags) & @promiseStateMask) === @promiseStatePending)
         @fulfillPromise(promise, value);
 }
 

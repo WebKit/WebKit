@@ -59,16 +59,16 @@ namespace JSC {
     macro(iteratedString) \
     macro(stringIteratorNextIndex) \
     macro(promise) \
+    macro(promiseOrCapability) \
     macro(Object) \
     macro(Number) \
     macro(Array) \
     macro(ArrayBuffer) \
     macro(RegExp) \
-    macro(Promise) \
-    macro(InternalPromise) \
     macro(trunc) \
     macro(create) \
     macro(defineProperty) \
+    macro(defaultPromiseThen) \
     macro(getPrototypeOf) \
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
@@ -82,15 +82,10 @@ namespace JSC {
     macro(homeObject) \
     macro(enqueueJob) \
     macro(hostPromiseRejectionTracker) \
-    macro(promiseIsHandled) \
-    macro(promiseState) \
-    macro(promiseReactions) \
-    macro(promiseResult) \
     macro(onFulfilled) \
     macro(onRejected) \
     macro(push) \
     macro(repeatCharacter) \
-    macro(capabilities) \
     macro(starDefault) \
     macro(InspectorInstrumentation) \
     macro(get) \
@@ -121,7 +116,6 @@ namespace JSC {
     macro(asyncGeneratorQueueFirst) \
     macro(asyncGeneratorQueueLast) \
     macro(asyncGeneratorQueueItemNext) \
-    macro(asyncGeneratorQueueItemPrevious) \
     macro(generatorResumeMode) \
     macro(dateTimeFormat) \
     macro(intlSubstituteValue) \

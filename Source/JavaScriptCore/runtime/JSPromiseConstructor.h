@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InternalFunction.h"
+#include "JSFunction.h"
 
 namespace JSC {
 
@@ -33,9 +33,9 @@ class JSPromise;
 class JSPromisePrototype;
 class GetterSetter;
 
-class JSPromiseConstructor : public InternalFunction {
+class JSPromiseConstructor : public JSFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = JSFunction;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static JSPromiseConstructor* create(VM&, Structure*, JSPromisePrototype*, GetterSetter* speciesSymbol);
@@ -44,12 +44,12 @@ public:
     DECLARE_INFO;
 
 protected:
-    JSPromiseConstructor(VM&, Structure*);
-    JSPromiseConstructor(VM&, Structure*, NativeFunction, NativeFunction);
+    JSPromiseConstructor(VM&, FunctionExecutable*, JSGlobalObject*, Structure*);
     void finishCreation(VM&, JSPromisePrototype*, GetterSetter*);
 
 private:
     void addOwnInternalSlots(VM&, JSGlobalObject*);
 };
+static_assert(sizeof(JSPromiseConstructor) == sizeof(JSFunction), "Allocate JSPromiseConstructor in JSFunction IsoSubspace");
 
 } // namespace JSC

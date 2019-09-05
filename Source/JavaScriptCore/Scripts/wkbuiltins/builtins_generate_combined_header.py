@@ -78,7 +78,8 @@ class BuiltinsCombinedHeaderGenerator(BuiltinsGenerator):
 class FunctionExecutable;
 class VM;
 
-enum class ConstructAbility : unsigned;
+enum class ConstructAbility : uint8_t;
+enum class ConstructorKind : uint8_t;
 }"""
 
     def generate_section_for_object(self, object):
@@ -99,7 +100,8 @@ enum class ConstructAbility : unsigned;
 
             lines.append("""extern const char* const s_%(codeName)s;
 extern const int s_%(codeName)sLength;
-extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function_args)
+extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;
+extern const JSC::ConstructorKind s_%(codeName)sConstructorKind;""" % function_args)
 
         return lines
 

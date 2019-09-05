@@ -53,6 +53,7 @@ namespace JSC { namespace DFG {
     /* Nodes for handling functions (both as call and as construct). */\
     macro(ToThis, NodeResultJS) \
     macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
+    macro(CreatePromise, NodeResultJS | NodeMustGenerate) \
     macro(GetCallee, NodeResultJS) \
     macro(SetCallee, NodeMustGenerate) \
     macro(GetArgumentCountIncludingThis, NodeResultInt32) \
@@ -338,6 +339,7 @@ namespace JSC { namespace DFG {
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
+    macro(NewPromise, NodeResultJS) \
     macro(NewArray, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSpread, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSize, NodeResultJS | NodeMustGenerate) \
@@ -398,6 +400,9 @@ namespace JSC { namespace DFG {
     macro(ProfileControlFlow, NodeMustGenerate) \
     macro(SetFunctionName, NodeMustGenerate) \
     macro(HasOwnProperty, NodeResultBoolean) \
+    \
+    macro(GetPromiseInternalField, NodeResultJS) \
+    macro(PutPromiseInternalField, NodeMustGenerate) \
     \
     macro(CreateActivation, NodeResultJS) \
     macro(PushWithScope, NodeResultJS | NodeMustGenerate) \

@@ -281,7 +281,8 @@ private:
 
             case PutClosureVar:
             case PutToArguments:
-            case SetRegExpObjectLastIndex: {
+            case SetRegExpObjectLastIndex:
+            case PutPromiseInternalField: {
                 considerBarrier(m_node->child1(), m_node->child2());
                 break;
             }
@@ -320,6 +321,7 @@ private:
             
             switch (m_node->op()) {
             case NewObject:
+            case NewPromise:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayBuffer:

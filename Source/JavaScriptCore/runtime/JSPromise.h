@@ -31,7 +31,14 @@ namespace JSC {
 
 class JSPromise : public JSNonFinalObject {
 public:
+    friend class LLIntOffsetsExtractor;
     using Base = JSNonFinalObject;
+
+    static size_t allocationSize(Checked<size_t> inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSPromise);
+    }
 
     static JSPromise* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -39,24 +46,36 @@ public:
     DECLARE_EXPORT_INFO;
 
     enum class Status : unsigned {
-        Pending = 1,
-        Fulfilled,
-        Rejected
+        Pending = 0, // Making this as 0, so that, we can change the status from Pending to others without masking.
+        Fulfilled = 1,
+        Rejected = 2,
     };
+    static constexpr uint32_t isHandledFlag = 4;
+    static constexpr uint32_t isFirstResolvingFunctionCalledFlag = 8;
+    static constexpr uint32_t stateMask = 0b11;
+
+    enum class Field : unsigned {
+        Flags = 0,
+        ReactionsOrResult = 1,
+    };
+    static constexpr unsigned numberOfInternalFields = 2;
 
     JS_EXPORT_PRIVATE Status status(VM&) const;
     JS_EXPORT_PRIVATE JSValue result(VM&) const;
     JS_EXPORT_PRIVATE bool isHandled(VM&) const;
 
-    // Initialize the promise with the executor.
-    // This may raise a JS exception.
-    void initialize(ExecState*, JSGlobalObject*, JSValue executor);
-
     JS_EXPORT_PRIVATE static JSPromise* resolve(JSGlobalObject&, JSValue);
+
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    static ptrdiff_t offsetOfInternalFields() { return OBJECT_OFFSETOF(JSPromise, m_internalFields); }
+    static ptrdiff_t offsetOfInternalField(unsigned index) { return OBJECT_OFFSETOF(JSPromise, m_internalFields) + index * sizeof(WriteBarrier<Unknown>); }
 
 protected:
     JSPromise(VM&, Structure*);
     void finishCreation(VM&);
+
+    WriteBarrier<Unknown> m_internalFields[numberOfInternalFields] { };
 };
 
 } // namespace JSC

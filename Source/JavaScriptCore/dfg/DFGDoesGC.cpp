@@ -123,6 +123,8 @@ bool doesGC(Graph& graph, Node* node)
     case GetGlobalThis:
     case GetClosureVar:
     case PutClosureVar:
+    case GetPromiseInternalField:
+    case PutPromiseInternalField:
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:
@@ -329,6 +331,7 @@ bool doesGC(Graph& graph, Node* node)
     case ToThis:
     case TryGetById:
     case CreateThis:
+    case CreatePromise:
     case ObjectCreate:
     case ObjectKeys:
     case AllocatePropertyStorage:
@@ -336,6 +339,7 @@ bool doesGC(Graph& graph, Node* node)
     case Arrayify:
     case ArrayifyToStructure:
     case NewObject:
+    case NewPromise:
     case NewArray:
     case NewArrayWithSpread:
     case Spread:

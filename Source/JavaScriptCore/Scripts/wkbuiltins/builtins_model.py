@@ -44,6 +44,7 @@ _FRAMEWORK_CONFIG_MAP = {
 
 functionHeadRegExp = re.compile(r"(?:@[\w|=\[\] \"\.]+\s*\n)*(?:async\s+)?function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
 functionGlobalPrivateRegExp = re.compile(r".*^@globalPrivate", re.MULTILINE | re.DOTALL)
+functionNakedConstructorRegExp = re.compile(r".*^@nakedConstructor", re.MULTILINE | re.DOTALL)
 functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
 functionIsConstructorRegExp = re.compile(r".*^@constructor", re.MULTILINE | re.DOTALL)
 functionIsGetterRegExp = re.compile(r".*^@getter", re.MULTILINE | re.DOTALL)
@@ -101,12 +102,13 @@ class BuiltinObject:
 
 
 class BuiltinFunction:
-    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_global_private, intrinsic, overridden_name):
+    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_global_private, is_naked_constructor, intrinsic, overridden_name):
         self.function_name = function_name
         self.function_source = function_source
         self.parameters = parameters
         self.is_async = is_async
         self.is_constructor = is_constructor
+        self.is_naked_constructor = is_naked_constructor
         self.is_global_private = is_global_private
         self.intrinsic = intrinsic
         self.overridden_name = overridden_name
@@ -140,6 +142,9 @@ class BuiltinFunction:
         is_constructor = functionIsConstructorRegExp.match(function_source) != None
         is_getter = functionIsGetterRegExp.match(function_source) != None
         is_global_private = functionGlobalPrivateRegExp.match(function_source) != None
+        is_naked_constructor = functionNakedConstructorRegExp.match(function_source) != None
+        if is_naked_constructor:
+            is_constructor = True
         parameters = [s.strip() for s in functionParameterFinder.findall(function_source)[0].split(',')]
         if len(parameters[0]) == 0:
             parameters = []
@@ -150,7 +155,7 @@ class BuiltinFunction:
         if not overridden_name:
             overridden_name = "static_cast<const char*>(nullptr)"
 
-        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_global_private, intrinsic, overridden_name)
+        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_global_private, is_naked_constructor, intrinsic, overridden_name)
 
     def __str__(self):
         interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))

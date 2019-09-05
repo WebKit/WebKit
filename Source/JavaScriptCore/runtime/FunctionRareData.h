@@ -62,7 +62,7 @@ public:
     DECLARE_INFO;
 
     static inline ptrdiff_t offsetOfObjectAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfile); }
-    static inline ptrdiff_t offsetOfObjectAllocationProfileWatchpoint() { return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfileWatchpoint); }
+    static inline ptrdiff_t offsetOfAllocationProfileWatchpointSet() { return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfileWatchpointSet); }
     static inline ptrdiff_t offsetOfInternalFunctionAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_internalFunctionAllocationProfile); }
     static inline ptrdiff_t offsetOfBoundFunctionStructure() { return OBJECT_OFFSETOF(FunctionRareData, m_boundFunctionStructure); }
     static inline ptrdiff_t offsetOfAllocationProfileClearingWatchpoint() { return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfileClearingWatchpoint); }
@@ -79,7 +79,7 @@ public:
 
     InlineWatchpointSet& allocationProfileWatchpointSet()
     {
-        return m_objectAllocationProfileWatchpoint;
+        return m_allocationProfileWatchpointSet;
     }
 
     void clear(const char* reason);
@@ -91,11 +91,19 @@ public:
     Structure* internalFunctionAllocationStructure() { return m_internalFunctionAllocationProfile.structure(); }
     Structure* createInternalFunctionAllocationStructureFromBase(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)
     {
+        initializeAllocationProfileWatchpointSet();
         return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, globalObject, this, prototype, baseStructure);
     }
-    void clearInternalFunctionAllocationProfile()
+    void clearInternalFunctionAllocationProfile(const char* reason)
     {
         m_internalFunctionAllocationProfile.clear();
+        m_allocationProfileWatchpointSet.fireAll(vm(), reason);
+    }
+
+    void initializeAllocationProfileWatchpointSet()
+    {
+        if (m_allocationProfileWatchpointSet.isStillValid())
+            m_allocationProfileWatchpointSet.startWatching();
     }
 
     Structure* getBoundFunctionStructure() { return m_boundFunctionStructure.get(); }
@@ -131,7 +139,7 @@ private:
     // We don't really care about 1) since this memory is rare and small in total. 2) is unfortunate but is
     // probably outweighed by the cost of 3).
     ObjectAllocationProfileWithPrototype m_objectAllocationProfile;
-    InlineWatchpointSet m_objectAllocationProfileWatchpoint;
+    InlineWatchpointSet m_allocationProfileWatchpointSet;
     InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
     WriteBarrier<Structure> m_boundFunctionStructure;
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;

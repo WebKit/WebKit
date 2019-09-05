@@ -118,6 +118,22 @@ op :create_this,
         cachedCallee: WriteBarrier[JSCell]
     }
 
+op :create_promise,
+    args: {
+        dst: VirtualRegister,
+        callee: VirtualRegister,
+        isInternalPromise: bool,
+    },
+    metadata: {
+        cachedCallee: WriteBarrier[JSCell]
+    }
+
+op :new_promise,
+    args: {
+        dst: VirtualRegister,
+        isInternalPromise: bool,
+    }
+
 op :get_argument,
     args: {
         dst: VirtualRegister,
@@ -1109,6 +1125,23 @@ op :resolve_scope_for_hoisting_func_decl_in_eval,
         dst: VirtualRegister,
         scope: VirtualRegister,
         property: unsigned,
+    }
+
+op :get_promise_internal_field,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        index: unsigned,
+    },
+    metadata: {
+        profile: ValueProfile,
+    }
+
+op :put_promise_internal_field,
+    args: {
+        base: VirtualRegister,
+        index: unsigned,
+        value: VirtualRegister,
     }
 
 op :nop

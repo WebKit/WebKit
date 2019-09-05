@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Basic sanity-checking 
 PASS Only whitelisted properties are accessible cross-origin 
 PASS [[GetPrototypeOf]] should return null 
@@ -24,5 +22,7 @@ PASS Same-origin observers get different functions for cross-origin objects
 PASS Same-origin observers get different accessors for cross-origin Window 
 PASS Same-origin observers get different accessors for cross-origin Location 
 PASS {}.toString.call() does the right thing on cross-origin objects 
-FAIL Resolving a promise with a cross-origin window without a 'then' subframe should work. Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+PASS Resolving a promise with a cross-origin window without a 'then' subframe should work. 
+PASS Resolving a promise with a cross-origin window with a 'then' subframe should work. 
+PASS Resolving a promise with a cross-origin location should work. 
   

@@ -1,3 +1,379 @@
+2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make Promise implementation faster
+        https://bugs.webkit.org/show_bug.cgi?id=200898
+
+        Reviewed by Saam Barati.
+
+        This is the major change of the Promise implementation and it improves JetStream2/async-fs by 62%.
+
+        1. Make JSPromise C++ friendly
+
+            Instead of using objects with private properties (properties with private symbols), we put internal fields in JSPromise.
+            This avoids allocating unnecessary butterflies for these private fields, and makes allocating JSPromise and accessing these
+            fields from C++ easy. Moreover, this patch reduces # of fields of JSPromise from 4 to 2 to make JSPromise compact. To access these internal
+            fields efficiently from JS, we add `op_get_promise_internal_field` and `op_put_promise_internal_field` bytecodes, and corresponding DFG/FTL
+            supports. They are similar to GetClosureVar / PutClosureVar implementation. These two bytecodes are intentionally generic to later expand
+            this support to generator and async-generator by renaming them to `op_get_internal_field` and `op_put_internal_field`. It is filed in [1].
+
+            We also add JSPromiseType as JSType. And structures for JSPromise should have that. So that now `@isPromise` is efficiently implemented.
+            This also requires adding SpecPromiseObject and PromiseObjectUse to DFG.
+
+            Further, by introducing another bit flag representing `alreadyResolved` to JSPromise's flags, we can remove JSPromiseDeferred. This extension
+            is filed in [2].
+
+        2. Make JSPromise constructor JS friendly
+
+            The old JSPromise constructor was very inefficient: JSPromise constructor is InternalFunction in C++, and in it, it
+            calls `initializePromise` JS function. And this `initializePromise` function invokes `executor` function passed by user program.
+            If we can implement JSPromise constructor fully in JS, we can recognize `executor` and we have a chance to fully inline them.
+            Unfortunately, we cannot inline JSPromise constructor for now since it takes 120 bytecode cost while our inlining threshold for
+            construct is 100. We might want to investigate getting it inlined in the future[3].
+
+            We can avoid C++ <-> JS dance in such an important operation, allocating JSPromise. This patch introduces @nakedConstructor
+            annotation to builtin JS. And this is propagated as `ConstructorKind::Naked`. If this kind is attached, the bytecode generator
+            do not emit `op_create_this` implicitly and the constructor does not return `this` object implicitly. The naked constructor allows
+            us to emit bare-metal bytecode, specifically necessary to allocate non-final JSObject from JS constructor. We introduce op_create_promise,
+            which is similar to op_create_this, but it allocates JSPromise. And by using @createPromise bytecode intrinsic, we implement
+            JSPromise constructor fully in JS.
+            With this, we can start introducing object-allocation-sinking for JSPromise too. It is filed in [4].
+
+        3. DFG supports for JSPromise operations
+
+            This patch adds four DFG nodes, CreatePromise, NewPromise, GetPromiseInternalField, and PutPromiseInternalField. CreatePromise mimics CreateThis,
+            and NewPromise mimics NewObject. CreatePromise can be converted to NewPromise with some condition checks and NewPromise can efficiently allocate
+            promises. CreatePromise and NewPromise have `isInternalPromise` flag so that InternalPromise is also correctly handled in DFG.
+            When converting CreatePromise to NewPromise, we need to get the correct structure with a specified `callee.prototype`. We mimic the mechanism
+            used in CreateThis, but we use InternalFunctionAllocationProfile instead of ObjectAllocationProfile because (1) InternalFunctionAllocationProfile
+            can handle non-final JSObjects and (2) we do not need to handle inline-capacity for promises. To make InternalFunctionAllocationProfile usable
+            in DFG, we connect watchpoint to InternalFunctionAllocationProfile's invalidation so that DFG code can notice when InternalFunctionAllocationProfile's
+            structure is invalidated: `callee.prototype` is replaced.
+
+        4. Avoid creating unnecessary promises
+
+            Some promises are never shown to users, and they are never rejected. One example is `await`'s promise. And some of promise creation can be avoided.
+            For example, when resolving a value with `Promise.resolve`, if a value is promise and if it's `then` method is the builtin `then`, we can avoid creating
+            intermediate promise. To handle these things well, we introduce `@resolveWithoutPromise`, `@rejectWithoutPromise`, and `@fulfillWithoutPromise`. They
+            take `onFulfilled` and `onRejected` handlers and they do not need an intermediate promise for resolving. This removes internal promise allocations
+            in major cases and makes promise / async-functions efficient. And we also expose builtin `then` function as `@then`, and insert `@isPromise(xxx) && then === @then`
+            check to take a fast path. We introduced four types of promise reactions to avoid some of object allocations. And microtask reaction is handling these four types.
+
+        5. Avoid creating resolving-functions and promise capabilities
+
+            Resolving functions have `alreadyResolved` flag to prevent calling `resolve` and `reject` multiple times. For the first resolving function creation, this
+            patch embeds one bit flag to JSPromise itself which indicates `alreadyResolved` in the first created resolving functions (resolving functions can be later
+            created again for the same promise. In that case, we just create a usual resolving functions). By doing so, we avoid unnecessary resolving functions
+            and promise capability allocations. We introduce a wrapper function `@resolvePromiseWithFirstResolvingFunctionCallCheck` and `@rejectPromiseWithFirstResolvingFunctionCallCheck`.
+            The resolving functions which are first created with `@newPromiseCapability` can be mechanically replaced with the calls to these functions, e.g. replacing
+            `promiseCapability.@resolve.@call(@undefined, value)` with `@resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value)`.
+            This mechanism will be used to drop JSPromiseDeferred in a separate patch.
+
+        JetStream2/async-fs results.
+            ToT:
+                Running async-fs:
+                    Startup: 116.279
+                    Worst Case: 151.515
+                    Average: 176.630
+                    Score: 145.996
+                    Wall time: 0:01.149
+
+            Patched:
+                Running async-fs:
+                    Startup: 166.667
+                    Worst Case: 267.857
+                    Average: 299.080
+                    Score: 237.235
+                    Wall time: 0:00.683
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=201159
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=201160
+        [3]: https://bugs.webkit.org/show_bug.cgi?id=201452
+        [4]: https://bugs.webkit.org/show_bug.cgi?id=201158
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        (ConstructAbility):
+        (ConstructorKind):
+        * Scripts/wkbuiltins/builtins_generate_separate_header.py:
+        * Scripts/wkbuiltins/builtins_generator.py:
+        (BuiltinsGenerator.generate_embedded_code_data_for_function):
+        (BuiltinsGenerator.generate_embedded_code_string_section_for_data):
+        * Scripts/wkbuiltins/builtins_model.py:
+        (BuiltinFunction.__init__):
+        (BuiltinFunction.fromString):
+        * Scripts/wkbuiltins/builtins_templates.py:
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        (next.try):
+        (next):
+        (return.try):
+        (return):
+        (throw.try):
+        (throw):
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorQueueIsEmpty):
+        (globalPrivate.asyncGeneratorQueueEnqueue):
+        (globalPrivate.asyncGeneratorQueueDequeue):
+        (globalPrivate.asyncGeneratorReject):
+        (globalPrivate.asyncGeneratorResolve):
+        (globalPrivate.asyncGeneratorYield):
+        (onRejected):
+        (globalPrivate.awaitValue):
+        (onFulfilled):
+        (globalPrivate.doAsyncGeneratorBodyCall):
+        (globalPrivate.asyncGeneratorResumeNext):
+        (globalPrivate.asyncGeneratorEnqueue):
+        (globalPrivate.asyncGeneratorDequeue): Deleted.
+        (const.onRejected): Deleted.
+        (const.onFulfilled): Deleted.
+        (globalPrivate.asyncGeneratorResumeNext.): Deleted.
+        * builtins/BuiltinExecutableCreator.h:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::defaultConstructorSourceCode):
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        (JSC::BuiltinExecutables::createExecutable):
+        (JSC::createBuiltinExecutable): Deleted.
+        * builtins/BuiltinExecutables.h:
+        * builtins/BuiltinNames.h:
+        * builtins/BuiltinUtils.h:
+        * builtins/ModuleLoader.js:
+        (forceFulfillPromise):
+        * builtins/PromiseConstructor.js:
+        (nakedConstructor.Promise.resolve):
+        (nakedConstructor.Promise.reject):
+        (nakedConstructor.Promise):
+        (nakedConstructor.InternalPromise.resolve):
+        (nakedConstructor.InternalPromise.reject):
+        (nakedConstructor.InternalPromise):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseReaction):
+        (globalPrivate.newPromiseCapability):
+        (globalPrivate.newHandledRejectedPromise):
+        (globalPrivate.triggerPromiseReactions):
+        (globalPrivate.resolvePromise):
+        (globalPrivate.rejectPromise):
+        (globalPrivate.fulfillPromise):
+        (globalPrivate.resolvePromiseWithFirstResolvingFunctionCallCheck):
+        (globalPrivate.rejectPromiseWithFirstResolvingFunctionCallCheck):
+        (globalPrivate.createResolvingFunctions.resolve):
+        (globalPrivate.createResolvingFunctions.reject):
+        (globalPrivate.createResolvingFunctions):
+        (globalPrivate.promiseReactionJobWithoutPromise):
+        (globalPrivate.resolveWithoutPromise):
+        (globalPrivate.rejectWithoutPromise):
+        (globalPrivate.fulfillWithoutPromise):
+        (resolve):
+        (reject):
+        (globalPrivate.createResolvingFunctionsWithoutPromise):
+        (globalPrivate.promiseReactionJob):
+        (globalPrivate.promiseResolveThenableJobFast):
+        (globalPrivate.promiseResolveThenableJobWithoutPromiseFast):
+        (globalPrivate.promiseResolveThenableJob):
+        (globalPrivate.isPromise): Deleted.
+        (globalPrivate.newPromiseCapability.executor): Deleted.
+        (globalPrivate.initializePromise): Deleted.
+        * builtins/PromisePrototype.js:
+        (then):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/Opcode.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromJSType):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitGetPromiseInternalField):
+        (JSC::BytecodeGenerator::emitPutPromiseInternalField):
+        (JSC::BytecodeGenerator::emitCreatePromise):
+        (JSC::BytecodeGenerator::emitNewPromise):
+        (JSC::BytecodeGenerator::emitReturn):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::promiseRegister):
+        (JSC::BytecodeGenerator::emitIsPromise):
+        (JSC::BytecodeGenerator::promiseCapabilityRegister): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::promiseInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putPromiseInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isPromise):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_createPromise):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_newPromise):
+        (JSC::FunctionNode::emitBytecode):
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToNewPromise):
+        (JSC::DFG::Node::hasIsInternalPromise):
+        (JSC::DFG::Node::isInternalPromise):
+        (JSC::DFG::Node::hasInternalFieldIndex):
+        (JSC::DFG::Node::internalFieldIndex):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasStructure):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::speculatePromiseObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::compileGetPromiseInternalField):
+        (JSC::DFG::SpeculativeJIT::compilePutPromiseInternalField):
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise):
+        (JSC::DFG::SpeculativeJIT::compileNewPromise):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewPromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPromiseInternalField):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPromiseInternalField):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculatePromiseObject):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_promise_internal_field):
+        (JSC::JIT::emit_op_put_promise_internal_field):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_promise_internal_field):
+        (JSC::JIT::emit_op_put_promise_internal_field):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/ConstructAbility.h:
+        * runtime/ConstructorKind.h: Copied from Source/JavaScriptCore/runtime/ConstructAbility.h.
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::FunctionRareData):
+        (JSC::FunctionRareData::initializeObjectAllocationProfile):
+        (JSC::FunctionRareData::clear):
+        * runtime/FunctionRareData.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructureSlow):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSCast.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::enqueueJob):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayProtoValuesFunction const):
+        (JSC::JSGlobalObject::promiseProtoThenFunction const):
+        (JSC::JSGlobalObject::initializePromiseFunction const): Deleted.
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::createStructure):
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::JSInternalPromiseConstructor::create):
+        (JSC::JSInternalPromiseConstructor::createStructure):
+        (JSC::JSInternalPromiseConstructor::JSInternalPromiseConstructor):
+        (JSC::constructPromise): Deleted.
+        * runtime/JSInternalPromiseConstructor.h:
+        * runtime/JSInternalPromisePrototype.cpp:
+        (JSC::JSInternalPromisePrototype::create):
+        * runtime/JSMicrotask.cpp:
+        (JSC::createJSMicrotask):
+        (JSC::JSMicrotask::run):
+        * runtime/JSMicrotask.h:
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::createStructure):
+        (JSC::JSPromise::finishCreation):
+        (JSC::JSPromise::visitChildren):
+        (JSC::JSPromise::status const):
+        (JSC::JSPromise::result const):
+        (JSC::JSPromise::isHandled const):
+        (JSC::JSPromise::initialize): Deleted.
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::allocationSize):
+        (JSC::JSPromise::offsetOfInternalFields):
+        (JSC::JSPromise::offsetOfInternalField):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::create):
+        (JSC::JSPromiseConstructor::createStructure):
+        (JSC::JSPromiseConstructor::JSPromiseConstructor):
+        (JSC::JSPromiseConstructor::finishCreation):
+        (JSC::constructPromise): Deleted.
+        (JSC::callPromise): Deleted.
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::create):
+        (JSC::JSPromisePrototype::finishCreation):
+        (JSC::JSPromisePrototype::addOwnInternalSlots):
+        * runtime/JSPromisePrototype.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+
 2019-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Local Overrides - Provide substitution content for resource loads (URL based)

@@ -2528,6 +2528,28 @@ llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatc
 end)
 
 
+llintOpWithProfile(op_get_promise_internal_field, OpGetPromiseInternalField, macro (size, get, dispatch, return)
+    get(m_base, t0)
+    loadi PayloadOffset[cfr, t0, 8], t0
+    getu(size, OpGetPromiseInternalField, m_index, t1)
+    loadi JSPromise::m_internalFields + TagOffset[t0, t1, SlotSize], t2
+    loadi JSPromise::m_internalFields + PayloadOffset[t0, t1, SlotSize], t3
+    return(t2, t3)
+end)
+
+llintOp(op_put_promise_internal_field, OpPutPromiseInternalField, macro (size, get, dispatch)
+    get(m_base, t0)
+    loadi PayloadOffset[cfr, t0, 8], t0
+    get(m_value, t1)
+    loadConstantOrVariable(size, t1, t2, t3)
+    getu(size, OpPutPromiseInternalField, m_index, t1)
+    storei t2, JSPromise::m_internalFields + TagOffset[t0, t1, SlotSize]
+    storei t3, JSPromise::m_internalFields + PayloadOffset[t0, t1, SlotSize]
+    writeBarrierOnOperand(size, get, m_base)
+    dispatch()
+end)
+
+
 llintOp(op_log_shadow_chicken_prologue, OpLogShadowChickenPrologue, macro (size, get, dispatch)
     acquireShadowChickenPacket(.opLogShadowChickenPrologueSlow)
     storep cfr, ShadowChicken::Packet::frame[t0]

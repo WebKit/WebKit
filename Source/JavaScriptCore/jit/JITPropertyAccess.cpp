@@ -37,6 +37,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
+#include "JSPromise.h"
 #include "LinkBuffer.h"
 #include "OpcodeInlines.h"
 #include "ResultType.h"
@@ -1233,6 +1234,36 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 
     if (mode == ShouldFilterValue) 
         valueNotCell.link(this);
+}
+
+void JIT::emit_op_get_promise_internal_field(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetPromiseInternalField>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    int dst = bytecode.m_dst.offset();
+    int base = bytecode.m_base.offset();
+    unsigned index = bytecode.m_index;
+    ASSERT(index < JSPromise::numberOfInternalFields);
+
+    emitGetVirtualRegister(base, regT1);
+    loadPtr(Address(regT1, JSPromise::offsetOfInternalField(index)), regT0);
+
+    emitValueProfilingSite(metadata);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_put_promise_internal_field(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpPutPromiseInternalField>();
+    int base = bytecode.m_base.offset();
+    int value = bytecode.m_value.offset();
+    unsigned index = bytecode.m_index;
+    ASSERT(index < JSPromise::numberOfInternalFields);
+
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(value, regT1);
+    storePtr(regT1, Address(regT0, JSPromise::offsetOfInternalField(index)));
+    emitWriteBarrier(base, value, ShouldFilterValue);
 }
 
 #else // USE(JSVALUE64)

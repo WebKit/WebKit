@@ -1,3 +1,80 @@
+2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make Promise implementation faster
+        https://bugs.webkit.org/show_bug.cgi?id=200898
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore/test/UnitTestFramework/UnitTestFramework.js:
+        (assert.assert.return.throws):
+        * modules/breaking-builtin-promise-then-does-not-break-internal-promise.js: Added.
+        * modules/breaking-builtin-promise-then-does-not-break-internal-promise/test.js: Added.
+        * stress/constructor-kind-naked-should-not-be-applied-to-inner-functions.js: Added.
+        (shouldThrow):
+        (new.Promise):
+        (shouldThrow.Promise):
+        * stress/create-promise-should-respect-promise-realm.js: Added.
+        (shouldBe):
+        (other.new.OtherPromise):
+        (DerivedOtherPromise):
+        (i.promise.new.DerivedOtherPromise):
+        (createPromise):
+        * stress/derived-promise-constructor-class-syntax-prototype-replace-attempt.js: Added.
+        (shouldBe):
+        (DerivedPromise):
+        (i.array.push.new.DerivedPromise):
+        (promise.new.DerivedPromise):
+        * stress/derived-promise-constructor-inlined.js: Added.
+        (shouldBe):
+        (DerivedPromise):
+        (i.array.push.new.DerivedPromise):
+        (DerivedPromise.all.array.then):
+        * stress/derived-promise-prototype-replaced.js: Added.
+        (shouldBe):
+        (DerivedPromise):
+        (i.array.push.new.DerivedPromise):
+        (promise.new.DerivedPromise):
+        * stress/internal-promise-constructor-not-confusing.js: Added.
+        (shouldBe):
+        (InternalPromise.vm.createBuiltin):
+        (DerivedPromise):
+        * stress/internal-promise-is-not-exposed.js: Added.
+        (shouldBe):
+        * stress/new-promise-should-respect-promise-realm.js: Added.
+        (shouldBe):
+        (other.new.OtherPromise):
+        (createPromise):
+        * stress/promise-cannot-be-called.js:
+        (shouldThrow):
+        * stress/promise-capability-fast-path.js: Added.
+        (shouldBe):
+        (i.array.push.new.Promise):
+        (i.array.i.then):
+        * stress/promise-capability-slow-path.js: Added.
+        (shouldBe):
+        (Promise.prototype.then):
+        (i.array.push.new.Promise):
+        (i.array.i.then):
+        * stress/promise-capability-then-slow-path.js: Added.
+        (shouldBe):
+        (DerivedPromise):
+        (DerivedPromise.prototype.then):
+        (i.array.push.new.DerivedPromise):
+        (i.array.i.then):
+        * stress/promise-constructor-inlined.js: Added.
+        (shouldBe):
+        (i.array.push.new.Promise):
+        (Promise.all.array.then):
+        * stress/promise-constructor-transition-from-new-promise-to-create-promise.js: Added.
+        (shouldBe):
+        (DerivedPromise):
+        (DerivedPromise2):
+        (i.array.push.new.DerivedPromise):
+        (i.array2.push.new.DerivedPromise2):
+        * stress/without-promise-functions.js: Added.
+        (shouldBe):
+        (async):
+
 2019-09-03  Mark Lam  <mark.lam@apple.com>
 
         Assertions in JSArrayBufferView::byteOffset() are only valid for the mutator thread.

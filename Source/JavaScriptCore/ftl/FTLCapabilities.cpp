@@ -74,6 +74,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutStructure:
     case GetButterfly:
     case NewObject:
+    case NewPromise:
     case NewStringObject:
     case NewSymbol:
     case NewArray:
@@ -141,6 +142,8 @@ inline CapabilityLevel canCompile(Node* node)
     case NewAsyncGeneratorFunction:
     case GetClosureVar:
     case PutClosureVar:
+    case GetPromiseInternalField:
+    case PutPromiseInternalField:
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
@@ -375,6 +378,7 @@ inline CapabilityLevel canCompile(Node* node)
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case CreateThis:
+    case CreatePromise:
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:
@@ -466,6 +470,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case WeakSetObjectUse:
                 case DataViewObjectUse:
                 case FinalObjectUse:
+                case PromiseObjectUse:
                 case RegExpObjectUse:
                 case ProxyObjectUse:
                 case DerivedArrayUse:

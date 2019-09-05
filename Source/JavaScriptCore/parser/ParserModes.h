@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConstructAbility.h"
+#include "ConstructorKind.h"
 #include "Identifier.h"
 
 namespace JSC {
@@ -34,7 +35,6 @@ enum class JSParserStrictMode { NotStrict, Strict };
 enum class JSParserBuiltinMode { NotBuiltin, Builtin };
 enum class JSParserScriptMode { Classic, Module };
 
-enum class ConstructorKind { None, Base, Extends };
 enum class SuperBinding { Needed, NotNeeded };
 
 enum class CodeGenerationMode : uint8_t {

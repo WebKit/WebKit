@@ -1,3 +1,20 @@
+2019-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make Promise implementation faster
+        https://bugs.webkit.org/show_bug.cgi?id=200898
+
+        Reviewed by Saam Barati.
+
+        * inspector/canvas/recording-bitmaprenderer-frameCount-expected.txt:
+        * inspector/canvas/recording-bitmaprenderer-full-expected.txt:
+        * inspector/canvas/recording-bitmaprenderer-memoryLimit-expected.txt:
+        * inspector/console/message-stack-trace-expected.txt:
+        * inspector/console/queryHolders-expected.txt:
+        * js/Promise-types-expected.txt:
+        * js/dom/Promise-resolve-with-itself-expected.txt:
+        * js/dom/Promise-resolve-with-itself.html:
+        * js/script-tests/Promise-types.js:
+
 2019-09-04  Tim Horton  <timothy_horton@apple.com>
 
         Line artifacts in note body after viewing note with <attachment>s

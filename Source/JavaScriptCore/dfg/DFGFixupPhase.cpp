@@ -1483,13 +1483,15 @@ private:
         }
             
         case GetClosureVar:
-        case GetFromArguments: {
+        case GetFromArguments:
+        case GetPromiseInternalField: {
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
 
         case PutClosureVar:
-        case PutToArguments: {
+        case PutToArguments:
+        case PutPromiseInternalField: {
             fixEdge<KnownCellUse>(node->child1());
             speculateForBarrier(node->child2());
             break;
@@ -1643,6 +1645,7 @@ private:
         case CheckStructure:
         case CheckCell:
         case CreateThis:
+        case CreatePromise:
         case GetButterfly: {
             fixEdge<CellUse>(node->child1());
             break;
@@ -2404,6 +2407,7 @@ private:
         case ForwardVarargs:
         case ProfileControlFlow:
         case NewObject:
+        case NewPromise:
         case NewRegexp:
         case DeleteById:
         case DeleteByVal:

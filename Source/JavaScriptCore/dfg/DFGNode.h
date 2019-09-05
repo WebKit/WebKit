@@ -757,6 +757,16 @@ public:
         m_opInfo2 = OpInfoWrapper();
     }
 
+    void convertToNewPromise(RegisteredStructure structure)
+    {
+        ASSERT(m_op == CreatePromise);
+        bool internal = isInternalPromise();
+        setOpAndDefaultFlags(NewPromise);
+        children.reset();
+        m_opInfo = structure;
+        m_opInfo2 = internal;
+    }
+
     void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     
     void convertToDirectCall(FrozenValue*);
@@ -1246,6 +1256,17 @@ public:
         return m_opInfo.as<unsigned>();
     }
 
+    bool hasIsInternalPromise()
+    {
+        return op() == CreatePromise || op() == NewPromise;
+    }
+
+    bool isInternalPromise()
+    {
+        ASSERT(hasIsInternalPromise());
+        return m_opInfo2.as<bool>();
+    }
+
     void setIndexingType(IndexingType indexingType)
     {
         ASSERT(hasIndexingType());
@@ -1261,6 +1282,17 @@ public:
     {
         ASSERT(hasScopeOffset());
         return ScopeOffset(m_opInfo.as<uint32_t>());
+    }
+
+    unsigned hasInternalFieldIndex()
+    {
+        return op() == GetPromiseInternalField || op() == PutPromiseInternalField;
+    }
+
+    unsigned internalFieldIndex()
+    {
+        ASSERT(hasInternalFieldIndex());
+        return m_opInfo.as<uint32_t>();
     }
     
     bool hasDirectArgumentsOffset()
@@ -1667,6 +1699,7 @@ public:
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:
+        case GetPromiseInternalField:
         case GetFromArguments:
         case GetArgument:
         case ArrayPop:
@@ -1875,6 +1908,7 @@ public:
         switch (op()) {
         case ArrayifyToStructure:
         case NewObject:
+        case NewPromise:
         case NewStringObject:
             return true;
         default:

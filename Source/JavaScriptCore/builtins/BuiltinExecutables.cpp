@@ -44,6 +44,7 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
 {
     switch (constructorKind) {
     case ConstructorKind::None:
+    case ConstructorKind::Naked:
         break;
     case ConstructorKind::Base: {
         static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
@@ -62,6 +63,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
 {
     switch (constructorKind) {
     case ConstructorKind::None:
+    case ConstructorKind::Naked:
         break;
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
@@ -71,14 +73,9 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
     return nullptr;
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
+UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
-    return createExecutable(m_vm, code, name, ConstructorKind::None, constructAbility);
-}
-
-UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
-{
-    return BuiltinExecutables::createExecutable(vm, code, name, ConstructorKind::None, constructAbility);
+    return createExecutable(m_vm, code, name, constructorKind, constructAbility);
 }
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
@@ -182,7 +179,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     positionBeforeLastNewline.lineStartOffset = source.startOffset() + positionBeforeLastNewlineLineStartOffset;
 
     SourceCode newSource = source.subExpression(source.startOffset() + parametersStart, source.startOffset() + (view.length() - closeBraceOffsetFromEnd), 0, parametersStart);
-    bool isBuiltinDefaultClassConstructor = constructorKind != ConstructorKind::None;
+    bool isBuiltinDefaultClassConstructor = constructorKind != ConstructorKind::None && constructorKind != ConstructorKind::Naked;
     UnlinkedFunctionKind kind = isBuiltinDefaultClassConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
 
     SourceParseMode parseMode = isAsyncFunction ? SourceParseMode::AsyncFunctionMode : SourceParseMode::NormalFunctionMode;
@@ -279,7 +276,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
         Identifier executableName = m_vm.propertyNames->builtinNames().functionName##PublicName();\
         if (overrideName)\
             executableName = Identifier::fromString(m_vm, overrideName);\
-        m_unlinkedExecutables[index] = createBuiltinExecutable(name##Source(), executableName, s_##name##ConstructAbility);\
+        m_unlinkedExecutables[index] = createBuiltinExecutable(name##Source(), executableName, s_##name##ConstructorKind, s_##name##ConstructAbility);\
     }\
     return m_unlinkedExecutables[index];\
 }

@@ -1448,6 +1448,8 @@ public:
     void compilePutDynamicVar(Node*);
     void compileGetClosureVar(Node*);
     void compilePutClosureVar(Node*);
+    void compileGetPromiseInternalField(Node*);
+    void compilePutPromiseInternalField(Node*);
     void compileCompareEqPtr(Node*);
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);
@@ -1481,7 +1483,9 @@ public:
     void compileObjectKeys(Node*);
     void compileObjectCreate(Node*);
     void compileCreateThis(Node*);
+    void compileCreatePromise(Node*);
     void compileNewObject(Node*);
+    void compileNewPromise(Node*);
     void compileToPrimitive(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
@@ -1605,6 +1609,8 @@ public:
     void speculateFinalObject(Edge);
     void speculateRegExpObject(Edge, GPRReg cell);
     void speculateRegExpObject(Edge);
+    void speculatePromiseObject(Edge);
+    void speculatePromiseObject(Edge, GPRReg cell);
     void speculateProxyObject(Edge, GPRReg cell);
     void speculateProxyObject(Edge);
     void speculateDerivedArray(Edge, GPRReg cell);

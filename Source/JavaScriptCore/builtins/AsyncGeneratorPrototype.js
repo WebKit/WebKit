@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Oleksandr Skachkov <gskachkov@gmail.com>.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +29,7 @@ function asyncGeneratorQueueIsEmpty(generator)
 {
     "use strict";
 
-    return @getByIdDirectPrivate(generator, "asyncGeneratorQueueLast") === null;
+    return @getByIdDirectPrivate(generator, "asyncGeneratorQueueFirst") === null;
 }
 
 @globalPrivate
@@ -36,7 +37,7 @@ function asyncGeneratorQueueEnqueue(generator, item)
 {
     "use strict";
 
-    @assert(@getByIdDirectPrivate(item, "asyncGeneratorQueueItemNext") === null && @getByIdDirectPrivate(item, "asyncGeneratorQueueItemPrevious") === null);
+    @assert(@getByIdDirectPrivate(item, "asyncGeneratorQueueItemNext") === null);
 
     if (@getByIdDirectPrivate(generator, "asyncGeneratorQueueFirst") === null) {
         @assert(@getByIdDirectPrivate(generator, "asyncGeneratorQueueLast") === null);
@@ -45,7 +46,6 @@ function asyncGeneratorQueueEnqueue(generator, item)
         @putByIdDirectPrivate(generator, "asyncGeneratorQueueLast", item);
     } else {
         var last = @getByIdDirectPrivate(generator, "asyncGeneratorQueueLast");
-        @putByIdDirectPrivate(item, "asyncGeneratorQueueItemPrevious", last);
         @putByIdDirectPrivate(last, "asyncGeneratorQueueItemNext", item);
         @putByIdDirectPrivate(generator, "asyncGeneratorQueueLast", item);
     }
@@ -56,9 +56,9 @@ function asyncGeneratorQueueDequeue(generator)
 {
     "use strict";
 
-    const result = @getByIdDirectPrivate(generator, "asyncGeneratorQueueFirst");
-    if (result === null)
-        return null;
+    @assert(!@asyncGeneratorQueueIsEmpty(generator), "Async genetator's Queue is an empty List.");
+
+    var result = @getByIdDirectPrivate(generator, "asyncGeneratorQueueFirst");
 
     var updatedFirst = @getByIdDirectPrivate(result, "asyncGeneratorQueueItemNext");
     @putByIdDirectPrivate(generator, "asyncGeneratorQueueFirst", updatedFirst);
@@ -67,18 +67,6 @@ function asyncGeneratorQueueDequeue(generator)
         @putByIdDirectPrivate(generator, "asyncGeneratorQueueLast", null);
 
     return result;
-}
-
-@globalPrivate
-function asyncGeneratorDequeue(generator)
-{
-    "use strict";
-
-    const queue = @getByIdDirectPrivate(generator, "asyncGeneratorQueue");
-
-    @assert(!@asyncGeneratorQueueIsEmpty(generator), "Async genetator's Queue is an empty List.");
-    
-    return @asyncGeneratorQueueDequeue(generator);
 }
 
 @globalPrivate
@@ -110,8 +98,9 @@ function asyncGeneratorReject(generator, exception)
 
     @assert(typeof @getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") === "number", "Generator is not an AsyncGenerator instance.");
 
-    const { promiseCapability } = @asyncGeneratorDequeue(generator);
-    promiseCapability.@reject.@call(@undefined, exception);
+    var promise = @asyncGeneratorQueueDequeue(generator).promise;
+    @assert(@isPromise(promise));
+    @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, exception);
 
     return @asyncGeneratorResumeNext(generator);
 }
@@ -123,8 +112,9 @@ function asyncGeneratorResolve(generator, value, done)
 
     @assert(typeof @getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") === "number", "Generator is not an AsyncGenerator instance.");
 
-    const { promiseCapability } = @asyncGeneratorDequeue(generator);
-    promiseCapability.@resolve.@call(@undefined, { value, done });
+    var promise = @asyncGeneratorQueueDequeue(generator).promise;
+    @assert(@isPromise(promise));
+    @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value, done });
 
     return @asyncGeneratorResumeNext(generator);
 }
@@ -143,23 +133,15 @@ function asyncGeneratorYield(generator, value, resumeMode)
     @putByIdDirectPrivate(generator, "asyncGeneratorSuspendReason", @AsyncGeneratorSuspendReasonAwait);
 
     @awaitValue(generator, value, asyncGeneratorYieldAwaited);
-
-    return @undefined;
 }
 
 @globalPrivate
-function awaitValue(generator, value, onFullfiled)
+function awaitValue(generator, value, onFulfilled)
 {
     "use strict";
 
-    const wrappedValue = @newPromiseCapability(@Promise);
-
-    const onRejected = function (result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeThrow); };
-
-    wrappedValue.@resolve.@call(@undefined, value);
-    wrappedValue.@promise.@then(onFullfiled, onRejected);
-
-    return wrappedValue;
+    var onRejected = function (result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeThrow); };
+    @resolveWithoutPromise(value, onFulfilled, onRejected);
 }
 
 @globalPrivate
@@ -167,8 +149,8 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
 {
     "use strict";
 
-    let value = @undefined;
-    let state = @getByIdDirectPrivate(generator, "generatorState");
+    var value = @undefined;
+    var state = @getByIdDirectPrivate(generator, "generatorState");
 
     @putByIdDirectPrivate(generator, "generatorState", @AsyncGeneratorStateExecuting);
     @putByIdDirectPrivate(generator, "asyncGeneratorSuspendReason", @AsyncGeneratorSuspendReasonNone);
@@ -185,11 +167,10 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
     }
 
     if (@getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") === @AsyncGeneratorSuspendReasonAwait) {
-        const onFulfilled = function(result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeNormal); };
+        var onFulfilled = function(result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeNormal); };
 
         @awaitValue(generator, value, onFulfilled);
-
-        return @undefined;
+        return;
     }
 
     if (@getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") === @AsyncGeneratorSuspendReasonYield)
@@ -199,8 +180,6 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
         @putByIdDirectPrivate(generator, "asyncGeneratorSuspendReason", @AsyncGeneratorSuspendReasonNone);
         return @asyncGeneratorResolve(generator, value, true);
     }
-
-    return @undefined;
 }
 
 @globalPrivate
@@ -210,17 +189,17 @@ function asyncGeneratorResumeNext(generator)
 
     @assert(typeof @getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") === "number", "Generator is not an AsyncGenerator instance.");
 
-    let state = @getByIdDirectPrivate(generator, "generatorState");
+    var state = @getByIdDirectPrivate(generator, "generatorState");
 
     @assert(state !== @AsyncGeneratorStateExecuting, "Async generator should not be in executing state");
 
     if (state === @AsyncGeneratorStateAwaitingReturn)
-        return @undefined;
+        return;
 
     if (@asyncGeneratorQueueIsEmpty(generator))
-        return @undefined;
+        return;
 
-    const next = @getByIdDirectPrivate(generator, "asyncGeneratorQueueFirst");
+    var next = @getByIdDirectPrivate(generator, "asyncGeneratorQueueFirst");
 
     if (next.resumeMode !== @GeneratorResumeModeNormal) {
         if (state === @AsyncGeneratorStateSuspendedStart) {
@@ -231,17 +210,16 @@ function asyncGeneratorResumeNext(generator)
         if (state === @AsyncGeneratorStateCompleted) {
             if (next.resumeMode === @GeneratorResumeModeReturn) {
                 @putByIdDirectPrivate(generator, "generatorState", @AsyncGeneratorStateAwaitingReturn);
-
-                const promiseCapability = @newPromiseCapability(@Promise);
-                promiseCapability.@resolve.@call(@undefined, next.value);
-
-                const throwawayCapabilityPromise = promiseCapability.@promise.@then(
-                    function (result) { generator.@generatorState = @AsyncGeneratorStateCompleted; @asyncGeneratorResolve(generator, result, true); },
-                    function (error) { generator.@generatorState = @AsyncGeneratorStateCompleted; @asyncGeneratorReject(generator, error); });
-
-                @putByIdDirectPrivate(throwawayCapabilityPromise, "promiseIsHandled", true);
-
-                return @undefined;
+                @resolveWithoutPromise(next.value,
+                    function (result) {
+                        @putByIdDirectPrivate(generator, "generatorState", @AsyncGeneratorStateCompleted);
+                        @asyncGeneratorResolve(generator, result, true);
+                    },
+                    function (error) {
+                        @putByIdDirectPrivate(generator, "generatorState", @AsyncGeneratorStateCompleted);
+                        @asyncGeneratorReject(generator, error);
+                    });
+                return;
             }
 
             @assert(next.resumeMode === @GeneratorResumeModeThrow, "Async generator has wrong mode");
@@ -254,27 +232,25 @@ function asyncGeneratorResumeNext(generator)
     @assert(state === @AsyncGeneratorStateSuspendedStart || @isSuspendYieldState(generator), "Async generator has wrong state");
 
     @doAsyncGeneratorBodyCall(generator, next.value, next.resumeMode);
-
-    return @undefined;
 }
 
 @globalPrivate
 function asyncGeneratorEnqueue(generator, value, resumeMode)
 {
     "use strict";
-    
-    const promiseCapability = @newPromiseCapability(@Promise);
+
+    var promise = @newPromise();
     if (!@isObject(generator) || typeof @getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") !== 'number') {
-        promiseCapability.@reject.@call(@undefined, @makeTypeError('|this| should be an async generator'));
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('|this| should be an async generator'));
+        return promise;
     }
 
-    @asyncGeneratorQueueEnqueue(generator, {resumeMode, value, promiseCapability, @asyncGeneratorQueueItemNext: null, @asyncGeneratorQueueItemPrevious: null});
+    @asyncGeneratorQueueEnqueue(generator, {resumeMode, value, promise, @asyncGeneratorQueueItemNext: null});
 
     if (!@isExecutionState(generator))
         @asyncGeneratorResumeNext(generator);
 
-    return promiseCapability.@promise;
+    return promise;
 }
 
 function next(value)

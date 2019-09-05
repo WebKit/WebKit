@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConstructAbility.h"
+#include "ConstructorKind.h"
 #include "ParserModes.h"
 #include "SourceCode.h"
 

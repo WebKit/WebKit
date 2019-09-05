@@ -523,6 +523,13 @@ macro writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
         end)
 end
 
+macro writeBarrierOnCellAndValueWithReload(cell, value, reloadAfterSlowPath)
+    btqnz value, tagMask, .writeBarrierDone
+    btqz value, .writeBarrierDone
+    writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
+.writeBarrierDone:
+end
+
 macro writeBarrierOnOperandWithReload(size, get, cellFieldName, reloadAfterSlowPath)
     get(cellFieldName, t1)
     loadConstantOrVariableCell(size, t1, t2, .writeBarrierDone)
@@ -2583,6 +2590,24 @@ llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatc
 .boxUp:
     orq tagTypeNumber, t0
     return(t0)
+end)
+
+
+llintOpWithProfile(op_get_promise_internal_field, OpGetPromiseInternalField, macro (size, get, dispatch, return)
+    loadVariable(get, m_base, t1)
+    getu(size, OpGetPromiseInternalField, m_index, t2)
+    loadq JSPromise::m_internalFields[t1, t2, SlotSize], t0
+    return(t0)
+end)
+
+llintOp(op_put_promise_internal_field, OpPutPromiseInternalField, macro (size, get, dispatch)
+    loadVariable(get, m_base, t0)
+    get(m_value, t1)
+    loadConstantOrVariable(size, t1, t2)
+    getu(size, OpPutPromiseInternalField, m_index, t1)
+    storeq t2, JSPromise::m_internalFields[t0, t1, SlotSize]
+    writeBarrierOnCellAndValueWithReload(t0, t2, macro() end)
+    dispatch()
 end)
 
 

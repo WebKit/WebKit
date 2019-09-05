@@ -45,7 +45,7 @@ JSPromise* JSPromise::create(VM& vm, Structure* structure)
 
 Structure* JSPromise::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSPromiseType, StructureFlags), info());
 }
 
 JSPromise::JSPromise(VM& vm, Structure* structure)
@@ -56,41 +56,38 @@ JSPromise::JSPromise(VM& vm, Structure* structure)
 void JSPromise::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    putDirect(vm, vm.propertyNames->builtinNames().promiseStatePrivateName(), jsNumber(static_cast<unsigned>(Status::Pending)));
-    putDirect(vm, vm.propertyNames->builtinNames().promiseReactionsPrivateName(), jsUndefined());
-    putDirect(vm, vm.propertyNames->builtinNames().promiseResultPrivateName(), jsUndefined());
+    m_internalFields[static_cast<unsigned>(Field::Flags)].set(vm, this, jsNumber(static_cast<unsigned>(Status::Pending)));
+    m_internalFields[static_cast<unsigned>(Field::ReactionsOrResult)].set(vm, this, jsUndefined());
 }
 
-void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValue executor)
+void JSPromise::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSFunction* initializePromise = globalObject->initializePromiseFunction();
-    CallData callData;
-    CallType callType = JSC::getCallData(exec->vm(), initializePromise, callData);
-    ASSERT(callType != CallType::None);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(executor);
-    ASSERT(!arguments.hasOverflowed());
-    call(exec, initializePromise, callType, callData, this, arguments);
+    auto* thisObject = jsCast<JSPromise*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.appendValues(thisObject->m_internalFields, numberOfInternalFields);
 }
 
-auto JSPromise::status(VM& vm) const -> Status
+auto JSPromise::status(VM&) const -> Status
 {
-    JSValue value = getDirect(vm, vm.propertyNames->builtinNames().promiseStatePrivateName());
-    ASSERT(value.isUInt32());
-    return static_cast<Status>(value.asUInt32());
+    JSValue value = m_internalFields[static_cast<unsigned>(Field::Flags)].get();
+    uint32_t flags = value.asUInt32AsAnyInt();
+    return static_cast<Status>(flags & stateMask);
 }
 
 JSValue JSPromise::result(VM& vm) const
 {
-    return getDirect(vm, vm.propertyNames->builtinNames().promiseResultPrivateName());
+    Status status = this->status(vm);
+    if (status == Status::Pending)
+        return jsUndefined();
+    return m_internalFields[static_cast<unsigned>(Field::ReactionsOrResult)].get();
 }
 
-bool JSPromise::isHandled(VM& vm) const
+bool JSPromise::isHandled(VM&) const
 {
-    JSValue value = getDirect(vm, vm.propertyNames->builtinNames().promiseIsHandledPrivateName());
-    ASSERT(value.isBoolean());
-    return value.asBoolean();
+    JSValue value = m_internalFields[static_cast<unsigned>(Field::Flags)].get();
+    uint32_t flags = value.asUInt32AsAnyInt();
+    return flags & isHandledFlag;
 }
 
 JSPromise* JSPromise::resolve(JSGlobalObject& globalObject, JSValue value)

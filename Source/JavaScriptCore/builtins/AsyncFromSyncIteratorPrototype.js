@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Oleksandr Skachkov <gskachkov@gmail.com>.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,125 +28,121 @@ function next(value)
 {
     "use strict";
 
-    const promiseCapability = @newPromiseCapability(@Promise);
+    var promise = @newPromise();
 
     if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
-        promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator is not an object.'));
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator is not an object.'));
+        return promise;
     }
 
-    const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
+    var syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
     try {
-        const { value: nextValue, done: nextDone } = @getByIdDirectPrivate(this, "nextMethod").@call(syncIterator, value);
-        const valueWrapperCapability = @newPromiseCapability(@Promise);
-        valueWrapperCapability.@resolve.@call(@undefined, nextValue);
-        valueWrapperCapability.@promise.@then(
-            function (result) { promiseCapability.@resolve.@call(@undefined, { value: result, done: !!nextDone }); },
-            function (error) { promiseCapability.@reject.@call(@undefined, error); });
-     } catch(e) {
-         promiseCapability.@reject.@call(@undefined, e);
-     }
+        var nextResult = @getByIdDirectPrivate(this, "nextMethod").@call(syncIterator, value);
+        var nextDone = !!nextResult.done;
+        var nextValue = nextResult.value;
+        @resolveWithoutPromise(nextValue,
+            function (result) { @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value: result, done: nextDone }); },
+            function (error) { @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error); });
+    } catch (e) {
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+    }
 
-    return promiseCapability.@promise;
+    return promise;
 }
 
 function return(value)
 {
     "use strict";
 
-    const promiseCapability = @newPromiseCapability(@Promise);
+    var promise = @newPromise();
 
     if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
-        promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator is not an object.'));
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator is not an object.'));
+        return promise;
     }
 
-    const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
+    var syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
-    let returnMethod;
+    var returnMethod;
 
     try {
         returnMethod = syncIterator.return;
     } catch (e) {
-        promiseCapability.@reject.@call(@undefined, e);
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+        return promise;
     }
 
     if (returnMethod === @undefined) {
-        promiseCapability.@resolve.@call(@undefined, { value, done: true });
-        return promiseCapability.@promise;
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value, done: true });
+        return promise;
     }
     
     try {
-        const returnResult = returnMethod.@call(syncIterator, value);
+        var returnResult = returnMethod.@call(syncIterator, value);
 
         if (!@isObject(returnResult)) {
-            promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator result interface is not an object.'));
-            return promiseCapability.@promise;
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator result interface is not an object.'));
+            return promise;
         }
 
-        const { value: resultValue, done: resultDone } = returnResult;
-        const valueWrapperCapability = @newPromiseCapability(@Promise);
-
-        valueWrapperCapability.@resolve.@call(@undefined, resultValue);
-        valueWrapperCapability.@promise.@then(
-            function (result) { promiseCapability.@resolve.@call(@undefined, { value: result, done: resultDone }); },
-            function (error) { promiseCapability.@reject.@call(@undefined, error); });
+        var resultDone = !!returnResult.done;
+        var resultValue = returnResult.value;
+        @resolveWithoutPromise(resultValue,
+            function (result) { @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value: result, done: resultDone }); },
+            function (error) { @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error); });
     } catch (e) {
-        promiseCapability.@reject.@call(@undefined, e);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
 
-    return promiseCapability.@promise;
+    return promise;
 }
 
 function throw(exception)
 {
     "use strict";
 
-    const promiseCapability = @newPromiseCapability(@Promise);
+    var promise = @newPromise();
 
     if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
-        promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator is not an object.'));
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator is not an object.'));
+        return promise;
     }
 
-    const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
+    var syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
-    let throwMethod;
+    var throwMethod;
 
     try {
         throwMethod = syncIterator.throw;
     } catch (e) {
-        promiseCapability.@reject.@call(@undefined, e);
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+        return promise;
     }
 
     if (throwMethod === @undefined) {
-        promiseCapability.@reject.@call(@undefined, exception);
-        return promiseCapability.@promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, exception);
+        return promise;
     }
     
     try {
-        const throwResult = throwMethod.@call(syncIterator, exception);
+        var throwResult = throwMethod.@call(syncIterator, exception);
         
         if (!@isObject(throwResult)) {
-            promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator result interface is not an object.'));
-            return promiseCapability.@promise;
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator result interface is not an object.'));
+            return promise;
         }
         
-        const { value: throwValue, done: throwDone } = throwResult;
-        const valueWrapperCapability = @newPromiseCapability(@Promise);
-        
-        valueWrapperCapability.@resolve.@call(@undefined, throwValue);
-        valueWrapperCapability.@promise.@then(
-            function (result) { promiseCapability.@resolve.@call(@undefined, { value: result, done: throwDone }); },
-            function (error) { promiseCapability.@reject.@call(@undefined, error); });
+        var throwDone = !!throwResult.done;
+        var throwValue = throwResult.value;
+        @resolveWithoutPromise(throwValue,
+            function (result) { @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value: result, done: throwDone }); },
+            function (error) { @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error); });
     } catch (e) {
-        promiseCapability.@reject.@call(@undefined, e);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
     
-    return promiseCapability.@promise;
+    return promise;
 }
 
 @globalPrivate

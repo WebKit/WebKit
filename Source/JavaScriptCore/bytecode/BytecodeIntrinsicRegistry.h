@@ -41,11 +41,13 @@ class RegisterID;
     macro(argumentCount) \
     macro(getByIdDirect) \
     macro(getByIdDirectPrivate) \
+    macro(getPromiseInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isJSArray) \
     macro(isProxyObject) \
     macro(isDerivedArray) \
+    macro(isPromise) \
     macro(isRegExpObject) \
     macro(isMap) \
     macro(isSet) \
@@ -58,10 +60,13 @@ class RegisterID;
     macro(putByIdDirect) \
     macro(putByIdDirectPrivate) \
     macro(putByValDirect) \
+    macro(putPromiseInternalField) \
     macro(toNumber) \
     macro(toString) \
     macro(toObject) \
     macro(newArrayWithSize) \
+    macro(newPromise) \
+    macro(createPromise) \
     macro(defineEnumerableWritableConfigurableDataProperty) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
@@ -88,6 +93,11 @@ class RegisterID;
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \
+    macro(promiseStateMask) \
+    macro(promiseFlagsIsHandled) \
+    macro(promiseFlagsIsFirstResolvingFunctionCalled) \
+    macro(promiseFieldFlags) \
+    macro(promiseFieldReactionsOrResult) \
     macro(GeneratorResumeModeNormal) \
     macro(GeneratorResumeModeThrow) \
     macro(GeneratorResumeModeReturn) \

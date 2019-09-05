@@ -406,7 +406,7 @@ var assert = function assert() {
                 },
                 {
                     regexp: /Promise: cannot be called without the new keyword/,
-                    replStr: "calling Promise constructor without new is invalid"
+                    replStr: "Cannot call a constructor without |new|"
                 },
                 {
                     regexp: /Promise: argument is not a Function object/,

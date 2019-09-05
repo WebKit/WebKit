@@ -1203,6 +1203,37 @@ void JIT::emit_op_put_to_arguments(const Instruction* currentInstruction)
     store32(regT2, Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>) + PayloadOffset));
 }
 
+void JIT::emit_op_get_promise_internal_field(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetPromiseInternalField>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    int dst = bytecode.m_dst.offset();
+    int base = bytecode.m_base.offset();
+    unsigned index = bytecode.m_index;
+    ASSERT(index < JSPromise::numberOfInternalFields);
+
+    emitLoadPayload(base, regT2);
+    load32(Address(regT2, JSPromise::offsetOfInternalField(index) + TagOffset), regT1);
+    load32(Address(regT2, JSPromise::offsetOfInternalField(index) + PayloadOffset), regT0);
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitStore(dst, regT1, regT0);
+}
+
+void JIT::emit_op_put_promise_internal_field(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpPutPromiseInternalField>();
+    int base = bytecode.m_base.offset();
+    int value = bytecode.m_value.offset();
+    unsigned index = bytecode.m_index;
+    ASSERT(index < JSPromise::numberOfInternalFields);
+
+    emitLoadPayload(base, regT0);
+    emitLoad(value, regT1, regT2);
+    store32(regT1, Address(regT0, JSPromise::offsetOfInternalField(index) + TagOffset));
+    store32(regT2, Address(regT0, JSPromise::offsetOfInternalField(index) + PayloadOffset));
+    emitWriteBarrier(base, value, ShouldFilterValue);
+}
+
 } // namespace JSC
 
 #endif // USE(JSVALUE32_64)

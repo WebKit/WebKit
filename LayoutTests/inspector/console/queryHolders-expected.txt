@@ -54,13 +54,13 @@ Tests for the `queryHolders` function in the Command Line API.
 [Root] (1)
 
 -- Running test case: CommandLineAPI.queryHolders.PromiseThen
-[Root, Window, object] (3)
+[Root, object] (2)
 
 -- Running test case: CommandLineAPI.queryHolders.PromiseCatch
-[Root, Window, object] (3)
+[Root, object] (2)
 
 -- Running test case: CommandLineAPI.queryHolders.PromiseFinally
-[Root, Window, object] (3)
+[Root, object] (2)
 
 -- Running test case: CommandLineAPI.queryHolders.EventListenerCallback
 [<div id="event-listener-target">, Root] (2)

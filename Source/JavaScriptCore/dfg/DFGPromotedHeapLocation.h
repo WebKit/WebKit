@@ -54,6 +54,7 @@ enum PromotedLocationKind {
     ArgumentPLoc,
     ArgumentsCalleePLoc,
     ClosureVarPLoc,
+    PromiseInternalFieldPLoc,
     FunctionActivationPLoc,
     FunctionExecutablePLoc,
     IndexedPropertyPLoc,

@@ -419,6 +419,8 @@ EncodedJSValue JIT_OPERATION operationNewAsyncGeneratorFunction(ExecState*, JSSc
 EncodedJSValue JIT_OPERATION operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 void JIT_OPERATION operationSetFunctionName(ExecState*, JSCell*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewPromise(ExecState*, Structure*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewInternalPromise(ExecState*, Structure*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewRegexp(ExecState*, JSCell*) WTF_INTERNAL;
 UnusedPtr JIT_OPERATION operationHandleTraps(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
