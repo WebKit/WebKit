@@ -1,3 +1,17 @@
+2019-09-05  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Retain certain parameters when following menu links
+        https://bugs.webkit.org/show_bug.cgi?id=201463
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/site_menu.py:
+        (SiteMenu.add_endpoint): Allow added endpoints to define parameters to be retained.
+        * resultsdbpy/resultsdbpy/view/templates/base.html: When clicking on a site-menu link,
+        retain the specified parameters
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+        (ViewRoutes.__init__):
+
 2019-09-05  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add proper layout test support for ephemeral sessions

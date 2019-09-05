@@ -41,23 +41,42 @@
         <button style="width: 44px" class="button mobile-sidebar-control">☰</button>
     </div>
     <div class="actions">
-        <div class="list">
-        {% for name, url in site_menu.items() %}
-            <div class="item">
-            {% if request.path == url() %}
-                <a href="{{ url() }}">
-            {% else %}
-                <a href="{{ url() }}">
-            {% endif %}
-            {{ name }}</a></div>
-        {% endfor %}
-        </div>
+        <div class="list" id="site-menu"></div>
     </div>
 </div>
 {% block content %}{% endblock %}
 <script type="module">
+    import {queryToParams, paramsToQuery} from '/assets/js/common.js';
+    import {DOM, REF} from '/library/js/Ref.js';
     import {disableBackGesture} from '/library/js/Utils.js';
+
     disableBackGesture();
+
+    DOM.inject(
+        document.getElementById('site-menu'),
+        `{% for name, url_info in site_menu.items() %}
+            <div class="item">
+                <a style="cursor: pointer" ref="${REF.createRef({
+                        onElementMount: element => {
+                            element.onclick = () => {
+                                const currentParams = queryToParams(document.URL.split('?')[1]);
+                                let retainedParams = {};
+                                {{ url_info['parameters']|safe }}.forEach((parameter) => {
+                                    if (currentParams.hasOwnProperty(parameter))
+                                        retainedParams[parameter] = currentParams[parameter];
+                                });
+                                let destination = "{{ url_info['url']() }}";
+                                if (Object.keys(retainedParams).length)
+                                    destination = `${destination}?${paramsToQuery(retainedParams)}`;
+                                window.location.assign(destination);
+                            };
+                        },
+                    })}">
+                    {{ name }}
+                </a>
+            </div>
+        {% endfor %}`,
+    );
 </script>
 </body>
 </html>

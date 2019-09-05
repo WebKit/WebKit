@@ -33,8 +33,11 @@ class SiteMenu(object):
     def add_link(self, name, url):
         self._name_link_mapping[name] = lambda: url
 
-    def add_endpoint(self, name, endpoint):
-        self._name_link_mapping[name] = lambda: url_for(endpoint)
+    def add_endpoint(self, name, endpoint, parameters=None):
+        self._name_link_mapping[name] = dict(
+            url=lambda: url_for(endpoint),
+            parameters=parameters or [],
+        )
 
     @classmethod
     def render_with_site_menu(cls):

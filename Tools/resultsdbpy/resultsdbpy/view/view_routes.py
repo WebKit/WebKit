@@ -85,10 +85,10 @@ class ViewRoutes(AuthedBlueprint):
         self.add_url_rule('/urls/worker', 'urls-worker', self.ci.worker, methods=('GET',))
         self.add_url_rule('/urls/build', 'urls-build', self.ci.build, methods=('GET',))
 
-        self.site_menu.add_endpoint('Main', self.name + '.main')
-        self.site_menu.add_endpoint('Suites', self.name + '.suites')
+        self.site_menu.add_endpoint('Main', self.name + '.main', parameters=['branch'])
+        self.site_menu.add_endpoint('Suites', self.name + '.suites', parameters=['branch'])
         self.site_menu.add_endpoint('Documentation', self.name + '.documentation')
-        self.site_menu.add_endpoint('Commits', self.name + '.commits')
+        self.site_menu.add_endpoint('Commits', self.name + '.commits', parameters=['branch'])
 
         self.register_error_handler(500, self.response_500)
 
