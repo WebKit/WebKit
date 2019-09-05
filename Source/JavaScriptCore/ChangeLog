@@ -1,3 +1,18 @@
+2019-09-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r247463.
+        https://bugs.webkit.org/show_bug.cgi?id=201515
+
+        JetStream2 code-load related regression (Requested by
+        yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "Keyword lookup can use memcmp to get around unaligned load
+        undefined behavior"
+        https://bugs.webkit.org/show_bug.cgi?id=199650
+        https://trac.webkit.org/changeset/247463
+
 2019-09-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         LazyClassStructure::setConstructor should not store the constructor to the global object
