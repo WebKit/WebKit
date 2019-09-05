@@ -104,14 +104,14 @@ public:
     LValue constBool(bool value);
     LValue constInt32(int32_t value);
 
-    LValue weakPointer(DFG::Graph& graph, JSCell* cell)
+    LValue alreadyRegisteredWeakPointer(DFG::Graph& graph, JSCell* cell)
     {
         ASSERT(graph.m_plan.weakReferences().contains(cell));
 
         return constIntPtr(bitwise_cast<intptr_t>(cell));
     }
 
-    LValue weakPointer(DFG::FrozenValue* value)
+    LValue alreadyRegisteredFrozenPointer(DFG::FrozenValue* value)
     {
         RELEASE_ASSERT(value->value().isCell());
 

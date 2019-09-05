@@ -230,15 +230,15 @@ function Promise(executor)
     if (typeof executor !== "function")
         @throwTypeError("Promise constructor takes a function argument");
 
-    var result = @createPromise(new.target, /* isInternalPromise */ false);
-    var promise = result;
+    var promise = @createPromise(new.target, /* isInternalPromise */ false);
+    var capturedPromise = promise;
 
     function @resolve(resolution) {
-        return @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, resolution);
+        return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
     }
 
     function @reject(reason) {
-        return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
+        return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
     }
 
     try {
@@ -247,7 +247,7 @@ function Promise(executor)
         @reject(error);
     }
 
-    return result;
+    return promise;
 }
 
 @nakedConstructor
@@ -258,15 +258,15 @@ function InternalPromise(executor)
     if (typeof executor !== "function")
         @throwTypeError("InternalPromise constructor takes a function argument");
 
-    var result = @createPromise(new.target, /* isInternalPromise */ true);
-    var promise = result;
+    var promise = @createPromise(new.target, /* isInternalPromise */ true);
+    var capturedPromise = promise;
 
     function @resolve(resolution) {
-        return @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, resolution);
+        return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
     }
 
     function @reject(reason) {
-        return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
+        return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
     }
 
     try {
@@ -275,5 +275,5 @@ function InternalPromise(executor)
         @reject(error);
     }
 
-    return result;
+    return promise;
 }

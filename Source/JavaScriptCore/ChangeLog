@@ -1,5 +1,28 @@
 2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up after r249530 and r249509
+        https://bugs.webkit.org/show_bug.cgi?id=201495
+
+        Rename FTLOutput::weakPointer to alreadyRegisteredWeakPointer and alreadyRegisteredFrozenPointer.
+
+        * builtins/PromiseConstructor.js:
+        (nakedConstructor.Promise.resolve):
+        (nakedConstructor.Promise.reject):
+        (nakedConstructor.Promise):
+        (nakedConstructor.InternalPromise.resolve):
+        (nakedConstructor.InternalPromise.reject):
+        (nakedConstructor.InternalPromise):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::weakPointer):
+        (JSC::FTL::DFG::LowerDFGToB3::frozenPointer):
+        (JSC::FTL::DFG::LowerDFGToB3::weakStructure):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::alreadyRegisteredWeakPointer):
+        (JSC::FTL::Output::alreadyRegisteredFrozenPointer):
+        (JSC::FTL::Output::weakPointer): Deleted.
+
+2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Generalize Get/PutPromiseInternalField for InternalFieldObjectImpl
         https://bugs.webkit.org/show_bug.cgi?id=201513
 

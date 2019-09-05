@@ -17449,12 +17449,12 @@ private:
     LValue weakPointer(JSCell* pointer)
     {
         addWeakReference(pointer);
-        return m_out.weakPointer(m_graph, pointer);
+        return m_out.alreadyRegisteredWeakPointer(m_graph, pointer);
     }
 
     LValue frozenPointer(FrozenValue* value)
     {
-        return m_out.weakPointer(value);
+        return m_out.alreadyRegisteredFrozenPointer(value);
     }
 
     LValue weakStructureID(RegisteredStructure structure)
@@ -17465,7 +17465,7 @@ private:
     LValue weakStructure(RegisteredStructure structure)
     {
         ASSERT(!!structure.get());
-        return m_out.weakPointer(m_graph, structure.get());
+        return m_out.alreadyRegisteredWeakPointer(m_graph, structure.get());
     }
     
     TypedPointer addressFor(LValue base, int operand, ptrdiff_t offset = 0)
