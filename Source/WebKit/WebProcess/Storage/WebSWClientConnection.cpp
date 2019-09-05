@@ -190,11 +190,11 @@ void WebSWClientConnection::runOrDelayTaskForImport(WTF::Function<void()>&& task
     initializeConnectionIfNeeded();
 }
 
-void WebSWClientConnection::whenRegistrationReady(const SecurityOrigin& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
+void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
 {
     uint64_t callbackID = ++m_previousCallbackIdentifier;
     m_ongoingRegistrationReadyTasks.add(callbackID, WTFMove(callback));
-    ensureConnectionAndSend(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, topOrigin.data(), clientURL));
+    ensureConnectionAndSend(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, topOrigin, clientURL));
 }
 
 void WebSWClientConnection::registrationReady(uint64_t callbackID, WebCore::ServiceWorkerRegistrationData&& registrationData)

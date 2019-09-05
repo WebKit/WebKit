@@ -105,9 +105,6 @@ private:
     void notifyFailedFetchingScript(ServiceWorkerJob&, const ResourceError&);
     void destroyJob(ServiceWorkerJob&);
 
-    void didFinishGetRegistrationRequest(uint64_t requestIdentifier, Optional<ServiceWorkerRegistrationData>&&);
-    void didFinishGetRegistrationsRequest(uint64_t requestIdentifier, Vector<ServiceWorkerRegistrationData>&&);
-
     DocumentOrWorkerIdentifier contextIdentifier() final;
 
     SWClientConnection& ensureSWClientConnection();
@@ -144,20 +141,6 @@ private:
 #ifndef NDEBUG
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
-
-    struct PendingPromise {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        PendingPromise(Ref<DeferredPromise>&& promise, Ref<PendingActivity<ServiceWorkerContainer>>&& pendingActivity)
-            : promise(WTFMove(promise))
-            , pendingActivity(WTFMove(pendingActivity))
-        { }
-
-        Ref<DeferredPromise> promise;
-        Ref<PendingActivity<ServiceWorkerContainer>> pendingActivity;
-    };
-
-    uint64_t m_lastPendingPromiseIdentifier { 0 };
-    HashMap<uint64_t, std::unique_ptr<PendingPromise>> m_pendingPromises;
 
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;

@@ -2490,6 +2490,7 @@ workers/service/ServiceWorkerRegistrationData.cpp
 workers/service/ServiceWorkerRegistrationKey.cpp
 workers/service/ServiceWorkerRegistrationOptions.cpp
 workers/service/ServiceWorkerWindowClient.cpp
+workers/service/WorkerSWClientConnection.cpp
 
 workers/service/context/ServiceWorkerDebuggable.cpp
 workers/service/context/ServiceWorkerFetch.cpp

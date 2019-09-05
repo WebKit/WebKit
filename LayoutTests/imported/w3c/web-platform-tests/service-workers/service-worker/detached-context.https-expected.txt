@@ -1,5 +1,4 @@
 
-
 PASS accessing a ServiceWorkerRegistration from a removed iframe 
 PASS accessing a ServiceWorker object from a removed iframe 
 PASS accessing navigator.serviceWorker on a detached iframe 

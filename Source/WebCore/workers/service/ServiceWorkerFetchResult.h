@@ -42,6 +42,8 @@ struct ServiceWorkerFetchResult {
     String referrerPolicy;
     ResourceError scriptError;
 
+    ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, ServiceWorkerFetchResult&);
 };

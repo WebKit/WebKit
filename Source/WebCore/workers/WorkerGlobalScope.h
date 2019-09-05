@@ -51,6 +51,7 @@ class ScheduledAction;
 class WorkerInspectorController;
 class WorkerLocation;
 class WorkerNavigator;
+class WorkerSWClientConnection;
 class WorkerThread;
 
 namespace IDBClient {
@@ -75,6 +76,9 @@ public:
 
     WorkerCacheStorageConnection& cacheStorageConnection();
     MessagePortChannelProvider& messagePortChannelProvider();
+#if ENABLE(SERVICE_WORKER)
+    WorkerSWClientConnection& swClientConnection();
+#endif
 
     WorkerScriptController* script() { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
@@ -214,6 +218,9 @@ private:
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
     std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
     unsigned long m_uniqueIdentifier { 1 };
+#if ENABLE(SERVICE_WORKER)
+    RefPtr<WorkerSWClientConnection> m_swClientConnection;
+#endif
 };
 
 } // namespace WebCore

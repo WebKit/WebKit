@@ -7323,6 +7323,8 @@
 		41A023ED1A39DB7900F722DF /* WritableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStream.idl; sourceTree = "<group>"; };
 		41A0829922932EF4008426E0 /* FeaturePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeaturePolicy.h; sourceTree = "<group>"; };
 		41A0829B22932EF4008426E0 /* FeaturePolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeaturePolicy.cpp; sourceTree = "<group>"; };
+		41A098BC231E91D100F4FFF0 /* WorkerSWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerSWClientConnection.cpp; sourceTree = "<group>"; };
+		41A098BE231E91D100F4FFF0 /* WorkerSWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerSWClientConnection.h; sourceTree = "<group>"; };
 		41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCProvider.cpp; path = libwebrtc/LibWebRTCProvider.cpp; sourceTree = "<group>"; };
 		41A1B01A1E542396007F3769 /* JSDOMGuardedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGuardedObject.h; sourceTree = "<group>"; };
 		41A1B01B1E542396007F3769 /* JSDOMGuardedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGuardedObject.cpp; sourceTree = "<group>"; };
@@ -18934,6 +18936,8 @@
 				46EF14261F97B7BA00C2A524 /* ServiceWorkerWindowClient.idl */,
 				46ECB6361FD0A3BB0088E5AD /* SWClientConnection.cpp */,
 				46ECB6371FD0A3BB0088E5AD /* SWClientConnection.h */,
+				41A098BC231E91D100F4FFF0 /* WorkerSWClientConnection.cpp */,
+				41A098BE231E91D100F4FFF0 /* WorkerSWClientConnection.h */,
 			);
 			path = service;
 			sourceTree = "<group>";

@@ -47,6 +47,7 @@
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerReportingProxy.h"
+#include "WorkerSWClientConnection.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/ScriptArguments.h>
@@ -469,6 +470,15 @@ MessagePortChannelProvider& WorkerGlobalScope::messagePortChannelProvider()
         m_messagePortChannelProvider = makeUnique<WorkerMessagePortChannelProvider>(*this);
     return *m_messagePortChannelProvider;
 }
+
+#if ENABLE(SERVICE_WORKER)
+WorkerSWClientConnection& WorkerGlobalScope::swClientConnection()
+{
+    if (!m_swClientConnection)
+        m_swClientConnection = WorkerSWClientConnection::create(*this);
+    return *m_swClientConnection;
+}
+#endif
 
 void WorkerGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
 {
