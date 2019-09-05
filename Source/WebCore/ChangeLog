@@ -1,3 +1,23 @@
+2019-09-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Don't call PlatformMediaSessionManager methods when neither VIDEO nor WEB_AUDIO is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=201508
+
+        Reviewed by Jer Noble.
+
+        Definitions of these methods are guarded with #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO),
+        so calling them causes linking errors.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShouldDeactivateAudioSession):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::processWillSuspend):
+        (WebCore::Internals::processDidResume):
+        (WebCore::Internals::setIsPlayingToAutomotiveHeadUnit):
+
 2019-09-05  Keith Rollin  <krollin@apple.com>
 
         Fix implicit conversion that loses precision
