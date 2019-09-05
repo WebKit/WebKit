@@ -1119,10 +1119,10 @@ void InspectorNetworkAgent::interceptWithResponse(ErrorString& errorString, cons
         overrideResponse.setMimeType(*mimeType);
     if (headers) {
         HTTPHeaderMap explicitHeaders;
-        for (auto& [key, value] : *headers) {
+        for (auto& header : *headers) {
             String headerValue;
-            if (value->asString(headerValue))
-                explicitHeaders.add(key, headerValue);
+            if (header.value->asString(headerValue))
+                explicitHeaders.add(header.key, headerValue);
         }
         overrideResponse.setHTTPHeaderFields(WTFMove(explicitHeaders));
         overrideResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, overrideResponse.mimeType());

@@ -1,3 +1,17 @@
+2019-09-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] InspectorNetworkAgent.cpp(1122,20): error: cannot decompose this type; 'std::tuple_size<const WTF::KeyValuePair<WTF::String, WTF::RefPtr<WTF::JSONImpl::Value, WTF::DumbPtrTraits<WTF::JSONImpl::Value> > >>::value' is not a valid integral const
+        https://bugs.webkit.org/show_bug.cgi?id=201489
+
+        Unreviewed build fix for clang-cl.
+
+        clang-cl 8 can't use a structured binding for a const struct.
+
+        No behavior change.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::interceptWithResponse): Not to use a structured binding for a const struct.
+
 2019-09-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, another build fix after r249501.
