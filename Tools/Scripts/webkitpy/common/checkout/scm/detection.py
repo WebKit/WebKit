@@ -34,6 +34,7 @@ from webkitpy.common.system.executive import Executive
 
 from .svn import SVN
 from .git import Git
+from .stub_repository import StubRepository
 
 _log = logging.getLogger(__name__)
 
@@ -73,6 +74,9 @@ class SCMDetector(object):
 
         if Git.in_working_directory(real_path, executive=self._executive):
             return Git(cwd=real_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
+
+        if StubRepository.in_working_directory(real_path, filesystem=self._filesystem):
+            return StubRepository(cwd=real_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
 
         return None
 
