@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKCookieManager.h"
+#ifndef WKHTTPCookieStoreRef_h
+#define WKHTTPCookieStoreRef_h
 
-#include "APIArray.h"
-#include "WKAPICast.h"
+#include <WebKit/WKBase.h>
+#include <WebKit/WKCookieManager.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKTypeID WKCookieManagerGetTypeID()
-{
-    return 0;
+WK_EXPORT WKTypeID WKHTTPCookieStoreGetTypeID();
+
+typedef void (*WKHTTPCookieStoreDeleteAllCookiesFunction)(void*);
+WK_EXPORT void WKHTTPCookieStoreDeleteAllCookies(WKHTTPCookieStoreRef cookieStore, void* context, WKHTTPCookieStoreDeleteAllCookiesFunction callback);
+    
+typedef void (*WKHTTPCookieStoreSetHTTPCookieAcceptPolicyFunction)(void*);
+WK_EXPORT void WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKHTTPCookieStoreRef cookieStore, WKHTTPCookieAcceptPolicy policy, void* context, WKHTTPCookieStoreSetHTTPCookieAcceptPolicyFunction callback);
+
+#ifdef __cplusplus
 }
+#endif
 
-void WKCookieManagerSetClient(WKCookieManagerRef, const WKCookieManagerClientBase*)
-{
-}
-
-void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef, void*, WKCookieManagerGetCookieHostnamesFunction)
-{
-}
-
-void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef, WKStringRef)
-{
-}
-
-void WKCookieManagerDeleteAllCookies(WKCookieManagerRef)
-{
-}
-
-void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef, double)
-{
-}
-
-void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef, WKHTTPCookieAcceptPolicy, void*, WKCookieManagerSetHTTPCookieAcceptPolicyFunction)
-{
-}
-
-void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef, void*, WKCookieManagerGetHTTPCookieAcceptPolicyFunction)
-{
-}
-
-void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef, bool)
-{
-}
-
-void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef)
-{
-}
-
-void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef)
-{
-}
+#endif /* WKHTTPCookieStoreRef_h */

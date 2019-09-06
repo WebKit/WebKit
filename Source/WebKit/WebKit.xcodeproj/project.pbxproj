@@ -1102,6 +1102,7 @@
 		5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */; };
 		5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C7FB47021E97DC5009E3241 /* WebCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */; };
@@ -1723,8 +1724,6 @@
 			compilerSpec = com.apple.compilers.proxy.script;
 			filePatterns = "*.h";
 			fileType = pattern.proxy;
-			inputFiles = (
-			);
 			isEditable = 1;
 			outputFiles = (
 				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
@@ -3636,6 +3635,8 @@
 		5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKCustomHeaderFields.h; sourceTree = "<group>"; };
 		5C5D238A227A1D9B000B9BDA /* APICustomHeaderFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICustomHeaderFields.h; sourceTree = "<group>"; };
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
+		5C66A4B32320961300EA4D44 /* WKHTTPCookieStoreRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKHTTPCookieStoreRef.cpp; sourceTree = "<group>"; };
+		5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStoreRef.h; sourceTree = "<group>"; };
 		5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImplCocoa.mm; sourceTree = "<group>"; };
 		5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImplCocoa.h; sourceTree = "<group>"; };
 		5C74300E21500492004BFA17 /* WKWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcess.h; sourceTree = "<group>"; };
@@ -8040,6 +8041,8 @@
 				BC0E619612D6CD120012A72A /* WKGeolocationPosition.h */,
 				B62E730F143047A60069EC35 /* WKHitTestResult.cpp */,
 				B62E7311143047B00069EC35 /* WKHitTestResult.h */,
+				5C66A4B32320961300EA4D44 /* WKHTTPCookieStoreRef.cpp */,
+				5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */,
 				5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */,
 				5110AE0B133C16CB0072717A /* WKIconDatabase.h */,
 				1C8E293812761E5B00BC7BD0 /* WKInspector.cpp */,
@@ -10196,6 +10199,7 @@
 				1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */,
 				B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */,
 				51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */,
+				5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */,
 				5110AE0D133C16CB0072717A /* WKIconDatabase.h in Headers */,
 				5123CF1C133D260A0056F800 /* WKIconDatabaseCG.h in Headers */,
 				BCCF6AC312C91F34008F9C35 /* WKImage.h in Headers */,

@@ -195,7 +195,6 @@ if (ENABLE_WEBKIT)
     set(TestWebKit_SOURCES
         Tests/WebKit/AboutBlankLoad.cpp
         Tests/WebKit/CanHandleRequest.cpp
-        Tests/WebKit/CookieManager.cpp
         Tests/WebKit/DOMWindowExtensionBasic.cpp
         Tests/WebKit/DOMWindowExtensionNoCache.cpp
         Tests/WebKit/DocumentStartUserScriptAlertCrash.cpp

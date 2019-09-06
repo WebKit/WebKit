@@ -36,7 +36,6 @@
 #import <Security/SecItem.h>
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKContextPrivate.h>
-#import <WebKit/WKCookieManager.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
@@ -69,7 +68,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
-    WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(context), true);
+    WKContextSetStorageAccessAPIEnabled(context, true);
 
     WKWebsiteDataStore* poolWebsiteDataStore = (__bridge WKWebsiteDataStore *)WKContextGetWebsiteDataStore((__bridge WKContextRef)globalWebViewConfiguration.processPool);
     if (libraryPath) {

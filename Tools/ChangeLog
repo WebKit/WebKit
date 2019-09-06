@@ -1,3 +1,24 @@
+2019-09-06  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate all WKCookieManagerRef functions
+        https://bugs.webkit.org/show_bug.cgi?id=201473
+
+        Reviewed by Chris Dumez.
+
+        Adopt replacement C API in WebKitTestRunner.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/CookieManager.cpp: Removed, because the functions it tests were removed.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2019-09-06  Tim Horton  <timothy_horton@apple.com>
 
         Marking up a note on iOS results in a PDF with no contents

@@ -80,8 +80,6 @@ public:
     void setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy, Function<void (CallbackBase::Error)>&&);
     void getHTTPCookieAcceptPolicy(PAL::SessionID, Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>&&);
 
-    void setStorageAccessAPIEnabled(bool);
-
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);
 

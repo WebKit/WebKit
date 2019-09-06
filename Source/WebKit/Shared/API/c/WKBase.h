@@ -100,6 +100,7 @@ typedef const struct OpaqueWKGeolocationManager* WKGeolocationManagerRef;
 typedef const struct OpaqueWKGeolocationPermissionRequest* WKGeolocationPermissionRequestRef;
 typedef const struct OpaqueWKGeolocationPosition* WKGeolocationPositionRef;
 typedef const struct OpaqueWKGrammarDetail* WKGrammarDetailRef;
+typedef const struct OpaqueWKHTTPCookieStore* WKHTTPCookieStoreRef;
 typedef const struct OpaqueWKHitTestResult* WKHitTestResultRef;
 typedef const struct OpaqueWKIconDatabase* WKIconDatabaseRef;
 typedef const struct OpaqueWKInspector* WKInspectorRef;

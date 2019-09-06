@@ -57,6 +57,7 @@ class InternalDebugFeature;
 class ExperimentalFeature;
 class FrameHandle;
 class FrameInfo;
+class HTTPCookieStore;
 class HitTestResult;
 class MessageListener;
 class Navigation;
@@ -133,6 +134,7 @@ WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
 WK_ADD_API_MAPPING(WKGeolocationManagerRef, WebGeolocationManagerProxy)
 WK_ADD_API_MAPPING(WKGeolocationPermissionRequestRef, GeolocationPermissionRequest)
 WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
+WK_ADD_API_MAPPING(WKHTTPCookieStoreRef, API::HTTPCookieStore)
 WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)

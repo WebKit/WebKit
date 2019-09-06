@@ -27,6 +27,7 @@
 #define WKCookieManager_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,28 +56,28 @@ typedef struct WKCookieManagerClientV0 {
     WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
 } WKCookieManagerClientV0;
 
-WK_EXPORT WKTypeID WKCookieManagerGetTypeID();
+WK_EXPORT WKTypeID WKCookieManagerGetTypeID() WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKCookieManagerSetClient(WKCookieManagerRef cookieManager, const WKCookieManagerClientBase* client);
+WK_EXPORT void WKCookieManagerSetClient(WKCookieManagerRef cookieManager, const WKCookieManagerClientBase* client) WK_C_API_DEPRECATED;
 
 typedef void (*WKCookieManagerGetCookieHostnamesFunction)(WKArrayRef, WKErrorRef, void*);
-WK_EXPORT void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetCookieHostnamesFunction function);
+WK_EXPORT void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetCookieHostnamesFunction function) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManager, WKStringRef hostname);
-WK_EXPORT void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManager);
+WK_EXPORT void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManager, WKStringRef hostname) WK_C_API_DEPRECATED;
+WK_EXPORT void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManager) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKHTTPCookieStoreDeleteAllCookies);
 
 // The time here is relative to the Unix epoch.
-WK_EXPORT void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieManager, double);
+WK_EXPORT void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieManager, double) WK_C_API_DEPRECATED;
 
 typedef void (*WKCookieManagerSetHTTPCookieAcceptPolicyFunction)(WKErrorRef, void*);
-WK_EXPORT void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy, void* context, WKCookieManagerSetHTTPCookieAcceptPolicyFunction callback);
+WK_EXPORT void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy, void* context, WKCookieManagerSetHTTPCookieAcceptPolicyFunction callback) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKHTTPCookieStoreSetHTTPCookieAcceptPolicy);
 typedef void (*WKCookieManagerGetHTTPCookieAcceptPolicyFunction)(WKHTTPCookieAcceptPolicy, WKErrorRef, void*);
-WK_EXPORT void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback);
+WK_EXPORT void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef cookieManager, bool enabled);
+WK_EXPORT void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef cookieManager, bool enabled) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKContextSetStorageAccessAPIEnabled);
 
-WK_EXPORT void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager);
-WK_EXPORT void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef cookieManager);
+WK_EXPORT void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager) WK_C_API_DEPRECATED;
+WK_EXPORT void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef cookieManager) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

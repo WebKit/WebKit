@@ -282,7 +282,6 @@
 		51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */; };
 		51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */; };
 		51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */; };
-		51D1249B1E785425002B2820 /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
 		51D8C1902267B26D00797E40 /* PDFLinkReferrer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */; };
 		51DB16CE1F085137001FA4C5 /* WebViewIconLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */; };
 		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
@@ -2526,7 +2525,6 @@
 		F6B7BE92174691EF008A3445 /* DidAssociateFormControls_Bundle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DidAssociateFormControls_Bundle.cpp; sourceTree = "<group>"; };
 		F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DidAssociateFormControls.cpp; sourceTree = "<group>"; };
 		F6B7BE9617469B7E008A3445 /* associate-form-controls.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "associate-form-controls.html"; sourceTree = "<group>"; };
-		F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieManager.cpp; sourceTree = "<group>"; };
 		F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache_Bundle.cpp; sourceTree = "<group>"; };
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
@@ -3448,7 +3446,6 @@
 				BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */,
 				1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */,
 				7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */,
-				F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */,
 				F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */,
 				F6B7BE92174691EF008A3445 /* DidAssociateFormControls_Bundle.cpp */,
 				9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */,
@@ -4419,7 +4416,6 @@
 				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
 				5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
-				51D1249B1E785425002B2820 /* CookieManager.cpp in Sources */,
 				5C19A5241FD0F60100EEA323 /* CookiePrivateBrowsing.mm in Sources */,
 				9B1F6F781F90558400B55744 /* CopyHTML.mm in Sources */,
 				9999108B1F393C96008AD455 /* Copying.mm in Sources */,

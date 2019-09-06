@@ -465,11 +465,11 @@ public:
 #if PLATFORM(COCOA)
     bool cookieStoragePartitioningEnabled() const { return m_cookieStoragePartitioningEnabled; }
     void setCookieStoragePartitioningEnabled(bool);
-    bool storageAccessAPIEnabled() const { return m_storageAccessAPIEnabled; }
-    void setStorageAccessAPIEnabled(bool);
 
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
 #endif
+    bool storageAccessAPIEnabled() const { return m_storageAccessAPIEnabled; }
+    void setStorageAccessAPIEnabled(bool);
 
     static uint64_t registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&&);
     static void unregisterProcessPoolCreationListener(uint64_t identifier);
@@ -756,8 +756,8 @@ private:
 
 #if PLATFORM(COCOA)
     bool m_cookieStoragePartitioningEnabled { false };
-    bool m_storageAccessAPIEnabled { false };
 #endif
+    bool m_storageAccessAPIEnabled { false };
 
     struct Paths {
         String injectedBundlePath;

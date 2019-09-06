@@ -75,6 +75,11 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef 
     WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsDebugMode(enable);
 }
 
+WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDataStoreRef dataStoreRef)
+{
+    return WebKit::toAPI(&WebKit::toImpl(dataStoreRef)->httpCookieStore());
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

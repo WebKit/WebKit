@@ -1,3 +1,55 @@
+2019-09-06  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate all WKCookieManagerRef functions
+        https://bugs.webkit.org/show_bug.cgi?id=201473
+
+        Reviewed by Chris Dumez.
+
+        Their use was removed in rdar://problem/55039275
+        Created replacement C API that more closely resembles the public ObjC API for WebKitTestRunner.
+
+        * Shared/API/c/WKBase.h:
+        * Sources.txt:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::deleteAllCookies):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore):
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetStorageAccessAPIEnabled):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerGetTypeID):
+        (WKCookieManagerSetClient):
+        (WKCookieManagerGetHostnamesWithCookies):
+        (WKCookieManagerDeleteCookiesForHostname):
+        (WKCookieManagerDeleteAllCookies):
+        (WKCookieManagerDeleteAllCookiesModifiedAfterDate):
+        (WKCookieManagerSetHTTPCookieAcceptPolicy):
+        (WKCookieManagerGetHTTPCookieAcceptPolicy):
+        (WKCookieManagerSetStorageAccessAPIEnabled):
+        (WKCookieManagerStartObservingCookieChanges):
+        (WKCookieManagerStopObservingCookieChanges):
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/C/WKHTTPCookieStoreRef.cpp: Added.
+        (WKHTTPCookieStoreGetTypeID):
+        (WKHTTPCookieStoreDeleteAllCookies):
+        (WKHTTPCookieStoreSetHTTPCookieAcceptPolicy):
+        * UIProcess/API/C/WKHTTPCookieStoreRef.h: Added.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreGetHTTPCookieStore):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        (API::HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore):
+        (API::toNSHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setStorageAccessAPIEnabled): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-09-06  Darryl Pogue  <darryl@dpogue.ca>
 
         REGRESSION(iOS 12): Keyboard dismissal leaves WKWebView viewport-fit=cover content offscreen

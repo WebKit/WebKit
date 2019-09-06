@@ -544,12 +544,6 @@ void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)
     m_cookieStoragePartitioningEnabled = enabled;
 }
 
-void WebProcessPool::setStorageAccessAPIEnabled(bool enabled)
-{
-    m_storageAccessAPIEnabled = enabled;
-    sendToNetworkingProcess(Messages::NetworkProcess::SetStorageAccessAPIEnabled(enabled));
-}
-
 void WebProcessPool::clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&& protectionSpace)
 {
     auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];

@@ -137,13 +137,15 @@ WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context) WK
 WK_EXPORT void WKContextSetUsesSingleWebProcess(WKContextRef, bool);
 WK_EXPORT bool WKContextGetUsesSingleWebProcess(WKContextRef);
 
+WK_EXPORT void WKContextSetStorageAccessAPIEnabled(WKContextRef, bool enabled);
+
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 
 WK_EXPORT WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef context);
 
 WK_EXPORT WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef context);
-WK_EXPORT WKCookieManagerRef WKContextGetCookieManager(WKContextRef context);
+WK_EXPORT WKCookieManagerRef WKContextGetCookieManager(WKContextRef context) WK_C_API_DEPRECATED;
 WK_EXPORT WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef context);
 WK_EXPORT WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef context);
 WK_EXPORT WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef context);

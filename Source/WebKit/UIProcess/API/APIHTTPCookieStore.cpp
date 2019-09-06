@@ -117,6 +117,38 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHand
     });
 }
 
+void HTTPCookieStore::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
+{
+    auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
+    if (!pool) {
+        if (!m_owningDataStore->sessionID().isEphemeral())
+            deleteCookiesInDefaultUIProcessCookieStore();
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+        return;
+    }
+
+    auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
+    cookieManager->deleteAllCookies(m_owningDataStore->sessionID());
+    // FIXME: The CompletionHandler should be passed to WebCookieManagerProxy::deleteAllCookies.
+    RunLoop::main().dispatch(WTFMove(completionHandler));
+}
+
+void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebKit::HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
+{
+    auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
+    if (!pool) {
+        if (!m_owningDataStore->sessionID().isEphemeral())
+            setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(policy);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+        return;
+    }
+
+    auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
+    cookieManager->setHTTPCookieAcceptPolicy(m_owningDataStore->sessionID(), policy, [completionHandler = WTFMove(completionHandler)] (CallbackBase::Error) mutable {
+        completionHandler();
+    });
+}
+
 class APIWebCookieManagerProxyObserver : public WebCookieManagerProxy::Observer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -246,6 +278,8 @@ void HTTPCookieStore::setCookieInDefaultUIProcessCookieStore(const WebCore::Cook
 void HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore(const WebCore::Cookie&) { }
 void HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&) { }
 void HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore() { }
+void HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore() { }
+void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebKit::HTTPCookieAcceptPolicy) { }
 #endif
     
 } // namespace API

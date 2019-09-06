@@ -268,13 +268,4 @@ void WebCookieManagerProxy::didSetHTTPCookieAcceptPolicy(WebKit::CallbackID call
     m_callbacks.take<VoidCallback>(callbackID)->performCallback();
 }
 
-void WebCookieManagerProxy::setStorageAccessAPIEnabled(bool enabled)
-{
-#if PLATFORM(COCOA)
-    processPool()->sendToNetworkingProcess(Messages::NetworkProcess::SetStorageAccessAPIEnabled(enabled));
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
 } // namespace WebKit

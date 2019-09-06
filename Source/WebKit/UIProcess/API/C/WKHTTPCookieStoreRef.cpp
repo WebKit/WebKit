@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,54 +24,28 @@
  */
 
 #include "config.h"
-#include "WKCookieManager.h"
+#include "WKHTTPCookieStoreRef.h"
 
-#include "APIArray.h"
+#include "APIHTTPCookieStore.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
-WKTypeID WKCookieManagerGetTypeID()
+WKTypeID WKHTTPCookieStoreGetTypeID()
 {
-    return 0;
+    return WebKit::toAPI(API::HTTPCookieStore::APIType);
 }
 
-void WKCookieManagerSetClient(WKCookieManagerRef, const WKCookieManagerClientBase*)
+void WKHTTPCookieStoreDeleteAllCookies(WKHTTPCookieStoreRef cookieStore, void* context, WKHTTPCookieStoreDeleteAllCookiesFunction callback)
 {
+    WebKit::toImpl(cookieStore)->deleteAllCookies([context, callback] {
+        if (callback)
+            callback(context);
+    });
 }
 
-void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef, void*, WKCookieManagerGetCookieHostnamesFunction)
+void WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKHTTPCookieStoreRef cookieStore, WKHTTPCookieAcceptPolicy policy, void* context, WKHTTPCookieStoreSetHTTPCookieAcceptPolicyFunction callback)
 {
-}
-
-void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef, WKStringRef)
-{
-}
-
-void WKCookieManagerDeleteAllCookies(WKCookieManagerRef)
-{
-}
-
-void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef, double)
-{
-}
-
-void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef, WKHTTPCookieAcceptPolicy, void*, WKCookieManagerSetHTTPCookieAcceptPolicyFunction)
-{
-}
-
-void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef, void*, WKCookieManagerGetHTTPCookieAcceptPolicyFunction)
-{
-}
-
-void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef, bool)
-{
-}
-
-void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef)
-{
-}
-
-void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef)
-{
+    WebKit::toImpl(cookieStore)->setHTTPCookieAcceptPolicy(WebKit::toHTTPCookieAcceptPolicy(policy), [context, callback] {
+        if (callback)
+            callback(context);
+    });
 }

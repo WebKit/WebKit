@@ -417,6 +417,11 @@ bool WKContextGetUsesSingleWebProcess(WKContextRef contextRef)
     return WebKit::toImpl(contextRef)->configuration().usesSingleWebProcess();
 }
 
+void WKContextSetStorageAccessAPIEnabled(WKContextRef contextRef, bool enabled)
+{
+    WebKit::toImpl(contextRef)->setStorageAccessAPIEnabled(enabled);
+}
+
 void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name)
 {
     WebKit::toImpl(contextRef)->setCustomWebContentServiceBundleIdentifier(WebKit::toImpl(name)->string());

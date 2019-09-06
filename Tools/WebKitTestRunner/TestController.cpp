@@ -38,10 +38,10 @@
 #include <WebKit/WKAuthenticationDecisionListener.h>
 #include <WebKit/WKContextConfigurationRef.h>
 #include <WebKit/WKContextPrivate.h>
-#include <WebKit/WKCookieManager.h>
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKFrameHandleRef.h>
 #include <WebKit/WKFrameInfoRef.h>
+#include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKIconDatabase.h>
 #include <WebKit/WKMessageListener.h>
 #include <WebKit/WKMockDisplay.h>
@@ -871,7 +871,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetBeaconAPIEnabled(preferences, true);
     WKPreferencesSetDirectoryUploadEnabled(preferences, true);
 
-    WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(WKContextGetWebsiteDataStore(m_context.get())), nullptr, nullptr);
 
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
     
@@ -2098,7 +2098,7 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
 
     auto setHTTPCookieAcceptPolicy = [&] (WKHTTPCookieAcceptPolicy policy, CompletionHandler<void(WKTypeRef)>&& completionHandler) {
         auto context = new CompletionHandler<void(WKTypeRef)>(WTFMove(completionHandler));
-        WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(this->context()), policy, context, [] (WKErrorRef error, void* context) {
+        WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(WKContextGetWebsiteDataStore(m_context.get())), policy, context, [] (void* context) {
             auto completionHandlerPointer = static_cast<CompletionHandler<void(WKTypeRef)>*>(context);
             (*completionHandlerPointer)(nullptr);
             delete completionHandlerPointer;

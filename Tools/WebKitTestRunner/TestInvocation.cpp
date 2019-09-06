@@ -33,9 +33,9 @@
 #include "UIScriptController.h"
 #include "WebCoreTestSupport.h"
 #include <WebKit/WKContextPrivate.h>
-#include <WebKit/WKCookieManager.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKDictionary.h>
+#include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
@@ -164,7 +164,7 @@ void TestInvocation::invoke()
 
     TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
 
-    WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(TestController::singleton().context()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
+    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(WKContextGetWebsiteDataStore(TestController::singleton().context())), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
 
     // FIXME: We should clear out visited links here.
 
@@ -912,7 +912,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStorageAccessAPIEnabled")) {
         WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
-        WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(TestController::singleton().context()), WKBooleanGetValue(accept));
+        WKContextSetStorageAccessAPIEnabled(TestController::singleton().context(), WKBooleanGetValue(accept));
         return nullptr;
     }
 
