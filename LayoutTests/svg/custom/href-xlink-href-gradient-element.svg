@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <linearGradient id="red-gradient">
+            <stop offset="0%"  stop-color="red" />
+        </linearGradient>
+        <linearGradient id="green-gradient">
+            <stop offset="0%"  stop-color="green" />
+        </linearGradient>
+        <linearGradient id="gradient1" href="#green-gradient"/>
+        <linearGradient id="gradient2" xlink:href="#green-gradient"/>
+        <linearGradient id="gradient3" href="#green-gradient" xlink:href="#red-gradient"/>
+        <linearGradient id="gradient4" xlink:href="#red-gradient" href="#green-gradient"/>
+
+        <linearGradient id="gradient5" href="#green-gradient"/>
+        <linearGradient id="gradient6" xlink:href="#red-gradient"/>
+        <linearGradient id="gradient7" href="#green-gradient" xlink:href="#red-gradient"/>
+        <linearGradient id="gradient8" xlink:href="#green-gradient" href="#red-gradient"/>
+
+        <linearGradient id="gradient9" href=""/>
+        <linearGradient id="gradient10" xlink:href="#red-gradient"/>
+        <linearGradient id="gradient11" href="" xlink:href="#red-gradient"/>
+        <linearGradient id="gradient12" xlink:href="#red-gradient" href=""/>
+    </defs>
+    <rect width="100" height="100" transform="translate(10, 10)" fill="url(#gradient1)"/>
+    <rect width="100" height="100" transform="translate(120, 10)" fill="url(#gradient2)"/>
+    <rect width="100" height="100" transform="translate(230, 10)" fill="url(#gradient3)"/>
+    <rect width="100" height="100" transform="translate(340, 10)" fill="url(#gradient4)"/>
+
+    <rect width="100" height="100" transform="translate(10, 120)" fill="url(#gradient5)"/>
+    <rect width="100" height="100" transform="translate(120, 120)" fill="url(#gradient6)"/>
+    <rect width="100" height="100" transform="translate(230, 120)" fill="url(#gradient7)"/>
+    <rect width="100" height="100" transform="translate(340, 120)" fill="url(#gradient8)"/>
+
+    <rect width="100" height="100" transform="translate(10, 230)" fill="green"/>
+    <rect width="100" height="100" transform="translate(120, 230)" fill="green"/>
+    <rect width="100" height="100" transform="translate(230, 230)" fill="green"/>
+    <rect width="100" height="100" transform="translate(340, 230)" fill="green"/>
+
+    <rect width="100" height="100" transform="translate(10, 230)" fill="url(#gradient9)"/>
+    <rect width="100" height="100" transform="translate(120, 230)" fill="url(#gradient10)"/>
+    <rect width="100" height="100" transform="translate(230, 230)" fill="url(#gradient11)"/>
+    <rect width="100" height="100" transform="translate(340, 230)" fill="url(#gradient12)"/>
+    <script>
+        window.addEventListener('load', (event) => {
+            var gradient5 = document.getElementById("gradient5");
+            gradient5.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#red-gradient");
+
+            var gradient6 = document.getElementById("gradient6");
+            gradient6.setAttribute("href", "#green-gradient");
+
+            var gradient7 = document.getElementById("gradient7");
+            gradient7.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+
+            var gradient8 = document.getElementById("gradient8");
+            gradient8.removeAttribute("href");
+
+            var gradient9 = document.getElementById("gradient9");
+            gradient9.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#red-gradient");
+
+            var gradient10 = document.getElementById("gradient10");
+            gradient10.setAttribute("href", "");
+
+            var gradient11 = document.getElementById("gradient11");
+            gradient11.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+
+            var gradient12 = document.getElementById("gradient12");
+            gradient12.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+        });
+    </script>
+ </svg>

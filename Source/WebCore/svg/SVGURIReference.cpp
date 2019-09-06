@@ -47,7 +47,10 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
 
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (isKnownAttribute(name))
+    auto* contextElement = m_href->contextElement();
+    if (name.matches(SVGNames::hrefAttr))
+        m_href->setBaseValInternal(value.isNull() ? contextElement->getAttribute(XLinkNames::hrefAttr) : value);
+    else if (name.matches(XLinkNames::hrefAttr) && !contextElement->hasAttribute(SVGNames::hrefAttr))
         m_href->setBaseValInternal(value);
 }
 

@@ -1,3 +1,15 @@
+2019-09-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Prefer null namespace 'href' over 'xlink:href' on SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=195802
+
+        Reviewed by Youenn Fablet.
+
+        * svg/custom/href-xlink-href-gradient-element-expected.svg: Added.
+        * svg/custom/href-xlink-href-gradient-element.svg: Added.
+        * svg/custom/href-xlink-href-use-element-expected.svg: Added.
+        * svg/custom/href-xlink-href-use-element.svg: Added.
+
 2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Tail Deleted Frames shown in Web Inspector are sometimes incorrect (Shadow Chicken)

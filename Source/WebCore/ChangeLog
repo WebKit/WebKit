@@ -1,3 +1,27 @@
+2019-09-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Prefer null namespace 'href' over 'xlink:href' on SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=195802
+
+        Reviewed by Youenn Fablet.
+
+        -- When the attribute "href" is set, its value is always reflected in
+           SVGURIReference::m_href.
+
+        -- When the attribute "href" is removed, the value of the attribute
+           "xlink:href" is always reflected in SVGURIReference::m_href.
+
+        -- When the "xlink:href" is set, its value is reflected in
+           SVGURIReference::m_href only if the attribute "href" is not set.
+
+        Tests: svg/custom/href-xlink-href-gradient-element-expected.svg
+               svg/custom/href-xlink-href-gradient-element.svg
+               svg/custom/href-xlink-href-use-element-expected.svg
+               svg/custom/href-xlink-href-use-element.svg
+
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::parseAttribute):
+
 2019-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Set computed row width.

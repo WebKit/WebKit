@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <rect id="red-rect"  width="100" height="100" fill="red"/>
+        <rect id="green-rect" width="100" height="100" fill="green"/>
+    </defs>
+    <use id="use1" transform="translate(10, 10)" href="#green-rect"/>
+    <use id="use2" transform="translate(120, 10)" xlink:href="#green-rect"/>
+    <use id="use3" transform="translate(230, 10)" href="#green-rect" xlink:href="#red-rect"/>
+    <use id="use4" transform="translate(340, 10)" xlink:href="#red-rect" href="#green-rect"/>
+
+    <use id="use5" transform="translate(120, 120)" href="#green-rect"/>
+    <use id="use6" transform="translate(10, 120)" xlink:href="#red-rect"/>
+    <use id="use7" transform="translate(230, 120)" href="#green-rect" xlink:href="#red-rect"/>
+    <use id="use8" transform="translate(340, 120)" xlink:href="#green-rect" href="#red-rect"/>
+
+    <use transform="translate(10, 230)" href="#green-rect"/>
+    <use transform="translate(120, 230)" href="#green-rect"/>
+    <use transform="translate(230, 230)" href="#green-rect"/>
+    <use transform="translate(340, 230)" href="#green-rect"/>
+
+    <use id="use9" transform="translate(10, 230)" href=""/>
+    <use id="use10" transform="translate(120, 230)" xlink:href="#red-rect"/>
+    <use id="use11" transform="translate(230, 230)" href="" xlink:href="#red-rect"/>
+    <use id="use12" transform="translate(340, 230)" xlink:href="#red-rect" href=""/>
+    <script>
+        window.addEventListener('load', (event) => {
+            var use5 = document.getElementById("use5");
+            use5.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#red-rect");
+
+            var use6 = document.getElementById("use6");
+            use6.setAttribute("href", "#green-rect");
+
+            var use7 = document.getElementById("use7");
+            use7.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+
+            var use8 = document.getElementById("use8");
+            use8.removeAttribute("href");
+
+            var use9 = document.getElementById("use9");
+            use9.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#red-rect");
+
+            var use10 = document.getElementById("use10");
+            use10.setAttribute("href", "");
+
+            var use11 = document.getElementById("use11");
+            use11.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+
+            var use12 = document.getElementById("use12");
+            use12.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+        });
+    </script>
+</svg>
