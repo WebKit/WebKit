@@ -689,7 +689,6 @@ public:
 #if ENABLE(RESIZE_OBSERVER)
         @NO, WebKitResizeObserverEnabledPreferenceKey,
 #endif
-        @NO, WebKitLazyImageLoadingEnabledPreferenceKey,
         @NO, WebKitCoreMathMLEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         nil];
@@ -3506,16 +3505,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
-}
-
-- (BOOL)lazyImageLoadingEnabled
-{
-    return [self _boolValueForKey:WebKitLazyImageLoadingEnabledPreferenceKey];
-}
-
-- (void)setLazyImageLoadingEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitLazyImageLoadingEnabledPreferenceKey];
 }
 
 @end

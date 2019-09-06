@@ -795,7 +795,6 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setResizeObserverEnabled(TRUE);
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
-    prefsPrivate->setLazyImageLoadingEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
 }

@@ -650,7 +650,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
-@property (nonatomic) BOOL lazyImageLoadingEnabled;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL quickLookDocumentSavingEnabled;

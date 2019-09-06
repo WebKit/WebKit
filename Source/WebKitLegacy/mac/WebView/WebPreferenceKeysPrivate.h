@@ -272,5 +272,4 @@
 #define WebKitResizeObserverEnabledPreferenceKey @"WebKitResizeObserverEnabled"
 #define WebKitCoreMathMLEnabledPreferenceKey @"WebKitCoreMathMLEnabled"
 #define WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey @"WebKitLinkPreloadResponsiveImagesEnabled"
-#define WebKitLazyImageLoadingEnabledPreferenceKey @"WebKitLazyImageLoadingEnabled"
 
