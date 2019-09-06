@@ -70,12 +70,12 @@ BINLINE Gigacage::Kind gigacageKind(HeapKind kind)
 BINLINE HeapKind heapKind(Gigacage::Kind kind)
 {
     switch (kind) {
-    case Gigacage::ReservedForFlagsAndNotABasePtr:
-        RELEASE_BASSERT_NOT_REACHED();
     case Gigacage::Primitive:
         return HeapKind::PrimitiveGigacage;
     case Gigacage::JSValue:
         return HeapKind::JSValueGigacage;
+    case Gigacage::NumberOfKinds:
+        break;
     }
     BCRASH();
     return HeapKind::Primary;
@@ -86,7 +86,7 @@ BINLINE bool isActiveHeapKindAfterEnsuringGigacage(HeapKind kind)
     switch (kind) {
     case HeapKind::PrimitiveGigacage:
     case HeapKind::JSValueGigacage:
-        if (Gigacage::wasEnabled())
+        if (Gigacage::isEnabled())
             return true;
         return false;
     default:
@@ -101,7 +101,7 @@ BINLINE HeapKind mapToActiveHeapKindAfterEnsuringGigacage(HeapKind kind)
     switch (kind) {
     case HeapKind::PrimitiveGigacage:
     case HeapKind::JSValueGigacage:
-        if (Gigacage::wasEnabled())
+        if (Gigacage::isEnabled())
             return kind;
         return HeapKind::Primary;
     default:

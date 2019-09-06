@@ -75,11 +75,7 @@ namespace Gigacage {
 // If this were less than 32GB, those OOB accesses could reach outside of the cage.
 constexpr size_t gigacageRunway = 32llu * 1024 * 1024 * 1024;
 
-// Note: g_gigacageBasePtrs[0] is reserved for storing the wasEnabled flag.
-// The first gigacageBasePtr will start at g_gigacageBasePtrs[sizeof(void*)].
-// This is done so that the wasEnabled flag will also be protected along with the
-// gigacageBasePtrs.
-alignas(gigacageBasePtrsSize) char g_gigacageBasePtrs[gigacageBasePtrsSize];
+alignas(configSizeToProtect) Config g_gigacageConfig;
 
 using namespace bmalloc;
 
@@ -89,15 +85,14 @@ bool s_isDisablingPrimitiveGigacageDisabled;
 
 void protectGigacageBasePtrs()
 {
-    uintptr_t basePtrs = reinterpret_cast<uintptr_t>(g_gigacageBasePtrs);
     // We might only get page size alignment, but that's also the minimum we need.
-    RELEASE_BASSERT(!(basePtrs & (vmPageSize() - 1)));
-    mprotect(g_gigacageBasePtrs, gigacageBasePtrsSize, PROT_READ);
+    RELEASE_BASSERT(!(reinterpret_cast<size_t>(&g_gigacageConfig) & (vmPageSize() - 1)));
+    mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ);
 }
 
 void unprotectGigacageBasePtrs()
 {
-    mprotect(g_gigacageBasePtrs, gigacageBasePtrsSize, PROT_READ | PROT_WRITE);
+    mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ | PROT_WRITE);
 }
 
 class UnprotectGigacageBasePtrsScope {
@@ -116,12 +111,12 @@ public:
 size_t runwaySize(Kind kind)
 {
     switch (kind) {
-    case Kind::ReservedForFlagsAndNotABasePtr:
-        RELEASE_BASSERT_NOT_REACHED();
     case Kind::Primitive:
         return gigacageRunway;
     case Kind::JSValue:
         return 0;
+    case Kind::NumberOfKinds:
+        RELEASE_BASSERT_NOT_REACHED();
     }
     return 0;
 }
@@ -137,17 +132,17 @@ void ensureGigacage()
             if (!shouldBeEnabled())
                 return;
             
-            Kind shuffledKinds[numKinds];
-            for (unsigned i = 0; i < numKinds; ++i)
-                shuffledKinds[i] = static_cast<Kind>(i + 1); // + 1 to skip Kind::ReservedForFlagsAndNotABasePtr.
+            Kind shuffledKinds[NumberOfKinds];
+            for (unsigned i = 0; i < NumberOfKinds; ++i)
+                shuffledKinds[i] = static_cast<Kind>(i);
             
             // We just go ahead and assume that 64 bits is enough randomness. That's trivially true right
             // now, but would stop being true if we went crazy with gigacages. Based on my math, 21 is the
             // largest value of n so that n! <= 2^64.
-            static_assert(numKinds <= 21, "too many kinds");
+            static_assert(NumberOfKinds <= 21, "too many kinds");
             uint64_t random;
             cryptoRandom(reinterpret_cast<unsigned char*>(&random), sizeof(random));
-            for (unsigned i = numKinds; i--;) {
+            for (unsigned i = NumberOfKinds; i--;) {
                 unsigned limit = i + 1;
                 unsigned j = static_cast<unsigned>(random % limit);
                 random /= limit;
@@ -184,7 +179,7 @@ void ensureGigacage()
             size_t nextCage = 0;
             for (Kind kind : shuffledKinds) {
                 nextCage = alignTo(kind, nextCage);
-                basePtr(kind) = reinterpret_cast<char*>(base) + nextCage;
+                g_gigacageConfig.setBasePtr(kind, reinterpret_cast<char*>(base) + nextCage);
                 nextCage = bump(kind, nextCage);
                 if (runwaySize(kind) > 0) {
                     char* runway = reinterpret_cast<char*>(base) + nextCage;
@@ -195,7 +190,7 @@ void ensureGigacage()
             }
             
             vmDeallocatePhysicalPages(base, totalSize);
-            setWasEnabled();
+            g_gigacageConfig.isEnabled = true;
             protectGigacageBasePtrs();
         });
 }
@@ -203,7 +198,7 @@ void ensureGigacage()
 void disablePrimitiveGigacage()
 {
     ensureGigacage();
-    if (!basePtrs().primitive) {
+    if (!g_gigacageConfig.basePtrs[Primitive]) {
         // It was never enabled. That means that we never even saved any callbacks. Or, we had already disabled
         // it before, and already called the callbacks.
         return;
@@ -215,13 +210,13 @@ void disablePrimitiveGigacage()
         callback.function(callback.argument);
     callbacks.callbacks.shrink(0);
     UnprotectGigacageBasePtrsScope unprotectScope;
-    basePtrs().primitive = nullptr;
+    g_gigacageConfig.basePtrs[Primitive] = nullptr;
 }
 
 void addPrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
     ensureGigacage();
-    if (!basePtrs().primitive) {
+    if (!g_gigacageConfig.basePtrs[Primitive]) {
         // It was already disabled or we were never able to enable it.
         function(argument);
         return;
@@ -248,7 +243,7 @@ void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
 
 static void primitiveGigacageDisabled(void*)
 {
-    if (GIGACAGE_ALLOCATION_CAN_FAIL && !wasEnabled())
+    if (GIGACAGE_ALLOCATION_CAN_FAIL && !isEnabled())
         return;
 
     static bool s_false;

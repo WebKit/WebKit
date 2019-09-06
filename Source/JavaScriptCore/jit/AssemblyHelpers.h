@@ -1595,7 +1595,7 @@ public:
                 if (length == scratch)
                     scratch = getCachedMemoryTempRegisterIDAndInvalidate();
 #endif
-                loadPtr(&Gigacage::basePtr(kind), scratch);
+                loadPtr(Gigacage::addressOfBasePtr(kind), scratch);
                 Jump done = branchTest64(Zero, scratch);
 #if CPU(ARM64E)
                 GPRReg tempReg = getCachedDataTempRegisterIDAndInvalidate();

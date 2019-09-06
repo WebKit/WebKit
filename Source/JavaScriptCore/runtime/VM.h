@@ -353,12 +353,12 @@ public:
     ALWAYS_INLINE CompleteSubspace& gigacageAuxiliarySpace(Gigacage::Kind kind)
     {
         switch (kind) {
-        case Gigacage::ReservedForFlagsAndNotABasePtr:
-            RELEASE_ASSERT_NOT_REACHED();
         case Gigacage::Primitive:
             return primitiveGigacageAuxiliarySpace;
         case Gigacage::JSValue:
             return jsValueGigacageAuxiliarySpace;
+        case Gigacage::NumberOfKinds:
+            break;
         }
         RELEASE_ASSERT_NOT_REACHED();
         return primitiveGigacageAuxiliarySpace;

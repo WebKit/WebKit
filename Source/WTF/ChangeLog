@@ -1,3 +1,19 @@
+2019-09-05  Mark Lam  <mark.lam@apple.com>
+
+        Refactor the Gigacage code to require less pointer casting.
+        https://bugs.webkit.org/show_bug.cgi?id=201521
+
+        Reviewed by Saam Barati.
+
+        Remove some unneeded stubs in WTF Gigacage.h.
+
+        * wtf/Gigacage.cpp:
+        * wtf/Gigacage.h:
+        (Gigacage::name):
+        (Gigacage::isEnabled):
+        (Gigacage::basePtr): Deleted.
+        (Gigacage::basePtrs): Deleted.
+
 2019-08-30  Alex Christensen  <achristensen@webkit.org>
 
         Remove HAVE_CFNETWORK_WITH_AUTO_ADDED_HTTP_HEADER_SUPPRESSION_SUPPORT conditional

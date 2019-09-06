@@ -35,24 +35,12 @@ namespace Gigacage {
 
 const size_t primitiveGigacageMask = 0;
 const size_t jsValueGigacageMask = 0;
-const size_t gigacageBasePtrsSize = 8 * KB;
-
-extern "C" alignas(void*) WTF_EXPORT_PRIVATE char g_gigacageBasePtrs[gigacageBasePtrsSize];
-
-struct BasePtrs {
-    uintptr_t reservedForFlags;
-    void* primitive;
-    void* jsValue;
-};
 
 enum Kind {
-    ReservedForFlagsAndNotABasePtr = 0,
     Primitive,
     JSValue,
+    NumberOfKinds
 };
-
-static_assert(offsetof(BasePtrs, primitive) == Kind::Primitive * sizeof(void*), "");
-static_assert(offsetof(BasePtrs, jsValue) == Kind::JSValue * sizeof(void*), "");
 
 inline void ensureGigacage() { }
 inline void disablePrimitiveGigacage() { }
@@ -70,46 +58,18 @@ inline bool canPrimitiveGigacageBeDisabled() { return true; }
 ALWAYS_INLINE const char* name(Kind kind)
 {
     switch (kind) {
-    case ReservedForFlagsAndNotABasePtr:
-        RELEASE_ASSERT_NOT_REACHED();
     case Primitive:
         return "Primitive";
     case JSValue:
         return "JSValue";
+    case NumberOfKinds:
+        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-ALWAYS_INLINE void*& basePtr(BasePtrs& basePtrs, Kind kind)
-{
-    switch (kind) {
-    case ReservedForFlagsAndNotABasePtr:
-        RELEASE_ASSERT_NOT_REACHED();
-    case Primitive:
-        return basePtrs.primitive;
-    case JSValue:
-        return basePtrs.jsValue;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return basePtrs.primitive;
-}
-
-ALWAYS_INLINE BasePtrs& basePtrs()
-{
-    return *reinterpret_cast<BasePtrs*>(reinterpret_cast<void*>(g_gigacageBasePtrs));
-}
-
-ALWAYS_INLINE void*& basePtr(Kind kind)
-{
-    return basePtr(basePtrs(), kind);
-}
-
-ALWAYS_INLINE bool isEnabled(Kind kind)
-{
-    return !!basePtr(kind);
-}
-
+ALWAYS_INLINE bool isEnabled(Kind) { return false; }
 ALWAYS_INLINE size_t mask(Kind) { return 0; }
 
 template<typename T>

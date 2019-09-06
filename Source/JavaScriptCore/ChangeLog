@@ -1,3 +1,20 @@
+2019-09-05  Mark Lam  <mark.lam@apple.com>
+
+        Refactor the Gigacage code to require less pointer casting.
+        https://bugs.webkit.org/show_bug.cgi?id=201521
+
+        Reviewed by Saam Barati.
+
+        Change LLInt's loadCagedJSValue() to skip the caging if Gigacage is not enabled
+        in the build.  This allows us to remove the unneeded stubs in WTF Gigacage.h.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageConditionally):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+        (JSC::VM::gigacageAuxiliarySpace):
+
 2019-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r249530 and r249509

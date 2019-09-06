@@ -440,7 +440,7 @@ macro cagedPrimitive(ptr, length, scratch, scratch2)
         const source = ptr
     end
     if GIGACAGE_ENABLED
-        cage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, source, scratch)
+        cage(_g_gigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
         if ARM64E
             const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
             bfiq scratch2, 0, 64 - numberOfPACBits, ptr
@@ -453,7 +453,9 @@ end
 
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
-    cage(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
+    if GIGACAGE_ENABLED
+        cage(_g_gigacageConfig + Gigacage::Config::basePtrs + GigacageJSValueBasePtrOffset, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
+    end
 end
 
 macro loadVariable(get, fieldName, valueReg)

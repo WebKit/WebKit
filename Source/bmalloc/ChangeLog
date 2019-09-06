@@ -1,3 +1,43 @@
+2019-09-05  Mark Lam  <mark.lam@apple.com>
+
+        Refactor the Gigacage code to require less pointer casting.
+        https://bugs.webkit.org/show_bug.cgi?id=201521
+
+        Reviewed by Saam Barati.
+
+        1. Define a Gigacage::Config struct instead of hacking around a g_gigacageBasePtrs
+           array of bytes.
+        2. Change Gigacage::basePtr() to return a pointer instead of a reference to the
+           requested basePtr.  Instead, make it explicit when the client is trying to
+           take the address of the basePtr, or setting it.
+        3. Renamed wasEnabled() to isEnabled() because it returns the present state of the
+           flag, not some past state.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::bmalloc::protectGigacageBasePtrs):
+        (Gigacage::bmalloc::unprotectGigacageBasePtrs):
+        (Gigacage::bmalloc::runwaySize):
+        (Gigacage::ensureGigacage):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        (Gigacage::primitiveGigacageDisabled):
+        * bmalloc/Gigacage.h:
+        (Gigacage::name):
+        (Gigacage::Config::basePtr const):
+        (Gigacage::Config::setBasePtr):
+        (Gigacage::isEnabled):
+        (Gigacage::basePtr):
+        (Gigacage::addressOfBasePtr):
+        (Gigacage::size):
+        (Gigacage::caged):
+        (Gigacage::wasEnabled): Deleted.
+        (Gigacage::setWasEnabled): Deleted.
+        (Gigacage::basePtrs): Deleted.
+        * bmalloc/HeapKind.h:
+        (bmalloc::heapKind):
+        (bmalloc::isActiveHeapKindAfterEnsuringGigacage):
+        (bmalloc::mapToActiveHeapKindAfterEnsuringGigacage):
+
 2019-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] IsoTLSLayout and AllIsoHeaps registration is racy with derived class initialization with virtual functions
