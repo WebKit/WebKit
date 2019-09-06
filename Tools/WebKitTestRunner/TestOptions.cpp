@@ -56,6 +56,11 @@ static bool isSVGTestPath(const std::string& pathOrURL)
     return pathContains(pathOrURL, "svg/W3C-SVG-1.1") || pathContains(pathOrURL, "svg\\W3C-SVG-1.1");
 }
 
+static bool shouldUseEphemeralSession(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "w3c/IndexedDB-private-browsing") || pathContains(pathOrURL, "w3c\\IndexedDB-private-browsing");
+}
+
 static float deviceScaleFactorForTest(const std::string& pathOrURL)
 {
     if (pathContains(pathOrURL, "/hidpi-3x-"))
@@ -69,6 +74,7 @@ TestOptions::TestOptions(const std::string& pathOrURL)
     : useFlexibleViewport(shouldMakeViewportFlexible(pathOrURL))
     , useFixedLayout(shouldUseFixedLayout(pathOrURL))
     , isSVGTest(isSVGTestPath(pathOrURL))
+    , useEphemeralSession(shouldUseEphemeralSession(pathOrURL))
     , deviceScaleFactor(deviceScaleFactorForTest(pathOrURL))
 {
 }

@@ -1834,6 +1834,11 @@ static bool shouldMakeViewportFlexible(const char* pathOrURL)
 }
 #endif
 
+static bool shouldUseEphemeralSession(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "w3c/IndexedDB-private-browsing");
+}
+
 static void setJSCOptions(const TestOptions& options)
 {
     static WTF::StringBuilder savedOptions;
@@ -2064,6 +2069,9 @@ static void runTest(const string& inputLine)
     if (shouldMakeViewportFlexible(pathOrURL.c_str()))
         adjustWebDocumentForFlexibleViewport(gWebBrowserView, gWebScrollView);
 #endif
+
+    if (shouldUseEphemeralSession(pathOrURL.c_str()))
+        [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:YES];
 
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];

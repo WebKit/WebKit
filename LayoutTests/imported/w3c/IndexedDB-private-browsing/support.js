@@ -1,10 +1,3 @@
-// WebKit changes: this file is the same as "IndexedDB/support.js" found in W3C web-platform-tests repo,
-// except for the following lines that activate private browsing
-// FIXME: Update WKTR / DRT to enable private browsing for this folder instead.
-if (window.testRunner)
-    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
-//End of WebKit changes
-
 var databaseName = "database";
 var databaseVersion = 1;
 

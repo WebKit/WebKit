@@ -1,5 +1,16 @@
 2019-09-05  Chris Dumez  <cdumez@apple.com>
 
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in imported/w3c/IndexedDB-private-browsing
+        https://bugs.webkit.org/show_bug.cgi?id=201519
+
+        Reviewed by Alex Christensen.
+
+        Drop Webkit-specific changes to WPT tests.
+
+        * IndexedDB-private-browsing/support.js:
+
+2019-09-05  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Add proper layout test support for ephemeral sessions
         https://bugs.webkit.org/show_bug.cgi?id=201475
 
