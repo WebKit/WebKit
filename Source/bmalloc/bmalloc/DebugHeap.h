@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Environment.h"
+#include "FailureAction.h"
 #include "Mutex.h"
 #include "StaticPerProcess.h"
 #include <mutex>
@@ -41,9 +42,9 @@ class DebugHeap : private StaticPerProcess<DebugHeap> {
 public:
     DebugHeap(std::lock_guard<Mutex>&);
     
-    void* malloc(size_t, bool crashOnFailure);
-    void* memalign(size_t alignment, size_t, bool crashOnFailure);
-    void* realloc(void*, size_t, bool crashOnFailure);
+    void* malloc(size_t, FailureAction);
+    void* memalign(size_t alignment, size_t, FailureAction);
+    void* realloc(void*, size_t, FailureAction);
     void free(void*);
     
     void* memalignLarge(size_t alignment, size_t);
