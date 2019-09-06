@@ -1,3 +1,13 @@
+2019-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix bmalloc::Allocator:tryAllocate() to return null on failure to allocate.
+        https://bugs.webkit.org/show_bug.cgi?id=201529
+        <rdar://problem/53935772>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/test-out-of-memory.js: Added.
+
 2019-09-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         LazyClassStructure::setConstructor should not store the constructor to the global object

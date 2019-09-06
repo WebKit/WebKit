@@ -59,7 +59,7 @@ void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSi
         Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
 
         std::unique_lock<Mutex> lock(Heap::mutex());
-        result = heap.tryAllocateLarge(lock, alignment, size);
+        result = heap.allocateLarge(lock, alignment, size, FailureAction::ReturnNull);
         if (result) {
             // Don't track this as dirty memory that dictates how we drive the scavenger.
             // FIXME: We should make it so that users of this API inform bmalloc which

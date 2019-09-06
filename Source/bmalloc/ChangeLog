@@ -1,3 +1,50 @@
+2019-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix bmalloc::Allocator:tryAllocate() to return null on failure to allocate.
+        https://bugs.webkit.org/show_bug.cgi?id=201529
+        <rdar://problem/53935772>
+
+        Reviewed by Yusuke Suzuki.
+
+        In this implementation, we pass FailureAction in as a runtime option.  If this
+        proves to be a perf issue, we can easily fix this by passing it as a template
+        argument.  That will also automatically elide unneeded code paths.  We'll defer
+        that exercise until we have evidence that it is warranted.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocateImpl):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::refillAllocator):
+        (bmalloc::Allocator::allocateLarge):
+        (bmalloc::Allocator::allocateLogSizeClass):
+        (bmalloc::Allocator::allocateSlowCase):
+        (bmalloc::Allocator::tryAllocate): Deleted.
+        (bmalloc::Allocator::allocate): Deleted.
+        (bmalloc::Allocator::reallocate): Deleted.
+        (bmalloc::Allocator::tryReallocate): Deleted.
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocate):
+        (bmalloc::Allocator::tryReallocate):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::allocateImpl):
+        * bmalloc/BumpAllocator.h:
+        * bmalloc/FailureAction.h: Added.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::tryAllocateLarge): Deleted.
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+
 2019-09-05  Mark Lam  <mark.lam@apple.com>
 
         Refactor the Gigacage code to require less pointer casting.

@@ -64,6 +64,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/EligibilityResult.h
     bmalloc/EligibilityResultInlines.h
     bmalloc/Environment.h
+    bmalloc/FailureAction.h
     bmalloc/FixedVector.h
     bmalloc/FreeList.h
     bmalloc/FreeListInlines.h

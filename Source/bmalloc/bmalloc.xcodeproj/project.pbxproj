@@ -147,6 +147,7 @@
 		E3FBB5A1225EADB000DB6FBD /* IsoSharedHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3FBB59E225EADB000DB6FBD /* IsoSharedHeap.cpp */; };
 		E3FBB5A2225EADB000DB6FBD /* IsoSharedHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FBB59F225EADB000DB6FBD /* IsoSharedHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FBB5A4225ECAD200DB6FBD /* IsoSharedHeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FBB5A3225ECAD200DB6FBD /* IsoSharedHeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD3A2321E8CC00F136D0 /* FailureAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -299,6 +300,7 @@
 		E3FBB59E225EADB000DB6FBD /* IsoSharedHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IsoSharedHeap.cpp; path = bmalloc/IsoSharedHeap.cpp; sourceTree = "<group>"; };
 		E3FBB59F225EADB000DB6FBD /* IsoSharedHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedHeap.h; path = bmalloc/IsoSharedHeap.h; sourceTree = "<group>"; };
 		E3FBB5A3225ECAD200DB6FBD /* IsoSharedHeapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedHeapInlines.h; path = bmalloc/IsoSharedHeapInlines.h; sourceTree = "<group>"; };
+		FE48BD3A2321E8CC00F136D0 /* FailureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FailureAction.h; path = bmalloc/FailureAction.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -475,6 +477,7 @@
 				142B44351E2839E7001DA6E9 /* DebugHeap.h */,
 				14895D8F1A3A319C0006235D /* Environment.cpp */,
 				14895D901A3A319C0006235D /* Environment.h */,
+				FE48BD3A2321E8CC00F136D0 /* FailureAction.h */,
 				0F5BF14E1F22DEAF0029D91D /* Gigacage.cpp */,
 				0F5BF14C1F22B0C30029D91D /* Gigacage.h */,
 				14DA320E18875D9F007269E0 /* Heap.cpp */,
@@ -613,6 +616,7 @@
 				0F7EB82E1F9541B000F1ABCB /* IsoPage.h in Headers */,
 				0F7EB8311F9541B000F1ABCB /* IsoPageInlines.h in Headers */,
 				0F7EB82B1F9541B000F1ABCB /* IsoPageTrigger.h in Headers */,
+				FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */,
 				E3FBB5A0225EADB000DB6FBD /* IsoSharedConfig.h in Headers */,
 				E3FBB5A2225EADB000DB6FBD /* IsoSharedHeap.h in Headers */,
 				E3FBB5A4225ECAD200DB6FBD /* IsoSharedHeapInlines.h in Headers */,

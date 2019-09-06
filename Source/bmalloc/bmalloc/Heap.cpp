@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,17 +226,21 @@ void Heap::deallocateLineCache(std::unique_lock<Mutex>&, LineCache& lineCache)
     }
 }
 
-void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass)
+void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass, FailureAction action)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
     
     size_t pageSize = bmalloc::pageSize(pageClass);
 
-    Chunk* chunk = [&]() {
+    Chunk* chunk = [&]() -> Chunk* {
         if (!m_chunkCache[pageClass].isEmpty())
             return m_chunkCache[pageClass].pop();
 
-        void* memory = allocateLarge(lock, chunkSize, chunkSize);
+        void* memory = allocateLarge(lock, chunkSize, chunkSize, action);
+        if (!memory) {
+            BASSERT(action == FailureAction::ReturnNull);
+            return nullptr;
+        }
 
         Chunk* chunk = new (memory) Chunk(pageSize);
 
@@ -256,7 +260,8 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass)
         return chunk;
     }();
     
-    m_freePages[pageClass].push(chunk);
+    if (chunk)
+        m_freePages[pageClass].push(chunk);
 }
 
 void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
@@ -285,7 +290,7 @@ void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
     m_largeFree.add(LargeRange(chunk, size, startPhysicalSize, totalPhysicalSize));
 }
 
-SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeClass, LineCache& lineCache)
+SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeClass, LineCache& lineCache, FailureAction action)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -297,11 +302,13 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
 
     m_scavenger->didStartGrowing();
     
-    SmallPage* page = [&]() {
+    SmallPage* page = [&]() -> SmallPage* {
         size_t pageClass = m_pageClasses[sizeClass];
         
         if (m_freePages[pageClass].isEmpty())
-            allocateSmallChunk(lock, pageClass);
+            allocateSmallChunk(lock, pageClass, action);
+        if (action == FailureAction::ReturnNull && m_freePages[pageClass].isEmpty())
+            return nullptr;
 
         Chunk* chunk = m_freePages[pageClass].tail();
 
@@ -328,6 +335,10 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
 
         return page;
     }();
+    if (!page) {
+        BASSERT(action == FailureAction::ReturnNull);
+        return nullptr;
+    }
 
     page->setSizeClass(sizeClass);
     return page;
@@ -376,11 +387,16 @@ void Heap::deallocateSmallLine(std::unique_lock<Mutex>& lock, Object object, Lin
 void Heap::allocateSmallBumpRangesByMetadata(
     std::unique_lock<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
-    LineCache& lineCache)
+    LineCache& lineCache, FailureAction action)
 {
+    BUNUSED(action);
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
-    SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
+    SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache, action);
+    if (!page) {
+        BASSERT(action == FailureAction::ReturnNull);
+        return;
+    }
     SmallLine* lines = page->begin();
     BASSERT(page->hasFreeLines(lock));
     size_t smallLineCount = m_vmPageSizePhysical / smallLineSize;
@@ -418,14 +434,14 @@ void Heap::allocateSmallBumpRangesByMetadata(
     for (;;) {
         if (!findSmallBumpRange(lineNumber)) {
             page->setHasFreeLines(lock, false);
-            BASSERT(allocator.canAllocate());
+            BASSERT(action == FailureAction::ReturnNull || allocator.canAllocate());
             return;
         }
 
         // In a fragmented page, some free ranges might not fit in the cache.
         if (rangeCache.size() == rangeCache.capacity()) {
             lineCache[sizeClass].push(page);
-            BASSERT(allocator.canAllocate());
+            BASSERT(action == FailureAction::ReturnNull || allocator.canAllocate());
             return;
         }
 
@@ -440,12 +456,17 @@ void Heap::allocateSmallBumpRangesByMetadata(
 void Heap::allocateSmallBumpRangesByObject(
     std::unique_lock<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
-    LineCache& lineCache)
+    LineCache& lineCache, FailureAction action)
 {
+    BUNUSED(action);
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
     size_t size = allocator.size();
-    SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
+    SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache, action);
+    if (!page) {
+        BASSERT(action == FailureAction::ReturnNull);
+        return;
+    }
     BASSERT(page->hasFreeLines(lock));
 
     auto findSmallBumpRange = [&](Object& it, Object& end) {
@@ -475,14 +496,14 @@ void Heap::allocateSmallBumpRangesByObject(
     for (;;) {
         if (!findSmallBumpRange(it, end)) {
             page->setHasFreeLines(lock, false);
-            BASSERT(allocator.canAllocate());
+            BASSERT(action == FailureAction::ReturnNull || allocator.canAllocate());
             return;
         }
 
         // In a fragmented page, some free ranges might not fit in the cache.
         if (rangeCache.size() == rangeCache.capacity()) {
             lineCache[sizeClass].push(page);
-            BASSERT(allocator.canAllocate());
+            BASSERT(action == FailureAction::ReturnNull || allocator.canAllocate());
             return;
         }
 
@@ -542,8 +563,16 @@ LargeRange Heap::splitAndAllocate(std::unique_lock<Mutex>&, LargeRange& range, s
     return range;
 }
 
-void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, size_t size)
+void* Heap::allocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, size_t size, FailureAction action)
 {
+#define ASSERT_OR_RETURN_ON_FAILURE(cond) do { \
+        if (action == FailureAction::Crash) \
+            RELEASE_BASSERT(cond); \
+        else if (!(cond)) \
+            return nullptr; \
+    } while (false)
+
+
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
     BASSERT(isPowerOfTwo(alignment));
@@ -551,13 +580,11 @@ void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, si
     m_scavenger->didStartGrowing();
     
     size_t roundedSize = size ? roundUpToMultipleOf(largeAlignment, size) : largeAlignment;
-    if (roundedSize < size) // Check for overflow
-        return nullptr;
+    ASSERT_OR_RETURN_ON_FAILURE(roundedSize >= size); // Check for overflow
     size = roundedSize;
 
     size_t roundedAlignment = roundUpToMultipleOf<largeAlignment>(alignment);
-    if (roundedAlignment < alignment) // Check for overflow
-        return nullptr;
+    ASSERT_OR_RETURN_ON_FAILURE(roundedAlignment >= alignment); // Check for overflow
     alignment = roundedAlignment;
 
     LargeRange range = m_largeFree.remove(alignment, size);
@@ -565,15 +592,13 @@ void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, si
         if (m_hasPendingDecommits) {
             m_condition.wait(lock, [&]() { return !m_hasPendingDecommits; });
             // Now we're guaranteed we're looking at all available memory.
-            return tryAllocateLarge(lock, alignment, size);
+            return allocateLarge(lock, alignment, size, action);
         }
 
-        if (usingGigacage())
-            return nullptr;
+        ASSERT_OR_RETURN_ON_FAILURE(!usingGigacage());
 
         range = VMHeap::get()->tryAllocateLargeChunk(alignment, size);
-        if (!range)
-            return nullptr;
+        ASSERT_OR_RETURN_ON_FAILURE(range);
         
         m_largeFree.add(range);
         range = m_largeFree.remove(alignment, size);
@@ -582,14 +607,10 @@ void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, si
     m_freeableMemory -= range.totalPhysicalSize();
 
     void* result = splitAndAllocate(lock, range, alignment, size).begin();
+    ASSERT_OR_RETURN_ON_FAILURE(result);
     return result;
-}
 
-void* Heap::allocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, size_t size)
-{
-    void* result = tryAllocateLarge(lock, alignment, size);
-    RELEASE_BASSERT(result);
-    return result;
+#undef ASSERT_OR_RETURN_ON_FAILURE
 }
 
 bool Heap::isLarge(std::unique_lock<Mutex>&, void* object)
