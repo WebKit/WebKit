@@ -1284,12 +1284,12 @@ void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
+    m_page->updateRendering();
+
     if (paintCompositedContentToHDC(dc)) {
         ::ValidateRect(m_viewWindow, nullptr);
         return;
     }
-
-    m_page->updateRendering();
 
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)

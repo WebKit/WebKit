@@ -1,3 +1,24 @@
+2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK1] ASSERTION FAILED: !isAcceleratedCompositing() in WebView::updateBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=201493
+
+        Reviewed by Don Olmstead.
+
+        WebView::paint switches painting code path by checking accelerated
+        compositing enabled. However, accelerated compositing could be
+        enabled after the checking.
+
+        WebView::paint called WebView::paintCompositedContentToHDC and
+        WebCore::Page::updateRendering.
+        WebView::paintCompositedContentToHDC checks accelerated
+        compositing enabled. Then, WebCore::Page::updateRendering executes
+        JavaScript and accelerated compositing could be enabled.
+
+        * WebView.cpp:
+        (WebView::paint): Call WebCore::Page::updateRendering the
+        beginning of the function.
+
 2019-09-03  Antti Koivisto  <antti@apple.com>
 
         Remove redundant painting phase arguments from GraphicsLayerClient functions
