@@ -27,6 +27,10 @@ body[dir] .resource-headers > section.summary > .details {
     border-color: var(--network-system-color);
 }
 
+body[dir] .resource-headers > section.error > .details {
+    border-color: var(--network-error-color);
+}
+
 body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
     border-color: var(--network-header-color);
 }
