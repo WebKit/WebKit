@@ -1354,3 +1354,5 @@ fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-widt
 
 # problem with blur handling
 mathml/focus-event-handling.html [ Failure ]
+
+webkit.org/b/201550 http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html [ Pass Timeout ]
