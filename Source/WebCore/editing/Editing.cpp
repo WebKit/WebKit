@@ -1122,14 +1122,11 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
     CharacterIterator it(range.get());
     it.advance(index - 1);
 
-    if (!it.atEnd() && it.text()[0] == '\n') {
+    if (!it.atEnd() && it.text().length() == 1 && it.text()[0] == '\n') {
         // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines.
-        auto iteratorRange = it.range();
-        if (iteratorRange->startPosition() == iteratorRange->endPosition()) {
-            it.advance(1);
-            if (!it.atEnd())
-                return VisiblePosition(it.range()->startPosition());
-        }
+        it.advance(1);
+        if (!it.atEnd())
+            return VisiblePosition(it.range()->startPosition());
     }
 
     return { it.atEnd() ? range->endPosition() : it.range()->endPosition(), UPSTREAM };

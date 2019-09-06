@@ -1,3 +1,15 @@
+2019-09-06  Andres Gonzalez  <andresg_22@apple.com>
+
+        AccessibilityRenderObject::setSelectedTextRange fails to set the selection passed an empty line.
+        https://bugs.webkit.org/show_bug.cgi?id=201518
+        <rdar://problem/54835122>
+
+        Reviewed by Ryosuke Niwa.
+
+        Extended this test to set the selection range passed an empty line.
+        * accessibility/set-selected-text-range-after-newline-expected.txt:
+        * accessibility/set-selected-text-range-after-newline.html:
+
 2019-09-05  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in js-test.js
