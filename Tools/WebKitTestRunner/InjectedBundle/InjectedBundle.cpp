@@ -164,7 +164,11 @@ void InjectedBundle::setUpInjectedBundleClients(WKBundlePageRef page)
 InjectedBundlePage* InjectedBundle::page() const
 {
     // It might be better to have the UI process send over a reference to the main
-    // page instead of just assuming it's the first one.
+    // page instead of just assuming it's the first non-suspended one.
+    for (auto& page : m_pages) {
+        if (!WKBundlePageIsSuspended(page->page()))
+            return page.get();
+    }
     return m_pages[0].get();
 }
 

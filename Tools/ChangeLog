@@ -1,3 +1,19 @@
+2019-09-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html and http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=201440
+        <rdar://problem/54998427>
+
+        Reviewed by Alex Christensen.
+
+        Since r249350, it is now possible for a WebContent process to have a suspended WebPage for the current web view.
+        This was confusing InjectedBundle::page() in WebKitTestRunner which was assuming that the WebPage that was first
+        created in the WebContent process is the one that is currently running the test and that we want to talk to.
+        Update InjectedBundle::page() to ignore suspended WebPages in order to address the issue.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::page const):
+
 2019-09-05  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Assign notifyRerender before calling

@@ -1,3 +1,17 @@
+2019-09-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html and http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=201440
+        <rdar://problem/54998427>
+
+        Reviewed by Alex Christensen.
+
+        Add private WKBundlePage API to query if the WebPage is currently suspended or not.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageIsSuspended):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2019-09-05  Sihui Liu  <sihui_liu@apple.com>
 
         Remove StorageArea pointers in StorageManagerSet when removing StorageManagers that own them

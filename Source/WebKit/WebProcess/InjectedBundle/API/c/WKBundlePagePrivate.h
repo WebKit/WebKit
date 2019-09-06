@@ -105,6 +105,8 @@ WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef,
 
 WK_EXPORT void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef page);
 
+WK_EXPORT bool WKBundlePageIsSuspended(WKBundlePageRef page);
+
 // This only works if the SuppressesIncrementalRendering preference is set as well.
 typedef unsigned WKRenderingSuppressionToken;
 WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef);

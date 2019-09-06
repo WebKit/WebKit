@@ -724,6 +724,11 @@ void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef pageRef, WKStr
         *returnRetainedDataRef = WebKit::toAPI(returnData.leakRef());
 }
 
+bool WKBundlePageIsSuspended(WKBundlePageRef pageRef)
+{
+    return WebKit::toImpl(pageRef)->isSuspended();
+}
+
 void WKBundlePageAddUserScript(WKBundlePageRef pageRef, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames)
 {
     WebKit::toImpl(pageRef)->addUserScript(WebKit::toWTFString(source), WebKit::toUserContentInjectedFrames(injectedFrames), WebKit::toUserScriptInjectionTime(injectionTime));
