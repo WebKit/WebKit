@@ -5,5 +5,6 @@ function timeout(foo = 25) {
 function bar(i = 9) {
     if (i > 0)
         return bar(i - 1);
-    return 25;
+    debugger;
+    return 99;
 }
