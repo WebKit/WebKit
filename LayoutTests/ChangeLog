@@ -1,3 +1,13 @@
+2019-09-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed, fix typo in r249216
+
+        Also change the <desc> element to be <text> element so the purpose of 
+        the test is visible once it is opened.
+
+        * svg/custom/href-svg-namespace-animate-target-expected.svg:
+        * svg/custom/href-svg-namespace-animate-target.svg:
+
 2019-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249566.
