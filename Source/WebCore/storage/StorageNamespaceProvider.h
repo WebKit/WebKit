@@ -52,7 +52,7 @@ public:
 
     Ref<StorageArea> localStorageArea(Document&);
 
-    WEBCORE_EXPORT void enableLegacyPrivateBrowsingForTesting(bool enabled);
+    WEBCORE_EXPORT void setSessionIDForTesting(const PAL::SessionID&);
 
 protected:
     StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }

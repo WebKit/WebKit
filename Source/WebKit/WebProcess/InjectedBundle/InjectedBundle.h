@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
+#include <pal/SessionID.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -104,7 +105,7 @@ public:
     void setAsyncFrameScrollingEnabled(WebPageGroupProxy*, bool);
     void setPluginsEnabled(WebPageGroupProxy*, bool);
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
-    void setPrivateBrowsingEnabled(WebPageGroupProxy*, bool);
+    void setPrivateBrowsingEnabled(WebPageGroupProxy*, WebPage*, bool);
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);
     void setAuthorAndUserStylesEnabled(WebPageGroupProxy*, bool);
     void setSpatialNavigationEnabled(WebPageGroupProxy*, bool);
@@ -172,6 +173,8 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
 
     std::unique_ptr<API::InjectedBundle::Client> m_client;
+
+    Optional<PAL::SessionID> m_initialSessionID;
 
 #if PLATFORM(COCOA)
     RetainPtr<WKWebProcessBundleParameters> m_bundleParameters;

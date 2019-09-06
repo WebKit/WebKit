@@ -82,9 +82,8 @@ StorageNamespace& StorageNamespaceProvider::transientLocalStorageNamespace(Secur
     return *slot;
 }
 
-void StorageNamespaceProvider::enableLegacyPrivateBrowsingForTesting(bool enabled)
+void StorageNamespaceProvider::setSessionIDForTesting(const PAL::SessionID& newSessionID)
 {
-    auto newSessionID = enabled ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID();
     if (m_localStorageNamespace && newSessionID != m_localStorageNamespace->sessionID())
         m_localStorageNamespace->setSessionIDForTesting(newSessionID);
     

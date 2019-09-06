@@ -49,7 +49,7 @@ WK_EXPORT void WKBundleSetAllowStorageAccessFromFileURLS(WKBundleRef bundle, WKB
 WK_EXPORT void WKBundleSetMinimumLogicalFontSize(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, int size);
 WK_EXPORT void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
-WK_EXPORT void WKBundleSetPrivateBrowsingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
+WK_EXPORT void WKBundleSetPrivateBrowsingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundlePageRef pageRef, bool enabled);
 WK_EXPORT void WKBundleSetPopupBlockingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetSpatialNavigationEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);

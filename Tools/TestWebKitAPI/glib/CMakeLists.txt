@@ -7,8 +7,6 @@ set(WebKitGLibAPITests_SOURCES
 )
 
 set(WebKitGLibAPITests_INCLUDE_DIRECTORIES
-    ${CMAKE_SOURCE_DIR}/Source
-    ${CMAKE_SOURCE_DIR}/Source/WTF
     ${FORWARDING_HEADERS_DIR}
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib

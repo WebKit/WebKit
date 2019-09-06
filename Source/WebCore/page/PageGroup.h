@@ -29,6 +29,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class Page;
@@ -58,7 +62,7 @@ public:
     WEBCORE_EXPORT CaptionUserPreferences& captionPreferences();
 #endif
 
-    WEBCORE_EXPORT void enableLegacyPrivateBrowsingForTesting(bool);
+    WEBCORE_EXPORT void setSessionIDForTesting(const PAL::SessionID&);
 
 private:
     String m_name;

@@ -1,3 +1,27 @@
+2019-09-06  Alex Christensen  <achristensen@webkit.org>
+
+        When disabling legacy private browsing for testing, change the SessionID back to what it was, not the defaultSessionID
+        https://bugs.webkit.org/show_bug.cgi?id=201480
+
+        Reviewed by Youenn Fablet.
+
+        No change in behavior, but this blocks bug 200050 which will make WebKitTestRunner use a persistent, non-default session.
+        Without this change, that change causes lots of test failures because we are switching from the legacy private browsing session
+        to the default session instead of the session we were using.
+
+        * page/Page.cpp:
+        (WebCore::Page::enableLegacyPrivateBrowsing): Deleted.
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addPage):
+        (WebCore::PageGroup::setSessionIDForTesting):
+        (WebCore::PageGroup::enableLegacyPrivateBrowsingForTesting): Deleted.
+        * page/PageGroup.h:
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::setSessionIDForTesting):
+        (WebCore::StorageNamespaceProvider::enableLegacyPrivateBrowsingForTesting): Deleted.
+        * storage/StorageNamespaceProvider.h:
+
 2019-09-06  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaStreamPrivate::scheduleDeferredTask

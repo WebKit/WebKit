@@ -95,7 +95,7 @@ void PageGroup::addPage(Page& page)
     m_pages.add(&page);
     
     if (m_isLegacyPrivateBrowsingEnabledForTesting)
-        page.enableLegacyPrivateBrowsing(true);
+        page.setSessionID(PAL::SessionID::legacyPrivateSessionID());
 }
 
 void PageGroup::removePage(Page& page)
@@ -126,15 +126,16 @@ CaptionUserPreferences& PageGroup::captionPreferences()
 }
 #endif
 
-void PageGroup::enableLegacyPrivateBrowsingForTesting(bool enabled)
+void PageGroup::setSessionIDForTesting(const PAL::SessionID& sessionID)
 {
-    if (m_isLegacyPrivateBrowsingEnabledForTesting == enabled)
+    bool legacyPrivate = sessionID == PAL::SessionID::legacyPrivateSessionID();
+    if (m_isLegacyPrivateBrowsingEnabledForTesting == legacyPrivate)
         return;
 
-    m_isLegacyPrivateBrowsingEnabledForTesting = enabled;
+    m_isLegacyPrivateBrowsingEnabledForTesting = legacyPrivate;
     
     for (auto* page : m_pages)
-        page->enableLegacyPrivateBrowsing(enabled);
+        page->setSessionID(sessionID);
 }
 
 } // namespace WebCore

@@ -5307,7 +5307,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     else
         WebFrameNetworkingContext::destroyPrivateBrowsingSession();
 #endif
-    m_page->enableLegacyPrivateBrowsing(!!enabled);
+    m_page->setSessionID(!!enabled ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID());
 
     hr = preferences->sansSerifFontFamily(&str);
     if (FAILED(hr))
