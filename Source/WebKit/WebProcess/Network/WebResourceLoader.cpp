@@ -144,14 +144,14 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
     if (InspectorInstrumentationWebKit::shouldInterceptResponse(m_coreLoader->frame(), response)) {
         unsigned long interceptedRequestIdentifier = m_coreLoader->identifier();
         m_interceptController.beginInterceptingResponse(interceptedRequestIdentifier);
-        InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<SharedBuffer> overrideData) mutable {
+        InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, protectedThis = makeRef(*this), interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<SharedBuffer> overrideData) mutable {
             if (!m_coreLoader || !m_coreLoader->identifier()) {
                 RELEASE_LOG_IF_ALLOWED("didReceiveResponse: not continuing intercept load because no coreLoader or no ID (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
                 m_interceptController.continueResponse(interceptedRequestIdentifier);
                 return;
             }
 
-            m_coreLoader->didReceiveResponse(inspectorResponse, [this, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler), overrideData = WTFMove(overrideData)]() mutable {
+            m_coreLoader->didReceiveResponse(inspectorResponse, [this, protectedThis = WTFMove(protectedThis), interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler), overrideData = WTFMove(overrideData)]() mutable {
                 if (policyDecisionCompletionHandler)
                     policyDecisionCompletionHandler();
 
@@ -185,7 +185,8 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
         m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), data, encodedDataLength]() mutable {
-            didReceiveData(data, encodedDataLength);
+            if (m_coreLoader)
+                didReceiveData(data, encodedDataLength);
         });
         return;
     }
@@ -205,7 +206,8 @@ void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkL
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
         m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), networkLoadMetrics]() mutable {
-            didFinishResourceLoad(networkLoadMetrics);
+            if (m_coreLoader)
+                didFinishResourceLoad(networkLoadMetrics);
         });
         return;
     }
@@ -221,7 +223,8 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
         m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), error]() mutable {
-            didFailResourceLoad(error);
+            if (m_coreLoader)
+                didFailResourceLoad(error);
         });
         return;
     }

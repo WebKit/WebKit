@@ -88,6 +88,19 @@ Response Headers:
   X-Expected: PASS
 Content: PASS
 
+-- Running test case: LocalResourceOverride.404
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 404 Not Found
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
 -- Running test case: LocalResourceOverride.Enabled
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Triggering load...

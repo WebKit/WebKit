@@ -1,3 +1,19 @@
+2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crashes when intercept response is a 404
+        https://bugs.webkit.org/show_bug.cgi?id=201514
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        Ensure the WebResourceLoader stays around during intercepts.
+
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        Only perform the work if the m_coreLoader is still alive.
+
 2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Add support for MouseEvent.buttons

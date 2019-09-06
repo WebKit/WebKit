@@ -1,5 +1,16 @@
 2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Crashes when intercept response is a 404
+        https://bugs.webkit.org/show_bug.cgi?id=201514
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/inspector/network/local-resource-override-basic-expected.txt:
+        * http/tests/inspector/network/local-resource-override-basic.html:
+        Add a test for a 404 response override.
+
+2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Tail Deleted Frames shown in Web Inspector are sometimes incorrect (Shadow Chicken)
         https://bugs.webkit.org/show_bug.cgi?id=201366
 

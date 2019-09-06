@@ -165,6 +165,22 @@ function test()
     });
 
     addTestCase({
+        name: "LocalResourceOverride.404",
+        description: "Test for a 404 override.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 404,
+            statusText: "Not Found",
+            headers: {"X-Expected": "PASS"},
+            disabled: false,
+        }]
+    });
+
+    addTestCase({
         name: "LocalResourceOverride.Enabled",
         description: "Test for an enabled override.",
         expression: `triggerOverrideLoad()`,
