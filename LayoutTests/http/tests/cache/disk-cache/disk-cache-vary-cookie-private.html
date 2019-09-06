@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <script src="/js-test-resources/js-test-pre.js"></script>
 <script src="resources/cache-test.js"></script>
 <body>
@@ -36,11 +37,9 @@ function testCookies(testDiskCache, completionHandler)
 }
 
 debug("Testing disk cache");
-testCookies(true, function () {
-    debug("Testing memory cache");
-    testCookies(false, function () {
-        finishJSTest();
-    });
+debug("Testing memory cache in private browsing");
+testCookies(false, function () {
+    finishJSTest();
 });
 
 </script>
