@@ -1,3 +1,49 @@
+2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Tail Deleted Frames shown in Web Inspector are sometimes incorrect (Shadow Chicken)
+        https://bugs.webkit.org/show_bug.cgi?id=201366
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/tail-deleted-frames-expected.txt: Removed.
+        * inspector/debugger/tail-deleted-frames-from-vm-entry-expected.txt: Removed.
+        * inspector/debugger/tail-deleted-frames-from-vm-entry.html: Removed.
+        * inspector/debugger/tail-deleted-frames-this-value-expected.txt: Removed.
+        * inspector/debugger/tail-deleted-frames-this-value.html: Removed.
+        * inspector/debugger/tail-deleted-frames.html: Removed.
+        Remove legacy tests that are difficult to read.
+
+        * inspector/debugger/tail-deleted-frames/resources/stack-trace-utilities.js: Added.
+        (TestPage.registerInitializer.window.getAsyncStackTrace):
+        (TestPage.registerInitializer.async.logThisObject):
+        (TestPage.registerInitializer.async.logScope):
+        (TestPage.registerInitializer.async.logCallFrame):
+        (TestPage.registerInitializer):
+        * inspector/debugger/tail-deleted-frames/resources/tail-deleted-frames-intermediate-frames.js: Added.
+        * inspector/debugger/tail-deleted-frames/resources/tail-deleted-frames-intermediate-native-tail-deleted-calls.js: Added.
+        * inspector/debugger/tail-deleted-frames/resources/tail-deleted-frames-intermediate-tail-deleted-frames.js: Added.
+        * inspector/debugger/tail-deleted-frames/resources/tail-deleted-frames-scopes.js: Added.
+        * inspector/debugger/tail-deleted-frames/resources/tail-deleted-frames-this-value.js: Added.
+        * inspector/debugger/tail-deleted-frames/resources/tail-deleted-frames-vm-entry.js: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-tail-deleted-frames-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-tail-deleted-frames.html: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-scopes-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-scopes.html: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-this-value-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-this-value.html: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-vm-entry-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-vm-entry.html: Added.
+        Include modern tests that are easier to read.
+
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-native-tail-deleted-calls-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-native-tail-deleted-calls.html: Added.
+        Include a test that is known to produce bad output, since we have reproductive steps.
+
+        * platform/mac/TestExpectations:
+        Updated pathes.
+
 2019-09-06  Darryl Pogue  <darryl@dpogue.ca>
 
         REGRESSION(iOS 12): Keyboard dismissal leaves WKWebView viewport-fit=cover content offscreen

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/stack-trace-utilities.js"></script>
+<script src="resources/tail-deleted-frames-scopes.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.TailDeletedFrames.Scopes");
+
+    suite.addTestCase({
+        name: "Debugger.TailDeletedFrames.Scopes",
+        description: "Ensure scopes in tail deleted frames",
+        async test() {
+            // Trigger breakpoint.
+            InspectorTest.evaluateInPage(`startABC()`);
+
+            // Dump stack when paused.
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.log("PAUSED");
+            await logAsyncStackTrace({includeScope: 0});
+
+            // Resume and end test.
+            WI.debuggerManager.resume();
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            InspectorTest.log("RESUMED");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure proper scopes in tail deleted frames.</p>
+</body>
+</html>

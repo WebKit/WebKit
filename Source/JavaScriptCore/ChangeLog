@@ -1,3 +1,128 @@
+2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Tail Deleted Frames shown in Web Inspector are sometimes incorrect (Shadow Chicken)
+        https://bugs.webkit.org/show_bug.cgi?id=201366
+
+        Reviewed by Saam Barati.
+
+        It is possible for the log buffer to be full right as someone is trying to
+        log a function prologue. In such a case the machine stack has already been
+        updated to include the new JavaScript call frame, but the prologue packet
+        cannot be included in the update because the log is full. This would mean
+        that the update fails to rationalize the machine stack with the shadow
+        log / stack. Namely, the current JavaScript call frame is unable to
+        find a matching prologue (the one we are holding to include after the update)
+        and inserts a questionable value into the stack; and in the process
+        missing and removing real potential tail calls.
+
+        For example:
+        
+            "use strict";
+            function third() { return 1; }
+            function second() { return third(); }
+            function first() { return second(); }
+            function start() { return first(); }
+
+        If the the log fills up just as we are entering `b` then we may have a list
+        full log of packets looking like:
+
+          Shadow Log:
+            ...
+            { prologue-packet: entering `start` ... }
+            { prologue-packet: entering `first` ... }
+            { tail-packet: leaving `first` with a tail call }
+
+          Incoming Packet:
+            { prologue-packet: entering `second` ... }
+
+          Current JS Stack:
+            second
+            start
+
+        Since the Current JavaScript stack already has `second`, if we process the
+        log without the prologue for `second` then we push a confused entry on the
+        shadow stack and clear the log such that we eventually lose the tail-call
+        information for `first` to `second`.
+
+        This patch solves this issue by providing enough extra space in the log
+        to always process the incoming packet when that forces an update. This way
+        clients can continue to behave exactly as they are.
+
+        --
+
+        We also document a corner case in some circumstances where the shadow
+        log may currently be insufficient to know how to reconcile:
+        
+        For example:
+
+            "use strict";
+            function third() { return 1; }
+            function second() { return third(); }
+            function first() { return second(); }
+            function doNothingTail() { return Math.random() }
+            function start() {
+                for (i=0;i<1000;++i) doNothingTail();
+                return first();
+            }
+
+        In this case the ShadowChicken log may be processed multiple times due
+        to the many calls to `doNothingTail` / `Math.random()`. When calling the
+        Native function no prologue packet is emitted, so it is unclear that we
+        temporarly go deeper and come back out on the stack, so the log appears
+        to have lots of doNothingTail calls reusing the same frame:
+
+          Shadow Log:
+            ...
+            , [123] {callee = 0x72a21aee0, frame = 0x7ffeef897270, callerFrame = 0x7ffeef8972e0, name = start}
+            , [124] {callee = 0x72a21af10, frame = 0x7ffeef8971f0, callerFrame = 0x7ffeef897270, name = doNothingTail}
+            , [125] tail-packet:{frame = 0x7ffeef8971f0}
+            , [126] {callee = 0x72a21af10, frame = 0x7ffeef8971f0, callerFrame = 0x7ffeef897270, name = doNothingTail}
+            , [127] tail-packet:{frame = 0x7ffeef8971f0}
+            ...
+            , [140] {callee = 0x72a21af10, frame = 0x7ffeef8971f0, callerFrame = 0x7ffeef897270, name = doNothingTail}
+            , [141] tail-packet:{frame = 0x7ffeef8971f0}
+            , [142] {callee = 0x72a21af10, frame = 0x7ffeef8971f0, callerFrame = 0x7ffeef897270, name = doNothingTail}
+            , [143] tail-packet:{frame = 0x7ffeef8971f0}
+            , [144] {callee = 0x72a21aeb0, frame = 0x7ffeef8971f0, callerFrame = 0x7ffeef897270, name = first}
+            , [145] tail-packet:{frame = 0x7ffeef8971f0}
+            , [146] {callee = 0x72a21ae80, frame = 0x7ffeef8971f0, callerFrame = 0x7ffeef897270, name = second}
+            ...
+
+        This log would seem to be indistinguishable from real tail recursion, such as:
+
+            "use strict";
+            function third() { return 1; }
+            function second() { return third(); }
+            function first() { return second(); }
+            function doNothingTail(n) {
+                return n ? doNothingTail(n-1) : first();
+            }
+            function start() {
+                return doNothingTail(1000);
+            }
+
+        Likewise there are more cases where the shadow log appears to be ambiguous with determining
+        the appropriate parent call frame with intermediate function calls. In practice this may
+        not be too problematic, as this is a best effort reconstruction of tail deleted frames.
+        It seems likely we would only show additional frames that did in fact happen serially
+        between JavaScript call frames, but may not actually be the proper parent frames
+        heirachy in the stack.
+
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::Packet::dump const):
+        (JSC::ShadowChicken::Frame::dump const):
+        (JSC::ShadowChicken::dump const):
+        Improved debugging output. Especially for functions.
+
+        (JSC::ShadowChicken::ShadowChicken):
+        Make space in the log for 1 additional packet to process when we slow log.
+
+        (JSC::ShadowChicken::log):
+        Include this packet in our update.
+
+        (JSC::ShadowChicken::update):
+        Address an edge case where we can eliminate tail-deleted frames that don't make sense.
+
 2019-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249566.
