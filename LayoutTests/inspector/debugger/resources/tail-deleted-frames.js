@@ -1,7 +1,7 @@
 "use strict";
 function a() {
     let x = 20;
-    debugger;
+    x;
     return x;
 }
 function b() {
@@ -10,7 +10,7 @@ function b() {
 }
 function c() {
     let z = 60;
-    return b();
+    return b(); 
 }
 function startABC() {
     c();

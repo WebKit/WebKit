@@ -1,3 +1,16 @@
+2019-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r249566.
+
+        Causes inspector layout test crashes under GuardMalloc
+
+        Reverted changeset:
+
+        "Tail Deleted Frames shown in Web Inspector are sometimes
+        incorrect (Shadow Chicken)"
+        https://bugs.webkit.org/show_bug.cgi?id=201366
+        https://trac.webkit.org/changeset/249566
+
 2019-09-06  Guillaume Emont  <guijemont@igalia.com>
 
         testmasm: save r6 in JIT'ed code on ARM_THUMB2
