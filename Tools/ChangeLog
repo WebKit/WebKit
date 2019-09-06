@@ -1,3 +1,13 @@
+2019-09-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble should only display important messages in pop-over - part 2
+        https://bugs.webkit.org/show_bug.cgi?id=201557
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Add few more strings to STEPS_TO_HIDE.
+
 2019-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate all WKCookieManagerRef functions
