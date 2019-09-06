@@ -554,6 +554,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _removeVisibilityPropagationView];
 #endif
+
+    _isPrintingToPDF = NO;
 }
 
 - (void)_processWillSwap
@@ -697,7 +699,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
     if (_isPrintingToPDF)
-        return 0;
+        [self _waitForDrawToPDFCallback];
 
     WebCore::FrameIdentifier frameID;
     if (_WKFrameHandle *handle = printFormatter.frameToPrint)
@@ -740,14 +742,21 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     });
 }
 
+- (BOOL)_waitForDrawToPDFCallback
+{
+    if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->webPageID(), Seconds::infinity())) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    ASSERT(!_isPrintingToPDF);
+    return true;
+}
+
 - (CGPDFDocumentRef)_wk_printedDocument
 {
     if (_isPrintingToPDF) {
-        if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->webPageID(), Seconds::infinity())) {
-            ASSERT_NOT_REACHED();
+        if (![self _waitForDrawToPDFCallback])
             return nullptr;
-        }
-        ASSERT(!_isPrintingToPDF);
     }
 
     return _printedDocument.get();

@@ -1,3 +1,50 @@
+2019-09-06  Tim Horton  <timothy_horton@apple.com>
+
+        Marking up a note on iOS results in a PDF with no contents
+        https://bugs.webkit.org/show_bug.cgi?id=201530
+        <rdar://problem/53686019>
+
+        Reviewed by Andy Estes.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::connectionDidClose):
+        * Platform/IPC/Connection.h:
+        If the main thread is blocked when the Web Content process dies, and
+        something eventually calls waitForAndDispatchImmediately without
+        returning control to the main run loop, we will wait for the full timeout,
+        because a) the code to mark the connection invalid is dispatched
+        to the main thread, and b) the secondary thread that is informed of
+        the Web Content process dying did not yet have a "waiting for" message
+        to mark as interrupted (because it wasn't waiting yet).
+
+        Fix this race by adding a bit that is set under the waitForMessage lock
+        on the secondary thread when the connection is invalidated, identically
+        to m_shouldWaitForSyncReplies, which solves the same problem for sync
+        messages.
+
+        Read the new bit when we are about to start waiting, and bail if it is set.
+        It's OK to not read it inside the loop because we are guaranteed to have
+        waitForMessage set at that point, so the normal interruption bit will work.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _processDidExit]):
+        Reset _isPrintingToPDF; the Web Content process is never going to get
+        back to us if it crashes.
+
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        Do not bail from starting a printing operation if one is already occurring.
+        This fixes the original bug, because Markup ends up invalidating the page
+        count at least one extra time before asking for the printed document.
+        Instead of maintaining the fragile requirement that you cannot recompute
+        the page count while printing, just let it happen. In order to make this
+        work safely, synchronously wait for the previous printed result before
+        continuing with the next print.
+
+        We could do more coalescing here if need be, but calls to -_recalcPageCount
+        are not high in volume.
+
 2019-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix unused argument warning from GCC.

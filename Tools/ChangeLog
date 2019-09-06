@@ -1,3 +1,18 @@
+2019-09-06  Tim Horton  <timothy_horton@apple.com>
+
+        Marking up a note on iOS results in a PDF with no contents
+        https://bugs.webkit.org/show_bug.cgi?id=201530
+        <rdar://problem/53686019>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewPrintFormatter.mm:
+        Add some tests for WKWebViewPrintFormatter; specifically that it is
+        possible to _recalcPageCount twice in quick succession, and that
+        we don't hang if we start painting the printed content immediately
+        after a Web Content process crash.
+
 2019-09-06  Matt Lewis  <jlewis3@apple.com>
 
         run-webkit-test: Allow results to be uploaded without scm checkout
