@@ -227,7 +227,7 @@ struct TupleDecoder {
 
 template<>
 struct TupleDecoder<0> {
-    static Optional<std::tuple<>> decode(Decoder& decoder)
+    static Optional<std::tuple<>> decode(Decoder&)
     {
         return std::make_tuple();
     }

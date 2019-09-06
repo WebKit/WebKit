@@ -1,5 +1,13 @@
 2019-09-06  Alex Christensen  <achristensen@webkit.org>
 
+        Fix unused argument warning from GCC.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::TupleDecoder<0>::decode):
+        There was indeed an unused argument.
+
+2019-09-06  Alex Christensen  <achristensen@webkit.org>
+
         When disabling legacy private browsing for testing, change the SessionID back to what it was, not the defaultSessionID
         https://bugs.webkit.org/show_bug.cgi?id=201480
 
