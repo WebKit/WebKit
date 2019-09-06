@@ -11,10 +11,11 @@ function foo() {
 
 new Promise(foo);
 
+var arrays = [];
 var exception;
 try {
     for (let i = 0; i < 10000000; i++)
-        new ArrayBuffer(1000);
+        arrays.push(new ArrayBuffer(1000));
 
 } catch (e) {
     exception = e;
