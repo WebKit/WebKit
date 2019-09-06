@@ -1,3 +1,15 @@
+2019-09-06  Darryl Pogue  <darryl@dpogue.ca>
+
+        REGRESSION(iOS 12): Keyboard dismissal leaves WKWebView viewport-fit=cover content offscreen
+        https://bugs.webkit.org/show_bug.cgi?id=192564
+
+        Reviewed by Tim Horton.
+
+        Added tests to verify scrolling properly adapts to the keyboard insets on iOS.
+
+        * fast/scrolling/ios/scrollview-adjusts-to-keyboard-insets-expected.txt: Added.
+        * fast/scrolling/ios/scrollview-adjusts-to-keyboard-insets.html: Added.
+
 2019-09-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, fix typo in r249216

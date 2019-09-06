@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body { width: 100vw; height: 100vh; margin: 0px; padding: 0px; }
+#content { width: 100vw; height: 100vh; box-sizing: border-box; padding: 20px; background: #ccc; }
+#target { position: absolute; bottom: 1em; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function listenForEventOnce(target, name, timeout) {
+    return new Promise((resolve, reject) => {
+        const timer = timeout ? setTimeout(reject, timeout) : null;
+        target.addEventListener(name, () => {
+            if (timer)
+                clearTimeout(timer);
+            resolve();
+        }, {once: true});
+    });
+}
+
+async function runTest() {
+    const target = document.getElementById('target');
+    var output = '';
+
+    const firstScrollEvent = listenForEventOnce(target, 'focus').then(() => listenForEventOnce(visualViewport, 'scroll', window.testRunner ? 3000 : 500));
+
+    if (window.testRunner) {
+        await UIHelper.setHardwareKeyboardAttached(false);
+        await UIHelper.activateElementAndWaitForInputSession(target);
+    }
+
+    try {
+        await firstScrollEvent;
+    } catch (error) { }
+
+    output += document.documentElement.scrollTop >= 50 ? 'PASS - the document did scroll on focus' : 'FAIL - the document did not scroll on focus';
+    output += '<br>';
+
+    const secondScrollEvent = listenForEventOnce(visualViewport, 'scroll', window.testRunner ? 3000 : 500);
+
+    if (window.testRunner) {
+        document.activeElement.blur();
+        await UIHelper.waitForKeyboardToHide();
+    }
+
+    try {
+        await secondScrollEvent;
+    } catch (error) { }
+
+    output += document.documentElement.scrollTop == 0 ? 'PASS - the document did scroll on blur' : 'FAIL - the document did not scroll on blur';
+
+    document.getElementById('result').innerHTML = output;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<body onload="runTest()">
+<div id="content">
+This tests focusing an element right above the keyboard. WebKit should scroll the document to reveal the element and then scroll back when the keyboard is dismissed.<br>
+To manually test, focus the text field below on iPad to bring up the docked software keyboard.<br>
+The document should scroll. Dimiss the keyboard and the document should scroll back to its original position.<br>
+<div id="result"></div>
+<input id="target">
+</div>
+</html>
