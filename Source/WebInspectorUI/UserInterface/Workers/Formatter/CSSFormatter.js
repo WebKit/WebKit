@@ -270,7 +270,17 @@ CSSFormatter = class CSSFormatter
                         this._builder.appendNewline(true);
                 }
 
-                this._builder.appendToken(specialSequenceText, startIndex);
+                specialSequenceText.split(`\n`).forEach((line, i, lines) => {
+                    if (line) {
+                        this._builder.appendToken(line, startIndex);
+                        startIndex += line.length;
+                    }
+
+                    if (i < lines.length - 1) {
+                        this._builder.appendNewline(true);
+                        ++startIndex;
+                    }
+                });
 
                 i = endIndex;
                 c = this._sourceText[i];
@@ -298,7 +308,6 @@ CSSFormatter = class CSSFormatter
 
             if (/\s/.test(c)) {
                 if (c === `\n`) {
-                    this._builder.addOriginalLineEnding(i);
                     if (!this._builder.lastTokenWasNewline) {
                         while (this._builder.lastTokenWasWhitespace)
                             this._builder.removeLastWhitespace();

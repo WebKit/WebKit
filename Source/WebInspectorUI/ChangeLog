@@ -1,3 +1,16 @@
+2019-09-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: CSS Formatter: links to CSS resources don't map to the right line after pretty printing if the line is after a multiline comment
+        https://bugs.webkit.org/show_bug.cgi?id=201559
+
+        Reviewed by Joseph Pecoraro.
+
+        Newlines in multiline comments weren't added as line endings, so they weren't considered
+        when a source code location updated after pretty printing.
+
+        * UserInterface/Workers/Formatter/CSSFormatter.js:
+        (CSSFormatter.prototype._format):
+
 2019-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better position for Sources tab when enabling the experimental setting
