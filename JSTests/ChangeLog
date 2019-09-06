@@ -1,3 +1,16 @@
+2019-09-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Math.round() produces wrong result for value prior to 0.5
+        https://bugs.webkit.org/show_bug.cgi?id=185115
+
+        Reviewed by Saam Barati.
+
+        * stress/math-round-basics.js:
+        Add positive/negative test cases.
+
+        * test262/expectations.yaml:
+        Mark test passing.
+
 2019-09-06  Mark Lam  <mark.lam@apple.com>
 
         Move web-assembly-constructors-should-not-override-global-object-property.js below JSTests/wasm/stress.

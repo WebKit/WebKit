@@ -895,8 +895,6 @@ defineUnaryDoubleOpWrapper(log);
 defineUnaryDoubleOpWrapper(floor);
 defineUnaryDoubleOpWrapper(ceil);
 defineUnaryDoubleOpWrapper(trunc);
-
-static const double halfConstant = 0.5;
     
 MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm)
 {
@@ -997,24 +995,29 @@ MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM& vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    SpecializedThunkJIT::Jump intResult;
     SpecializedThunkJIT::JumpList doubleResult;
-    if (jit.supportsFloatingPointTruncate()) {
+    if (jit.supportsFloatingPointRounding()) {
         jit.moveZeroToDouble(SpecializedThunkJIT::fpRegT1);
         doubleResult.append(jit.branchDouble(MacroAssembler::DoubleEqual, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
-        SpecializedThunkJIT::JumpList slowPath;
-        // Handle the negative doubles in the slow path for now.
-        slowPath.append(jit.branchDouble(MacroAssembler::DoubleLessThanOrUnordered, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
-        jit.loadDouble(MacroAssembler::TrustedImmPtr(&halfConstant), SpecializedThunkJIT::fpRegT1);
-        jit.addDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
-        slowPath.append(jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::regT0));
-        intResult = jit.jump();
-        slowPath.link(&jit);
-    }
-    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(jsRound));
+
+        jit.ceilDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+        static const double halfConstant = -0.5;
+        jit.loadDouble(MacroAssembler::TrustedImmPtr(&halfConstant), SpecializedThunkJIT::fpRegT2);
+        jit.addDouble(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::fpRegT2);
+        MacroAssembler::Jump shouldRoundDown = jit.branchDouble(MacroAssembler::DoubleGreaterThan, SpecializedThunkJIT::fpRegT2, SpecializedThunkJIT::fpRegT0);
+
+        jit.moveDouble(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::fpRegT0);
+        MacroAssembler::Jump continuation = jit.jump();
+
+        shouldRoundDown.link(&jit);
+        static const double oneConstant = 1.0;
+        jit.loadDouble(MacroAssembler::TrustedImmPtr(&oneConstant), SpecializedThunkJIT::fpRegT2);
+        jit.subDouble(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::fpRegT2, SpecializedThunkJIT::fpRegT0);
+
+        continuation.link(&jit);
+    } else
+        jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(jsRound));
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-    if (jit.supportsFloatingPointTruncate())
-        intResult.link(&jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);

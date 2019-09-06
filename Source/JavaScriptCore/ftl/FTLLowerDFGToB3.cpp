@@ -2945,18 +2945,17 @@ private:
                 LValue value = lowDouble(m_node->child1());
                 result = m_out.doubleFloor(m_out.doubleAdd(value, m_out.constDouble(0.5)));
             } else {
-                LBasicBlock realPartIsMoreThanHalf = m_out.newBlock();
+                LBasicBlock shouldRoundDown = m_out.newBlock();
                 LBasicBlock continuation = m_out.newBlock();
 
                 LValue value = lowDouble(m_node->child1());
                 LValue integerValue = m_out.doubleCeil(value);
                 ValueFromBlock integerValueResult = m_out.anchor(integerValue);
 
-                LValue realPart = m_out.doubleSub(integerValue, value);
+                LValue ceilMinusHalf = m_out.doubleSub(integerValue, m_out.constDouble(0.5));
+                m_out.branch(m_out.doubleGreaterThanOrUnordered(ceilMinusHalf, value), unsure(shouldRoundDown), unsure(continuation));
 
-                m_out.branch(m_out.doubleGreaterThanOrUnordered(realPart, m_out.constDouble(0.5)), unsure(realPartIsMoreThanHalf), unsure(continuation));
-
-                LBasicBlock lastNext = m_out.appendTo(realPartIsMoreThanHalf, continuation);
+                LBasicBlock lastNext = m_out.appendTo(shouldRoundDown, continuation);
                 LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
                 ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
                 m_out.jump(continuation);

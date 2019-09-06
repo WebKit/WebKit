@@ -1212,9 +1212,6 @@ test/built-ins/JSON/parse/reviver-array-length-get-err.js:
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
-test/built-ins/Math/round/S15.8.2.15_A7.js:
-  default: "Test262Error: #4: '1 / Math.round(0.49999999999999994) !== 1 / 0'"
-  strict mode: "Test262Error: #4: '1 / Math.round(0.49999999999999994) !== 1 / 0'"
 test/built-ins/Number/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'

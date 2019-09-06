@@ -81,6 +81,14 @@ for (var i = 0; i < 1e4; ++i) {
     if (roundedValue !== Number.NEGATIVE_INFINITY)
         throw "mathRoundOnDoubles(Number.NEGATIVE_INFINITY) = " + roundedValue;
 
+    var roundedValue = mathRoundOnDoubles(0.5 - Number.EPSILON / 4);
+    if (roundedValue !== 0 || (1 / roundedValue) !== Infinity)
+        throw "mathRoundOnDoubles(0.5 - Number.EPSILON / 4) = " + roundedValue;
+
+    var roundedValue = mathRoundOnDoubles(-0.5 + Number.EPSILON / 4);
+    if (roundedValue !== 0 || (1 / roundedValue) !== -Infinity)
+        throw "mathRoundOnDoubles(-0.5 + Number.EPSILON / 4) = " + roundedValue;
+
     var boolean = !!(i % 2);
     var roundedBoolean = mathRoundOnBooleans(boolean);
     if (roundedBoolean != boolean)

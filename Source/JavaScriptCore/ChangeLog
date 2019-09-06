@@ -1,3 +1,27 @@
+2019-09-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Math.round() produces wrong result for value prior to 0.5
+        https://bugs.webkit.org/show_bug.cgi?id=185115
+
+        Reviewed by Saam Barati.
+
+        Our Math.round implementation goes in the wrong direction for double values like 0.49999999999999994.
+        This requires just a subtle adjustment for three of our four versions; only baseline JIT needed a full rewrite.
+
+        Specifically:
+          - While 0.49999999999999994 is representable, 1 - 0.49999999999999994 is not (it turns into 0.5),
+            so taking the difference between ceil(value)` and `value` is problematic.
+          - The baseline implementation was doing `floor(x + 0.5)` for positive doubles and slowpathing negative ones
+            (by falling back to jsRound). This patch gives baseline a legitimate implementation too.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRound):
+        * jit/ThunkGenerators.cpp:
+        (JSC::roundThunkGenerator):
+        * runtime/MathCommon.cpp:
+
 2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Tail Deleted Frames shown in Web Inspector are sometimes incorrect (Shadow Chicken)

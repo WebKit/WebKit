@@ -5604,16 +5604,14 @@ void SpeculativeJIT::compileArithRounding(Node* node)
                     m_jit.floorDouble(resultFPR, resultFPR);
                 } else {
                     m_jit.ceilDouble(valueFPR, resultFPR);
-                    FPRTemporary realPart(this);
-                    FPRReg realPartFPR = realPart.fpr();
-                    m_jit.subDouble(resultFPR, valueFPR, realPartFPR);
 
                     FPRTemporary scratch(this);
                     FPRReg scratchFPR = scratch.fpr();
-                    static const double halfConstant = 0.5;
+                    static const double halfConstant = -0.5;
                     m_jit.loadDouble(TrustedImmPtr(&halfConstant), scratchFPR);
+                    m_jit.addDouble(resultFPR, scratchFPR);
 
-                    JITCompiler::Jump shouldUseCeiled = m_jit.branchDouble(JITCompiler::DoubleLessThanOrEqual, realPartFPR, scratchFPR);
+                    JITCompiler::Jump shouldUseCeiled = m_jit.branchDouble(JITCompiler::DoubleLessThanOrEqual, scratchFPR, valueFPR);
                     static const double oneConstant = -1.0;
                     m_jit.loadDouble(TrustedImmPtr(&oneConstant), scratchFPR);
                     m_jit.addDouble(scratchFPR, resultFPR);
