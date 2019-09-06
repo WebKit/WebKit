@@ -127,7 +127,8 @@ static int greatestCommonDivisor(int a, int b)
 #if USE(TEXTURE_MAPPER_GL)
 class GstVideoFrameHolder : public TextureMapperPlatformLayerBuffer::UnmanagedBufferDataHolder {
 public:
-    explicit GstVideoFrameHolder(GstSample* sample, TextureMapperGL::Flags flags, bool gstGLEnabled)
+    explicit GstVideoFrameHolder(GstSample* sample, Optional<GstVideoDecoderPlatform> videoDecoderPlatform, TextureMapperGL::Flags flags, bool gstGLEnabled)
+        : m_videoDecoderPlatform(videoDecoderPlatform)
     {
         RELEASE_ASSERT(GST_IS_SAMPLE(sample));
 
@@ -232,6 +233,13 @@ public:
             if (GST_VIDEO_INFO_N_COMPONENTS(&m_videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) > 3)
                 return nullptr;
 
+            if (m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::ImxVPU) {
+                // IMX VPU decoder decodes YUV data only into the Y texture from which the sampler
+                // then directly produces RGBA data. Textures for other planes aren't used, but
+                // that's decoder's problem. We have to treat that Y texture as having RGBA data.
+                return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(m_videoFrame.data[0]) } }, m_size, m_flags, GraphicsContext3D::RGBA);
+            }
+
             unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info);
             std::array<GLuint, 3> planes;
             std::array<unsigned, 3> yuvPlane;
@@ -270,6 +278,7 @@ private:
     GstVideoFrame m_videoFrame { };
     IntSize m_size;
     bool m_hasAlphaChannel;
+    Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     TextureMapperGL::Flags m_flags { };
     GLuint m_textureID { 0 };
     bool m_isMapped { false };
@@ -302,7 +311,7 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
 #if USE(GSTREAMER_GL)
-    if (m_videoDecoderPlatform == WebKitGstVideoDecoderPlatform::Video4Linux)
+    if (m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux)
         flushCurrentBuffer();
 #endif
 #if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
@@ -779,7 +788,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
             if (!proxy.isActive())
                 return;
 
-            std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, !m_usingFallbackVideoSink);
+            std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_usingFallbackVideoSink);
 
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
             if (frameHolder->hasMappedTextures()) {
@@ -937,7 +946,7 @@ void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
             gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
     }
 
-    bool shouldWait = m_videoDecoderPlatform == WebKitGstVideoDecoderPlatform::Video4Linux;
+    bool shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux;
     auto proxyOperation = [shouldWait, pipeline = pipeline()](TextureMapperPlatformLayerProxy& proxy) {
         GST_DEBUG_OBJECT(pipeline, "Flushing video sample %s", shouldWait ? "synchronously" : "");
         LockHolder locker(!shouldWait ? &proxy.lock() : nullptr);
@@ -1038,7 +1047,7 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
     if (!GST_IS_SAMPLE(m_sample.get()))
         return false;
 
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
+    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, true);
 
     std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = frameHolder->platformLayerBuffer();
     if (!layerBuffer)
@@ -1067,7 +1076,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     if (!GST_IS_SAMPLE(m_sample.get()))
         return nullptr;
 
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperFlags, true);
+    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, true);
 
     std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = frameHolder->platformLayerBuffer();
     if (!layerBuffer)

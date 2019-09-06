@@ -314,8 +314,7 @@ protected:
     bool m_waitingForKey { false };
 #endif
 
-    enum class WebKitGstVideoDecoderPlatform { Video4Linux };
-    Optional<WebKitGstVideoDecoderPlatform> m_videoDecoderPlatform;
+    Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
 private:
     FloatSize naturalSizeFromCaps(GstCaps*) const;
