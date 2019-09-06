@@ -870,6 +870,11 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     return image && (image->isAnimating() || image->animationPending());
 }
 
+unsigned Internals::imagePendingDecodePromisesCountForTesting(HTMLImageElement& element)
+{
+    return element.pendingDecodePromisesCountForTesting();
+}
+
 void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement& element, bool enabled)
 {
     if (auto* bitmapImage = bitmapImageFromImageElement(element))

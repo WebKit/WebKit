@@ -369,6 +369,7 @@ enum CompositingPolicy {
     void setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
     void resetImageAnimation(HTMLImageElement element);
     boolean isImageAnimating(HTMLImageElement element);
+    unsigned long imagePendingDecodePromisesCountForTesting(HTMLImageElement element);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean enabled);
     unsigned long imageDecodeCount(HTMLImageElement element);
     unsigned long pdfDocumentCachingCount(HTMLImageElement element);
