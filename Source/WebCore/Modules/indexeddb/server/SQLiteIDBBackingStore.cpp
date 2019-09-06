@@ -2304,21 +2304,78 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    outCount = 0;
-
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get count from database without an in-progress transaction"_s };
 
-    auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreIdentifier, indexIdentifier, range);
-    if (!cursor) {
-        LOG_ERROR("Cannot open cursor to populate indexes in database");
-        return IDBError { UnknownError, "Unable to populate indexes in database"_s };
+    outCount = 0;
+
+    auto lowerKey = range.lowerKey.isNull() ? IDBKeyData::minimum() : range.lowerKey;
+    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(lowerKey);
+    if (!lowerBuffer) {
+        LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
+        return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range for count operation"_s };
     }
 
-    while (cursor->advance(1))
-        ++outCount;
+    auto upperKey = range.upperKey.isNull() ? IDBKeyData::maximum() : range.upperKey;
+    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(upperKey);
+    if (!upperBuffer) {
+        LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
+        return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range for count operation"_s };
+    }
 
+    SQLiteStatement* statement = nullptr;
+
+    if (!indexIdentifier) {
+        static const char* const countLowerOpenUpperOpenRecords = "SELECT COUNT(*) FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT);";
+        static const char* const countLowerOpenUpperClosedRecords = "SELECT COUNT(*) FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT);";
+        static const char* const countLowerClosedUpperOpenRecords = "SELECT COUNT(*) FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT);";
+        static const char* const countLowerClosedUpperClosedRecords = "SELECT COUNT(*) FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT);";
+
+        if (range.lowerOpen && range.upperOpen)
+            statement = cachedStatement(SQL::CountRecordsLowerOpenUpperOpen, countLowerOpenUpperOpenRecords);
+        else if (range.lowerOpen && !range.upperOpen)
+            statement = cachedStatement(SQL::CountRecordsLowerOpenUpperClosed, countLowerOpenUpperClosedRecords);
+        else if (!range.lowerOpen && range.upperOpen)
+            statement = cachedStatement(SQL::CountRecordsLowerClosedUpperOpen, countLowerClosedUpperOpenRecords);
+        else
+            statement = cachedStatement(SQL::CountRecordsLowerClosedUpperClosed, countLowerClosedUpperClosedRecords);
+        
+        if (!statement
+            || statement->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
+            || statement->bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLITE_OK
+            || statement->bindBlob(3, upperBuffer->data(), upperBuffer->size()) != SQLITE_OK) {
+            LOG_ERROR("Could not count records in object store %" PRIi64 " from Records table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return IDBError { UnknownError, "Unable to count records in object store due to binding failure"_s };
+        }
+    } else {
+        static const char* const countLowerOpenUpperOpenIndexRecords = "SELECT COUNT(*) FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT);";
+        static const char* const countLowerOpenUpperClosedIndexRecords = "SELECT COUNT(*) FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT);";
+        static const char* const countLowerClosedUpperOpenIndexRecords = "SELECT COUNT(*) FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT);";
+        static const char* const countLowerClosedUpperClosedIndexRecords = "SELECT COUNT(*) FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT);";
+        
+        if (range.lowerOpen && range.upperOpen)
+            statement = cachedStatement(SQL::CountIndexRecordsLowerOpenUpperOpen, countLowerOpenUpperOpenIndexRecords);
+        else if (range.lowerOpen && !range.upperOpen)
+            statement = cachedStatement(SQL::CountIndexRecordsLowerOpenUpperClosed, countLowerOpenUpperClosedIndexRecords);
+        else if (!range.lowerOpen && range.upperOpen)
+            statement = cachedStatement(SQL::CountIndexRecordsLowerClosedUpperOpen, countLowerClosedUpperOpenIndexRecords);
+        else
+            statement = cachedStatement(SQL::CountIndexRecordsLowerClosedUpperClosed, countLowerClosedUpperClosedIndexRecords);
+
+        if (!statement
+            || statement->bindInt64(1, indexIdentifier) != SQLITE_OK
+            || statement->bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLITE_OK
+            || statement->bindBlob(3, upperBuffer->data(), upperBuffer->size()) != SQLITE_OK) {
+            LOG_ERROR("Could not count records with index %" PRIi64 " from IndexRecords table (%i) - %s", indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return IDBError { UnknownError, "Unable to count records for index due to binding failure"_s };
+        }
+    }
+
+    if (statement->step() != SQLITE_ROW)
+        return IDBError { UnknownError, "Unable to count records"_s };
+
+    outCount = statement->getColumnInt(0);
     return IDBError { };
 }
 
@@ -2571,7 +2628,7 @@ void SQLiteIDBBackingStore::unregisterCursor(SQLiteIDBCursor& cursor)
 
 SQLiteStatement* SQLiteIDBBackingStore::cachedStatement(SQLiteIDBBackingStore::SQL sql, const char* statement)
 {
-    if (sql >= SQL::Count) {
+    if (sql >= SQL::Invalid) {
         LOG_ERROR("Invalid SQL statement ID passed to cachedStatement()");
         return nullptr;
     }
@@ -2598,7 +2655,7 @@ void SQLiteIDBBackingStore::close()
 
 void SQLiteIDBBackingStore::closeSQLiteDB()
 {
-    for (size_t i = 0; i < static_cast<int>(SQL::Count); ++i)
+    for (size_t i = 0; i < static_cast<int>(SQL::Invalid); ++i)
         m_cachedStatements[i] = nullptr;
 
     if (m_sqliteDB)
