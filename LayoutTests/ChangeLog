@@ -1,3 +1,21 @@
+2019-09-05  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in plugins/private-browsing-mode.html
+        https://bugs.webkit.org/show_bug.cgi?id=201523
+
+        Reviewed by Alex Christensen.
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in plugins/private-browsing-mode.html
+        since it does not do the right thing for WebKit2. Instead, use the new useEphemeralSession
+        WKTR flag.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * plugins/non-private-browsing-mode-expected.txt: Added.
+        * plugins/non-private-browsing-mode.html: Added.
+        * plugins/private-browsing-mode-expected.txt:
+        * plugins/private-browsing-mode.html:
+
 2019-09-05  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Fix new test results after adding console warnings

@@ -487,7 +487,6 @@ http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
 plugins/private-browsing-mode-2.html [ Skip ]
-plugins/private-browsing-mode.html [ Skip ]
 storage/websql/private-browsing-noread-nowrite.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.

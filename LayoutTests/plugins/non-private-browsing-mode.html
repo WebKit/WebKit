@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <head>
 <script src="../resources/js-test.js"></script>
 </head>
@@ -16,9 +15,8 @@ function runTest()
     plugin.setAttribute('test', 'private-browsing');
     document.body.appendChild(plugin);
     
-    shouldBe("plugin.privateBrowsingEnabled", "true");
-    shouldBe("plugin.cachedPrivateBrowsingEnabled", "true");
-    
+    shouldBe("plugin.privateBrowsingEnabled", "false");
+    shouldBe("plugin.cachedPrivateBrowsingEnabled", "false");
 }
 </script>
 

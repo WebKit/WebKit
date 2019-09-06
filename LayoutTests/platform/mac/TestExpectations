@@ -467,7 +467,6 @@ webkit.org/b/57688 fast/text/international/bidi-AN-after-empty-run.html [ Failur
 webkit.org/b/57688 fast/text/international/bidi-CS-after-AN.html [ Failure Pass ]
 webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass ]
 
-webkit.org/b/112646 plugins/private-browsing-mode.html [ Failure Pass ]
 webkit.org/b/112616 plugins/plugin-clip-subframe.html [ Failure Pass ]
 
 # Flakey plugin tests
