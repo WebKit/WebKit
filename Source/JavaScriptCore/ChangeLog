@@ -1,3 +1,51 @@
+2019-09-06  Guillaume Emont  <guijemont@igalia.com>
+
+        testmasm: save r6 in JIT'ed code on ARM_THUMB2
+        https://bugs.webkit.org/show_bug.cgi?id=201138
+
+        Reviewed by Mark Lam.
+
+        MacroAssemblerArmv7 uses r6 as a temporary register, and it is a
+        callee-saved register. The JITs use
+        AssemblyHelpers::emitSaveCalleeSaves() and friends to save
+        callee-saved registers, but there is no such mechanism in testmasm,
+        which seems to make the assumption that the macroassembler does not
+        use callee-saved registers (which I guess is true for all other
+        architectures, but not for Armv7).
+
+        This issue means that testmasm crashes on Armv7 since code generated
+        by gcc uses r6, and it gets modified by JIT'ed code.
+
+        This change makes sure that we save and restore r6 for all code
+        compiled by testmasm on Armv7.
+
+        * assembler/testmasm.cpp:
+        (JSC::emitFunctionPrologue):
+        (JSC::emitFunctionEpilogue):
+        (JSC::testSimple):
+        (JSC::testGetEffectiveAddress):
+        (JSC::testBranchTruncateDoubleToInt32):
+        (JSC::testBranchTestBit32RegReg):
+        (JSC::testBranchTestBit32RegImm):
+        (JSC::testBranchTestBit32AddrImm):
+        (JSC::testBranchTestBit64RegReg):
+        (JSC::testBranchTestBit64RegImm):
+        (JSC::testBranchTestBit64AddrImm):
+        (JSC::testCompareDouble):
+        (JSC::testMul32WithImmediates):
+        (JSC::testMul32SignExtend):
+        (JSC::testCompareFloat):
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesProgramCounter):
+        (JSC::testProbeModifiesStackValues):
+        (JSC::testByteSwap):
+        (JSC::testMoveDoubleConditionally32):
+        (JSC::testMoveDoubleConditionally64):
+        (JSC::testCagePreservesPACFailureBit):
+
 2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Tail Deleted Frames shown in Web Inspector are sometimes incorrect (Shadow Chicken)
