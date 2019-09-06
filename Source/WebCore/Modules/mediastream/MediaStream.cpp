@@ -101,14 +101,14 @@ MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPri
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    setIsActive(m_private->active());
-    m_private->addObserver(*this);
-
     for (auto& trackPrivate : m_private->tracks()) {
         auto track = MediaStreamTrack::create(document, *trackPrivate);
         track->addObserver(*this);
         m_trackSet.add(track->id(), WTFMove(track));
     }
+
+    setIsActive(m_private->active());
+    m_private->addObserver(*this);
     suspendIfNeeded();
 }
 

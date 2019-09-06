@@ -215,15 +215,25 @@ void UserMediaRequest::start()
     controller->requestUserMediaAccess(*this);
 }
 
+static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
+{
+    if (stream.getTracks().isEmpty())
+        return false;
+
+    return WTF::allOf(stream.getTracks(), [](auto& track) {
+        return !track->source().captureDidFail();
+    });
+}
+
 void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
 
     auto callback = [this, protector = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
-        auto scopeExit = makeScopeExit([&] {
+        auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
-        if (!m_scriptExecutionContext)
+        if (isContextStopped())
             return;
 
         if (!privateStream) {
@@ -231,16 +241,21 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             deny(MediaAccessDenialReason::HardwareError);
             return;
         }
-        privateStream->monitorOrientation(downcast<Document>(m_scriptExecutionContext)->orientationNotifier());
 
-        auto stream = MediaStream::create(*downcast<Document>(m_scriptExecutionContext), privateStream.releaseNonNull());
-        if (stream->getTracks().isEmpty()) {
+        auto& document = downcast<Document>(*m_scriptExecutionContext);
+        privateStream->monitorOrientation(document.orientationNotifier());
+
+        auto stream = MediaStream::create(document, privateStream.releaseNonNull());
+        stream->startProducingData();
+
+        if (!isMediaStreamCorrectlyStarted(stream)) {
             deny(MediaAccessDenialReason::HardwareError);
             return;
         }
 
-        scopeExit.release();
-        m_pendingActivationMediaStream = makeUnique<PendingActivationMediaStream>(WTFMove(protector), *this, WTFMove(stream), WTFMove(completionHandler));
+        ASSERT(document.isCapturing());
+        stream->document()->setHasCaptureMediaStreamTrack();
+        m_promise.resolve(WTFMove(stream));
     };
 
     auto& document = downcast<Document>(*scriptExecutionContext());
@@ -310,11 +325,6 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 
 void UserMediaRequest::stop()
 {
-    // Protecting 'this' since nulling m_pendingActivationMediaStream might destroy it.
-    Ref<UserMediaRequest> protectedThis(*this);
-
-    m_pendingActivationMediaStream = nullptr;
-
     auto& document = downcast<Document>(*m_scriptExecutionContext);
     if (auto* controller = UserMediaController::from(document.page()))
         controller->cancelUserMediaAccessRequest(*this);
@@ -335,50 +345,6 @@ Document* UserMediaRequest::document() const
     return downcast<Document>(m_scriptExecutionContext);
 }
 
-UserMediaRequest::PendingActivationMediaStream::PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&& protectingUserMediaRequest, UserMediaRequest& userMediaRequest, Ref<MediaStream>&& stream, CompletionHandler<void()>&& completionHandler)
-    : m_protectingUserMediaRequest(WTFMove(protectingUserMediaRequest))
-    , m_userMediaRequest(userMediaRequest)
-    , m_mediaStream(WTFMove(stream))
-    , m_completionHandler(WTFMove(completionHandler))
-{
-    m_mediaStream->privateStream().addObserver(*this);
-    m_mediaStream->startProducingData();
-}
-
-UserMediaRequest::PendingActivationMediaStream::~PendingActivationMediaStream()
-{
-    m_mediaStream->privateStream().removeObserver(*this);
-    m_completionHandler();
-    if (auto* document = m_mediaStream->document())
-        document->updateIsPlayingMedia();
-}
-
-void UserMediaRequest::PendingActivationMediaStream::characteristicsChanged()
-{
-    if (!m_userMediaRequest.m_pendingActivationMediaStream)
-        return;
-
-    for (auto& track : m_mediaStream->privateStream().tracks()) {
-        if (track->source().captureDidFail()) {
-            m_userMediaRequest.mediaStreamDidFail(track->source().type());
-            return;
-        }
-    }
-
-    if (m_mediaStream->privateStream().hasVideo() || m_mediaStream->privateStream().hasAudio()) {
-        m_userMediaRequest.mediaStreamIsReady(WTFMove(m_mediaStream));
-        return;
-    }
-}
-
-void UserMediaRequest::mediaStreamIsReady(Ref<MediaStream>&& stream)
-{
-    RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamIsReady");
-    stream->document()->setHasCaptureMediaStreamTrack();
-    m_promise.resolve(WTFMove(stream));
-    m_pendingActivationMediaStream = nullptr;
-}
-
 void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamDidFail");
@@ -395,7 +361,6 @@ void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
         break;
     }
     m_promise.reject(NotReadableError, makeString("Failed starting capture of a "_s, typeDescription, " track"_s));
-    m_pendingActivationMediaStream = nullptr;
 }
 
 } // namespace WebCore

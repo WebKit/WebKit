@@ -282,9 +282,7 @@ void MediaStreamPrivate::trackMutedChanged(MediaStreamTrackPrivate& track)
 #endif
 
     ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier(), " ", track.muted());
-    scheduleDeferredTask([this] {
-        characteristicsChanged();
-    });
+    characteristicsChanged();
 }
 
 void MediaStreamPrivate::trackSettingsChanged(MediaStreamTrackPrivate&)
@@ -301,9 +299,7 @@ void MediaStreamPrivate::trackEnabledChanged(MediaStreamTrackPrivate& track)
     ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier(), " ", track.enabled());
     updateActiveVideoTrack();
 
-    scheduleDeferredTask([this] {
-        characteristicsChanged();
-    });
+    characteristicsChanged();
 }
 
 void MediaStreamPrivate::trackStarted(MediaStreamTrackPrivate& track)
@@ -313,9 +309,7 @@ void MediaStreamPrivate::trackStarted(MediaStreamTrackPrivate& track)
 #endif
 
     ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier());
-    scheduleDeferredTask([this] {
-        characteristicsChanged();
-    });
+    characteristicsChanged();
 }
 
 void MediaStreamPrivate::trackEnded(MediaStreamTrackPrivate& track)
@@ -325,21 +319,8 @@ void MediaStreamPrivate::trackEnded(MediaStreamTrackPrivate& track)
 #endif
 
     ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier());
-    scheduleDeferredTask([this] {
-        updateActiveState(NotifyClientOption::Notify);
-        characteristicsChanged();
-    });
-}
-
-void MediaStreamPrivate::scheduleDeferredTask(Function<void ()>&& function)
-{
-    ASSERT(function);
-    callOnMainThread([weakThis = makeWeakPtr(*this), function = WTFMove(function)] {
-        if (!weakThis)
-            return;
-
-        function();
-    });
+    updateActiveState(NotifyClientOption::Notify);
+    characteristicsChanged();
 }
 
 void MediaStreamPrivate::monitorOrientation(OrientationNotifier& notifier)
