@@ -52,12 +52,22 @@ static void childSetupFunction(gpointer userData)
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 static bool isInsideFlatpak()
 {
-    static int ret = -1;
-    if (ret != -1)
-        return ret;
+    static Optional<bool> ret;
+    if (ret)
+        return *ret;
 
     ret = g_file_test("/.flatpak-info", G_FILE_TEST_EXISTS);
-    return ret;
+    return *ret;
+}
+
+static bool isInsideSnap()
+{
+    static Optional<bool> ret;
+    if (ret)
+        return *ret;
+
+    ret = g_getenv("SNAP");
+    return *ret;
 }
 #endif
 
@@ -137,7 +147,8 @@ void ProcessLauncher::launchProcess()
         sandboxEnabled = !strcmp(sandboxEnv, "1");
 
     // You cannot use bubblewrap within Flatpak so lets ensure it never happens.
-    if (sandboxEnabled && !isInsideFlatpak())
+    // Snap can allow it but has its own limitations that require workarounds.
+    if (sandboxEnabled && !isInsideFlatpak() && !isInsideSnap())
         process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
     else
 #endif
