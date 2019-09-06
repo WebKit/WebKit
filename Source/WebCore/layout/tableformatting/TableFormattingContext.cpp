@@ -64,42 +64,59 @@ void TableFormattingContext::layout()
     ASSERT(!cellList.isEmpty());
     // Layout and position each table cell (and compute row height as well).
     auto& layoutState = this->layoutState();
-    auto& columnList = grid.columnsContext().columns();
     auto& rowList = grid.rows();
-    // First row.
-    auto& row = rowList.first();
-    row.setLogicalTop({ });
-    initializeDisplayBoxToBlank(displayBoxForLayoutBox(row.box()));
+    auto& columnList = grid.columnsContext().columns();
 
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
-        ASSERT(cellLayoutBox.establishesBlockFormattingContext());
-
-        auto& cellDisplayBox = displayBoxForLayoutBox(cellLayoutBox);
-        // FIXME: Add support for column and row spanning.
         auto cellPosition = cell->position;
-        auto& row = rowList.at(cellPosition.y());
-        auto& column = columnList.at(cellPosition.x());
 
+        auto& column = columnList.at(cellPosition.x());
+        auto& row = rowList.at(cellPosition.y());
+
+        auto& cellDisplayBox = displayBoxForLayoutBox(cell->tableCellBox);
         initializeDisplayBoxToBlank(cellDisplayBox);
         cellDisplayBox.setContentBoxWidth(column.logicalWidth());
         cellDisplayBox.setTopLeft({ column.logicalLeft(), row.logicalTop() });
-
+        ASSERT(cellLayoutBox.establishesBlockFormattingContext());
         layoutState.createFormattingContext(cellLayoutBox)->layout();
-
-        // FIXME: This requires a 2 pass layout.
         auto heightAndMargin = geometry().tableCellHeightAndMargin(cellLayoutBox);
-        cellDisplayBox.setContentBoxHeight(heightAndMargin.height);
-        cellDisplayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
 
+        // FIXME: Add support for column and row spanning and this requires a 2 pass layout.
         row.setLogicalHeight(std::max(row.logicalHeight(), heightAndMargin.height));
-        // FIXME: This also requires spanning support/check.
         if (!cellPosition.x() && cellPosition.y()) {
             auto& previousRow = rowList.at(cellPosition.y() - 1);
             row.setLogicalTop(previousRow.logicalBottom());
-            initializeDisplayBoxToBlank(displayBoxForLayoutBox(row.box()));
         }
     }
+
+    // Finalize size and position.
+    for (auto& cell : cellList) {
+        auto& cellDisplayBox = displayBoxForLayoutBox(cell->tableCellBox);
+        auto cellPosition = cell->position;
+        auto& column = columnList.at(cellPosition.x());
+        auto& row = rowList.at(cellPosition.y());
+
+        cellDisplayBox.setTop(row.logicalTop());
+        cellDisplayBox.setLeft(column.logicalLeft());
+        cellDisplayBox.setContentBoxWidth(column.logicalWidth());
+        cellDisplayBox.setContentBoxHeight(row.logicalHeight());
+        cellDisplayBox.setVerticalMargin({ });
+        cellDisplayBox.setHorizontalMargin({ });
+    }
+
+    LayoutUnit rowWidth;
+    for (auto& column : columnList)
+        rowWidth += column.logicalWidth();
+
+    for (auto& row : rowList) {
+        auto& rowDisplayBox = layoutState.displayBoxForLayoutBox(row.box());
+        initializeDisplayBoxToBlank(rowDisplayBox);
+        rowDisplayBox.setContentBoxHeight(row.logicalHeight());
+        rowDisplayBox.setContentBoxWidth(rowWidth);
+        rowDisplayBox.setTop(row.logicalTop());
+    }
+
     // FIXME: This is temporary only. Size table sections properly.
     for (auto& section : childrenOfType<Box>(downcast<Container>(root())))
         initializeDisplayBoxToBlank(layoutState.displayBoxForLayoutBox(section));

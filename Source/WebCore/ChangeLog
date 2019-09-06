@@ -1,5 +1,20 @@
 2019-09-06  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Set computed row width.
+        https://bugs.webkit.org/show_bug.cgi?id=201533
+        <rdar://problem/55098828>
+
+        Reviewed by Antti Koivisto.
+
+        Decouple cell box layout/display box setup and set the computed row width.    
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout):
+
+2019-09-06  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] A formatting context root is always a containing block for relative: static boxes.
         https://bugs.webkit.org/show_bug.cgi?id=201554
         <rdar://problem/55123295>
