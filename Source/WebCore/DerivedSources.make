@@ -78,6 +78,7 @@ VPATH = \
     $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
+    $(WebCore)/mathml \
     $(WebCore)/page \
     $(WebCore)/platform/network \
     $(WebCore)/plugins \
@@ -847,6 +848,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/track/VTTRegionList.idl \
     $(WebCore)/html/track/VideoTrack.idl \
     $(WebCore)/html/track/VideoTrackList.idl \
+    $(WebCore)/mathml/MathMLElement.idl \
+    $(WebCore)/mathml/MathMLMathElement.idl \
     $(WebCore)/inspector/CommandLineAPIHost.idl \
     $(WebCore)/inspector/InspectorAuditAccessibilityObject.idl \
     $(WebCore)/inspector/InspectorAuditDOMObject.idl \
@@ -1682,6 +1685,7 @@ IDL_INCLUDES = \
     $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
+    $(WebCore)/mathml \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \

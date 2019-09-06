@@ -26,6 +26,7 @@
 <details><summary></summary><summary id="summary"></summary></details>
 <iframe id="iframeForDesignMode"></iframe>
 <svg><g id="g" onfocus="alert('fail')"></g></svg>
+<math><mrow id="mrow" onfocus="alert('fail')"></mrow></math>
 </div>
 
 <script>
@@ -54,6 +55,7 @@ var iframeForDesignMode = document.getElementById('iframeForDesignMode');
 iframeForDesignMode.contentDocument.designMode = 'on';
 var bodyInDesignMode = iframeForDesignMode.contentDocument.body;
 var g = document.getElementById('g');
+var mrow = document.getElementById('mrow');
 
 shouldBe('anchor.tabIndex', '0');
 shouldBe('iframe.tabIndex', '0');
@@ -74,6 +76,7 @@ shouldBe('videoWithControls.tabIndex', '-1');
 shouldBe('summary.tabIndex', '-1');
 shouldBe('bodyInDesignMode.tabIndex', '-1');
 shouldBe('g.tabIndex', '-1');
+shouldBe('mrow.tabIndex', '-1');
 
 shouldBe('anchor.setAttribute("tabindex", "invalid"); anchor.tabIndex', '0');
 shouldBe('iframe.setAttribute("tabindex", "invalid"); iframe.tabIndex', '0');
@@ -94,6 +97,7 @@ shouldBe('videoWithControls.setAttribute("tabindex", "invalid"); videoWithContro
 shouldBe('summary.setAttribute("tabindex", "invalid"); summary.tabIndex', '-1');
 shouldBe('bodyInDesignMode.setAttribute("tabindex", "invalid"); bodyInDesignMode.tabIndex', '-1');
 shouldBe('g.setAttribute("tabindex", "invalid"); g.tabIndex', '-1');
+shouldBe('mrow.setAttribute("tabindex", "invalid"); mrow.tabIndex', '-1');
 
 shouldBe('anchor.setAttribute("tabindex", "9999999999"); anchor.tabIndex', '0');
 shouldBe('iframe.setAttribute("tabindex", "9999999999"); iframe.tabIndex', '0');
@@ -114,6 +118,7 @@ shouldBe('videoWithControls.setAttribute("tabindex", "9999999999"); videoWithCon
 shouldBe('summary.setAttribute("tabindex", "9999999999"); summary.tabIndex', '-1');
 shouldBe('bodyInDesignMode.setAttribute("tabindex", "9999999999"); bodyInDesignMode.tabIndex', '-1');
 shouldBe('g.setAttribute("tabindex", "9999999999"); g.tabIndex', '-1');
+shouldBe('mrow.setAttribute("tabindex", "9999999999"); mrow.tabIndex', '-1');
 
 document.getElementById('container').innerHTML = '';
 </script>

@@ -34,6 +34,8 @@
 #include "EventHandler.h"
 #include "FrameLoader.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "MathMLNames.h"
 #include "MouseEvent.h"
@@ -87,8 +89,20 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& 
     } else if (name == columnspanAttr) {
         if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
             downcast<RenderTableCell>(renderer())->colSpanOrRowSpanChanged();
-    } else
+    } else if (name == HTMLNames::tabindexAttr) {
+        if (value.isEmpty())
+            clearTabIndexExplicitlyIfNeeded();
+        else if (auto optionalTabIndex = parseHTMLInteger(value))
+            setTabIndexExplicitly(optionalTabIndex.value());
+    } else {
+        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
+        if (!eventName.isNull()) {
+            setAttributeEventListener(eventName, name, value);
+            return;
+        }
+
         StyledElement::parseAttribute(name, value);
+    }
 }
 
 bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const

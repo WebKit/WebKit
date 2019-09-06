@@ -1,3 +1,22 @@
+2019-09-06  Rob Buis  <rbuis@igalia.com>
+
+        Implement MathML DOM
+        https://bugs.webkit.org/show_bug.cgi?id=200470
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend existing tests to also test focus for MathML. Add a standalone test for MathML
+        based on svg/custom/tabindex-order.html. Add a test for mouse clicks and focus handling
+        based on svg/custom/focus-event-handling.xhtml.
+
+        * fast/dom/tabindex-defaults-expected.txt:
+        * fast/dom/tabindex-defaults.html:
+        * mathml/focus-event-handling-expected.txt: Added.
+        * mathml/focus-event-handling.html: Added.
+        * mathml/tabindex-order-expected.txt: Added.
+        * mathml/tabindex-order.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2019-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crashes when intercept response is a 404

@@ -1,3 +1,39 @@
+2019-09-06  Rob Buis  <rbuis@igalia.com>
+
+        Implement MathML DOM
+        https://bugs.webkit.org/show_bug.cgi?id=200470
+
+        Reviewed by Ryosuke Niwa.
+
+        Expose MathML DOM as specified here [1].
+
+        [1] https://mathml-refresh.github.io/mathml-core/#dom-mathmlelement
+
+        Tests: imported/w3c/web-platform-tests/mathml/relations/html5-tree/clipboard-event-handlers.tentative.html
+               imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-dynamic.tentative.html
+               imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-interface.tentative.html
+               imported/w3c/web-platform-tests/mathml/relations/html5-tree/html-or-foreign-element-interfaces.tentative.html
+               imported/w3c/web-platform-tests/mathml/relations/html5-tree/integration-point-4.html
+               imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html
+               mathml/focus-event-handling.html
+               mathml/tabindex-order.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::createNewElementWrapper):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseAttribute):
+        * mathml/MathMLElement.idl: Copied from Source/WebCore/html/HTMLOrForeignElement.idl.
+        * mathml/MathMLMathElement.idl: Copied from Source/WebCore/html/HTMLOrForeignElement.idl.
+        * mathml/mathtags.in:
+
 2019-09-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] YUV buffers on iMX platforms have to be treated as RGBA

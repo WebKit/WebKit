@@ -1351,3 +1351,6 @@ fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html [ Pass 
 # Skip tests timing out for <rdar://problem/48616298>
 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
 fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html [ Skip ]
+
+# problem with blur handling
+mathml/focus-event-handling.html [ Failure ]

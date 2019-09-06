@@ -2567,6 +2567,7 @@ UserAgentStyleSheetsData.cpp
 WebCoreJSBuiltinInternals.cpp
 WebCoreJSBuiltins.cpp
 JSHTMLElementWrapperFactory.cpp
+JSMathMLElementWrapperFactory.cpp
 JSSVGElementWrapperFactory.cpp
 
 // IDL bindings
@@ -2933,6 +2934,8 @@ JSHashChangeEvent.cpp
 JSHistory.cpp
 JSHkdfParams.cpp
 JSHmacKeyParams.cpp
+JSMathMLElement.cpp
+JSMathMLMathElement.cpp
 JSIDBCursor.cpp
 JSIDBCursorDirection.cpp
 JSIDBCursorWithValue.cpp

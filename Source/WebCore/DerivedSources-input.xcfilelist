@@ -856,6 +856,8 @@ $(PROJECT_DIR)/inspector/InspectorAuditResourcesObject.idl
 $(PROJECT_DIR)/inspector/InspectorFrontendHost.idl
 $(PROJECT_DIR)/loader/appcache/DOMApplicationCache.idl
 $(PROJECT_DIR)/make-hash-tools.pl
+$(PROJECT_DIR)/mathml/MathMLElement.idl
+$(PROJECT_DIR)/mathml/MathMLMathElement.idl
 $(PROJECT_DIR)/mathml/mathattrs.in
 $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl

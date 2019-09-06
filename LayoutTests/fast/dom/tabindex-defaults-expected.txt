@@ -22,6 +22,7 @@ PASS videoWithControls.tabIndex is -1
 PASS summary.tabIndex is -1
 PASS bodyInDesignMode.tabIndex is -1
 PASS g.tabIndex is -1
+PASS mrow.tabIndex is -1
 PASS anchor.setAttribute("tabindex", "invalid"); anchor.tabIndex is 0
 PASS iframe.setAttribute("tabindex", "invalid"); iframe.tabIndex is 0
 PASS frame.setAttribute("tabindex", "invalid"); frame.tabIndex is 0
@@ -41,6 +42,7 @@ PASS videoWithControls.setAttribute("tabindex", "invalid"); videoWithControls.ta
 PASS summary.setAttribute("tabindex", "invalid"); summary.tabIndex is -1
 PASS bodyInDesignMode.setAttribute("tabindex", "invalid"); bodyInDesignMode.tabIndex is -1
 PASS g.setAttribute("tabindex", "invalid"); g.tabIndex is -1
+PASS mrow.setAttribute("tabindex", "invalid"); mrow.tabIndex is -1
 PASS anchor.setAttribute("tabindex", "9999999999"); anchor.tabIndex is 0
 PASS iframe.setAttribute("tabindex", "9999999999"); iframe.tabIndex is 0
 PASS frame.setAttribute("tabindex", "9999999999"); frame.tabIndex is 0
@@ -60,6 +62,7 @@ PASS videoWithControls.setAttribute("tabindex", "9999999999"); videoWithControls
 PASS summary.setAttribute("tabindex", "9999999999"); summary.tabIndex is -1
 PASS bodyInDesignMode.setAttribute("tabindex", "9999999999"); bodyInDesignMode.tabIndex is -1
 PASS g.setAttribute("tabindex", "9999999999"); g.tabIndex is -1
+PASS mrow.setAttribute("tabindex", "9999999999"); mrow.tabIndex is -1
 PASS successfullyParsed is true
 
 TEST COMPLETE

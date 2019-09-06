@@ -931,6 +931,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMallocStatistics.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMallocStatistics.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLMathElement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLMathElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaCapabilities.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaCapabilitiesDecodingInfo.cpp

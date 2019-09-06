@@ -11978,6 +11978,9 @@
 		A9EE448F210FD69A00B6EAE6 /* AccessibilityRole.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibilityRole.idl; sourceTree = "<group>"; };
 		AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCursorImageValue.cpp; sourceTree = "<group>"; };
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
+		AA11C04B23169689009D9831 /* MathMLMathElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MathMLMathElement.idl; sourceTree = "<group>"; };
+		AA11C04D2316973D009D9831 /* JSMathMLMathElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMathMLMathElement.cpp; sourceTree = "<group>"; };
+		AA11C04E23169782009D9831 /* JSMathMLMathElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMathMLMathElement.h; sourceTree = "<group>"; };
 		AA2A5AB816A485D500975A25 /* DOMWindowSpeechSynthesis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowSpeechSynthesis.cpp; sourceTree = "<group>"; };
 		AA2A5AB916A485D500975A25 /* DOMWindowSpeechSynthesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowSpeechSynthesis.h; sourceTree = "<group>"; };
 		AA2A5ABA16A485D500975A25 /* DOMWindowSpeechSynthesis.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindowSpeechSynthesis.idl; sourceTree = "<group>"; };
@@ -12000,6 +12003,8 @@
 		AA4C3A740B2B1679002334A2 /* InlineStyleSheetOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineStyleSheetOwner.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* InlineStyleSheetOwner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineStyleSheetOwner.h; sourceTree = "<group>"; };
 		AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		AA61BB5223167473002FE25A /* JSMathMLElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSMathMLElementWrapperFactory.cpp; path = DerivedSources/WebCore/JSMathMLElementWrapperFactory.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA61BB5423167474002FE25A /* JSMathMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSMathMLElementWrapperFactory.h; path = DerivedSources/WebCore/JSMathMLElementWrapperFactory.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7FEE9C16A4E6F3004C0C33 /* JSSpeechSynthesis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesis.cpp; sourceTree = "<group>"; };
 		AA7FEE9E16A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesisUtterance.cpp; sourceTree = "<group>"; };
 		AA7FEE9F16A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechSynthesisUtterance.h; sourceTree = "<group>"; };
@@ -16529,6 +16534,7 @@
 				7C330A041DF9F93B00D3395C /* Geolocation */,
 				A83B79080CCAFF2B000B0825 /* HTML */,
 				1C5FAECA0DCFD8C900D58F78 /* Inspector */,
+				AACC83D92316578600EB6BF5 /* MATHML */,
 				CDAB6D2A17C7E97D00C60B34 /* MediaControls */,
 				CD61FE7B1794CA02004101EB /* MediaSource */,
 				07CFD99317D01405001C4FFC /* MediaStream */,
@@ -19870,6 +19876,8 @@
 				1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
+				AA61BB5223167473002FE25A /* JSMathMLElementWrapperFactory.cpp */,
+				AA61BB5423167474002FE25A /* JSMathMLElementWrapperFactory.h */,
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
 				8574D1F20ADE6122004CBA11 /* JSSVGElementWrapperFactory.h */,
 				FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */,
@@ -23816,6 +23824,17 @@
 				AAA728F216D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		AACC83D92316578600EB6BF5 /* MATHML */ = {
+			isa = PBXGroup;
+			children = (
+				AACC83DB2316583200EB6BF5 /* JSMathMLElement.cpp */,
+				AACC83DA231657EC00EB6BF5 /* JSMathMLElement.h */,
+				AA11C04D2316973D009D9831 /* JSMathMLMathElement.cpp */,
+				AA11C04E23169782009D9831 /* JSMathMLMathElement.h */,
+			);
+			name = MATHML;
 			sourceTree = "<group>";
 		};
 		B1A942DD15B5CE2200D525D1 /* mediasource */ = {
@@ -27841,10 +27860,12 @@
 				FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */,
 				FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */,
 				FABE72EE1059C1EB00D999DD /* MathMLElement.h */,
+				AACC83D42316568700EB6BF5 /* MathMLElement.idl */,
 				0BCF83EF1059C1EB00D999DD /* MathMLFractionElement.cpp */,
 				0BCF83F01059C1EB00D999DD /* MathMLFractionElement.h */,
 				FABE72F11059C1EB00D999DD /* MathMLMathElement.cpp */,
 				FABE72F21059C1EB00D999DD /* MathMLMathElement.h */,
+				AA11C04B23169689009D9831 /* MathMLMathElement.idl */,
 				C3E61C653A64807A83E76FB8 /* MathMLMencloseElement.cpp */,
 				CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */,
 				D4F72C653A64807A83E76FB8 /* MathMLOperatorDictionary.cpp */,
@@ -29701,6 +29722,8 @@
 				A5B81CAE1FAA44620037D1E6 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */,
+				A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */,
+				A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */,
 				A5B81CAF1FAA44620037D1E6 /* InspectorLayerTreeAgent.h in Headers */,
 				A5B81CB01FAA44620037D1E6 /* InspectorMemoryAgent.h in Headers */,
 				A5B81CB11FAA44620037D1E6 /* InspectorNetworkAgent.h in Headers */,
@@ -32313,12 +32336,10 @@
 				07D60928214C5BFD00E7396C /* WindowDisplayCaptureSourceMac.h in Headers */,
 				BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */,
 				7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */,
-				A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */,
 				463521AD2081092A00C28922 /* WindowProxy.h in Headers */,
 				E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */,
 				501BAAA913950E2C00F7ACEB /* WindRule.h in Headers */,
 				A14832BE187F64CC00DA63A6 /* WKContentObservation.h in Headers */,
-				A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */,
 				A14832BF187F652C00DA63A6 /* WKGraphics.h in Headers */,
 				A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */,
 				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,

@@ -1,0 +1,15 @@
+TEST
+Test whether focus and blur events are dispatched and seen in the focus/blur event handlers:
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusSeen is "space1"
+PASS blurSeen is "space1"
+PASS focusSeen is "row"
+PASS blurSeen is "row"
+PASS focusSeen is "fraction"
+PASS blurSeen is "fraction"
+PASS focusSeen is "text"
+PASS blurSeen is "text"
+

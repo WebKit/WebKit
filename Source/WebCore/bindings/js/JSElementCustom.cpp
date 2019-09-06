@@ -36,8 +36,10 @@
 #include "JSAttr.h"
 #include "JSDOMBinding.h"
 #include "JSHTMLElementWrapperFactory.h"
+#include "JSMathMLElementWrapperFactory.h"
 #include "JSNodeList.h"
 #include "JSSVGElementWrapperFactory.h"
+#include "MathMLElement.h"
 #include "NodeList.h"
 #include "SVGElement.h"
 
@@ -53,6 +55,8 @@ static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Elem
         return createJSHTMLWrapper(globalObject, static_reference_cast<HTMLElement>(WTFMove(element)));
     if (is<SVGElement>(element))
         return createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(element)));
+    if (is<MathMLElement>(element))
+        return createJSMathMLWrapper(globalObject, static_reference_cast<MathMLElement>(WTFMove(element)));
     return createWrapper<Element>(globalObject, WTFMove(element));
 }
 

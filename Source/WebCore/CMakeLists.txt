@@ -907,6 +907,9 @@ set(WebCore_NON_SVG_IDL_FILES
 
     loader/appcache/DOMApplicationCache.idl
 
+    mathml/MathMLElement.idl
+    mathml/MathMLMathElement.idl
+
     page/BarProp.idl
     page/Crypto.idl
     page/DOMSelection.idl

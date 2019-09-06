@@ -1,0 +1,9 @@
+
+PASS math.addEventListener for copy 
+FAIL oncopy: the content attribute must be compiled into a function as the corresponding property assert_true: Calling the handler must run the code expected true got undefined
+PASS math.addEventListener for cut 
+FAIL oncut: the content attribute must be compiled into a function as the corresponding property assert_true: Calling the handler must run the code expected true got undefined
+PASS math.addEventListener for paste 
+FAIL onpaste: the content attribute must be compiled into a function as the corresponding property assert_true: Calling the handler must run the code expected true got undefined
+E
+
