@@ -34,10 +34,14 @@
 #include "MiniBrowserReplace.h"
 #include "WebKitLegacyBrowserWindow.h"
 #include <WebKitLegacy/WebKitCOMAPI.h>
+#include <wtf/win/SoftLinking.h>
 
 #if ENABLE(WEBKIT)
 #include "WebKitBrowserWindow.h"
 #endif
+
+SOFT_LINK_LIBRARY(user32);
+SOFT_LINK_OPTIONAL(user32, SetProcessDpiAwarenessContext, BOOL, STDAPICALLTYPE, (DPI_AWARENESS_CONTEXT));
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpstrCmdLine, _In_ int nCmdShow)
 {
@@ -63,7 +67,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     // Init COM
     OleInitialize(nullptr);
 
-    ::SetProcessDPIAware();
+    if (SetProcessDpiAwarenessContextPtr())
+        SetProcessDpiAwarenessContextPtr()(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+    else
+        ::SetProcessDPIAware();
 
     auto factory = WebKitLegacyBrowserWindow::create;
 #if ENABLE(WEBKIT)

@@ -27,11 +27,17 @@
 #include "GDIUtilities.h"
 
 #include "HWndDC.h"
+#include <wtf/win/SoftLinking.h>
+
+SOFT_LINK_LIBRARY(user32);
+SOFT_LINK_OPTIONAL(user32, GetDpiForWindow, UINT, STDAPICALLTYPE, (HWND));
 
 namespace WebCore {
 
 float deviceScaleFactorForWindow(HWND window)
 {
+    if (window && GetDpiForWindowPtr())
+        return GetDpiForWindowPtr()(window) / 96.0f;
     HWndDC dc(window);
     return ::GetDeviceCaps(dc, LOGPIXELSX) / 96.0f;
 }

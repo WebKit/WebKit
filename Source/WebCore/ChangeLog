@@ -1,3 +1,13 @@
+2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Support Per-Monitor (V2) DPI Awareness
+        https://bugs.webkit.org/show_bug.cgi?id=201450
+
+        Reviewed by Don Olmstead.
+
+        * platform/win/GDIUtilities.cpp:
+        (WebCore::deviceScaleFactorForWindow): Use GetDpiForWindow if available by using soft linking.
+
 2019-09-05  Charlie Turner  <cturner@igalia.com>
 
         [EME] Introduce a Proxy CDM for thread-safe access to CDM instances from background decryption threads

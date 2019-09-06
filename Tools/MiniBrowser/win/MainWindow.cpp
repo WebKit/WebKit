@@ -264,9 +264,12 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
     case WM_SIZE:
         thisWindow->resizeSubViews();
         break;
-    case WM_DPICHANGED:
+    case WM_DPICHANGED: {
         thisWindow->updateDeviceScaleFactor();
-        return DefWindowProc(hWnd, message, wParam, lParam);
+        auto& rect = *reinterpret_cast<RECT*>(lParam);
+        SetWindowPos(hWnd, nullptr, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOACTIVATE);
+        break;
+    }
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

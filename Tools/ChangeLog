@@ -1,3 +1,15 @@
+2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Support Per-Monitor (V2) DPI Awareness
+        https://bugs.webkit.org/show_bug.cgi?id=201450
+
+        Reviewed by Don Olmstead.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::WndProc): Set the window position suggested by WM_DPICHANGED.
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Call SetProcessDpiAwarenessContext by using soft linking.
+
 2019-09-05  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html and http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html are flaky timeouts
