@@ -909,6 +909,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setModernMediaControlsEnabled(options.enableModernMediaControls);
     prefsPrivate->setIsSecureContextAttributeEnabled(options.enableIsSecureContextAttribute);
     prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
+    preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
 }
 
 static String applicationId()
