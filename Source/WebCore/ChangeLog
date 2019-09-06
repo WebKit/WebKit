@@ -1,5 +1,20 @@
 2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] Add support for MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=201445
+
+        Reviewed by Brent Fulgham.
+
+        Spec: <https://www.w3.org/TR/uievents/#dom-mouseevent-buttons>
+
+        * platform/win/GDIUtilities.h:
+        (buttonsForEvent): Added.
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        Set m_buttons.
+
+2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win] Support Per-Monitor (V2) DPI Awareness
         https://bugs.webkit.org/show_bug.cgi?id=201450
 

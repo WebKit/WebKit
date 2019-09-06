@@ -1,3 +1,14 @@
+2019-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Add support for MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=201445
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        Set m_buttons.
+
 2019-09-05  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html and http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html are flaky timeouts

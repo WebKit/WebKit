@@ -41,6 +41,18 @@ inline LPARAM makeScaledPoint(IntPoint point, float scaleFactor)
     return MAKELPARAM(point.x(), point.y());
 }
 
+inline unsigned short buttonsForEvent(WPARAM wparam)
+{
+    unsigned short buttons = 0;
+    if (wparam & MK_LBUTTON)
+        buttons |= 1;
+    if (wparam & MK_MBUTTON)
+        buttons |= 4;
+    if (wparam & MK_RBUTTON)
+        buttons |= 2;
+    return buttons;
+}
+
 } // namespace WebCore
 
 #endif // GDIUtilties_h

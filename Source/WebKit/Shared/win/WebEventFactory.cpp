@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebEventFactory.h"
 
+#include <WebCore/GDIUtilities.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/Scrollbar.h>
@@ -396,8 +397,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
 
     int clickCount = WebKit::clickCount(type, button, position, timestamp);
     auto modifiers = modifiersForEvent(wParam);
+    auto buttons = buttonsForEvent(wParam);
 
-    return WebMouseEvent(type, button, 0, position, globalPosition, 0, 0, 0, clickCount, modifiers, WallTime::now(), didActivateWebView);
+    return WebMouseEvent(type, button, buttons, position, globalPosition, 0, 0, 0, clickCount, modifiers, WallTime::now(), didActivateWebView);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

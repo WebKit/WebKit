@@ -83,6 +83,7 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
     : PlatformEvent(messageToEventType(message), wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, WallTime::now())
     , m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
+    , m_buttons(buttonsForEvent(wParam))
     , m_clickCount(0)
     , m_modifierFlags(wParam)
     , m_didActivateWebView(didActivateWebView)
