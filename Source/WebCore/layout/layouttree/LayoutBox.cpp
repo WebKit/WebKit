@@ -188,7 +188,7 @@ const Container* Box::containingBlock() const
     ASSERT(!Phase::isInTreeBuilding());
     // The containing block in which the root element lives is a rectangle called the initial containing block.
     // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
-    // content edge of the nearest block container ancestor box.
+    // content edge of the nearest block container ancestor box or which establishes a formatting context.
     // If the element has 'position: fixed', the containing block is established by the viewport
     // If the element has 'position: absolute', the containing block is established by the nearest ancestor with a
     // 'position' of 'absolute', 'relative' or 'fixed'.
@@ -196,9 +196,13 @@ const Container* Box::containingBlock() const
         return nullptr;
 
     if (!isPositioned() || isInFlowPositioned()) {
-        auto* nearestBlockContainer = parent();
-        for (; nearestBlockContainer->parent() && !nearestBlockContainer->isBlockContainerBox(); nearestBlockContainer = nearestBlockContainer->parent()) { }
-        return nearestBlockContainer;
+        for (auto* nearestBlockContainerOrFormattingContextRoot = parent(); nearestBlockContainerOrFormattingContextRoot; nearestBlockContainerOrFormattingContextRoot = nearestBlockContainerOrFormattingContextRoot->parent()) {
+            if (nearestBlockContainerOrFormattingContextRoot->isBlockContainerBox() || nearestBlockContainerOrFormattingContextRoot->establishesFormattingContext())
+                return nearestBlockContainerOrFormattingContextRoot; 
+        }
+        // We should always manage to find the ICB.
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
 
     if (isFixedPositioned()) {
