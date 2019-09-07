@@ -1,3 +1,46 @@
+2019-09-06  Chris Dumez  <cdumez@apple.com>
+
+        Move the ResourceLoadObserver logic to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=201517
+
+        Reviewed by Brent Fulgham.
+
+        Move the ResourceLoadObserver logic to WebKit2 since it is not used by WebKit1. This allows us to simplify
+        code.
+
+        In a follow-up patch, I will simplify the code even further by leveraging the fact that a WebContent process
+        is always associated with a single WebsiteDataStore / sessionID:
+        - No need for a HashMap of sessionIDs
+        - No need to even allocate the ResourceLoadObserver if the WebProcess is associated with an ephemeral session.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp: Copied from Source/WebCore/loader/ResourceLoadObserver.cpp.
+        (WebKit::is3xxRedirect):
+        (WebKit::WebResourceLoadObserver::WebResourceLoadObserver):
+        (WebKit::WebResourceLoadObserver::shouldLog const):
+        (WebKit::WebResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::WebResourceLoadObserver::scheduleNotificationIfNeeded):
+        (WebKit::WebResourceLoadObserver::updateCentralStatisticsStore):
+        (WebKit::WebResourceLoadObserver::statisticsForURL):
+        (WebKit::WebResourceLoadObserver::takeStatistics):
+        (WebKit::WebResourceLoadObserver::clearState):
+        (WebKit::WebResourceLoadObserver::nonNullOwnerURL const):
+        (WebKit::WebResourceLoadObserver::logFontLoad):
+        (WebKit::WebResourceLoadObserver::logCanvasRead):
+        (WebKit::WebResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebKit::WebResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logScreenAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logSubresourceLoading):
+        (WebKit::WebResourceLoadObserver::logWebSocketLoading):
+        (WebKit::WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h: Added.
+        * WebProcess/WebProcess.cpp:
+
 2019-09-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Make WebAuthn default off and let clients turn it on at will

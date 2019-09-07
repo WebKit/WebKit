@@ -554,6 +554,7 @@ WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
 WebProcess/WebCoreSupport/WebPlugInClient.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
 WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
+WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
 WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
 WebProcess/WebCoreSupport/WebUserMediaClient.cpp
 WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp

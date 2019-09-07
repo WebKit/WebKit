@@ -25,91 +25,41 @@
 
 #pragma once
 
-#include "CanvasActivityRecord.h"
-#include "PageIdentifier.h"
 #include "ResourceLoadStatistics.h"
-#include "Timer.h"
 #include <pal/SessionID.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/WTFString.h>
-
-namespace WTF {
-class Lock;
-class WorkQueue;
-class WallTime;
-}
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class Document;
 class Frame;
-class Page;
-class RegistrableDomain;
 class ResourceRequest;
 class ResourceResponse;
-class ScriptExecutionContext;
-
-struct ResourceLoadStatistics;
 
 class ResourceLoadObserver {
-    friend class WTF::NeverDestroyed<ResourceLoadObserver>;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    using PerSessionResourceLoadData = Vector<std::pair<PAL::SessionID, Vector<ResourceLoadStatistics>>>;
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
-
-    void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
-    void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, PAL::SessionID);
-    void logUserInteractionWithReducedTimeResolution(const Document&);
+    WEBCORE_EXPORT static void setShared(ResourceLoadObserver&);
     
-    void logFontLoad(const Document&, const String& familyName, bool loadStatus);
-    void logCanvasRead(const Document&);
-    void logCanvasWriteOrMeasure(const Document&, const String& textWritten);
-    void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI);
-    void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI);
+    virtual ~ResourceLoadObserver() { }
 
-    WEBCORE_EXPORT String statisticsForURL(PAL::SessionID, const URL&);
+    virtual void logSubresourceLoading(const Frame*, const ResourceRequest& /* newRequest */, const ResourceResponse& /* redirectResponse */) { }
+    virtual void logWebSocketLoading(const URL& /* targetURL */, const URL& /* mainFrameURL */, PAL::SessionID) { }
+    virtual void logUserInteractionWithReducedTimeResolution(const Document&) { }
+    virtual void logFontLoad(const Document&, const String& /* familyName */, bool /* loadStatus */) { }
+    virtual void logCanvasRead(const Document&) { }
+    virtual void logCanvasWriteOrMeasure(const Document&, const String& /* textWritten */) { }
+    virtual void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI) { }
+    virtual void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI) { }
 
-    WEBCORE_EXPORT void setStatisticsUpdatedCallback(Function<void(PerSessionResourceLoadData&&)>&&);
-    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)>&&);
-    WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&)>&&);
-
-    WEBCORE_EXPORT void updateCentralStatisticsStore();
-    WEBCORE_EXPORT void clearState();
-
+    virtual String statisticsForURL(PAL::SessionID, const URL&) { return { }; }
+    virtual void updateCentralStatisticsStore() { }
+    virtual void clearState() { }
+    
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    bool shouldLogUserInteraction() const { return m_shouldLogUserInteraction; }
-    void setShouldLogUserInteraction(bool shouldLogUserInteraction) { m_shouldLogUserInteraction = shouldLogUserInteraction; }
+    virtual void setShouldLogUserInteraction(bool) { }
 #endif
-
-private:
-    ResourceLoadObserver();
-
-    bool shouldLog(PAL::SessionID) const;
-    ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(PAL::SessionID, const RegistrableDomain&);
-    void scheduleNotificationIfNeeded();
-
-    PerSessionResourceLoadData takeStatistics();
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void requestStorageAccessUnderOpener(PAL::SessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument);
-#endif
-
-    HashMap<PAL::SessionID, std::unique_ptr<HashMap<RegistrableDomain, ResourceLoadStatistics>>> m_perSessionResourceStatisticsMap;
-    HashMap<RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;
-    Function<void(PerSessionResourceLoadData)> m_notificationCallback;
-    Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)> m_requestStorageAccessUnderOpenerCallback;
-    Function<void(PAL::SessionID, const RegistrableDomain&)> m_logUserInteractionNotificationCallback;
-
-    Timer m_notificationTimer;
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    uint64_t m_loggingCounter { 0 };
-    bool m_shouldLogUserInteraction { false };
-#endif
-
-    URL nonNullOwnerURL(const Document&) const;
 };
     
 } // namespace WebCore

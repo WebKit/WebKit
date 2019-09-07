@@ -910,6 +910,7 @@
 		4657D88A22664A2F005DE823 /* WKOrientationAccessAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4657D88822664A1A005DE823 /* WKOrientationAccessAlert.mm */; };
 		465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 465F4E05230B2E7C003CEDB7 /* StorageNamespaceIdentifier.h */; };
 		466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */; };
+		4671FF1F23217EFF001B64C7 /* WebResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */; };
 		467E43E82243FF7D00B13924 /* WebProcessDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
 		46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */; };
@@ -3217,6 +3218,8 @@
 		466BC0381FA266C9002FA9C1 /* WebSWContextManagerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWContextManagerConnection.cpp; sourceTree = "<group>"; };
 		466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWContextManagerConnection.h; sourceTree = "<group>"; };
 		466BC03A1FA266C9002FA9C1 /* WebSWContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWContextManagerConnection.messages.in; sourceTree = "<group>"; };
+		4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadObserver.h; sourceTree = "<group>"; };
+		4671FF1E23217EFF001B64C7 /* WebResourceLoadObserver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadObserver.cpp; sourceTree = "<group>"; };
 		467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessDataStoreParameters.h; sourceTree = "<group>"; };
 		4683569A21E81CC7006E27A3 /* ProvisionalPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProvisionalPageProxy.h; sourceTree = "<group>"; };
 		4683569B21E81CC7006E27A3 /* ProvisionalPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProvisionalPageProxy.cpp; sourceTree = "<group>"; };
@@ -7625,6 +7628,8 @@
 				D3B9484311FF4B6500032B39 /* WebPopupMenu.h */,
 				1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */,
 				1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */,
+				4671FF1E23217EFF001B64C7 /* WebResourceLoadObserver.cpp */,
+				4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */,
 				D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */,
 				D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */,
 				C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */,
@@ -9993,8 +9998,10 @@
 				461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
+				A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
+				4671FF1F23217EFF001B64C7 /* WebResourceLoadObserver.h in Headers */,
 				7AFBD36321E50F39005DBACB /* WebResourceLoadStatisticsStore.h in Headers */,
 				413075B01DE85F580039EC69 /* WebRTCMonitor.h in Headers */,
 				41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */,
@@ -10211,7 +10218,6 @@
 				0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */,
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
-				A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */,
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
 				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
 				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,

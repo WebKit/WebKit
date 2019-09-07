@@ -67,6 +67,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
+#include "WebResourceLoadObserver.h"
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
@@ -110,7 +111,6 @@
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/RegistrableDomain.h>
-#include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -217,16 +217,7 @@ WebProcess::WebProcess()
     m_plugInAutoStartOriginHashes.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, WallTime>());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    ResourceLoadObserver::shared().setStatisticsUpdatedCallback([this] (auto&& statistics) {
-        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
-    });
-
-    ResourceLoadObserver::shared().setRequestStorageAccessUnderOpenerCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, const RegistrableDomain& openerDomain) {
-        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(sessionID, domainInNeedOfStorageAccess, openerPageID, openerDomain), 0);
-    });
-    
-    ResourceLoadObserver::shared().setLogUserInteractionNotificationCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& domain) {    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(sessionID, domain), 0);
-    });
+    ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
 #endif
     
     Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
@@ -1655,7 +1646,9 @@ void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 
 void WebProcess::clearResourceLoadStatistics()
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     ResourceLoadObserver::shared().clearState();
+#endif
 }
 
 RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)

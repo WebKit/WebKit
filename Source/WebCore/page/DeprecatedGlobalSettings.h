@@ -134,7 +134,7 @@ private:
     WEBCORE_EXPORT static bool gManageAudioSession;
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;
-    static bool gResourceLoadStatisticsEnabledEnabled;
+    WEBCORE_EXPORT static bool gResourceLoadStatisticsEnabledEnabled;
     static bool gAllowsAnySSLCertificate;
 };
 

@@ -696,7 +696,7 @@ void NetworkConnectionToWebProcess::logUserInteraction(PAL::SessionID sessionID,
     }
 }
 
-void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(ResourceLoadObserver::PerSessionResourceLoadData&& statistics)
+void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(WebResourceLoadObserver::PerSessionResourceLoadData&& statistics)
 {
     for (auto& iter : statistics) {
         if (auto* networkSession = networkProcess().networkSession(iter.first)) {
