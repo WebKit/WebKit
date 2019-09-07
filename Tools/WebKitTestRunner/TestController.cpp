@@ -881,7 +881,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetBeaconAPIEnabled(preferences, true);
     WKPreferencesSetDirectoryUploadEnabled(preferences, true);
 
-    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(WKContextGetWebsiteDataStore(m_context.get())), nullptr, nullptr);
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(TestController::websiteDataStore()), nullptr, nullptr);
 
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
     
@@ -2107,7 +2107,7 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
 
     auto setHTTPCookieAcceptPolicy = [&] (WKHTTPCookieAcceptPolicy policy, CompletionHandler<void(WKTypeRef)>&& completionHandler) {
         auto context = new CompletionHandler<void(WKTypeRef)>(WTFMove(completionHandler));
-        WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(WKContextGetWebsiteDataStore(m_context.get())), policy, context, [] (void* context) {
+        WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::websiteDataStore()), policy, context, [] (void* context) {
             auto completionHandlerPointer = static_cast<CompletionHandler<void(WKTypeRef)>*>(context);
             (*completionHandlerPointer)(nullptr);
             delete completionHandlerPointer;

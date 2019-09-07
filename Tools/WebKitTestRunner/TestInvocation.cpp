@@ -164,7 +164,7 @@ void TestInvocation::invoke()
 
     TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
 
-    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(WKContextGetWebsiteDataStore(TestController::singleton().context())), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
+    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
 
     // FIXME: We should clear out visited links here.
 

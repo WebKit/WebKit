@@ -1,5 +1,16 @@
 2019-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Remove calls to WKContextGetWebsiteDataStore missed in r249614
+        https://bugs.webkit.org/show_bug.cgi?id=200050
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Remove invalid assertion added in r249614
         https://bugs.webkit.org/show_bug.cgi?id=200050
 

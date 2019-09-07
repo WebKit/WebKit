@@ -71,7 +71,6 @@ public:
 
     virtual void invalidateAndCancel();
     virtual void clearCredentials() { };
-    virtual void clearCookies() { };
     virtual bool shouldLogCookieInformation() const { return false; }
     virtual Seconds loadThrottleLatency() const { return { }; }
 

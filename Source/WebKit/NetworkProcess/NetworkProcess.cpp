@@ -467,7 +467,6 @@ void NetworkProcess::clearCachedCredentials()
         if (auto storageSession = networkSession.networkStorageSession())
             storageSession->credentialStorage().clearCredentials();
         networkSession.clearCredentials();
-        networkSession.clearCookies();
     });
 }
 

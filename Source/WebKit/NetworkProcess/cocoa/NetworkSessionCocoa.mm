@@ -1172,15 +1172,6 @@ void NetworkSessionCocoa::clearCredentials()
 #endif
 }
 
-void NetworkSessionCocoa::clearCookies()
-{
-    if (auto storageSession = networkStorageSession()) {
-        NSHTTPCookieStorage *cookieStorage = storageSession->nsCookieStorage();
-        for (NSHTTPCookie *cookie in cookieStorage.cookies)
-            [cookieStorage deleteCookie:cookie];
-    }
-}
-
 NetworkDataTaskCocoa* NetworkSessionCocoa::dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
     ASSERT(RunLoop::isMain());
