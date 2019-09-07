@@ -128,6 +128,8 @@ struct Config {
             bool shouldBeEnabledHasBeenCalled;
             bool ensureGigacageHasBeenCalled;
 
+            void* start;
+            size_t totalSize;
             void* basePtrs[NumberOfKinds];
         };
         char ensureSize[configSizeToProtect];
@@ -230,6 +232,13 @@ BINLINE bool isCaged(Kind kind, const void* ptr)
     return caged(kind, ptr) == ptr;
 }
 
+BINLINE bool contains(const void* ptr)
+{
+    auto* start = reinterpret_cast<const uint8_t*>(g_gigacageConfig.start);
+    auto* p = reinterpret_cast<const uint8_t*>(ptr);
+    return static_cast<size_t>(p - start) < g_gigacageConfig.totalSize;
+}
+
 BEXPORT bool shouldBeEnabled();
 
 #else // GIGACAGE_ENABLED
@@ -242,6 +251,7 @@ BINLINE void* basePtr(Kind)
 }
 BINLINE size_t size(Kind) { BCRASH(); return 0; }
 BINLINE void ensureGigacage() { }
+BINLINE bool contains(const void*) { return false; }
 BINLINE bool isEnabled() { return false; }
 BINLINE bool isCaged(Kind, const void*) { return true; }
 BINLINE bool isEnabled(Kind) { return false; }

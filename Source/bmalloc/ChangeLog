@@ -1,3 +1,21 @@
+2019-09-07  Mark Lam  <mark.lam@apple.com>
+
+        performJITMemcpy() source buffer should not be in the Gigacage.
+        https://bugs.webkit.org/show_bug.cgi?id=201577
+        <rdar://problem/55142606>
+
+        Reviewed by Michael Saboff.
+
+        1. Add the Gigacage start address and totalSize to the Config.
+        2. Add a contains() function that uses the start address and totalSize to check
+           if a given pointer is in the Gigacage's address range.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::verifyGigacageIsEnabled):
+        * bmalloc/Gigacage.h:
+        (Gigacage::contains):
+
 2019-09-06  Mark Lam  <mark.lam@apple.com>
 
         Harden protection of the Gigacage Config parameters.

@@ -77,7 +77,7 @@ namespace Gigacage {
 // in size. 2^32 * 8 = 32GB. This means if an access on a caged type happens to go out of
 // bounds, the access is guaranteed to land somewhere else in the cage or inside the runway.
 // If this were less than 32GB, those OOB accesses could reach outside of the cage.
-constexpr size_t gigacageRunway = 32llu * 1024 * 1024 * 1024;
+constexpr size_t gigacageRunway = 32llu * bmalloc::Sizes::GB;
 
 alignas(configSizeToProtect) Config g_gigacageConfig;
 
@@ -232,7 +232,9 @@ void ensureGigacage()
                     nextCage += runwaySize(kind);
                 }
             }
-            
+
+            g_gigacageConfig.start = base;
+            g_gigacageConfig.totalSize = totalSize;
             vmDeallocatePhysicalPages(base, totalSize);
             g_gigacageConfig.isEnabled = true;
             freezeGigacageConfig();
@@ -296,6 +298,8 @@ static bool verifyGigacageIsEnabled()
     bool isEnabled = g_gigacageConfig.isEnabled;
     for (size_t i = 0; i < NumberOfKinds; ++i)
         isEnabled = isEnabled && g_gigacageConfig.basePtrs[i];
+    isEnabled = isEnabled && g_gigacageConfig.start;
+    isEnabled = isEnabled && g_gigacageConfig.totalSize;
     return isEnabled;
 }
 

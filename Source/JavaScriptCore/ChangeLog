@@ -1,5 +1,19 @@
 2019-09-07  Mark Lam  <mark.lam@apple.com>
 
+        performJITMemcpy() source buffer should not be in the Gigacage.
+        https://bugs.webkit.org/show_bug.cgi?id=201577
+        <rdar://problem/55142606>
+
+        Reviewed by Michael Saboff.
+
+        Add a RELEASE_ASSERT in performJITMemcpy() to ensure that the passed in source
+        buffer is not in the Gigacage.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+
+2019-09-07  Mark Lam  <mark.lam@apple.com>
+
         The jsc shell should allow disabling of the Gigacage for testing purposes.
         https://bugs.webkit.org/show_bug.cgi?id=201579
 

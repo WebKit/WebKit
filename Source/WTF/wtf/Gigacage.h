@@ -69,6 +69,7 @@ ALWAYS_INLINE const char* name(Kind kind)
     return nullptr;
 }
 
+ALWAYS_INLINE bool contains(const void*) { return false; }
 ALWAYS_INLINE bool isEnabled(Kind) { return false; }
 ALWAYS_INLINE size_t mask(Kind) { return 0; }
 
