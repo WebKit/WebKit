@@ -1,3 +1,26 @@
+2019-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Incorrect selection rect revealed after pasting images in a contenteditable element
+        https://bugs.webkit.org/show_bug.cgi?id=201549
+        <rdar://problem/50956429>
+
+        Reviewed by Simon Fraser.
+
+        Add a couple of new layout tests.
+
+        * editing/pasteboard/do-not-reveal-selection-after-programmatic-scroll-expected.txt: Added.
+        * editing/pasteboard/do-not-reveal-selection-after-programmatic-scroll.html: Added.
+
+        This test verifies that we don't try to scroll to reveal the caret after pasting, if the scroll position was
+        changed before the images finished loading.
+
+        * editing/pasteboard/reveal-selection-after-pasting-images-expected.txt: Added.
+        * editing/pasteboard/reveal-selection-after-pasting-images.html: Added.
+        * platform/ios/editing/pasteboard/reveal-selection-after-pasting-images-expected.txt: Added.
+
+        This test verifies that we reveal the caret after loading multiple pasted images in a selection, and dispatch a
+        scroll event in the process.
+
 2019-09-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Update several interface and enum names to match spec

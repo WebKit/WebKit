@@ -1,3 +1,16 @@
+2019-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Incorrect selection rect revealed after pasting images in a contenteditable element
+        https://bugs.webkit.org/show_bug.cgi?id=201549
+        <rdar://problem/50956429>
+
+        Reviewed by Simon Fraser.
+
+        Add an API test to exercise the scenario where we scroll to reveal the selection after pasting an image that was
+        directly written to the pasteboard.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+
 2019-09-06  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r249582.

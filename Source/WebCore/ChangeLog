@@ -1,3 +1,69 @@
+2019-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Incorrect selection rect revealed after pasting images in a contenteditable element
+        https://bugs.webkit.org/show_bug.cgi?id=201549
+        <rdar://problem/50956429>
+
+        Reviewed by Simon Fraser.
+
+        Editor::replaceSelectionWithFragment currently scrolls to reveal the selection after inserting the given
+        DocumentFragment. However, this scrolling occurs before any inserted images have loaded yet, which causes the
+        wrong caret rect to be revealed, since all image elements inserted during paste will be empty.
+
+        To fix this, we defer revealing the selection after inserting the fragment until after all images that have
+        been inserted are done loading. While waiting for images to load, if any layers which may be scrolled as a
+        result of revealing the selection are scrolled, we additionally cancel the deferred selection reveal. See
+        comments below for more detail.
+
+        Tests: editing/pasteboard/do-not-reveal-selection-after-programmatic-scroll.html
+               editing/pasteboard/reveal-selection-after-pasting-images.html
+               PasteImage.RevealSelectionAfterPastingImage
+
+        * editing/Editing.cpp:
+        (WebCore::visibleImageElementsInRangeWithNonLoadedImages):
+
+        Add a new helper to iterate through a range and collect all image elements in that range, that contain cached
+        images that have not finished loading yet.
+
+        * editing/Editing.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+
+        Instead of always immediately revealing the selection after applying the ReplaceSelectionCommand, collect the
+        image elements that were just inserted, and avoid immediately revealing the selection if any of these images
+        have non-null cached images, but are not loaded yet. Instead, hold on to these images in a set, remove them once
+        they finish loading using the new method below, and once all images are removed, reveal the selection.
+
+        (WebCore::Editor::revealSelectionIfNeededAfterLoadingImageForElement):
+        (WebCore::Editor::renderLayerDidScroll):
+
+        Called whenever a scrollable RenderLayer is scrolled (or in the case of FrameView, the root layer). In the case
+        where Editor is waiting to reveal the selection, we check to see if the scrolled layer is an ancestor of the
+        layer enclosing the start of the selection.
+
+        (WebCore::Editor::respondToChangedSelection):
+
+        If the selection changes between pasting and waiting for pasted images to load, just cancel waiting to reveal
+        the selection after pasting.
+
+        * editing/Editor.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::insertedContentRange const):
+
+        Add a helper method to grab the Range of content inserted after applying the command.
+
+        * editing/ReplaceSelectionCommand.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::didFinishLoadingImageForElement):
+
+        Notify Editor after an image finishes loading.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2019-09-06  Brent Fulgham  <bfulgham@apple.com>
 
         PathDirect2D Cleanups

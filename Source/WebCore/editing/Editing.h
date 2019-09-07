@@ -27,12 +27,14 @@
 
 #include "Position.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
 class Document;
 class HTMLElement;
+class HTMLImageElement;
 class HTMLSpanElement;
 class HTMLTextFormControlElement;
 class RenderBlock;
@@ -101,6 +103,8 @@ bool isNodeVisiblyContainedWithin(Node&, const Range&);
 bool areIdenticalElements(const Node&, const Node&);
 
 bool positionBeforeOrAfterNodeIsCandidate(Node&);
+
+WEBCORE_EXPORT HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const Range&);
 
 // -------------------------------------------------------------------------
 // Position

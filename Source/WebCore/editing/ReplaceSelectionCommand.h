@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class DocumentFragment;
+class Range;
 class ReplacementFragment;
 
 class ReplaceSelectionCommand : public CompositeEditCommand {
@@ -51,6 +52,8 @@ public:
     }
 
     VisibleSelection visibleSelectionForInsertedText() const { return m_visibleSelectionForInsertedText; }
+
+    RefPtr<Range> insertedContentRange() const;
 
 private:
     ReplaceSelectionCommand(Document&, RefPtr<DocumentFragment>&&, OptionSet<CommandOption>, EditAction);

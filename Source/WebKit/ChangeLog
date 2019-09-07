@@ -1,3 +1,17 @@
+2019-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Incorrect selection rect revealed after pasting images in a contenteditable element
+        https://bugs.webkit.org/show_bug.cgi?id=201549
+        <rdar://problem/50956429>
+
+        Reviewed by Simon Fraser.
+
+        Tweak some existing logic to use the new visibleImageElementsInRangeWithNonLoadedImages helper function. See
+        WebCore for more details.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeEditDrag):
+
 2019-09-06  Chris Dumez  <cdumez@apple.com>
 
         Move the ResourceLoadObserver logic to WebKit2

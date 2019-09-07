@@ -908,28 +908,16 @@ void WebPage::didConcludeEditDrag()
 
     m_pendingImageElementsForDropSnapshot.clear();
 
-    bool waitingForAnyImageToLoad = false;
     auto frame = makeRef(m_page->focusController().focusedOrMainFrame());
     if (auto selectionRange = frame->selection().selection().toNormalizedRange()) {
-        for (TextIterator iterator(selectionRange.get()); !iterator.atEnd(); iterator.advance()) {
-            auto* node = iterator.node();
-            if (!is<HTMLImageElement>(node))
-                continue;
-
-            auto& imageElement = downcast<HTMLImageElement>(*node);
-            auto* cachedImage = imageElement.cachedImage();
-            if (cachedImage && cachedImage->image() && cachedImage->image()->isNull()) {
-                m_pendingImageElementsForDropSnapshot.add(&imageElement);
-                waitingForAnyImageToLoad = true;
-            }
-        }
+        m_pendingImageElementsForDropSnapshot = visibleImageElementsInRangeWithNonLoadedImages(*selectionRange);
         auto collapsedRange = Range::create(selectionRange->ownerDocument(), selectionRange->endPosition(), selectionRange->endPosition());
         frame->selection().setSelectedRange(collapsedRange.ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
         m_rangeForDropSnapshot = WTFMove(selectionRange);
     }
 
-    if (!waitingForAnyImageToLoad)
+    if (m_pendingImageElementsForDropSnapshot.isEmpty())
         computeAndSendEditDragSnapshot();
 }
 

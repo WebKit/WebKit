@@ -86,6 +86,7 @@
 #include "Range.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
+#include "RenderLayer.h"
 #include "RenderTextControl.h"
 #include "RenderedDocumentMarker.h"
 #include "RenderedPosition.h"
@@ -674,7 +675,13 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
 
     auto command = ReplaceSelectionCommand::create(document(), &fragment, options, editingAction);
     command->apply();
-    revealSelectionAfterEditingOperation();
+
+    m_imageElementsToLoadBeforeRevealingSelection.clear();
+    if (auto insertionRange = command->insertedContentRange())
+        m_imageElementsToLoadBeforeRevealingSelection = visibleImageElementsInRangeWithNonLoadedImages(*insertionRange);
+
+    if (m_imageElementsToLoadBeforeRevealingSelection.isEmpty())
+        revealSelectionAfterEditingOperation();
 
     selection = m_frame.selection().selection();
     if (selection.isInPasswordField())
@@ -1570,6 +1577,44 @@ void Editor::copyImage(const HitTestResult& result)
 }
 
 #endif
+
+void Editor::revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement& element)
+{
+    if (m_imageElementsToLoadBeforeRevealingSelection.isEmpty())
+        return;
+
+    if (!m_imageElementsToLoadBeforeRevealingSelection.remove(&element))
+        return;
+
+    if (!m_imageElementsToLoadBeforeRevealingSelection.isEmpty())
+        return;
+
+    // FIXME: This should be queued as a task for the next rendering update.
+    document().updateLayout();
+    revealSelectionAfterEditingOperation();
+}
+
+void Editor::renderLayerDidScroll(const RenderLayer& layer)
+{
+    if (m_imageElementsToLoadBeforeRevealingSelection.isEmpty())
+        return;
+
+    auto startContainer = makeRefPtr(m_frame.selection().selection().start().containerNode());
+    if (!startContainer)
+        return;
+
+    auto* startContainerRenderer = startContainer->renderer();
+    if (!startContainerRenderer)
+        return;
+
+    // FIXME: Ideally, this would also cancel deferred selection revealing if the selection is inside a subframe and a parent frame is scrolled.
+    for (auto* enclosingLayer = startContainerRenderer->enclosingLayer(); enclosingLayer; enclosingLayer = enclosingLayer->parent()) {
+        if (enclosingLayer == &layer) {
+            m_imageElementsToLoadBeforeRevealingSelection.clear();
+            break;
+        }
+    }
+}
 
 bool Editor::isContinuousSpellCheckingEnabled() const
 {
@@ -3575,6 +3620,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
 #endif
 
     setStartNewKillRingSequence(true);
+    m_imageElementsToLoadBeforeRevealingSelection.clear();
 
     if (m_editorUIUpdateTimer.isActive())
         return;

@@ -55,6 +55,7 @@
 #include "DocumentEventQueue.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
+#include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "FEColorMatrix.h"
@@ -2609,6 +2610,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
         view.frameView().didChangeScrollOffset();
 
     view.frameView().viewportContentsChanged();
+    frame.editor().renderLayerDidScroll(*this);
 }
 
 static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView& frameView)
