@@ -1,3 +1,26 @@
+2019-09-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Minor cleanups to avoid crashes during web browsing
+        https://bugs.webkit.org/show_bug.cgi?id=201572
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch addresses a few crashes seen when doing general web browsing using
+        the FTW build of WebKit:
+
+        1. ImageBuffer::sinkIntoImage was attempting to use a render target after WTFMoving it elsewhere.
+        2. ImageBuffer::copyNativeImage was not properly checking the type of the render
+           target to make sure it was suitable for Bitmap operations.
+        3. BackingStoreBackendDirect2DImpl::scroll would crash if the scroll offset was
+           outside the bounds of the current view. In that case, it would attempt to allocate
+           a zero-size texture, which triggered a crash.
+
+        * platform/graphics/win/BackingStoreBackendDirect2DImpl.cpp:
+        (WebCore::BackingStoreBackendDirect2DImpl::scroll):
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::sinkIntoImage):
+        (WebCore::ImageBuffer::copyNativeImage const):
+
 2019-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Incorrect selection rect revealed after pasting images in a contenteditable element

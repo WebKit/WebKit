@@ -69,6 +69,9 @@ void BackingStoreBackendDirect2DImpl::scroll(const IntRect& scrollRect, const In
     sourceRect.move(-scrollOffset);
     sourceRect.intersect(scrollRect);
 
+    if (sourceRect.isEmpty())
+        return;
+
     if (!m_scrollSurface || scrollRect.size() != m_scrollSurfaceSize) {
 #ifndef _NDEBUG
         ASSERT(m_size.width() >= scrollRect.size().width());

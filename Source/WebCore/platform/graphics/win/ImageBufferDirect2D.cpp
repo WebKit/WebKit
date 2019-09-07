@@ -194,8 +194,12 @@ RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffe
     IntSize backingStoreSize = imageBuffer->m_data.backingStoreSize;
     float resolutionScale = imageBuffer->m_resolutionScale;
 
-    auto bitmapTarget = reinterpret_cast<ID2D1BitmapRenderTarget*>(imageBuffer->context().platformContext()->renderTarget());
-    return createBitmapImageAfterScalingIfNeeded(bitmapTarget, sinkIntoNativeImage(WTFMove(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, preserveResolution);
+    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget;
+    HRESULT hr = imageBuffer->context().platformContext()->renderTarget()->QueryInterface(&bitmapTarget);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return createBitmapImageAfterScalingIfNeeded(bitmapTarget.get(), sinkIntoNativeImage(WTFMove(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, preserveResolution);
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
@@ -211,10 +215,13 @@ COMPtr<ID2D1Bitmap> ImageBuffer::sinkIntoNativeImage(std::unique_ptr<ImageBuffer
 
 COMPtr<ID2D1Bitmap> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    auto bitmapTarget = reinterpret_cast<ID2D1BitmapRenderTarget*>(context().platformContext());
+    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget;
+    HRESULT hr = context().platformContext()->renderTarget()->QueryInterface(&bitmapTarget);
+    if (!SUCCEEDED(hr))
+        return nullptr;
 
     COMPtr<ID2D1Bitmap> image;
-    HRESULT hr = bitmapTarget->GetBitmap(&image);
+    hr = bitmapTarget->GetBitmap(&image);
     ASSERT(SUCCEEDED(hr));
 
     // FIXME: m_data.data is nullptr even when asking to copy backing store leading to test failures.
