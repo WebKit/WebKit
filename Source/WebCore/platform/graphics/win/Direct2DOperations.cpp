@@ -495,11 +495,7 @@ void fillRectWithGradient(PlatformContextDirect2D& platformContext, const FloatR
 
 void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const FillSource& fillSource, const ShadowState& shadowState)
 {
-    if (path.activePath()) {
-        // Make sure it's closed. This might fail if the path was already closed, so
-        // ignore the return value.
-        path.activePath()->Close();
-    }
+    path.closeAnyOpenGeometries(D2D1_FIGURE_END_OPEN);
 
     auto context = platformContext.renderTarget();
 
@@ -582,8 +578,7 @@ void drawPath(PlatformContextDirect2D& platformContext, const Path& path, const 
 {
     auto context = platformContext.renderTarget();
 
-    if (path.activePath())
-        path.activePath()->Close();
+    path.closeAnyOpenGeometries(D2D1_FIGURE_END_OPEN);
 
     context->SetTags(1, __LINE__);
 

@@ -194,14 +194,12 @@ namespace WebCore {
 #endif
 
 #if USE(DIRECT2D)
-        ID2D1GeometrySink* activePath() const { return m_activePath.get(); }
         void appendGeometry(ID2D1Geometry*);
         void createGeometryWithFillMode(WindRule, COMPtr<ID2D1GeometryGroup>&) const;
-        void drawDidComplete();
 
-        HRESULT initializePathState();
         void openFigureAtCurrentPointIfNecessary();
-        void closeAnyOpenGeometries();
+        void closeAnyOpenGeometries(unsigned figureEndStyle) const;
+        void clearGeometries();
 #endif
 
 #ifndef NDEBUG
@@ -210,10 +208,10 @@ namespace WebCore {
 
     private:
 #if USE(DIRECT2D)
+        Vector<ID2D1Geometry*> m_geometries;
         COMPtr<ID2D1GeometryGroup> m_path;
-        COMPtr<ID2D1PathGeometry> m_activePathGeometry;
-        COMPtr<ID2D1GeometrySink> m_activePath;
-        size_t m_openFigureCount { 0 };
+        mutable COMPtr<ID2D1GeometrySink> m_activePath;
+        mutable bool m_figureIsOpened { false };
 #else
         PlatformPathPtr m_path { nullptr };
 #endif

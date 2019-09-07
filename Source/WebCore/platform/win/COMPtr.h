@@ -46,10 +46,11 @@ enum CreateTag { Create };
 template<typename T> class COMPtr {
 public:
     typedef T* PtrType;
-    COMPtr() : m_ptr(0) { }
+    COMPtr() : m_ptr(nullptr) { }
     COMPtr(T* ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->AddRef(); }
     COMPtr(AdoptCOMTag, T* ptr) : m_ptr(ptr) { }
     COMPtr(const COMPtr& o) : m_ptr(o.m_ptr) { if (T* ptr = m_ptr) ptr->AddRef(); }
+    COMPtr(COMPtr&& o) : m_ptr(o.leakRef()) { }
 
     COMPtr(QueryTag, IUnknown* ptr) : m_ptr(copyQueryInterfaceRef(ptr)) { }
     template<typename U> COMPtr(QueryTag, const COMPtr<U>& ptr) : m_ptr(copyQueryInterfaceRef(ptr.get())) { }
@@ -79,6 +80,7 @@ public:
     operator UnspecifiedBoolType() const { return m_ptr ? &COMPtr::get : 0; }
 
     COMPtr& operator=(const COMPtr&);
+    COMPtr& operator=(COMPtr&&);
     COMPtr& operator=(T*);
     template<typename U> COMPtr& operator=(const COMPtr<U>&);
 
@@ -165,6 +167,14 @@ template<typename T> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<T>& o)
     return *this;
 }
 
+template<typename T> inline COMPtr<T>& COMPtr<T>::operator=(COMPtr<T>&& o)
+{
+    if (T* ptr = m_ptr)
+        ptr->Release();
+    m_ptr = o.leakRef();
+    return *this;
+}
+
 template<typename T> template<typename U> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<U>& o)
 {
     T* optr = o.get();
@@ -217,6 +227,19 @@ template<typename T, typename U> inline bool operator!=(T* a, const COMPtr<U>& b
 {
     return a != b.get();
 }
+
+#if !ASSERT_DISABLED
+inline unsigned refCount(IUnknown* ptr)
+{
+    if (!ptr)
+        return 0;
+
+    unsigned temp = ptr->AddRef();
+    unsigned value = ptr->Release();
+    ASSERT(temp = value + 1);
+    return value;
+}
+#endif
 
 namespace WTF {
 

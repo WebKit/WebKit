@@ -1,3 +1,28 @@
+2019-09-06  Brent Fulgham  <bfulgham@apple.com>
+
+        PathDirect2D Cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=201534
+
+        Reviewed by Fujii Hironori.
+
+        1. Add a COMPtr<> move operator.
+        2. Reduce copying ID2D1Geometry objects.
+        3. Protect against using the ID2D1PathGeometry after the
+           ID2D1GeometrySink's Close operation is used.
+        4. Add a debug-only 'refCount' function to COMPtr to help
+           track down memory errors.
+
+        * platform/graphics/Path.h:
+        (WebCore::Path::activePath const): Deleted.
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::fillPath):
+        (WebCore::Direct2D::drawPath):
+        * platform/graphics/win/PathDirect2D.cpp:
+        * platform/win/COMPtr.h:
+        (COMPtr::COMPtr):
+        (=):
+        (refCount):
+
 2019-09-06  Chris Dumez  <cdumez@apple.com>
 
         Move the ResourceLoadObserver logic to WebKit2
