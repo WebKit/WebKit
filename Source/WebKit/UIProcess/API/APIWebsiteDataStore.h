@@ -38,6 +38,7 @@ public:
     static bool defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
 
+    static Ref<WebsiteDataStore> create(Ref<WebKit::WebsiteDataStoreConfiguration>&&, const PAL::SessionID&);
     static Ref<WebsiteDataStore> createNonPersistentDataStore();
     static Ref<WebsiteDataStore> createLegacy(Ref<WebKit::WebsiteDataStoreConfiguration>&&);
 

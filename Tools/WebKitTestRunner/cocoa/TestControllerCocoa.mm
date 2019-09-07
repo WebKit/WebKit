@@ -64,13 +64,13 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
     globalWebViewConfiguration.processPool = (__bridge WKProcessPool *)context;
-    globalWebViewConfiguration.websiteDataStore = (__bridge WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
+    globalWebViewConfiguration.websiteDataStore = (__bridge WKWebsiteDataStore *)TestController::websiteDataStore();
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
     WKContextSetStorageAccessAPIEnabled(context, true);
 
-    WKWebsiteDataStore* poolWebsiteDataStore = (__bridge WKWebsiteDataStore *)WKContextGetWebsiteDataStore((__bridge WKContextRef)globalWebViewConfiguration.processPool);
+    WKWebsiteDataStore* poolWebsiteDataStore = (__bridge WKWebsiteDataStore *)TestController::websiteDataStore();
     if (libraryPath) {
         String cacheStorageDirectory = String(libraryPath) + '/' + "CacheStorage";
         [poolWebsiteDataStore _setCacheStorageDirectory: cacheStorageDirectory];
@@ -251,6 +251,7 @@ void TestController::resetContentExtensions()
 
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
+    ASSERT(![WKWebsiteDataStore _defaultDataStoreExists]);
     m_calendarSwizzler = nullptr;
     m_overriddenCalendarIdentifier = nil;
     

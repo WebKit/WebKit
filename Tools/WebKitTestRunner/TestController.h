@@ -88,6 +88,7 @@ private:
 class TestController {
 public:
     static TestController& singleton();
+    static WKWebsiteDataStoreRef websiteDataStore();
 
     static const unsigned viewWidth;
     static const unsigned viewHeight;

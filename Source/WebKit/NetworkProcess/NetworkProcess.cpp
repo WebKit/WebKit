@@ -307,8 +307,10 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
-    if (parameters.shouldUseTestingNetworkSession)
-        switchToNewTestingSession();
+    if (parameters.shouldUseTestingNetworkSession) {
+        m_shouldUseTestingNetworkStorageSession = true;
+        m_defaultNetworkStorageSession = newTestingSession(PAL::SessionID::defaultSessionID());
+    }
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setIsITPDatabaseEnabled(parameters.shouldEnableITPDatabase);
 
@@ -460,6 +462,13 @@ void NetworkProcess::clearCachedCredentials()
         networkSession->clearCredentials();
     else
         ASSERT_NOT_REACHED();
+
+    forEachNetworkSession([] (auto& networkSession) {
+        if (auto storageSession = networkSession.networkStorageSession())
+            storageSession->credentialStorage().clearCredentials();
+        networkSession.clearCredentials();
+        networkSession.clearCookies();
+    });
 }
 
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
@@ -494,7 +503,7 @@ void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>
         functor(*session);
 }
 
-void NetworkProcess::switchToNewTestingSession()
+std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSession(const PAL::SessionID& sessionID)
 {
 #if PLATFORM(COCOA)
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
@@ -509,9 +518,9 @@ void NetworkProcess::switchToNewTestingSession()
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
     }
 
-    m_defaultNetworkStorageSession = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
+    return makeUnique<WebCore::NetworkStorageSession>(sessionID, WTFMove(session), WTFMove(cookieStorage));
 #elif USE(CURL) || USE(SOUP)
-    m_defaultNetworkStorageSession = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+    return makeUnique<WebCore::NetworkStorageSession>(sessionID);
 #endif
 }
 
@@ -527,6 +536,11 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String
     if (!addResult.isNewEntry)
         return;
 
+    if (m_shouldUseTestingNetworkStorageSession) {
+        addResult.iterator->value = newTestingSession(sessionID);
+        return;
+    }
+    
 #if PLATFORM(COCOA)
     RetainPtr<CFURLStorageSessionRef> storageSession;
     RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();

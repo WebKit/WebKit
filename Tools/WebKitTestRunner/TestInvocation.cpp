@@ -933,7 +933,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "DeleteAllIndexedDatabases")) {
-        WKWebsiteDataStoreRemoveAllIndexedDatabases(WKContextGetWebsiteDataStore(TestController::singleton().context()), nullptr, { });
+        WKWebsiteDataStoreRemoveAllIndexedDatabases(TestController::websiteDataStore(), nullptr, { });
         return nullptr;
     }
 

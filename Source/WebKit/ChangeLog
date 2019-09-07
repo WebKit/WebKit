@@ -1,3 +1,65 @@
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate WKContextGetWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=200050
+
+        Reviewed by Geoff Garen.
+
+        The last use of it was removed in rdar://problem/47030981
+        In order to remove its use in WebKitTestRunner, I needed to make WKWebsiteDataStoreConfigurationRef
+        to replace the WKContextConfigurationRef members that should've been associated with the WebsiteDataStore the whole time.
+        There is one use of WKContextGetWebsiteDataStore in TestWebKitAPI still I'll investigate later.
+
+        * Shared/API/c/WKBase.h:
+        * Sources.txt:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::create):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetApplicationCacheManager):
+        (WKContextGetKeyValueStorageManager):
+        (WKContextGetResourceCacheManager):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyDiskCacheDirectory):
+        (WKContextConfigurationSetDiskCacheDirectory):
+        (WKContextConfigurationCopyApplicationCacheDirectory):
+        (WKContextConfigurationSetApplicationCacheDirectory):
+        (WKContextConfigurationCopyIndexedDBDatabaseDirectory):
+        (WKContextConfigurationSetIndexedDBDatabaseDirectory):
+        (WKContextConfigurationCopyLocalStorageDirectory):
+        (WKContextConfigurationSetLocalStorageDirectory):
+        (WKContextConfigurationCopyWebSQLDatabaseDirectory):
+        (WKContextConfigurationSetWebSQLDatabaseDirectory):
+        (WKContextConfigurationCopyMediaKeysStorageDirectory):
+        (WKContextConfigurationSetMediaKeysStorageDirectory):
+        (WKContextConfigurationCopyResourceLoadStatisticsDirectory):
+        (WKContextConfigurationSetResourceLoadStatisticsDirectory):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp: Added.
+        (WKWebsiteDataStoreConfigurationGetTypeID):
+        (WKWebsiteDataStoreConfigurationCreate):
+        (WKWebsiteDataStoreConfigurationCopyApplicationCacheDirectory):
+        (WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory):
+        (WKWebsiteDataStoreConfigurationCopyNetworkCacheDirectory):
+        (WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory):
+        (WKWebsiteDataStoreConfigurationCopyIndexedDBDatabaseDirectory):
+        (WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory):
+        (WKWebsiteDataStoreConfigurationCopyLocalStorageDirectory):
+        (WKWebsiteDataStoreConfigurationSetLocalStorageDirectory):
+        (WKWebsiteDataStoreConfigurationCopyWebSQLDatabaseDirectory):
+        (WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory):
+        (WKWebsiteDataStoreConfigurationCopyMediaKeysStorageDirectory):
+        (WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory):
+        (WKWebsiteDataStoreConfigurationCopyResourceLoadStatisticsDirectory):
+        (WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h: Added.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreCreateWithConfiguration):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-09-06  Mark Lam  <mark.lam@apple.com>
 
         Harden protection of the Gigacage Config parameters.

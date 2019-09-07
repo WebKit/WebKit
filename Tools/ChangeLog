@@ -1,3 +1,74 @@
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate WKContextGetWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=200050
+
+        Reviewed by Geoff Garen.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::updateProxySettings):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration const):
+        (WTR::TestController::websiteDataStore):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::platformAdjustContext):
+        (WTR::TestController::clearServiceWorkerRegistrations):
+        (WTR::TestController::clearDOMCache):
+        (WTR::TestController::clearDOMCaches):
+        (WTR::TestController::ClearIndexedDatabases):
+        (WTR::TestController::hasDOMCache):
+        (WTR::TestController::domCacheSize):
+        (WTR::TestController::setStatisticsDebugMode):
+        (WTR::TestController::setStatisticsPrevalentResourceForDebugMode):
+        (WTR::TestController::setStatisticsLastSeen):
+        (WTR::TestController::setStatisticsPrevalentResource):
+        (WTR::TestController::setStatisticsVeryPrevalentResource):
+        (WTR::TestController::dumpResourceLoadStatistics):
+        (WTR::TestController::isStatisticsPrevalentResource):
+        (WTR::TestController::isStatisticsVeryPrevalentResource):
+        (WTR::TestController::isStatisticsRegisteredAsSubresourceUnder):
+        (WTR::TestController::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestController::isStatisticsRegisteredAsRedirectingTo):
+        (WTR::TestController::setStatisticsHasHadUserInteraction):
+        (WTR::TestController::isStatisticsHasHadUserInteraction):
+        (WTR::TestController::setStatisticsGrandfathered):
+        (WTR::TestController::isStatisticsGrandfathered):
+        (WTR::TestController::setStatisticsSubframeUnderTopFrameOrigin):
+        (WTR::TestController::setStatisticsSubresourceUnderTopFrameOrigin):
+        (WTR::TestController::setStatisticsSubresourceUniqueRedirectTo):
+        (WTR::TestController::setStatisticsSubresourceUniqueRedirectFrom):
+        (WTR::TestController::setStatisticsTopFrameUniqueRedirectTo):
+        (WTR::TestController::setStatisticsTopFrameUniqueRedirectFrom):
+        (WTR::TestController::setStatisticsCrossSiteLoadWithLinkDecoration):
+        (WTR::TestController::setStatisticsTimeToLiveUserInteraction):
+        (WTR::TestController::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestController::statisticsUpdateCookieBlocking):
+        (WTR::TestController::statisticsSubmitTelemetry):
+        (WTR::TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WTR::TestController::setStatisticsIsRunningTest):
+        (WTR::TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WTR::TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        (WTR::TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        (WTR::TestController::setStatisticsGrandfatheringTime):
+        (WTR::TestController::setStatisticsMaxStatisticsEntries):
+        (WTR::TestController::setStatisticsPruneEntriesDownTo):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WTR::TestController::statisticsClearThroughWebsiteDataRemoval):
+        (WTR::TestController::statisticsDeleteCookiesForHost):
+        (WTR::TestController::isStatisticsHasLocalStorage):
+        (WTR::TestController::setStatisticsCacheMaxAgeCap):
+        (WTR::TestController::statisticsResetToConsistentState):
+        (WTR::TestController::setWebAuthenticationMockConfiguration):
+        (WTR::TestController::clearAdClickAttributionsThroughWebsiteDataRemoval):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2019-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Incorrect selection rect revealed after pasting images in a contenteditable element

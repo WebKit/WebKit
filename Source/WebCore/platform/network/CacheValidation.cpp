@@ -368,11 +368,13 @@ static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(co
     return varyingRequestHeaders;
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession& storageSession, const ResourceRequest& request, const ResourceResponse& response)
+Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession* storageSession, const ResourceRequest& request, const ResourceResponse& response)
 {
+    if (!storageSession)
+        return { };
     return collectVaryingRequestHeadersInternal(response, [&] (const String& headerName) {
         return headerValueForVary(request, headerName, [&] {
-            return cookieRequestHeaderFieldValue(storageSession, request);
+            return cookieRequestHeaderFieldValue(*storageSession, request);
         });
     });
 }
@@ -398,11 +400,13 @@ static bool verifyVaryingRequestHeadersInternal(const Vector<std::pair<String, S
     return true;
 }
 
-bool verifyVaryingRequestHeaders(NetworkStorageSession& storageSession, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)
+bool verifyVaryingRequestHeaders(NetworkStorageSession* storageSession, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)
 {
+    if (!storageSession)
+        return false;
     return verifyVaryingRequestHeadersInternal(varyingRequestHeaders, [&] (const String& headerName) {
         return headerValueForVary(request, headerName, [&] {
-            return cookieRequestHeaderFieldValue(storageSession, request);
+            return cookieRequestHeaderFieldValue(*storageSession, request);
         });
     });
 }

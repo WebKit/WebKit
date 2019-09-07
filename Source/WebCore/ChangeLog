@@ -1,3 +1,17 @@
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate WKContextGetWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=200050
+
+        Reviewed by Geoff Garen.
+
+        * platform/network/CacheValidation.cpp:
+        (WebCore::collectVaryingRequestHeaders):
+        (WebCore::verifyVaryingRequestHeaders):
+        * platform/network/CacheValidation.h:
+        Replace a few NetworkStorageSession& with NetworkStorageSession*
+        so I can replace defaultStorageSession with the correct NetworkStorageSession in NetworkCache.cpp.
+
 2019-09-06  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Minor cleanups to avoid crashes during web browsing

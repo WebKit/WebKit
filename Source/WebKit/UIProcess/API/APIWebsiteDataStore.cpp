@@ -70,6 +70,11 @@ Ref<WebsiteDataStore> WebsiteDataStore::createLegacy(Ref<WebKit::WebsiteDataStor
     return adoptRef(*new WebsiteDataStore(WTFMove(configuration), PAL::SessionID::defaultSessionID()));
 }
 
+Ref<WebsiteDataStore> WebsiteDataStore::create(Ref<WebKit::WebsiteDataStoreConfiguration>&& configuration, const PAL::SessionID& sessionID)
+{
+    return adoptRef(*new WebsiteDataStore(WTFMove(configuration), sessionID));
+}
+
 WebsiteDataStore::WebsiteDataStore()
     : m_websiteDataStore(WebKit::WebsiteDataStore::createNonPersistent())
 {

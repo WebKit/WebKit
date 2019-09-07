@@ -1,3 +1,15 @@
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate WKContextGetWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=200050
+
+        Reviewed by Geoff Garen.
+
+        Rebase some accessibility tests that were printing the SessionID since we're using SessionID 2 for testing now.
+
+        * accessibility/mac/document-attributes-expected.txt:
+        * platform/mac/accessibility/parent-delete-expected.txt:
+
 2019-09-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: CSS Formatter: the closing } of nested @media aren't indented

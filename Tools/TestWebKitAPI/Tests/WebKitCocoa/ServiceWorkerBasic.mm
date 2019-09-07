@@ -973,6 +973,7 @@ void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
     auto pool = configuration.processPool;
     [pool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
 
+    // FIXME: Investigate and remove this last use of WKContextGetWebsiteDataStore.
     configuration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context.get());
 }
 

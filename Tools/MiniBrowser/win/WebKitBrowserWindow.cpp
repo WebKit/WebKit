@@ -35,6 +35,7 @@
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKProtectionSpaceCurl.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsiteDataStoreRefCurl.h>
 #include <vector>
 
@@ -165,7 +166,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConf
 void WebKitBrowserWindow::updateProxySettings()
 {
     auto context = WKPageGetContext(WKViewGetPage(m_view.get()));
-    auto store = WKContextGetWebsiteDataStore(context);
+    auto store = WKWebsiteDataStoreGetDefaultDataStore();
 
     if (!m_proxy.enable) {
         WKWebsiteDataStoreDisableNetworkProxySettings(store);

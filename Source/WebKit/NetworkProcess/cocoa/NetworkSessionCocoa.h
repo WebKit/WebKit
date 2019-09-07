@@ -93,6 +93,7 @@ public:
 private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
+    void clearCookies() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
     Seconds loadThrottleLatency() const override { return m_loadThrottleLatency; }
 

@@ -40,6 +40,7 @@
 #include "WKContextConfigurationRef.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
+#include "WKWebsiteDataStoreRef.h"
 #include "WebCertificateInfo.h"
 #include "WebContextInjectedBundleClient.h"
 #include "WebPageProxy.h"
@@ -456,7 +457,7 @@ WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef context)
 
 WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef context)
 {
-    return reinterpret_cast<WKApplicationCacheManagerRef>(WKContextGetWebsiteDataStore(context));
+    return reinterpret_cast<WKApplicationCacheManagerRef>(WKWebsiteDataStoreGetDefaultDataStore());
 }
 
 WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
@@ -471,7 +472,7 @@ WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef)
 
 WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef context)
 {
-    return reinterpret_cast<WKKeyValueStorageManagerRef>(WKContextGetWebsiteDataStore(context));
+    return reinterpret_cast<WKKeyValueStorageManagerRef>(WKWebsiteDataStoreGetDefaultDataStore());
 }
 
 WKMediaSessionFocusManagerRef WKContextGetMediaSessionFocusManager(WKContextRef context)
@@ -491,7 +492,7 @@ WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef contextRef
 
 WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef context)
 {
-    return reinterpret_cast<WKResourceCacheManagerRef>(WKContextGetWebsiteDataStore(context));
+    return reinterpret_cast<WKResourceCacheManagerRef>(WKWebsiteDataStoreGetDefaultDataStore());
 }
 
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)
