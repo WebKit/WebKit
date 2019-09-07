@@ -1588,7 +1588,7 @@ public:
     {
 #if GIGACAGE_ENABLED
         if (Gigacage::isEnabled(kind)) {
-            if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageDisabled())
+            if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageForbidden())
                 cageWithoutUntagging(kind, storage);
             else {
 #if CPU(ARM64E)

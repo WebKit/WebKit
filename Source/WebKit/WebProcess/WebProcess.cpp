@@ -220,7 +220,7 @@ WebProcess::WebProcess()
     ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
 #endif
     
-    Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
+    Gigacage::forbidDisablingPrimitiveGigacage();
 }
 
 WebProcess::~WebProcess()

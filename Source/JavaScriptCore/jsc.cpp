@@ -3086,7 +3086,7 @@ int jscmain(int argc, char** argv)
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
-    Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
+    Gigacage::forbidDisablingPrimitiveGigacage();
 
 #if PLATFORM(COCOA)
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();

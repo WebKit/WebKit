@@ -49,9 +49,9 @@ inline bool shouldBeEnabled() { return false; }
 inline void addPrimitiveDisableCallback(void (*)(void*), void*) { }
 inline void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 
-inline void disableDisablingPrimitiveGigacageIfShouldBeEnabled() { }
+inline void forbidDisablingPrimitiveGigacage() { }
 
-inline bool isDisablingPrimitiveGigacageDisabled() { return false; }
+inline bool isDisablingPrimitiveGigacageForbidden() { return false; }
 inline bool isPrimitiveGigacagePermanentlyEnabled() { return false; }
 inline bool canPrimitiveGigacageBeDisabled() { return true; }
 

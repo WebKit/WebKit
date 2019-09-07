@@ -35,6 +35,10 @@
 #include <cstdio>
 #include <mutex>
 
+#if BOS(DARWIN)
+#include <mach/mach.h>
+#endif
+
 #if GIGACAGE_ENABLED
 
 namespace Gigacage {
@@ -81,30 +85,63 @@ using namespace bmalloc;
 
 namespace {
 
-bool s_isDisablingPrimitiveGigacageDisabled;
+#if BOS(DARWIN)
+enum {
+    AllowPermissionChangesAfterThis = false,
+    DisallowPermissionChangesAfterThis = true
+};
+#endif
 
-void protectGigacageBasePtrs()
+static void freezeGigacageConfig()
 {
-    // We might only get page size alignment, but that's also the minimum we need.
-    RELEASE_BASSERT(!(reinterpret_cast<size_t>(&g_gigacageConfig) & (vmPageSize() - 1)));
-    mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ);
+    int result;
+#if BOS(DARWIN)
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_gigacageConfig), configSizeToProtect, AllowPermissionChangesAfterThis, VM_PROT_READ);
+#else
+    result = mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ);
+#endif
+    RELEASE_BASSERT(!result);
 }
 
-void unprotectGigacageBasePtrs()
+static void unfreezeGigacageConfig()
 {
-    mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ | PROT_WRITE);
+    RELEASE_BASSERT(!g_gigacageConfig.isPermanentlyFrozen);
+    int result;
+#if BOS(DARWIN)
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_gigacageConfig), configSizeToProtect, AllowPermissionChangesAfterThis, VM_PROT_READ | VM_PROT_WRITE);
+#else
+    result = mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ | PROT_WRITE);
+#endif
+    RELEASE_BASSERT(!result);
 }
 
-class UnprotectGigacageBasePtrsScope {
+static void permanentlyFreezeGigacageConfig()
+{
+    if (!g_gigacageConfig.isPermanentlyFrozen) {
+        unfreezeGigacageConfig();
+        g_gigacageConfig.isPermanentlyFrozen = true;
+    }
+
+    // There's no going back now!
+    int result;
+#if BOS(DARWIN)
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_gigacageConfig), configSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
+#else
+    result = mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ);
+#endif
+    RELEASE_BASSERT(!result);
+}
+
+class UnfreezeGigacageConfigScope {
 public:
-    UnprotectGigacageBasePtrsScope()
+    UnfreezeGigacageConfigScope()
     {
-        unprotectGigacageBasePtrs();
+        unfreezeGigacageConfig();
     }
     
-    ~UnprotectGigacageBasePtrsScope()
+    ~UnfreezeGigacageConfigScope()
     {
-        protectGigacageBasePtrs();
+        freezeGigacageConfig();
     }
 };
 
@@ -129,9 +166,16 @@ void ensureGigacage()
     std::call_once(
         onceFlag,
         [] {
+            RELEASE_BASSERT(!g_gigacageConfig.ensureGigacageHasBeenCalled);
+            g_gigacageConfig.ensureGigacageHasBeenCalled = true;
+
             if (!shouldBeEnabled())
                 return;
             
+            // We might only get page size alignment, but that's also the minimum
+            // alignment we need for freezing the Config.
+            RELEASE_BASSERT(!(reinterpret_cast<size_t>(&g_gigacageConfig) & (vmPageSize() - 1)));
+
             Kind shuffledKinds[NumberOfKinds];
             for (unsigned i = 0; i < NumberOfKinds; ++i)
                 shuffledKinds[i] = static_cast<Kind>(i);
@@ -191,12 +235,18 @@ void ensureGigacage()
             
             vmDeallocatePhysicalPages(base, totalSize);
             g_gigacageConfig.isEnabled = true;
-            protectGigacageBasePtrs();
+            freezeGigacageConfig();
         });
 }
 
 void disablePrimitiveGigacage()
 {
+    if (g_gigacageConfig.disablingPrimitiveGigacageIsForbidden)
+        fprintf(stderr, "FATAL: Disabling Primitive gigacage is forbidden, but we don't want that in this process.\n");
+
+    RELEASE_BASSERT(!g_gigacageConfig.disablingPrimitiveGigacageIsForbidden);
+    RELEASE_BASSERT(!g_gigacageConfig.isPermanentlyFrozen);
+
     ensureGigacage();
     if (!g_gigacageConfig.basePtrs[Primitive]) {
         // It was never enabled. That means that we never even saved any callbacks. Or, we had already disabled
@@ -209,7 +259,7 @@ void disablePrimitiveGigacage()
     for (Callback& callback : callbacks.callbacks)
         callback.function(callback.argument);
     callbacks.callbacks.shrink(0);
-    UnprotectGigacageBasePtrsScope unprotectScope;
+    UnfreezeGigacageConfigScope unfreezeScope;
     g_gigacageConfig.basePtrs[Primitive] = nullptr;
 }
 
@@ -241,37 +291,39 @@ void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
     }
 }
 
-static void primitiveGigacageDisabled(void*)
+static bool verifyGigacageIsEnabled()
 {
-    if (GIGACAGE_ALLOCATION_CAN_FAIL && !isEnabled())
-        return;
-
-    static bool s_false;
-    fprintf(stderr, "FATAL: Primitive gigacage disabled, but we don't want that in this process.\n");
-    if (!s_false)
-        BCRASH();
+    bool isEnabled = g_gigacageConfig.isEnabled;
+    for (size_t i = 0; i < NumberOfKinds; ++i)
+        isEnabled = isEnabled && g_gigacageConfig.basePtrs[i];
+    return isEnabled;
 }
 
-void disableDisablingPrimitiveGigacageIfShouldBeEnabled()
+void forbidDisablingPrimitiveGigacage()
 {
-    if (shouldBeEnabled()) {
-        addPrimitiveDisableCallback(primitiveGigacageDisabled, nullptr);
-        s_isDisablingPrimitiveGigacageDisabled = true;
+    RELEASE_BASSERT(GIGACAGE_ALLOCATION_CAN_FAIL || verifyGigacageIsEnabled());
+    if (!g_gigacageConfig.disablingPrimitiveGigacageIsForbidden) {
+        unfreezeGigacageConfig();
+        g_gigacageConfig.disablingPrimitiveGigacageIsForbidden = true;
     }
+    permanentlyFreezeGigacageConfig();
+    RELEASE_BASSERT(isDisablingPrimitiveGigacageForbidden());
 }
 
-bool isDisablingPrimitiveGigacageDisabled()
+BNO_INLINE bool isDisablingPrimitiveGigacageForbidden()
 {
-    return s_isDisablingPrimitiveGigacageDisabled;
+    return g_gigacageConfig.disablingPrimitiveGigacageIsForbidden;
 }
 
 bool shouldBeEnabled()
 {
-    static bool cached = false;
     static std::once_flag onceFlag;
     std::call_once(
         onceFlag,
         [] {
+            RELEASE_BASSERT(!g_gigacageConfig.shouldBeEnabledHasBeenCalled);
+            g_gigacageConfig.shouldBeEnabledHasBeenCalled = true;
+
             bool debugHeapEnabled = Environment::get()->isDebugHeapEnabled();
             if (debugHeapEnabled)
                 return;
@@ -287,13 +339,11 @@ bool shouldBeEnabled()
                     fprintf(stderr, "Warning: invalid argument to GIGACAGE_ENABLED: %s\n", gigacageEnabled);
             }
             
-            cached = true;
+            g_gigacageConfig.shouldBeEnabled = true;
         });
-    return cached;
+    return g_gigacageConfig.shouldBeEnabled;
 }
 
 } // namespace Gigacage
 
 #endif // GIGACAGE_ENABLED
-
-

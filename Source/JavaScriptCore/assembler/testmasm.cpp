@@ -1210,7 +1210,7 @@ void testMoveDoubleConditionally64()
 static void testCagePreservesPACFailureBit()
 {
 #if GIGACAGE_ENABLED
-    ASSERT(!Gigacage::isDisablingPrimitiveGigacageDisabled());
+    ASSERT(!Gigacage::isDisablingPrimitiveGigacageForbidden());
     auto cage = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
         jit.cageConditionally(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);

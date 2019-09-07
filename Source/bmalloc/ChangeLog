@@ -1,5 +1,79 @@
 2019-09-06  Mark Lam  <mark.lam@apple.com>
 
+        Harden protection of the Gigacage Config parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=201570
+        <rdar://problem/55134229>
+
+        Reviewed by Saam Barati.
+
+        1. Rename protectGigacageBasePtrs() and unprotectGigacageBasePtrs() to
+           freezeGigacageConfig() and unfreezeGigacageConfig() respectively.
+
+           Also move the alignment check in protectGigacageBasePtrs() into ensureGigacage().
+           There's no need to check it more than once.
+
+        2. Introduce permanentlyFreezeGigacageConfig() which permanently makes the
+           Config ReadOnly.  Once invoked, the Config cannot be made writable again.
+
+           This is made possible by using vm_protect with a true set_maximum argument.
+           We also add a g_gigacageConfig.isPermanentlyFrozen flag that we assert.
+           Note: this permanence is only true for OS(DARWIN) since vm_protect is Mach API.
+
+        3. Rename disableDisablingPrimitiveGigacageIfShouldBeEnabled() to
+           forbidDisablingPrimitiveGigacage() because "disablingDisabling" is a tongue
+           twister.
+
+           Also, we don't want to make it conditional on "IfShouldBeEnabled".  We want
+           forbidDisablingPrimitiveGigacage() to be irreversible.  It is up to the client
+           to ensure that the Gigacage is already initialized (if possible) before
+           invoking forbidDisablingPrimitiveGigacage().  Conceptually, the forbidding
+           isn't about guaranteeing that the Gigacage is enabled.  It only takes away the
+           option to disable it.
+
+           That said, forbidDisablingPrimitiveGigacage() is only invoked by clients that
+           care about keeping the Gigacage enabled.  So, it does a sanity check (with an
+           assertion) that if !GIGACAGE_ALLOCATION_CAN_FAIL, then the Gigacage should be
+           have been initialized and enabled before invoking it.
+
+           We also make sure that forbidDisablingPrimitiveGigacage() calls
+           permanentlyFreezeGigacageConfig() unconditionally.  It is safe to call it more
+           than once.  This guarantees that the Config is permanently frozen after this,
+           even if a bug should inadvertantly set the
+           g_gigacageConfig.disablingPrimitiveGigacageIsForbidden flag before
+           forbidDisablingPrimitiveGigacage() is invoked.
+
+        4. Assert that ensureGigacage() is only called once.
+
+        5. Assert that shouldBeEnabled() is only called once.
+           Also moved its cached result into the Config so that it can be frozen.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::bmalloc::freezeGigacageConfig):
+        (Gigacage::bmalloc::unfreezeGigacageConfig):
+        (Gigacage::bmalloc::permanentlyFreezeGigacageConfig):
+        (Gigacage::bmalloc::UnfreezeGigacageConfigScope::UnfreezeGigacageConfigScope):
+        (Gigacage::bmalloc::UnfreezeGigacageConfigScope::~UnfreezeGigacageConfigScope):
+        (Gigacage::ensureGigacage):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::verifyGigacageIsEnabled):
+        (Gigacage::forbidDisablingPrimitiveGigacage):
+        (Gigacage::isDisablingPrimitiveGigacageForbidden):
+        (Gigacage::shouldBeEnabled):
+        (Gigacage::bmalloc::protectGigacageBasePtrs): Deleted.
+        (Gigacage::bmalloc::unprotectGigacageBasePtrs): Deleted.
+        (Gigacage::bmalloc::UnprotectGigacageBasePtrsScope::UnprotectGigacageBasePtrsScope): Deleted.
+        (Gigacage::bmalloc::UnprotectGigacageBasePtrsScope::~UnprotectGigacageBasePtrsScope): Deleted.
+        (Gigacage::primitiveGigacageDisabled): Deleted.
+        (Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled): Deleted.
+        (Gigacage::isDisablingPrimitiveGigacageDisabled): Deleted.
+        * bmalloc/Gigacage.h:
+        (Gigacage::isPrimitiveGigacagePermanentlyEnabled):
+        (Gigacage::canPrimitiveGigacageBeDisabled):
+        (Gigacage::forbidDisablingPrimitiveGigacage):
+        (Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled): Deleted.
+
+2019-09-06  Mark Lam  <mark.lam@apple.com>
+
         Use FailureAction everywhere in bmalloc instead of a crashOnFailure boolean.
         https://bugs.webkit.org/show_bug.cgi?id=201553
 

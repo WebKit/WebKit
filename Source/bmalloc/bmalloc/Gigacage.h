@@ -113,7 +113,21 @@ struct Config {
 
     union {
         struct {
+            // All the fields in this struct should be chosen such that their
+            // initial value is 0 / null / falsy because Config is instantiated
+            // as a global singleton.
+
             bool isEnabled;
+            bool isPermanentlyFrozen;
+            bool disablingPrimitiveGigacageIsForbidden;
+            bool shouldBeEnabled;
+
+            // We would like to just put the std::once_flag for these functions
+            // here, but we can't because std::once_flag has a implicitly-deleted
+            // default constructor. So, we use a boolean instead.
+            bool shouldBeEnabledHasBeenCalled;
+            bool ensureGigacageHasBeenCalled;
+
             void* basePtrs[NumberOfKinds];
         };
         char ensureSize[configSizeToProtect];
@@ -138,11 +152,11 @@ BEXPORT void disablePrimitiveGigacage();
 BEXPORT void addPrimitiveDisableCallback(void (*)(void*), void*);
 BEXPORT void removePrimitiveDisableCallback(void (*)(void*), void*);
 
-BEXPORT void disableDisablingPrimitiveGigacageIfShouldBeEnabled();
+BEXPORT void forbidDisablingPrimitiveGigacage();
 
-BEXPORT bool isDisablingPrimitiveGigacageDisabled();
-inline bool isPrimitiveGigacagePermanentlyEnabled() { return isDisablingPrimitiveGigacageDisabled(); }
-inline bool canPrimitiveGigacageBeDisabled() { return !isDisablingPrimitiveGigacageDisabled(); }
+BEXPORT bool isDisablingPrimitiveGigacageForbidden();
+inline bool isPrimitiveGigacagePermanentlyEnabled() { return isDisablingPrimitiveGigacageForbidden(); }
+inline bool canPrimitiveGigacageBeDisabled() { return !isDisablingPrimitiveGigacageForbidden(); }
 
 BINLINE void* basePtr(Kind kind)
 {
@@ -233,7 +247,7 @@ BINLINE bool isCaged(Kind, const void*) { return true; }
 BINLINE bool isEnabled(Kind) { return false; }
 template<typename T> BINLINE T* caged(Kind, T* ptr) { return ptr; }
 template<typename T> BINLINE T* cagedMayBeNull(Kind, T* ptr) { return ptr; }
-BINLINE void disableDisablingPrimitiveGigacageIfShouldBeEnabled() { }
+BINLINE void forbidDisablingPrimitiveGigacage() { }
 BINLINE bool canPrimitiveGigacageBeDisabled() { return false; }
 BINLINE void disablePrimitiveGigacage() { }
 BINLINE void addPrimitiveDisableCallback(void (*)(void*), void*) { }

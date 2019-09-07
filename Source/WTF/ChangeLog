@@ -1,3 +1,19 @@
+2019-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Harden protection of the Gigacage Config parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=201570
+        <rdar://problem/55134229>
+
+        Reviewed by Saam Barati.
+
+        Just renaming some function names here.
+
+        * wtf/Gigacage.h:
+        (Gigacage::forbidDisablingPrimitiveGigacage):
+        (Gigacage::isDisablingPrimitiveGigacageForbidden):
+        (Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled): Deleted.
+        (Gigacage::isDisablingPrimitiveGigacageDisabled): Deleted.
+
 2019-09-05  Mark Lam  <mark.lam@apple.com>
 
         Refactor the Gigacage code to require less pointer casting.
