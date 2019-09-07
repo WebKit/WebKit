@@ -47,7 +47,7 @@ promise_test(() => {
     return getBasicDevice().then(function(device) {
         texDescriptor.sampleCount = 4;
         texDescriptor.format = "rgba8unorm";
-        texDescriptor.usage = GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_SRC
+        texDescriptor.usage = GPUTextureUsage.SAMPLED | GPUTextureUsage.COPY_SRC
 
         const multisampledTexture = device.createTexture(texDescriptor);
         assert_true(multisampledTexture instanceof GPUTexture, "Successfully created multisampled texture.");

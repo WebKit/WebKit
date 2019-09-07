@@ -603,6 +603,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorStateDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorStateDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorWrite.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorWrite.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorWriteBits.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorWriteBits.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
@@ -625,6 +627,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStage.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStageBit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStageBit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUStoreOp.cpp
@@ -929,10 +933,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLongRange.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLongRange.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMallocStatistics.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMallocStatistics.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLMathElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLMathElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaCapabilities.cpp
@@ -1979,6 +1983,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineStageDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineStageDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUProgrammablePassEncoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUProgrammablePassEncoder.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUProgrammableStageDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUProgrammableStageDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUQueue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUQueue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPURenderPassDescriptor.cpp

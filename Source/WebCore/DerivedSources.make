@@ -379,7 +379,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUCanvasContext.idl \
     $(WebCore)/Modules/webgpu/GPUColor.idl \
     $(WebCore)/Modules/webgpu/GPUColorStateDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUColorWriteBits.idl \
+    $(WebCore)/Modules/webgpu/GPUColorWrite.idl \
     $(WebCore)/Modules/webgpu/GPUBindGroupLayoutBinding.idl \
     $(WebCore)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBlendDescriptor.idl \
@@ -394,7 +394,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUOutOfMemoryError.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/webgpu/GPUSamplerDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUShaderStageBit.idl \
+    $(WebCore)/Modules/webgpu/GPUShaderStage.idl \
     $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
@@ -425,7 +425,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineLayout.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUPipelineStageDescriptor.idl \
+    $(WebCore)/Modules/webgpu/WebGPUProgrammableStageDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUProgrammablePassEncoder.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassEncoder.idl \

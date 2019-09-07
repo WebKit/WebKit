@@ -34,5 +34,5 @@ typedef unsigned long GPUColorWriteFlags;
 
     required GPUBlendDescriptor alphaBlend;
     required GPUBlendDescriptor colorBlend;
-    GPUColorWriteFlags writeMask; // GPUColorWriteBits.ALL
+    GPUColorWriteFlags writeMask; // GPUColorWrite.ALL
 };

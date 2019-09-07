@@ -54,7 +54,7 @@ async function start(device) {
             dstFactor: "blend-color",
             operation: "add"
         },
-        writeMask: GPUColorWriteBits.ALL
+        writeMask: GPUColorWrite.ALL
     }];
 
     const pipeline = createBasicPipeline(shaderModule, device, colorStates);

@@ -24,18 +24,18 @@
  */
 
 #include "config.h"
-#include "WebGPUPipelineStageDescriptor.h"
+#include "WebGPUProgrammableStageDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
 namespace WebCore {
 
-Optional<GPUPipelineStageDescriptor> WebGPUPipelineStageDescriptor::tryCreateGPUPipelineStageDescriptor() const
+Optional<GPUProgrammableStageDescriptor> WebGPUProgrammableStageDescriptor::tryCreateGPUProgrammableStageDescriptor() const
 {
     if (!module || !module->module() || entryPoint.isEmpty())
         return WTF::nullopt;
 
-    return GPUPipelineStageDescriptor { makeRef(*module->module()), *this };
+    return GPUProgrammableStageDescriptor { makeRef(*module->module()), *this };
 }
 
 } // namespace WebCore

@@ -127,7 +127,7 @@ async function start(device) {
     const inputSize = Float32Array.BYTES_PER_ELEMENT * 32;
     const outputSize = Float32Array.BYTES_PER_ELEMENT * 2;
 
-    const uploadBufferDescriptor = {size: inputSize, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.TRANSFER_SRC};
+    const uploadBufferDescriptor = {size: inputSize, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC};
     const uploadBuffer = device.createBuffer(uploadBufferDescriptor);
     const uploadBufferArrayBuffer = await uploadBuffer.mapWriteAsync();
     const uploadBufferFloat32Array = new Float32Array(uploadBufferArrayBuffer);
@@ -135,7 +135,7 @@ async function start(device) {
         uploadBufferFloat32Array[i] = i;
     uploadBuffer.unmap();
 
-    const inputBufferDescriptor = {size: inputSize, usage: GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.STORAGE};
+    const inputBufferDescriptor = {size: inputSize, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE};
     const inputBuffer = device.createBuffer(inputBufferDescriptor);
 
     const outputBufferDescriptor = {size: outputSize, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ};

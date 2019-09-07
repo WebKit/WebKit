@@ -29,7 +29,7 @@
 
 #include "GPURenderPipelineDescriptor.h"
 #include "WebGPUPipelineDescriptorBase.h"
-#include "WebGPUPipelineStageDescriptor.h"
+#include "WebGPUProgrammableStageDescriptor.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -39,8 +39,8 @@ class GPUErrorScopes;
 struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
     Optional<GPURenderPipelineDescriptor> tryCreateGPURenderPipelineDescriptor(GPUErrorScopes&) const;
 
-    WebGPUPipelineStageDescriptor vertexStage;
-    Optional<WebGPUPipelineStageDescriptor> fragmentStage;
+    WebGPUProgrammableStageDescriptor vertexStage;
+    Optional<WebGPUProgrammableStageDescriptor> fragmentStage;
 };
 
 } // namespace WebCore

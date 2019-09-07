@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,18 @@
  */
 // https://gpuweb.github.io/gpuweb
 
-typedef unsigned long WebGPUShaderStageEnum;
+typedef unsigned long u32;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary WebGPUPipelineStageDescriptor {
-    required WebGPUShaderModule module;
-    required DOMString entryPoint;
+    DoNotCheckConstants,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface GPUColorWrite {
+    const u32 NONE = 0;
+    const u32 RED = 1;
+    const u32 GREEN = 2;
+    const u32 BLUE = 4;
+    const u32 ALPHA = 8;
+    const u32 ALL = 15;
 };

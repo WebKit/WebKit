@@ -60,7 +60,7 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
     UNUSED_PARAM(functionName);
 #endif
 
-    if (flags.containsAny({ GPUTextureUsage::Flags::TransferSource, GPUTextureUsage::Flags::Sampled }) && (flags & GPUTextureUsage::Flags::Storage)) {
+    if (flags.containsAny({ GPUTextureUsage::Flags::CopySource, GPUTextureUsage::Flags::Sampled }) && (flags & GPUTextureUsage::Flags::Storage)) {
         LOG(WebGPU, "%s: Texture cannot have both STORAGE and a read-only usage!", functionName);
         return WTF::nullopt;
     }

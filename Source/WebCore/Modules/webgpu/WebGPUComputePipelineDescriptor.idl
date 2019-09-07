@@ -28,5 +28,5 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUComputePipelineDescriptor : WebGPUPipelineDescriptorBase {
-    required WebGPUPipelineStageDescriptor computeStage;
+    required WebGPUProgrammableStageDescriptor computeStage;
 };

@@ -34,7 +34,7 @@ async function start(device) {
     const rasterizationState = {frontFace: "cw", cullMode: "none"};
     const alphaBlend = {};
     const colorBlend = {};
-    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWriteBits.ALL
+    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWrite.ALL
     const depthStencilState = null;
     
     const attribute0 = {shaderLocation: 0, format: "float4"};
@@ -82,7 +82,7 @@ async function start(device) {
     vertexBuffer0Float32Array[23] = 100;
     vertexBuffer0.unmap();
 
-    const textureDataBufferDescriptor = {size: Uint8Array.BYTES_PER_ELEMENT * 4 * 2 * 2 + Uint8Array.BYTES_PER_ELEMENT * 4 * 1 * 1, usage: GPUBufferUsage.TRANSFER_SRC | GPUBufferUsage.MAP_WRITE};
+    const textureDataBufferDescriptor = {size: Uint8Array.BYTES_PER_ELEMENT * 4 * 2 * 2 + Uint8Array.BYTES_PER_ELEMENT * 4 * 1 * 1, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE};
     const textureDataBuffer = device.createBuffer(textureDataBufferDescriptor);
     const textureDataBufferArrayBuffer = await textureDataBuffer.mapWriteAsync();
     const textureDataBufferUint8Array = new Uint8Array(textureDataBufferArrayBuffer);
@@ -108,7 +108,7 @@ async function start(device) {
     textureDataBufferUint8Array[19] = 255;
     textureDataBuffer.unmap();
 
-    const textureDescriptor = {size: {width: 2, height: 2, depth: 1}, mipLevelCount: 2, format: "rgba8unorm", usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_DST};
+    const textureDescriptor = {size: {width: 2, height: 2, depth: 1}, mipLevelCount: 2, format: "rgba8unorm", usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.COPY_DST};
     const texture = device.createTexture(textureDescriptor);
     const textureView = texture.createDefaultView();
 

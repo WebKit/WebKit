@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUShaderStageBit.h"
+#include "GPUShaderStage.h"
 
 namespace WebCore {
 

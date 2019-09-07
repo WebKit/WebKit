@@ -50,10 +50,10 @@ public:
     static Ref<GPUTexture> create(PlatformTextureSmartPtr&&, OptionSet<GPUTextureUsage::Flags>);
 
     PlatformTexture *platformTexture() const { return m_platformTexture.get(); }
-    bool isTransferSource() const { return m_usage.contains(GPUTextureUsage::Flags::TransferSource); }
-    bool isTransferDestination() const { return m_usage.contains(GPUTextureUsage::Flags::TransferDestination); }
+    bool isCopySource() const { return m_usage.contains(GPUTextureUsage::Flags::CopySource); }
+    bool isCopyDestination() const { return m_usage.contains(GPUTextureUsage::Flags::CopyDestination); }
     bool isOutputAttachment() const { return m_usage.contains(GPUTextureUsage::Flags::OutputAttachment); }
-    bool isReadOnly() const { return m_usage.containsAny({ GPUTextureUsage::Flags::TransferSource, GPUTextureUsage::Flags::Sampled }); }
+    bool isReadOnly() const { return m_usage.containsAny({ GPUTextureUsage::Flags::CopySource, GPUTextureUsage::Flags::Sampled }); }
     bool isSampled() const { return m_usage.contains(GPUTextureUsage::Flags::Sampled); }
     bool isStorage() const { return m_usage.contains(GPUTextureUsage::Flags::Storage); }
     unsigned platformUsage() const { return m_platformUsage; }

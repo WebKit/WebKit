@@ -109,7 +109,7 @@ async function test(device) {
 
     const textureBufferDescriptor = {
         size: imageData.data.length,
-        usage: GPUBufferUsage.TRANSFER_SRC
+        usage: GPUBufferUsage.COPY_SRC
     };
     const textureBuffer = createBufferWithData(device, textureBufferDescriptor, imageData.data.buffer);
 
@@ -123,19 +123,19 @@ async function test(device) {
     const textureDescriptor = {
         size: { width: image.width, height: image.height, depth: 1 },
         format: "rgba8unorm",
-        usage: GPUTextureUsage.TRANSFER_DST | GPUTextureUsage.SAMPLED
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.SAMPLED
     };
     const texture = device.createTexture(textureDescriptor);
 
     // Bind texture and a sampler to pipeline
     const textureLayoutBinding = { 
         binding: textureBindingNum, 
-        visibility: GPUShaderStageBit.FRAGMENT, 
+        visibility: GPUShaderStage.FRAGMENT, 
         type: "sampled-texture" 
     };
     const samplerLayoutBinding = {
         binding: samplerBindingNum,
-        visibility: GPUShaderStageBit.FRAGMENT,
+        visibility: GPUShaderStage.FRAGMENT,
         type: "sampler"
     };
 

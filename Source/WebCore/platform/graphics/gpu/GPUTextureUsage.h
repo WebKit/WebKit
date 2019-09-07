@@ -37,8 +37,8 @@ class GPUTextureUsage : public RefCounted<GPUTextureUsage> {
 public:
     enum class Flags : GPUTextureUsageFlags {
         None = 0,
-        TransferSource = 1 << 0,
-        TransferDestination = 1 << 1,
+        CopySource = 1 << 0,
+        CopyDestination = 1 << 1,
         Sampled = 1 << 2,
         Storage = 1 << 3,
         OutputAttachment = 1 << 4,

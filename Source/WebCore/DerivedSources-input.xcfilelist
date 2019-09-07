@@ -330,6 +330,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUCanvasContext.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUColor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUColorStateDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUColorWrite.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUColorWriteBits.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUCompareFunction.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl
@@ -341,6 +342,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUOrigin3D.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUOutOfMemoryError.idl
 $(PROJECT_DIR)/Modules/webgpu/GPURequestAdapterOptions.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUSamplerDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUShaderStage.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUShaderStageBit.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUStoreOp.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureDescriptor.idl
@@ -375,6 +377,7 @@ $(PROJECT_DIR)/Modules/webgpu/WebGPUPipelineLayout.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUPipelineStageDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUProgrammablePassEncoder.idl
+$(PROJECT_DIR)/Modules/webgpu/WebGPUProgrammableStageDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUQueue.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPURenderPassDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPURenderPassEncoder.idl

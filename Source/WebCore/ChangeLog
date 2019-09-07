@@ -1,3 +1,86 @@
+2019-09-06  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update several interface and enum names to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=201564
+
+        Reviewed by Dean Jackson.
+
+        Rename GPUShaderStageBit -> GPUShaderStage.
+        Rename GPUColorWriteBits -> GPUColorWrite.
+        Rename TRANSFER_SRC/DST -> COPY_SRC/DST.
+        Rename GPUPipelineStageDescriptor -> GPUProgrammableStageDescriptor.
+
+        Existing tests trivially updated to match.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUBindGroupLayoutBinding.h:
+        * Modules/webgpu/GPUBufferUsage.idl:
+        * Modules/webgpu/GPUColorStateDescriptor.idl:
+        * Modules/webgpu/GPUColorWrite.idl: Renamed from Source/WebCore/Modules/webgpu/GPUColorWriteBits.idl.
+        * Modules/webgpu/GPUShaderStage.h: Renamed from Source/WebCore/Modules/webgpu/GPUShaderStageBit.h.
+        * Modules/webgpu/GPUShaderStage.idl: Renamed from Source/WebCore/Modules/webgpu/GPUShaderStageBit.idl.
+        * Modules/webgpu/GPUTextureUsage.idl:
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.cpp:
+        (WebCore::WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor const):
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.h:
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.idl:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.cpp: Renamed from Source/WebCore/Modules/webgpu/WebGPUPipelineStageDescriptor.cpp.
+        (WebCore::WebGPUProgrammableStageDescriptor::tryCreateGPUProgrammableStageDescriptor const):
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.h: Renamed from Source/WebCore/Modules/webgpu/WebGPUPipelineStageDescriptor.h.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUPipelineStageDescriptor.idl.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor const):
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::isCopySource const):
+        (WebCore::GPUBuffer::isCopyDestination const):
+        (WebCore::GPUBuffer::isTransferSource const): Deleted.
+        (WebCore::GPUBuffer::isTransferDestination const): Deleted.
+        * platform/graphics/gpu/GPUBufferUsage.h:
+        * platform/graphics/gpu/GPUColorStateDescriptor.h:
+        * platform/graphics/gpu/GPUColorWrite.h: Renamed from Source/WebCore/platform/graphics/gpu/GPUColorWriteBits.h.
+        * platform/graphics/gpu/GPUComputePipelineDescriptor.h:
+        (WebCore::GPUComputePipelineDescriptor::GPUComputePipelineDescriptor):
+        * platform/graphics/gpu/GPUPipelineDescriptorBase.h:
+        * platform/graphics/gpu/GPUProgrammableStageDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPUPipelineStageDescriptor.h.
+        (WebCore::GPUProgrammableStageDescriptor::GPUProgrammableStageDescriptor):
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h:
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor):
+        * platform/graphics/gpu/GPUTexture.h:
+        (WebCore::GPUTexture::isCopySource const):
+        (WebCore::GPUTexture::isCopyDestination const):
+        (WebCore::GPUTexture::isReadOnly const):
+        (WebCore::GPUTexture::isTransferSource const): Deleted.
+        (WebCore::GPUTexture::isTransferDestination const): Deleted.
+        * platform/graphics/gpu/GPUTextureUsage.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::GPUBindGroup::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer):
+        (WebCore::GPUCommandBuffer::copyBufferToTexture):
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer):
+        (WebCore::GPUCommandBuffer::copyTextureToTexture):
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.cpp:
+        (WebCore::convertShaderStageFlags):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::mtlColorWriteMaskForGPUColorWriteFlags):
+        (WebCore::trySetFunctions):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::mtlTextureUsageForGPUTextureUsageFlags):
+
 2019-09-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r249367): m_decodingPromises grows indefinitely until ImageLoader destruction

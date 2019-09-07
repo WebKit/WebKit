@@ -21,7 +21,7 @@ let basicPipeline;
 tests["Create and use a basic GPUBindGroup."] = async device => {
     const bufferLayoutBinding = {
         binding: 0,
-        visibility: GPUShaderStageBit.COMPUTE,
+        visibility: GPUShaderStage.COMPUTE,
         type: "storage-buffer"
     };
 
@@ -60,7 +60,7 @@ tests["Create and use a basic GPUBindGroup."] = async device => {
 tests["Create and use many GPUBindGroups in a single compute pass."] = async device => {
     const bufferLayoutBinding = {
         binding: 0,
-        visibility: GPUShaderStageBit.COMPUTE,
+        visibility: GPUShaderStage.COMPUTE,
         type: "storage-buffer"
     };
 
@@ -111,11 +111,11 @@ tests["Create and access a uniform-buffer in a GPUBindGroup."] = async device =>
     const bindGroupLayout = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "uniform-buffer"
         }, {
             binding: 1,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         }]
     });
@@ -171,7 +171,7 @@ compute void compute_main(Texture2D<uint> inputTexture : register(t0), sampler i
 `;
 
 tests["Create and access a sampled texture in a GPUBindGroup."] = async device => {
-    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.TRANSFER_SRC });
+    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.COPY_SRC });
     new Uint32Array(textureArrayBuffer).set([42]);
     textureDataBuffer.unmap();
 
@@ -179,7 +179,7 @@ tests["Create and access a sampled texture in a GPUBindGroup."] = async device =
     const texture = device.createTexture({
         size: textureSize,
         format: "rgba8uint",
-        usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_DST
+        usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.COPY_DST
     });
 
     const outputBuffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
@@ -187,15 +187,15 @@ tests["Create and access a sampled texture in a GPUBindGroup."] = async device =
     const bindGroupLayout = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "sampled-texture"
         }, {
             binding: 1,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "sampler"
         }, {
             binding: 2,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         }]
     });
@@ -260,7 +260,7 @@ compute void compute_main(
 `;
 
 tests["Create and use multiple GPUBindGroups in a single dispatch."] = async device => {
-    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.TRANSFER_SRC });
+    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.COPY_SRC });
     new Uint32Array(textureArrayBuffer).set([17]);
     textureDataBuffer.unmap();
 
@@ -268,7 +268,7 @@ tests["Create and use multiple GPUBindGroups in a single dispatch."] = async dev
     const texture = device.createTexture({
         size: textureSize,
         format: "rgba8uint",
-        usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_DST
+        usage: GPUTextureUsage.SAMPLED | GPUTextureUsage.COPY_DST
     });
 
     const [inputBuffer, inputArrayBuffer] = device.createBufferMapped({ size: 4, usage: GPUBufferUsage.UNIFORM });
@@ -280,28 +280,28 @@ tests["Create and use multiple GPUBindGroups in a single dispatch."] = async dev
     const bgl0 = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "sampled-texture"
         }]
     });
     const bgl1 = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "sampler"
         }]
     });
     const bgl2 = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "uniform-buffer"
         }]
     });
     const bgl3 = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         }]
     })
@@ -386,11 +386,11 @@ tests["Bind a single GPUBuffer with different offsets in different GPUBindGroups
     const bindGroupLayout = device.createBindGroupLayout({
         bindings: [{
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "uniform-buffer"
         }, {
             binding: 1,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         }]
     });

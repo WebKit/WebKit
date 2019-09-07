@@ -34,7 +34,7 @@ async function start(device) {
     const rasterizationState = {frontFace: "cw", cullMode: "none"};
     const alphaBlend = {};
     const colorBlend = {};
-    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWriteBits.ALL
+    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWrite.ALL
     const depthStencilState = null;
 
     const attribute0 = {shaderLocation: 173, format: "float4"};

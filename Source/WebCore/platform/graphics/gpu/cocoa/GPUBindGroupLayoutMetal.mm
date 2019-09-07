@@ -150,11 +150,11 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
             }
             return true;
         };
-        if ((binding.visibility & GPUShaderStageBit::Flags::Vertex) && !addIndices(vertexArgs, vertexLengths))
+        if ((binding.visibility & GPUShaderStage::Flags::Vertex) && !addIndices(vertexArgs, vertexLengths))
             return nullptr;
-        if ((binding.visibility & GPUShaderStageBit::Flags::Fragment) && !addIndices(fragmentArgs, fragmentLengths))
+        if ((binding.visibility & GPUShaderStage::Flags::Fragment) && !addIndices(fragmentArgs, fragmentLengths))
             return nullptr;
-        if ((binding.visibility & GPUShaderStageBit::Flags::Compute) && !addIndices(computeArgs, computeLengths))
+        if ((binding.visibility & GPUShaderStage::Flags::Compute) && !addIndices(computeArgs, computeLengths))
             return nullptr;
     }
 

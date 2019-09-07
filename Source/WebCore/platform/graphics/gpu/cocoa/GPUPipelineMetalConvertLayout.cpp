@@ -26,20 +26,21 @@
 #include "config.h"
 #include "GPUPipelineMetalConvertLayout.h"
 
-#include "GPUPipelineLayout.h"
-
 #if ENABLE(WEBGPU)
+
+#include "GPUPipelineLayout.h"
+#include "GPUShaderStage.h"
 
 namespace WebCore {
 
 static OptionSet<WHLSL::ShaderStage> convertShaderStageFlags(GPUShaderStageFlags flags)
 {
     OptionSet<WHLSL::ShaderStage> result;
-    if (flags & GPUShaderStageBit::Flags::Vertex)
+    if (flags & GPUShaderStage::Flags::Vertex)
         result.add(WHLSL::ShaderStage::Vertex);
-    if (flags & GPUShaderStageBit::Flags::Fragment)
+    if (flags & GPUShaderStage::Flags::Fragment)
         result.add(WHLSL::ShaderStage::Fragment);
-    if (flags & GPUShaderStageBit::Flags::Compute)
+    if (flags & GPUShaderStage::Flags::Compute)
         result.add(WHLSL::ShaderStage::Compute);
     return result;
 }

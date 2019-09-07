@@ -192,13 +192,13 @@ class Harness {
         } else {
             this._resultBuffer = this.device.createBuffer({ 
                 size: Types.MAX_SIZE, 
-                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ | GPUBufferUsage.TRANSFER_DST
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST
             });
         }
 
         argsLayouts.unshift({
             binding: 0,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         });
         argsResourceBindings.unshift({
@@ -295,7 +295,7 @@ compute void _compute_main() { }`;
         if (!this._clearBuffer) {
             this._clearBuffer = this._device.createBuffer({ 
                 size: Types.MAX_SIZE, 
-                usage: GPUBufferUsage.TRANSFER_SRC
+                usage: GPUBufferUsage.COPY_SRC
             });
         }
         const commandEncoder = this._device.createCommandEncoder();
@@ -324,7 +324,7 @@ compute void _compute_main() { }`;
             functionCallArgs.push(convertToWHLSLInputType(`arg${i}` + (arg.isBuffer ? "" : "[0]"), arg.type));
             argsLayouts.push({
                 binding: i,
-                visibility: GPUShaderStageBit.COMPUTE,
+                visibility: GPUShaderStage.COMPUTE,
                 type: "storage-buffer"
             });
             argsResourceBindings.push({

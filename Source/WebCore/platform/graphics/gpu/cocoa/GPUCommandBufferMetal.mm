@@ -95,7 +95,7 @@ void GPUCommandBuffer::endBlitEncoding()
 
 void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffset, Ref<GPUBuffer>&& dst, uint64_t dstOffset, uint64_t size)
 {
-    if (isEncodingPass() || !src->isTransferSource() || !dst->isTransferDestination()) {
+    if (isEncodingPass() || !src->isCopySource() || !dst->isCopyDestination()) {
         LOG(WebGPU, "GPUCommandBuffer::copyBufferToBuffer(): Invalid operation!");
         return;
     }
@@ -134,7 +134,7 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffs
 
 void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTextureCopyView&& dstTexture, const GPUExtent3D& size)
 {
-    if (isEncodingPass() || !srcBuffer.buffer->isTransferSource() || !dstTexture.texture->isTransferDestination()) {
+    if (isEncodingPass() || !srcBuffer.buffer->isCopySource() || !dstTexture.texture->isCopyDestination()) {
         LOG(WebGPU, "GPUComandBuffer::copyBufferToTexture(): Invalid operation!");
         return;
     }
@@ -179,7 +179,7 @@ void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTex
 
 void GPUCommandBuffer::copyTextureToBuffer(GPUTextureCopyView&& srcTexture, GPUBufferCopyView&& dstBuffer, const GPUExtent3D& size)
 {
-    if (isEncodingPass() || !srcTexture.texture->isTransferSource() || !dstBuffer.buffer->isTransferDestination()) {
+    if (isEncodingPass() || !srcTexture.texture->isCopySource() || !dstBuffer.buffer->isCopyDestination()) {
         LOG(WebGPU, "GPUCommandBuffer::copyTextureToBuffer(): Invalid operation!");
         return;
     }
@@ -213,7 +213,7 @@ void GPUCommandBuffer::copyTextureToBuffer(GPUTextureCopyView&& srcTexture, GPUB
 
 void GPUCommandBuffer::copyTextureToTexture(GPUTextureCopyView&& src, GPUTextureCopyView&& dst, const GPUExtent3D& size)
 {
-    if (isEncodingPass() || !src.texture->isTransferSource() || !dst.texture->isTransferDestination()) {
+    if (isEncodingPass() || !src.texture->isCopySource() || !dst.texture->isCopyDestination()) {
         LOG(WebGPU, "GPUCommandBuffer::copyTextureToTexture(): Invalid operation!");
         return;
     }

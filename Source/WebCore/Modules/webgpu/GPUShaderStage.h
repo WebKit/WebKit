@@ -31,19 +31,18 @@
 
 namespace WebCore {
 
-using GPUColorWriteFlags = unsigned;
+using GPUShaderStageFlags = unsigned;
 
-class GPUColorWriteBits : public RefCounted<GPUColorWriteBits> {
+class GPUShaderStage : public RefCounted<GPUShaderStage> {
 public:
-    enum class Flags : GPUColorWriteFlags {
+    enum Flags : GPUShaderStageFlags {
         None = 0,
-        Red = 1 << 0,
-        Green = 1 << 1,
-        Blue = 1 << 2,
-        Alpha = 1 << 3,
-        All = (1 << 4) - 1,
+        Vertex = 1 << 0,
+        Fragment = 1 << 1,
+        Compute = 1 << 2,
     };
 };
+
 
 } // namespace WebCore
 

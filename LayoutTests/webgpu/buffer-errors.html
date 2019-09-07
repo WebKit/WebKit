@@ -12,7 +12,7 @@ tests["GPUBuffers can be created with both read-only and STORAGE usages."] = asy
     device.pushErrorScope("validation");
     device.createBuffer({
         size: 4,
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.INDEX | GPUBufferUsage.TRANSFER_SRC | GPUBufferUsage.UNIFORM | GPUBufferUsage.STORAGE
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.INDEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.UNIFORM | GPUBufferUsage.STORAGE
     });
     return popNullError(device);
 };
@@ -21,8 +21,8 @@ tests["unmap on already unmapped, mappable GPUBuffer should not generate error."
     const buffer = device.createBuffer({
         size: 4,
         usage: GPUBufferUsage.MAP_READ |
-            GPUBufferUsage.TRANSFER_SRC |
-            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.COPY_SRC |
+            GPUBufferUsage.COPY_DST |
             GPUBufferUsage.VERTEX |
             GPUBufferUsage.INDEX |
             GPUBufferUsage.UNIFORM |
@@ -68,8 +68,8 @@ tests["mapReadAsync on non-MAP_READ GPUBuffer should fail."] = async device => {
     const buffer = device.createBuffer({
         size: 4,
         usage: GPUBufferUsage.MAP_WRITE |
-            GPUBufferUsage.TRANSFER_SRC |
-            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.COPY_SRC |
+            GPUBufferUsage.COPY_DST |
             GPUBufferUsage.VERTEX |
             GPUBufferUsage.INDEX |
             GPUBufferUsage.UNIFORM |
@@ -85,8 +85,8 @@ tests["mapWriteAsync on non-MAP_WRITE GPUBuffer should fail."] = async device =>
     const buffer = device.createBuffer({
         size: 4,
         usage: GPUBufferUsage.MAP_READ |
-            GPUBufferUsage.TRANSFER_SRC |
-            GPUBufferUsage.TRANSFER_DST |
+            GPUBufferUsage.COPY_SRC |
+            GPUBufferUsage.COPY_DST |
             GPUBufferUsage.VERTEX |
             GPUBufferUsage.INDEX |
             GPUBufferUsage.UNIFORM |
@@ -101,8 +101,8 @@ tests["mapWriteAsync on non-MAP_WRITE GPUBuffer should fail."] = async device =>
 tests["unmap on non-mappable GPUBuffer should fail."] = async device => {
     const buffer = device.createBuffer({
         size: 4,
-        usage: GPUBufferUsage.TRANSFER_SRC |
-            GPUBufferUsage.TRANSFER_DST |
+        usage: GPUBufferUsage.COPY_SRC |
+            GPUBufferUsage.COPY_DST |
             GPUBufferUsage.VERTEX |
             GPUBufferUsage.INDEX |
             GPUBufferUsage.UNIFORM |

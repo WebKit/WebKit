@@ -372,7 +372,7 @@ Modules/webgpu/WebGPUDeviceErrorScopes.cpp
 Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
 Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp
-Modules/webgpu/WebGPUPipelineStageDescriptor.cpp
+Modules/webgpu/WebGPUProgrammableStageDescriptor.cpp
 Modules/webgpu/WebGPUProgrammablePassEncoder.cpp
 Modules/webgpu/WebGPURenderPassDescriptor.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp
@@ -2813,7 +2813,7 @@ JSFontFaceSet.cpp
 JSGPUCanvasContext.cpp
 JSGPUColor.cpp
 JSGPUColorStateDescriptor.cpp
-JSGPUColorWriteBits.cpp
+JSGPUColorWrite.cpp
 JSGPUBindGroupLayoutBinding.cpp
 JSGPUBindGroupLayoutDescriptor.cpp
 JSGPUBlendDescriptor.cpp
@@ -2828,7 +2828,7 @@ JSGPUOrigin3D.cpp
 JSGPUOutOfMemoryError.cpp
 JSGPURequestAdapterOptions.cpp
 JSGPUSamplerDescriptor.cpp
-JSGPUShaderStageBit.cpp
+JSGPUShaderStage.cpp
 JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
 JSGPUTextureFormat.cpp
@@ -3398,7 +3398,7 @@ JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineLayout.cpp
 JSWebGPUPipelineLayoutDescriptor.cpp
-JSWebGPUPipelineStageDescriptor.cpp
+JSWebGPUProgrammableStageDescriptor.cpp
 JSWebGPUProgrammablePassEncoder.cpp
 JSWebGPURenderPassDescriptor.cpp
 JSWebGPURenderPassEncoder.cpp

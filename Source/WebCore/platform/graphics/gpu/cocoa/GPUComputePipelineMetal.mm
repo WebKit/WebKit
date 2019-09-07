@@ -62,7 +62,7 @@ static bool trySetMetalFunctions(MTLLibrary *computeMetalLibrary, MTLComputePipe
     return true;
 }
 
-static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUPipelineStageDescriptor& computeStage, const GPUDevice& device, MTLComputePipelineDescriptor* mtlDescriptor, Optional<WHLSL::ComputePipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
+static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUProgrammableStageDescriptor& computeStage, const GPUDevice& device, MTLComputePipelineDescriptor* mtlDescriptor, Optional<WHLSL::ComputePipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
 {
     RetainPtr<MTLLibrary> computeLibrary;
     String computeEntryPoint;

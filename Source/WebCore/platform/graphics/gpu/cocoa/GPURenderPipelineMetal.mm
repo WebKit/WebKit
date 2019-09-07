@@ -223,19 +223,19 @@ static bool trySetVertexInput(const GPUVertexInputDescriptor& descriptor, MTLRen
 
 static MTLColorWriteMask mtlColorWriteMaskForGPUColorWriteFlags(GPUColorWriteFlags flags)
 {
-    if (flags == static_cast<GPUColorWriteFlags>(GPUColorWriteBits::Flags::All))
+    if (flags == static_cast<GPUColorWriteFlags>(GPUColorWrite::Flags::All))
         return MTLColorWriteMaskAll;
 
-    auto options = OptionSet<GPUColorWriteBits::Flags>::fromRaw(flags);
+    auto options = OptionSet<GPUColorWrite::Flags>::fromRaw(flags);
 
     MTLColorWriteMask mask = MTLColorWriteMaskNone;
-    if (options & GPUColorWriteBits::Flags::Red)
+    if (options & GPUColorWrite::Flags::Red)
         mask |= MTLColorWriteMaskRed;
-    if (options & GPUColorWriteBits::Flags::Green)
+    if (options & GPUColorWrite::Flags::Green)
         mask |= MTLColorWriteMaskGreen;
-    if (options & GPUColorWriteBits::Flags::Blue)
+    if (options & GPUColorWrite::Flags::Blue)
         mask |= MTLColorWriteMaskBlue;
-    if (options & GPUColorWriteBits::Flags::Alpha)
+    if (options & GPUColorWrite::Flags::Alpha)
         mask |= MTLColorWriteMaskAlpha;
 
     return mask;
@@ -376,7 +376,7 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
     return false;
 }
 
-static bool trySetFunctions(const GPUPipelineStageDescriptor& vertexStage, const Optional<GPUPipelineStageDescriptor>& fragmentStage, const GPUDevice& device, MTLRenderPipelineDescriptor* mtlDescriptor, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
+static bool trySetFunctions(const GPUProgrammableStageDescriptor& vertexStage, const Optional<GPUProgrammableStageDescriptor>& fragmentStage, const GPUDevice& device, MTLRenderPipelineDescriptor* mtlDescriptor, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
 {
     RetainPtr<MTLLibrary> vertexLibrary, fragmentLibrary;
     String vertexEntryPoint, fragmentEntryPoint;

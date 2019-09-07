@@ -30,7 +30,7 @@
 #include "GPUColorStateDescriptor.h"
 #include "GPUDepthStencilStateDescriptor.h"
 #include "GPUPipelineDescriptorBase.h"
-#include "GPUPipelineStageDescriptor.h"
+#include "GPUProgrammableStageDescriptor.h"
 #include "GPUVertexInputDescriptor.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
@@ -53,7 +53,7 @@ struct GPURenderPipelineDescriptorBase {
 };
 
 struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
-    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, Optional<GPUPipelineStageDescriptor>&& fragment, const GPURenderPipelineDescriptorBase& base)
+    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUProgrammableStageDescriptor&& vertex, Optional<GPUProgrammableStageDescriptor>&& fragment, const GPURenderPipelineDescriptorBase& base)
         : GPUPipelineDescriptorBase { WTFMove(layout) }
         , GPURenderPipelineDescriptorBase(base)
         , vertexStage(WTFMove(vertex))
@@ -61,8 +61,8 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelin
     {
     }
 
-    GPUPipelineStageDescriptor vertexStage;
-    Optional<GPUPipelineStageDescriptor> fragmentStage;
+    GPUProgrammableStageDescriptor vertexStage;
+    Optional<GPUProgrammableStageDescriptor> fragmentStage;
 };
 
 } // namespace WebCore

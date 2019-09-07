@@ -28,7 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUPipelineDescriptorBase.h"
-#include "WebGPUPipelineStageDescriptor.h"
+#include "WebGPUProgrammableStageDescriptor.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ struct GPUComputePipelineDescriptor;
 struct WebGPUComputePipelineDescriptor : WebGPUPipelineDescriptorBase {
     Optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor(GPUErrorScopes&) const;
 
-    WebGPUPipelineStageDescriptor computeStage;
+    WebGPUProgrammableStageDescriptor computeStage;
 };
 
 } // namespace WebCore

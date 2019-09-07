@@ -28,18 +28,18 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUPipelineDescriptorBase.h"
-#include "GPUPipelineStageDescriptor.h"
+#include "GPUProgrammableStageDescriptor.h"
 
 namespace WebCore {
 
 struct GPUComputePipelineDescriptor : GPUPipelineDescriptorBase {
-    GPUComputePipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& compute)
+    GPUComputePipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUProgrammableStageDescriptor&& compute)
         : GPUPipelineDescriptorBase { WTFMove(layout) }
         , computeStage { WTFMove(compute) }
     {
     }
 
-    GPUPipelineStageDescriptor computeStage;
+    GPUProgrammableStageDescriptor computeStage;
 };
 
 } // namespace WebCore

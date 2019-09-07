@@ -46,7 +46,7 @@ async function test(device) {
         format: "bgra8unorm",
         alphaBlend: {},
         colorBlend: {},
-        writeMask: GPUColorWriteBits.GREEN | GPUColorWriteBits.ALPHA
+        writeMask: GPUColorWrite.GREEN | GPUColorWrite.ALPHA
     }];
     const pipeline = createBasicPipeline(shaderModule, device, colorStates);
     const commandEncoder = device.createCommandEncoder();

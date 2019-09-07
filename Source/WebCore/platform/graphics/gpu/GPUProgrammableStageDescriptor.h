@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,18 +22,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://gpuweb.github.io/gpuweb
 
-typedef unsigned long u32;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    DoNotCheckConstants,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface GPUShaderStageBit {
-    const u32 NONE = 0;
-    const u32 VERTEX = 1;
-    const u32 FRAGMENT = 2;
-    const u32 COMPUTE = 4;
+#if ENABLE(WEBGPU)
+
+#include "GPUShaderModule.h"
+#include <wtf/Ref.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+struct GPUProgrammableStageDescriptorBase {
+    String entryPoint;
 };
+
+struct GPUProgrammableStageDescriptor : GPUProgrammableStageDescriptorBase {
+    GPUProgrammableStageDescriptor(Ref<const GPUShaderModule>&& module, const GPUProgrammableStageDescriptorBase& base)
+        : GPUProgrammableStageDescriptorBase(base)
+        , module { WTFMove(module) }
+    {
+    }
+
+    Ref<const GPUShaderModule> module;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

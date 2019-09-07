@@ -28,7 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUPipelineLayout.h"
-#include "GPUPipelineStageDescriptor.h"
+#include "GPUProgrammableStageDescriptor.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

@@ -88,7 +88,7 @@ namespace WebCore {
     macro(GPUBuffer) \
     macro(GPUBufferUsage) \
     macro(GPUCanvasContext) \
-    macro(GPUColorWriteBits) \
+    macro(GPUColorWrite) \
     macro(GPUCommandBuffer) \
     macro(GPUCommandEncoder) \
     macro(GPUComputePassEncoder) \
@@ -102,7 +102,7 @@ namespace WebCore {
     macro(GPURenderPipeline) \
     macro(GPUSampler) \
     macro(GPUShaderModule) \
-    macro(GPUShaderStageBit) \
+    macro(GPUShaderStage) \
     macro(GPUSwapChain) \
     macro(GPUTexture) \
     macro(GPUTextureUsage) \

@@ -156,12 +156,12 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
             return nullptr;
         }
         auto layoutBinding = layoutIterator->value;
-        if (layoutBinding.externalBinding.visibility == GPUShaderStageBit::Flags::None)
+        if (layoutBinding.externalBinding.visibility == GPUShaderStage::Flags::None)
             continue;
 
-        bool isForVertex = layoutBinding.externalBinding.visibility & GPUShaderStageBit::Flags::Vertex;
-        bool isForFragment = layoutBinding.externalBinding.visibility & GPUShaderStageBit::Flags::Fragment;
-        bool isForCompute = layoutBinding.externalBinding.visibility & GPUShaderStageBit::Flags::Compute;
+        bool isForVertex = layoutBinding.externalBinding.visibility & GPUShaderStage::Flags::Vertex;
+        bool isForFragment = layoutBinding.externalBinding.visibility & GPUShaderStage::Flags::Fragment;
+        bool isForCompute = layoutBinding.externalBinding.visibility & GPUShaderStage::Flags::Compute;
 
         if (isForVertex && !vertexEncoder) {
             LOG(WebGPU, "%s: No vertex argument encoder found for binding %u!", functionName, index);

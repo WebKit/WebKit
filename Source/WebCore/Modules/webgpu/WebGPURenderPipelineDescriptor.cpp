@@ -36,14 +36,14 @@ Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateG
 {
     auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
 
-    auto vertex = vertexStage.tryCreateGPUPipelineStageDescriptor();
+    auto vertex = vertexStage.tryCreateGPUProgrammableStageDescriptor();
 
-    Optional<GPUPipelineStageDescriptor> fragment;
+    Optional<GPUProgrammableStageDescriptor> fragment;
     if (fragmentStage)
-        fragment = fragmentStage->tryCreateGPUPipelineStageDescriptor();
+        fragment = fragmentStage->tryCreateGPUProgrammableStageDescriptor();
 
     if (!vertex || (fragmentStage && !fragment)) {
-        errorScopes.generatePrefixedError("Invalid GPUPipelineStageDescriptor!");
+        errorScopes.generatePrefixedError("Invalid GPUProgrammableStageDescriptor!");
         return WTF::nullopt;
     }
 

@@ -35,7 +35,7 @@ promise_test(() => {
     return getBasicDevice().then(function(device) {
         const shaderModule = device.createShaderModule({ code: shaderCode });
 
-        const layoutBinding = { binding: 0, visibility: GPUShaderStageBit.VERTEX, type: "storage-buffer" };
+        const layoutBinding = { binding: 0, visibility: GPUShaderStage.VERTEX, type: "storage-buffer" };
         const bindGroupLayout = device.createBindGroupLayout({ bindings: [layoutBinding] });
         const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 

@@ -27,14 +27,14 @@ async function start(device) {
 
     const size = Uint32Array.BYTES_PER_ELEMENT * 1337;
 
-    const bufferDescriptor = {size, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.TRANSFER_SRC};
+    const bufferDescriptor = {size, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC};
     const buffer = device.createBuffer(bufferDescriptor);
     const bufferArrayBuffer = await buffer.mapWriteAsync();
     const bufferUint32Array = new Uint32Array(bufferArrayBuffer);
     bufferUint32Array[0] = 0;
     buffer.unmap();
 
-    const resultsBufferDescriptor = {size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ};
+    const resultsBufferDescriptor = {size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ};
     const resultsBuffer = device.createBuffer(resultsBufferDescriptor);
 
     const bufferBinding = {buffer: resultsBuffer, size};

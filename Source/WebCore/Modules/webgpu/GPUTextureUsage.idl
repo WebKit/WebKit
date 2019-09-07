@@ -33,8 +33,8 @@ typedef unsigned long u32;
     ImplementationLacksVTable
 ] interface GPUTextureUsage {
     const u32 NONE = 0;
-    const u32 TRANSFER_SRC = 1;
-    const u32 TRANSFER_DST = 2;
+    const u32 COPY_SRC = 1;
+    const u32 COPY_DST = 2;
     const u32 SAMPLED = 4;
     const u32 STORAGE = 8;
     const u32 OUTPUT_ATTACHMENT = 16;

@@ -75,8 +75,8 @@ public:
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
     size_t byteLength() const { return m_byteLength; }
-    bool isTransferSource() const { return m_usage.contains(GPUBufferUsage::Flags::TransferSource); }
-    bool isTransferDestination() const { return m_usage.contains(GPUBufferUsage::Flags::TransferDestination); }
+    bool isCopySource() const { return m_usage.contains(GPUBufferUsage::Flags::CopySource); }
+    bool isCopyDestination() const { return m_usage.contains(GPUBufferUsage::Flags::CopyDestination); }
     bool isIndex() const { return m_usage.contains(GPUBufferUsage::Flags::Index); }
     bool isVertex() const { return m_usage.contains(GPUBufferUsage::Flags::Vertex); }
     bool isUniform() const { return m_usage.contains(GPUBufferUsage::Flags::Uniform); }
