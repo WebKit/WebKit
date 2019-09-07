@@ -70,13 +70,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
 ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, NavigatorBase& navigator)
     : ActiveDOMObject(context)
     , m_navigator(navigator)
-    , m_messageQueue(*this)
 {
     suspendIfNeeded();
-    
-    // We should queue messages until the DOMContentLoaded event has fired or startMessages() has been called.
-    if (is<Document>(context) && downcast<Document>(*context).parsing())
-        m_messageQueue.suspend();
 }
 
 ServiceWorkerContainer::~ServiceWorkerContainer()
@@ -315,7 +310,6 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerContainer::startMessages()
 {
-    m_messageQueue.resume();
 }
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
@@ -413,8 +407,7 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context, WTFMove(sourceData)) };
 
     auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source));
-    
-    m_messageQueue.enqueueEvent(WTFMove(messageEvent));
+    dispatchEvent(messageEvent);
 }
 
 void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegistrationKey& registrationKey)
@@ -524,16 +517,6 @@ bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
     return !hasPendingActivity();
 }
 
-void ServiceWorkerContainer::suspend(ReasonForSuspension)
-{
-    m_messageQueue.suspend();
-}
-
-void ServiceWorkerContainer::resume()
-{
-    m_messageQueue.resume();
-}
-
 SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());
@@ -585,7 +568,6 @@ void ServiceWorkerContainer::stop()
     m_isStopped = true;
     removeAllEventListeners();
     m_readyPromise = nullptr;
-    m_messageQueue.close();
     auto jobMap = WTFMove(m_jobMap);
     for (auto& ongoingJob : jobMap.values()) {
         if (ongoingJob.job->cancelPendingLoad())
@@ -628,16 +610,6 @@ bool ServiceWorkerContainer::isAlwaysOnLoggingAllowed() const
 
     // FIXME: No logging inside service workers for now.
     return false;
-}
-
-bool ServiceWorkerContainer::addEventListener(const AtomString& eventType, Ref<EventListener>&& eventListener, const AddEventListenerOptions& options)
-{
-    // Setting the onmessage EventHandler attribute on the ServiceWorkerContainer should start the messages
-    // automatically.
-    if (eventListener->isAttribute() && eventType == eventNames().messageEvent)
-        startMessages();
-
-    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(eventListener), options);
 }
 
 } // namespace WebCore

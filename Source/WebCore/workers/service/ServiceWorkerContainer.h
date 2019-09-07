@@ -30,7 +30,6 @@
 #include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include "SWClientConnection.h"
 #include "SWServer.h"
 #include "ServiceWorkerJobClient.h"
@@ -91,8 +90,6 @@ public:
     NavigatorBase* navigator() { return &m_navigator; }
 
 private:
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { }) final;
-
     void scheduleJob(std::unique_ptr<ServiceWorkerJob>&&);
 
     void jobFailedWithException(ServiceWorkerJob&, const Exception&) final;
@@ -109,12 +106,8 @@ private:
 
     SWClientConnection& ensureSWClientConnection();
 
-    // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
-    
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
     void refEventTarget() final;
@@ -144,7 +137,6 @@ private:
 
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
-    GenericEventQueue m_messageQueue;
 
 };
 

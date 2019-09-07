@@ -193,7 +193,6 @@
 #include "SegmentedString.h"
 #include "SelectorQuery.h"
 #include "ServiceWorkerClientData.h"
-#include "ServiceWorkerContainer.h"
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -5709,14 +5708,6 @@ void Document::finishedParsing()
 
     // Parser should have picked up all speculative preloads by now
     m_cachedResourceLoader->clearPreloads(CachedResourceLoader::ClearPreloadsMode::ClearSpeculativePreloads);
-
-#if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
-        // Stop queuing service worker client messages now that the DOMContentLoaded event has been fired.
-        if (auto* serviceWorkerContainer = this->serviceWorkerContainer())
-            serviceWorkerContainer->startMessages();
-    }
-#endif
 }
 
 void Document::clearSharedObjectPool()

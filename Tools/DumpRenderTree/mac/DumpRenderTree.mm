@@ -1725,9 +1725,6 @@ void dump()
     WebThreadLock();
 #endif
 
-    if (done)
-        return;
-
     updateDisplay();
 
     invalidateAnyPreviousWaitToDumpWatchdog();
