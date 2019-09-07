@@ -285,6 +285,4 @@ bool defaultCSSOMViewScrollingAPIEnabled();
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif
 
-bool defaultWebAuthenticationEnabled();
-
 } // namespace WebKit

@@ -64,15 +64,4 @@ bool defaultTextAutosizingUsesIdempotentMode()
 
 #endif // ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
 
-bool defaultWebAuthenticationEnabled()
-{
-#if PLATFORM(IOS_FAMILY)
-    return WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
-#elif PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
-}
-
 } // namespace WebKit
