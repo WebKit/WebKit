@@ -19,6 +19,14 @@
     }
 }
 
+@media print {
+    @media screen {
+        body {
+            color: red;
+        }
+    }
+}
+
 /* MEDIA QUERY */
 @media screen and (max-device-width: 480px) {
     html {

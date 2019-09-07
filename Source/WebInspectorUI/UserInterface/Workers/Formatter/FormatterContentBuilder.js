@@ -160,9 +160,9 @@ FormatterContentBuilder = class FormatterContentBuilder
         if (this.lastTokenWasNewline) {
             this._popFormattedContent();
             this._formattedLineEndings.pop();
-            this._startOfLine = false;
             this.lastTokenWasNewline = this.lastToken === "\n";
             this.lastTokenWasWhitespace = this.lastToken === " ";
+            this._startOfLine = this.lastTokenWasNewline;
         }
     }
 
