@@ -1,3 +1,12 @@
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Remove invalid assertion added in r249614
+        https://bugs.webkit.org/show_bug.cgi?id=200050
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        Something is instantiating the default data store, which is no problem right now.
+
 2019-09-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249353.

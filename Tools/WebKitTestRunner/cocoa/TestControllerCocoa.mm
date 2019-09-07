@@ -251,7 +251,6 @@ void TestController::resetContentExtensions()
 
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
-    ASSERT(![WKWebsiteDataStore _defaultDataStoreExists]);
     m_calendarSwizzler = nullptr;
     m_overriddenCalendarIdentifier = nil;
     
