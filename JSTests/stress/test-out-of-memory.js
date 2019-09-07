@@ -1,3 +1,5 @@
+//@ runDefault
+
 const a = [0];
 a.__proto__ = {};
 Object.defineProperty(a, 0, {
@@ -11,11 +13,10 @@ function foo() {
 
 new Promise(foo);
 
-var arrays = [];
 var exception;
 try {
     for (let i = 0; i < 10000000; i++)
-        arrays.push(new ArrayBuffer(1000));
+        new ArrayBuffer(1000);
 
 } catch (e) {
     exception = e;
