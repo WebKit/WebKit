@@ -34,6 +34,7 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/Page.h>
 
