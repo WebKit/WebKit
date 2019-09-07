@@ -1,5 +1,17 @@
 2019-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: temporarily skipping these tests until the fix can be reviewed and landed.
+
+        Not reviewed.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=201579 for the fix.
+
+        * stress/disable-gigacage-arrays.js:
+        * stress/disable-gigacage-strings.js:
+        * stress/disable-gigacage-typed-arrays.js:
+
+2019-09-07  Mark Lam  <mark.lam@apple.com>
+
         Gardening: speculative test fix to green bots [attempt #2].
         https://bugs.webkit.org/show_bug.cgi?id=201529
         <rdar://problem/53935772>
