@@ -1,5 +1,4 @@
-//@ skip
-// temporarily disable, previous options: runNoisyTestWithEnv "disable-gigacage", "GIGACAGE_ENABLED=0"
+//@ runNoisyTestWithEnv "disable-gigacage", "GIGACAGE_ENABLED=0"
 
 (function() {
     function foo(array, i)

@@ -1,3 +1,17 @@
+2019-09-07  Mark Lam  <mark.lam@apple.com>
+
+        The jsc shell should allow disabling of the Gigacage for testing purposes.
+        https://bugs.webkit.org/show_bug.cgi?id=201579
+
+        Reviewed by Michael Saboff.
+
+        Check for the same GIGACAGE_ENABLED env var that is checked by Gigacage code.  If
+        this env var is present and it has a falsy value, then do not
+        forbidDisablingPrimitiveGigacage() in the jsc shell.
+
+        * jsc.cpp:
+        (jscmain):
+
 2019-09-06  Mark Lam  <mark.lam@apple.com>
 
         Harden protection of the Gigacage Config parameters.
