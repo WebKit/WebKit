@@ -305,7 +305,10 @@ static bool verifyGigacageIsEnabled()
 
 void forbidDisablingPrimitiveGigacage()
 {
-    RELEASE_BASSERT(GIGACAGE_ALLOCATION_CAN_FAIL || verifyGigacageIsEnabled());
+    ensureGigacage();
+    RELEASE_BASSERT(g_gigacageConfig.shouldBeEnabledHasBeenCalled
+        && (GIGACAGE_ALLOCATION_CAN_FAIL || !g_gigacageConfig.shouldBeEnabled || verifyGigacageIsEnabled()));
+
     if (!g_gigacageConfig.disablingPrimitiveGigacageIsForbidden) {
         unfreezeGigacageConfig();
         g_gigacageConfig.disablingPrimitiveGigacageIsForbidden = true;

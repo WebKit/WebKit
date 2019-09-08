@@ -1,5 +1,25 @@
 2019-09-07  Mark Lam  <mark.lam@apple.com>
 
+        [Follow up fix] Harden protection of the Gigacage Config parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=201570
+        <rdar://problem/55134229>
+
+        Reviewed by Saam Barati.
+
+        The previously landed hardening measures is failing the assertion in
+        forbidDisablingPrimitiveGigacage() when a replacement heap (e.g. gmalloc) is
+        used.
+
+        1. forbidDisablingPrimitiveGigacage() should just ensureGigacage() so that we
+           know that the Gigacage is properly configured (whether enabled or disabled).
+        2. Strengthen the assertion in forbidDisablingPrimitiveGigacage() to ensure that
+           we have already determined if the Gigacage should be enabled.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::forbidDisablingPrimitiveGigacage):
+
+2019-09-07  Mark Lam  <mark.lam@apple.com>
+
         performJITMemcpy() source buffer should not be in the Gigacage.
         https://bugs.webkit.org/show_bug.cgi?id=201577
         <rdar://problem/55142606>
