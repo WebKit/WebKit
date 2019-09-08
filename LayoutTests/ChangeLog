@@ -1,5 +1,22 @@
 2019-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Add support for postMessage buffering between the service worker and window
+        https://bugs.webkit.org/show_bug.cgi?id=201169
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        Unskip test that is no longer timing out.
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+        Use testRunner.forceImmediateCompletion() instead of notifyDone() for WPT tests.
+        testRunner.notifyDone() does not work in case of load error or when the load
+        does not finish. The WPT test was timing out because the load does not finish for
+        testing purposes.
+
+2019-09-07  Chris Dumez  <cdumez@apple.com>
+
         Rewrite http/tests/workers/service/serviceworker-private-browsing.https.html as an API test
         https://bugs.webkit.org/show_bug.cgi?id=201574
 
