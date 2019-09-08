@@ -164,8 +164,8 @@ private:
 #if !ASSERT_DISABLED
     mutable bool m_isOwnedByMainThread;
     bool m_areThreadingChecksEnabled { true };
-    WTF_EXPORT_PRIVATE static bool areThreadingChecksEnabledGlobally;
 #endif
+    WTF_EXPORT_PRIVATE static bool areThreadingChecksEnabledGlobally;
 #if CHECK_REF_COUNTED_LIFECYCLE
     mutable bool m_deletionHasBegun;
     mutable bool m_adoptionIsRequired;

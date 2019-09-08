@@ -23,8 +23,6 @@
 
 namespace WTF {
 
-#if !ASSERT_DISABLED
 bool RefCountedBase::areThreadingChecksEnabledGlobally { false };
-#endif
 
 }

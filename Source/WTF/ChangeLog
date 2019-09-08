@@ -1,3 +1,18 @@
+2019-09-07  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION(r248533): Unable to use WTF::RefCounted when building in a debug configuration against a non-debug WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=201585
+        rdar://problem/55153369
+
+        Reviewed by Chris Dumez.
+
+        Export WTF::RefCountedBase::areThreadingChecksEnabledGlobally regardless of whether or not assertions
+        are enabled for the WTF being built. This allows WebKit-based projects to use RefCounted for their own
+        objects in a debug configuration without requiring a debug build of WebKit.
+
+        * wtf/RefCounted.cpp:
+        * wtf/RefCounted.h:
+
 2019-09-07  Mark Lam  <mark.lam@apple.com>
 
         performJITMemcpy() source buffer should not be in the Gigacage.
