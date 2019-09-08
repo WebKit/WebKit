@@ -27,6 +27,7 @@
 #include "WebKitWebsiteDataPrivate.h"
 #include "WebsiteDataFetchOption.h"
 #include <glib/gi18n-lib.h>
+#include <pal/SessionID.h>
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -383,7 +384,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(Ref<WebsiteDataStoreConfiguration>&& configuration)
 {
     WebKitWebsiteDataManager* manager = WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, nullptr));
-    manager->priv->websiteDataStore = API::WebsiteDataStore::createLegacy(WTFMove(configuration));
+    manager->priv->websiteDataStore = API::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
 
     return manager;
 }
@@ -404,7 +405,7 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
         configuration->setHSTSStorageDirectory(!priv->hstsCacheDirectory ?
             API::WebsiteDataStore::defaultHSTSDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
         configuration->setMediaKeysStorageDirectory(API::WebsiteDataStore::defaultMediaKeysStorageDirectory());
-        priv->websiteDataStore = API::WebsiteDataStore::createLegacy(WTFMove(configuration));
+        priv->websiteDataStore = API::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
     }
 
     return *priv->websiteDataStore;

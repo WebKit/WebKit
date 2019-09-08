@@ -53,9 +53,6 @@ public:
     
     Ref<ProcessPoolConfiguration> copy();
 
-    bool shouldHaveLegacyDataStore() const { return m_shouldHaveLegacyDataStore; }
-    void setShouldHaveLegacyDataStore(bool shouldHaveLegacyDataStore) { m_shouldHaveLegacyDataStore = shouldHaveLegacyDataStore; }
-
     bool usesSingleWebProcess() const { return m_usesSingleWebProcess; }
     void setUsesSingleWebProcess(bool enabled) { m_usesSingleWebProcess = enabled; }
 
@@ -186,8 +183,6 @@ public:
 #endif
 
 private:
-    bool m_shouldHaveLegacyDataStore { false };
-
     bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModel::PrimaryWebBrowser };
 

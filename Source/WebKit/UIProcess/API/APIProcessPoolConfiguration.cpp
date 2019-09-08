@@ -36,16 +36,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::create()
     return adoptRef(*new ProcessPoolConfiguration);
 }
 
-Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions()
-{
-    auto configuration = ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(WebsiteDataStore::legacyDefaultDataStoreConfiguration());
-
-    configuration->m_shouldHaveLegacyDataStore = true;
-    configuration->m_cacheModel = WebKit::CacheModel::DocumentViewer;
-
-    return configuration;
-}
-
 Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStoreConfiguration& legacyConfiguration)
 {
     auto configuration = ProcessPoolConfiguration::create();
@@ -86,7 +76,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 {
     auto copy = this->create();
 
-    copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
     copy->m_cacheModel = this->m_cacheModel;
     copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
     copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;

@@ -80,7 +80,7 @@ WebProcessPool& inspectorProcessPool(unsigned inspectionLevel)
     // guarantees no process sharing for our user interface.
     WebProcessPool*& pool = (inspectionLevel == 1) ? s_mainInspectorProcessPool : s_nestedInspectorProcessPool;
     if (!pool) {
-        auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+        auto configuration = API::ProcessPoolConfiguration::create();
         pool = &WebProcessPool::create(configuration.get()).leakRef();
         // Do not delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         pool->disableDelayedWebProcessLaunch();

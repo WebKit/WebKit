@@ -64,12 +64,6 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
     return adoptRef(*new WebsiteDataStore);
 }
 
-Ref<WebsiteDataStore> WebsiteDataStore::createLegacy(Ref<WebKit::WebsiteDataStoreConfiguration>&& configuration)
-{
-    configuration->setIndexedDBDatabaseDirectory(legacyDefaultIndexedDBDatabaseDirectory());
-    return adoptRef(*new WebsiteDataStore(WTFMove(configuration), PAL::SessionID::defaultSessionID()));
-}
-
 Ref<WebsiteDataStore> WebsiteDataStore::create(Ref<WebKit::WebsiteDataStoreConfiguration>&& configuration, const PAL::SessionID& sessionID)
 {
     return adoptRef(*new WebsiteDataStore(WTFMove(configuration), sessionID));
@@ -168,24 +162,6 @@ Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreCon
 
     configuration->setJavaScriptConfigurationDirectory(defaultJavaScriptConfigurationDirectory());
 
-    return configuration;
-}
-
-Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::legacyDefaultDataStoreConfiguration()
-{
-    auto configuration = defaultDataStoreConfiguration();
-
-    configuration->setApplicationCacheDirectory(legacyDefaultApplicationCacheDirectory());
-    configuration->setApplicationCacheFlatFileSubdirectoryName("ApplicationCache");
-    configuration->setNetworkCacheDirectory(legacyDefaultNetworkCacheDirectory());
-    configuration->setMediaCacheDirectory(legacyDefaultMediaCacheDirectory());
-    configuration->setMediaKeysStorageDirectory(legacyDefaultMediaKeysStorageDirectory());
-    configuration->setDeviceIdHashSaltsStorageDirectory(legacyDefaultDeviceIdHashSaltsStorageDirectory());
-    configuration->setIndexedDBDatabaseDirectory(legacyDefaultIndexedDBDatabaseDirectory());
-    configuration->setWebSQLDatabaseDirectory(legacyDefaultWebSQLDatabaseDirectory());
-    configuration->setLocalStorageDirectory(legacyDefaultLocalStorageDirectory());
-    configuration->setJavaScriptConfigurationDirectory(legacyDefaultJavaScriptConfigurationDirectory());
-    
     return configuration;
 }
 

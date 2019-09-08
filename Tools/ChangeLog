@@ -1,5 +1,15 @@
 2019-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebsiteDataStore::legacyDefaultDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=200054
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        This test relied on the default data store having been instantiated.
+
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Remove calls to WKContextGetWebsiteDataStore missed in r249614
         https://bugs.webkit.org/show_bug.cgi?id=200050
 

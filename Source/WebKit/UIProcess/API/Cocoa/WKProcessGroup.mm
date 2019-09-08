@@ -195,7 +195,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     if (!self)
         return nil;
 
-    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    auto configuration = API::ProcessPoolConfiguration::create();
     configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
 
     _processPool = WebKit::WebProcessPool::create(configuration);

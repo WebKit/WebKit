@@ -1,5 +1,75 @@
 2019-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebsiteDataStore::legacyDefaultDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=200054
+
+        Reviewed by Carlos Garcia Campos.
+
+        Its last needed use was removed in rdar://problem/47030981
+        This changes WKContextConfigurationCreateWithLegacyOptions to be equal to WKContextConfigurationCreate,
+        but it has no remaining clients so it is only being retained for binary compabibility.
+        This also changes WKContextCreateWithInjectedBundlePath and WKContextCreate to be equal to WKContextCreateWithConfiguration,
+        and after rdar://problem/47030981 there are no meaningful clients of those functions, also.
+        There is one existing client of WKContextCreateWithInjectedBundlePath in rdar://problem/50323967 but our current implementation
+        is compatible enough for them because it uses their injected bundle still.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        (API::ProcessPoolConfiguration::createWithLegacyOptions): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::createLegacy): Deleted.
+        (API::WebsiteDataStore::legacyDefaultDataStoreConfiguration): Deleted.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        (WKContextGetWebsiteDataStore):
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCreate):
+        (WKContextConfigurationCreateWithLegacyOptions):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory): Deleted.
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory): Deleted.
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp:
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory): Deleted.
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory): Deleted.
+        * UIProcess/WebInspectorUtilities.cpp:
+        (WebKit::inspectorProcessPool):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_webProcessCache):
+        (WebKit::legacyWebsiteDataStoreConfiguration): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Fix Windows build
         https://bugs.webkit.org/show_bug.cgi?id=201517
 

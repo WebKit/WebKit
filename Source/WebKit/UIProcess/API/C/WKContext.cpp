@@ -69,13 +69,13 @@ WKTypeID WKContextGetTypeID()
 
 WKContextRef WKContextCreate()
 {
-    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    auto configuration = API::ProcessPoolConfiguration::create();
     return WebKit::toAPI(&WebKit::WebProcessPool::create(configuration).leakRef());
 }
 
 WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
-    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    auto configuration = API::ProcessPoolConfiguration::create();
     configuration->setInjectedBundlePath(WebKit::toWTFString(pathRef));
 
     return WebKit::toAPI(&WebKit::WebProcessPool::create(configuration).leakRef());
@@ -443,16 +443,9 @@ WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
     return WebKit::toAPI(WebKit::toImpl(contextRef)->supplement<WebKit::WebCookieManagerProxy>());
 }
 
-WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef context)
+WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef)
 {
-    auto* dataStore = WebKit::toImpl(context)->websiteDataStore();
-    if (!dataStore) {
-        auto defaultDataStore = API::WebsiteDataStore::defaultDataStore();
-        WebKit::toImpl(context)->setPrimaryDataStore(defaultDataStore.get());
-        dataStore = defaultDataStore.ptr();
-    }
-
-    return WebKit::toAPI(dataStore);
+    return WKWebsiteDataStoreGetDefaultDataStore();
 }
 
 WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef context)

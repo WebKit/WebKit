@@ -972,9 +972,6 @@ void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
     configuration.processPool = (WKProcessPool *)context.get();
     auto pool = configuration.processPool;
     [pool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
-
-    // FIXME: Investigate and remove this last use of WKContextGetWebsiteDataStore.
-    configuration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context.get());
 }
 
 @interface RegularPageMessageHandler : NSObject <WKScriptMessageHandler>
@@ -1425,6 +1422,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     ASSERT(mainBytes);
     ASSERT(scriptBytes);
 
+    [WKWebsiteDataStore defaultDataStore];
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

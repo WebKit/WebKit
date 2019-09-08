@@ -205,25 +205,6 @@ const Vector<WebProcessPool*>& WebProcessPool::allProcessPools()
     return processPools();
 }
 
-static Ref<WebsiteDataStoreConfiguration> legacyWebsiteDataStoreConfiguration(API::ProcessPoolConfiguration& processPoolConfiguration)
-{
-    auto configuration = WebsiteDataStoreConfiguration::create();
-
-    configuration->setCacheStorageDirectory(String(API::WebsiteDataStore::defaultCacheStorageDirectory()));
-    configuration->setServiceWorkerRegistrationDirectory(String(API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()));
-    configuration->setLocalStorageDirectory(String(processPoolConfiguration.localStorageDirectory()));
-    configuration->setWebSQLDatabaseDirectory(String(processPoolConfiguration.webSQLDatabaseDirectory()));
-    configuration->setApplicationCacheDirectory(String(processPoolConfiguration.applicationCacheDirectory()));
-    configuration->setApplicationCacheFlatFileSubdirectoryName(String(processPoolConfiguration.applicationCacheFlatFileSubdirectoryName()));
-    configuration->setMediaCacheDirectory(String(processPoolConfiguration.mediaCacheDirectory()));
-    configuration->setMediaKeysStorageDirectory(String(processPoolConfiguration.mediaKeysStorageDirectory()));
-    configuration->setIndexedDBDatabaseDirectory(String(processPoolConfiguration.indexedDBDatabaseDirectory()));
-    configuration->setResourceLoadStatisticsDirectory(String(processPoolConfiguration.resourceLoadStatisticsDirectory()));
-    configuration->setNetworkCacheDirectory(String(processPoolConfiguration.diskCacheDirectory()));
-
-    return configuration;
-}
-
 static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProtocolHandlers()
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> set;
@@ -262,9 +243,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
     });
-
-    if (m_configuration->shouldHaveLegacyDataStore())
-        m_websiteDataStore = API::WebsiteDataStore::createLegacy(legacyWebsiteDataStoreConfiguration(m_configuration));
 
     if (!m_websiteDataStore && API::WebsiteDataStore::defaultDataStoreExists())
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore();

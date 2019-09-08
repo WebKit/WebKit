@@ -40,7 +40,6 @@ public:
 
     static Ref<WebsiteDataStore> create(Ref<WebKit::WebsiteDataStoreConfiguration>&&, const PAL::SessionID&);
     static Ref<WebsiteDataStore> createNonPersistentDataStore();
-    static Ref<WebsiteDataStore> createLegacy(Ref<WebKit::WebsiteDataStoreConfiguration>&&);
 
     explicit WebsiteDataStore(Ref<WebKit::WebsiteDataStoreConfiguration>&&, PAL::SessionID);
     virtual ~WebsiteDataStore();
@@ -74,18 +73,6 @@ public:
     static WTF::String defaultJavaScriptConfigurationDirectory();
 
     static Ref<WebKit::WebsiteDataStoreConfiguration> defaultDataStoreConfiguration();
-
-    static WTF::String legacyDefaultApplicationCacheDirectory();
-    static WTF::String legacyDefaultNetworkCacheDirectory();
-    static WTF::String legacyDefaultLocalStorageDirectory();
-    static WTF::String legacyDefaultIndexedDBDatabaseDirectory();
-    static WTF::String legacyDefaultWebSQLDatabaseDirectory();
-    static WTF::String legacyDefaultMediaKeysStorageDirectory();
-    static WTF::String legacyDefaultDeviceIdHashSaltsStorageDirectory();
-    static WTF::String legacyDefaultMediaCacheDirectory();
-    static WTF::String legacyDefaultJavaScriptConfigurationDirectory();
-
-    static Ref<WebKit::WebsiteDataStoreConfiguration> legacyDefaultDataStoreConfiguration();
 
 private:
     enum ShouldCreateDirectory { CreateDirectory, DontCreateDirectory };
