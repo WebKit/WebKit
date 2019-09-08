@@ -1,5 +1,19 @@
 2019-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Null check m_client in NetworkDataTask::didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=201587
+        <rdar://problem/54743444>
+
+        Reviewed by Chris Dumez.
+
+        clearClient can be called at any time.  We null check it everyhere else we use it,
+        and we are seeing crashes at this call site.  Let's not crash.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::didReceiveResponse):
+
+2019-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Remove WebsiteDataStore::legacyDefaultDataStoreConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=200054
 
