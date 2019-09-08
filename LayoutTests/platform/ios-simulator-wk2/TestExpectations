@@ -66,8 +66,6 @@ http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Slow ]
 http/wpt/cache-storage/a-cache-open.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
 
-webkit.org/b/196376 [ Debug ] storage/domstorage/localstorage/private-browsing-affects-storage.html [ Pass ]
-
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
 
 webkit.org/b/195341 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Pass Failure ]

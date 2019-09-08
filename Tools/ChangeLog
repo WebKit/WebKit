@@ -1,3 +1,19 @@
+2019-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Rewrite storage/domstorage/localstorage/private-browsing-affects-storage.html as an API test
+        https://bugs.webkit.org/show_bug.cgi?id=201547
+
+        Reviewed by Alex Christensen.
+
+        Rewrite storage/domstorage/localstorage/private-browsing-affects-storage.html as an API test so
+        it can use a true ephemeral session instead of the testRunner.setPrivateBrowsingEnabled_DEPRECATED()
+        hack.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (-[LocalStorageNavigationDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[LocalStorageNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2019-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebsiteDataStore::legacyDefaultDataStoreConfiguration

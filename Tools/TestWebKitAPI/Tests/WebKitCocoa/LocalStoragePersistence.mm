@@ -30,6 +30,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -38,6 +39,7 @@
 
 static bool readyToContinue;
 static bool receivedScriptMessage;
+static bool didFinishNavigation;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 static RetainPtr<WKWebView> createdWebView;
 
@@ -54,7 +56,9 @@ static RetainPtr<WKWebView> createdWebView;
 
 @end
 
-@interface LocalStorageNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@interface LocalStorageNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
+    @public void (^decidePolicyForNavigationActionHandler)(WKNavigationAction *, WKWebpagePreferences *, void (^)(WKNavigationActionPolicy, WKWebpagePreferences *));
+}
 @end
 
 @implementation LocalStorageNavigationDelegate
@@ -62,7 +66,21 @@ static RetainPtr<WKWebView> createdWebView;
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [createdWebView setNavigationDelegate:self];
     return createdWebView.get();
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    if (decidePolicyForNavigationActionHandler)
+        decidePolicyForNavigationActionHandler(navigationAction, preferences, decisionHandler);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    didFinishNavigation = true;
 }
 
 @end
@@ -233,4 +251,166 @@ TEST(WKWebView, LocalStorageOpenWindowPrivate)
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"local:storage", [lastScriptMessage body]);
+}
+
+TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore defaultDataStore]];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    
+    auto delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigation = false;
+    
+    bool finishedRunningScript = false;
+    [webView evaluateJavaScript:@"localStorage.setItem('testItem', 'Persistent item!');" completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"Persistent item!", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    delegate->decidePolicyForNavigationActionHandler = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        // Switch to an ephemeral session.
+        preferences._websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    
+    [webView reload];
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigation = false;
+    
+    [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        EXPECT_TRUE([result isEqual:NSNull.null]);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [webView evaluateJavaScript:@"localStorage.setItem('testItem', 'FirstValue');" completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"FirstValue", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [webView evaluateJavaScript:@"localStorage.setItem('testItem', 'ChangedValue');" completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"ChangedValue", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    delegate->decidePolicyForNavigationActionHandler = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        // Switch back to the default session.
+        preferences._websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    
+    [webView reload];
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigation = false;
+    
+    [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"Persistent item!", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+}
+
+TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    
+    auto delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigation = false;
+    
+    bool finishedRunningScript = false;
+    [webView evaluateJavaScript:@"localStorage.setItem('testItem', 'Persistent item!');" completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    createdWebView = nullptr;
+    [webView evaluateJavaScript:@"open(window.location)" completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+        
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigation = false;
+    
+    EXPECT_TRUE(!!createdWebView);
+    
+    [createdWebView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"Persistent item!", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [createdWebView evaluateJavaScript:@"localStorage.setItem('testItem', 'ChangedValue');" completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [createdWebView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"ChangedValue", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+    
+    [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+        NSString *value = (NSString *)result;
+        EXPECT_WK_STREQ(@"ChangedValue", value);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
 }

@@ -1,3 +1,16 @@
+2019-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Rewrite storage/domstorage/localstorage/private-browsing-affects-storage.html as an API test
+        https://bugs.webkit.org/show_bug.cgi?id=201547
+
+        Reviewed by Alex Christensen.
+
+        Drop outdated test.
+
+        * storage/domstorage/localstorage/private-browsing-affects-storage.html: Removed.
+        * storage/domstorage/localstorage/resources/private-browsing-1.html: Removed.
+        * storage/domstorage/localstorage/resources/private-browsing-2.html: Removed.
+
 2019-09-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249353.
