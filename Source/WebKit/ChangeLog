@@ -1,3 +1,17 @@
+2019-09-07  Tim Horton  <timothy_horton@apple.com>
+
+        Marking up a note on iOS results in a PDF with no contents
+        https://bugs.webkit.org/show_bug.cgi?id=201530
+        <rdar://problem/53686019>
+
+        Unreviewed follow-up.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _waitForDrawToPDFCallback]):
+        Remove an ASSERT_NOT_REACHED that fires if the synchronous wait for printing
+        times out. This is a totally legitimite situation that can occur if the process
+        crashes; there's no need for an assert there.
+
 2019-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Null check m_client in NetworkDataTask::didReceiveResponse
