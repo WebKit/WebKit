@@ -51,6 +51,7 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
     : m_server(makeWeakPtr(server))
     , m_registrationKey(registration.key())
+    , m_registration(makeWeakPtr(registration))
     , m_data { identifier, scriptURL, ServiceWorkerState::Redundant, type, registration.identifier() }
     , m_script(script)
     , m_contentSecurityPolicy(contentSecurityPolicy)
@@ -63,7 +64,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     auto result = allWorkers().add(identifier, this);
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    ASSERT(m_server->getRegistration(m_registrationKey));
+    ASSERT(m_server->getRegistration(m_registrationKey) == &registration);
 }
 
 SWServerWorker::~SWServerWorker()
@@ -76,10 +77,9 @@ SWServerWorker::~SWServerWorker()
 
 ServiceWorkerContextData SWServerWorker::contextData() const
 {
-    auto* registration = m_server->getRegistration(m_registrationKey);
-    ASSERT(registration);
+    ASSERT(m_registration);
 
-    return { WTF::nullopt, registration->data(), m_data.identifier, m_script, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, m_server->sessionID(), false, m_scriptResourceMap };
+    return { WTF::nullopt, m_registration->data(), m_data.identifier, m_script, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, m_server->sessionID(), false, m_scriptResourceMap };
 }
 
 void SWServerWorker::terminate()
@@ -177,10 +177,9 @@ void SWServerWorker::skipWaiting()
 {
     m_isSkipWaitingFlagSet = true;
 
-    auto* registration = m_server->getRegistration(m_registrationKey);
-    ASSERT(registration || isTerminating());
-    if (registration)
-        registration->tryActivate();
+    ASSERT(m_registration || isTerminating());
+    if (m_registration)
+        m_registration->tryActivate();
 }
 
 void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
@@ -193,13 +192,12 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
         return;
 
     // Do tryClear/tryActivate, as per https://w3c.github.io/ServiceWorker/#wait-until-method.
-    auto* registration = m_server->getRegistration(m_registrationKey);
-    if (!registration)
+    if (!m_registration)
         return;
 
-    if (registration->isUninstalling() && registration->tryClear())
+    if (m_registration->isUnregistered() && m_registration->tryClear())
         return;
-    registration->tryActivate();
+    m_registration->tryActivate();
 }
 
 void SWServerWorker::whenActivated(WTF::Function<void(bool)>&& handler)
@@ -218,10 +216,9 @@ void SWServerWorker::setState(ServiceWorkerState state)
 
     m_data.state = state;
 
-    auto* registration = m_server->getRegistration(m_registrationKey);
-    ASSERT(registration || state == ServiceWorkerState::Redundant);
-    if (registration) {
-        registration->forEachConnection([&](auto& connection) {
+    ASSERT(m_registration || state == ServiceWorkerState::Redundant);
+    if (m_registration) {
+        m_registration->forEachConnection([&](auto& connection) {
             connection.updateWorkerStateInClient(this->identifier(), state);
         });
     }
@@ -239,11 +236,16 @@ void SWServerWorker::callWhenActivatedHandler(bool success)
 
 void SWServerWorker::setState(State state)
 {
-    ASSERT(state != State::Running || m_server->getRegistration(m_registrationKey));
+    ASSERT(state != State::Running || m_registration);
     m_state = state;
 
     if (state == State::Running)
         m_shouldSkipHandleFetch = false;
+}
+
+SWServerRegistration* SWServerWorker::registration() const
+{
+    return m_registration.get();
 }
 
 } // namespace WebCore

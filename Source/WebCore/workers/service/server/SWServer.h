@@ -132,7 +132,7 @@ public:
 
     WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
-    void removeRegistration(const ServiceWorkerRegistrationKey&);
+    void removeRegistration(ServiceWorkerRegistrationIdentifier);
     WEBCORE_EXPORT Vector<ServiceWorkerRegistrationData> getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL);
 
     WEBCORE_EXPORT void scheduleJob(ServiceWorkerJobData&&);
@@ -193,6 +193,8 @@ public:
 
     void disableServiceWorkerProcessTerminationDelay() { m_shouldDisableServiceWorkerProcessTerminationDelay = true; }
 
+    void removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationKey&);
+
 private:
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
 
@@ -221,8 +223,8 @@ private:
     void terminateWorkerInternal(SWServerWorker&, TerminationMode);
 
     HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
-    HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
-    HashMap<ServiceWorkerRegistrationIdentifier, SWServerRegistration*> m_registrationsByID;
+    HashMap<ServiceWorkerRegistrationKey, WeakPtr<SWServerRegistration>> m_scopeToRegistrationMap;
+    HashMap<ServiceWorkerRegistrationIdentifier, std::unique_ptr<SWServerRegistration>> m_registrations;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;

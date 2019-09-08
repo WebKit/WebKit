@@ -34,6 +34,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ struct ExceptionData;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
 
-class SWServerRegistration {
+class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL);
@@ -56,9 +57,6 @@ public:
 
     SWServerWorker* getNewestWorker();
     WEBCORE_EXPORT ServiceWorkerRegistrationData data() const;
-
-    bool isUninstalling() const { return m_uninstalling; }
-    void setIsUninstalling(bool);
 
     void setLastUpdateTime(WallTime);
     WallTime lastUpdateTime() const { return m_lastUpdateTime; }
@@ -94,11 +92,15 @@ public:
     bool tryClear();
     void tryActivate();
     void didFinishActivation(ServiceWorkerIdentifier);
+    
+    bool isUnregistered() const;
 
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
     WEBCORE_EXPORT bool shouldSoftUpdate(const FetchOptions&) const;
     WEBCORE_EXPORT void softUpdate();
+    
+    String scopeURLWithoutFragment() const { return m_scopeURL; }
 
 private:
     void activate();
@@ -110,7 +112,6 @@ private:
     URL m_scopeURL;
     URL m_scriptURL;
 
-    bool m_uninstalling { false };
     RefPtr<SWServerWorker> m_preInstallationWorker; // Implementation detail, not part of the specification.
     RefPtr<SWServerWorker> m_installingWorker;
     RefPtr<SWServerWorker> m_waitingWorker;

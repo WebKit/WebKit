@@ -273,7 +273,6 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
 
     // If registration is not null (in our parlance "empty"), then:
     if (auto* registration = m_server.getRegistration(m_registrationKey)) {
-        registration->setIsUninstalling(false);
         auto* newestWorker = registration->getNewestWorker();
         if (newestWorker && equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()) && job.registrationOptions.updateViaCache == registration->updateViaCache()) {
             RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found directly reusable registration %llu for job %s (DONE)", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());
@@ -306,15 +305,15 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     auto* registration = m_server.getRegistration(m_registrationKey);
 
     // If registration is null, then:
-    if (!registration || registration->isUninstalling()) {
+    if (!registration) {
         // Invoke Resolve Job Promise with job and false.
         m_server.resolveUnregistrationJob(job, m_registrationKey, false);
         finishCurrentJob();
         return;
     }
-
-    // Set registration's uninstalling flag.
-    registration->setIsUninstalling(true);
+    
+    // Remove scope to registration map[job’s scope url].
+    m_server.removeFromScopeToRegistrationMap(m_registrationKey);
 
     // Invoke Resolve Job Promise with job and true.
     m_server.resolveUnregistrationJob(job, m_registrationKey, true);
@@ -333,8 +332,6 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
     // If registration is null (in our parlance "empty") or registration's uninstalling flag is set, then:
     if (!registration)
         return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a null/nonexistent service worker registration"_s });
-    if (registration->isUninstalling())
-        return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a service worker registration that is uninstalling"_s });
 
     // Let newestWorker be the result of running Get Newest Worker algorithm passing registration as the argument.
     auto* newestWorker = registration->getNewestWorker();

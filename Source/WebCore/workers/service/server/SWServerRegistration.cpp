@@ -259,7 +259,7 @@ void SWServerRegistration::clear()
         updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
 
     // Remove scope to registration map[scopeString].
-    m_server.removeRegistration(key());
+    m_server.removeRegistration(identifier());
 }
 
 // https://w3c.github.io/ServiceWorker/#try-activate-algorithm
@@ -333,9 +333,14 @@ void SWServerRegistration::handleClientUnload()
 {
     if (hasClientsUsingRegistration())
         return;
-    if (isUninstalling() && tryClear())
+    if (isUnregistered() && tryClear())
         return;
     tryActivate();
+}
+
+bool SWServerRegistration::isUnregistered() const
+{
+    return m_server.getRegistration(key()) != this;
 }
 
 void SWServerRegistration::controlClient(ServiceWorkerClientIdentifier identifier)
@@ -347,19 +352,6 @@ void SWServerRegistration::controlClient(ServiceWorkerClientIdentifier identifie
     HashSet<DocumentIdentifier> identifiers;
     identifiers.add(identifier.contextIdentifier);
     m_server.connection(identifier.serverConnectionIdentifier)->notifyClientsOfControllerChange(identifiers, activeWorker()->data());
-}
-
-void SWServerRegistration::setIsUninstalling(bool value)
-{
-    if (m_uninstalling == value)
-        return;
-
-    m_uninstalling = value;
-
-    if (!m_uninstalling && activeWorker()) {
-        // Registration with active worker has been resurrected, we need to check if any ready promises were waiting for this.
-        m_server.resolveRegistrationReadyRequests(*this);
-    }
 }
 
 bool SWServerRegistration::shouldSoftUpdate(const FetchOptions& options) const

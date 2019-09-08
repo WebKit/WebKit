@@ -1,3 +1,17 @@
+2019-09-07  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Drop support for registration resurrection
+        https://bugs.webkit.org/show_bug.cgi?id=201584
+
+        Reviewed by Alex Christensen.
+
+        Re-sync a couple of outdated WPT tests from upstream 820f0f86047e6e.
+
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https.html:
+
 2019-09-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249353.

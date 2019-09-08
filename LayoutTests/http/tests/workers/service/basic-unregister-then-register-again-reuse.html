@@ -40,9 +40,9 @@ async function test()
 
          let registration2 = await navigator.serviceWorker.register("resources/basic-unregister-then-register-again-reuse-worker.js", { });
          if (registration1 === registration2)
-             log("PASS: Registration was reused");
+             log("FAIL: Registration was reused");
          else
-             log("FAIL: Registration was not reused");
+             log("PASS: Registration was not reused");
     } catch (e) {
         log("FAIL: Got exception " + e);
     }
