@@ -1349,6 +1349,87 @@ TEST(ServiceWorkers, CacheStorageInPrivateBrowsingMode)
     done = false;
 }
 
+static const char* serviceWorkerCacheAccessEphemeralSessionMainBytes = R"SWRESOURCE(
+<script>
+try {
+    navigator.serviceWorker.addEventListener("message", (event) => {
+        webkit.messageHandlers.sw.postMessage(event.data);
+    });
+
+    navigator.serviceWorker.register("serviceworker-private-browsing-worker.js", { scope : "my private backyard" }).then((registration) => {
+        activeWorker = registration.installing;
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated") {
+                activeWorker.postMessage("TESTCACHE");
+            }
+        });
+    });
+} catch (e) {
+    webkit.messageHandlers.sw.postMessage("" + e);
+}
+</script>
+)SWRESOURCE";
+
+static const char* serviceWorkerCacheAccessEphemeralSessionSWBytes = R"SWRESOURCE(
+self.addEventListener("message", (event) => {
+    try {
+        self.caches.keys().then((keys) => {
+            event.source.postMessage(keys.length === 0 ? "PASS" : "FAIL: caches is not empty, got: " + JSON.stringify(keys));
+        });
+    } catch (e) {
+         event.source.postMessage("" + e);
+    }
+});
+)SWRESOURCE";
+
+// Opens a cache in the default session and checks that an ephemeral service worker
+// does not have access to it.
+TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    
+    auto defaultPreferences = [configuration preferences];
+    [defaultPreferences _setSecureContextChecksEnabled:NO];
+    
+    auto handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/openCache.html", ResourceInfo { @"text/html", "foo" });
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", serviceWorkerCacheAccessEphemeralSessionMainBytes });
+    handler->resources.set("sw://host/serviceworker-private-browsing-worker.js", ResourceInfo { @"application/javascript", serviceWorkerCacheAccessEphemeralSessionSWBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/openCache.html"]];
+    [defaultWebView synchronouslyLoadRequest:request];
+    
+    bool openedCache = false;
+    [defaultWebView evaluateJavaScript:@"self.caches.open('test');" completionHandler: [&] (id innerText, NSError *error) {
+        openedCache = true;
+    }];
+    TestWebKitAPI::Util::run(&openedCache);
+
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    auto messageHandler = adoptNS([[SWMessageHandlerForCacheStorage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+
+    [ephemeralWebView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 static const char* regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
 <script>
 async function getResult()
@@ -1378,9 +1459,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     setConfigurationInjectedBundlePath(configuration.get());
 
     RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);

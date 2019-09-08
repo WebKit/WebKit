@@ -1,3 +1,16 @@
+2019-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Rewrite http/tests/workers/service/serviceworker-private-browsing.https.html as an API test
+        https://bugs.webkit.org/show_bug.cgi?id=201574
+
+        Reviewed by Alex Christensen.
+
+        Update Service Workers so that they obey the "secureContextChecksEnabled" preference.
+        This was needed to allow my service worker to access self.caches in my API test.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updatePreferencesStore):
+
 2019-09-07  Tim Horton  <timothy_horton@apple.com>
 
         Marking up a note on iOS results in a PDF with no contents

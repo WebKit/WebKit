@@ -1,5 +1,18 @@
 2019-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Rewrite http/tests/workers/service/serviceworker-private-browsing.https.html as an API test
+        https://bugs.webkit.org/show_bug.cgi?id=201574
+
+        Reviewed by Alex Christensen.
+
+        Rewrite http/tests/workers/service/serviceworker-private-browsing.https.html as an API test so that
+        we truly test private browsing. testRunner.setPrivateBrowsingEnabled_DEPRECATED() is a hack which
+        does not work well for WK2.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
+2019-09-07  Chris Dumez  <cdumez@apple.com>
+
         Rewrite storage/domstorage/localstorage/private-browsing-affects-storage.html as an API test
         https://bugs.webkit.org/show_bug.cgi?id=201547
 
