@@ -1,3 +1,15 @@
+2019-09-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macCatalyst] The last typed character in password fields shouldn't be echoed
+        https://bugs.webkit.org/show_bug.cgi?id=201595
+        <rdar://problem/55166367>
+
+        Reviewed by Tim Horton.
+
+        Disable password echoing on macCatalyst, to better match behavior on macOS.
+
+        * Shared/WebPreferencesDefaultValues.h:
+
 2019-09-07  Chris Dumez  <cdumez@apple.com>
 
         Rewrite http/tests/workers/service/serviceworker-private-browsing.https.html as an API test
