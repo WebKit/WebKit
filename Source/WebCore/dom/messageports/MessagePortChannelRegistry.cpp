@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-MessagePortChannelRegistry::MessagePortChannelRegistry(MessagePortChannelProvider& provider)
-    : m_provider(provider)
+MessagePortChannelRegistry::MessagePortChannelRegistry(CheckProcessLocalPortForActivityCallback&& checkProcessLocalPortForActivityCallback)
+    : m_checkProcessLocalPortForActivityCallback(WTFMove(checkProcessLocalPortForActivityCallback))
 {
 }
 
@@ -176,6 +176,11 @@ MessagePortChannel* MessagePortChannelRegistry::existingChannelContainingPort(co
     ASSERT(isMainThread());
 
     return m_openChannels.get(port);
+}
+
+void MessagePortChannelRegistry::checkProcessLocalPortForActivity(const MessagePortIdentifier& messagePortIdentifier, ProcessIdentifier processIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
+{
+    m_checkProcessLocalPortForActivityCallback(messagePortIdentifier, processIdentifier, WTFMove(callback));
 }
 
 } // namespace WebCore

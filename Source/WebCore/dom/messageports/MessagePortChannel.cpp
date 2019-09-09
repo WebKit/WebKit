@@ -221,7 +221,7 @@ void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier&
         callback(hasActivity);
     };
 
-    m_registry.provider().checkProcessLocalPortForActivity(remotePort, *m_processes[i], WTFMove(outerCallback));
+    m_registry.checkProcessLocalPortForActivity(remotePort, *m_processes[i], WTFMove(outerCallback));
 }
 
 bool MessagePortChannel::hasAnyMessagesPendingOrInFlight() const

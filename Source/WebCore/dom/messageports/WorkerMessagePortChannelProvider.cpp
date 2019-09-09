@@ -120,19 +120,4 @@ void WorkerMessagePortChannelProvider::checkRemotePortForActivity(const MessageP
     });
 }
 
-void WorkerMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier& identifier, ProcessIdentifier processIdentifier, CompletionHandler<void(HasActivity)>&& callback)
-{
-    uint64_t callbackIdentifier = ++m_lastCallbackIdentifier;
-    m_activityCallbacks.add(callbackIdentifier, WTFMove(callback));
-
-    callOnMainThread([this, workerThread = makeRef(m_scope.thread()), callbackIdentifier, identifier, processIdentifier]() mutable {
-        MessagePortChannelProvider::singleton().checkProcessLocalPortForActivity(identifier, processIdentifier, [this, workerThread = WTFMove(workerThread), callbackIdentifier](auto hasActivity) {
-            workerThread->runLoop().postTaskForMode([this, callbackIdentifier, hasActivity](auto& scope) mutable {
-                ASSERT_UNUSED(scope, this == &downcast<WorkerGlobalScope>(scope).messagePortChannelProvider());
-                m_activityCallbacks.take(callbackIdentifier)(hasActivity);
-            }, WorkerRunLoop::defaultMode());
-        });
-    });
-}
-
 } // namespace WebCore

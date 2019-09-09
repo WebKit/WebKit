@@ -90,12 +90,6 @@ void WebMessagePortChannelProvider::postMessageToRemote(const MessageWithMessage
     networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
 }
 
-void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&)
-{
-    // To be called only in the UI process provider, not the Web process provider.
-    ASSERT_NOT_REACHED();
-}
-
 void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& completionHandler)
 {
     networkProcessConnection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CheckRemotePortForActivity { remoteTarget }, [completionHandler = WTFMove(completionHandler)](bool hasActivity) mutable {

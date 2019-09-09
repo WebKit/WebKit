@@ -1,3 +1,34 @@
+2019-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Move checkProcessLocalPortForActivity from provider to registry
+        https://bugs.webkit.org/show_bug.cgi?id=201400
+
+        Reviewed by Alex Christensen.
+
+        Update the registry to take a callback that is used to implement checkProcessLocalPortForActivity.
+        This allows WK1 and WK2 to have their own implementation.
+
+        Make the call to checkProcessLocalPortForActivity directly on the registry.
+        Remove unneeded worker checkProcessLocalPortForActivity method.
+        No change of behavior.
+
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::checkRemotePortForActivity):
+        * dom/messageports/MessagePortChannelProvider.h:
+        * dom/messageports/MessagePortChannelProviderImpl.cpp:
+        (WebCore::createMessagePortChannelRegistry):
+        (WebCore::MessagePortChannelProviderImpl::MessagePortChannelProviderImpl):
+        (WebCore::MessagePortChannelProviderImpl::checkProcessLocalPortForActivity): Deleted.
+        * dom/messageports/MessagePortChannelProviderImpl.h:
+        * dom/messageports/MessagePortChannelRegistry.cpp:
+        (WebCore::MessagePortChannelRegistry::MessagePortChannelRegistry):
+        (WebCore::MessagePortChannelRegistry::checkProcessLocalPortForActivity):
+        * dom/messageports/MessagePortChannelRegistry.h:
+        (WebCore::MessagePortChannelRegistry::provider): Deleted.
+        * dom/messageports/WorkerMessagePortChannelProvider.cpp:
+        (WebCore::WorkerMessagePortChannelProvider::checkProcessLocalPortForActivity): Deleted.
+        * dom/messageports/WorkerMessagePortChannelProvider.h:
+
 2019-09-08  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Add back a version of the property resolver

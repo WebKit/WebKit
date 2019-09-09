@@ -35,7 +35,9 @@ namespace WebCore {
 
 class MessagePortChannelRegistry {
 public:
-    WEBCORE_EXPORT MessagePortChannelRegistry(MessagePortChannelProvider&);
+    using CheckProcessLocalPortForActivityCallback = Function<void(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&&)>;
+    WEBCORE_EXPORT explicit MessagePortChannelRegistry(CheckProcessLocalPortForActivityCallback&&);
+
     WEBCORE_EXPORT ~MessagePortChannelRegistry();
     
     WEBCORE_EXPORT void didCreateMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
@@ -51,12 +53,11 @@ public:
     WEBCORE_EXPORT void messagePortChannelCreated(MessagePortChannel&);
     WEBCORE_EXPORT void messagePortChannelDestroyed(MessagePortChannel&);
 
-    MessagePortChannelProvider& provider() { return m_provider; }
+    void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&&);
 
 private:
     HashMap<MessagePortIdentifier, MessagePortChannel*> m_openChannels;
-    MessagePortChannelProvider& m_provider;
-
+    CheckProcessLocalPortForActivityCallback m_checkProcessLocalPortForActivityCallback;
 };
 
 } // namespace WebCore

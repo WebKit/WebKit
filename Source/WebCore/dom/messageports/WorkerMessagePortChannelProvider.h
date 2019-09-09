@@ -49,8 +49,6 @@ private:
     void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) final;
     void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
 
-    void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) final;
-
     WorkerGlobalScope& m_scope;
 
     uint64_t m_lastCallbackIdentifier { 0 };

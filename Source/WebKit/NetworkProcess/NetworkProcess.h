@@ -31,7 +31,6 @@
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
-#include "NetworkMessagePortChannelProvider.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -43,6 +42,7 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBServer.h>
+#include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
@@ -350,7 +350,7 @@ public:
     const OptionSet<NetworkCache::CacheOption>& cacheOptions() const { return m_cacheOptions; }
 
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
-    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelProvider.registry(); }
+    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
@@ -575,7 +575,7 @@ private:
     HashMap<IPC::Connection::UniqueID, PAL::SessionID> m_sessionByConnection;
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
-    NetworkMessagePortChannelProvider m_messagePortChannelProvider;
+    WebCore::MessagePortChannelRegistry m_messagePortChannelRegistry;
 };
 
 } // namespace WebKit

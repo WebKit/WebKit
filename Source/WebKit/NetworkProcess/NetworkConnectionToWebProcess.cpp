@@ -31,7 +31,6 @@
 #include "DataReference.h"
 #include "NetworkCache.h"
 #include "NetworkMDNSRegisterMessages.h"
-#include "NetworkMessagePortChannelProvider.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkProcessMessages.h"

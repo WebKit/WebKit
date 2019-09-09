@@ -59,9 +59,6 @@ public:
     };
     virtual void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) = 0;
 
-    // Operations that the coordinating process performs (e.g. the UIProcess)
-    virtual void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) = 0;
-
 private:
 
 };
