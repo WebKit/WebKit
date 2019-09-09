@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 482: callback not yet supported
 
 PASS idl_test setup 
 PASS ResizeObserverEntry creator 

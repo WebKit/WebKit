@@ -1,30 +1,16 @@
 
-FAIL Test IDL implementation of CSS Properties Values API promise_test: Unhandled rejection with value: object "Got an error before parsing any named definition: Unrecognised tokens, line 1 (tokens: "{\"error\": {\"message\"")
-[
-    {
-        "type": "{",
-        "value": "{",
-        "trivia": ""
-    },
-    {
-        "type": "string",
-        "value": "\"error\"",
-        "trivia": ""
-    },
-    {
-        "type": ":",
-        "value": ":",
-        "trivia": ""
-    },
-    {
-        "type": "{",
-        "value": "{",
-        "trivia": " "
-    },
-    {
-        "type": "string",
-        "value": "\"message\"",
-        "trivia": ""
-    }
-]"
+PASS idl_test setup 
+PASS Partial namespace CSS: original namespace defined 
+FAIL CSSPropertyRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface object length assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface object name assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: attribute name assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: attribute syntax assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: attribute inherits assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+FAIL CSSPropertyRule interface: attribute initialValue assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
+PASS CSS namespace: operation escape(CSSOMString) 
+PASS CSS namespace: operation registerProperty(PropertyDefinition) 
 

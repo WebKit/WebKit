@@ -12,12 +12,7 @@ PASS Headers interface: operation delete(ByteString)
 PASS Headers interface: operation get(ByteString) 
 PASS Headers interface: operation has(ByteString) 
 PASS Headers interface: operation set(ByteString, ByteString) 
-PASS Testing Symbol.iterator property of iterable interface Headers 
-PASS Testing pair iterable interface Headers 
-PASS Headers interface: operation entries() 
-PASS Headers interface: operation keys() 
-PASS Headers interface: operation values() 
-PASS Headers interface: operation forEach(function, any) 
+PASS Headers interface: iterable<ByteString, ByteString> 
 PASS Headers must be primary interface of new Headers() 
 PASS Stringification of new Headers() 
 PASS Headers interface: new Headers() must inherit property "append(ByteString, ByteString)" with the proper type 
@@ -30,11 +25,6 @@ PASS Headers interface: new Headers() must inherit property "has(ByteString)" wi
 PASS Headers interface: calling has(ByteString) on new Headers() with too few arguments must throw TypeError 
 PASS Headers interface: new Headers() must inherit property "set(ByteString, ByteString)" with the proper type 
 PASS Headers interface: calling set(ByteString, ByteString) on new Headers() with too few arguments must throw TypeError 
-PASS Headers interface: new Headers() must inherit property "entries()" with the proper type 
-PASS Headers interface: new Headers() must inherit property "keys()" with the proper type 
-PASS Headers interface: new Headers() must inherit property "values()" with the proper type 
-PASS Headers interface: new Headers() must inherit property "forEach(function, any)" with the proper type 
-PASS Headers interface: calling forEach(function, any) on new Headers() with too few arguments must throw TypeError 
 PASS Request interface: existence and properties of interface object 
 PASS Request interface object length 
 PASS Request interface object name 
@@ -134,19 +124,8 @@ PASS Response interface: new Response() must inherit property "blob()" with the 
 PASS Response interface: new Response() must inherit property "formData()" with the proper type 
 PASS Response interface: new Response() must inherit property "json()" with the proper type 
 PASS Response interface: new Response() must inherit property "text()" with the proper type 
-PASS HTMLElement interface: existence and properties of interface object 
-PASS HTMLBodyElement interface: existence and properties of interface object 
 PASS Window interface: existence and properties of interface object 
 PASS WorkerGlobalScope interface: operation fetch(RequestInfo, RequestInit) 
 PASS WorkerGlobalScope interface: self must inherit property "fetch(RequestInfo, RequestInit)" with the proper type 
 PASS WorkerGlobalScope interface: calling fetch(RequestInfo, RequestInit) on self with too few arguments must throw TypeError 
-PASS HTMLFrameSetElement interface: existence and properties of interface object 
-PASS Node interface: existence and properties of interface object 
-PASS Document interface: existence and properties of interface object 
-PASS DocumentType interface: existence and properties of interface object 
-PASS DocumentFragment interface: existence and properties of interface object 
-PASS ShadowRoot interface: existence and properties of interface object 
-PASS Element interface: existence and properties of interface object 
-PASS CharacterData interface: existence and properties of interface object 
-PASS Text interface: existence and properties of interface object 
 

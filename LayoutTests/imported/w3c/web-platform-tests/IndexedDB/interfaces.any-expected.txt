@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 482: callback not yet supported
 
 PASS Test driver 
 PASS Partial interface WindowOrWorkerGlobalScope: original interface defined 

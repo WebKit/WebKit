@@ -28,6 +28,10 @@ PASS NodeIterator interface: existence and properties of interface object
 PASS TreeWalker interface: existence and properties of interface object 
 PASS NodeFilter interface: existence and properties of interface object 
 PASS DOMTokenList interface: existence and properties of interface object 
+PASS XPathResult interface: existence and properties of interface object 
+PASS XPathExpression interface: existence and properties of interface object 
+PASS XPathNSResolver interface: existence and properties of interface object 
+PASS XPathEvaluator interface: existence and properties of interface object 
 PASS IDBRequest interface: existence and properties of interface object 
 PASS IDBRequest interface object length 
 PASS IDBRequest interface object name 

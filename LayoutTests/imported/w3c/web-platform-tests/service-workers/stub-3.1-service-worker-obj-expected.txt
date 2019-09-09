@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 867: Invalid object member name ServiceWorkerState
+CONSOLE MESSAGE: line 871: Invalid object member name ServiceWorkerState
 
 Harness Error (FAIL), message = Invalid object member name ServiceWorkerState
 

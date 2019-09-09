@@ -13,6 +13,7 @@ PASS ServiceWorker interface: existence and properties of interface prototype ob
 PASS ServiceWorker interface: attribute scriptURL 
 PASS ServiceWorker interface: attribute state 
 PASS ServiceWorker interface: operation postMessage(any, [object Object]) 
+PASS ServiceWorker interface: operation postMessage(any, PostMessageOptions) 
 PASS ServiceWorker interface: attribute onstatechange 
 PASS ServiceWorkerRegistration interface: existence and properties of interface object 
 PASS ServiceWorkerRegistration interface object length 
@@ -23,6 +24,7 @@ PASS ServiceWorkerRegistration interface: existence and properties of interface 
 PASS ServiceWorkerRegistration interface: attribute installing 
 PASS ServiceWorkerRegistration interface: attribute waiting 
 PASS ServiceWorkerRegistration interface: attribute active 
+FAIL ServiceWorkerRegistration interface: attribute navigationPreload assert_true: The prototype object must have a property "navigationPreload" expected true got false
 PASS ServiceWorkerRegistration interface: attribute scope 
 PASS ServiceWorkerRegistration interface: attribute updateViaCache 
 PASS ServiceWorkerRegistration interface: operation update() 
@@ -33,11 +35,22 @@ PASS Stringification of self.registration
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "installing" with the proper type 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "waiting" with the proper type 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "active" with the proper type 
+FAIL ServiceWorkerRegistration interface: self.registration must inherit property "navigationPreload" with the proper type assert_inherits: property "navigationPreload" not found in prototype chain
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "scope" with the proper type 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "updateViaCache" with the proper type 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "update()" with the proper type 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "unregister()" with the proper type 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "onupdatefound" with the proper type 
+FAIL NavigationPreloadManager interface: existence and properties of interface object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface object length assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface object name assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: operation enable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: operation disable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: operation setHeaderValue(ByteString) assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: operation getState() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
 PASS ServiceWorkerGlobalScope interface object length 
 PASS ServiceWorkerGlobalScope interface object name 
@@ -52,6 +65,7 @@ PASS ServiceWorkerGlobalScope interface: existence and properties of interface p
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ServiceWorkerGlobalScope interface: attribute clients 
 PASS ServiceWorkerGlobalScope interface: attribute registration 
+FAIL ServiceWorkerGlobalScope interface: attribute serviceWorker assert_own_property: The global object must have a property "serviceWorker" expected property "serviceWorker" missing
 PASS ServiceWorkerGlobalScope interface: operation skipWaiting() 
 PASS ServiceWorkerGlobalScope interface: attribute oninstall 
 PASS ServiceWorkerGlobalScope interface: attribute onactivate 
@@ -68,6 +82,7 @@ PASS ServiceWorkerGlobalScope must be primary interface of self
 PASS Stringification of self 
 PASS ServiceWorkerGlobalScope interface: self must inherit property "clients" with the proper type 
 PASS ServiceWorkerGlobalScope interface: self must inherit property "registration" with the proper type 
+FAIL ServiceWorkerGlobalScope interface: self must inherit property "serviceWorker" with the proper type assert_own_property: expected property "serviceWorker" missing
 PASS ServiceWorkerGlobalScope interface: self must inherit property "skipWaiting()" with the proper type 
 PASS ServiceWorkerGlobalScope interface: self must inherit property "oninstall" with the proper type 
 PASS ServiceWorkerGlobalScope interface: self must inherit property "onactivate" with the proper type 
@@ -85,6 +100,7 @@ PASS Client interface: attribute frameType
 PASS Client interface: attribute id 
 PASS Client interface: attribute type 
 PASS Client interface: operation postMessage(any, [object Object]) 
+PASS Client interface: operation postMessage(any, PostMessageOptions) 
 PASS WindowClient interface: existence and properties of interface object 
 PASS WindowClient interface object length 
 PASS WindowClient interface object name 

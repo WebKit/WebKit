@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 482: callback not yet supported
 DOM IDL tests
 
 
 PASS Test driver 
+PASS Partial interface Window: original interface defined 
 PASS Event interface: existence and properties of interface object 
 PASS Event interface object length 
 PASS Event interface object name 
@@ -13,6 +13,7 @@ PASS Event interface: attribute type
 PASS Event interface: attribute target 
 PASS Event interface: attribute srcElement 
 PASS Event interface: attribute currentTarget 
+PASS Event interface: operation composedPath() 
 PASS Event interface: constant NONE on interface object 
 PASS Event interface: constant NONE on interface prototype object 
 PASS Event interface: constant CAPTURING_PHASE on interface object 
@@ -23,12 +24,14 @@ PASS Event interface: constant BUBBLING_PHASE on interface object
 PASS Event interface: constant BUBBLING_PHASE on interface prototype object 
 PASS Event interface: attribute eventPhase 
 PASS Event interface: operation stopPropagation() 
+PASS Event interface: attribute cancelBubble 
 PASS Event interface: operation stopImmediatePropagation() 
 PASS Event interface: attribute bubbles 
 PASS Event interface: attribute cancelable 
 PASS Event interface: attribute returnValue 
 PASS Event interface: operation preventDefault() 
 PASS Event interface: attribute defaultPrevented 
+PASS Event interface: attribute composed 
 PASS Event interface: attribute timeStamp 
 PASS Event interface: operation initEvent(DOMString, boolean, boolean) 
 PASS Event must be primary interface of document.createEvent("Event") 
@@ -37,18 +40,21 @@ PASS Event interface: document.createEvent("Event") must inherit property "type"
 PASS Event interface: document.createEvent("Event") must inherit property "target" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "srcElement" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "currentTarget" with the proper type 
+PASS Event interface: document.createEvent("Event") must inherit property "composedPath()" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "NONE" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "CAPTURING_PHASE" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "AT_TARGET" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "BUBBLING_PHASE" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "eventPhase" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "stopPropagation()" with the proper type 
+PASS Event interface: document.createEvent("Event") must inherit property "cancelBubble" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "stopImmediatePropagation()" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "bubbles" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "cancelable" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "returnValue" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "preventDefault()" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "defaultPrevented" with the proper type 
+PASS Event interface: document.createEvent("Event") must inherit property "composed" with the proper type 
 PASS Event interface: document.createEvent("Event") must have own property "isTrusted" 
 PASS Event interface: document.createEvent("Event") must inherit property "timeStamp" with the proper type 
 PASS Event interface: document.createEvent("Event") must inherit property "initEvent(DOMString, boolean, boolean)" with the proper type 
@@ -59,18 +65,21 @@ PASS Event interface: new Event("foo") must inherit property "type" with the pro
 PASS Event interface: new Event("foo") must inherit property "target" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "srcElement" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "currentTarget" with the proper type 
+PASS Event interface: new Event("foo") must inherit property "composedPath()" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "NONE" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "CAPTURING_PHASE" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "AT_TARGET" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "BUBBLING_PHASE" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "eventPhase" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "stopPropagation()" with the proper type 
+PASS Event interface: new Event("foo") must inherit property "cancelBubble" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "stopImmediatePropagation()" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "bubbles" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "cancelable" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "returnValue" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "preventDefault()" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "defaultPrevented" with the proper type 
+PASS Event interface: new Event("foo") must inherit property "composed" with the proper type 
 PASS Event interface: new Event("foo") must have own property "isTrusted" 
 PASS Event interface: new Event("foo") must inherit property "timeStamp" with the proper type 
 PASS Event interface: new Event("foo") must inherit property "initEvent(DOMString, boolean, boolean)" with the proper type 
@@ -92,18 +101,21 @@ PASS Event interface: new CustomEvent("foo") must inherit property "type" with t
 PASS Event interface: new CustomEvent("foo") must inherit property "target" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "srcElement" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "currentTarget" with the proper type 
+PASS Event interface: new CustomEvent("foo") must inherit property "composedPath()" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "NONE" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "CAPTURING_PHASE" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "AT_TARGET" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "BUBBLING_PHASE" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "eventPhase" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "stopPropagation()" with the proper type 
+PASS Event interface: new CustomEvent("foo") must inherit property "cancelBubble" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "stopImmediatePropagation()" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "bubbles" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "cancelable" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "returnValue" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "preventDefault()" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "defaultPrevented" with the proper type 
+PASS Event interface: new CustomEvent("foo") must inherit property "composed" with the proper type 
 PASS Event interface: new CustomEvent("foo") must have own property "isTrusted" 
 PASS Event interface: new CustomEvent("foo") must inherit property "timeStamp" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "initEvent(DOMString, boolean, boolean)" with the proper type 
@@ -168,6 +180,7 @@ PASS NodeList interface: existence and properties of interface prototype object'
 PASS NodeList interface: existence and properties of interface prototype object's @@unscopables property 
 PASS NodeList interface: operation item(unsigned long) 
 PASS NodeList interface: attribute length 
+PASS NodeList interface: iterable<Node> 
 PASS NodeList must be primary interface of document.querySelectorAll("script") 
 PASS Stringification of document.querySelectorAll("script") 
 PASS NodeList interface: document.querySelectorAll("script") must inherit property "item(unsigned long)" with the proper type 
@@ -328,6 +341,9 @@ PASS Document interface: operation prepend([object Object],[object Object])
 PASS Document interface: operation append([object Object],[object Object]) 
 PASS Document interface: operation querySelector(DOMString) 
 PASS Document interface: operation querySelectorAll(DOMString) 
+FAIL Document interface: operation createExpression(DOMString, XPathNSResolver) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation createNSResolver(Node) 
+FAIL Document interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) assert_equals: property has wrong .length expected 2 but got 0
 PASS Document must be primary interface of new Document() 
 PASS Stringification of new Document() 
 PASS Document interface: new Document() must inherit property "implementation" with the proper type 
@@ -389,6 +405,16 @@ PASS Document interface: new Document() must inherit property "querySelector(DOM
 PASS Document interface: calling querySelector(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "querySelectorAll(DOMString)" with the proper type 
 PASS Document interface: calling querySelectorAll(DOMString) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "createExpression(DOMString, XPathNSResolver)" with the proper type 
+FAIL Document interface: calling createExpression(DOMString, XPathNSResolver) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createNSResolver(Node)" with the proper type 
+PASS Document interface: calling createNSResolver(Node) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult)" with the proper type 
+FAIL Document interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Node interface: new Document() must inherit property "ELEMENT_NODE" with the proper type 
 PASS Node interface: new Document() must inherit property "ATTRIBUTE_NODE" with the proper type 
 PASS Node interface: new Document() must inherit property "TEXT_NODE" with the proper type 
@@ -522,6 +548,16 @@ PASS Document interface: xmlDoc must inherit property "querySelector(DOMString)"
 PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "querySelectorAll(DOMString)" with the proper type 
 PASS Document interface: calling querySelectorAll(DOMString) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "createExpression(DOMString, XPathNSResolver)" with the proper type 
+FAIL Document interface: calling createExpression(DOMString, XPathNSResolver) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: xmlDoc must inherit property "createNSResolver(Node)" with the proper type 
+PASS Document interface: calling createNSResolver(Node) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult)" with the proper type 
+FAIL Document interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected object "TypeError" ("TypeError")
 PASS Node interface: xmlDoc must inherit property "ELEMENT_NODE" with the proper type 
 PASS Node interface: xmlDoc must inherit property "ATTRIBUTE_NODE" with the proper type 
 PASS Node interface: xmlDoc must inherit property "TEXT_NODE" with the proper type 
@@ -826,6 +862,7 @@ PASS Element interface: operation setAttribute(DOMString, DOMString)
 PASS Element interface: operation setAttributeNS(DOMString, DOMString, DOMString) 
 PASS Element interface: operation removeAttribute(DOMString) 
 PASS Element interface: operation removeAttributeNS(DOMString, DOMString) 
+PASS Element interface: operation toggleAttribute(DOMString, boolean) 
 PASS Element interface: operation hasAttribute(DOMString) 
 PASS Element interface: operation hasAttributeNS(DOMString, DOMString) 
 PASS Element interface: operation getAttributeNode(DOMString) 
@@ -883,6 +920,8 @@ PASS Element interface: element must inherit property "removeAttribute(DOMString
 PASS Element interface: calling removeAttribute(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "removeAttributeNS(DOMString, DOMString)" with the proper type 
 PASS Element interface: calling removeAttributeNS(DOMString, DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "toggleAttribute(DOMString, boolean)" with the proper type 
+PASS Element interface: calling toggleAttribute(DOMString, boolean) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "hasAttribute(DOMString)" with the proper type 
 PASS Element interface: calling hasAttribute(DOMString) on element with too few arguments must throw TypeError 
 PASS Element interface: element must inherit property "hasAttributeNS(DOMString, DOMString)" with the proper type 
@@ -1436,16 +1475,16 @@ FAIL AbstractRange interface: attribute startOffset assert_own_property: self do
 FAIL AbstractRange interface: attribute endContainer assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 FAIL AbstractRange interface: attribute endOffset assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 FAIL AbstractRange interface: attribute collapsed assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
-FAIL StaticRange interface: existence and properties of interface object assert_own_property: should inherit from AbstractRange, but self has no such property expected property "AbstractRange" missing
-FAIL StaticRange interface object length assert_equals: wrong value for StaticRange.length expected 0 but got 1
+FAIL StaticRange interface: existence and properties of interface object assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
+PASS StaticRange interface object length 
 PASS StaticRange interface object name 
-FAIL StaticRange interface: existence and properties of interface prototype object assert_own_property: should inherit from AbstractRange, but self has no such property expected property "AbstractRange" missing
+FAIL StaticRange interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 PASS StaticRange interface: existence and properties of interface prototype object's "constructor" property 
 PASS StaticRange interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL Range interface: existence and properties of interface object assert_own_property: should inherit from AbstractRange, but self has no such property expected property "AbstractRange" missing
+FAIL Range interface: existence and properties of interface object assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 PASS Range interface object length 
 PASS Range interface object name 
-FAIL Range interface: existence and properties of interface prototype object assert_own_property: should inherit from AbstractRange, but self has no such property expected property "AbstractRange" missing
+FAIL Range interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AbstractRange" expected property "AbstractRange" missing
 PASS Range interface: existence and properties of interface prototype object's "constructor" property 
 PASS Range interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Range interface: attribute commonAncestorContainer 
@@ -1680,6 +1719,7 @@ PASS DOMTokenList interface: operation replace(DOMString, DOMString)
 PASS DOMTokenList interface: operation supports(DOMString) 
 PASS DOMTokenList interface: attribute value 
 PASS DOMTokenList interface: stringifier 
+PASS DOMTokenList interface: iterable<DOMString> 
 PASS DOMTokenList must be primary interface of document.body.classList 
 PASS Stringification of document.body.classList 
 PASS DOMTokenList interface: document.body.classList must inherit property "length" with the proper type 
@@ -1698,5 +1738,61 @@ PASS DOMTokenList interface: calling replace(DOMString, DOMString) on document.b
 PASS DOMTokenList interface: document.body.classList must inherit property "supports(DOMString)" with the proper type 
 PASS DOMTokenList interface: calling supports(DOMString) on document.body.classList with too few arguments must throw TypeError 
 PASS DOMTokenList interface: document.body.classList must inherit property "value" with the proper type 
-PASS WorkerGlobalScope interface: existence and properties of interface object 
+PASS XPathResult interface: existence and properties of interface object 
+PASS XPathResult interface object length 
+PASS XPathResult interface object name 
+PASS XPathResult interface: existence and properties of interface prototype object 
+PASS XPathResult interface: existence and properties of interface prototype object's "constructor" property 
+PASS XPathResult interface: existence and properties of interface prototype object's @@unscopables property 
+PASS XPathResult interface: constant ANY_TYPE on interface object 
+PASS XPathResult interface: constant ANY_TYPE on interface prototype object 
+PASS XPathResult interface: constant NUMBER_TYPE on interface object 
+PASS XPathResult interface: constant NUMBER_TYPE on interface prototype object 
+PASS XPathResult interface: constant STRING_TYPE on interface object 
+PASS XPathResult interface: constant STRING_TYPE on interface prototype object 
+PASS XPathResult interface: constant BOOLEAN_TYPE on interface object 
+PASS XPathResult interface: constant BOOLEAN_TYPE on interface prototype object 
+PASS XPathResult interface: constant UNORDERED_NODE_ITERATOR_TYPE on interface object 
+PASS XPathResult interface: constant UNORDERED_NODE_ITERATOR_TYPE on interface prototype object 
+PASS XPathResult interface: constant ORDERED_NODE_ITERATOR_TYPE on interface object 
+PASS XPathResult interface: constant ORDERED_NODE_ITERATOR_TYPE on interface prototype object 
+PASS XPathResult interface: constant UNORDERED_NODE_SNAPSHOT_TYPE on interface object 
+PASS XPathResult interface: constant UNORDERED_NODE_SNAPSHOT_TYPE on interface prototype object 
+PASS XPathResult interface: constant ORDERED_NODE_SNAPSHOT_TYPE on interface object 
+PASS XPathResult interface: constant ORDERED_NODE_SNAPSHOT_TYPE on interface prototype object 
+PASS XPathResult interface: constant ANY_UNORDERED_NODE_TYPE on interface object 
+PASS XPathResult interface: constant ANY_UNORDERED_NODE_TYPE on interface prototype object 
+PASS XPathResult interface: constant FIRST_ORDERED_NODE_TYPE on interface object 
+PASS XPathResult interface: constant FIRST_ORDERED_NODE_TYPE on interface prototype object 
+PASS XPathResult interface: attribute resultType 
+PASS XPathResult interface: attribute numberValue 
+PASS XPathResult interface: attribute stringValue 
+PASS XPathResult interface: attribute booleanValue 
+PASS XPathResult interface: attribute singleNodeValue 
+PASS XPathResult interface: attribute invalidIteratorState 
+PASS XPathResult interface: attribute snapshotLength 
+PASS XPathResult interface: operation iterateNext() 
+FAIL XPathResult interface: operation snapshotItem(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathExpression interface: existence and properties of interface object 
+PASS XPathExpression interface object length 
+PASS XPathExpression interface object name 
+PASS XPathExpression interface: existence and properties of interface prototype object 
+PASS XPathExpression interface: existence and properties of interface prototype object's "constructor" property 
+PASS XPathExpression interface: existence and properties of interface prototype object's @@unscopables property 
+FAIL XPathExpression interface: operation evaluate(Node, unsigned short, XPathResult) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathNSResolver interface: existence and properties of interface object 
+PASS XPathNSResolver interface: existence and properties of interface prototype object 
+PASS XPathNSResolver interface: existence and properties of interface prototype object's "constructor" property 
+PASS XPathNSResolver interface: existence and properties of interface prototype object's @@unscopables property 
+PASS XPathNSResolver interface: operation lookupNamespaceURI(DOMString) 
+PASS XPathEvaluator interface: existence and properties of interface object 
+PASS XPathEvaluator interface object length 
+PASS XPathEvaluator interface object name 
+PASS XPathEvaluator interface: existence and properties of interface prototype object 
+PASS XPathEvaluator interface: existence and properties of interface prototype object's "constructor" property 
+PASS XPathEvaluator interface: existence and properties of interface prototype object's @@unscopables property 
+FAIL XPathEvaluator interface: operation createExpression(DOMString, XPathNSResolver) assert_equals: property has wrong .length expected 1 but got 0
+FAIL XPathEvaluator interface: operation createNSResolver(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL XPathEvaluator interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) assert_equals: property has wrong .length expected 2 but got 0
+PASS Window interface: attribute event 
 

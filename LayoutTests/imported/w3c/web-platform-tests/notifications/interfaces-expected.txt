@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 482: callback not yet supported
-CONSOLE MESSAGE: line 482: callback not yet supported
 
 PASS Notification interface: existence and properties of interface object 
 PASS Notification interface object length 

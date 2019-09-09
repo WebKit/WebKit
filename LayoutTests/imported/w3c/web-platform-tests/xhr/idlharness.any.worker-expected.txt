@@ -118,12 +118,7 @@ FAIL FormData interface: operation getAll(USVString) assert_own_property: self d
 FAIL FormData interface: operation has(USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
 FAIL FormData interface: operation set(USVString, USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
 FAIL FormData interface: operation set(USVString, Blob, USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL Testing Symbol.iterator property of iterable interface FormData undefined is not an object (evaluating 'self[interfaceName].prototype')
-FAIL Testing pair iterable interface FormData undefined is not an object (evaluating 'self[interfaceName].prototype')
-FAIL FormData interface: operation entries() assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation keys() assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation values() assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation forEach(function, any) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
+FAIL FormData interface: iterable<USVString, FormDataEntryValue> undefined is not an object (evaluating 'this.get_interface_object().prototype')
 FAIL FormData must be primary interface of new FormData() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
 FAIL Stringification of new FormData() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
 FAIL FormData interface: new FormData() must inherit property "append(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
@@ -142,11 +137,6 @@ FAIL FormData interface: new FormData() must inherit property "set(USVString, US
 FAIL FormData interface: calling set(USVString, USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
 FAIL FormData interface: new FormData() must inherit property "set(USVString, Blob, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
 FAIL FormData interface: calling set(USVString, Blob, USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "entries()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "keys()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "values()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "forEach(function, any)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling forEach(function, any) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
 PASS ProgressEvent interface: existence and properties of interface object 
 PASS ProgressEvent interface object length 
 PASS ProgressEvent interface object name 
@@ -163,10 +153,4 @@ PASS ProgressEvent interface: new ProgressEvent("type") must inherit property "l
 PASS ProgressEvent interface: new ProgressEvent("type") must inherit property "total" with the proper type 
 PASS Node interface: existence and properties of interface object 
 PASS Document interface: existence and properties of interface object 
-PASS DocumentType interface: existence and properties of interface object 
-PASS DocumentFragment interface: existence and properties of interface object 
-PASS ShadowRoot interface: existence and properties of interface object 
-PASS Element interface: existence and properties of interface object 
-PASS CharacterData interface: existence and properties of interface object 
-PASS Text interface: existence and properties of interface object 
 

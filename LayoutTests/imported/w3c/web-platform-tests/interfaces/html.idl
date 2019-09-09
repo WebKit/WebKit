@@ -1,8 +1,13 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: HTML Standard (https://html.spec.whatwg.org/)
+
 [Exposed=Window,
  LegacyUnenumerableNamedProperties]
 interface HTMLAllCollection {
   readonly attribute unsigned long length;
-  getter Element? (unsigned long index);
+  getter Element (unsigned long index);
   getter (HTMLCollection or Element)? namedItem(DOMString name);
   (HTMLCollection or Element)? item(optional DOMString nameOrIndex);
 
@@ -15,6 +20,7 @@ interface HTMLFormControlsCollection : HTMLCollection {
   getter (RadioNodeList or Element)? namedItem(DOMString name); // shadows inherited namedItem()
 };
 
+[Exposed=Window]
 interface RadioNodeList : NodeList {
   attribute DOMString value;
 };
@@ -65,15 +71,14 @@ partial interface Document {
   readonly attribute HTMLOrSVGScriptElement? currentScript; // classic scripts in a document tree only
 
   // dynamic markup insertion
-  [CEReactions] Document open(optional DOMString type = "text/html", optional DOMString replace = "");
-  WindowProxy open(USVString url, DOMString name, DOMString features);
+  [CEReactions] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored
+  WindowProxy? open(USVString url, DOMString name, DOMString features);
   [CEReactions] void close();
   [CEReactions] void write(DOMString... text);
   [CEReactions] void writeln(DOMString... text);
 
   // user interaction
   readonly attribute WindowProxy? defaultView;
-  readonly attribute Element? activeElement;
   boolean hasFocus();
   [CEReactions] attribute DOMString designMode;
   [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
@@ -85,9 +90,15 @@ partial interface Document {
 
   // special event handler IDL attributes that only apply to Document objects
   [LenientThis] attribute EventHandler onreadystatechange;
+
+  // also has obsolete members
 };
 Document includes GlobalEventHandlers;
 Document includes DocumentAndElementEventHandlers;
+
+partial interface mixin DocumentOrShadowRoot {
+  readonly attribute Element? activeElement;
+};
 
 [Exposed=Window,
  HTMLConstructor]
@@ -97,32 +108,39 @@ interface HTMLElement : Element {
   [CEReactions] attribute DOMString lang;
   [CEReactions] attribute boolean translate;
   [CEReactions] attribute DOMString dir;
-  [SameObject] readonly attribute DOMStringMap dataset;
 
   // user interaction
   [CEReactions] attribute boolean hidden;
   void click();
-  [CEReactions] attribute long tabIndex;
-  void focus(optional FocusOptions options);
-  void blur();
   [CEReactions] attribute DOMString accessKey;
   readonly attribute DOMString accessKeyLabel;
   [CEReactions] attribute boolean draggable;
   [CEReactions] attribute boolean spellcheck;
+  [CEReactions] attribute DOMString autocapitalize;
 
   [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerText;
-};
 
-dictionary FocusOptions {
-  boolean preventScroll = false;
+  ElementInternals attachInternals();
 };
 
 HTMLElement includes GlobalEventHandlers;
 HTMLElement includes DocumentAndElementEventHandlers;
 HTMLElement includes ElementContentEditable;
+HTMLElement includes HTMLOrSVGElement;
 
 // Note: intentionally not [HTMLConstructor]
+[Exposed=Window]
 interface HTMLUnknownElement : HTMLElement { };
+
+interface mixin HTMLOrSVGElement {
+  [SameObject] readonly attribute DOMStringMap dataset;
+  attribute DOMString nonce; // intentionally no [CEReactions]
+
+  [CEReactions] attribute boolean autofocus;
+  [CEReactions] attribute long tabIndex;
+  void focus(optional FocusOptions options = {});
+  void blur();
+};
 
 [Exposed=Window,
  OverrideBuiltins]
@@ -164,14 +182,13 @@ interface HTMLLinkElement : HTMLElement {
   [CEReactions] attribute DOMString as; // (default "")
   [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
   [CEReactions] attribute DOMString media;
-  [CEReactions] attribute DOMString nonce;
   [CEReactions] attribute DOMString integrity;
   [CEReactions] attribute DOMString hreflang;
   [CEReactions] attribute DOMString type;
   [SameObject, PutForwards=value] readonly attribute DOMTokenList sizes;
+  [CEReactions] attribute USVString imageSrcset;
+  [CEReactions] attribute DOMString imageSizes;
   [CEReactions] attribute DOMString referrerPolicy;
-  [CEReactions] attribute DOMString workerType;
-  [CEReactions] attribute DOMString updateViaCache;
 
   // also has obsolete members
 };
@@ -191,8 +208,8 @@ interface HTMLMetaElement : HTMLElement {
  HTMLConstructor]
 interface HTMLStyleElement : HTMLElement {
   [CEReactions] attribute DOMString media;
-  [CEReactions] attribute DOMString nonce;
-  [CEReactions] attribute DOMString type;
+
+  // also has obsolete members
 };
 HTMLStyleElement includes LinkStyle;
 
@@ -371,6 +388,7 @@ interface HTMLImageElement : HTMLElement {
   readonly attribute boolean complete;
   readonly attribute USVString currentSrc;
   [CEReactions] attribute DOMString referrerPolicy;
+  [CEReactions] attribute DOMString decoding;
 
   Promise<void> decode();
 
@@ -384,16 +402,15 @@ interface HTMLIFrameElement : HTMLElement {
   [CEReactions] attribute DOMString srcdoc;
   [CEReactions] attribute DOMString name;
   [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
+  [CEReactions] attribute DOMString allow;
   [CEReactions] attribute boolean allowFullscreen;
   [CEReactions] attribute boolean allowPaymentRequest;
-  [CEReactions] attribute boolean allowUserMedia;
   [CEReactions] attribute DOMString width;
   [CEReactions] attribute DOMString height;
   [CEReactions] attribute DOMString referrerPolicy;
   readonly attribute Document? contentDocument;
   readonly attribute WindowProxy? contentWindow;
   Document? getSVGDocument();
-  [SameObject, PutForwards=value] readonly attribute DOMTokenList delegateStickyUserActivation;
 
   // also has obsolete members
 };
@@ -415,7 +432,6 @@ interface HTMLEmbedElement : HTMLElement {
 interface HTMLObjectElement : HTMLElement {
   [CEReactions] attribute USVString data;
   [CEReactions] attribute DOMString type;
-  [CEReactions] attribute boolean typeMustMatch;
   [CEReactions] attribute DOMString name;
   [CEReactions] attribute DOMString useMap;
   readonly attribute HTMLFormElement? form;
@@ -654,7 +670,7 @@ interface TimeRanges {
 };
 
 [Exposed=Window,
- Constructor(DOMString type, optional TrackEventInit eventInitDict)]
+ Constructor(DOMString type, optional TrackEventInit eventInitDict = {})]
 interface TrackEvent : Event {
   readonly attribute (VideoTrack or AudioTrack or TextTrack)? track;
 };
@@ -730,7 +746,7 @@ interface HTMLTableColElement : HTMLElement {
  HTMLConstructor]
 interface HTMLTableSectionElement : HTMLElement {
   [SameObject] readonly attribute HTMLCollection rows;
-  HTMLElement insertRow(optional long index = -1);
+  HTMLTableRowElement insertRow(optional long index = -1);
   [CEReactions] void deleteRow(long index);
 
   // also has obsolete members
@@ -776,6 +792,8 @@ interface HTMLFormElement : HTMLElement {
   [CEReactions] attribute DOMString name;
   [CEReactions] attribute boolean noValidate;
   [CEReactions] attribute DOMString target;
+  [CEReactions] attribute DOMString rel;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
 
   [SameObject] readonly attribute HTMLFormControlsCollection elements;
   readonly attribute unsigned long length;
@@ -783,6 +801,7 @@ interface HTMLFormElement : HTMLElement {
   getter (RadioNodeList or Element) (DOMString name);
 
   void submit();
+  void requestSubmit(optional HTMLElement submitter);
   [CEReactions] void reset();
   boolean checkValidity();
   boolean reportValidity();
@@ -802,7 +821,6 @@ interface HTMLInputElement : HTMLElement {
   [CEReactions] attribute DOMString accept;
   [CEReactions] attribute DOMString alt;
   [CEReactions] attribute DOMString autocomplete;
-  [CEReactions] attribute boolean autofocus;
   [CEReactions] attribute boolean defaultChecked;
   attribute boolean checked;
   [CEReactions] attribute DOMString dirName;
@@ -863,7 +881,6 @@ interface HTMLInputElement : HTMLElement {
 [Exposed=Window,
  HTMLConstructor]
 interface HTMLButtonElement : HTMLElement {
-  [CEReactions] attribute boolean autofocus;
   [CEReactions] attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
   [CEReactions] attribute USVString formAction;
@@ -889,7 +906,6 @@ interface HTMLButtonElement : HTMLElement {
  HTMLConstructor]
 interface HTMLSelectElement : HTMLElement {
   [CEReactions] attribute DOMString autocomplete;
-  [CEReactions] attribute boolean autofocus;
   [CEReactions] attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
   [CEReactions] attribute boolean multiple;
@@ -954,7 +970,6 @@ interface HTMLOptionElement : HTMLElement {
  HTMLConstructor]
 interface HTMLTextAreaElement : HTMLElement {
   [CEReactions] attribute DOMString autocomplete;
-  [CEReactions] attribute boolean autofocus;
   [CEReactions] attribute unsigned long cols;
   [CEReactions] attribute DOMString dirName;
   [CEReactions] attribute boolean disabled;
@@ -970,7 +985,7 @@ interface HTMLTextAreaElement : HTMLElement {
 
   readonly attribute DOMString type;
   [CEReactions] attribute DOMString defaultValue;
-  [CEReactions] attribute [TreatNullAs=EmptyString] DOMString value;
+  attribute [TreatNullAs=EmptyString] DOMString value;
   readonly attribute unsigned long textLength;
 
   readonly attribute boolean willValidate;
@@ -1083,6 +1098,16 @@ interface ValidityState {
 };
 
 [Exposed=Window,
+ Constructor(DOMString type, optional FormDataEventInit eventInitDict = {})]
+interface FormDataEvent : Event {
+  readonly attribute FormData formData;
+};
+
+dictionary FormDataEventInit : EventInit {
+  required FormData formData;
+};
+
+[Exposed=Window,
  HTMLConstructor]
 interface HTMLDetailsElement : HTMLElement {
   [CEReactions] attribute boolean open;
@@ -1108,9 +1133,8 @@ interface HTMLScriptElement : HTMLElement {
   [CEReactions] attribute boolean defer;
   [CEReactions] attribute DOMString? crossOrigin;
   [CEReactions] attribute DOMString text;
-  [CEReactions] attribute DOMString nonce;
   [CEReactions] attribute DOMString integrity;
-
+  [CEReactions] attribute DOMString referrerPolicy;
 
   // also has obsolete members
 };
@@ -1125,15 +1149,15 @@ interface HTMLTemplateElement : HTMLElement {
  HTMLConstructor]
 interface HTMLSlotElement : HTMLElement {
   [CEReactions] attribute DOMString name;
-  sequence<Node> assignedNodes(optional AssignedNodesOptions options);
-  sequence<Element> assignedElements(optional AssignedNodesOptions options);
+  sequence<Node> assignedNodes(optional AssignedNodesOptions options = {});
+  sequence<Element> assignedElements(optional AssignedNodesOptions options = {});
 };
 
 dictionary AssignedNodesOptions {
   boolean flatten = false;
 };
 
-typedef (CanvasRenderingContext2D or ImageBitmapRenderingContext or WebGLRenderingContext) RenderingContext;
+typedef (CanvasRenderingContext2D or ImageBitmapRenderingContext or WebGLRenderingContext or WebGL2RenderingContext) RenderingContext;
 
 [Exposed=Window,
  HTMLConstructor]
@@ -1143,8 +1167,8 @@ interface HTMLCanvasElement : HTMLElement {
 
   RenderingContext? getContext(DOMString contextId, optional any options = null);
 
-  USVString toDataURL(optional DOMString type, optional any quality);
-  void toBlob(BlobCallback _callback, optional DOMString type, optional any quality);
+  USVString toDataURL(optional DOMString type = "image/png", optional any quality);
+  void toBlob(BlobCallback _callback, optional DOMString type = "image/png", optional any quality);
   OffscreenCanvas transferControlToOffscreen();
 };
 
@@ -1163,6 +1187,7 @@ enum CanvasFillRule { "nonzero", "evenodd" };
 
 dictionary CanvasRenderingContext2DSettings {
   boolean alpha = true;
+  boolean desynchronized = false;
 };
 
 enum ImageSmoothingQuality { "low", "medium", "high" };
@@ -1171,6 +1196,8 @@ enum ImageSmoothingQuality { "low", "medium", "high" };
 interface CanvasRenderingContext2D {
   // back-reference to the canvas
   readonly attribute HTMLCanvasElement canvas;
+
+  CanvasRenderingContext2DSettings getContextAttributes();
 };
 CanvasRenderingContext2D includes CanvasState;
 CanvasRenderingContext2D includes CanvasTransform;
@@ -1204,8 +1231,9 @@ interface mixin CanvasTransform {
 
   [NewObject] DOMMatrix getTransform();
   void setTransform(unrestricted double a, unrestricted double b, unrestricted double c, unrestricted double d, unrestricted double e, unrestricted double f);
-  void setTransform(optional DOMMatrix2DInit transform);
+  void setTransform(optional DOMMatrix2DInit transform = {});
   void resetTransform();
+
 };
 
 interface mixin CanvasCompositing {
@@ -1218,6 +1246,7 @@ interface mixin CanvasImageSmoothing {
   // image smoothing
   attribute boolean imageSmoothingEnabled; // (default true)
   attribute ImageSmoothingQuality imageSmoothingQuality; // (default low)
+
 };
 
 interface mixin CanvasFillStrokeStyles {
@@ -1227,6 +1256,7 @@ interface mixin CanvasFillStrokeStyles {
   CanvasGradient createLinearGradient(double x0, double y0, double x1, double y1);
   CanvasGradient createRadialGradient(double x0, double y0, double r0, double x1, double y1, double r1);
   CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
+
 };
 
 interface mixin CanvasShadowStyles {
@@ -1258,7 +1288,6 @@ interface mixin CanvasDrawPath {
   void stroke(Path2D path);
   void clip(optional CanvasFillRule fillRule = "nonzero");
   void clip(Path2D path, optional CanvasFillRule fillRule = "nonzero");
-  void resetClip();
   boolean isPointInPath(unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");
   boolean isPointInPath(Path2D path, unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");
   boolean isPointInStroke(unrestricted double x, unrestricted double y);
@@ -1344,10 +1373,10 @@ interface CanvasGradient {
 [Exposed=(Window,Worker)]
 interface CanvasPattern {
   // opaque object
-  void setTransform(optional DOMMatrix2DInit transform);
+  void setTransform(optional DOMMatrix2DInit transform = {});
 };
 
-[Exposed=Window]
+[Exposed=(Window,Worker)]
 interface TextMetrics {
   // x-direction
   readonly attribute double width; // advance width
@@ -1379,13 +1408,13 @@ interface ImageData {
 [Constructor(optional (Path2D or DOMString) path),
  Exposed=(Window,Worker)]
 interface Path2D {
-  void addPath(Path2D path, optional DOMMatrix2DInit transform);
+  void addPath(Path2D path, optional DOMMatrix2DInit transform = {});
 };
 Path2D includes CanvasPath;
 
-[Exposed=Window]
+[Exposed=(Window,Worker)]
 interface ImageBitmapRenderingContext {
-  readonly attribute HTMLCanvasElement canvas;
+  readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
   void transferFromImageBitmap(ImageBitmap? bitmap);
 };
 
@@ -1393,26 +1422,24 @@ dictionary ImageBitmapRenderingContextSettings {
   boolean alpha = true;
 };
 
-typedef (OffscreenCanvasRenderingContext2D or
-        WebGLRenderingContext) OffscreenRenderingContext;
+typedef (OffscreenCanvasRenderingContext2D or ImageBitmapRenderingContext or WebGLRenderingContext or WebGL2RenderingContext) OffscreenRenderingContext;
 
 dictionary ImageEncodeOptions {
   DOMString type = "image/png";
-  unrestricted double quality = 1.0;
+  unrestricted double quality;
 };
 
-enum OffscreenRenderingContextId { "2d", "webgl" };
+enum OffscreenRenderingContextId { "2d", "bitmaprenderer", "webgl", "webgl2" };
 
 [Constructor([EnforceRange] unsigned long long width, [EnforceRange] unsigned long long height), Exposed=(Window,Worker), Transferable]
 interface OffscreenCanvas : EventTarget {
-  attribute unsigned long long width;
-  attribute unsigned long long height;
+  attribute [EnforceRange] unsigned long long width;
+  attribute [EnforceRange] unsigned long long height;
 
   OffscreenRenderingContext? getContext(OffscreenRenderingContextId contextId, optional any options = null);
   ImageBitmap transferToImageBitmap();
-  Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
+  Promise<Blob> convertToBlob(optional ImageEncodeOptions options = {});
 };
-
 
 [Exposed=(Window,Worker)]
 interface OffscreenCanvasRenderingContext2D {
@@ -1429,32 +1456,75 @@ OffscreenCanvasRenderingContext2D includes CanvasShadowStyles;
 OffscreenCanvasRenderingContext2D includes CanvasFilters;
 OffscreenCanvasRenderingContext2D includes CanvasRect;
 OffscreenCanvasRenderingContext2D includes CanvasDrawPath;
+OffscreenCanvasRenderingContext2D includes CanvasText;
 OffscreenCanvasRenderingContext2D includes CanvasDrawImage;
 OffscreenCanvasRenderingContext2D includes CanvasImageData;
 OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles;
+OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles;
 OffscreenCanvasRenderingContext2D includes CanvasPath;
-
 
 [Exposed=Window]
 interface CustomElementRegistry {
-  [CEReactions] void define(DOMString name, Function constructor, optional ElementDefinitionOptions options);
+  [CEReactions] void define(DOMString name, CustomElementConstructor constructor, optional ElementDefinitionOptions options = {});
   any get(DOMString name);
   Promise<void> whenDefined(DOMString name);
+  [CEReactions] void upgrade(Node root);
 };
+
+callback CustomElementConstructor = HTMLElement ();
 
 dictionary ElementDefinitionOptions {
   DOMString extends;
 };
 
+[Exposed=Window]
+interface ElementInternals {
+  // Form-associated custom elements
+
+  void setFormValue((File or USVString or FormData)? value,
+                    optional (File or USVString or FormData)? state);
+
+  readonly attribute HTMLFormElement? form;
+
+  void setValidity(ValidityStateFlags flags,
+                   optional DOMString message,
+                   optional HTMLElement anchor);
+  readonly attribute boolean willValidate;
+  readonly attribute ValidityState validity;
+  readonly attribute DOMString validationMessage;
+  boolean checkValidity();
+  boolean reportValidity();
+
+  readonly attribute NodeList labels;
+};
+
+dictionary ValidityStateFlags {
+  boolean valueMissing = false;
+  boolean typeMismatch = false;
+  boolean patternMismatch = false;
+  boolean tooLong = false;
+  boolean tooShort = false;
+  boolean rangeUnderflow = false;
+  boolean rangeOverflow = false;
+  boolean stepMismatch = false;
+  boolean badInput = false;
+  boolean customError = false;
+};
+
+dictionary FocusOptions {
+  boolean preventScroll = false;
+};
+
 interface mixin ElementContentEditable {
   [CEReactions] attribute DOMString contentEditable;
+  [CEReactions] attribute DOMString enterKeyHint;
   readonly attribute boolean isContentEditable;
   [CEReactions] attribute DOMString inputMode;
 };
 
 [Exposed=Window,
  Constructor]
-  interface DataTransfer {
+interface DataTransfer {
   attribute DOMString dropEffect;
   attribute DOMString effectAllowed;
 
@@ -1491,7 +1561,7 @@ interface DataTransferItem {
 callback FunctionStringCallback = void (DOMString data);
 
 [Exposed=Window,
- Constructor(DOMString type, optional DragEventInit eventInitDict)]
+ Constructor(DOMString type, optional DragEventInit eventInitDict = {})]
 interface DragEvent : MouseEvent {
   readonly attribute DataTransfer? dataTransfer;
 };
@@ -1532,7 +1602,7 @@ interface Window : EventTarget {
   attribute any opener;
   [Replaceable] readonly attribute WindowProxy? parent;
   readonly attribute Element? frameElement;
-  WindowProxy? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
+  WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
   getter object (DOMString name);
   // Since this is the global object, the IDL named getter adds a NamedPropertiesObject exotic
   // object on the prototype chain. Indeed, this does not make the global object an exotic object.
@@ -1540,7 +1610,7 @@ interface Window : EventTarget {
 
   // the user agent
   readonly attribute Navigator navigator;
-  readonly attribute ApplicationCache applicationCache;
+  [SecureContext] readonly attribute ApplicationCache applicationCache;
 
   // user prompts
   void alert();
@@ -1549,17 +1619,15 @@ interface Window : EventTarget {
   DOMString? prompt(optional DOMString message = "", optional DOMString default = "");
   void print();
 
-  unsigned long requestAnimationFrame(FrameRequestCallback callback);
-  void cancelAnimationFrame(unsigned long handle);
-
   void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-
-  // also has obsolete members
+  void postMessage(any message, optional WindowPostMessageOptions options = {});
 };
 Window includes GlobalEventHandlers;
 Window includes WindowEventHandlers;
 
-callback FrameRequestCallback = void (DOMHighResTimeStamp time);
+dictionary WindowPostMessageOptions : PostMessageOptions {
+  USVString targetOrigin = "/";
+};
 
 [Exposed=Window]
 interface BarProp {
@@ -1570,7 +1638,6 @@ enum ScrollRestoration { "auto", "manual" };
 
 [Exposed=Window]
 interface History {
-  readonly attribute unsigned long index;
   readonly attribute unsigned long length;
   attribute ScrollRestoration scrollRestoration;
   readonly attribute any state;
@@ -1601,7 +1668,7 @@ interface Location { // but see also additional creation steps and overridden in
 };
 
 [Exposed=Window,
- Constructor(DOMString type, optional PopStateEventInit eventInitDict)]
+ Constructor(DOMString type, optional PopStateEventInit eventInitDict = {})]
 interface PopStateEvent : Event {
   readonly attribute any state;
 };
@@ -1611,7 +1678,7 @@ dictionary PopStateEventInit : EventInit {
 };
 
 [Exposed=Window,
- Constructor(DOMString type, optional HashChangeEventInit eventInitDict)]
+ Constructor(DOMString type, optional HashChangeEventInit eventInitDict = {})]
 interface HashChangeEvent : Event {
   readonly attribute USVString oldURL;
   readonly attribute USVString newURL;
@@ -1623,7 +1690,7 @@ dictionary HashChangeEventInit : EventInit {
 };
 
 [Exposed=Window,
- Constructor(DOMString type, optional PageTransitionEventInit eventInitDict)]
+ Constructor(DOMString type, optional PageTransitionEventInit eventInitDict = {})]
 interface PageTransitionEvent : Event {
   readonly attribute boolean persisted;
 };
@@ -1637,7 +1704,8 @@ interface BeforeUnloadEvent : Event {
   attribute DOMString returnValue;
 };
 
-[Exposed=Window]
+[SecureContext,
+ Exposed=Window]
 interface ApplicationCache : EventTarget {
 
   // update status
@@ -1669,7 +1737,8 @@ interface mixin NavigatorOnLine {
   readonly attribute boolean onLine;
 };
 
-[Constructor(DOMString type, optional ErrorEventInit eventInitDict), Exposed=(Window,Worker)]
+[Constructor(DOMString type, optional ErrorEventInit eventInitDict = {}),
+ Exposed=(Window,Worker)]
 interface ErrorEvent : Event {
   readonly attribute DOMString message;
   readonly attribute USVString filename;
@@ -1735,6 +1804,7 @@ interface mixin GlobalEventHandlers {
   attribute EventHandler onended;
   attribute OnErrorEventHandler onerror;
   attribute EventHandler onfocus;
+  attribute EventHandler onformdata;
   attribute EventHandler oninput;
   attribute EventHandler oninvalid;
   attribute EventHandler onkeydown;
@@ -1743,7 +1813,6 @@ interface mixin GlobalEventHandlers {
   attribute EventHandler onload;
   attribute EventHandler onloadeddata;
   attribute EventHandler onloadedmetadata;
-  attribute EventHandler onloadend;
   attribute EventHandler onloadstart;
   attribute EventHandler onmousedown;
   [LenientThis] attribute EventHandler onmouseenter;
@@ -1814,9 +1883,12 @@ interface mixin WindowOrWorkerGlobalScope {
   long setInterval(TimerHandler handler, optional long timeout = 0, any... arguments);
   void clearInterval(optional long handle = 0);
 
+  // microtask queuing
+  void queueMicrotask(VoidFunction callback);
+
   // ImageBitmap
-  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
-  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
+  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options = {});
+  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options = {});
 };
 Window includes WindowOrWorkerGlobalScope;
 WorkerGlobalScope includes WindowOrWorkerGlobalScope;
@@ -1843,11 +1915,9 @@ interface mixin NavigatorID {
   readonly attribute DOMString userAgent;
   [Exposed=Window] readonly attribute DOMString vendor;
   [Exposed=Window] readonly attribute DOMString vendorSub; // constant ""
-
-  // also has additional members in a partial interface
 };
 
-partial interface NavigatorID {
+partial interface mixin NavigatorID {
   [Exposed=Window] boolean taintEnabled(); // constant false
   [Exposed=Window] readonly attribute DOMString oscpu;
 };
@@ -1933,7 +2003,17 @@ dictionary ImageBitmapOptions {
   ResizeQuality resizeQuality = "low";
 };
 
-[Constructor(DOMString type, optional MessageEventInit eventInitDict), Exposed=(Window,Worker,AudioWorklet)]
+callback FrameRequestCallback = void (DOMHighResTimeStamp time);
+
+interface mixin AnimationFrameProvider {
+  unsigned long requestAnimationFrame(FrameRequestCallback callback);
+  void cancelAnimationFrame(unsigned long handle);
+};
+Window includes AnimationFrameProvider;
+DedicatedWorkerGlobalScope includes AnimationFrameProvider;
+
+[Constructor(DOMString type, optional MessageEventInit eventInitDict = {}),
+ Exposed=(Window,Worker,AudioWorklet)]
 interface MessageEvent : Event {
   readonly attribute any data;
   readonly attribute USVString origin;
@@ -1954,7 +2034,7 @@ dictionary MessageEventInit : EventInit {
 
 typedef (WindowProxy or MessagePort or ServiceWorker) MessageEventSource;
 
-[Constructor(USVString url, optional EventSourceInit eventSourceInitDict), Exposed=(Window,Worker)]
+[Constructor(USVString url, optional EventSourceInit eventSourceInitDict = {}), Exposed=(Window,Worker)]
 interface EventSource : EventTarget {
   readonly attribute USVString url;
   readonly attribute boolean withCredentials;
@@ -2006,7 +2086,8 @@ interface WebSocket : EventTarget {
   void send(ArrayBufferView data);
 };
 
-[Constructor(DOMString type, optional CloseEventInit eventInitDict), Exposed=(Window,Worker)]
+[Constructor(DOMString type, optional CloseEventInit eventInitDict = {}),
+ Exposed=(Window,Worker)]
 interface CloseEvent : Event {
   readonly attribute boolean wasClean;
   readonly attribute unsigned short code;
@@ -2027,13 +2108,18 @@ interface MessageChannel {
 
 [Exposed=(Window,Worker,AudioWorklet), Transferable]
 interface MessagePort : EventTarget {
-  void postMessage(any message, optional sequence<object> transfer = []);
+  void postMessage(any message, sequence<object> transfer);
+  void postMessage(any message, optional PostMessageOptions options = {});
   void start();
   void close();
 
   // event handlers
   attribute EventHandler onmessage;
   attribute EventHandler onmessageerror;
+};
+
+dictionary PostMessageOptions {
+  sequence<object> transfer = [];
 };
 
 [Constructor(DOMString name), Exposed=(Window,Worker)]
@@ -2064,7 +2150,8 @@ interface WorkerGlobalScope : EventTarget {
 interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
   [Replaceable] readonly attribute DOMString name;
 
-  void postMessage(any message, optional sequence<object> transfer = []);
+  void postMessage(any message, sequence<object> transfer);
+  void postMessage(any message, optional PostMessageOptions options = {});
 
   void close();
 
@@ -2085,18 +2172,20 @@ interface mixin AbstractWorker {
   attribute EventHandler onerror;
 };
 
-[Constructor(USVString scriptURL, optional WorkerOptions options), Exposed=(Window,Worker)]
+[Constructor(USVString scriptURL, optional WorkerOptions options = {}),
+ Exposed=(Window,Worker)]
 interface Worker : EventTarget {
   void terminate();
 
-  void postMessage(any message, optional sequence<object> transfer = []);
+  void postMessage(any message, sequence<object> transfer);
+  void postMessage(any message, optional PostMessageOptions options = {});
   attribute EventHandler onmessage;
   attribute EventHandler onmessageerror;
 };
 
 dictionary WorkerOptions {
   WorkerType type = "classic";
-  RequestCredentials credentials = "omit"; // credentials is only used if type is "module"
+  RequestCredentials credentials = "same-origin"; // credentials is only used if type is "module"
   DOMString name = "";
 };
 
@@ -2104,7 +2193,7 @@ enum WorkerType { "classic", "module" };
 
 Worker includes AbstractWorker;
 
-[Constructor(USVString scriptURL, optional (DOMString or WorkerOptions) options),
+[Constructor(USVString scriptURL, optional (DOMString or WorkerOptions) options = {}),
  Exposed=(Window,Worker)]
 interface SharedWorker : EventTarget {
   readonly attribute MessagePort port;
@@ -2156,13 +2245,15 @@ interface mixin WindowLocalStorage {
 Window includes WindowLocalStorage;
 
 [Exposed=Window,
- Constructor(DOMString type, optional StorageEventInit eventInitDict)]
+ Constructor(DOMString type, optional StorageEventInit eventInitDict = {})]
 interface StorageEvent : Event {
   readonly attribute DOMString? key;
   readonly attribute DOMString? oldValue;
   readonly attribute DOMString? newValue;
   readonly attribute USVString url;
   readonly attribute Storage? storageArea;
+
+  void initStorageEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional DOMString? key = null, optional DOMString? oldValue = null, optional DOMString? newValue = null, optional USVString url = "", optional Storage? storageArea = null);
 };
 
 dictionary StorageEventInit : EventInit {
@@ -2379,6 +2470,10 @@ partial interface HTMLPreElement {
   [CEReactions] attribute long width;
 };
 
+partial interface HTMLStyleElement {
+  [CEReactions] attribute DOMString type;
+};
+
 partial interface HTMLScriptElement {
   [CEReactions] attribute DOMString charset;
   [CEReactions] attribute DOMString event;
@@ -2457,8 +2552,7 @@ partial interface Window {
   [Replaceable, SameObject] readonly attribute External external;
 };
 
-[Exposed=Window,
- NoInterfaceObject]
+[Exposed=Window]
 interface External {
   void AddSearchProvider();
   void IsSearchProviderInstalled();

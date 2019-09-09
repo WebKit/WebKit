@@ -17,7 +17,7 @@ PASS Stringification of window.performance
 PASS Performance interface: window.performance must inherit property "now()" with the proper type 
 FAIL Performance interface: window.performance must inherit property "timeOrigin" with the proper type assert_inherits: property "timeOrigin" not found in prototype chain
 FAIL Performance interface: window.performance must inherit property "toJSON()" with the proper type assert_inherits: property "toJSON" not found in prototype chain
-FAIL Test default toJSON operation of Performance memberHolderObject.toJSON is not a function. (In 'memberHolderObject.toJSON()', 'memberHolderObject.toJSON' is undefined)
+FAIL Performance interface: default toJSON operation on window.performance memberHolderObject.toJSON is not a function. (In 'memberHolderObject.toJSON()', 'memberHolderObject.toJSON' is undefined)
 PASS Window interface: attribute performance 
 PASS Window interface: window must inherit property "performance" with the proper type 
 PASS WorkerGlobalScope interface: existence and properties of interface object 

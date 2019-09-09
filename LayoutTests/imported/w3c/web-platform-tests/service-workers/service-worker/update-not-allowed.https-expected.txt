@@ -1,6 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-PASS ServiceWorkerRegistration.update() from client throws while installing service worker. 
-TIMEOUT ServiceWorkerRegistration.update() from installing service worker throws. Test timed out
+PASS ServiceWorkerRegistration.update() from client succeeds while installing service worker. 
+FAIL ServiceWorkerRegistration.update() from installing service worker throws. assert_false: update() should have failed. expected false got true
+FAIL ServiceWorkerRegistration.update() from active service worker succeeds while installing service worker. assert_equals: Service worker should be activated. expected "redundant" but got "activated"
 

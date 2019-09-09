@@ -11,16 +11,12 @@ FAIL XMLSerializer must be primary interface of new XMLSerializer() assert_equal
 FAIL Stringification of new XMLSerializer() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: XMLSerializer"
 FAIL XMLSerializer interface: new XMLSerializer() must not have property "serializeToString" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: XMLSerializer"
 PASS Node interface: existence and properties of interface object 
-PASS Document interface: existence and properties of interface object 
-PASS DocumentType interface: existence and properties of interface object 
 PASS DocumentFragment interface: existence and properties of interface object 
 PASS ShadowRoot interface: existence and properties of interface object 
 PASS Element interface: existence and properties of interface object 
 FAIL Element interface: document.createElement("div") must not have property "outerHTML" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: document"
 FAIL Element interface: document.createElement("div") must not have property "insertAdjacentHTML" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: document"
 FAIL Element interface: document.createElement("div") must not have property "innerHTML" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: document"
-PASS CharacterData interface: existence and properties of interface object 
-PASS Text interface: existence and properties of interface object 
 PASS AbstractRange interface: existence and properties of interface object 
 PASS Range interface: existence and properties of interface object 
 FAIL Range interface: new Range() must not have property "createContextualFragment" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Range"

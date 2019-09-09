@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: WebSocket network error: OSStatus Error -9807: Invalid certificate chain 
-CONSOLE MESSAGE: WebSocket network error: OSStatus Error -9807: Invalid certificate chain 
 
-
-FAIL Verify WebSocket handshake channel does not get intercepted promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Verify WebSocket handshake channel does not get intercepted 
 

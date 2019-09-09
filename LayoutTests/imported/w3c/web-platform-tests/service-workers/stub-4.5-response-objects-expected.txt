@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 867: Invalid object member name ResponseInit
+CONSOLE MESSAGE: line 871: Invalid object member name ResponseInit
 
 Harness Error (FAIL), message = Invalid object member name ResponseInit
 
@@ -41,10 +41,10 @@ FAIL Response interface: throw new Error ('No object defined for the CORSRespons
 FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "headers" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
 FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "url" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
 FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "toBlob()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
-FAIL Response interface: existence and properties of interface object assert_own_property: should inherit from AbstractResponse, but self has no such property expected property "AbstractResponse" missing
+FAIL Response interface: existence and properties of interface object assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
 PASS Response interface object length 
 PASS Response interface object name 
-FAIL Response interface: existence and properties of interface prototype object assert_own_property: should inherit from AbstractResponse, but self has no such property expected property "AbstractResponse" missing
+FAIL Response interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
 PASS Response interface: existence and properties of interface prototype object's "constructor" property 
 PASS Response interface: existence and properties of interface prototype object's @@unscopables property 
 FAIL Response interface: attribute status assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"

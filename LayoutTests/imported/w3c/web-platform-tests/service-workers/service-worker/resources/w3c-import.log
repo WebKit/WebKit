@@ -43,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/client-navigate-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/client-navigate-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/client-navigated-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/clients-frame-freeze.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/clients-get-client-types-frame-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/clients-get-client-types-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/clients-get-client-types-shared-worker.js
@@ -60,10 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/cors-approved.txt
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/cors-approved.txt.headers
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/cors-denied.txt
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/dummy-shared-worker-interceptor.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/dummy-shared-worker-interceptor.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/dummy-worker-interceptor.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/dummy-worker-script.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/dummy.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/dummy.txt
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/echo-content.py
@@ -152,11 +150,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/immutable-prototype-serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-mime-type-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-relative.xsl
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-404-after-update-plus-update-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-404-after-update.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-404.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-diff-resource-map-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-echo.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-get.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-mime-types-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-redirect-import.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-redirect-on-second-time-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-redirect-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-resource-map-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-updated-flag-worker.js
@@ -227,6 +229,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-dictionary-transferables-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-echo-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-msgport-to-client-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-on-load-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-to-client-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-transferables-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-worker.js
@@ -265,8 +268,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/service-worker-interception-network-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/service-worker-interception-service-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/service-worker-interception-static-import-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/shared-worker-controlled.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/shared-worker-import.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/silence.oga
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/simple-intercept-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/simple-intercept-worker.js.headers
@@ -295,6 +296,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-nocookie-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-recovery-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-registration-with-type.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-smaller-body-after-update-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-smaller-body-before-update-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-worker-from-file.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update_shell.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/vtt-frame.html
@@ -304,7 +308,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/windowclient-navigate-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-client-id-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-fetching-cross-origin.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-interception-iframe.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-interception-redirect-serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-interception-redirect-webworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-load-interceptor.js

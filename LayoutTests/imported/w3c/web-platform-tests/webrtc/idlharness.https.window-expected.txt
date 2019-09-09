@@ -1,30 +1,13 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Got an error before parsing any named definition: Unrecognised tokens, line 1 (tokens: "{\"error\": {\"message\"")
-[
-    {
-        "type": "{",
-        "value": "{",
-        "trivia": ""
-    },
-    {
-        "type": "string",
-        "value": "\"error\"",
-        "trivia": ""
-    },
-    {
-        "type": ":",
-        "value": ":",
-        "trivia": ""
-    },
-    {
-        "type": "{",
-        "value": "{",
-        "trivia": " "
-    },
-    {
-        "type": "string",
-        "value": "\"message\"",
-        "trivia": ""
-    }
-]"
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "RTCError inherits DOMException, but DOMException is undefined."
+PASS Test driver for asyncInitCertificate 
+FAIL Test driver for asyncInitTransports assert_unreached: Failed to run asyncInitTransports: ReferenceError: Can't find variable: RTCSctpTransport Reached unreachable code
+PASS Test driver for asyncInitMediaStreamTrack 
+PASS Partial interface RTCPeerConnection: original interface defined 
+PASS Partial dictionary RTCOfferOptions: original dictionary defined 
+PASS Partial interface RTCPeerConnection[2]: original interface defined 
+PASS Partial interface RTCPeerConnection[3]: original interface defined 
+PASS Partial interface RTCPeerConnection[4]: original interface defined 
+PASS Partial interface RTCRtpSender: original interface defined 
+PASS Partial interface RTCPeerConnection[5]: original interface defined 
 

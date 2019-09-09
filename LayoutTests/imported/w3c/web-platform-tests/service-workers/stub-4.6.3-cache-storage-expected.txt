@@ -1,4 +1,6 @@
-CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 871: Invalid object member name CacheStorageIterationCallback
+
+Harness Error (FAIL), message = Invalid object member name CacheStorageIterationCallback
 
 PASS CacheStorage interface: existence and properties of interface object 
 FAIL CacheStorage interface object length assert_equals: wrong value for CacheStorage.length expected 1 but got 0

@@ -1,3 +1,255 @@
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Resync service workers WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201589
+
+        Reviewed by Youenn Fablet.
+
+        Resync service workers WPT tests from upstream 820f0f86047e6e26401e.
+
+        * web-platform-tests/service-workers/service-worker/Service-Worker-Allowed-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/Service-Worker-Allowed-header.https.html:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/postmessage.https.html:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https.html:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html:
+        * web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html:
+        * web-platform-tests/service-workers/service-worker/activate-event-after-install-state-change.https.html:
+        * web-platform-tests/service-workers/service-worker/activation-after-registration.https.html:
+        * web-platform-tests/service-workers/service-worker/activation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/activation.https.html:
+        * web-platform-tests/service-workers/service-worker/appcache-ordering-main.https.html:
+        * web-platform-tests/service-workers/service-worker/claim-fetch-with-appcache.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/claim-fetch-with-appcache.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/claim-fetch.https.html:
+        * web-platform-tests/service-workers/service-worker/claim-not-using-registration.https.html:
+        * web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html:
+        * web-platform-tests/service-workers/service-worker/claim-using-registration.https.html:
+        * web-platform-tests/service-workers/service-worker/claim-worker-fetch.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-worker-fetch.https.html:
+        * web-platform-tests/service-workers/service-worker/client-id.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-get-client-types.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-get-resultingClientId.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/clients-get-resultingClientId.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/clients-get.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-exact-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-exact-controller.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-order.https.html:
+        * web-platform-tests/service-workers/service-worker/clients-matchall.https.html:
+        * web-platform-tests/service-workers/service-worker/controller-on-disconnect.https.html:
+        * web-platform-tests/service-workers/service-worker/controller-on-load.https.html:
+        * web-platform-tests/service-workers/service-worker/controller-on-reload.https.html:
+        * web-platform-tests/service-workers/service-worker/data-transfer-files.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/data-transfer-files.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/detached-context.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/detached-context.https.html:
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https.html:
+        * web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-double-write.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-double-write.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-csp.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-after-navigation-within-page.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-argument.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-body-loaded-in-chunk.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-stops-propagation.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event-throws-after-respond-with.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-header-visibility.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-base-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-base-url.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-html-imports.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-html-imports.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr-sync.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-response-xhr.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html:
+        * web-platform-tests/service-workers/service-worker/getregistration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/getregistration.https.html:
+        * web-platform-tests/service-workers/service-worker/import-module-scripts.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/import-module-scripts.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/import-scripts-mime-types.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/import-scripts-mime-types.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/import-scripts-resource-map.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-resource-map.https.html:
+        * web-platform-tests/service-workers/service-worker/interfaces-window.https.html:
+        * web-platform-tests/service-workers/service-worker/invalid-blobtype.https.html:
+        * web-platform-tests/service-workers/service-worker/invalid-header.https.html:
+        * web-platform-tests/service-workers/service-worker/iso-latin1-header.https.html:
+        * web-platform-tests/service-workers/service-worker/multiple-update.https.html:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https.html:
+        * web-platform-tests/service-workers/service-worker/onactivate-script-error.https.html:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https.html:
+        * web-platform-tests/service-workers/service-worker/postmessage-from-waiting-serviceworker.https.html:
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client-message-queue.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client-message-queue.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client.https.html:
+        * web-platform-tests/service-workers/service-worker/postmessage.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage.https.html:
+        * web-platform-tests/service-workers/service-worker/ready.https.html:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https.html:
+        * web-platform-tests/service-workers/service-worker/referer.https.html:
+        * web-platform-tests/service-workers/service-worker/register-default-scope.https.html:
+        * web-platform-tests/service-workers/service-worker/register-wait-forever-in-install-worker.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-end-to-end.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-events.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-mime-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-mime-types.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-schedule-job.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/registration-schedule-job.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/registration-scope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-security-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html.
+        * web-platform-tests/service-workers/service-worker/resource-timing.sub.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-ping-frame.py:
+        * web-platform-tests/service-workers/service-worker/resources/appcache-ordering.manifest:
+        * web-platform-tests/service-workers/service-worker/resources/claim-worker.js:
+        * web-platform-tests/service-workers/service-worker/resources/classic-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-cross-origin-frame.html:
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-resultingClientId-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-worker.js:
+        (self.onmessage):
+        * web-platform-tests/service-workers/service-worker/resources/enable-client-message-queue.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/extendable-event-async-waituntil.js:
+        (switch):
+        (event.request.url.indexOf):
+        (else.event.request.url.indexOf):
+        * web-platform-tests/service-workers/service-worker/resources/fetch-canvas-tainting-double-write-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-cors-xhr-iframe.html:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-async-respond-with-worker.js:
+        (setTimeout):
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-network-fallback-worker.js:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-test-worker.js:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-css-base-url-iframe.html:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-css-base-url-worker.js:
+        (self.onmessage):
+        (url.indexOf):
+        (else.url.indexOf):
+        * web-platform-tests/service-workers/service-worker/resources/get-resultingClientId-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/import-relative.xsl: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/import-scripts-diff-resource-map-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/import-scripts-get.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/import-scripts-mime-types-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/imported-classic-script.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/imported-module-script.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/message-vs-microtask.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/module-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-other-origin.html:
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-out-scope.py:
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope1.py:
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope2.py:
+        * web-platform-tests/service-workers/service-worker/resources/nested-iframe-parent.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/performance-timeline-worker.js:
+        (promise_test.):
+        (promise_test):
+        * web-platform-tests/service-workers/service-worker/resources/postmessage-echo-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/redirect-worker.js:
+        (event.waitUntil.Promise.all.waitUntilPromiseList.then):
+        (then):
+        (waitUntilPromise.caches.open.cacheName.then):
+        (event.respondWith.waitUntilPromise.then):
+        * web-platform-tests/service-workers/service-worker/resources/registration-tests-mime-types.js:
+        (registration_tests_mime_types):
+        * web-platform-tests/service-workers/service-worker/resources/registration-tests-scope.js:
+        (registration_tests_scope):
+        * web-platform-tests/service-workers/service-worker/resources/registration-tests-security-error.js:
+        (registration_tests_security_error):
+        * web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.sub.html:
+        * web-platform-tests/service-workers/service-worker/resources/service-worker-csp-worker.py:
+        * web-platform-tests/service-workers/service-worker/resources/service-worker-header.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/skip-waiting-installed-worker.js:
+        (event.waitUntil.self.skipWaiting.then):
+        * web-platform-tests/service-workers/service-worker/resources/stalling-service-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/test-helpers.sub.js:
+        (wait_for_update):
+        (async.wait_for_activation_on_dummy_scope):
+        * web-platform-tests/service-workers/service-worker/resources/test-request-headers-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/test-request-headers-worker.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/trickle.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/update-during-installation-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/update-during-installation-worker.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/update-fetch-worker.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/update-missing-import-scripts-imported-worker.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/update-missing-import-scripts-main-worker.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/update-registration-with-type.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/resources/worker-interception-iframe.https.html:
+        * web-platform-tests/service-workers/service-worker/resources/worker-load-interceptor.js:
+        (self.onfetch):
+        * web-platform-tests/service-workers/service-worker/resources/worker-testharness.js:
+        (create_temporary_cache):
+        * web-platform-tests/service-workers/service-worker/resources/xhr-iframe.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/xhr-response-url-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/xsl-base-url-iframe.xml: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/xsl-base-url-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/xslt-pass.xsl: Removed.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-default.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-header.https.html:
+        * web-platform-tests/service-workers/service-worker/serviceworker-message-event-historical.https.html:
+        * web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html:
+        * web-platform-tests/service-workers/service-worker/skip-waiting.https.html:
+        * web-platform-tests/service-workers/service-worker/state.https.html:
+        * web-platform-tests/service-workers/service-worker/synced-state.https.html:
+        * web-platform-tests/service-workers/service-worker/uncontrolled-page.https.html:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https.html:
+        * web-platform-tests/service-workers/service-worker/update-after-navigation-redirect.https.html:
+        * web-platform-tests/service-workers/service-worker/update-after-oneday.https.html:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https.html:
+        * web-platform-tests/service-workers/service-worker/update-missing-import-scripts.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/update-missing-import-scripts.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/update-not-allowed.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/update-not-allowed.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/update-on-navigation.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/update-on-navigation.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/update-recovery.https.html:
+        * web-platform-tests/service-workers/service-worker/update-registration-with-type.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/update-registration-with-type.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/websocket.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/websocket.https.html:
+        * web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html:
+        * web-platform-tests/service-workers/service-worker/worker-client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception.https.html:
+        * web-platform-tests/service-workers/service-worker/xhr-response-url.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/xhr-response-url.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/xsl-base-url.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/xsl-base-url.https.html: Removed.
+
 2019-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249574.

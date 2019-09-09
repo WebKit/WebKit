@@ -118,12 +118,7 @@ PASS FormData interface: operation getAll(USVString)
 PASS FormData interface: operation has(USVString) 
 PASS FormData interface: operation set(USVString, USVString) 
 PASS FormData interface: operation set(USVString, Blob, USVString) 
-PASS Testing Symbol.iterator property of iterable interface FormData 
-PASS Testing pair iterable interface FormData 
-PASS FormData interface: operation entries() 
-PASS FormData interface: operation keys() 
-PASS FormData interface: operation values() 
-PASS FormData interface: operation forEach(function, any) 
+PASS FormData interface: iterable<USVString, FormDataEntryValue> 
 PASS FormData must be primary interface of new FormData() 
 PASS Stringification of new FormData() 
 PASS FormData interface: new FormData() must inherit property "append(USVString, USVString)" with the proper type 
@@ -142,11 +137,6 @@ PASS FormData interface: new FormData() must inherit property "set(USVString, US
 PASS FormData interface: calling set(USVString, USVString) on new FormData() with too few arguments must throw TypeError 
 PASS FormData interface: new FormData() must inherit property "set(USVString, Blob, USVString)" with the proper type 
 PASS FormData interface: calling set(USVString, Blob, USVString) on new FormData() with too few arguments must throw TypeError 
-PASS FormData interface: new FormData() must inherit property "entries()" with the proper type 
-PASS FormData interface: new FormData() must inherit property "keys()" with the proper type 
-PASS FormData interface: new FormData() must inherit property "values()" with the proper type 
-PASS FormData interface: new FormData() must inherit property "forEach(function, any)" with the proper type 
-PASS FormData interface: calling forEach(function, any) on new FormData() with too few arguments must throw TypeError 
 PASS FormData must be primary interface of new FormData(form) 
 PASS Stringification of new FormData(form) 
 PASS FormData interface: new FormData(form) must inherit property "append(USVString, USVString)" with the proper type 
@@ -165,11 +155,6 @@ PASS FormData interface: new FormData(form) must inherit property "set(USVString
 PASS FormData interface: calling set(USVString, USVString) on new FormData(form) with too few arguments must throw TypeError 
 PASS FormData interface: new FormData(form) must inherit property "set(USVString, Blob, USVString)" with the proper type 
 PASS FormData interface: calling set(USVString, Blob, USVString) on new FormData(form) with too few arguments must throw TypeError 
-PASS FormData interface: new FormData(form) must inherit property "entries()" with the proper type 
-PASS FormData interface: new FormData(form) must inherit property "keys()" with the proper type 
-PASS FormData interface: new FormData(form) must inherit property "values()" with the proper type 
-PASS FormData interface: new FormData(form) must inherit property "forEach(function, any)" with the proper type 
-PASS FormData interface: calling forEach(function, any) on new FormData(form) with too few arguments must throw TypeError 
 PASS ProgressEvent interface: existence and properties of interface object 
 PASS ProgressEvent interface object length 
 PASS ProgressEvent interface object name 
