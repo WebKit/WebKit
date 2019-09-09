@@ -1,3 +1,27 @@
+==================
+WPE WebKit 2.25.91
+==================
+
+  - Do not enable the sandbox in Snap.
+  - Fix sandbox parsing DISPLAY on X11.
+  - Add WEBKIT_USE_SINGLE_WEB_PROCESS environment variable to force single process model in all WebKitWebContext.
+    This is a temporary solution for applications still depending on the single process mode behavior. It will be
+    only available in 2.26 series.
+  - Add new API to remove a filter from an user content manager given its identifier.
+  - Add support for HSTS.
+  - Several improvements and bug fixes in MSE media player.
+  - Switch to use libsoup WebSockets API.
+  - Add support for permessage-deflate WebSocket extension.
+  - Add user agent quirk to make github work in FreeBSD.
+  - Fix content disappearing when using CSS transforms.
+  - Fix building without unified sources.
+  - Fix web process deadlock when scrolling twitter timeline which contains HLS videos.
+  - Fix a crash with empty video source.
+  - Fix some radio streams that could not be played.
+  - Fix video pause that sometimes caused to skip to finish.
+  - Fix volume level changes when playing a video.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.25.1
 =================
