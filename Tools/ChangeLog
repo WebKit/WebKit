@@ -1,3 +1,14 @@
+2019-09-07  Keith Miller  <keith_miller@apple.com>
+
+        OSR entry into wasm misses some contexts
+        https://bugs.webkit.org/show_bug.cgi?id=201569
+
+        Reviewed by Yusuke Suzuki.
+
+        Add new test harness mode for tests created from wast files.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-09-09  Daniel Bates  <dabates@apple.com>
 
         Remove all selection view animations before dumping results

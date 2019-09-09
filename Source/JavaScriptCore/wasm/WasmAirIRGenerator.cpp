@@ -591,8 +591,8 @@ private:
 
     void emitThrowException(CCallHelpers&, ExceptionType);
 
-    void emitEntryTierUpCheck(int32_t incrementCount, B3::Origin);
-    void emitLoopTierUpCheck(int32_t incrementCount, const Stack&, uint32_t, uint32_t, B3::Origin);
+    void emitEntryTierUpCheck();
+    void emitLoopTierUpCheck(uint32_t loopIndex);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -852,7 +852,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         }
     });
 
-    emitEntryTierUpCheck(TierUpCount::functionEntryIncrement(), B3::Origin());
+    emitEntryTierUpCheck();
 }
 
 void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restoreCachedStackLimit, const MemoryInformation& memory, TypedTmp instance, BasicBlock* block)
@@ -1603,10 +1603,8 @@ auto AirIRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero,
     return { };
 }
 
-void AirIRGenerator::emitEntryTierUpCheck(int32_t incrementCount, B3::Origin origin)
+void AirIRGenerator::emitEntryTierUpCheck()
 {
-    UNUSED_PARAM(origin);
-
     if (!m_tierUp)
         return;
 
@@ -1624,7 +1622,7 @@ void AirIRGenerator::emitEntryTierUpCheck(int32_t incrementCount, B3::Origin ori
     patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-        CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(incrementCount), CCallHelpers::Address(params[0].gpr()));
+        CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(TierUpCount::functionEntryIncrement()), CCallHelpers::Address(params[0].gpr()));
         CCallHelpers::Label tierUpResume = jit.label();
 
         params.addLatePath([=] (CCallHelpers& jit) {
@@ -1650,9 +1648,10 @@ void AirIRGenerator::emitEntryTierUpCheck(int32_t incrementCount, B3::Origin ori
     emitPatchpoint(patch, Tmp(), countdownPtr);
 }
 
-void AirIRGenerator::emitLoopTierUpCheck(int32_t incrementCount, const Stack& expressionStack, uint32_t loopIndex, uint32_t outerLoopIndex, B3::Origin origin)
+void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
 {
-    UNUSED_PARAM(origin);
+    uint32_t outerLoopIndex = this->outerLoopIndex();
+    m_outerLoops.append(loopIndex);
 
     if (!m_tierUp)
         return;
@@ -1680,14 +1679,16 @@ void AirIRGenerator::emitLoopTierUpCheck(int32_t incrementCount, const Stack& ex
     Vector<ConstrainedTmp> patchArgs;
     patchArgs.append(countdownPtr);
 
-    Vector<B3::Type> types;
-    for (auto& local : m_locals) {
+    for (auto& local : m_locals)
         patchArgs.append(ConstrainedTmp(local, B3::ValueRep::ColdAny));
-        types.append(toB3Type(local.type()));
-    }
-    for (auto& expression : expressionStack) {
-        patchArgs.append(ConstrainedTmp(expression, B3::ValueRep::ColdAny));
-        types.append(toB3Type(expression.type()));
+    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+        ExpressionList& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+        for (auto& value : expressionStack)
+            patchArgs.append(ConstrainedTmp(value, B3::ValueRep::ColdAny));
+
+        const auto& results = m_parser->controlStack()[controlIndex].controlData.result;
+        for (auto& value : results)
+            patchArgs.append(ConstrainedTmp(value, B3::ValueRep::ColdAny));
     }
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
@@ -1696,12 +1697,13 @@ void AirIRGenerator::emitLoopTierUpCheck(int32_t incrementCount, const Stack& ex
     patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         CCallHelpers::Jump forceOSREntry = jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::AbsoluteAddress(forceEntryTrigger));
-        CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(incrementCount), CCallHelpers::Address(params[0].gpr()));
+        CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(TierUpCount::loopIncrement()), CCallHelpers::Address(params[0].gpr()));
         MacroAssembler::Label tierUpResume = jit.label();
 
         OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex);
-        for (unsigned index = 0; index < types.size(); ++index)
-            osrEntryData.values().constructAndAppend(params[index + 1], types[index]);
+        // First argument is the countdown location.
+        for (unsigned index = 1; index < params.value()->numChildren(); ++index)
+            osrEntryData.values().constructAndAppend(params[index], params.value()->child(index)->type());
         OSREntryData* osrEntryDataPtr = &osrEntryData;
 
         params.addLatePath([=] (CCallHelpers& jit) {
@@ -1718,7 +1720,7 @@ void AirIRGenerator::emitLoopTierUpCheck(int32_t incrementCount, const Stack& ex
     emitPatchpoint(patch, Tmp(), WTFMove(patchArgs));
 }
 
-AirIRGenerator::ControlData AirIRGenerator::addLoop(Type signature, const Stack& expressionStack, uint32_t loopIndex)
+AirIRGenerator::ControlData AirIRGenerator::addLoop(Type signature, const Stack&, uint32_t loopIndex)
 {
     BasicBlock* body = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
@@ -1726,10 +1728,8 @@ AirIRGenerator::ControlData AirIRGenerator::addLoop(Type signature, const Stack&
     append(Jump);
     m_currentBlock->setSuccessors(body);
 
-    uint32_t outerLoopIndex = this->outerLoopIndex();
-    m_outerLoops.append(loopIndex);
     m_currentBlock = body;
-    emitLoopTierUpCheck(TierUpCount::loopIncrement(), expressionStack, loopIndex, outerLoopIndex, origin());
+    emitLoopTierUpCheck(loopIndex);
 
     return ControlData(origin(), signature, tmpForType(signature), BlockType::Loop, continuation, body);
 }

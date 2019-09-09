@@ -21,8 +21,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- path: wasm/self-test/
-  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/wast-tests/
+  cmd: runWebAssemblyWithHarness
 - path: wasm/js-api/
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/noJIT/
@@ -43,6 +43,8 @@
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/modules/
   cmd: runWebAssembly unless parseRunCommands
+- path: wasm/self-test/
+  cmd: runWebAssemblySuite unless parseRunCommands
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -185,3 +187,4 @@
 
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly
+

@@ -1,3 +1,27 @@
+2019-09-07  Keith Miller  <keith_miller@apple.com>
+
+        OSR entry into wasm misses some contexts
+        https://bugs.webkit.org/show_bug.cgi?id=201569
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a new harness and wast and the generated wasm file for
+        testing. The idea long term is to make it easy to test by creating
+        a C file and converting it to a wast then modify that to produce a
+        test.
+
+        * wasm.yaml:
+        * wasm/wast-tests/harness.js: Added.
+        (async.runWasmFile):
+        * wasm/wast-tests/osr-entry-inner-loop-branch-above-no-consts.wasm: Added.
+        * wasm/wast-tests/osr-entry-inner-loop-branch-above-no-consts.wast: Added.
+        * wasm/wast-tests/osr-entry-inner-loop-branch-above.wasm: Added.
+        * wasm/wast-tests/osr-entry-inner-loop-branch-above.wast: Added.
+        * wasm/wast-tests/osr-entry-inner-loop.wasm: Added.
+        * wasm/wast-tests/osr-entry-inner-loop.wast: Added.
+        * wasm/wast-tests/osr-entry-multiple-enclosed-contexts.wasm: Added.
+        * wasm/wast-tests/osr-entry-multiple-enclosed-contexts.wast: Added.
+
 2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Promise resolve/reject functions should be created more efficiently

@@ -132,7 +132,7 @@ namespace JSC  {
 
         JSGlobalObject* wasmAwareLexicalGlobalObject(VM&);
 
-        bool isAnyWasmCallee();
+        JS_EXPORT_PRIVATE bool isAnyWasmCallee();
 
         // Global object in which the currently executing code was defined.
         // Differs from VM::vmEntryGlobalObject() during function calls across web browser frames.

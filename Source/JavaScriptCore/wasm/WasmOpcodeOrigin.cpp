@@ -32,7 +32,7 @@ namespace JSC { namespace Wasm {
 
 void OpcodeOrigin::dump(PrintStream& out) const
 {
-    out.print("{opcode: ", makeString(opcode()), ", location: ", location(), "}");
+    out.print("{opcode: ", makeString(opcode()), ", location: ", RawPointer(reinterpret_cast<void*>(location())), "}");
 }
 
 } } // namespace JSC::Wasm

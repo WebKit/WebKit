@@ -1,3 +1,54 @@
+2019-09-07  Keith Miller  <keith_miller@apple.com>
+
+        OSR entry into wasm misses some contexts
+        https://bugs.webkit.org/show_bug.cgi?id=201569
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes an issue where we could fail to capture some of
+        our contexts when OSR entering into wasm code. Before we would
+        only capture the state of the block immediately surrounding the
+        entrance loop block header. We actually need to capture all
+        enclosed stacks.
+
+        Additionally, we don't need to use variables for all the captured
+        values. We can use a Phi and insert an upsilon just below the
+        captured value.
+
+        * interpreter/CallFrame.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionCallerIsOMGCompiled):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::createStack):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addConstant):
+        (JSC::Wasm::B3IRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::B3IRGenerator::dump):
+        (JSC::Wasm::B3IRGenerator::Stack::Stack): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::append): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::takeLast): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::last): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::size const): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::isEmpty const): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::convertToExpressionList): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::at const): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::variableAt const): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::shrink): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::swap): Deleted.
+        (JSC::Wasm::B3IRGenerator::Stack::dump const): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::controlStack):
+
 2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Promise resolve/reject functions should be created more efficiently

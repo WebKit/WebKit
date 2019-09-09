@@ -60,6 +60,8 @@ public:
     OpType currentOpcode() const { return m_currentOpcode; }
     size_t currentOpcodeStartingOffset() const { return m_currentOpcodeStartingOffset; }
 
+    Vector<ControlEntry>& controlStack() { return m_controlStack; }
+
 private:
     static const bool verbose = false;
 

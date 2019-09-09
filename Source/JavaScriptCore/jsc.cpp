@@ -27,6 +27,7 @@
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "BytecodeCacheError.h"
+#include "CallFrameInlines.h"
 #include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
@@ -320,6 +321,7 @@ static EncodedJSValue JSC_HOST_CALL functionNoFTL(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNoOSRExitFuzzing(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionOptimizeNextInvocation(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCallerIsOMGCompiled(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionJSCOptions(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
@@ -541,6 +543,7 @@ protected:
         addFunction(vm, "noFTL", functionNoFTL, 1);
         addFunction(vm, "noOSRExitFuzzing", functionNoOSRExitFuzzing, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
+        addFunction(vm, "callerIsOMGCompiled", functionCallerIsOMGCompiled, 0);
         addFunction(vm, "jscOptions", functionJSCOptions, 0);
         addFunction(vm, "optimizeNextInvocation", functionOptimizeNextInvocation, 1);
         addFunction(vm, "reoptimizationRetryCount", functionReoptimizationRetryCount, 1);
@@ -1725,6 +1728,31 @@ EncodedJSValue JSC_HOST_CALL functionOptimizeNextInvocation(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState* exec)
 {
     return JSValue::encode(numberOfDFGCompiles(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL functionCallerIsOMGCompiled(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!Options::useBBQTierUpChecks())
+        return JSValue::encode(jsBoolean(true));
+
+    CallerFunctor wasmToJSFrame;
+    StackVisitor::visit(exec, &vm, wasmToJSFrame);
+    if (!wasmToJSFrame.callerFrame()->isAnyWasmCallee())
+        return throwVMError(exec, scope, "caller is not a wasm->js import function");
+
+    // We have a wrapper frame that we generate for imports. If we ever can direct call from wasm we would need to change this.
+    ASSERT(!wasmToJSFrame.callerFrame()->callee().isWasm());
+    CallerFunctor wasmFrame;
+    StackVisitor::visit(wasmToJSFrame.callerFrame(), &vm, wasmFrame);
+    ASSERT(wasmFrame.callerFrame()->callee().isWasm());
+#if ENABLE(WEBASSEMBLY)
+    auto mode = wasmFrame.callerFrame()->callee().asWasmCallee()->compilationMode();
+    return JSValue::encode(jsBoolean(mode == Wasm::CompilationMode::OMGMode || mode == Wasm::CompilationMode::OMGForOSREntryMode));
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 Message::Message(ArrayBufferContents&& contents, int32_t index)

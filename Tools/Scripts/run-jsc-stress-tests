@@ -1114,6 +1114,36 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
     end
 end
 
+def runHarnessTest(kind, *options)
+    wasmFiles = allWasmFiles($collection)
+    wasmFiles.each {
+        | file |
+        basename = file.basename.to_s
+        addRunCommand("(" + basename + ")-" + kind, [pathToVM.to_s] + $testSpecificRequiredOptions + options + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
+    }
+end
+
+def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
+    raise unless $benchmark.to_s =~ /harness\.m?js/
+    return if !$jitTests
+    return if !$isFTLPlatform
+
+    wasmFiles = allWasmFiles($collection)
+    prepareExtraRelativeFiles(wasmFiles.map { |f| f.basename }, $collection)
+
+    runHarnessTest("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    if $mode != "quick"
+        runHarnessTest("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-no-call-ic", "--useCallICsForWebAssemblyToJSCalls=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-no-air", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-collect-continuously", "--collectContinuously=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+    end
+end
+
 def runWebAssemblyEmscripten(mode)
     case mode
     when :skip
@@ -1481,6 +1511,21 @@ def skip
     $didAddRunCommand = true
     $skipped = true
     puts "Skipping #{$collectionName}/#{$benchmark}"
+end
+
+def allWasmFiles(path)
+    if path.file?
+        [path]
+    else
+        result = []
+        Dir.foreach(path) {
+            | filename |
+            next unless filename =~ /\.m?wasm$/
+            next unless (path + filename).file?
+            result << path + filename
+        }
+        result
+    end
 end
 
 def allJSFiles(path)
