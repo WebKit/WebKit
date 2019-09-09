@@ -269,8 +269,6 @@ public:
     using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;
     void cacheStorageRootPath(PAL::SessionID, CacheStorageRootPathCallback&&);
 
-    void preconnectTo(const URL&, WebCore::StoredCredentialsPolicy);
-
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 

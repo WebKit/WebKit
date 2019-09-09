@@ -109,7 +109,7 @@ WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 
 WK_EXPORT void WKContextSetFontWhitelist(WKContextRef, WKArrayRef);
 
-WK_EXPORT void WKContextPreconnectToServer(WKContextRef context, WKURLRef serverURL);
+WK_EXPORT void WKContextPreconnectToServer(WKContextRef context, WKURLRef serverURL) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKProcessID WKContextGetNetworkProcessIdentifier(WKContextRef context);
 

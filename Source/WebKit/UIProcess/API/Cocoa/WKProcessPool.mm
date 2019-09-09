@@ -528,7 +528,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_preconnectToServer:(NSURL *)serverURL
 {
-    _processPool->preconnectToServer(serverURL);
 }
 
 - (size_t)_pluginProcessCount

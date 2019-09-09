@@ -433,9 +433,8 @@ void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, 
     WebKit::toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
 }
 
-void WKContextPreconnectToServer(WKContextRef contextRef, WKURLRef serverURLRef)
+void WKContextPreconnectToServer(WKContextRef, WKURLRef)
 {
-    WebKit::toImpl(contextRef)->preconnectToServer(URL(URL(), WebKit::toWTFString(serverURLRef)));
 }
 
 WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)

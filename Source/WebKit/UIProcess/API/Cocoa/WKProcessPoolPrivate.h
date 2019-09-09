@@ -115,7 +115,7 @@
 // Test only. Should be called before any web content processes are launched.
 + (void)_forceGameControllerFramework WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
-- (void)_preconnectToServer:(NSURL *)serverURL WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+- (void)_preconnectToServer:(NSURL *)serverURL WK_API_DEPRECATED("If needed, SPI should be added to WKWebsiteDataStore", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 
 // Test only.
 - (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL)allows WK_API_AVAILABLE(macos(10.13.4), ios(11.3));

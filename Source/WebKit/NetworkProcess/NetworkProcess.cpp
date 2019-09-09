@@ -2223,21 +2223,6 @@ void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, String&
         callback(String { cacheStorageDirectory });
 }
 
-void NetworkProcess::preconnectTo(const URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
-{
-#if ENABLE(SERVER_PRECONNECT)
-    NetworkLoadParameters parameters { PAL::SessionID::defaultSessionID() };
-    parameters.request = ResourceRequest { url };
-    parameters.storedCredentialsPolicy = storedCredentialsPolicy;
-    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
-
-    new PreconnectTask(*this, WTFMove(parameters));
-#else
-    UNUSED_PARAM(url);
-    UNUSED_PARAM(storedCredentialsPolicy);
-#endif
-}
-
 void NetworkProcess::registerURLSchemeAsSecure(const String& scheme) const
 {
     SchemeRegistry::registerURLSchemeAsSecure(scheme);

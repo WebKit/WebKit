@@ -268,8 +268,6 @@ public:
     void registerURLSchemeServiceWorkersCanHandle(const String&);
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&);
 
-    void preconnectToServer(const URL&);
-
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
     void setCacheModel(CacheModel);

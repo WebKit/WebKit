@@ -1,3 +1,24 @@
+2019-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate unused SPI to preconnect to a server
+        https://bugs.webkit.org/show_bug.cgi?id=201558
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextPreconnectToServer):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _preconnectToServer:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::preconnectToServer): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2019-09-09  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed Windows build fix.
