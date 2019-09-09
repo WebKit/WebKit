@@ -76,7 +76,12 @@ public:
     size_t largeSize(std::unique_lock<Mutex>&, void*);
     void shrinkLarge(std::unique_lock<Mutex>&, const Range&, size_t);
 
+#if BPLATFORM(MAC)
+    void scavengeToHighWatermark(std::lock_guard<Mutex>&, BulkDecommit&);
+    void scavenge(std::lock_guard<Mutex>&, BulkDecommit&);
+#else
     void scavenge(std::lock_guard<Mutex>&, BulkDecommit&, size_t& deferredDecommits);
+#endif
     void scavenge(std::lock_guard<Mutex>&, BulkDecommit&, size_t& freed, size_t goal);
 
     size_t freeableMemory(std::lock_guard<Mutex>&);
@@ -151,6 +156,10 @@ private:
 
 #if ENABLE_PHYSICAL_PAGE_MAP 
     PhysicalPageMap m_physicalPageMap;
+#endif
+    
+#if BPLATFORM(MAC)
+    void* m_highWatermark { nullptr };
 #endif
 };
 

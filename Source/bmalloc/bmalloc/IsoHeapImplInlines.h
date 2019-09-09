@@ -110,6 +110,21 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
     m_directoryHighWatermark = 0;
 }
 
+#if BPLATFORM(MAC)
+template<typename Config>
+void IsoHeapImpl<Config>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
+{
+    std::lock_guard<Mutex> locker(this->lock);
+    if (!m_directoryHighWatermark)
+        m_inlineDirectory.scavengeToHighWatermark(decommits);
+    for (IsoDirectoryPage<Config>* page = m_headDirectory; page; page = page->next) {
+        if (page->index() >= m_directoryHighWatermark)
+            page->payload.scavengeToHighWatermark(decommits);
+    }
+    m_directoryHighWatermark = 0;
+}
+#endif
+
 template<typename Config>
 size_t IsoHeapImpl<Config>::freeableMemory()
 {
