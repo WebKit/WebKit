@@ -1,3 +1,13 @@
+2019-09-08  David Quesada  <david_quesada@apple.com>
+
+        Remove some unused constants in VersionChecks.h
+        https://bugs.webkit.org/show_bug.cgi?id=201599
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+            Remove two macros that are unused as of r244512.
+
 2019-09-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macCatalyst] The last typed character in password fields shouldn't be echoed
