@@ -61,7 +61,7 @@ class StatusBubble(View):
                      '^Printed configuration$', '^Checked patch relevance$']
     DAYS_TO_CHECK = 3
     BUILDER_ICON = u'\U0001f6e0'
-    TESTER_ICON = u'\U0001f9ea'
+    TESTER_ICON = u'\U0001f52c'
 
     def _build_bubble(self, patch, queue, hide_icons=False):
         bubble = {

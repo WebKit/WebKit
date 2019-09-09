@@ -1,5 +1,15 @@
 2019-09-09  Aakash Jain  <aakash_jain@apple.com>
 
+        EWS testtube emoji doesn't exist on macOS Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=201532
+
+        Reviewed by Simon Fraser.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Change the emoji to microscope emoji.
+
+2019-09-09  Aakash Jain  <aakash_jain@apple.com>
+
         [EWS] API testers can go in an infinite RETRY loop when there is build failure in trunk
         https://bugs.webkit.org/show_bug.cgi?id=201607
 
