@@ -1,3 +1,15 @@
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/workers/service/basic-register.html
+        https://bugs.webkit.org/show_bug.cgi?id=201590
+
+        Reviewed by Youenn Fablet.
+
+        Add a new API test to check that if the default session registers a service worker, the
+        hasServiceWorkerRegistration flag is still false in an ephemeral session.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-09-09  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: mobile-sidebar-control should override button

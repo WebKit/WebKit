@@ -1430,6 +1430,90 @@ TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
     done = false;
 }
 
+static const char* differentSessionsUseDifferentRegistrationsMainBytes = R"SWRESOURCE(
+<script>
+try {
+    navigator.serviceWorker.register("empty-worker.js", { scope : "/test" }).then((registration) => {
+        activeWorker = registration.installing;
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                webkit.messageHandlers.sw.postMessage("PASS");
+        });
+    });
+} catch (e) {
+    webkit.messageHandlers.sw.postMessage("" + e);
+}
+</script>
+)SWRESOURCE";
+
+static const char* defaultPageMainBytes = R"SWRESOURCE(
+<script>
+async function getResult()
+{
+    var result = await internals.hasServiceWorkerRegistration("/test");
+    window.webkit.messageHandlers.sw.postMessage(result ? "PASS" : "FAIL");
+}
+getResult();
+</script>
+)SWRESOURCE";
+
+static const char* privatePageMainBytes = R"SWRESOURCE(
+<script>
+async function getResult()
+{
+    var result = await internals.hasServiceWorkerRegistration("/test");
+    window.webkit.messageHandlers.sw.postMessage(result ? "FAIL" : "PASS");
+}
+getResult();
+</script>
+)SWRESOURCE";
+
+TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    
+    auto messageHandler = adoptNS([[SWMessageHandlerForCacheStorage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    
+    auto handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", differentSessionsUseDifferentRegistrationsMainBytes });
+    handler->resources.set("sw://host/main2.html", ResourceInfo { @"text/html", defaultPageMainBytes });
+    handler->resources.set("sw://host/empty-worker.js", ResourceInfo { @"application/javascript", "" });
+    handler->resources.set("sw://host/private.html", ResourceInfo { @"text/html", privatePageMainBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [defaultWebView synchronouslyLoadRequest:request];
+    
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main2.html"]];
+    [defaultWebView synchronouslyLoadRequest:request];
+    
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/private.html"]];
+    [ephemeralWebView synchronouslyLoadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 static const char* regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
 <script>
 async function getResult()

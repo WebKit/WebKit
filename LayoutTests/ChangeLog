@@ -1,3 +1,19 @@
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/workers/service/basic-register.html
+        https://bugs.webkit.org/show_bug.cgi?id=201590
+
+        Reviewed by Youenn Fablet.
+
+        Split the layout test in 2 to test both the default and the ephemeral session without relying on the
+        testRunner.setPrivateBrowsingEnabled_DEPRECATED() hack.
+
+        * http/tests/workers/service/basic-register-expected.txt:
+        * http/tests/workers/service/basic-register-private-expected.txt: Copied from LayoutTests/http/tests/workers/service/basic-register-expected.txt.
+        * http/tests/workers/service/basic-register-private.html: Added.
+        * http/tests/workers/service/resources/basic-register.js:
+        (async.test):
+
 2019-09-09  Rob Buis  <rbuis@igalia.com>
 
         [GTK][WPE] Remove attributes deprecated from MathML3

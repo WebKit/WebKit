@@ -10,14 +10,6 @@ async function test()
     else
         log("FAIL: A service worker is initially registered for this origin");
 
-    testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
-
-    if (!await internals.hasServiceWorkerRegistration(self.origin))
-        log("PASS: No service worker is initially registered for this origin in private session");
-    else
-        log("FAIL: A service worker is initially registered for this origin in private session");
-
-    testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
     try {
         r = await navigator.serviceWorker.register("resources/empty-worker.js", { scope: "/workers/service/resources/test", updateViaCache: "none" })
         log("Registered!");
@@ -36,15 +28,6 @@ async function test()
             log("PASS: A service worker is now registered for this origin");
         else
             log("FAIL: No service worker is registered for this origin");
-
-        testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
-
-        if (!await internals.hasServiceWorkerRegistration("/test"))
-            log("PASS: No service worker is registered for this origin in private session");
-        else
-            log("FAIL: A service worker is registered for this origin in private session");
-
-        testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
     } catch (e) {
         log("Exception registering: " + e);
     }
