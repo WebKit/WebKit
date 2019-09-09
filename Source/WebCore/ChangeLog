@@ -1,3 +1,45 @@
+2019-09-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Introduce cell spacing.
+        https://bugs.webkit.org/show_bug.cgi?id=201605
+        <rdar://problem/55184009>
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for horizontal and vertical cell spacing (border-spacing). Now LFC matches table geometry for simple table content with multiple columns and rows. 
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const): Now we can use the generic, check the inflow content logic for table height.
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::HorizontalEdges::width const):
+        (WebCore::Layout::VerticalEdges::height const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::verifyAndOutputSubtree):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout):
+        (WebCore::Layout::TableFormattingContext::layoutTableCellBox):
+        (WebCore::Layout::TableFormattingContext::positionTableCells):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computedTableWidth):
+        (WebCore::Layout::TableFormattingContext::useAsContentLogicalWidth):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::tableCellHeightAndMargin const):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::widthConstraints const):
+        (WebCore::Layout::TableGrid::ColumnsContext::useAsLogicalWidth): Deleted.
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::setHorizontalSpacing):
+        (WebCore::Layout::TableGrid::horizontalSpacing const):
+        (WebCore::Layout::TableGrid::setVerticalSpacing):
+        (WebCore::Layout::TableGrid::verticalSpacing const):
+        (WebCore::Layout::TableGrid::ColumnsContext::logicalWidth const):
+
 2019-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249574.

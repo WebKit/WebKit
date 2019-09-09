@@ -118,19 +118,13 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         ASSERT(!lineBoxes.isEmpty());
         top = lineBoxes.first().logicalTop();
         bottom = lineBoxes.last().logicalBottom();
-    } else if (formattingRootContainer.establishesBlockFormattingContext() || layoutBox.isDocumentBox()) {
+    } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || layoutBox.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild(), EscapeType::AccessChildFormattingContext);
             auto& lastDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild(), EscapeType::AccessChildFormattingContext);
             top = firstDisplayBox.rectWithMargin().top();
             bottom = lastDisplayBox.rectWithMargin().bottom();
         }
-    } else if (formattingRootContainer.establishesTableFormattingContext()) {
-        auto& rowList = downcast<TableFormattingState>(layoutState.establishedFormattingState(formattingRootContainer)).tableGrid().rows();
-        ASSERT(!rowList.isEmpty());
-        top += rowList.first().logicalTop();
-        auto& lastRow = rowList.last();
-        bottom += lastRow.logicalBottom();
     } else
         ASSERT_NOT_REACHED();
 

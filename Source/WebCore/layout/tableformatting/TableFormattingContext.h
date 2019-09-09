@@ -56,10 +56,16 @@ private:
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit computedTableWidth();
+    void layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column&);
+    void positionTableCells();
+    void setComputedGeometryForRows();
+    void setComputedGeometryForSections();
 
     void ensureTableGrid();
     void computePreferredWidthForColumns();
     void distributeAvailableWidth(LayoutUnit extraHorizontalSpace);
+    enum class WidthConstraintsType { Minimum, Maximum };
+    void useAsContentLogicalWidth(WidthConstraintsType);
 
     void initializeDisplayBoxToBlank(Display::Box&) const;
 

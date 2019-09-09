@@ -46,6 +46,12 @@ public:
     void insertCell(const Box&, const Box& before);
     void removeCell(const Box&);
 
+    void setHorizontalSpacing(LayoutUnit horizontalSpacing) { m_horizontalSpacing = horizontalSpacing; }
+    LayoutUnit horizontalSpacing() const { return m_horizontalSpacing; }
+
+    void setVerticalSpacing(LayoutUnit verticalSpacing) { m_verticalSpacing = verticalSpacing; }
+    LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
+
     using SlotPosition = IntPoint;
 
     // Cell represents a <td> or <th>. It can span multiple slots in the grid.
@@ -68,13 +74,11 @@ public:
         void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints);
         FormattingContext::IntrinsicWidthConstraints widthConstraints() const;
 
-        void setLogicalWidth(LayoutUnit);
-        LayoutUnit logicalWidth() const;
-
         void setLogicalLeft(LayoutUnit);
         LayoutUnit logicalLeft() const;
-
         LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
+        void setLogicalWidth(LayoutUnit);
+        LayoutUnit logicalWidth() const;
 
     private:
         friend class ColumnsContext;
@@ -95,9 +99,7 @@ public:
         using ColumnList = Vector<Column>;
         ColumnList& columns() { return m_columns; }
         const ColumnList& columns() const { return m_columns; }
-
-        enum class WidthConstraintsType { Minimum, Maximum };
-        void useAsLogicalWidth(WidthConstraintsType);
+        LayoutUnit logicalWidth() const { return columns().last().logicalRight() - columns().first().logicalLeft(); }
 
     private:
         friend class TableGrid;
@@ -148,6 +150,8 @@ private:
     CellList m_cellList;
     ColumnsContext m_columnsContext;
     RowList m_rows;
+    LayoutUnit m_horizontalSpacing;
+    LayoutUnit m_verticalSpacing;
 };
 
 }

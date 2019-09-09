@@ -43,7 +43,7 @@ HeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const
     if (!height)
         height = contentHeightForFormattingContextRoot(layoutBox);
 
-    // FIXME: Compute vertical margin values.
+    // Margins don't apply to internal table elements.
     return HeightAndMargin { *height, { } };
 }
 
