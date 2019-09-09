@@ -58,13 +58,12 @@ public:
         AudioCaptureMask = HasActiveAudioCaptureDevice | HasMutedAudioCaptureDevice | HasInterruptedAudioCaptureDevice,
         VideoCaptureMask = HasActiveVideoCaptureDevice | HasMutedVideoCaptureDevice | HasInterruptedVideoCaptureDevice,
         DisplayCaptureMask = HasActiveDisplayCaptureDevice | HasMutedDisplayCaptureDevice | HasInterruptedDisplayCaptureDevice,
-        ActiveCaptureMask = HasActiveAudioCaptureDevice | HasActiveVideoCaptureDevice | HasActiveDisplayCaptureDevice,
         MutedCaptureMask =  HasMutedAudioCaptureDevice | HasMutedVideoCaptureDevice | HasMutedDisplayCaptureDevice,
         MediaCaptureMask = AudioCaptureMask | VideoCaptureMask | DisplayCaptureMask,
     };
     typedef unsigned MediaStateFlags;
 
-    static bool isCapturing(MediaStateFlags state) { return (state & ActiveCaptureMask) || (state & MutedCaptureMask); }
+    static bool isCapturing(MediaStateFlags state) { return (state & HasActiveAudioCaptureDevice) || (state & HasActiveVideoCaptureDevice) || (state & HasMutedAudioCaptureDevice) || (state & HasMutedVideoCaptureDevice); }
 
     virtual MediaStateFlags mediaState() const = 0;
 
