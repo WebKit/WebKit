@@ -1,3 +1,20 @@
+2019-09-09  Rob Buis  <rbuis@igalia.com>
+
+        [GTK][WPE] Remove attributes deprecated from MathML3
+        https://bugs.webkit.org/show_bug.cgi?id=197492
+
+        Reviewed by Frédéric Wang.
+
+        Remove some MathML3 deprecated attributes:
+        https://github.com/mathml-refresh/mathml/issues/5#issuecomment-475506856
+
+        This change also maps the dir attribute to direction for MathML Core.
+
+        Test: imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-001.html
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute):
+
 2019-09-09  Youenn Fablet  <youenn@apple.com>
 
         Move checkProcessLocalPortForActivity from provider to registry

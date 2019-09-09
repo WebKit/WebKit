@@ -40,6 +40,7 @@
 #include "MathMLNames.h"
 #include "MouseEvent.h"
 #include "RenderTableCell.h"
+#include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -139,25 +140,31 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
         addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, convertMathSizeIfNeeded(value));
     else if (name == mathcolorAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyColor, value);
-    // FIXME: The following are deprecated attributes that should lose if there is a conflict with a non-deprecated attribute.
-    else if (name == fontsizeAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, value);
-    else if (name == backgroundAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyBackgroundColor, value);
-    else if (name == colorAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyColor, value);
-    else if (name == fontstyleAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyFontStyle, value);
-    else if (name == fontweightAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyFontWeight, value);
-    else if (name == fontfamilyAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyFontFamily, value);
     else if (name == dirAttr) {
-        if (hasTagName(mathTag) || hasTagName(mrowTag) || hasTagName(mstyleTag) || isMathMLToken())
+        if (document().settings().coreMathMLEnabled() || hasTagName(mathTag) || hasTagName(mrowTag) || hasTagName(mstyleTag) || isMathMLToken())
             addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, value);
-    }  else {
-        ASSERT(!isPresentationAttribute(name));
-        StyledElement::collectStyleForPresentationAttribute(name, value, style);
+    } else {
+        if (document().settings().coreMathMLEnabled()) {
+            StyledElement::collectStyleForPresentationAttribute(name, value, style);
+            return;
+        }
+        // FIXME: The following are deprecated attributes that should lose if there is a conflict with a non-deprecated attribute.
+        if (name == fontsizeAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, value);
+        else if (name == backgroundAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBackgroundColor, value);
+        else if (name == colorAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyColor, value);
+        else if (name == fontstyleAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontStyle, value);
+        else if (name == fontweightAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontWeight, value);
+        else if (name == fontfamilyAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontFamily, value);
+        else {
+            ASSERT(!isPresentationAttribute(name));
+            StyledElement::collectStyleForPresentationAttribute(name, value, style);
+        }
     }
 }
 
