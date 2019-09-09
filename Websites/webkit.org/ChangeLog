@@ -1,5 +1,23 @@
 2019-09-09  Jon Lee  <jonlee@apple.com>
 
+        Add Babylon demos
+        https://bugs.webkit.org/show_bug.cgi?id=201611
+
+        Rubber-stamped by Justin Fan.
+
+        * demos/webgpu/babylon/LICENSE: Added.
+        * demos/webgpu/babylon/babylonWebGpu.max.js: Added.
+        * demos/webgpu/babylon/logo.svg: Added.
+        * demos/webgpu/babylon/oneHelmetWebGPU.html: Added.
+        * demos/webgpu/babylon/oneHelmetWebGPUGLSLShaders.js: Added.
+        * demos/webgpu/babylon/oneHelmetWebGPUWSLShaders.js: Added.
+        * demos/webgpu/babylon/oneSphereWebGPU.html: Added.
+        * demos/webgpu/babylon/oneSphereWebGPUGLSLShaders.js: Added.
+        * demos/webgpu/babylon/oneSphereWebGPUWSLShaders.js: Added.
+        * demos/webgpu/babylon/vertexShaderGLSL1.glsl: Added.
+
+2019-09-09  Jon Lee  <jonlee@apple.com>
+
         Add boids time test
         https://bugs.webkit.org/show_bug.cgi?id=201612
 
