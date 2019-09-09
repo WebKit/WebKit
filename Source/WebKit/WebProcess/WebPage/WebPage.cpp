@@ -1553,6 +1553,12 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     ASSERT(!m_pendingWebsitePolicies);
 }
 
+// LoadRequestWaitingForPID should never be sent to the WebProcess. It must always be converted to a LoadRequest message.
+NO_RETURN void WebPage::loadRequestWaitingForPID(LoadParameters&&, const String&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies, Ref<SharedBuffer>&& sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, const UserData& userData, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     SendStopResponsivenessTimer stopper;

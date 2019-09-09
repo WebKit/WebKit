@@ -1055,14 +1055,15 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
         if (SandboxExtension::createHandleForReadByPid(resourceDirectoryURL.fileSystemPath(), process.processIdentifier(), sandboxExtensionHandle)) {
-            m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+            return;
+        }
+#else
+        if (SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
+            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
             return;
         }
 #endif
-        if (SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
-            m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
-            return;
-        }
     }
 
     if (process.hasAssumedReadAccessToURL(url))
@@ -1076,11 +1077,12 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         willAcquireUniversalFileReadSandboxExtension(process);
         return;
     }
-#endif
+#else
     if (SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
         willAcquireUniversalFileReadSandboxExtension(process);
         return;
     }
+#endif
 
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfter(SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
@@ -1090,8 +1092,15 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // We failed to issue an universal file read access sandbox, fall back to issuing one for the base URL instead.
     auto baseURL = URL(URL(), url.baseAsString());
     auto basePath = baseURL.fileSystemPath();
-    if (!basePath.isNull() && SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
-        m_process->assumeReadAccessToBaseURL(*this, baseURL);
+    if (basePath.isNull())
+        return;
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (SandboxExtension::createHandleForReadByPid(basePath, process.processIdentifier(), sandboxExtensionHandle))
+        process.assumeReadAccessToBaseURL(*this, baseURL);
+#else
+    if (SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
+        process.assumeReadAccessToBaseURL(*this, baseURL);
+#endif
 }
 
 #if !PLATFORM(COCOA)
@@ -1149,7 +1158,23 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     addPlatformLoadParameters(loadParameters);
 
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (processIdentifier() || !url.isLocalFile())
+        process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
+    else {
+        String sandboxExtensionPath;
+        if (!m_pageLoadState.resourceDirectoryURL().isEmpty()) {
+            sandboxExtensionPath = m_pageLoadState.resourceDirectoryURL().fileSystemPath();
+            process->assumeReadAccessToBaseURL(*this, m_pageLoadState.resourceDirectoryURL());
+        } else {
+            sandboxExtensionPath = "/";
+            willAcquireUniversalFileReadSandboxExtension(process);
+        }
+        process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, sandboxExtensionPath), m_pageID);
+    }
+#else
     process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
+#endif
     process->responsivenessTimer().start();
 }
 
@@ -1196,13 +1221,21 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     loadParameters.shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-    if (!SandboxExtension::createHandleForReadByPid(resourceDirectoryPath, processIdentifier(), loadParameters.sandboxExtensionHandle))
-#endif
+    SandboxExtension::createHandleForReadByPid(resourceDirectoryPath, processIdentifier(), loadParameters.sandboxExtensionHandle);
+#else
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::Type::ReadOnly, loadParameters.sandboxExtensionHandle);
+#endif
     addPlatformLoadParameters(loadParameters);
 
     m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (processIdentifier())
+        m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
+    else
+        m_process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, resourceDirectoryPath), m_pageID);
+#else
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
+#endif
     m_process->responsivenessTimer().start();
 
     return navigation;
