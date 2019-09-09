@@ -879,7 +879,6 @@
 		4143751C20EAEA2D00FAD06C /* cn.microdone.cmb.safari.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4143751B20EAEA1E00FAD06C /* cn.microdone.cmb.safari.sb */; };
 		414DD37920BF43F5006959FB /* com.cisco.webex.plugin.gpc64.sb in Resources */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
 		414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
-		414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */; };
 		4157E4B020E2ECDF00A6C0D7 /* com.google.o1dbrowserplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */; };
 		4176901422FDD41B00B1576D /* NetworkRTCProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */; };
 		417915AF2256BB7500D6F97E /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 417915AD2256BB7400D6F97E /* WebSocketChannel.h */; };
@@ -3137,8 +3136,6 @@
 		413CCD4F20DEBC2F0065A21A /* com.google.googletalkbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.googletalkbrowserplugin.sb; sourceTree = "<group>"; };
 		4143751B20EAEA1E00FAD06C /* cn.microdone.cmb.safari.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cn.microdone.cmb.safari.sb; sourceTree = "<group>"; };
 		414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.cisco.webex.plugin.gpc64.sb; sourceTree = "<group>"; };
-		414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProcessProxy.h; sourceTree = "<group>"; };
-		414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProcessProxy.cpp; sourceTree = "<group>"; };
 		41518535222704F5005430C6 /* ServiceWorkerFetchTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerFetchTask.h; sourceTree = "<group>"; };
 		41518536222704F6005430C6 /* ServiceWorkerFetchTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerFetchTask.cpp; sourceTree = "<group>"; };
 		4151853822270F53005430C6 /* ServiceWorkerFetchTask.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerFetchTask.messages.in; sourceTree = "<group>"; };
@@ -7777,8 +7774,6 @@
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */,
-				414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */,
-				414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */,
 				51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */,
 				514BDED216C98EDD00E4E25E /* StatisticsRequest.h */,
 				515C415A207D74E000726E02 /* SuspendedPageProxy.cpp */,
@@ -9746,7 +9741,6 @@
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
-				414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				46BEB6DF22FBB16B00269867 /* SessionStorageNamespace.h in Headers */,

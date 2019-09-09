@@ -49,7 +49,6 @@
 #include "PerActivityStateCPUUsageSampler.h"
 #include "PluginProcessManager.h"
 #include "SandboxExtension.h"
-#include "ServiceWorkerProcessProxy.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
@@ -86,6 +85,7 @@
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/RegistrationDatabase.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -709,8 +709,8 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     if (m_serviceWorkerProcesses.isEmpty())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
 
-    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, registrableDomain, *websiteDataStore);
-    m_serviceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcessProxy.ptr());
+    auto serviceWorkerProcessProxy = WebProcessProxy::createForServiceWorkers(*this, WTFMove(registrableDomain), *websiteDataStore);
+    m_serviceWorkerProcesses.add(serviceWorkerProcessProxy->registrableDomain(), serviceWorkerProcessProxy.ptr());
 
     updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy, websiteDataStore);
@@ -718,9 +718,9 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     auto* serviceWorkerProcessProxyPtr = serviceWorkerProcessProxy.ptr();
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
-    serviceWorkerProcessProxyPtr->start(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), sessionID);
+    serviceWorkerProcessProxyPtr->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), sessionID.valueOr(PAL::SessionID::defaultSessionID()));
     if (!m_serviceWorkerUserAgent.isNull())
-        serviceWorkerProcessProxyPtr->setUserAgent(m_serviceWorkerUserAgent);
+        serviceWorkerProcessProxyPtr->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
 }
 #endif
 
@@ -1126,8 +1126,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     });
 
 #if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerProcessProxy>(*process)) {
-        auto* removedProcess = m_serviceWorkerProcesses.take(downcast<ServiceWorkerProcessProxy>(*process).registrableDomain());
+    if (process->isRunningServiceWorkers()) {
+        auto* removedProcess = m_serviceWorkerProcesses.take(process->registrableDomain());
         ASSERT_UNUSED(removedProcess, removedProcess == process);
         updateProcessAssertions();
     }
@@ -1187,7 +1187,7 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
         if (process == m_prewarmedProcess || process == m_dummyProcessProxy)
             continue;
 #if ENABLE(SERVICE_WORKER)
-        if (is<ServiceWorkerProcessProxy>(*process))
+        if (process->isRunningServiceWorkers())
             continue;
 #endif
         if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
@@ -1241,12 +1241,12 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
 
 #if ENABLE(SERVICE_WORKER)
-    ASSERT(!is<ServiceWorkerProcessProxy>(*process));
+    ASSERT(!process->isRunningServiceWorkers());
 
     if (!m_serviceWorkerPreferences) {
         m_serviceWorkerPreferences = page->preferencesStore();
         for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
-            serviceWorkerProcess->updatePreferencesStore(*m_serviceWorkerPreferences);
+            serviceWorkerProcess->updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
     }
 #endif
 
@@ -1274,7 +1274,7 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
         return;
     m_serviceWorkerUserAgent = userAgent;
     for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
-        serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
+        serviceWorkerProcess->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
 }
 
 bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& store)
@@ -1288,7 +1288,7 @@ bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& sto
 
     return m_mayHaveRegisteredServiceWorkers.ensure(serviceWorkerRegistrationDirectory, [&] {
         // FIXME: Make this computation on a background thread.
-        return ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(serviceWorkerRegistrationDirectory);
+        return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(serviceWorkerRegistrationDirectory));
     }).iterator->value;
 }
 #endif
@@ -2132,9 +2132,9 @@ void WebProcessPool::updateProcessAssertions()
         if (!m_serviceWorkerProcesses.isEmpty() && m_foregroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto& registrableDomain = serviceWorkerProcess->registrableDomain();
+                auto registrableDomain = serviceWorkerProcess->registrableDomain();
                 if (!m_foregroundTokensForServiceWorkerProcesses.contains(registrableDomain))
-                    m_foregroundTokensForServiceWorkerProcesses.add(registrableDomain, serviceWorkerProcess->throttler().foregroundActivityToken());
+                    m_foregroundTokensForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().foregroundActivityToken());
             }
             m_backgroundTokensForServiceWorkerProcesses.clear();
             return;
@@ -2142,9 +2142,9 @@ void WebProcessPool::updateProcessAssertions()
         if (!m_serviceWorkerProcesses.isEmpty() && m_backgroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto& registrableDomain = serviceWorkerProcess->registrableDomain();
+                auto registrableDomain = serviceWorkerProcess->registrableDomain();
                 if (!m_backgroundTokensForServiceWorkerProcesses.contains(registrableDomain))
-                    m_backgroundTokensForServiceWorkerProcesses.add(registrableDomain, serviceWorkerProcess->throttler().backgroundActivityToken());
+                    m_backgroundTokensForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().backgroundActivityToken());
             }
             m_foregroundTokensForServiceWorkerProcesses.clear();
             return;
@@ -2198,10 +2198,9 @@ bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
 {
 #if ENABLE(SERVICE_WORKER)
     // FIXME: This is inefficient.
-    for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-        if (serviceWorkerProcess->webPageProxyID() == pageID)
-            return true;
-    }
+    return WTF::anyOf(m_serviceWorkerProcesses.values(), [pageID](auto* process) {
+        return process->hasServiceWorkerPageProxy(pageID);
+    });
 #endif
     return false;
 }

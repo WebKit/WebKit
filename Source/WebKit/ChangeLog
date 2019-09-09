@@ -1,5 +1,55 @@
 2019-09-09  Youenn Fablet  <youenn@apple.com>
 
+        Remove ServiceWorkerProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=201506
+
+        Reviewed by Chris Dumez.
+
+        Instead of using a specific ServiceWorkerProcessProxy, move the logic directly in WebProcessProxy.
+        This will allow us in the future to run a service worker in a process that already runs a web page,
+        thus saving the need to spin off a new process.
+
+        This patch adds a new WebProcessProxy::createForServiceWorkers method instead of creating a
+        ServiceWorkerProcessProxy. The behavior is then similar: a process running a service worker cannot run a page.
+
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _hasRegisteredServiceWorker]):
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::shouldBeActive const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        * UIProcess/ServiceWorkerProcessProxy.cpp: Removed.
+        * UIProcess/ServiceWorkerProcessProxy.h: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::updateServiceWorkerUserAgent):
+        (WebKit::WebProcessPool::mayHaveRegisteredServiceWorkers):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::isServiceWorkerPageID const):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createForServiceWorkers):
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::canBeAddedToWebProcessCache const):
+        (WebKit::WebProcessProxy::didSetAssertionState):
+        (WebKit::WebProcessProxy::didExceedCPULimit):
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        (WebKit::WebProcessProxy::setServiceWorkerUserAgent):
+        (WebKit::WebProcessProxy::updateServiceWorkerPreferencesStore):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isRunningServiceWorkers const):
+        (WebKit::WebProcessProxy::hasServiceWorkerPageProxy):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-09-09  Youenn Fablet  <youenn@apple.com>
+
         Use WebProcess processIdentifier to identify IDB connections between WebProcess and NetworkProcess
         https://bugs.webkit.org/show_bug.cgi?id=201419
 

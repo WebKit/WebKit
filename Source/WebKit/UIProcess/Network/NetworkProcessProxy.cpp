@@ -145,9 +145,9 @@ void NetworkProcessProxy::openNetworkProcessConnection(uint64_t connectionReques
     bool isServiceWorkerProcess = false;
     RegistrableDomain registrableDomain;
 #if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerProcessProxy>(webProcessProxy)) {
+    if (webProcessProxy.isRunningServiceWorkers()) {
         isServiceWorkerProcess = true;
-        registrableDomain = downcast<ServiceWorkerProcessProxy>(webProcessProxy).registrableDomain();
+        registrableDomain = webProcessProxy.registrableDomain();
     }
 #endif
 

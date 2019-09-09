@@ -49,6 +49,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxyMessages.h"
+#include "WebSWContextManagerConnectionMessages.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
@@ -130,6 +131,15 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
     auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed));
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes)
         proxy->connect();
+    return proxy;
+}
+
+Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore)
+{
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No));
+    proxy->m_registrableDomain = WTFMove(registrableDomain);
+    proxy->m_serviceWorkerInformation = ServiceWorkerInformation { WebPageProxyIdentifier::generate(), PageIdentifier::generate() };
+    proxy->connect();
     return proxy;
 }
 
@@ -276,6 +286,11 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     if (processPool().shouldMakeNextWebProcessLaunchFailForTesting()) {
         processPool().setShouldMakeNextWebProcessLaunchFailForTesting(false);
         launchOptions.shouldMakeProcessLaunchFailForTesting = true;
+    }
+
+    if (m_serviceWorkerInformation) {
+        launchOptions.extraInitializationData.add("service-worker-process"_s, "1"_s);
+        launchOptions.extraInitializationData.add("registrable-domain"_s, m_registrableDomain->string());
     }
 }
 
@@ -751,9 +766,9 @@ void WebProcessProxy::didBecomeUnresponsive()
     for (auto& callback : isResponsiveCallbacks)
         callback(isWebProcessResponsive);
 
-    // If the service worker process becomes unresponsive, kill it ourselves since there are no native clients to do it.
-    if (isServiceWorkerProcess()) {
-        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didBecomeUnresponsive() Terminating Service Worker process with pid %d because it is unresponsive", this, processIdentifier());
+    // If the web process becomes unresponsive and only runs service workers, kill it ourselves since there are no native clients to do it.
+    if (isRunningServiceWorkers() && m_pageMap.isEmpty()) {
+        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didBecomeUnresponsive() Terminating service worker-only web process with pid %d because it is unresponsive", this, processIdentifier());
         terminate();
     }
 }
@@ -886,7 +901,7 @@ void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
-    if (isServiceWorkerProcess())
+    if (isRunningServiceWorkers())
         return false;
 
     if (WebKit::isInspectorProcessPool(processPool()))
@@ -1202,7 +1217,7 @@ void WebProcessProxy::didCancelProcessSuspension()
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (isServiceWorkerProcess())
+    if (isRunningServiceWorkers())
         return;
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
@@ -1378,10 +1393,7 @@ void WebProcessProxy::didExceedCPULimit()
     if (hasVisiblePage)
         return;
 
-    if (isServiceWorkerProcess())
-        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating Service Worker process with pid %d that has exceeded the background CPU limit", this, processIdentifier());
-    else
-        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess with pid %d that has exceeded the background CPU limit", this, processIdentifier());
+    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess with pid %d that has exceeded the background CPU limit", this, processIdentifier());
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededBackgroundCPULimitKey());
     requestTermination(ProcessTerminationReason::ExceededCPULimit);
 }
@@ -1478,6 +1490,25 @@ void WebProcessProxy::releaseBackgroundActivityTokenForFullscreenInput()
     RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because it has dismissed fullscreen UI for form controls.");
 }
 
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, PAL::SessionID sessionID)
+{
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, sessionID }, 0);
+}
+
+void WebProcessProxy::setServiceWorkerUserAgent(const String& userAgent)
+{
+    ASSERT(m_serviceWorkerInformation);
+    send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
+}
+
+void WebProcessProxy::updateServiceWorkerPreferencesStore(const WebPreferencesStore& store)
+{
+    ASSERT(m_serviceWorkerInformation);
+    send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
+}
 #endif
 
 } // namespace WebKit

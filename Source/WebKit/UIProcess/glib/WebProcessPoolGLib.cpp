@@ -103,7 +103,7 @@ void WebProcessPool::platformInitialize()
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
 #if PLATFORM(WPE)
-    parameters.isServiceWorkerProcess = process.isServiceWorkerProcess();
+    parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
 
     if (!parameters.isServiceWorkerProcess) {
         parameters.hostClientFileDescriptor = wpe_renderer_host_create_client();

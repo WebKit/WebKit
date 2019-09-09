@@ -41,7 +41,7 @@
 #import "_WKWebsiteDataStoreConfiguration.h"
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
-#import <WebKit/ServiceWorkerProcessProxy.h>
+#import <WebCore/RegistrationDatabase.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
@@ -578,7 +578,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (bool)_hasRegisteredServiceWorker
 {
-    return WebKit::ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(_websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory());
+    return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(_websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory()));
 }
 
 - (id <_WKWebsiteDataStoreDelegate>)_delegate

@@ -38,7 +38,6 @@
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessThrottler.h"
-#include "ServiceWorkerProcessProxy.h"
 #include "StatisticsRequest.h"
 #include "VisitedLinkStore.h"
 #include "WebContextClient.h"
@@ -100,7 +99,6 @@ class DownloadProxy;
 class HighPerformanceGraphicsUsageSampler;
 class UIGamepad;
 class PerActivityStateCPUUsageSampler;
-class ServiceWorkerProcessProxy;
 class SuspendedPageProxy;
 class WebAutomationSession;
 class WebContextSupplement;
@@ -382,7 +380,7 @@ public:
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, Optional<PAL::SessionID>);
-    const HashMap<WebCore::RegistrableDomain, ServiceWorkerProcessProxy*>& serviceWorkerProxies() const { return m_serviceWorkerProcesses; }
+    const HashMap<WebCore::RegistrableDomain, WebProcessProxy*>& serviceWorkerProxies() const { return m_serviceWorkerProcesses; }
     void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }
     bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
     void updateServiceWorkerUserAgent(const String& userAgent);
@@ -620,7 +618,7 @@ private:
 
     WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::RegistrableDomain, ServiceWorkerProcessProxy*> m_serviceWorkerProcesses;
+    HashMap<WebCore::RegistrableDomain, WebProcessProxy*> m_serviceWorkerProcesses;
     bool m_waitingForWorkerContextProcessConnection { false };
     bool m_allowsAnySSLCertificateForServiceWorker { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };

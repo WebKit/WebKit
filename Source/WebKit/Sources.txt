@@ -250,7 +250,6 @@ UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
 UIProcess/RemoteWebInspectorProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
-UIProcess/ServiceWorkerProcessProxy.cpp
 UIProcess/StatisticsRequest.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/SystemPreviewController.cpp

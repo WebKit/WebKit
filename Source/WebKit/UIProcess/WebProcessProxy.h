@@ -82,6 +82,7 @@ class WebsiteDataStore;
 enum class WebsiteDataType;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
+struct WebPreferencesStore;
 struct WebsiteData;
 
 #if PLATFORM(IOS_FAMILY)
@@ -109,6 +110,8 @@ public:
     enum class ShouldLaunchProcess : bool { No, Yes };
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> createForServiceWorkers(WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
+
     ~WebProcessProxy();
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, const Function<void(WebPageProxy&)>&);
@@ -149,7 +152,7 @@ public:
 
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
 
-    virtual bool isServiceWorkerProcess() const { return false; }
+    bool isRunningServiceWorkers() const { return !!m_serviceWorkerInformation; }
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
@@ -308,6 +311,14 @@ public:
 
     void ref() final { ThreadSafeRefCounted::ref(); }
     void deref() final { ThreadSafeRefCounted::deref(); }
+
+#if ENABLE(SERVICE_WORKER)
+    void establishServiceWorkerContext(const WebPreferencesStore&, PAL::SessionID);
+    void startForServiceWorkers(const WebPreferencesStore&, PAL::SessionID);
+    void setServiceWorkerUserAgent(const String&);
+    void updateServiceWorkerPreferencesStore(const WebPreferencesStore&);
+    bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->serviceWorkerPageProxyID == pageProxyID; }
+#endif
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
@@ -476,6 +487,12 @@ private:
 #if PLATFORM(COCOA)
     MediaCaptureSandboxExtensions m_mediaCaptureSandboxExtensions { SandboxExtensionType::None };
 #endif
+
+    struct ServiceWorkerInformation {
+        WebPageProxyIdentifier serviceWorkerPageProxyID;
+        WebCore::PageIdentifier serviceWorkerPageID;
+    };
+    Optional<ServiceWorkerInformation> m_serviceWorkerInformation;
 };
 
 } // namespace WebKit
