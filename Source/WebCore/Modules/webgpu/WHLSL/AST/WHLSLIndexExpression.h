@@ -45,6 +45,9 @@ public:
         : PropertyAccessExpression(location, Kind::Index, WTFMove(base))
         , m_index(WTFMove(index))
     {
+#if CPU(ADDRESS32)
+        UNUSED_PARAM(m_padding);
+#endif
     }
 
     ~IndexExpression() = default;
@@ -58,6 +61,10 @@ public:
 
 private:
     UniqueRef<Expression> m_index;
+#if CPU(ADDRESS32)
+    // This is used to allow for replaceWith into a bigger type.
+    char m_padding[4];
+#endif
 };
 
 } // namespace AST

@@ -1,3 +1,9 @@
+2019-09-09  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed follow up to r249630. We need padding for ADDRESS32 CPUs to allow replaceWith to work on the intended types.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+
 2019-09-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Introduce cell spacing.
