@@ -851,14 +851,6 @@ pre {
   padding-left: var(--colPaddingSize);
 }
 
-.mobile-sidebar-control {
-  display: none;
-  float: right;
-}
-.mobile-sidebar-control.display {
-  display: block;
-}
-
 @media (prefers-color-scheme: dark) {
   .sidebar {
     background-color: var(--blurBackgroundColorDark);
@@ -907,10 +899,6 @@ pre {
   .sidebar.under-topbar-with-actions {
     height: calc(100% - 12px * 2  - var(--largeSize) * 1.3);
     bottom: 0;
-  }
-
-  .mobile-sidebar-control.display {
-    display: none;
   }
 
   .main {
@@ -2563,9 +2551,20 @@ a.disabled {
   display: none;
 }
 
+.mobile-sidebar-control {
+  display: none;
+  float: right;
+}
+.mobile-sidebar-control.display {
+  display: block;
+}
+
 @media screen and (min-width: 600px) {
   .desktop-control {
     display: block;
+  }
+  .mobile-sidebar-control.display {
+    display: none;
   }
 }
 
