@@ -25,12 +25,14 @@ import webkitpy.thirdparty.autoinstalled.requests
 import json
 import requests
 import sys
+import time
 
 import platform as host_platform
 
 
 class Upload(object):
     UPLOAD_ENDPOINT = '/api/upload'
+    ARCHIVE_UPLOAD_ENDPOINT = '/api/upload/archive'
     BUILDBOT_DETAILS = ['buildbot-master', 'builder-name', 'build-number', 'buildbot-worker']
     VERSION = 0
 
@@ -99,7 +101,7 @@ class Upload(object):
         self.suite = suite
         self.configuration = configuration
         self.commits = commits
-        self.timestamp = timestamp
+        self.timestamp = int(timestamp or time.time())
         self.details = details
         self.run_stats = run_stats
         self.results = results
@@ -165,20 +167,51 @@ class Upload(object):
         result.update({key: value for key, value in optional_data.iteritems() if value is not None})
         return result
 
-    def upload(self, url, log_line_func=lambda val: sys.stdout.write(val + '\n')):
+    def upload(self, hostname, log_line_func=lambda val: sys.stdout.write(val + '\n')):
         try:
-            response = requests.post(url + self.UPLOAD_ENDPOINT, data=json.dumps(self, cls=Upload.Encoder))
+            response = requests.post('{}{}'.format(hostname, self.UPLOAD_ENDPOINT), data=json.dumps(self, cls=Upload.Encoder))
         except requests.exceptions.ConnectionError:
-            log_line_func(' ' * 4 + 'Failed to upload to {}, results server not online'.format(url))
+            log_line_func(' ' * 4 + 'Failed to upload to {}, results server not online'.format(hostname))
             return False
         except ValueError as e:
             log_line_func(' ' * 4 + 'Failed to encode upload data: {}'.format(e))
             return False
 
         if response.status_code != 200:
-            log_line_func(' ' * 4 + 'Error uploading to {}:'.format(url))
-            log_line_func(' ' * 8 + response.json()['description'])
+            log_line_func(' ' * 4 + 'Error uploading to {}'.format(hostname))
+            log_line_func(' ' * 8 + response.json().get('description'))
             return False
 
-        log_line_func(' ' * 4 + 'Uploaded results to {}'.format(url))
+        log_line_func(' ' * 4 + 'Uploaded results to {}'.format(hostname))
+        return True
+
+    def upload_archive(self, hostname, archive, log_line_func=lambda val: sys.stdout.write(val + '\n')):
+        try:
+            meta_data = dict(
+                version=self.VERSION,
+                suite=self.suite,
+                configuration=json.dumps(self.configuration or self.create_configuration()),
+                commits=json.dumps(self.commits),
+            )
+            if self.timestamp:
+                meta_data['timestamp'] = self.timestamp
+            response = requests.post(
+                '{}{}'.format(hostname, self.ARCHIVE_UPLOAD_ENDPOINT),
+                data=meta_data,
+                files=dict(file=archive),
+            )
+
+        except requests.exceptions.ConnectionError:
+            log_line_func(' ' * 4 + 'Failed to upload test archive to {}, results server not online'.format(hostname))
+            return False
+        except ValueError as e:
+            log_line_func(' ' * 4 + 'Failed to encode archive reference data: {}'.format(e))
+            return False
+
+        if response.status_code != 200:
+            log_line_func(' ' * 4 + 'Error uploading archive to {}'.format(hostname))
+            log_line_func(' ' * 8 + response.json().get('description'))
+            return False
+
+        log_line_func(' ' * 4 + 'Uploaded test archive to {}'.format(hostname))
         return True

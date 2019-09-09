@@ -1,3 +1,22 @@
+2019-09-09  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Report results archive to results.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=201321
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): After all tests are finish, upload the results archive for each
+        configuration.
+        * Scripts/webkitpy/results/upload.py:
+        (Upload):
+        (Upload.__init__): Automatically define timestamp.
+        (Upload.upload_archive): Upload an archive associated with the test run.
+        * Scripts/webkitpy/results/upload_unittest.py:
+        (UploadTest.test_buildbot):
+        (UploadTest):
+        (UploadTest.test_archive_upload):
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/workers/service/basic-register.html
