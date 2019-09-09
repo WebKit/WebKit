@@ -1357,12 +1357,14 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         second_run_results = self.results.get(ReRunAPITests.name)
         clean_tree_results = self.results.get(RunAPITestsWithoutPatch.name)
 
-        if not (first_run_results and second_run_results and clean_tree_results):
+        if not (first_run_results and second_run_results):
             self.finished(RETRY)
             self.build.buildFinished(['Unable to parse API test results'], RETRY)
             return -1
 
         def getAPITestFailures(result):
+            if not result:
+                return set([])
             # TODO: Analyze Time-out, Crash and Failure independently
             return set([failure.get('name') for failure in result.get('Timedout', [])] +
                 [failure.get('name') for failure in result.get('Crashed', [])] +

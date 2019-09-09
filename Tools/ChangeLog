@@ -1,3 +1,14 @@
+2019-09-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] API testers can go in an infinite RETRY loop when there is build failure in trunk
+        https://bugs.webkit.org/show_bug.cgi?id=201607
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults.analyzeResults): Do not RETRY when clean_tree_results are missing.
+        (AnalyzeAPITestsResults.analyzeResults.getAPITestFailures): Gracefully handle None result.
+
 2019-09-07  Keith Miller  <keith_miller@apple.com>
 
         OSR entry into wasm misses some contexts
