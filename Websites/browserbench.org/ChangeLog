@@ -1,3 +1,16 @@
+2019-09-09  Jon Lee  <jonlee@apple.com>
+
+        Upload triangles tests for 3D suite in MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=201606
+
+        Reviewed by Simon Fraser.
+
+        * MotionMark1.1/resources/debug-runner/tests.js:
+        * MotionMark1.1/tests/3d/resources/webgl.js:
+        * MotionMark1.1/tests/3d/resources/webgpu.js: Added.
+        * MotionMark1.1/tests/3d/triangles-webgl.html: Copied from PerformanceTests/MotionMark/tests/3d/webgl.html.
+        * MotionMark1.1/tests/3d/triangles-webgpu.html: Renamed from PerformanceTests/MotionMark/tests/3d/webgl.html.
+
 2019-04-16  Jon Lee  <jonlee@apple.com>
 
         [MotionMark] The text "kkkj" is causing Firefox console warning: `unreachable code after return statement`

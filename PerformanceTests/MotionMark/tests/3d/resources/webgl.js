@@ -41,7 +41,7 @@ WebGLStage = Utilities.createSubclass(Stage,
             this._gl = this.element.getContext("webgl");
             var gl = this._gl;
 
-            gl.clearColor(0.5, 0.5, 0.5, 1);
+            gl.clearColor(0, 0, 0, 1);
 
             // Create the vertex shader object.
             var vertexShader = gl.createShader(gl.VERTEX_SHADER);

@@ -1,3 +1,17 @@
+2019-09-09  Jon Lee  <jonlee@apple.com>
+
+        Upload triangles tests for 3D suite in MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=201606
+
+        Reviewed by Simon Fraser.
+
+        * MotionMark/resources/debug-runner/motionmark.css:
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/3d/resources/webgl.js:
+        * MotionMark/tests/3d/resources/webgpu.js: Added.
+        * MotionMark/tests/3d/triangles-webgl.html: Renamed from Websites/browserbench.org/MotionMark1.1/tests/3d/webgl.html.
+        * MotionMark/tests/3d/triangles-webgpu.html: Copied from PerformanceTests/MotionMark/tests/3d/webgl.html.
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Update .xcconfig symbols to reflect the current set of past and future product versions.

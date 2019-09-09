@@ -354,8 +354,12 @@ Suites.push(new Suite("Suits suite",
 Suites.push(new Suite("3D Graphics",
     [
         {
-            url: "3d/webgl.html",
-            name: "WebGL"
+            url: "3d/triangles-webgl.html",
+            name: "Triangles (WebGL)"
+        },
+        {
+            url: "3d/triangles-webgpu.html",
+            name: "Triangles (WebGPU)"
         },
     ]
 ));
