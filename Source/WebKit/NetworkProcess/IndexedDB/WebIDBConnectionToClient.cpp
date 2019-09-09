@@ -44,12 +44,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(NetworkProcess& networkProcess, IPC::Connection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
+Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(NetworkProcess& networkProcess, IPC::Connection& connection, ProcessIdentifier serverConnectionIdentifier, PAL::SessionID sessionID)
 {
     return adoptRef(*new WebIDBConnectionToClient(networkProcess, connection, serverConnectionIdentifier, sessionID));
 }
 
-WebIDBConnectionToClient::WebIDBConnectionToClient(NetworkProcess& networkProcess, IPC::Connection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
+WebIDBConnectionToClient::WebIDBConnectionToClient(NetworkProcess& networkProcess, IPC::Connection& connection, ProcessIdentifier serverConnectionIdentifier, PAL::SessionID sessionID)
     : m_connection(connection)
     , m_networkProcess(networkProcess)
     , m_identifier(serverConnectionIdentifier)
@@ -345,9 +345,9 @@ void WebIDBConnectionToClient::confirmDidCloseFromServer(uint64_t databaseConnec
     m_networkProcess->idbServer(m_sessionID).confirmDidCloseFromServer(databaseConnectionIdentifier);
 }
 
-void WebIDBConnectionToClient::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
+void WebIDBConnectionToClient::getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
-    m_networkProcess->idbServer(m_sessionID).getAllDatabaseNames(serverConnectionIdentifier, topOrigin, openingOrigin, callbackID);
+    m_networkProcess->idbServer(m_sessionID).getAllDatabaseNames(identifier(), topOrigin, openingOrigin, callbackID);
 }
 
 } // namespace WebKit

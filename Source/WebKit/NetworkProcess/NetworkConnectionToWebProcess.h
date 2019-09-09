@@ -204,7 +204,7 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB).
-    void establishIDBConnectionToServer(PAL::SessionID, CompletionHandler<void(uint64_t  serverConnectionIdentifier)>&&);
+    void establishIDBConnectionToServer(PAL::SessionID);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -315,7 +315,7 @@ private:
     RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
+    HashMap<uint64_t, Ref<WebIDBConnectionToClient>> m_webIDBConnections;
 #endif
 
 #if ENABLE(SERVICE_WORKER)

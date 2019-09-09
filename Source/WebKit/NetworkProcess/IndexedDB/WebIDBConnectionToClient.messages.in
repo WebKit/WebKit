@@ -51,6 +51,6 @@ messages -> WebIDBConnectionToClient {
     OpenDBRequestCancelled(WebCore::IDBRequestData requestData);
     ConfirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 
-    GetAllDatabaseNames(uint64_t serverConnectionIdentifier, struct WebCore::SecurityOriginData topOrigin, struct WebCore::SecurityOriginData openingOrigin, uint64_t callbackID);
+    GetAllDatabaseNames(struct WebCore::SecurityOriginData topOrigin, struct WebCore::SecurityOriginData openingOrigin, uint64_t callbackID);
 }
 #endif // ENABLE(INDEXED_DATABASE)

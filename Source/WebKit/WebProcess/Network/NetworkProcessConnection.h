@@ -71,7 +71,7 @@ public:
     void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
 #if ENABLE(INDEXED_DATABASE)
-    WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) const { return m_webIDBConnectionsByIdentifier.get(identifier); };
+    WebIDBConnectionToServer* existingIDBConnectionToServer(PAL::SessionID sessionID) const { return m_webIDBConnectionsBySession.get(sessionID.toUInt64()); };
     WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
 #endif
 
@@ -108,8 +108,7 @@ private:
     Ref<IPC::Connection> m_connection;
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<PAL::SessionID, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;
-    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsByIdentifier;
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;
 #endif
 
 #if ENABLE(SERVICE_WORKER)

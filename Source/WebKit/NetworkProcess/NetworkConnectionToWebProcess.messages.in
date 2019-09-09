@@ -77,7 +77,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
 #if ENABLE(INDEXED_DATABASE)
-    EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier) Synchronous
+    EstablishIDBConnectionToServer(PAL::SessionID sessionID)
 #endif
 
 #if ENABLE(SERVICE_WORKER)

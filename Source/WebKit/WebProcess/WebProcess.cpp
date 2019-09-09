@@ -1242,8 +1242,8 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
         if (!idbConnection)
             continue;
         
-        if (connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())) {
-            ASSERT(idbConnection == &connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())->coreConnectionToServer());
+        if (connection->existingIDBConnectionToServer(page->corePage()->sessionID())) {
+            ASSERT(idbConnection == &connection->existingIDBConnectionToServer(page->corePage()->sessionID())->coreConnectionToServer());
             page->corePage()->clearIDBConnection();
         }
     }

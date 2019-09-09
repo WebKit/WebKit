@@ -129,7 +129,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
-        if (auto idbConnection = m_webIDBConnectionsByIdentifier.get(decoder.destinationID()))
+        if (auto* idbConnection = m_webIDBConnectionsBySession.get(decoder.destinationID()))
             idbConnection->didReceiveMessage(connection, decoder);
         return;
     }
@@ -194,16 +194,14 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     WebProcess::singleton().networkProcessConnectionClosed(this);
 
 #if ENABLE(INDEXED_DATABASE)
-    for (auto& connection : m_webIDBConnectionsByIdentifier.values())
+    auto idbConnections = std::exchange(m_webIDBConnectionsBySession, { });
+    for (auto& connection : idbConnections.values())
         connection->connectionToServerLost();
-    
-    m_webIDBConnectionsByIdentifier.clear();
-    m_webIDBConnectionsBySession.clear();
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    auto connections = std::exchange(m_swConnectionsByIdentifier, { });
-    for (auto& connection : connections.values())
+    auto swConnections = std::exchange(m_swConnectionsByIdentifier, { });
+    for (auto& connection : swConnections.values())
         connection->connectionToServerLost();
 #endif
 }
@@ -252,13 +250,8 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 #if ENABLE(INDEXED_DATABASE)
 WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSession(PAL::SessionID sessionID)
 {
-    return *m_webIDBConnectionsBySession.ensure(sessionID, [&] {
-        auto connection = WebIDBConnectionToServer::create(sessionID);
-        
-        auto result = m_webIDBConnectionsByIdentifier.add(connection->identifier(), connection.copyRef());
-        ASSERT_UNUSED(result, result.isNewEntry);
-        
-        return connection;
+    return *m_webIDBConnectionsBySession.ensure(sessionID.toUInt64(), [&] {
+        return WebIDBConnectionToServer::create(sessionID);
     }).iterator->value;
 }
 #endif

@@ -849,21 +849,12 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(ResourceLoadIde
 }
 
 #if ENABLE(INDEXED_DATABASE)
-static uint64_t generateIDBConnectionToServerIdentifier()
+void NetworkConnectionToWebProcess::establishIDBConnectionToServer(PAL::SessionID sessionID)
 {
-    ASSERT(RunLoop::isMain());
-    static uint64_t identifier = 0;
-    return ++identifier;
-}
-
-void NetworkConnectionToWebProcess::establishIDBConnectionToServer(PAL::SessionID sessionID, CompletionHandler<void(uint64_t)>&& completionHandler)
-{
-    uint64_t serverConnectionIdentifier = generateIDBConnectionToServerIdentifier();
-    LOG(IndexedDB, "NetworkConnectionToWebProcess::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);
-    ASSERT(!m_webIDBConnections.contains(serverConnectionIdentifier));
+    LOG(IndexedDB, "NetworkConnectionToWebProcess::establishIDBConnectionToServer - %" PRIu64, sessionID.toUInt64());
+    ASSERT(!m_webIDBConnections.contains(sessionID.toUInt64()));
     
-    m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(m_networkProcess, m_connection.get(), serverConnectionIdentifier, sessionID));
-    completionHandler(serverConnectionIdentifier);
+    m_webIDBConnections.add(sessionID.toUInt64(), WebIDBConnectionToClient::create(m_networkProcess, m_connection.get(), m_webProcessIdentifier, sessionID));
 }
 #endif
     
