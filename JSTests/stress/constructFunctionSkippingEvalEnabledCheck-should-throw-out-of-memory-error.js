@@ -1,3 +1,5 @@
+//@ skip if $memoryLimited
+
 var exception;
 try {
     Function('a'.repeat(2147483623));

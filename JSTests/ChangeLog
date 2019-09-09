@@ -1,3 +1,12 @@
+2019-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed JSC test gardening.
+
+        * stress/constructFunctionSkippingEvalEnabledCheck-should-throw-out-of-memory-error.js:
+        This test allocates a 2GB string before it goes out and tests
+        out-of-memory exception when appending other strings to it. As such,
+        skip the test on memory-limited platforms.
+
 2019-09-07  Mark Lam  <mark.lam@apple.com>
 
         The jsc shell should allow disabling of the Gigacage for testing purposes.
