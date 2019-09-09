@@ -1,5 +1,11 @@
 2019-09-09  Per Arne Vollan  <pvollan@apple.com>
 
+        Unreviewed Windows build fix.
+
+        * WebProcess/WebPage/WebPage.h:
+
+2019-09-09  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Pid is sometimes invalid when creating sandbox extensions by pid.
         https://bugs.webkit.org/show_bug.cgi?id=201543
         <rdar://problem/54733465>
