@@ -33,9 +33,9 @@ namespace JSC {
 
 const ClassInfo FunctionRareData::s_info = { "FunctionRareData", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionRareData) };
 
-FunctionRareData* FunctionRareData::create(VM& vm)
+FunctionRareData* FunctionRareData::create(VM& vm, JSFunction* function)
 {
-    FunctionRareData* rareData = new (NotNull, allocateCell<FunctionRareData>(vm.heap)) FunctionRareData(vm);
+    FunctionRareData* rareData = new (NotNull, allocateCell<FunctionRareData>(vm.heap)) FunctionRareData(vm, function);
     rareData->finishCreation(vm);
     return rareData;
 }
@@ -62,13 +62,14 @@ void FunctionRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(rareData->m_boundFunctionStructure);
 }
 
-FunctionRareData::FunctionRareData(VM& vm)
+FunctionRareData::FunctionRareData(VM& vm, JSFunction* function)
     : Base(vm, vm.functionRareDataStructure.get())
     , m_objectAllocationProfile()
     // We initialize blind so that changes to the prototype after function creation but before
     // the first allocation don't disable optimizations. This isn't super important, since the
     // function is unlikely to allocate a rare data until the first allocation anyway.
     , m_allocationProfileWatchpointSet(ClearWatchpoint)
+    , m_hasReifiedName(function->isAnonymousBuiltinFunction())
 {
 }
 

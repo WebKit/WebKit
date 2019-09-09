@@ -125,10 +125,6 @@ void JSFunction::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(jsDynamicCast<JSFunction*>(vm, this));
     ASSERT(type() == JSFunctionType);
-    if (isAnonymousBuiltinFunction()) {
-        // This is anonymous builtin function.
-        rareData(vm)->setHasReifiedName();
-    }
 }
 
 void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name)
@@ -146,7 +142,7 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
 FunctionRareData* JSFunction::allocateRareData(VM& vm)
 {
     ASSERT(!m_rareData);
-    FunctionRareData* rareData = FunctionRareData::create(vm);
+    FunctionRareData* rareData = FunctionRareData::create(vm, this);
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
@@ -186,7 +182,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, siz
     ASSERT(canUseAllocationProfile());
     VM& vm = exec->vm();
     JSObject* prototype = prototypeForConstruction(vm, exec);
-    FunctionRareData* rareData = FunctionRareData::create(vm);
+    FunctionRareData* rareData = FunctionRareData::create(vm, this);
     rareData->initializeObjectAllocationProfile(vm, globalObject(vm), prototype, inlineCapacity, this);
 
     // A DFG compilation thread may be trying to read the rare data

@@ -1,3 +1,41 @@
+2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Promise resolve/reject functions should be created more efficiently
+        https://bugs.webkit.org/show_bug.cgi?id=201488
+
+        Reviewed by Mark Lam.
+
+        While r246553 fixed an important issue, it makes anonymous-builtin-function creation costly since it enforces FunctionRareData allocations.
+        Unfortunately, anonymous-builtin-function function can be created frequently since this type of function is used
+        for `resolve` and `reject` arguments of Promise's executor (e.g. `new Promise((resolve, reject) => ...)`'s resolve and reject).
+        Since we are now always creating FunctionRareData for these functions, this additional allocation makes promise creation slower.
+
+        In this patch, we use `isAnonymousBuiltinFunction` information for `hasReifiedName` correctly. And we propagate `isAnonymousBuiltinFunction` information
+        to FunctionRareData to initialize `m_hasReifiedName` correctly. Then we can avoid unnecessary FunctionRareData allocation, which makes
+        anonymous-builtin-function creation faster.
+
+        We can ensure that this patch does not revert r246553's fix by running JSTests/stress/builtin-private-function-name.js test.
+        The simple microbenchmark shows 1.7x improvement.
+
+                                              ToT                     Patched
+
+            promise-creation-many       45.6701+-0.1488     ^     26.8663+-1.8336        ^ definitely 1.6999x faster
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::create):
+        (JSC::FunctionRareData::FunctionRareData):
+        * runtime/FunctionRareData.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::allocateRareData):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::hasReifiedName const):
+
 2019-09-07  Mark Lam  <mark.lam@apple.com>
 
         performJITMemcpy() source buffer should not be in the Gigacage.

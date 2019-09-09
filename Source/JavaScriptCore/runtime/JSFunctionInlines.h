@@ -110,7 +110,11 @@ inline bool JSFunction::hasReifiedLength() const
 
 inline bool JSFunction::hasReifiedName() const
 {
-    return m_rareData ? m_rareData->hasReifiedName() : false;
+    if (m_rareData)
+        return m_rareData->hasReifiedName();
+    if (isAnonymousBuiltinFunction())
+        return true;
+    return false;
 }
 
 inline bool JSFunction::canUseAllocationProfile()
