@@ -60,6 +60,14 @@ public:
     {
     }
 
+    ReadModifyWriteExpression(CodeLocation location, UniqueRef<Expression> leftValue, UniqueRef<VariableDeclaration> oldValue, UniqueRef<VariableDeclaration> newValue)
+        : Expression(location, Kind::ReadModifyWrite)
+        , m_leftValue(WTFMove(leftValue))
+        , m_oldValue(WTFMove(oldValue))
+        , m_newValue(WTFMove(newValue))
+    {
+    }
+
 
     ~ReadModifyWriteExpression() = default;
 
@@ -87,6 +95,7 @@ public:
     }
 
     Expression& leftValue() { return m_leftValue; }
+    UniqueRef<Expression>& leftValueReference() { return m_leftValue; }
     VariableDeclaration& oldValue() { return m_oldValue; }
     VariableDeclaration& newValue() { return m_newValue; }
     Expression& newValueExpression()

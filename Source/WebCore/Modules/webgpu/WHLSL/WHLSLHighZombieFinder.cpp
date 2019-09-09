@@ -28,16 +28,43 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLAST.h"
 #include "WHLSLVisitor.h"
 
 namespace WebCore {
 
 namespace WHLSL {
 
-void findHighZombies(Program&)
+class HighZombieFinder : public Visitor {
+public:
+    void visit(AST::ReadModifyWriteExpression& readModifyWrite) override
+    {
+        checkErrorAndVisit(readModifyWrite.newValueExpression());
+        checkErrorAndVisit(readModifyWrite.resultExpression());
+
+        RELEASE_ASSERT(!readModifyWrite.leftValue().mayBeEffectful());
+    }
+
+    void visit(AST::DotExpression& dotExpression) override
+    {
+        RELEASE_ASSERT(!dotExpression.base().mayBeEffectful());
+    }
+
+    void visit(AST::IndexExpression& indexExpression) override
+    {
+        RELEASE_ASSERT(!indexExpression.base().mayBeEffectful());
+        RELEASE_ASSERT(!indexExpression.indexExpression().mayBeEffectful());
+    }
+};
+
+void findHighZombies(Program& program)
 {
-    // FIXME: Bring this phase back once we add a new property resolver
-    // https://bugs.webkit.org/show_bug.cgi?id=201251
+    UNUSED_PARAM(program);
+
+#if !ASSERT_DISABLED
+    HighZombieFinder finder;
+    finder.Visitor::visit(program);
+#endif
 }
 
 }

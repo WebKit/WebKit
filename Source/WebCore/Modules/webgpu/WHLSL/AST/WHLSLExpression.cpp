@@ -162,6 +162,48 @@ void Expression::destruct(Expression& expression)
     }
 }
 
+bool Expression::mayBeEffectful() const
+{
+    auto& expression = const_cast<Expression&>(*this);
+
+    switch (expression.kind()) {
+    case Expression::Kind::BooleanLiteral:
+    case Expression::Kind::FloatLiteral:
+    case Expression::Kind::IntegerLiteral:
+    case Expression::Kind::UnsignedIntegerLiteral:
+    case Expression::Kind::EnumerationMemberLiteral:
+    case Expression::Kind::GlobalVariableReference:
+    case Expression::Kind::VariableReference:
+        return false;
+
+    case Expression::Kind::Dereference:
+        return downcast<DereferenceExpression>(expression).pointer().mayBeEffectful();
+
+    case Expression::Kind::Logical:
+        return downcast<LogicalExpression>(expression).left().mayBeEffectful() || downcast<LogicalExpression>(expression).right().mayBeEffectful();
+
+    case Expression::Kind::LogicalNot:
+        return downcast<LogicalNotExpression>(expression).operand().mayBeEffectful();
+
+    case Expression::Kind::MakeArrayReference:
+        return downcast<MakeArrayReferenceExpression>(expression).leftValue().mayBeEffectful();
+
+    case Expression::Kind::MakePointer:
+        return downcast<MakePointerExpression>(expression).leftValue().mayBeEffectful();
+
+    case Expression::Kind::Dot:
+        return downcast<DotExpression>(expression).base().mayBeEffectful();
+
+    case Expression::Kind::Index:
+        return downcast<IndexExpression>(expression).base().mayBeEffectful() || downcast<IndexExpression>(expression).indexExpression().mayBeEffectful();
+
+    default:
+        break;
+    }
+
+    return true;
+}
+
 } // namespace AST
 
 } // namespace WHLSL

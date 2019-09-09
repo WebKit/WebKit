@@ -120,6 +120,8 @@ public:
             other.setType(*resolvedType);
     }
 
+    bool mayBeEffectful() const;
+
     Kind kind() const  { return m_kind; }
     bool isAssignmentExpression() const { return kind() == Kind::Assignment; }
     bool isBooleanLiteral() const { return kind() == Kind::BooleanLiteral; }

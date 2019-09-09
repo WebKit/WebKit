@@ -558,9 +558,6 @@ void FunctionDefinitionWriter::visit(AST::DotExpression& dotExpression)
 
 void FunctionDefinitionWriter::visit(AST::IndexExpression& indexExpression)
 {
-    // FIXME: Make it so that evaluating index and base twice doesn't execute effects twice:
-    // https://bugs.webkit.org/show_bug.cgi?id=201251
-
     auto& type = indexExpression.base().resolvedType().unifyNode();
     if (is<AST::ArrayReferenceType>(type)) {
         m_stringBuilder.append('(');
@@ -769,8 +766,6 @@ void FunctionDefinitionWriter::visit(AST::ReadModifyWriteExpression& readModifyW
     m_stringBuilder.append(", ", newValueVariable, " = ");
     checkErrorAndVisit(readModifyWrite.newValueExpression());
 
-    // FIXME: Make it so that evaluating left value twice doesn't execute effects twice:
-    // https://bugs.webkit.org/show_bug.cgi?id=201251
     m_stringBuilder.append(", ");
     checkErrorAndVisit(readModifyWrite.leftValue());
     m_stringBuilder.append(" = ", newValueVariable, ", ");

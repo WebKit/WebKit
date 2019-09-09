@@ -1,3 +1,49 @@
+2019-09-08  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Add back a version of the property resolver
+        https://bugs.webkit.org/show_bug.cgi?id=201251
+
+        Reviewed by Robin Morisset.
+
+        This patch adds back the property resolver to aid in how we emit metal code.
+        The goal of the new property resolver phase is to allow two things:
+        1. For property access expressions, metal codegen should be allowed to evaluate
+        the base, and if it's an index expression, the index, as many times as needed.
+        So this patch ensures that if Metal evaluates such things, effects aren't performed
+        more than once.
+        
+        2. For ReadModifyWrite expressions, metal codegen should be able to evaluate the
+        leftValueExpression as many times as it'd like without performing the effects of
+        leftValueExpression more than once.
+        
+        Here are a couple examples of this transformation:
+        `a()[b()]` -> `(temp1 = a(), temp2 = b(), temp1[temp2])`
+        `(*a())[b()] += 42;` -> `(temp1 = &*a(), temp2 = b(), (*temp1)[temp2] += 42)`
+        
+        The interesting rules break down like:
+        - When the base is an lvalue, we take its address and replace the old base
+        with a dereference of the new pointer variable.
+        - When the base is an rvalue, we evaluate it and store it in a temporary
+        variable, and switch the base to be a reference of that variable.
+        - All indices are evaluated before the property access instruction and
+        replaced with a reference to the temporary variable.
+
+        Test: webgpu/whlsl/property-evaluation-order.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.cpp:
+        (WebCore::WHLSL::AST::Expression::mayBeEffectful const):
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp:
+        (WebCore::WHLSL::findHighZombies):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::PropertyResolver::handleLeftHandSideBase):
+        (WebCore::WHLSL::PropertyResolver::handlePropertyAccess):
+        (WebCore::WHLSL::resolveProperties):
+
 2019-09-07  Chris Dumez  <cdumez@apple.com>
 
         Add support for postMessage buffering between the service worker and window

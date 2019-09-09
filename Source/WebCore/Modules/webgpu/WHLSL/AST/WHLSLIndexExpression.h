@@ -53,6 +53,7 @@ public:
     IndexExpression(IndexExpression&&) = default;
 
     Expression& indexExpression() { return m_index; }
+    UniqueRef<Expression>& indexReference() { return m_index; }
     UniqueRef<Expression> takeIndex() { return WTFMove(m_index); }
 
 private:
