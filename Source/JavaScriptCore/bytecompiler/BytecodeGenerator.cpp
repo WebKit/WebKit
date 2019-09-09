@@ -2496,7 +2496,6 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
         
         dst = tempDestination(dst);
         OpResolveScope::emit(this, kill(dst), scopeRegister(), addConstant(variable.ident()), resolveType(), localScopeDepth());
-        m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return dst;
     }
     
@@ -2525,7 +2524,6 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
             GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), InitializationMode::NotInitialization),
             localScopeDepth(),
             variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
-        m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return dst;
     } }
     
@@ -2558,7 +2556,6 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
             symbolTableOrScopeDepth = SymbolTableOrScopeDepth::scopeDepth(localScopeDepth());
         }
         OpPutToScope::emit(this, scope, addConstant(variable.ident()), value, getPutInfo, symbolTableOrScopeDepth, !!offset ? offset.offset() : 0);
-        m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return value;
     } }
     
@@ -2609,7 +2606,6 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
 
     OpGetById::emit(this, kill(dst), base, addConstant(property));
-    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
 
@@ -2626,7 +2622,6 @@ RegisterID* BytecodeGenerator::emitDirectGetById(RegisterID* dst, RegisterID* ba
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val_direct.");
 
     OpGetByIdDirect::emit(this, kill(dst), base, addConstant(property));
-    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
 
@@ -2639,8 +2634,6 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
     OpPutById::emit(this, base, propertyIndex, value, PutByIdNone); // is not direct
-    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
-
     return value;
 }
 
@@ -2665,7 +2658,6 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
 
     PutByIdFlags type = (putType == PropertyNode::KnownDirect || property != m_vm.propertyNames->underscoreProto) ? PutByIdIsDirect : PutByIdNone;
     OpPutById::emit(this, base, propertyIndex, value, type);
-    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return value;
 }
 
@@ -2851,8 +2843,6 @@ RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
     OpCreateThis::emit(this, dst, dst, 0);
     m_staticPropertyAnalyzer.createThis(dst, m_lastInstruction);
-
-    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
 
@@ -5134,7 +5124,6 @@ void StaticPropertyAnalysis::record()
 void BytecodeGenerator::emitToThis()
 {
     OpToThis::emit(this, kill(&m_thisRegister));
-    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
 }
 
 } // namespace JSC

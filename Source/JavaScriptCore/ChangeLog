@@ -1,3 +1,39 @@
+2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use metadata table to iterate specific bytecode metadata instead of propertyAccessInstructions vector
+        https://bugs.webkit.org/show_bug.cgi?id=201613
+
+        Reviewed by Mark Lam.
+
+        We do not need to maintain propertyAccessInstructions vector to access metadata tied to a specific bytecode opcode
+        since we have MetadataTable::forEach<Op> feature. This removes propertyAccessInstructions entirely, and fixes the
+        issue that `op_create_promise` missed propertyAccessInstructions registration (a name "propertyAccessInstructions" is
+        misleading, it is like "instructions-requires-llint-finalize").
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::applyModification):
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addPropertyAccessInstruction): Deleted.
+        (JSC::UnlinkedCodeBlock::numberOfPropertyAccessInstructions const): Deleted.
+        (JSC::UnlinkedCodeBlock::propertyAccessInstructions const): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitDirectGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitCreateThis):
+        (JSC::BytecodeGenerator::emitToThis):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock<CodeBlockType>::decode const):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+
 2019-09-07  Keith Miller  <keith_miller@apple.com>
 
         OSR entry into wasm misses some contexts

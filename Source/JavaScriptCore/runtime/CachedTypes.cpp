@@ -1838,7 +1838,6 @@ private:
 
     CachedPtr<CachedInstructionStream> m_instructions;
     CachedVector<InstructionStream::Offset> m_jumpTargets;
-    CachedVector<InstructionStream::Offset> m_propertyAccessInstructions;
     CachedVector<CachedJSValue> m_constantRegisters;
     CachedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     CachedVector<ExpressionRangeInfo> m_expressionInfo;
@@ -2043,7 +2042,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::decode(Decoder& decoder, Unli
     for (unsigned i = LinkTimeConstantCount; i--;)
         codeBlock.m_linkTimeConstants[i] = m_linkTimeConstants[i];
 
-    m_propertyAccessInstructions.decode(decoder, codeBlock.m_propertyAccessInstructions);
     m_constantRegisters.decode(decoder, codeBlock.m_constantRegisters, &codeBlock);
     m_constantsSourceCodeRepresentation.decode(decoder, codeBlock.m_constantsSourceCodeRepresentation);
     m_expressionInfo.decode(decoder, codeBlock.m_expressionInfo);
@@ -2219,7 +2217,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.impl());
 
     m_instructions.encode(encoder, codeBlock.m_instructions.get());
-    m_propertyAccessInstructions.encode(encoder, codeBlock.m_propertyAccessInstructions);
     m_constantRegisters.encode(encoder, codeBlock.m_constantRegisters);
     m_constantsSourceCodeRepresentation.encode(encoder, codeBlock.m_constantsSourceCodeRepresentation);
     m_expressionInfo.encode(encoder, codeBlock.m_expressionInfo);
