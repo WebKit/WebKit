@@ -1127,7 +1127,9 @@ WI.Table = class Table extends WI.View
 
         // Completely remove all rows and add new ones.
         this._listElement.removeChildren();
-        this._listElement.classList.toggle("odd-first-zebra-stripe", !!(topHiddenRowCount % 2));
+
+        // If there are an odd number of rows hidden, the first visible row must be an even row.
+        this._listElement.classList.toggle("even-first-zebra-stripe", !!(topHiddenRowCount % 2));
 
         for (let i = this._visibleRowIndexStart; i < this._visibleRowIndexEnd && i < numberOfRows; ++i) {
             let row = this._getOrCreateRow(i);

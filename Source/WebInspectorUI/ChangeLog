@@ -1,3 +1,45 @@
+2019-09-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Dark Mode: Overview Timeline View has jarring white box-shadows in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=201442
+        <rdar://problem/54999794>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid:not(.variable-height-rows) table.data):
+        (.data-grid:not(.variable-height-rows) table.data.even-first-zebra-stripe):
+        (.data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(odd)):
+        (.data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(even)):
+        (.data-grid:not(.variable-height-rows) table.data.odd-first-zebra-stripe): Deleted.
+        (.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(odd)): Deleted.
+        (.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(even)): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.updateVisibleRows):
+        * UserInterface/Views/Table.css:
+        (.table > .data-container > .data-list):
+        (.table > .data-container > .data-list.even-first-zebra-stripe):
+        (.table > .data-container > .data-list.odd-first-zebra-stripe): Deleted.
+        * UserInterface/Views/Table.js:
+        In the gradients "even" was mistakenly first. Fix these so that "odd" is first and the
+        unusual case would be having "even" first. This allows us to line up with `nth-of-type(even)`.
+
+        * UserInterface/Views/Main.css:
+        (:root):
+        (@media (prefers-color-scheme: dark)):
+        Flip even and odd so we maintain the same styles for gradients.
+
+        * UserInterface/Views/OverviewTimelineView.css:
+        (.timeline-view.overview > .data-grid tr):
+        (.timeline-view.overview > .data-grid tr:nth-child(even)):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (@media (prefers-color-scheme: dark)):
+        (WI.Table.prototype._updateVisibleRows):
+        * UserInterface/Views/Variables.css:
+
 2019-09-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: CSS Formatter: the closing } of nested @media aren't indented

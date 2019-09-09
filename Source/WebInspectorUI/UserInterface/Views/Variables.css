@@ -175,8 +175,8 @@
     --network-request-color: hsl(118, 56%, 65%);
     --network-response-color: hsl(202, 61%, 59%);
 
-    --even-zebra-stripe-row-background-color: white;
-    --odd-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
+    --even-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
+    --odd-zebra-stripe-row-background-color: white;
     --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;
 
     --toolbar-height: 36px;
@@ -316,8 +316,8 @@ body.window-inactive * {
         --cpu-medium-color: hsl(46, 91%, 62%);
         --cpu-high-color: hsl(6, 79%, 57%);
 
-        --even-zebra-stripe-row-background-color: var(--background-color);
-        --odd-zebra-stripe-row-background-color: var(--background-color-secondary);
+        --even-zebra-stripe-row-background-color: var(--background-color-secondary);
+        --odd-zebra-stripe-row-background-color: var(--background-color);
         --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 100%, 0.03) 50%, hsla(0, 0%, 100%, 0.03)) top left / 100% 40px;
 
         --search-highlight-text-color: hsl(60, 100%, 50%);

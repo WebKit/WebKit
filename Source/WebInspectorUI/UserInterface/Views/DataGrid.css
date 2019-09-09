@@ -124,7 +124,7 @@ body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid:not(.variable-height-rows) table.data {
-    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
+    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
     background-size: 100% 40px;
 }
 
@@ -132,8 +132,8 @@ body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
     height: 16px;
 }
 
-.data-grid:not(.variable-height-rows) table.data.odd-first-zebra-stripe {
-    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
+.data-grid:not(.variable-height-rows) table.data.even-first-zebra-stripe {
+    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
 }
 
 .data-grid.inline table.data {
@@ -156,11 +156,11 @@ body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
     background-color: var(--even-zebra-stripe-row-background-color);
 }
 
-.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(odd) {
+.data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(odd) {
     background-color: var(--even-zebra-stripe-row-background-color);
 }
 
-.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(even) {
+.data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(even) {
     background-color: var(--odd-zebra-stripe-row-background-color);
 }
 

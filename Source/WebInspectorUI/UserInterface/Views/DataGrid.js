@@ -1142,7 +1142,8 @@ WI.DataGrid = class DataGrid extends WI.View
             this._bottomDataTableMarginElement.style.height = marginBottom + "px";
         }
 
-        this._dataTableElement.classList.toggle("odd-first-zebra-stripe", !!(topHiddenRowCount % 2));
+        // If there are an odd number of rows hidden, the first visible row must be an even row.
+        this._dataTableElement.classList.toggle("even-first-zebra-stripe", !!(topHiddenRowCount % 2));
 
         this.dataTableBodyElement.removeChildren();
 

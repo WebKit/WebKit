@@ -113,12 +113,12 @@ body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::af
     margin: 0;
     min-height: 100%;
 
-    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
+    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
     background-size: 100% 40px;
 }
 
-.table > .data-container > .data-list.odd-first-zebra-stripe {
-    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
+.table > .data-container > .data-list.even-first-zebra-stripe {
+    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
 }
 
 .table > .data-container > .data-list > li {
