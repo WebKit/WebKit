@@ -1,3 +1,12 @@
+2019-09-07  Christian Kirbach  <Christian.Kirbach@googlemail.com>
+
+        Updated German translation
+        https://bugs.webkit.org/show_bug.cgi?id=201582
+
+        Rubber-stamped by Adrian Perez de Castro.
+
+        * de.po:
+
 2019-09-09  Rafael Fontenelle  <rafaelff@gnome.org>
 
         [l10n] [pt_BR] Updated Brazilian Portuguese translation
