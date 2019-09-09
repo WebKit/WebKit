@@ -1,3 +1,19 @@
+2019-09-09  Daniel Bates  <dabates@apple.com>
+
+        Remove all selection view animations before dumping results
+        https://bugs.webkit.org/show_bug.cgi?id=199241
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS the selection UI uses a few animations, including fading in the grabbers. We have many
+        historical tests that were written for Mac and expect Mac's lack of animations that we run on
+        iOS and are flaky. Let's try to remove all selection view animations before dumping results and
+        see if this makes tests on iOS less flaky. A future enhancement to this is to expose a uiController
+        API for a test to remove selection animations at any time during the run.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::notifyDone):
+
 2019-09-09  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests: Report results archive to results.webkit.org
