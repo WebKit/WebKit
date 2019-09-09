@@ -27,6 +27,8 @@
 #include "AuxiliaryProcessProxy.h"
 
 #include "AuxiliaryProcessMessages.h"
+#include "LoadParameters.h"
+#include "WebPageMessages.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -175,6 +177,20 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
         std::unique_ptr<IPC::Encoder> message = WTFMove(m_pendingMessages[i].first);
         OptionSet<IPC::SendOption> sendOptions = m_pendingMessages[i].second;
+#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_PID)
+        if (message->messageName() == "LoadRequestWaitingForPID") {
+            auto buffer = message->buffer();
+            auto bufferSize = message->bufferSize();
+            std::unique_ptr<IPC::Decoder> decoder = makeUnique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
+            LoadParameters loadParameters;
+            String sandboxExtensionPath;
+            if (decoder->decode(loadParameters) && decoder->decode(sandboxExtensionPath)) {
+                SandboxExtension::createHandleForReadByPid(sandboxExtensionPath, processIdentifier(), loadParameters.sandboxExtensionHandle);
+                send(Messages::WebPage::LoadRequest(loadParameters), decoder->destinationID());
+                continue;
+            }
+        }
+#endif
         m_connection->sendMessage(WTFMove(message), sendOptions);
     }
 

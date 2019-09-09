@@ -1,3 +1,35 @@
+2019-09-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Pid is sometimes invalid when creating sandbox extensions by pid.
+        https://bugs.webkit.org/show_bug.cgi?id=201543
+        <rdar://problem/54733465>
+
+        Reviewed by Brent Fulgham.
+
+        There is a race condition when starting a load of a local file, where the WebContent process has not finished
+        launching yet, and its pid is not available. When we try to create a sandbox extension by using the pid of the
+        WebContent process, it is not available in the cases where the WebContent process has just launched and has not
+        finished launching yet. This patch creates a new dummy Web page message, 'LoadRequestWaitingForPID', which will
+        be sent instead of a normal 'LoadRequest' message, and only when the WebContent process has not finished
+        launching. When the WebContent process has finished launching, and we are about to actually send the pending
+        messages, we can detect that a 'LoadRequestWaitingForPID' has been appended for sending, and replace it with a
+        normal 'LoadReqest' message where we have created the sandbox extension issue with a valid pid. The message
+        'LoadRequestWaitingForPID' is never intended to reach the WebContent process, it is just there to replace with
+        a normal 'LoadRequest' message with a new sandbox extension. In the implementation of the message handler on
+        the WebContent process side, we assert that the method is never called. This patch makes sure the ordering of
+        the Web page messages are the same, even when we modify the message.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadFile):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::fileLoadRequest):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-09-09  Youenn Fablet  <youenn@apple.com>
 
         Remove ServiceWorkerProcessProxy
