@@ -116,6 +116,11 @@ public:
     void setPluginsEnabled(bool);
     void setPopupBlockingEnabled(bool);
     void setPrivateBrowsingEnabled(bool);
+
+    void willNavigate();
+    void setShouldSwapToEphemeralSessionOnNextNavigation(bool shouldSwap) { m_shouldSwapToEphemeralSessionOnNextNavigation = shouldSwap; }
+    void setShouldSwapToDefaultSessionOnNextNavigation(bool shouldSwap) { m_shouldSwapToDefaultSessionOnNextNavigation = shouldSwap; }
+
     void setTabKeyCyclesThroughElements(bool);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
@@ -458,6 +463,8 @@ private:
     bool m_hasPendingWebNotificationClick { false };
     bool m_dumpJSConsoleLogInStdErr { false };
     bool m_didCancelClientRedirect { false };
+    bool m_shouldSwapToEphemeralSessionOnNextNavigation { false };
+    bool m_shouldSwapToDefaultSessionOnNextNavigation { false };
 
     double m_databaseDefaultQuota { -1 };
     double m_databaseMaxQuota { -1 };

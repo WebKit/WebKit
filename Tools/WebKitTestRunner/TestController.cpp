@@ -68,6 +68,7 @@
 #include <WebKit/WKUserMediaPermissionCheck.h>
 #include <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
+#include <WebKit/WKWebsitePolicies.h>
 #include <algorithm>
 #include <cstdio>
 #include <ctype.h>
@@ -2811,14 +2812,26 @@ void TestController::decidePolicyForNavigationAction(WKNavigationActionRef navig
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
     WKRetainPtr<WKNavigationActionRef> retainedNavigationAction { navigationAction };
     const bool shouldIgnore { m_policyDelegateEnabled && !m_policyDelegatePermissive };
-    auto decisionFunction = [shouldIgnore, retainedListener, retainedNavigationAction]() {
+    auto decisionFunction = [shouldIgnore, retainedListener, retainedNavigationAction, shouldSwapToEphemeralSessionOnNextNavigation = m_shouldSwapToEphemeralSessionOnNextNavigation, shouldSwapToDefaultSessionOnNextNavigation = m_shouldSwapToDefaultSessionOnNextNavigation]() {
         if (shouldIgnore)
             WKFramePolicyListenerIgnore(retainedListener.get());
         else if (WKNavigationActionShouldPerformDownload(retainedNavigationAction.get()))
             WKFramePolicyListenerDownload(retainedListener.get());
-        else
-            WKFramePolicyListenerUse(retainedListener.get());
+        else {
+            if (shouldSwapToEphemeralSessionOnNextNavigation || shouldSwapToDefaultSessionOnNextNavigation) {
+                ASSERT(shouldSwapToEphemeralSessionOnNextNavigation != shouldSwapToDefaultSessionOnNextNavigation);
+                auto policies = adoptWK(WKWebsitePoliciesCreate());
+                WKRetainPtr<WKWebsiteDataStoreRef> newSession = TestController::websiteDataStore();
+                if (shouldSwapToEphemeralSessionOnNextNavigation)
+                    newSession = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
+                WKWebsitePoliciesSetDataStore(policies.get(), newSession.get());
+                WKFramePolicyListenerUseWithPolicies(retainedListener.get(), policies.get());
+            } else
+                WKFramePolicyListenerUse(retainedListener.get());
+        }
     };
+    m_shouldSwapToEphemeralSessionOnNextNavigation = false;
+    m_shouldSwapToDefaultSessionOnNextNavigation = false;
 
     if (m_shouldDecideNavigationPolicyAfterDelay)
         RunLoop::main().dispatch(WTFMove(decisionFunction));

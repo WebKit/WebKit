@@ -127,6 +127,8 @@ public:
     void setCacheModel(int);
     void setAsynchronousSpellCheckingEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
+    void setShouldSwapToEphemeralSessionOnNextNavigation(bool);
+    void setShouldSwapToDefaultSessionOnNextNavigation(bool);
     void setEncryptedMediaAPIEnabled(bool);
     void setMediaDevicesEnabled(bool);
     void setWebRTCMDNSICECandidatesEnabled(bool);

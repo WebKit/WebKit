@@ -66,7 +66,7 @@
 		1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A215A8011F2609C008AD0F5 /* PluginTest.h */; };
 		1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */; };
 		1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */; };
-		1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.m */; };
+		1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.mm */; };
 		1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A31EB3713466AC100017372 /* ConvertPoint.cpp */; };
 		1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */; };
 		1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */; };
@@ -268,7 +268,7 @@
 		1A215A8011F2609C008AD0F5 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginTest.h; sourceTree = "<group>"; };
 		1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectFromDestroyedPlugin.cpp; sourceTree = "<group>"; };
 		1A2FB84C178C80920059FD96 /* DefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPolicyDelegate.h; sourceTree = "<group>"; };
-		1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPolicyDelegate.m; sourceTree = "<group>"; };
+		1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DefaultPolicyDelegate.mm; sourceTree = "<group>"; };
 		1A31EB3713466AC100017372 /* ConvertPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertPoint.cpp; sourceTree = "<group>"; };
 		1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLWithJavaScriptURLDestroyingPlugin.cpp; sourceTree = "<group>"; };
 		1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToStringAndValueOfObject.cpp; sourceTree = "<group>"; };
@@ -482,7 +482,7 @@
 				A1158D6A18927CE10088C17B /* ios */,
 				A134E53418905E6C00901D06 /* config.h */,
 				1A2FB84C178C80920059FD96 /* DefaultPolicyDelegate.h */,
-				1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.m */,
+				1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.mm */,
 				9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */,
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				1422A2750AF6F4BD00E1A883 /* Delegates */,
@@ -1162,7 +1162,7 @@
 				BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */,
 				F44A531D21B89A4D00DBB99C /* ClassMethodSwizzler.mm in Sources */,
 				53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */,
-				1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.m in Sources */,
+				1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.mm in Sources */,
 				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
 				A1158D581892740C0088C17B /* DumpRenderTreeBrowserView.mm in Sources */,
 				9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */,

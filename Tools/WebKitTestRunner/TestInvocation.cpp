@@ -925,6 +925,16 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setAllowsAnySSLCertificate(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
         return nullptr;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldSwapToEphemeralSessionOnNextNavigation")) {
+        TestController::singleton().setShouldSwapToEphemeralSessionOnNextNavigation(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldSwapToDefaultSessionOnNextNavigation")) {
+        TestController::singleton().setShouldSwapToDefaultSessionOnNextNavigation(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        return nullptr;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ImageCountInGeneralPasteboard")) {
         unsigned count = TestController::singleton().imageCountInGeneralPasteboard();

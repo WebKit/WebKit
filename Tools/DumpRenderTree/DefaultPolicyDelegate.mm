@@ -6,8 +6,11 @@
 //
 //
 
+#import "config.h"
 #import "DefaultPolicyDelegate.h"
 
+#import "DumpRenderTree.h"
+#import "TestRunner.h"
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -16,12 +19,16 @@
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id <WebPolicyDecisionListener>)listener
 {
     if ([WebView _canHandleRequest:request]) {
+        if (![frame frameElement])
+            gTestRunner->willNavigate();
         [listener use];
         return;
     }
 
     WebNavigationType navType = (WebNavigationType)[[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
-    if (navType == WebNavigationTypePlugInRequest) {
+    if (static_cast<unsigned>(navType) == static_cast<unsigned>(WebNavigationTypePlugInRequest)) {
+        if (![frame frameElement])
+            gTestRunner->willNavigate();
         [listener use];
         return;
     }

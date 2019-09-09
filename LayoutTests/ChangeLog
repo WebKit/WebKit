@@ -1,5 +1,21 @@
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html
+        https://bugs.webkit.org/show_bug.cgi?id=201596
+
+        Reviewed by Alex Christensen.
+
+        Update layout test to use testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() &
+        testRunner.setShouldSwapToDefaultSessionOnNextNavigation() instead of the legacy
+        testRunner.setPrivateBrowsingEnabled_DEPRECATED(). The test needed some extra steps to
+        navigate whenever we switch session but it is a lot more realistic and is really switching
+        session on WebKit2. The testRunner.setPrivateBrowsingEnabled_DEPRECATED() was not truly
+        switching session, just making the document think it did.
+
+        * http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html:
+
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
         Resync service workers WPT tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=201589
 

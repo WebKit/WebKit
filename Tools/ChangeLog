@@ -1,3 +1,38 @@
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html
+        https://bugs.webkit.org/show_bug.cgi?id=201596
+
+        Reviewed by Alex Christensen.
+
+        Add new testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() / testRunner.setShouldSwapToDefaultSessionOnNextNavigation()
+        test functions to support dynamic switching between ephemeral and default/persistent session in layout tests. The new methods
+        do the right thing for WebKit2 and truly switch session, unlike setPrivateBrowsingEnabled_DEPRECATED() which was merely making
+        the WebCore::Document think it changed session.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setShouldSwapToEphemeralSessionOnNextNavigationCallback):
+        (setShouldSwapToDefaultSessionOnNextNavigationCallback):
+        (TestRunner::staticFunctions):
+        (TestRunner::willNavigate):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation):
+        (TestRunner::setShouldSwapToDefaultSessionOnNextNavigation):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation):
+        (WTR::TestRunner::setShouldSwapToDefaultSessionOnNextNavigation):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::decidePolicyForNavigationAction):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setShouldSwapToEphemeralSessionOnNextNavigation):
+        (WTR::TestController::setShouldSwapToDefaultSessionOnNextNavigation):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-09-09  Aakash Jain  <aakash_jain@apple.com>
 
         EWS testtube emoji doesn't exist on macOS Mojave

@@ -594,9 +594,6 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
         if (apiWebsitePolicies) {
             if (auto* websiteDataStore = apiWebsitePolicies->websiteDataStore()) {
-                auto sessionID = websiteDataStore->websiteDataStore().sessionID();
-                if (!sessionID.isEphemeral() && sessionID != PAL::SessionID::defaultSessionID())
-                    [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._websiteDataStore must be nil, default, or non-persistent."];
                 if (subframeNavigation)
                     [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._websiteDataStore must be nil for subframe navigations."];
             }

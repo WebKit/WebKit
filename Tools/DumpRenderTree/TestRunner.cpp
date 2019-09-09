@@ -1128,6 +1128,30 @@ static JSValueRef setPrivateBrowsingEnabledCallback(JSContextRef context, JSObje
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setShouldSwapToEphemeralSessionOnNextNavigationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setShouldSwapToEphemeralSessionOnNextNavigation(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setShouldSwapToDefaultSessionOnNextNavigationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setShouldSwapToDefaultSessionOnNextNavigation(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef setJavaScriptCanAccessClipboardCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
@@ -2220,6 +2244,8 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setPluginsEnabled", setPluginsEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPrinting", setPrintingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPrivateBrowsingEnabled_DEPRECATED", setPrivateBrowsingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setShouldSwapToEphemeralSessionOnNextNavigation", setShouldSwapToEphemeralSessionOnNextNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setShouldSwapToDefaultSessionOnNextNavigation", setShouldSwapToDefaultSessionOnNextNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSerializeHTTPLoads", setSerializeHTTPLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSpatialNavigationEnabled", setSpatialNavigationEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setStopProvisionalFrameLoads", setStopProvisionalFrameLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2534,4 +2560,12 @@ void TestRunner::setOpenPanelFilesMediaIcon(JSContextRef context, JSValueRef med
 void TestRunner::cleanup()
 {
     clearTestRunnerCallbacks();
+}
+
+void TestRunner::willNavigate()
+{
+    if (m_shouldSwapToEphemeralSessionOnNextNavigation || m_shouldSwapToDefaultSessionOnNextNavigation) {
+        ASSERT(m_shouldSwapToEphemeralSessionOnNextNavigation != m_shouldSwapToDefaultSessionOnNextNavigation);
+        setPrivateBrowsingEnabled(m_shouldSwapToEphemeralSessionOnNextNavigation);
+    }
 }

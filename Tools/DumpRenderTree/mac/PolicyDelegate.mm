@@ -85,9 +85,11 @@
 
     printf("%s\n", [message UTF8String]);
 
-    if (permissiveDelegate)
+    if (permissiveDelegate) {
+        if (![frame frameElement])
+            gTestRunner->willNavigate();
         [listener use];
-    else
+    } else
         [listener ignore];
 
     if (controllerToNotifyDone) {

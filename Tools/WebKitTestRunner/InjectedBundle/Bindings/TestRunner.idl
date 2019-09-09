@@ -105,7 +105,8 @@ interface TestRunner {
     void setIgnoresViewportScaleLimits(boolean value);
     void setShouldDownloadUndisplayableMIMETypes(boolean value);
     
-    // DEPRECATED: Use <!-- webkit-test-runner [ useEphemeralSession=true ] --> instead.
+    // DEPRECATED: Use <!-- webkit-test-runner [ useEphemeralSession=true ] --> instead, or
+    // testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() / testRunner.setShouldSwapToDefaultSessionOnNextNavigation().
     void setPrivateBrowsingEnabled_DEPRECATED(boolean value);
 
     // Special DOM functions.
@@ -252,6 +253,9 @@ interface TestRunner {
     void setAuthenticationPassword(DOMString password);
 
     void setAllowsAnySSLCertificate(boolean value);
+
+    void setShouldSwapToEphemeralSessionOnNextNavigation(boolean value);
+    void setShouldSwapToDefaultSessionOnNextNavigation(boolean value);
 
     // Secure text input mode (Mac only)
     readonly attribute boolean secureEventInputIsEnabled;

@@ -186,6 +186,8 @@ public:
     void setAuthenticationUsername(String username) { m_authenticationUsername = username; }
     void setAuthenticationPassword(String password) { m_authenticationPassword = password; }
     void setAllowsAnySSLCertificate(bool);
+    void setShouldSwapToEphemeralSessionOnNextNavigation(bool value) { m_shouldSwapToEphemeralSessionOnNextNavigation = value; }
+    void setShouldSwapToDefaultSessionOnNextNavigation(bool value) { m_shouldSwapToDefaultSessionOnNextNavigation = value; }
 
     void setBlockAllPlugins(bool shouldBlock);
     void setPluginSupportedMode(const String&);
@@ -593,6 +595,8 @@ private:
     uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
     bool m_shouldDismissJavaScriptAlertsAsynchronously { false };
     bool m_allowsAnySSLCertificate { true };
+    bool m_shouldSwapToEphemeralSessionOnNextNavigation { false };
+    bool m_shouldSwapToDefaultSessionOnNextNavigation { false };
 };
 
 struct TestCommand {

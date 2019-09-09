@@ -1,3 +1,17 @@
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html
+        https://bugs.webkit.org/show_bug.cgi?id=201596
+
+        Reviewed by Alex Christensen.
+
+        Allow WKFramePolicyListenerUseWithPolicies() C API to switch to a persistent non-default session.
+        This is important since WebKitTestRunner is not using the default session anymore and I need to
+        be able to switch it back to its normal session after going to an ephemeral one.
+
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (useWithPolicies):
+
 2019-09-09  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate unused SPI to preconnect to a server
