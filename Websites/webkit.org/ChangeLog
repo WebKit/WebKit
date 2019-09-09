@@ -1,3 +1,14 @@
+2019-09-09  Jon Lee  <jonlee@apple.com>
+
+        Add boids time test
+        https://bugs.webkit.org/show_bug.cgi?id=201612
+
+        Rubber-stamped by Justin Fan.
+
+        * demos/webgpu/compute-boids-compile.html: Added.
+        * demos/webgpu/scripts/compute-boids-compile.js: Added.
+        * demos/webgpu/scripts/compute-boids-utils.js: Added.
+
 2019-09-03  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Add compute-boids to WebGPU demo page

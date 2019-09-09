@@ -1,0 +1,26 @@
+<!-- Based off of https://github.com/austinEng/webgpu-samples/blob/master/compute_boids.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width">
+    <title>WebGPU Compute Boids Compile Time Test</title>
+    <script src="scripts/gl-matrix-min.js"></script>
+    <script src="scripts/compute-boids-utils.js"></script>
+    <script src="scripts/compute-boids-compile.js"> </script>
+    <style>
+    body {
+        font-family: system-ui;
+    }
+
+    </style>
+</head>
+
+<body>
+    <h1>WebGPU Compute Boids Compile Time Test</h1>
+    <div id="not-supported" style="display: none">WebGPU not supported! Please visit <a href="//webgpu.io">webgpu.io</a> to see the current implementation status.</div>
+    <div id="results"></div>
+    <canvas height=10 width=10></canvas>
+</body>
+
+</html>
