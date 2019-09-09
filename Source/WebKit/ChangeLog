@@ -1,3 +1,9 @@
+2019-09-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.26.0 release
+
+        * gtk/NEWS: Add release notes for 2.26.0.
+
 2019-09-06  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Do not enable the sandbox in Snap

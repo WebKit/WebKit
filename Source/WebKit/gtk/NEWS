@@ -1,3 +1,14 @@
+================
+WebKitGTK 2.26.0
+================
+
+What's new in WebKitGTK+ 2.26.0?
+
+  - Disable process swap on navigation.
+  - Do not enable the sandbox in Snap.
+  - Fix sandbox parsing DISPLAY on X11.
+  - Translation updates: Brazilian Portuguese, German.
+
 =================
 WebKitGTK 2.25.92
 =================
