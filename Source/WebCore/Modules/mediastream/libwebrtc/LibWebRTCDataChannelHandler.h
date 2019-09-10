@@ -41,6 +41,7 @@ struct DataChannelInit;
 
 namespace WebCore {
 
+class Document;
 class RTCDataChannelEvent;
 class RTCDataChannelHandlerClient;
 struct RTCDataChannelInit;
@@ -53,7 +54,7 @@ public:
     ~LibWebRTCDataChannelHandler();
 
     static webrtc::DataChannelInit fromRTCDataChannelInit(const RTCDataChannelInit&);
-    static Ref<RTCDataChannelEvent> channelEvent(ScriptExecutionContext&, rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
+    static Ref<RTCDataChannelEvent> channelEvent(Document&, rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
 
 private:
     // RTCDataChannelHandler API

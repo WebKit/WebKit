@@ -73,7 +73,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorCallWith=Document,
     EnabledAtRuntime=PeerConnection,
     ExportMacro=WEBCORE_EXPORT,
     JSBuiltinConstructor
@@ -146,7 +146,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     // 6.1 Peer-to-peer data API
     // FIXME 169644: missing sctp
 
-    [CallWith=ScriptExecutionContext, MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] USVString label, optional RTCDataChannelInit options);
+    [MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] USVString label, optional RTCDataChannelInit options);
     attribute EventHandler ondatachannel;
 
 

@@ -67,24 +67,25 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RTCPeerConnection);
 
 Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context)
 {
-    auto peerConnection = adoptRef(*new RTCPeerConnection(context));
+    auto& document = downcast<Document>(context);
+    auto peerConnection = adoptRef(*new RTCPeerConnection(document));
     peerConnection->suspendIfNeeded();
     // RTCPeerConnection may send events at about any time during its lifetime.
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.
     if (!peerConnection->isClosed()) {
         peerConnection->m_pendingActivity = peerConnection->makePendingActivity(peerConnection.get());
-        if (auto* page = downcast<Document>(context).page()) {
+        if (auto* page = document.page()) {
             peerConnection->registerToController(page->rtcController());
-            page->libWebRTCProvider().setEnableLogging(!context.sessionID().isEphemeral());
+            page->libWebRTCProvider().setEnableLogging(!document.sessionID().isEphemeral());
         }
     }
     return peerConnection;
 }
 
-RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
+RTCPeerConnection::RTCPeerConnection(Document& document)
+    : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(downcast<Document>(context).logger())
+    , m_logger(document.logger())
     , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
 #endif
     , m_backend(PeerConnectionBackend::create(*this))
@@ -92,7 +93,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
     ALWAYS_LOG(LOGIDENTIFIER);
 
 #if !RELEASE_LOG_DISABLED
-    auto* page = downcast<Document>(context).page();
+    auto* page = document.page();
     if (page && !page->settings().webRTCEncryptionEnabled())
         ALWAYS_LOG(LOGIDENTIFIER, "encryption is disabled");
 #endif
@@ -318,7 +319,7 @@ static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> ice
 ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnection::certificatesFromConfiguration(const RTCConfiguration& configuration)
 {
     auto currentMilliSeconds = WallTime::now().secondsSinceEpoch().milliseconds();
-    auto& origin = downcast<Document>(*scriptExecutionContext()).securityOrigin();
+    auto& origin = document()->securityOrigin();
 
     Vector<MediaEndpointConfiguration::CertificatePEM> certificates;
     certificates.reserveInitialCapacity(configuration.certificates.size());
@@ -401,7 +402,7 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
     m_backend->getStats(WTFMove(promise));
 }
 
-ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
+ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& label, RTCDataChannelInit&& options)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -421,7 +422,7 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExec
     if (!channelHandler)
         return Exception { NotSupportedError };
 
-    return RTCDataChannel::create(context, WTFMove(channelHandler), WTFMove(label), WTFMove(options));
+    return RTCDataChannel::create(*document(), WTFMove(channelHandler), WTFMove(label), WTFMove(options));
 }
 
 bool RTCPeerConnection::doClose()
@@ -667,6 +668,11 @@ const Vector<RefPtr<RTCRtpTransceiver>>& RTCPeerConnection::getTransceivers() co
 {
     m_backend->collectTransceivers();
     return m_transceiverSet->list();
+}
+
+Document* RTCPeerConnection::document()
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 #if !RELEASE_LOG_DISABLED

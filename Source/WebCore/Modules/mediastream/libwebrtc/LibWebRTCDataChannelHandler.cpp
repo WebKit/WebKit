@@ -56,7 +56,7 @@ static inline String fromStdString(const std::string& value)
     return String::fromUTF8(value.data(), value.length());
 }
 
-Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(ScriptExecutionContext& context, rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
+Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(Document& document, rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
 {
     auto protocol = dataChannel->protocol();
     auto label = dataChannel->label();
@@ -70,7 +70,7 @@ Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(ScriptExecuti
     init.id = dataChannel->id();
 
     auto handler =  makeUnique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
-    auto channel = RTCDataChannel::create(context, WTFMove(handler), fromStdString(label), WTFMove(init));
+    auto channel = RTCDataChannel::create(document, WTFMove(handler), fromStdString(label), WTFMove(init));
 
     return RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(channel));
 }

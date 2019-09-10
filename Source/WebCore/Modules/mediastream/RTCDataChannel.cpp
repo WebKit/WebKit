@@ -53,10 +53,10 @@ static const AtomString& arraybufferKeyword()
     return arraybuffer;
 }
 
-Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
+Ref<RTCDataChannel> RTCDataChannel::create(Document& document, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
 {
     ASSERT(handler);
-    auto channel = adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
+    auto channel = adoptRef(*new RTCDataChannel(document, WTFMove(handler), WTFMove(label), WTFMove(options)));
     channel->suspendIfNeeded();
     channel->m_handler->setClient(channel.get());
     channel->setPendingActivity(channel.get());
@@ -78,13 +78,13 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(Document& document, RTCDataC
     } };
 }
 
-RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
-    : ActiveDOMObject(&context)
+RTCDataChannel::RTCDataChannel(Document& document, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
+    : ActiveDOMObject(document)
     , m_handler(WTFMove(handler))
     , m_scheduledEventTimer(*this, &RTCDataChannel::scheduledEventTimerFired)
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))
-    , m_messageQueue(createMessageQueue(downcast<Document>(context), *this))
+    , m_messageQueue(createMessageQueue(document, *this))
 {
 }
 

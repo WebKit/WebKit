@@ -663,7 +663,7 @@ void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChanne
         if (protectedThis->isStopped())
             return;
         auto& connection = protectedThis->m_peerConnectionBackend.connection();
-        connection.fireEvent(LibWebRTCDataChannelHandler::channelEvent(*connection.scriptExecutionContext(), WTFMove(dataChannel)));
+        connection.fireEvent(LibWebRTCDataChannelHandler::channelEvent(*connection.document(), WTFMove(dataChannel)));
     });
 }
 

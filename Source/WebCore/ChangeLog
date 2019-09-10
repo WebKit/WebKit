@@ -1,5 +1,36 @@
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
+        RTCPeerConnection can only be instantiated in documents
+        https://bugs.webkit.org/show_bug.cgi?id=201639
+
+        Reviewed by Alex Christensen.
+
+        Make it clear that RTCDataChannel expects Document since peer connections
+        and data channels can only be instantiated in document environments.
+        We keep one downcast in RTCPeerConnection constructor due to a limitation
+        in binding generator for JS built-ins.
+        No change of behavior.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::certificatesFromConfiguration):
+        (WebCore::RTCPeerConnection::createDataChannel):
+        (WebCore::RTCPeerConnection::document):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::channelEvent):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+
+2019-09-10  Youenn Fablet  <youenn@apple.com>
+
         Remove MediaStreamPrivate::scheduleDeferredTask
         https://bugs.webkit.org/show_bug.cgi?id=200975
 
