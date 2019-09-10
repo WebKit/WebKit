@@ -181,7 +181,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
         if (message->messageName() == "LoadRequestWaitingForPID") {
             auto buffer = message->buffer();
             auto bufferSize = message->bufferSize();
-            std::unique_ptr<IPC::Decoder> decoder = makeUnique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
+            std::unique_ptr<IPC::Decoder> decoder = std::make_unique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
             LoadParameters loadParameters;
             String sandboxExtensionPath;
             if (decoder->decode(loadParameters) && decoder->decode(sandboxExtensionPath)) {
