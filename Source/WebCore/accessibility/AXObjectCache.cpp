@@ -1496,6 +1496,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         textChanged(element);
     else if (attrName == forAttr && is<HTMLLabelElement>(*element))
         labelChanged(element);
+    else if (attrName == tabindexAttr)
+        childrenChanged(element->parentNode(), element);
 
     if (!attrName.localName().string().startsWith("aria-"))
         return;
