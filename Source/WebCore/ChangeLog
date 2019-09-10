@@ -1,3 +1,50 @@
+2019-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Option + arrow moves caret past whitespace on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=201575
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by findNextWordFromIndex on iOS behaving differently from macOS and UIKit by skipping
+        trailing whitespace after a word when moving forward and not skipping leading whitespace when moving backward.
+
+        This patch introduces a new mode (StopAfterWord) of findNextWordFromIndex in iOS that better matches
+        the behavior of findNextWordFromIndex on macOS and UIKit, and use it in various modify* functions of
+        FrameSelection when the selection update is triggered by user.
+
+        The legacy mode (LegacyStopBeforeWord) is used in all other call sites as well as when modify* functions
+        are invoked from author scripts.
+
+        Test: editing/selection/ios/move-by-word-with-keyboard.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::nextWordWhitespaceModeInIOS): Added. A helper to convert EUserTriggered to NextWordModeInIOS.
+        (WebCore::FrameSelection::nextWordPositionForPlatform):
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingForward):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modifyMovingBackward):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::updateAppearance):
+        * editing/FrameSelection.h:
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::isWordStartMatch const):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousWordPositionBoundary):
+        (WebCore::previousWordPosition):
+        (WebCore::nextWordPositionBoundary):
+        (WebCore::nextWordPosition):
+        * editing/VisibleUnits.h:
+        * platform/text/TextBoundaries.cpp:
+        (WebCore::findNextWordFromIndex):
+        * platform/text/TextBoundaries.h:
+        * platform/text/mac/TextBoundaries.mm:
+        (WebCore::findNextWordFromIndex): Added a new mode.
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html is frequently timing out on iOS EWS bots

@@ -2335,7 +2335,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
     size_t wordBreakSearchStart = start + length;
     while (wordBreakSearchStart > start)
-        wordBreakSearchStart = findNextWordFromIndex(StringView(m_buffer.data(), m_buffer.size()), wordBreakSearchStart, false /* backwards */);
+        wordBreakSearchStart = findNextWordFromIndex(StringView(m_buffer.data(), m_buffer.size()), wordBreakSearchStart, NextWordDirection::Backward);
     return wordBreakSearchStart == start;
 }
 

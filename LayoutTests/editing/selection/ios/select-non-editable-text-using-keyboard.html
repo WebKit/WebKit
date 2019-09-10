@@ -49,7 +49,7 @@ async function testExtendSelectionToEndOfWord()
 
     debug("<br>Press Shift + Option + right arrow to select to the end of the word:");
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("rightArrow", ["shiftKey", "altKey"]) , document, "selectionchange");
-    shouldBeEqualToString("window.getSelection().toString()", "Here's ");
+    shouldBeEqualToString("window.getSelection().toString()", "Here's");
 }
 
 async function testExtendSelectionToBeginningOfWord()
@@ -79,6 +79,13 @@ async function testExtendSelectionToBeginningOfLine()
     shouldBeEqualToString("window.getSelection().toString()", "The misfits.");
 }
 
+async function waitForSecondaryPresentationUpdateIfNeeded()
+{
+    // There might be a secondary selectionchange event after moving by paragraph boundary. See webkit.org/b/199851
+    if (window.testRunner)
+        await UIHelper.ensurePresentationUpdate();
+}
+
 async function testExtendSelectionUp()
 {
     await UIHelper.callFunctionAndWaitForEvent(() => selection.setBaseAndExtent(paragraphs[1].firstChild, 1, paragraphs[1].firstChild, 0), document, "selectionchange");
@@ -86,6 +93,7 @@ async function testExtendSelectionUp()
     debug("<br>Press Shift + up arrow to select up:");
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("upArrow", ["shiftKey"]) , document, "selectionchange");
     shouldBeEqualToString("window.getSelection().toString()", "Here's to the crazy ones.\n\nT");
+    await waitForSecondaryPresentationUpdateIfNeeded();
 }
 
 async function testExtendSelectionDown()
@@ -95,6 +103,7 @@ async function testExtendSelectionDown()
     debug("<br>Press Shift + down arrow to select down:");
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("downArrow", ["shiftKey"]) , document, "selectionchange");
     shouldBeEqualToString("window.getSelection().toString()", "The misfits.\n\nT");
+    await waitForSecondaryPresentationUpdateIfNeeded();
 }
 
 async function testExtendSelectionToEndOfParagraph()
@@ -107,6 +116,8 @@ async function testExtendSelectionToEndOfParagraph()
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("downArrow", ["shiftKey", "altKey"]) , document, "selectionchange");
     shouldBeEqualToString("window.getSelection().toString()", "Here's to the crazy ones.");
 
+    await waitForSecondaryPresentationUpdateIfNeeded();
+
     toggleOnlyShowTestContainer();
 }
 
@@ -118,7 +129,10 @@ async function testExtendSelectionToBeginningOfParagraph()
 
     debug("<br>Press Shift + Option + up arrow to select to the beginning of the paragraph:");
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("upArrow", ["shiftKey", "altKey"]) , document, "selectionchange");
+
     shouldBeEqualToString("window.getSelection().toString()", "The rebels.");
+
+    await waitForSecondaryPresentationUpdateIfNeeded();
 
     toggleOnlyShowTestContainer();
 }
@@ -133,6 +147,8 @@ async function testExtendSelectionToEndOfDocument()
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("downArrow", ["shiftKey", "ctrlKey"]) , document, "selectionchange");
     shouldBeEqualToString("window.getSelection().toString()", "Here's to the crazy ones.\n\nThe misfits.\n\nThe rebels.");
 
+    await waitForSecondaryPresentationUpdateIfNeeded();
+
     toggleOnlyShowTestContainer();
 }
 
@@ -145,6 +161,8 @@ async function testExtendSelectionToBeginningOfDocument()
     debug("<br>Press Shift + Control + up arrow to select to the beginning of the document:");
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("upArrow", ["shiftKey", "ctrlKey"]) , document, "selectionchange");
     shouldBeEqualToString("window.getSelection().toString()", "Here's to the crazy ones.\n\nThe misfits.");
+
+    await waitForSecondaryPresentationUpdateIfNeeded();
 
     toggleOnlyShowTestContainer();
 }

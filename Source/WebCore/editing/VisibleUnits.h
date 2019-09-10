@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EditingBoundary.h"
+#include "TextBoundaries.h"
 #include "VisibleSelection.h"
 
 namespace WebCore {
@@ -40,8 +41,8 @@ enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
 // words
 WEBCORE_EXPORT VisiblePosition startOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
 WEBCORE_EXPORT VisiblePosition endOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
-WEBCORE_EXPORT VisiblePosition previousWordPosition(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition nextWordPosition(const VisiblePosition &);
+WEBCORE_EXPORT VisiblePosition previousWordPosition(const VisiblePosition&, NextWordModeInIOS = NextWordModeInIOS::LegacyStopBeforeWord);
+WEBCORE_EXPORT VisiblePosition nextWordPosition(const VisiblePosition&, NextWordModeInIOS = NextWordModeInIOS::LegacyStopBeforeWord);
 VisiblePosition rightWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 VisiblePosition leftWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 bool isStartOfWord(const VisiblePosition&);

@@ -761,6 +761,7 @@ VisiblePosition endOfWord(const VisiblePosition& c, EWordSide side)
     return nextBoundary(p, endWordBoundary);
 }
 
+template <NextWordModeInIOS nextWordModeInIOS>
 static unsigned previousWordPositionBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.substring(0, offset))) {
@@ -768,14 +769,17 @@ static unsigned previousWordPositionBoundary(StringView text, unsigned offset, B
         return 0;
     }
     needMoreContext = false;
-    return findNextWordFromIndex(text, offset, false);
+    return findNextWordFromIndex(text, offset, NextWordDirection::Backward, nextWordModeInIOS);
 }
 
-VisiblePosition previousWordPosition(const VisiblePosition& position)
+VisiblePosition previousWordPosition(const VisiblePosition& position, NextWordModeInIOS nextWordModeInIOS)
 {
-    return position.honorEditingBoundaryAtOrBefore(previousBoundary(position, previousWordPositionBoundary));
+    if (nextWordModeInIOS == NextWordModeInIOS::LegacyStopBeforeWord) // FIXME: Remove this code path.
+        return position.honorEditingBoundaryAtOrBefore(previousBoundary(position, previousWordPositionBoundary<NextWordModeInIOS::LegacyStopBeforeWord>));
+    return position.honorEditingBoundaryAtOrBefore(previousBoundary(position, previousWordPositionBoundary<NextWordModeInIOS::StopAfterWord>));
 }
 
+template <NextWordModeInIOS nextWordModeInIOS>
 static unsigned nextWordPositionBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     if (mayHaveMoreContext && endOfFirstWordBoundaryContext(text.substring(offset)) == text.length() - offset) {
@@ -783,12 +787,14 @@ static unsigned nextWordPositionBoundary(StringView text, unsigned offset, Bound
         return text.length();
     }
     needMoreContext = false;
-    return findNextWordFromIndex(text, offset, true);
+    return findNextWordFromIndex(text, offset, NextWordDirection::Forward, nextWordModeInIOS);
 }
 
-VisiblePosition nextWordPosition(const VisiblePosition& position)
+VisiblePosition nextWordPosition(const VisiblePosition& position, NextWordModeInIOS nextWordModeInIOS)
 {
-    return position.honorEditingBoundaryAtOrAfter(nextBoundary(position, nextWordPositionBoundary));
+    if (nextWordModeInIOS == NextWordModeInIOS::LegacyStopBeforeWord) // FIXME: Remove this code path.
+        return position.honorEditingBoundaryAtOrAfter(nextBoundary(position, nextWordPositionBoundary<NextWordModeInIOS::LegacyStopBeforeWord>));
+    return position.honorEditingBoundaryAtOrAfter(nextBoundary(position, nextWordPositionBoundary<NextWordModeInIOS::StopAfterWord>));
 }
 
 bool isStartOfWord(const VisiblePosition& p)

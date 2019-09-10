@@ -1,3 +1,20 @@
+2019-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Option + arrow moves caret past whitespace on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=201575
+
+        Reviewed by Wenson Hsieh.
+
+        Added a new test for moving caret by word granularity on iOS.
+
+        * editing/selection/ios/move-by-word-with-keyboard-expected.txt: Added.
+        * editing/selection/ios/move-by-word-with-keyboard.html: Added.
+        * editing/selection/ios/select-non-editable-text-using-keyboard-expected.txt: Rebaselined.
+        * editing/selection/ios/select-non-editable-text-using-keyboard.html: Updated the expected
+        selection string due to the behavior change. Also fixed a bug that some test cases were
+        not waiting for a secondary selectionchange event that happens after an extra selection
+        update with character granularity introduced in r247524.
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html is frequently timing out on iOS EWS bots

@@ -61,11 +61,11 @@ unsigned startOfLastWordBoundaryContext(StringView text)
 
 #if !PLATFORM(COCOA)
 
-int findNextWordFromIndex(StringView text, int position, bool forward)
+int findNextWordFromIndex(StringView text, int position, NextWordDirection direction, NextWordModeInIOS)
 {
     UBreakIterator* it = wordBreakIterator(text);
 
-    if (forward) {
+    if (direction == NextWordDirection::Forward) {
         position = ubrk_following(it, position);
         while (position != UBRK_DONE) {
             // We stop searching when the character preceeding the break is alphanumeric.

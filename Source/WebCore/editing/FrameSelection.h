@@ -299,16 +299,16 @@ private:
     VisiblePosition positionForPlatform(bool isGetStart) const;
     VisiblePosition startForPlatform() const;
     VisiblePosition endForPlatform() const;
-    VisiblePosition nextWordPositionForPlatform(const VisiblePosition&);
+    VisiblePosition nextWordPositionForPlatform(const VisiblePosition&, EUserTriggered);
 
-    VisiblePosition modifyExtendingRight(TextGranularity);
-    VisiblePosition modifyExtendingForward(TextGranularity);
-    VisiblePosition modifyMovingRight(TextGranularity, bool* reachedBoundary = nullptr);
-    VisiblePosition modifyMovingForward(TextGranularity, bool* reachedBoundary = nullptr);
-    VisiblePosition modifyExtendingLeft(TextGranularity);
-    VisiblePosition modifyExtendingBackward(TextGranularity);
-    VisiblePosition modifyMovingLeft(TextGranularity, bool* reachedBoundary = nullptr);
-    VisiblePosition modifyMovingBackward(TextGranularity, bool* reachedBoundary = nullptr);
+    VisiblePosition modifyExtendingRight(TextGranularity, EUserTriggered);
+    VisiblePosition modifyExtendingForward(TextGranularity, EUserTriggered);
+    VisiblePosition modifyMovingRight(TextGranularity, EUserTriggered, bool* reachedBoundary = nullptr);
+    VisiblePosition modifyMovingForward(TextGranularity, EUserTriggered, bool* reachedBoundary = nullptr);
+    VisiblePosition modifyExtendingLeft(TextGranularity, EUserTriggered);
+    VisiblePosition modifyExtendingBackward(TextGranularity, EUserTriggered);
+    VisiblePosition modifyMovingLeft(TextGranularity, EUserTriggered, bool* reachedBoundary = nullptr);
+    VisiblePosition modifyMovingBackward(TextGranularity, EUserTriggered, bool* reachedBoundary = nullptr);
 
     LayoutUnit lineDirectionPointForBlockDirectionNavigation(EPositionType);
 
