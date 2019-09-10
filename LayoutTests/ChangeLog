@@ -1,3 +1,16 @@
+2019-09-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION: [ Catalina WK2 ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=201620
+        <rdar://problem/51524958>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html:
+        Remove the timeout value given those tests should never time out.
+        * platform/mac-wk2/TestExpectations:
+        Change the test expectation to Pass.
+
 2019-09-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r249460): LayoutTests/webgpu/viewport-scissor-rect-triangle-strip.html is Failing

@@ -1,3 +1,17 @@
+2019-09-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION: [ Catalina WK2 ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=201620
+        <rdar://problem/51524958>
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::WebCore::createAttestedCredentialDataFromU2fRegisterResponse):
+        Change the way how the aaguid is initialized to see if that fixes the issue.
+
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
         Add missing origin check for Service-Worker-Allowed header
