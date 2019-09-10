@@ -1086,13 +1086,6 @@ uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frame
     return pageCount;
 }
 
-void WebPageProxy::drawToPDFCallback(const IPC::DataReference& pdfData, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<DrawToPDFCallback>(callbackID);
-    RELEASE_ASSERT(callback);
-    callback->performCallbackWithReturnValue(pdfData);
-}
-
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
     process().send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), m_webPageID);

@@ -257,6 +257,9 @@
 		514958BE1F7427AC00E87BAD /* WKWebViewAutofillTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */; };
 		515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */; };
 		515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */; };
+		516281252325C18000BB7E42 /* TestPDFDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516281242325C17B00BB7E42 /* TestPDFDocument.mm */; };
+		516281272325C19800BB7E42 /* PDFSnapshot.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516281262325C19100BB7E42 /* PDFSnapshot.mm */; };
+		516281292325C45400BB7E42 /* PDFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 516281282325C45400BB7E42 /* PDFKit.framework */; };
 		5165FE04201EE620009F7EC3 /* MessagePortProviders.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */; };
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
@@ -1746,6 +1749,10 @@
 		514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewAutofillTests.mm; sourceTree = "<group>"; };
 		515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StoreBlobToBeDeleted.html; sourceTree = "<group>"; };
 		515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StoreBlobThenDelete.mm; sourceTree = "<group>"; };
+		516281232325C17A00BB7E42 /* TestPDFDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestPDFDocument.h; path = cocoa/TestPDFDocument.h; sourceTree = "<group>"; };
+		516281242325C17B00BB7E42 /* TestPDFDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestPDFDocument.mm; path = cocoa/TestPDFDocument.mm; sourceTree = "<group>"; };
+		516281262325C19100BB7E42 /* PDFSnapshot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFSnapshot.mm; sourceTree = "<group>"; };
+		516281282325C45400BB7E42 /* PDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PDFKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/PDFKit.framework; sourceTree = DEVELOPER_DIR; };
 		5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessagePortProviders.mm; sourceTree = "<group>"; };
 		51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-1.html"; sourceTree = "<group>"; };
 		51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-2.html"; sourceTree = "<group>"; };
@@ -2571,6 +2578,7 @@
 				5CFACF63226F73C60056C7D0 /* libboringssl.a in Frameworks */,
 				7C83E03F1D0A61A000FEBCF3 /* libicucore.dylib in Frameworks */,
 				578CBD67204FB2C80083B9F2 /* LocalAuthentication.framework in Frameworks */,
+				516281292325C45400BB7E42 /* PDFKit.framework in Frameworks */,
 				7A010BCD1D877C0D00EDE72A /* QuartzCore.framework in Frameworks */,
 				574F55D2204D47F0002948C6 /* Security.framework in Frameworks */,
 			);
@@ -2668,6 +2676,8 @@
 				5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */,
 				2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */,
 				2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */,
+				516281232325C17A00BB7E42 /* TestPDFDocument.h */,
+				516281242325C17B00BB7E42 /* TestPDFDocument.mm */,
 				A14FC58D1B8AE36500D107EB /* TestProtocol.h */,
 				A14FC58E1B8AE36500D107EB /* TestProtocol.mm */,
 				2EFF06D21D8AEDBB0004BB30 /* TestWKWebView.h */,
@@ -2829,6 +2839,7 @@
 				9BDD95561F83683600D20C60 /* PasteRTFD.mm */,
 				9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */,
 				51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */,
+				516281262325C19100BB7E42 /* PDFSnapshot.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,
 				83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
@@ -3099,6 +3110,7 @@
 				4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */,
 				7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */,
 				578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */,
+				516281282325C45400BB7E42 /* PDFKit.framework */,
 				7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */,
 				574F55D0204D471C002948C6 /* Security.framework */,
 			);
@@ -4632,6 +4644,7 @@
 				9BDD95581F83683600D20C60 /* PasteRTFD.mm in Sources */,
 				9B2346421F943E2700DB1D23 /* PasteWebArchive.mm in Sources */,
 				51D8C1902267B26D00797E40 /* PDFLinkReferrer.mm in Sources */,
+				516281272325C19800BB7E42 /* PDFSnapshot.mm in Sources */,
 				7C83E0531D0A643A00FEBCF3 /* PendingAPIRequestURL.cpp in Sources */,
 				3FCC4FE51EC4E8520076E37C /* PictureInPictureDelegate.mm in Sources */,
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
@@ -4730,6 +4743,7 @@
 				F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */,
 				F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */,
 				F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */,
+				516281252325C18000BB7E42 /* TestPDFDocument.mm in Sources */,
 				5774AA6821FBBF7800AF2A1B /* TestSOAuthorization.mm in Sources */,
 				F4CD74C920FDB49600DE3794 /* TestURLSchemeHandler.mm in Sources */,
 				F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */,

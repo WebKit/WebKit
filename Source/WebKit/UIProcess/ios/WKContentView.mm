@@ -720,6 +720,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     WebKit::PrintInfo printInfo;
     printInfo.pageSetupScaleFactor = 1;
     printInfo.snapshotFirstPage = printFormatter.snapshotFirstPage;
+
+    // FIXME: Paginate when exporting PDFs taller than 200"
     if (printInfo.snapshotFirstPage) {
         static const CGFloat maximumPDFHeight = 200 * 72; // maximum PDF height for a single page is 200 inches
         CGSize contentSize = self.bounds.size;

@@ -2033,7 +2033,7 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
 
 bool RenderElement::hasOutlineAnnotation() const
 {
-    return element() && element()->isLink() && document().printing();
+    return element() && element()->isLink() && (document().printing() || (view().frameView().paintBehavior() & PaintBehavior::AnnotateLinks));
 }
 
 bool RenderElement::hasSelfPaintingLayer() const

@@ -1,3 +1,54 @@
+2019-09-10  Brady Eidson  <beidson@apple.com>
+
+        Add SPI to save a PDF from the contents of a WKWebView.
+        <rdar://problem/48955900> and https://bugs.webkit.org/show_bug.cgi?id=195765
+
+        Reviewed by Tim Horton.
+
+        -Add an "Export to PDF..." menu option to MiniBrowser.
+        -Add API tests for the API itself.
+
+        * MiniBrowser/MiniBrowser.entitlements:
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController forceRepaint:]):
+        (-[BrowserWindowController saveAsPDF:]):
+
+        * MiniBrowser/mac/MainMenu.xib:
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController saveAsPDF:]):
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFSnapshot.mm: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestPDFDocument.h: Added.
+        * TestWebKitAPI/cocoa/TestPDFDocument.mm: Added.
+        (TestWebKitAPI::toCGRect):
+        (TestWebKitAPI::toPlatformPoint):
+        (TestWebKitAPI::TestPDFAnnotation::TestPDFAnnotation):
+        (TestWebKitAPI::TestPDFAnnotation::isLink const):
+        (TestWebKitAPI::TestPDFAnnotation::bounds const):
+        (TestWebKitAPI::TestPDFAnnotation::linkURL const):
+        (TestWebKitAPI::TestPDFPage::create):
+        (TestWebKitAPI::TestPDFPage::TestPDFPage):
+        (TestWebKitAPI::TestPDFPage::annotations):
+        (TestWebKitAPI::TestPDFPage::characterCount const):
+        (TestWebKitAPI::TestPDFPage::text const):
+        (TestWebKitAPI::TestPDFPage::rectForCharacterAtIndex const):
+        (TestWebKitAPI::TestPDFPage::characterIndexAtPoint const):
+        (TestWebKitAPI::TestPDFPage::bounds const):
+        (TestWebKitAPI::TestPDFPage::colorAtPoint const):
+        (TestWebKitAPI::TestPDFDocument::createFromData):
+        (TestWebKitAPI::TestPDFDocument::TestPDFDocument):
+        (TestWebKitAPI::TestPDFDocument::pageCount const):
+        (TestWebKitAPI::TestPDFDocument::page):
+
 2019-09-10  Keith Rollin  <krollin@apple.com>
 
         Remove SSL-based TLSDeprecation.mm contents

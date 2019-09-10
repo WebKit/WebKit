@@ -4113,9 +4113,12 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         fillWithWarningColor = false; // Element images are transparent, don't fill with red.
     else
         fillWithWarningColor = true;
-    
-    if (fillWithWarningColor)
-        context.fillRect(dirtyRect, Color(255, 64, 255));
+
+    if (fillWithWarningColor) {
+        IntRect debugRect = frameRect();
+        debugRect.intersect(dirtyRect);
+        context.fillRect(debugRect, Color(255, 64, 255));
+    }
 #endif
 
     RenderView* renderView = this->renderView();

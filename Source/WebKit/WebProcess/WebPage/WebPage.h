@@ -881,6 +881,8 @@ public:
     void computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&&);
 #endif
 
+    void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CallbackID);
+
 #if PLATFORM(GTK)
     void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CallbackID);
     void didFinishPrintOperation(const WebCore::ResourceError&, CallbackID);
@@ -1606,8 +1608,8 @@ private:
 
     RefPtr<WebImage> snapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions);
     RefPtr<WebImage> snapshotNode(WebCore::Node&, SnapshotOptions, unsigned maximumPixelCount = std::numeric_limits<unsigned>::max());
-#if USE(CF)
-    RetainPtr<CFDataRef> pdfSnapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions);
+#if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> pdfSnapshotAtSize(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions);
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1621,6 +1623,8 @@ private:
     bool shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
 
     void updateMockAccessibilityElementAfterCommittingLoad();
+
+    void paintSnapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize&, SnapshotOptions, WebCore::Frame&, WebCore::FrameView&, WebCore::GraphicsContext&);
 
     WebCore::PageIdentifier m_identifier;
 

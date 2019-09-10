@@ -1635,6 +1635,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness,
 
 void GraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
 {
+    // FIXME: <rdar://problem/54900133> PDF exporting on iOS should include URL rects
 #if !PLATFORM(IOS_FAMILY)
     if (paintingDisabled())
         return;

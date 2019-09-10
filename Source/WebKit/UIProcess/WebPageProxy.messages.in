@@ -196,7 +196,6 @@ messages -> WebPageProxy {
     DidCompleteSyntheticClick()
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
     HandleSmartMagnificationInformationForPotentialTap(uint64_t requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
-    DrawToPDFCallback(IPC::DataReference pdfData, WebKit::CallbackID callbackID)
     SelectionRectsCallback(Vector<WebCore::SelectionRect> selectionRects, WebKit::CallbackID callbackID);
 #endif
 #if ENABLE(DATA_DETECTION)
@@ -206,6 +205,7 @@ messages -> WebPageProxy {
     PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(COCOA)
+    DrawToPDFCallback(IPC::DataReference pdfData, WebKit::CallbackID callbackID)
     MachSendRightCallback(MachSendRight sendRight, WebKit::CallbackID callbackID)
     NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
 #endif

@@ -1,3 +1,41 @@
+2019-09-10  Brady Eidson  <beidson@apple.com>
+
+        Add SPI to save a PDF from the contents of a WKWebView.
+        <rdar://problem/48955900> and https://bugs.webkit.org/show_bug.cgi?id=195765
+
+        Reviewed by Tim Horton.
+
+        This is refactoring a combination of "snapshotFirstPage" PDF printing code and the
+        "takeSnapshot" API code to capture the on-screen visible page to a PDF at full fidelity.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takePDFSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawToPDF):
+        (WebKit::WebPageProxy::drawToPDFCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::drawToPDFCallback): Move to cross platform WebPageProxy.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::pdfSnapshotAtSize):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pdfSnapshotAtSize): Instead of assuming 1 page capped at 200 inches,
+          paginate every 200 inches.
+        (WebKit::WebPage::drawToPDF):
+        (WebKit::paintSnapshotAtSize): Deleted.
+        (WebKit::WebPage::pdfSnapshotAtSize): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
         Hangs on Swiss.com due to the web process being blocked on StorageAreaMap::LoadValuesIfNeeded

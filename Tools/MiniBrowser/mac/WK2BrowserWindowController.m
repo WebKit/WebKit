@@ -207,6 +207,9 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SEL action = menuItem.action;
 
+    if (action == @selector(saveAsPDF:))
+        return YES;
+
     if (action == @selector(zoomIn:))
         return [self canZoomIn];
     if (action == @selector(zoomOut:))
@@ -812,6 +815,19 @@ static NSSet *dataTypes()
 - (void)_webView:(WKWebView *)webView includeSensitiveMediaDeviceDetails:(void (^)(BOOL includeSensitiveDetails))decisionHandler
 {
     decisionHandler(false);
+}
+
+- (IBAction)saveAsPDF:(id)sender
+{
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.allowedFileTypes = @[ @"pdf" ];
+    [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+        if (result == NSModalResponseOK) {
+            [_webView _takePDFSnapshotWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+                [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
+            }];
+        }
+    }];
 }
 
 @end

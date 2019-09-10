@@ -113,3 +113,5 @@ WK_COCOA_TOUCH_watchos = cocoatouch;
 WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
+
+SYSTEM_FRAMEWORK_SEARCH_PATHS = $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(inherited);

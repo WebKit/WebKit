@@ -7783,6 +7783,26 @@ void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& p
 }
 #endif
 
+#if PLATFORM(COCOA)
+void WebPageProxy::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>& rect, DrawToPDFCallback::CallbackFunction&& callback)
+{
+    if (!hasRunningProcess()) {
+        callback(IPC::DataReference(), CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::DrawToPDF(frameID, rect, callbackID), m_webPageID);
+}
+
+void WebPageProxy::drawToPDFCallback(const IPC::DataReference& pdfData, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<DrawToPDFCallback>(callbackID);
+    RELEASE_ASSERT(callback);
+    callback->performCallbackWithReturnValue(pdfData);
+}
+#endif // PLATFORM(COCOA)
+
 void WebPageProxy::updateBackingStoreDiscardableState()
 {
     ASSERT(hasRunningProcess());

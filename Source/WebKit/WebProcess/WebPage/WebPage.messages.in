@@ -389,6 +389,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Synchronous
 #endif
+    DrawToPDF(WebCore::FrameIdentifier frameID, Optional<WebCore::FloatRect> rect, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(GTK)
     DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)

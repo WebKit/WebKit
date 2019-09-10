@@ -432,6 +432,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_focusTextInputContext:(_WKTextInputContext *)textInputElement completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *pdfSnapshotData, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
 
 #if TARGET_OS_IPHONE && !TARGET_OS_WATCH

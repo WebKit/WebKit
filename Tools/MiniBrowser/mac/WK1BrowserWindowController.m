@@ -134,6 +134,9 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SEL action = [menuItem action];
 
+    if (action == @selector(saveAsPDF:))
+        return NO;
+
     if (action == @selector(zoomIn:))
         return [self canZoomIn];
     if (action == @selector(zoomOut:))

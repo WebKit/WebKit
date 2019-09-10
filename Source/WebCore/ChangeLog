@@ -1,3 +1,23 @@
+2019-09-10  Brady Eidson  <beidson@apple.com>
+
+        Add SPI to save a PDF from the contents of a WKWebView.
+        <rdar://problem/48955900> and https://bugs.webkit.org/show_bug.cgi?id=195765
+
+        Reviewed by Tim Horton.
+
+        Covered by API tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents): Don't paint the debug color outside of the FrameRect.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setURLForRect):
+
+        * rendering/PaintPhase.h: Add "AnnotateLinks" option to always gather and annotation links.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::hasOutlineAnnotation const): Also return true when the PaintOptions include "AnnotateLinks"
+
 2019-09-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION: [ Catalina WK2 ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html is failing
