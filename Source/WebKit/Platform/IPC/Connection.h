@@ -365,6 +365,7 @@ private:
 
     Lock m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
+    bool m_shouldWaitForMessages;
     struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 

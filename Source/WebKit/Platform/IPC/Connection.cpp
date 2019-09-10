@@ -272,6 +272,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
     , m_shouldWaitForSyncReplies(true)
+    , m_shouldWaitForMessages(true)
 {
     ASSERT(RunLoop::isMain());
     allConnections().add(m_uniqueID, this);
@@ -521,6 +522,11 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
         // We don't support having multiple clients waiting for messages.
         ASSERT(!m_waitingForMessage);
         if (m_waitingForMessage)
+            return nullptr;
+
+        // If the connection is already invalidated, don't even start waiting.
+        // Once m_waitingForMessage is set, messageWaitingInterrupted will cover this instead.
+        if (!m_shouldWaitForMessages)
             return nullptr;
 
         m_waitingForMessage = &waitingForMessage;
@@ -845,6 +851,10 @@ void Connection::connectionDidClose()
 
     {
         std::lock_guard<Lock> lock(m_waitForMessageMutex);
+
+        ASSERT(m_shouldWaitForMessages);
+        m_shouldWaitForMessages = false;
+
         if (m_waitingForMessage)
             m_waitingForMessage->messageWaitingInterrupted = true;
     }
