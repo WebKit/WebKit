@@ -36,6 +36,12 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+extern ULONG gLockCount;
+extern ULONG gClassCount;
+extern HashCountedSet<WTF::String>& gClassNameCount();
+extern HINSTANCE gInstance;
+extern CLSID gRegCLSIDs[];
+
 #ifndef WEBKIT_API
 #ifdef WEBKIT_EXPORTS
 #define WEBKIT_API __declspec(dllexport)
@@ -47,12 +53,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern ULONG gLockCount;
-extern ULONG gClassCount;
-extern HashCountedSet<WTF::String>& gClassNameCount();
-extern HINSTANCE gInstance;
-extern CLSID gRegCLSIDs[];
 
 WEBKIT_API void shutDownWebKit();
 

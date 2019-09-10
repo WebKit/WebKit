@@ -1,3 +1,16 @@
+2019-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKitLegacy] WebKitDLL.h(53,37): warning: 'gClassNameCount' has C-linkage specified, but returns user-defined type 'HashCountedSet<WTF::String> &' which is incompatible with C [-Wreturn-type-c-linkage]
+        https://bugs.webkit.org/show_bug.cgi?id=201601
+
+        Reviewed by Ross Kirsling.
+
+        Fixed a clang-cl warning. Names which aren't dllexport-ed don't
+        need to be in a extern "C" scope because they aren't exported to
+        other DLLs.
+
+        * WebKitDLL.h: Moved some variables and gClassNameCount() out of extern "C" scope.
+
 2019-09-06  Alex Christensen  <achristensen@webkit.org>
 
         When disabling legacy private browsing for testing, change the SessionID back to what it was, not the defaultSessionID
