@@ -106,6 +106,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE paintCustomScrollCorner(_In_opt_ IWebView*, _In_ HDC, RECT) { return E_NOTIMPL; }
 
 private:
+    ULONG m_refCount { 0 };
     WebKitLegacyBrowserWindow& m_client;
     HWND m_modalDialogParent { nullptr };
 };

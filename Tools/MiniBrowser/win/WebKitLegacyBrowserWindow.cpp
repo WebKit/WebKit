@@ -69,17 +69,10 @@ WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(BrowserWindowClient& client
 {
 }
 
-ULONG WebKitLegacyBrowserWindow::AddRef()
+WebKitLegacyBrowserWindow::~WebKitLegacyBrowserWindow()
 {
-    ref();
-    return refCount();
-}
-
-ULONG WebKitLegacyBrowserWindow::Release()
-{
-    auto count = refCount();
-    deref();
-    return --count;
+    m_defaultNotificationCenter->removeObserver(m_notificationObserver, _bstr_t(WebViewProgressEstimateChangedNotification), m_webView);
+    m_defaultNotificationCenter->removeObserver(m_notificationObserver, _bstr_t(WebViewProgressFinishedNotification), m_webView);
 }
 
 HRESULT WebKitLegacyBrowserWindow::init()
@@ -109,8 +102,7 @@ HRESULT WebKitLegacyBrowserWindow::init()
     if (FAILED(hr))
         return hr;
 
-    IWebNotificationCenterPtr defaultNotificationCenter;
-    hr = notificationCenter->defaultCenter(&defaultNotificationCenter.GetInterfacePtr());
+    hr = notificationCenter->defaultCenter(&m_defaultNotificationCenter.GetInterfacePtr());
     if (FAILED(hr))
         return hr;
 
@@ -125,19 +117,20 @@ HRESULT WebKitLegacyBrowserWindow::init()
 
     auto webHost = new MiniBrowserWebHost(this);
 
-    hr = setFrameLoadDelegate(webHost);
+    hr = m_webView->setFrameLoadDelegate(webHost);
     if (FAILED(hr))
         return hr;
 
-    hr = setFrameLoadDelegatePrivate(webHost);
+    hr = m_webViewPrivate->setFrameLoadDelegatePrivate(webHost);
     if (FAILED(hr))
         return hr;
 
-    hr = defaultNotificationCenter->addObserver(webHost, _bstr_t(WebViewProgressEstimateChangedNotification), nullptr);
+    m_notificationObserver = webHost;
+    hr = m_defaultNotificationCenter->addObserver(m_notificationObserver, _bstr_t(WebViewProgressEstimateChangedNotification), m_webView);
     if (FAILED(hr))
         return hr;
 
-    hr = defaultNotificationCenter->addObserver(webHost, _bstr_t(WebViewProgressFinishedNotification), nullptr);
+    hr = m_defaultNotificationCenter->addObserver(m_notificationObserver, _bstr_t(WebViewProgressFinishedNotification), m_webView);
     if (FAILED(hr))
         return hr;
 
@@ -153,9 +146,7 @@ HRESULT WebKitLegacyBrowserWindow::init()
     if (FAILED(hr))
         return hr;
 
-    IWebDownloadDelegatePtr downloadDelegate;
-    downloadDelegate.Attach(new WebDownloadDelegate(*this));
-    hr = setDownloadDelegate(downloadDelegate);
+    hr = setDownloadDelegate(new WebDownloadDelegate(*this));
     if (FAILED(hr))
         return hr;
 
@@ -247,38 +238,23 @@ void WebKitLegacyBrowserWindow::subclassForLayeredWindow()
 #endif
 }
 
-HRESULT WebKitLegacyBrowserWindow::setFrameLoadDelegate(IWebFrameLoadDelegate* frameLoadDelegate)
-{
-    m_frameLoadDelegate = frameLoadDelegate;
-    return m_webView->setFrameLoadDelegate(frameLoadDelegate);
-}
-
-HRESULT WebKitLegacyBrowserWindow::setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate)
-{
-    return m_webViewPrivate->setFrameLoadDelegatePrivate(frameLoadDelegatePrivate);
-}
-
 HRESULT WebKitLegacyBrowserWindow::setUIDelegate(IWebUIDelegate* uiDelegate)
 {
-    m_uiDelegate = uiDelegate;
     return m_webView->setUIDelegate(uiDelegate);
 }
 
 HRESULT WebKitLegacyBrowserWindow::setAccessibilityDelegate(IAccessibilityDelegate* accessibilityDelegate)
 {
-    m_accessibilityDelegate = accessibilityDelegate;
     return m_webView->setAccessibilityDelegate(accessibilityDelegate);
 }
 
 HRESULT WebKitLegacyBrowserWindow::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
 {
-    m_resourceLoadDelegate = resourceLoadDelegate;
     return m_webView->setResourceLoadDelegate(resourceLoadDelegate);
 }
 
 HRESULT WebKitLegacyBrowserWindow::setDownloadDelegate(IWebDownloadDelegatePtr downloadDelegate)
 {
-    m_downloadDelegate = downloadDelegate;
     return m_webView->setDownloadDelegate(downloadDelegate);
 }
 

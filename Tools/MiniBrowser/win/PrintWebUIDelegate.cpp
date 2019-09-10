@@ -72,7 +72,7 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt
     ShowWindow(newWindow.hwnd(), SW_SHOW);
 
     auto& newBrowserWindow = *static_cast<WebKitLegacyBrowserWindow*>(newWindow.browserWindow());
-    *newWebView = newBrowserWindow.webView();
+    *newWebView = newBrowserWindow.webView().Detach();
     IWebFramePtr frame;
     HRESULT hr;
     hr = (*newWebView)->mainFrame(&frame.GetInterfacePtr());
@@ -151,12 +151,15 @@ HRESULT PrintWebUIDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
 
 ULONG PrintWebUIDelegate::AddRef()
 {
-    return m_client.AddRef();
+    return ++m_refCount;
 }
 
 ULONG PrintWebUIDelegate::Release()
 {
-    return m_client.Release();
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+    return newRef;
 }
 
 HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(_In_opt_ IWebView* view, _Out_ RECT* rect)

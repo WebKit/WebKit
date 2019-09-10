@@ -41,6 +41,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE fireFrameLoadStartedEvents();
     virtual HRESULT STDMETHODCALLTYPE fireFrameLoadFinishedEvents();
 private:
+    ULONG m_refCount { 0 };
     WebKitLegacyBrowserWindow& m_client;
 };
 

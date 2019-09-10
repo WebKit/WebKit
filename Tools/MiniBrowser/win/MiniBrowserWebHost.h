@@ -68,5 +68,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE onNotify(_In_opt_ IWebNotification*);
 
 private:
+    ULONG m_refCount { 0 };
     WebKitLegacyBrowserWindow* m_client { nullptr };
 };

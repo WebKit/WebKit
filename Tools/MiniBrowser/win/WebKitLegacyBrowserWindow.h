@@ -64,9 +64,6 @@ private:
     friend class WebDownloadDelegate;
     friend class ResourceLoadDelegate;
 
-    ULONG AddRef();
-    ULONG Release();
-
     HRESULT init();
     HRESULT prepareViews(HWND mainWnd, const RECT& clientRect);
 
@@ -81,8 +78,6 @@ private:
     bool seedInitialDefaultPreferences();
     bool setToDefaultPreferences();
 
-    HRESULT setFrameLoadDelegate(IWebFrameLoadDelegate*);
-    HRESULT setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate*);
     HRESULT setUIDelegate(IWebUIDelegate*);
     HRESULT setAccessibilityDelegate(IAccessibilityDelegate*);
     HRESULT setResourceLoadDelegate(IWebResourceLoadDelegate*);
@@ -116,6 +111,7 @@ private:
     void setPreference(UINT menuID, bool enable);
 
     WebKitLegacyBrowserWindow(BrowserWindowClient&, HWND mainWnd, bool useLayeredWebView);
+    ~WebKitLegacyBrowserWindow();
     void subclassForLayeredWindow();
     bool setCacheFolder();
 
@@ -129,12 +125,8 @@ private:
     IWebInspectorPtr m_inspector;
     IWebPreferencesPtr m_standardPreferences;
     IWebPreferencesPrivatePtr m_prefsPrivate;
-
-    IWebFrameLoadDelegatePtr m_frameLoadDelegate;
-    IWebUIDelegatePtr m_uiDelegate;
-    IAccessibilityDelegatePtr m_accessibilityDelegate;
-    IWebResourceLoadDelegatePtr m_resourceLoadDelegate;
-    IWebDownloadDelegatePtr m_downloadDelegate;
+    IWebNotificationCenterPtr m_defaultNotificationCenter;
+    IWebNotificationObserverPtr m_notificationObserver;
 
     IWebCoreStatisticsPtr m_statistics;
     IWebCachePtr m_webCache;

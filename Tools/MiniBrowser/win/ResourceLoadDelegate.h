@@ -52,6 +52,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE plugInFailedWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebDataSource*);
 
 private:
+    ULONG m_refCount { 0 };
     WebKitLegacyBrowserWindow* m_client;
 };
 

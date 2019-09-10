@@ -1,3 +1,65 @@
+2019-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] WebKitLegacyBrowserWindow is leaked by circular references
+        https://bugs.webkit.org/show_bug.cgi?id=201600
+
+        Reviewed by Brent Fulgham.
+
+        There were some circular references between
+        WebKitLegacyBrowserWindow and its delegation classes. For
+        example, WebKitLegacyBrowserWindow has a reference of
+        WebDownloadDelegate, and WebDownloadDelegate shares the ref
+        counter with WebKitLegacyBrowserWindow.
+
+        WebNotificationObserver was leaked because it wasn't unregistered
+        from the default notification center by using
+        IWebNotificationCenter::removeObserver.
+
+        If a new legacy window was created by mouse right click a link,
+        WebView was released twice because
+        PrintWebUIDelegate::createWebViewWithRequest didn't AddRef the
+        WebView.
+
+        This change does:
+        1. Make delegation classes have own ref-counter to avoid circular references
+        2. Do removeObserver notification observers
+        3. AddRef WebView in PrintWebUIDelegate::createWebViewWithRequest
+
+        * MiniBrowser/win/AccessibilityDelegate.cpp:
+        (AccessibilityDelegate::AddRef):
+        (AccessibilityDelegate::Release):
+        * MiniBrowser/win/AccessibilityDelegate.h: Added m_refCount.
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::QueryInterface):
+        (MiniBrowserWebHost::AddRef):
+        (MiniBrowserWebHost::Release):
+        * MiniBrowser/win/MiniBrowserWebHost.h: Added m_refCount.
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest): Do AddRef for the returned IWebView.
+        (PrintWebUIDelegate::AddRef):
+        (PrintWebUIDelegate::Release):
+        * MiniBrowser/win/PrintWebUIDelegate.h: Added m_refCount.
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::AddRef):
+        (ResourceLoadDelegate::Release):
+        * MiniBrowser/win/ResourceLoadDelegate.h: Added m_refCount.
+        * MiniBrowser/win/WebDownloadDelegate.cpp:
+        (WebDownloadDelegate::AddRef):
+        (WebDownloadDelegate::Release):
+        * MiniBrowser/win/WebDownloadDelegate.h: Added m_refCount.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::~WebKitLegacyBrowserWindow): Do removeObserver notification observers.
+        (WebKitLegacyBrowserWindow::init):
+        (WebKitLegacyBrowserWindow::setUIDelegate):
+        (WebKitLegacyBrowserWindow::setAccessibilityDelegate):
+        (WebKitLegacyBrowserWindow::setResourceLoadDelegate):
+        (WebKitLegacyBrowserWindow::setDownloadDelegate):
+        (WebKitLegacyBrowserWindow::AddRef): Deleted.
+        (WebKitLegacyBrowserWindow::Release): Deleted.
+        (WebKitLegacyBrowserWindow::setFrameLoadDelegate): Deleted.
+        (WebKitLegacyBrowserWindow::setFrameLoadDelegatePrivate): Deleted.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html

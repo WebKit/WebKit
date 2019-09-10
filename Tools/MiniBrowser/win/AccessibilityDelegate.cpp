@@ -53,12 +53,15 @@ HRESULT AccessibilityDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ voi
 
 ULONG AccessibilityDelegate::AddRef()
 {
-    return m_client.AddRef();
+    return ++m_refCount;
 }
 
 ULONG AccessibilityDelegate::Release()
 {
-    return m_client.Release();
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+    return newRef;
 }
 
 HRESULT AccessibilityDelegate::fireFrameLoadStartedEvents()

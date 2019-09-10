@@ -54,6 +54,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didFinish(_In_opt_ IWebDownload*);
 
 private:
+    ULONG m_refCount { 0 };
     WebKitLegacyBrowserWindow& m_client;
 };
 

@@ -59,12 +59,15 @@ HRESULT WebDownloadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void*
 
 ULONG WebDownloadDelegate::AddRef()
 {
-    return m_client.AddRef();
+    return ++m_refCount;
 }
 
 ULONG WebDownloadDelegate::Release()
 {
-    return m_client.Release();
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+    return newRef;
 }
 
 HRESULT WebDownloadDelegate::decideDestinationWithSuggestedFilename(_In_opt_ IWebDownload* download, _In_ BSTR filename)

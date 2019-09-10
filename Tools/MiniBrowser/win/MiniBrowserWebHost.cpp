@@ -82,6 +82,10 @@ HRESULT MiniBrowserWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegatePrivate))
+        *ppvObject = static_cast<IWebFrameLoadDelegatePrivate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebNotificationObserver))
+        *ppvObject = static_cast<IWebNotificationObserver*>(this);
     else
         return E_NOINTERFACE;
 
@@ -91,12 +95,15 @@ HRESULT MiniBrowserWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
 
 ULONG MiniBrowserWebHost::AddRef()
 {
-    return m_client->AddRef();
+    return ++m_refCount;
 }
 
 ULONG MiniBrowserWebHost::Release()
 {
-    return m_client->Release();
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+    return newRef;
 }
 
 HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
