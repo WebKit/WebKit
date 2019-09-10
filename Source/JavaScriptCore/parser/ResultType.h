@@ -27,6 +27,8 @@
 
 namespace JSC {
 
+    // FIXME: Consider whether this is actually necessary. Is LLInt and Baseline's profiling information enough?
+    // https://bugs.webkit.org/show_bug.cgi?id=201659
     struct ResultType {
     private:
         friend struct OperandTypes;
@@ -148,7 +150,7 @@ namespace JSC {
         
         static constexpr ResultType bigIntOrInt32Type()
         {
-            return ResultType(TypeMaybeBigInt | TypeInt32);
+            return ResultType(TypeMaybeBigInt | TypeInt32 | TypeMaybeNumber);
         }
 
         static constexpr ResultType unknownType()

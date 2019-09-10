@@ -1,5 +1,21 @@
 2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ResultType implementation is wrong for bit ops, and ends up making ArithDiv take the DFG Int32 fast path even if Baseline constantly produces Double result
+        https://bugs.webkit.org/show_bug.cgi?id=198253
+
+        Reviewed by Mark Lam.
+
+        ResultType of bitwise operation needs to include TypeMaybeNumber. TypeInt32 is something like a flag indicating the number looks like a int32.
+        When it is specified, TypeMaybeNumber must exist too. This issue compiles op_div in JetStream2/async-fs slow-path. And eventually DFG first mis-compiles
+        it with Int32 ArithDiv while that div always produces double. And unnecessary OSR exit happens.
+
+        In this patch, we add TypeMaybeNumber to bigIntOrInt32Type correctly.
+
+        * parser/ResultType.h:
+        (JSC::ResultType::bigIntOrInt32Type):
+
+2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] 32bit bitwide operation with all-one (-1) is wrong in B3
         https://bugs.webkit.org/show_bug.cgi?id=201634
 
