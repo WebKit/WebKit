@@ -1,5 +1,47 @@
 2019-09-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r249514. rdar://problem/55182886
+
+    MobileSafari may crash when invoking the C++ lambda in -[WKContentView _shareForWebView:]
+    https://bugs.webkit.org/show_bug.cgi?id=201479
+    <rdar://problem/51511834>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Fix the crash by making -_shareForWebView: robust in the case where there are no selection rects
+    known in the UI process when -[WKContentView _share:] is invoked.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _shareForWebView:]):
+    
+    Tools:
+    
+    Add a test to verify that the UI process doesn't crash when invoking `_share:` while there's no selection.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+    * TestWebKitAPI/ios/UIKitSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249514 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            MobileSafari may crash when invoking the C++ lambda in -[WKContentView _shareForWebView:]
+            https://bugs.webkit.org/show_bug.cgi?id=201479
+            <rdar://problem/51511834>
+
+            Reviewed by Tim Horton.
+
+            Fix the crash by making -_shareForWebView: robust in the case where there are no selection rects
+            known in the UI process when -[WKContentView _share:] is invoked.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _shareForWebView:]):
+
+2019-09-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r249454. rdar://problem/55198071
 
     [macOS] Unable to open local file from favorites bar

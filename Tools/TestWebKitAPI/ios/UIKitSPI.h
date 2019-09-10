@@ -249,4 +249,8 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (CGRect)_selectionClipRect;
 @end
 
+@interface UIResponder (Internal)
+- (void)_share:(id)sender;
+@end
+
 #endif // PLATFORM(IOS_FAMILY)
