@@ -1,5 +1,13 @@
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, re-skip service worker test that was unskipped in r249716.
+
+        This test is still flaky.
+
+        * TestExpectations:
+
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r249724.
 
         Patch included a lot more changes than intended
