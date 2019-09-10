@@ -192,32 +192,45 @@ protected:
         const auto& adjacentsOfU = m_adjacencyList[u];
         const auto& adjacentsOfV = m_adjacencyList[v];
 
-        if (adjacentsOfU.size() + adjacentsOfV.size() < registerCount()) {
+        Vector<IndexType, MacroAssembler::numGPRs + MacroAssembler::numFPRs> highOrderAdjacents;
+        RELEASE_ASSERT(registerCount() <= MacroAssembler::numGPRs + MacroAssembler::numFPRs);
+        unsigned numCandidates = adjacentsOfU.size() + adjacentsOfV.size();
+        if (numCandidates < registerCount()) {
             // Shortcut: if the total number of adjacents is less than the number of register, the condition is always met.
             return true;
         }
 
-        HashSet<IndexType> highOrderAdjacents;
-
         for (IndexType adjacentTmpIndex : adjacentsOfU) {
             ASSERT(adjacentTmpIndex != v);
             ASSERT(adjacentTmpIndex != u);
+            numCandidates--;
             if (!hasBeenSimplified(adjacentTmpIndex) && m_degrees[adjacentTmpIndex] >= registerCount()) {
-                auto addResult = highOrderAdjacents.add(adjacentTmpIndex);
-                if (addResult.isNewEntry && highOrderAdjacents.size() >= registerCount())
+                ASSERT(std::find(highOrderAdjacents.begin(), highOrderAdjacents.end(), adjacentTmpIndex) == highOrderAdjacents.end());
+                highOrderAdjacents.uncheckedAppend(adjacentTmpIndex);
+                if (highOrderAdjacents.size() >= registerCount())
                     return false;
-            }
+            } else if (highOrderAdjacents.size() + numCandidates < registerCount())
+                return true;
         }
+        ASSERT(numCandidates == adjacentsOfV.size());
+
+        auto iteratorEndHighOrderAdjacentsOfU = highOrderAdjacents.end();
         for (IndexType adjacentTmpIndex : adjacentsOfV) {
             ASSERT(adjacentTmpIndex != u);
             ASSERT(adjacentTmpIndex != v);
-            if (!hasBeenSimplified(adjacentTmpIndex) && m_degrees[adjacentTmpIndex] >= registerCount()) {
-                auto addResult = highOrderAdjacents.add(adjacentTmpIndex);
-                if (addResult.isNewEntry && highOrderAdjacents.size() >= registerCount())
+            numCandidates--;
+            if (!hasBeenSimplified(adjacentTmpIndex)
+                && m_degrees[adjacentTmpIndex] >= registerCount()
+                && std::find(highOrderAdjacents.begin(), iteratorEndHighOrderAdjacentsOfU, adjacentTmpIndex) == iteratorEndHighOrderAdjacentsOfU) {
+                ASSERT(std::find(iteratorEndHighOrderAdjacentsOfU, highOrderAdjacents.end(), adjacentTmpIndex) == highOrderAdjacents.end());
+                highOrderAdjacents.uncheckedAppend(adjacentTmpIndex);
+                if (highOrderAdjacents.size() >= registerCount())
                     return false;
-            }
+            } else if (highOrderAdjacents.size() + numCandidates < registerCount())
+                return true;
         }
 
+        ASSERT(!numCandidates);
         ASSERT(highOrderAdjacents.size() < registerCount());
         return true;
     }
@@ -1021,7 +1034,7 @@ protected:
     }
 
     // Low-degree vertex can always be colored: just pick any of the color taken by any
-    // other adjacent verices.
+    // other adjacent vertices.
     // The "Simplify" phase takes a low-degree out of the interference graph to simplify it.
     void simplify()
     {
@@ -1789,13 +1802,9 @@ public:
         padInterference(m_code);
 
         allocateOnBank<GP>();
-        m_numIterations = 0;
         allocateOnBank<FP>();
 
         fixSpillsAfterTerminals(m_code);
-
-        if (reportStats)
-            dataLog("Num iterations = ", m_numIterations, "\n");
     }
 
 private:
@@ -1808,12 +1817,15 @@ private:
         // we should add the Tmp to unspillableTmps. That will help avoid relooping only to turn the
         // Tmp into an unspillable Tmp.
         // https://bugs.webkit.org/show_bug.cgi?id=152699
-        
-        while (true) {
-            ++m_numIterations;
+
+        unsigned numIterations = 0;
+        bool done = false;
+
+        while (!done) {
+            ++numIterations;
 
             if (traceDebug)
-                dataLog("Code at iteration ", m_numIterations, ":\n", m_code);
+                dataLog("Code at iteration ", numIterations, ":\n", m_code);
 
             // FIXME: One way to optimize this code is to remove the recomputation inside the fixpoint.
             // We need to recompute because spilling adds tmps, but we could just update tmpWidth when we
@@ -1822,7 +1834,7 @@ private:
             // spill code we emit. Since we currently recompute TmpWidth after spilling, the newly
             // created Tmps may get narrower use/def widths. On the other hand, the spiller already
             // selects which move instruction to use based on the original Tmp's widths, so it may not
-            // matter than a subsequent iteration sees a coservative width for the new Tmps. Also, the
+            // matter than a subsequent iteration sees a conservative width for the new Tmps. Also, the
             // recomputation may not actually be a performance problem; it's likely that a better way to
             // improve performance of TmpWidth is to replace its HashMap with something else. It's
             // possible that most of the TmpWidth overhead is from queries of TmpWidth rather than the
@@ -1835,7 +1847,7 @@ private:
                 if (!allocator.requiresSpilling()) {
                     this->assignRegistersToTmp<bank>(allocator);
                     if (traceDebug)
-                        dataLog("Successfull allocation at iteration ", m_numIterations, ":\n", m_code);
+                        dataLog("Successfull allocation at iteration ", numIterations, ":\n", m_code);
 
                     return true;
                 }
@@ -1843,8 +1855,7 @@ private:
                 this->addSpillAndFill<bank>(allocator, unspillableTmps);
                 return false;
             };
-            
-            bool done;
+
             if (useIRC()) {
                 ColoringAllocator<bank, IRC> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                 done = doAllocation(allocator);
@@ -1852,9 +1863,8 @@ private:
                 ColoringAllocator<bank, Briggs> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                 done = doAllocation(allocator);
             }
-            if (done)
-                return;
         }
+        dataLogLnIf(reportStats, "Num iterations = ", numIterations, " for bank: ", bank);
     }
 
     template<Bank bank>
@@ -2187,7 +2197,6 @@ private:
     Code& m_code;
     TmpWidth m_tmpWidth;
     UseCounts<Tmp>& m_useCounts;
-    unsigned m_numIterations { 0 };
 };
 
 } // anonymous namespace

@@ -1,3 +1,23 @@
+2019-09-09  Robin Morisset  <rmorisset@apple.com>
+
+        [Air] highOrderAdjacents in AbstractColoringAllocator::conservativeHeuristic should be some kind of array
+        https://bugs.webkit.org/show_bug.cgi?id=197305
+
+        Reviewed by Keith Miller.
+
+        Currently it is a HashSet, but it only ever holds at most registerCount() items. And linear search tends to be faster on such a small collection than hashing + searching in a HashSet.
+        Further benefits include avoiding the allocation of the HashSet, not actually adding the nodes adjacent to V (since there are no duplicates in the adjacency lists).
+
+        This patch also contains a trivial optimization: if the remaining number of nodes to consider + the number of highOrderAdjacents already seen is smaller than registerCount() we can return true directly.
+        Apart from that, the patch got some trivial cleanup of GraphColoringRegisterAllocation::allocateOnBank() (that for example was only logging the number of iterations for FP registers, and not the more interesting number for GP registers).
+
+        The time spent in the register allocator throughout JetStream2 on this MacBook Pro moves from 3767 / 3710 / 3785 ms to 3551 / 3454 / 3503 ms.
+        So about a 6% speedup for that phase, and between 1 and 1.5% speedup for FTL/OMG compilation overall.
+
+        No new tests as there is no intended change to the code being generated, and this was already tested by running testb3 + JetStream2.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+
 2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use metadata table to iterate specific bytecode metadata instead of propertyAccessInstructions vector
