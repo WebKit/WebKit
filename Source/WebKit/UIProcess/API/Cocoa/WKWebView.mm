@@ -374,6 +374,8 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
 
     NSUInteger _focusPreservationCount;
     NSUInteger _activeFocusedStateRetainCount;
+
+    BOOL _hasEnteredDealloc;
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -874,6 +876,8 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    _hasEnteredDealloc = YES;
+
     [_contentView _webViewDestroyed];
 
     if (_remoteObjectRegistry)
@@ -3011,6 +3015,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_addUpdateVisibleContentRectPreCommitHandler
 {
+    if (_hasEnteredDealloc) {
+        RELEASE_LOG_FAULT(ViewState, "-[WKWebView %p _addUpdateVisibleContentRectPreCommitHandler]: Attempted to add pre-commit handler under -dealloc. Bailing.", self);
+        return;
+    }
+
     auto retainedSelf = retainPtr(self);
     [CATransaction addCommitHandler:[retainedSelf] {
         WKWebView *webView = retainedSelf.get();
