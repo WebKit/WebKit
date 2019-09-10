@@ -48,6 +48,8 @@
 
 namespace WebCore {
 
+static MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource&);
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
@@ -72,7 +74,9 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     if (auto document = this->document()) {
         if (document->page() && document->page()->mutedState())
             setMuted(true);
+#if !PLATFORM(IOS_FAMILY)
         document->addAudioProducer(*this);
+#endif
     }
 }
 
@@ -83,8 +87,10 @@ MediaStreamTrack::~MediaStreamTrack()
     if (!isCaptureTrack())
         return;
 
+#if !PLATFORM(IOS_FAMILY)
     if (auto document = this->document())
         document->removeAudioProducer(*this);
+#endif
 }
 
 const AtomString& MediaStreamTrack::kind() const
@@ -409,26 +415,63 @@ MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
     if (!document || !document->page())
         return IsNotPlaying;
 
-    if (source().type() == RealtimeMediaSource::Type::Audio) {
-        if (source().interrupted() && !source().muted())
-            return HasInterruptedAudioCaptureDevice;
-        if (muted())
-            return HasMutedAudioCaptureDevice;
-        if (m_private->isProducingData())
-            return HasActiveAudioCaptureDevice;
-    } else {
-        auto deviceType = source().deviceType();
-        ASSERT(deviceType == CaptureDevice::DeviceType::Camera || deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window);
-        if (source().interrupted() && !source().muted())
-            return deviceType == CaptureDevice::DeviceType::Camera ? HasInterruptedVideoCaptureDevice : HasInterruptedDisplayCaptureDevice;
-        if (muted())
-            return deviceType == CaptureDevice::DeviceType::Camera ? HasMutedVideoCaptureDevice : HasMutedDisplayCaptureDevice;
-        if (m_private->isProducingData())
-            return deviceType == CaptureDevice::DeviceType::Camera ? HasActiveVideoCaptureDevice : HasActiveDisplayCaptureDevice;
+    return sourceCaptureState(source());
+}
+
+MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
+{
+    switch (source.deviceType()) {
+    case CaptureDevice::DeviceType::Microphone:
+        if (source.muted())
+            return MediaProducer::HasMutedAudioCaptureDevice;
+        if (source.interrupted())
+            return MediaProducer::HasInterruptedAudioCaptureDevice;
+        if (source.isProducingData())
+            return MediaProducer::HasActiveAudioCaptureDevice;
+        break;
+    case CaptureDevice::DeviceType::Camera:
+        if (source.muted())
+            return MediaProducer::HasMutedVideoCaptureDevice;
+        if (source.interrupted())
+            return MediaProducer::HasInterruptedVideoCaptureDevice;
+        if (source.isProducingData())
+            return MediaProducer::HasActiveVideoCaptureDevice;
+        break;
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        if (source.muted())
+            return MediaProducer::HasMutedDisplayCaptureDevice;
+        if (source.interrupted())
+            return MediaProducer::HasInterruptedDisplayCaptureDevice;
+        if (source.isProducingData())
+            return MediaProducer::HasActiveDisplayCaptureDevice;
+        break;
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
     }
 
-    return IsNotPlaying;
+    return MediaProducer::IsNotPlaying;
 }
+
+#if PLATFORM(IOS_FAMILY)
+MediaProducer::MediaStateFlags MediaStreamTrack::captureState()
+{
+    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
+    if (auto* source = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource())
+        state |= sourceCaptureState(*source);
+    if (auto* source = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource())
+        state |= sourceCaptureState(*source);
+    return state;
+}
+
+void MediaStreamTrack::muteCapture()
+{
+    if (auto* source = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource())
+        source->setMuted(true);
+    if (auto* source = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource())
+        source->setMuted(true);
+}
+#endif
 
 void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 {

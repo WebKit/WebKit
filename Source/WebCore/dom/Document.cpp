@@ -3984,6 +3984,10 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     for (auto& audioProducer : m_audioProducers)
         state |= audioProducer.mediaState();
 
+#if PLATFORM(IOS_FAMILY)
+    state |= MediaStreamTrack::captureState();
+#endif
+
 #if ENABLE(MEDIA_SESSION)
     if (HTMLMediaElement* sourceElement = HTMLMediaElement::elementWithID(sourceElementID)) {
         if (sourceElement->isPlaying())
@@ -4025,6 +4029,10 @@ void Document::pageMutedStateDidChange()
 {
     for (auto& audioProducer : m_audioProducers)
         audioProducer.pageMutedStateDidChange();
+
+#if PLATFORM(IOS_FAMILY)
+    MediaStreamTrack::muteCapture();
+#endif
 }
 
 static bool isNodeInSubtree(Node& node, Node& container, Document::NodeRemoval nodeRemoval)
