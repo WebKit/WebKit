@@ -29,6 +29,7 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "InstrumentingAgents.h"
+#include "ScriptExecutionContext.h"
 #include "Timer.h"
 
 namespace WebCore {

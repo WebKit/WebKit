@@ -1,3 +1,18 @@
+2019-09-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fixes for non-unified builds after r249022
+        https://bugs.webkit.org/show_bug.cgi?id=201610
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests needed.
+
+        * fileapi/NetworkSendQueue.h: Add missing inclusion of wtf/WeakPtr.h; add the namespace to WTF::WeakPtr
+        which is needed because there is no "using" clause.
+        * inspector/InspectorInstrumentation.cpp: Add missing inclusion of the PageDOMDebuggerAgent.h header.
+        * inspector/agents/WebDebuggerAgent.cpp: Add missing inclusion of the ScriptExecutionContext.h header.
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp: Add missing inclusion of the InstrumentingAgents.h header.
+
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
         Add support to RTCDataChannel.send(Blob)

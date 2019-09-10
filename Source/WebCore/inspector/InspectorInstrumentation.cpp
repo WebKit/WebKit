@@ -54,6 +54,7 @@
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "LoaderStrategy.h"
+#include "PageDOMDebuggerAgent.h"
 #include "PageDebuggerAgent.h"
 #include "PageHeapAgent.h"
 #include "PageRuntimeAgent.h"

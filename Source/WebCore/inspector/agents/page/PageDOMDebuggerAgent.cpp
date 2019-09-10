@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "InspectorDOMAgent.h"
+#include "InstrumentingAgents.h"
 #include "Node.h"
 
 namespace WebCore {

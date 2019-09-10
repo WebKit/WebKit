@@ -1,3 +1,13 @@
+2019-09-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fixes for non-unified builds after r249022
+        https://bugs.webkit.org/show_bug.cgi?id=201610
+
+        Reviewed by Joseph Pecoraro.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.h: Add missing inclusion of the WebPageProxyIdentifier.h header.
+        * NetworkProcess/NetworkLoadChecker.h: Add missing inclusion of the WebPageProxyIdentifier.h header.
+
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
         UserMediaProcessManager is revoking sandbox extensions too aggressively

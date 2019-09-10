@@ -29,6 +29,7 @@
 #include <wtf/Function.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -62,7 +63,7 @@ private:
     using Message = Variant<String, Ref<SharedBuffer>, UniqueRef<BlobLoader>>;
     Deque<Message> m_queue;
 
-    WeakPtr<Document> m_document;
+    WTF::WeakPtr<Document> m_document;
 
     WriteString m_writeString;
     WriteRawData m_writeRawData;
