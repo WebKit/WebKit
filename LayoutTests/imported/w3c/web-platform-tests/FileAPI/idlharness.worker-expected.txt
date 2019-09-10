@@ -11,12 +11,18 @@ PASS Blob interface: existence and properties of interface prototype object's @@
 PASS Blob interface: attribute size 
 PASS Blob interface: attribute type 
 PASS Blob interface: operation slice(long long, long long, DOMString) 
+FAIL Blob interface: operation stream() assert_own_property: interface prototype object missing non-static operation expected property "stream" missing
+FAIL Blob interface: operation text() assert_own_property: interface prototype object missing non-static operation expected property "text" missing
+FAIL Blob interface: operation arrayBuffer() assert_own_property: interface prototype object missing non-static operation expected property "arrayBuffer" missing
 PASS Blob must be primary interface of new Blob(["TEST"]) 
 PASS Stringification of new Blob(["TEST"]) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "type" with the proper type 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "slice(long long, long long, DOMString)" with the proper type 
 PASS Blob interface: calling slice(long long, long long, DOMString) on new Blob(["TEST"]) with too few arguments must throw TypeError 
+FAIL Blob interface: new Blob(["TEST"]) must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
+FAIL Blob interface: new Blob(["TEST"]) must inherit property "text()" with the proper type assert_inherits: property "text" not found in prototype chain
+FAIL Blob interface: new Blob(["TEST"]) must inherit property "arrayBuffer()" with the proper type assert_inherits: property "arrayBuffer" not found in prototype chain
 FAIL File interface: existence and properties of interface object assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface object length assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface object name assert_own_property: self does not have own property "File" expected property "File" missing
@@ -33,6 +39,9 @@ FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit propert
 FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "slice(long long, long long, DOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL Blob interface: calling slice(long long, long long, DOMString) on new File(["myFileBits"], "myFileName") with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL FileList interface: existence and properties of interface object assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface object length assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface object name assert_own_property: self does not have own property "FileList" expected property "FileList" missing
@@ -110,6 +119,6 @@ PASS FileReaderSync interface: new FileReaderSync() must inherit property "readA
 PASS FileReaderSync interface: calling readAsText(Blob, DOMString) on new FileReaderSync() with too few arguments must throw TypeError 
 PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsDataURL(Blob)" with the proper type 
 PASS FileReaderSync interface: calling readAsDataURL(Blob) on new FileReaderSync() with too few arguments must throw TypeError 
-PASS URL interface: operation createObjectURL(Blob) 
+PASS URL interface: operation createObjectURL([object Object],[object Object]) 
 PASS URL interface: operation revokeObjectURL(DOMString) 
 

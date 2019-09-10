@@ -1,5 +1,148 @@
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync web-platform-tests IDL interfaces from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201630
+
+        Reviewed by Alex Christensen.
+
+        Re-sync web-platform-tests IDL interfaces from upstream 603a271948a7162.
+
+        * web-platform-tests/interfaces/BackgroundSync.idl: Added.
+        * web-platform-tests/interfaces/CSP.idl: Added.
+        * web-platform-tests/interfaces/CSS-Parser-API.idl: Added.
+        * web-platform-tests/interfaces/DOM-Parsing.idl:
+        * web-platform-tests/interfaces/FileAPI.idl:
+        * web-platform-tests/interfaces/IndexedDB.idl:
+        * web-platform-tests/interfaces/InputDeviceCapabilities.idl: Added.
+        * web-platform-tests/interfaces/META.yml: Added.
+        * web-platform-tests/interfaces/README.md: Added.
+        * web-platform-tests/interfaces/SRI.idl: Added.
+        * web-platform-tests/interfaces/WebCryptoAPI.idl:
+        * web-platform-tests/interfaces/accelerometer.idl:
+        * web-platform-tests/interfaces/ambient-light.idl:
+        * web-platform-tests/interfaces/animation-worklet.idl: Added.
+        * web-platform-tests/interfaces/appmanifest.idl: Added.
+        * web-platform-tests/interfaces/audio-output.idl: Added.
+        * web-platform-tests/interfaces/background-fetch.idl:
+        * web-platform-tests/interfaces/battery-status.idl: Added.
+        * web-platform-tests/interfaces/beacon.idl: Added.
+        * web-platform-tests/interfaces/clipboard-apis.idl:
+        * web-platform-tests/interfaces/compat.idl: Added.
+        * web-platform-tests/interfaces/console.idl:
+        * web-platform-tests/interfaces/cookie-store.idl:
+        * web-platform-tests/interfaces/cors-rfc1918.idl: Added.
+        * web-platform-tests/interfaces/csp-embedded-enforcement.idl: Added.
+        * web-platform-tests/interfaces/css-animations.idl: Added.
+        * web-platform-tests/interfaces/css-conditional.idl: Added.
+        * web-platform-tests/interfaces/css-counter-styles.idl: Added.
+        * web-platform-tests/interfaces/css-device-adapt.idl: Added.
+        * web-platform-tests/interfaces/css-font-loading.idl: Added.
+        * web-platform-tests/interfaces/css-fonts.idl: Added.
+        * web-platform-tests/interfaces/css-images.idl: Added.
+        * web-platform-tests/interfaces/css-layout-api.idl: Added.
+        * web-platform-tests/interfaces/css-masking.idl: Added.
+        * web-platform-tests/interfaces/css-paint-api.idl: Added.
+        * web-platform-tests/interfaces/css-regions.idl: Added.
+        * web-platform-tests/interfaces/css-transitions.idl: Added.
+        * web-platform-tests/interfaces/css-typed-om.idl:
+        * web-platform-tests/interfaces/element-timing.idl: Added.
+        * web-platform-tests/interfaces/encoding.idl:
+        * web-platform-tests/interfaces/encrypted-media.idl:
+        * web-platform-tests/interfaces/entries-api.idl:
+        * web-platform-tests/interfaces/event-timing.idl: Added.
+        * web-platform-tests/interfaces/feature-policy.idl: Added.
+        * web-platform-tests/interfaces/fetch.idl:
+        * web-platform-tests/interfaces/filter-effects.idl: Added.
+        * web-platform-tests/interfaces/font-metrics-api.idl: Added.
+        * web-platform-tests/interfaces/fullscreen.idl:
+        * web-platform-tests/interfaces/gamepad.idl:
+        * web-platform-tests/interfaces/generic-sensor.idl: Added.
+        * web-platform-tests/interfaces/geolocation-API.idl: Added.
+        * web-platform-tests/interfaces/geolocation-sensor.idl:
+        * web-platform-tests/interfaces/geometry.idl:
+        * web-platform-tests/interfaces/gyroscope.idl:
+        * web-platform-tests/interfaces/hr-time.idl:
+        * web-platform-tests/interfaces/html-media-capture.idl: Added.
+        * web-platform-tests/interfaces/image-capture.idl: Added.
+        * web-platform-tests/interfaces/input-events.idl: Added.
+        * web-platform-tests/interfaces/intersection-observer.idl:
+        * web-platform-tests/interfaces/keyboard-lock.idl: Added.
+        * web-platform-tests/interfaces/keyboard-map.idl: Added.
+        * web-platform-tests/interfaces/largest-contentful-paint.idl: Added.
+        * web-platform-tests/interfaces/layout-instability.idl: Added.
+        * web-platform-tests/interfaces/longtasks.idl: Added.
+        * web-platform-tests/interfaces/magnetometer.idl:
+        * web-platform-tests/interfaces/media-capabilities.idl: Added.
+        * web-platform-tests/interfaces/media-playback-quality.idl: Added.
+        * web-platform-tests/interfaces/media-source.idl: Added.
+        * web-platform-tests/interfaces/mediacapture-depth.idl: Added.
+        * web-platform-tests/interfaces/mediacapture-fromelement.idl: Added.
+        * web-platform-tests/interfaces/mediasession.idl: Added.
+        * web-platform-tests/interfaces/mediastream-recording.idl: Added.
+        * web-platform-tests/interfaces/mst-content-hint.idl: Added.
+        * web-platform-tests/interfaces/navigation-timing.idl: Added.
+        * web-platform-tests/interfaces/netinfo.idl: Added.
+        * web-platform-tests/interfaces/notifications.idl: Added.
+        * web-platform-tests/interfaces/orientation-event.idl: Added.
+        * web-platform-tests/interfaces/orientation-sensor.idl:
+        * web-platform-tests/interfaces/page-visibility.idl: Added.
+        * web-platform-tests/interfaces/paint-timing.idl: Added.
+        * web-platform-tests/interfaces/payment-handler.idl:
+        * web-platform-tests/interfaces/payment-method-basic-card.idl: Added.
+        * web-platform-tests/interfaces/payment-request.idl:
+        * web-platform-tests/interfaces/permissions.idl: Added.
+        * web-platform-tests/interfaces/picture-in-picture.idl: Added.
+        * web-platform-tests/interfaces/pointerevents-extension.idl: Added.
+        * web-platform-tests/interfaces/pointerevents.idl: Added.
+        * web-platform-tests/interfaces/pointerlock.idl: Added.
+        * web-platform-tests/interfaces/presentation-api.idl: Added.
+        * web-platform-tests/interfaces/proximity.idl:
+        * web-platform-tests/interfaces/push-api.idl: Added.
+        * web-platform-tests/interfaces/remote-playback.idl: Added.
+        * web-platform-tests/interfaces/reporting.idl: Added.
+        * web-platform-tests/interfaces/requestidlecallback.idl: Added.
+        * web-platform-tests/interfaces/resize-observer.idl: Added.
+        * web-platform-tests/interfaces/screen-capture.idl: Added.
+        * web-platform-tests/interfaces/screen-orientation.idl:
+        * web-platform-tests/interfaces/scroll-animations.idl: Added.
+        * web-platform-tests/interfaces/secure-contexts.idl: Added.
+        * web-platform-tests/interfaces/selection-api.idl:
+        * web-platform-tests/interfaces/server-timing.idl: Added.
+        * web-platform-tests/interfaces/shape-detection-api.idl: Added.
+        * web-platform-tests/interfaces/speech-api.idl: Added.
+        * web-platform-tests/interfaces/storage.idl:
+        * web-platform-tests/interfaces/touch-events.idl: Added.
+        * web-platform-tests/interfaces/trusted-types.tentative.idl: Added.
+        * web-platform-tests/interfaces/uievents.idl:
+        * web-platform-tests/interfaces/url.idl:
+        * web-platform-tests/interfaces/user-timing.idl: Added.
+        * web-platform-tests/interfaces/vibration.idl: Added.
+        * web-platform-tests/interfaces/wai-aria.idl: Added.
+        * web-platform-tests/interfaces/wake-lock.idl:
+        * web-platform-tests/interfaces/wasm-js-api.idl: Added.
+        * web-platform-tests/interfaces/wasm-web-api.idl: Added.
+        * web-platform-tests/interfaces/web-animations.idl: Added.
+        * web-platform-tests/interfaces/web-bluetooth.idl: Added.
+        * web-platform-tests/interfaces/web-nfc.idl:
+        * web-platform-tests/interfaces/web-share.idl:
+        * web-platform-tests/interfaces/webaudio.idl: Added.
+        * web-platform-tests/interfaces/webauthn.idl:
+        * web-platform-tests/interfaces/webdriver.idl: Added.
+        * web-platform-tests/interfaces/webgl1.idl: Added.
+        * web-platform-tests/interfaces/webgl2.idl: Added.
+        * web-platform-tests/interfaces/webidl.idl:
+        * web-platform-tests/interfaces/webmidi.idl: Added.
+        * web-platform-tests/interfaces/webrtc-dscp.idl: Added.
+        * web-platform-tests/interfaces/webrtc-stats.idl: Added.
+        * web-platform-tests/interfaces/webusb.idl:
+        * web-platform-tests/interfaces/webvtt.idl: Added.
+        * web-platform-tests/interfaces/webxr.idl:
+        * web-platform-tests/interfaces/worklets.idl: Added.
+        * web-platform-tests/interfaces/xhr.idl:
+        * web-platform-tests/interfaces/xslt.tentative.idl: Added.
+
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r249724.
 
         Patch included a lot more changes than intended

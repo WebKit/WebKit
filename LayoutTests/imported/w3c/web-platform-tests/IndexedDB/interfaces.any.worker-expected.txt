@@ -1,6 +1,6 @@
 
 PASS Test driver 
-PASS Partial interface WindowOrWorkerGlobalScope: original interface defined 
+PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined 
 PASS EventListener interface: existence and properties of interface object 
 PASS NodeList interface: existence and properties of interface object 
 PASS HTMLCollection interface: existence and properties of interface object 
@@ -73,6 +73,7 @@ PASS IDBFactory interface: existence and properties of interface prototype objec
 PASS IDBFactory interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBFactory interface: operation open(DOMString, unsigned long long) 
 PASS IDBFactory interface: operation deleteDatabase(DOMString) 
+FAIL IDBFactory interface: operation databases() assert_own_property: interface prototype object missing non-static operation expected property "databases" missing
 PASS IDBFactory interface: operation cmp(any, any) 
 PASS IDBFactory must be primary interface of [object IDBFactory] 
 PASS Stringification of [object IDBFactory] 
@@ -80,6 +81,7 @@ PASS IDBFactory interface: [object IDBFactory] must inherit property "open(DOMSt
 PASS IDBFactory interface: calling open(DOMString, unsigned long long) on [object IDBFactory] with too few arguments must throw TypeError 
 PASS IDBFactory interface: [object IDBFactory] must inherit property "deleteDatabase(DOMString)" with the proper type 
 PASS IDBFactory interface: calling deleteDatabase(DOMString) on [object IDBFactory] with too few arguments must throw TypeError 
+FAIL IDBFactory interface: [object IDBFactory] must inherit property "databases()" with the proper type assert_inherits: property "databases" not found in prototype chain
 PASS IDBFactory interface: [object IDBFactory] must inherit property "cmp(any, any)" with the proper type 
 PASS IDBFactory interface: calling cmp(any, any) on [object IDBFactory] with too few arguments must throw TypeError 
 PASS IDBDatabase interface: existence and properties of interface object 
@@ -183,6 +185,7 @@ PASS IDBCursor interface: attribute source
 PASS IDBCursor interface: attribute direction 
 PASS IDBCursor interface: attribute key 
 PASS IDBCursor interface: attribute primaryKey 
+FAIL IDBCursor interface: attribute request assert_true: The prototype object must have a property "request" expected true got false
 PASS IDBCursor interface: operation advance(unsigned long) 
 PASS IDBCursor interface: operation continue(any) 
 PASS IDBCursor interface: operation continuePrimaryKey(any, any) 
@@ -206,6 +209,7 @@ PASS IDBTransaction interface: attribute mode
 PASS IDBTransaction interface: attribute db 
 PASS IDBTransaction interface: attribute error 
 PASS IDBTransaction interface: operation objectStore(DOMString) 
+FAIL IDBTransaction interface: operation commit() assert_own_property: interface prototype object missing non-static operation expected property "commit" missing
 PASS IDBTransaction interface: operation abort() 
 PASS IDBTransaction interface: attribute onabort 
 PASS IDBTransaction interface: attribute oncomplete 

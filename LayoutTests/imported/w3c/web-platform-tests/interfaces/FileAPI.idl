@@ -1,29 +1,40 @@
-// https://w3c.github.io/FileAPI/#idl-index
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: File API (https://w3c.github.io/FileAPI/)
 
-[Constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options),
-Exposed=(Window,Worker)]
+[Constructor(optional sequence<BlobPart> blobParts,
+             optional BlobPropertyBag options = {}),
+ Exposed=(Window,Worker), Serializable]
 interface Blob {
 
   readonly attribute unsigned long long size;
   readonly attribute DOMString type;
 
-  //slice Blob into byte-ranged chunks
-
-  Blob slice([Clamp] optional long long start,
-            [Clamp] optional long long end,
+  // slice Blob into byte-ranged chunks
+  Blob slice(optional [Clamp] long long start,
+            optional [Clamp] long long end,
             optional DOMString contentType);
+
+  // read from the Blob.
+  [NewObject] ReadableStream stream();
+  [NewObject] Promise<USVString> text();
+  [NewObject] Promise<ArrayBuffer> arrayBuffer();
 };
+
+enum EndingType { "transparent", "native" };
 
 dictionary BlobPropertyBag {
   DOMString type = "";
+  EndingType endings = "transparent";
 };
 
 typedef (BufferSource or Blob or USVString) BlobPart;
 
 [Constructor(sequence<BlobPart> fileBits,
-            [EnsureUTF16] DOMString fileName,
-            optional FilePropertyBag options),
-Exposed=(Window,Worker)]
+             USVString fileName,
+             optional FilePropertyBag options = {}),
+ Exposed=(Window,Worker), Serializable]
 interface File : Blob {
   readonly attribute DOMString name;
   readonly attribute long long lastModified;
@@ -33,7 +44,7 @@ dictionary FilePropertyBag : BlobPropertyBag {
   long long lastModified;
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), Serializable]
 interface FileList {
   getter File? item(unsigned long index);
   readonly attribute unsigned long length;
@@ -45,7 +56,7 @@ interface FileReader: EventTarget {
   // async read methods
   void readAsArrayBuffer(Blob blob);
   void readAsBinaryString(Blob blob);
-  void readAsText(Blob blob, optional DOMString label);
+  void readAsText(Blob blob, optional DOMString encoding);
   void readAsDataURL(Blob blob);
 
   void abort();
@@ -54,7 +65,6 @@ interface FileReader: EventTarget {
   const unsigned short EMPTY = 0;
   const unsigned short LOADING = 1;
   const unsigned short DONE = 2;
-
 
   readonly attribute unsigned short readyState;
 
@@ -70,21 +80,20 @@ interface FileReader: EventTarget {
   attribute EventHandler onabort;
   attribute EventHandler onerror;
   attribute EventHandler onloadend;
-
 };
 
-[Constructor, Exposed=Worker]
+[Constructor, Exposed=(DedicatedWorker,SharedWorker)]
 interface FileReaderSync {
   // Synchronously return strings
 
   ArrayBuffer readAsArrayBuffer(Blob blob);
   DOMString readAsBinaryString(Blob blob);
-  DOMString readAsText(Blob blob, optional DOMString label);
+  DOMString readAsText(Blob blob, optional DOMString encoding);
   DOMString readAsDataURL(Blob blob);
 };
 
 [Exposed=(Window,DedicatedWorker,SharedWorker)]
 partial interface URL {
-  static DOMString createObjectURL(Blob blob);
+  static DOMString createObjectURL((Blob or MediaSource) obj);
   static void revokeObjectURL(DOMString url);
 };

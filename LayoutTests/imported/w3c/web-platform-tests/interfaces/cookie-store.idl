@@ -1,34 +1,37 @@
-// https://github.com/WICG/cookie-store/blob/gh-pages/explainer.md
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: Cookie Store API (https://wicg.github.io/cookie-store/)
 
-dictionary CookieListItem {
-  USVString name;
-  USVString value;
-};
-
-typedef sequence<CookieListItem> CookieList;
-
-[
-  Exposed=(ServiceWorker,Window)
-] interface CookieStore {
-  Promise<CookieList?> getAll(USVString name, optional CookieStoreGetOptions options);
-  Promise<CookieList?> getAll(optional CookieStoreGetOptions options);
-
-  Promise<CookieListItem?> get(USVString name, optional CookieStoreGetOptions options);
+[Exposed=(ServiceWorker,Window),
+ SecureContext]
+interface CookieStore : EventTarget {
+  Promise<CookieListItem?> get(USVString name);
   Promise<CookieListItem?> get(optional CookieStoreGetOptions options);
 
-  Promise<boolean> has(USVString name, optional CookieStoreGetOptions options);
-  Promise<boolean> has(optional CookieStoreGetOptions options);
+  Promise<CookieList> getAll(USVString name);
+  Promise<CookieList> getAll(optional CookieStoreGetOptions options);
 
-  Promise<void> set(USVString name, USVString value, optional CookieStoreSetOptions options);
-  Promise<void> set(CookieStoreSetOptions options);
+  Promise<void> set(USVString name, USVString value,
+                    optional CookieStoreSetOptions options);
+  Promise<void> set(CookieStoreSetExtraOptions options);
 
-  Promise<void> delete(USVString name, optional CookieStoreSetOptions options);
-  Promise<void> delete(CookieStoreSetOptions options);
+  Promise<void> delete(USVString name);
+  Promise<void> delete(CookieStoreDeleteOptions options);
+
+  [Exposed=ServiceWorker]
+  Promise<void> subscribeToChanges(sequence<CookieStoreGetOptions> subscriptions);
+
+  [Exposed=ServiceWorker]
+  Promise<sequence<CookieStoreGetOptions>> getChangeSubscriptions();
+
+  [Exposed=Window]
+  attribute EventHandler onchange;
 };
 
 enum CookieMatchType {
   "equals",
-  "startsWith"
+  "starts-with"
 };
 
 dictionary CookieStoreGetOptions {
@@ -37,20 +40,75 @@ dictionary CookieStoreGetOptions {
   CookieMatchType matchType = "equals";
 };
 
-dictionary CookieStoreSetOptions {
-  USVString name;
-  USVString value;
-  DOMTimeStamp? expires = null;
-  USVString domain;
-  USVString path = "/";
-  boolean? secure;
-  boolean httpOnly = false;
+enum CookieSameSite {
+  "strict",
+  "lax",
+  "unrestricted"
 };
 
+dictionary CookieStoreSetOptions {
+  DOMTimeStamp? expires = null;
+  USVString? domain = null;
+  USVString path = "/";
+  boolean secure = true;
+  CookieSameSite sameSite = "strict";
+};
+
+dictionary CookieStoreSetExtraOptions : CookieStoreSetOptions {
+  required USVString name;
+  required USVString value;
+};
+
+dictionary CookieStoreDeleteOptions {
+  required USVString name;
+  USVString? domain = null;
+  USVString path = "/";
+};
+
+dictionary CookieListItem {
+  required USVString name;
+  USVString value;
+  USVString? domain = null;
+  USVString path = "/";
+  DOMTimeStamp? expires = null;
+  boolean secure = true;
+  CookieSameSite sameSite = "strict";
+};
+
+typedef sequence<CookieListItem> CookieList;
+
+[Exposed=Window,
+ SecureContext,
+ Constructor(DOMString type, optional CookieChangeEventInit eventInitDict)]
+interface CookieChangeEvent : Event {
+  readonly attribute CookieList changed;
+  readonly attribute CookieList deleted;
+};
+
+dictionary CookieChangeEventInit : EventInit {
+  CookieList changed;
+  CookieList deleted;
+};
+
+[Exposed=ServiceWorker,
+ Constructor(DOMString type, optional ExtendableCookieChangeEventInit eventInitDict)
+] interface ExtendableCookieChangeEvent : ExtendableEvent {
+  readonly attribute CookieList changed;
+  readonly attribute CookieList deleted;
+};
+
+dictionary ExtendableCookieChangeEventInit : ExtendableEventInit {
+  CookieList changed;
+  CookieList deleted;
+};
+
+[SecureContext]
 partial interface Window {
   [Replaceable, SameObject] readonly attribute CookieStore cookieStore;
 };
 
 partial interface ServiceWorkerGlobalScope {
   [Replaceable, SameObject] readonly attribute CookieStore cookieStore;
+
+  attribute EventHandler oncookiechange;
 };

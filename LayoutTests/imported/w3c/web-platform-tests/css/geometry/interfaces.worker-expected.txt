@@ -180,6 +180,7 @@ PASS DOMMatrixReadOnly interface: attribute is2D
 PASS DOMMatrixReadOnly interface: attribute isIdentity 
 PASS DOMMatrixReadOnly interface: operation translate(unrestricted double, unrestricted double, unrestricted double) 
 PASS DOMMatrixReadOnly interface: operation scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+FAIL DOMMatrixReadOnly interface: operation scaleNonUniform(unrestricted double, unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "scaleNonUniform" missing
 PASS DOMMatrixReadOnly interface: operation scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
 PASS DOMMatrixReadOnly interface: operation rotate(unrestricted double, unrestricted double, unrestricted double) 
 PASS DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double, unrestricted double) 
@@ -231,6 +232,8 @@ PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property 
 PASS DOMMatrixReadOnly interface: calling translate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scaleNonUniform(unrestricted double, unrestricted double)" with the proper type assert_inherits: property "scaleNonUniform" not found in prototype chain
+FAIL DOMMatrixReadOnly interface: calling scaleNonUniform(unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_inherits: property "scaleNonUniform" not found in prototype chain
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 

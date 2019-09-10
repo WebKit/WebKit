@@ -1,6 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
-// Content of this file was automatically extracted from the Geometry Interfaces spec.
-// See https://drafts.fxtf.org/geometry/
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: Geometry Interfaces Module Level 1 (https://drafts.fxtf.org/geometry/)
 
 [Constructor(optional unrestricted double x = 0, optional unrestricted double y = 0,
              optional unrestricted double z = 0, optional unrestricted double w = 1),
@@ -14,7 +15,7 @@ interface DOMPointReadOnly {
     readonly attribute unrestricted double z;
     readonly attribute unrestricted double w;
 
-    DOMPoint matrixTransform(optional DOMMatrixInit matrix);
+    [NewObject] DOMPoint matrixTransform(optional DOMMatrixInit matrix);
 
     [Default] object toJSON();
 };
@@ -80,6 +81,7 @@ dictionary DOMRectInit {
     unrestricted double height = 0;
 };
 
+[Exposed=Window]
 interface DOMRectList {
     readonly attribute unsigned long length;
     getter DOMRect? item(unsigned long index);
@@ -155,6 +157,8 @@ interface DOMMatrixReadOnly {
                                 optional unrestricted double originX = 0,
                                 optional unrestricted double originY = 0,
                                 optional unrestricted double originZ = 0);
+    [NewObject] DOMMatrix scaleNonUniform(optional unrestricted double scaleX = 1,
+                                          optional unrestricted double scaleY = 1);
     [NewObject] DOMMatrix scale3d(optional unrestricted double scale = 1,
                                   optional unrestricted double originX = 0,
                                   optional unrestricted double originY = 0,

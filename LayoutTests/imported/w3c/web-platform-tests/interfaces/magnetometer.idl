@@ -1,4 +1,9 @@
-[Constructor(optional MagnetometerSensorOptions sensorOptions), SecureContext,
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: Magnetometer (https://w3c.github.io/magnetometer/)
+
+[Constructor(optional MagnetometerSensorOptions sensorOptions = {}), SecureContext,
   Exposed=Window]
 interface Magnetometer : Sensor {
   readonly attribute double? x;
@@ -6,13 +11,13 @@ interface Magnetometer : Sensor {
   readonly attribute double? z;
 };
 
-enum LocalCoordinateSystem { "device", "screen" };
+enum MagnetometerLocalCoordinateSystem { "device", "screen" };
 
 dictionary MagnetometerSensorOptions : SensorOptions {
-  LocalCoordinateSystem referenceFrame = "device";
+  MagnetometerLocalCoordinateSystem referenceFrame = "device";
 };
 
-[Constructor(optional MagnetometerSensorOptions sensorOptions), SecureContext,
+[Constructor(optional MagnetometerSensorOptions sensorOptions = {}), SecureContext,
   Exposed=Window]
 interface UncalibratedMagnetometer : Sensor {
   readonly attribute double? x;
@@ -21,4 +26,19 @@ interface UncalibratedMagnetometer : Sensor {
   readonly attribute double? xBias;
   readonly attribute double? yBias;
   readonly attribute double? zBias;
+};
+
+dictionary MagnetometerReadingValues {
+  required double? x;
+  required double? y;
+  required double? z;
+};
+
+dictionary UncalibratedMagnetometerReadingValues {
+  required double? x;
+  required double? y;
+  required double? z;
+  required double? xBias;
+  required double? yBias;
+  required double? zBias;
 };

@@ -3,6 +3,7 @@ Description
 This test verifies that the implementations of the WebCrypto API match with its WebIDL definition.
 
 
+FAIL Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined assert_true: Original interface mixin should be defined expected true got false
 PASS Crypto interface: existence and properties of interface object 
 PASS Crypto interface object length 
 PASS Crypto interface object name 

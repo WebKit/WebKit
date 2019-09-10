@@ -1,4 +1,5 @@
 
+FAIL Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined assert_true: Original interface mixin should be defined expected true got false
 PASS Window interface: existence and properties of interface object 
 FAIL ArrayBuffer interface: existence and properties of interface object assert_false: expected false got true
 PASS ArrayBufferView interface: existence and properties of interface object 

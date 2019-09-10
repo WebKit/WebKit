@@ -1,60 +1,103 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: Web NFC API (https://w3c.github.io/web-nfc/)
 
-      dictionary NFCMessage {
-        sequence<NFCRecord> records;
-        USVString url;
-      };
+[Exposed=Window]
+interface NDEFMessage {
+  constructor(NDEFMessageInit messageInit);
+  readonly attribute FrozenArray<NDEFRecord> records;
+};
 
-      typedef (DOMString or unrestricted double or ArrayBuffer or Dictionary) NFCRecordData;
+dictionary NDEFMessageInit {
+  sequence<NDEFRecordInit> records;
+};
 
-      dictionary NFCRecord {
-        NFCRecordType recordType;
-        USVString mediaType;
-        NFCRecordData data;
-      };
+typedef any NDEFRecordData;
 
-        enum NFCRecordType {
-          "empty",
-          "text",
-          "url",
-          "json",
-          "opaque"
-        };
+[Exposed=Window]
+interface NDEFRecord {
+  constructor(NDEFRecordInit recordInit);
 
-    partial interface Navigator {
-      readonly attribute NFC nfc;
-    };
+  readonly attribute NDEFRecordType recordType;
+  readonly attribute USVString mediaType;
+  readonly attribute USVString id;
 
-    typedef (DOMString or ArrayBuffer or NFCMessage) NFCPushMessage;
+  USVString? toText();
+  [NewObject] ArrayBuffer? toArrayBuffer();
+  [NewObject] any toJSON();
+  sequence<NDEFRecord> toRecords();
+};
 
-    interface NFC {
-      Promise<void> push(NFCPushMessage message, optional NFCPushOptions options);
-      Promise<void> cancelPush(optional NFCPushTarget target="any");
-      Promise<long> watch(MessageCallback callback, optional NFCWatchOptions options);
-      Promise<void> cancelWatch(optional long id);
-    };
+dictionary NDEFRecordInit {
+  NDEFRecordType recordType;
+  USVString mediaType;
+  USVString id;
 
-    callback MessageCallback = void (NFCMessage message);
+  NDEFRecordData data;
+};
 
-      dictionary NFCPushOptions {
-        NFCPushTarget target = "any";
-        unrestricted double timeout = Infinity;
-        boolean ignoreRead = true;
-      };
+typedef DOMString NDEFRecordType;
 
-      enum NFCPushTarget {
-        "tag",
-        "peer",
-        "any"
-      };
+typedef (DOMString or ArrayBuffer or NDEFMessageInit) NDEFMessageSource;
 
-        dictionary NFCWatchOptions {
-          USVString url = "";
-          NFCRecordType? recordType;
-          USVString mediaType = "";
-          NFCWatchMode mode = "web-nfc-only";
-        };
+[SecureContext, Exposed=Window]
+interface NFCWriter {
+  constructor();
 
-      enum NFCWatchMode {
-        "web-nfc-only",
-        "any"
-      };
+  Promise<void> push(NDEFMessageSource message, optional NFCPushOptions options={});
+};
+
+[SecureContext, Exposed=Window]
+interface NFCReader : EventTarget {
+  constructor();
+
+  attribute EventHandler onreading;
+  attribute EventHandler onerror;
+
+  void scan(optional NFCScanOptions options={});
+};
+
+[SecureContext, Exposed=Window]
+interface NFCReadingEvent : Event {
+  constructor(DOMString type, NFCReadingEventInit readingEventInitDict);
+
+  readonly attribute DOMString serialNumber;
+  [SameObject] readonly attribute NDEFMessage message;
+};
+
+dictionary NFCReadingEventInit : EventInit {
+  DOMString? serialNumber = "";
+  required NDEFMessageInit message;
+};
+
+[SecureContext, Exposed=Window]
+interface NFCErrorEvent : Event {
+  constructor(DOMString type, NFCErrorEventInit errorEventInitDict);
+
+  readonly attribute DOMException error;
+};
+
+dictionary NFCErrorEventInit : EventInit {
+  required DOMException error;
+};
+
+dictionary NFCPushOptions {
+  NFCPushTarget target = "any";
+  unrestricted double timeout = Infinity;
+  boolean ignoreRead = true;
+  AbortSignal? signal;
+};
+
+enum NFCPushTarget {
+  "tag",
+  "peer",
+  "any"
+};
+
+dictionary NFCScanOptions {
+  USVString id = "";
+  NDEFRecordType recordType;
+  USVString mediaType = "";
+  AbortSignal? signal;
+};

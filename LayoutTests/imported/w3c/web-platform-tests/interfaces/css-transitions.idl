@@ -1,0 +1,25 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into reffy-reports
+// (https://github.com/tidoust/reffy-reports)
+// Source: CSS Transitions (https://drafts.csswg.org/css-transitions/)
+
+[Exposed=Window,
+ Constructor(CSSOMString type, optional TransitionEventInit transitionEventInitDict = {})]
+interface TransitionEvent : Event {
+  readonly attribute CSSOMString propertyName;
+  readonly attribute double elapsedTime;
+  readonly attribute CSSOMString pseudoElement;
+};
+
+dictionary TransitionEventInit : EventInit {
+  CSSOMString propertyName = "";
+  double elapsedTime = 0.0;
+  CSSOMString pseudoElement = "";
+};
+
+partial interface mixin GlobalEventHandlers {
+  attribute EventHandler ontransitionrun;
+  attribute EventHandler ontransitionstart;
+  attribute EventHandler ontransitionend;
+  attribute EventHandler ontransitioncancel;
+};

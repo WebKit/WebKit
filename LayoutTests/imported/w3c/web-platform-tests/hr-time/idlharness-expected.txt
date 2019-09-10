@@ -2,7 +2,7 @@ High Resolution Time IDL tests
 
 
 PASS Test driver 
-PASS Partial interface WindowOrWorkerGlobalScope: original interface defined 
+PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined 
 PASS Performance interface: existence and properties of interface object 
 PASS Performance interface object length 
 PASS Performance interface object name 
