@@ -40,6 +40,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -2457,6 +2458,11 @@ void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const S
     LOG_WITH_STREAM(Scrolling, stream << "FrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition << " (scale " << frameScaleFactor() << " )");
     updateLayoutViewport();
     viewportContentsChanged();
+
+    if (auto* renderView = this->renderView()) {
+        if (auto* layer = renderView->layer())
+            frame().editor().renderLayerDidScroll(*layer);
+    }
 }
 
 void FrameView::applyRecursivelyWithVisibleRect(const WTF::Function<void (FrameView& frameView, const IntRect& visibleRect)>& apply)

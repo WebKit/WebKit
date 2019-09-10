@@ -664,6 +664,8 @@ public:
     GraphicsLayer* layerForHorizontalScrollbar() const final;
     GraphicsLayer* layerForVerticalScrollbar() const final;
 
+    void renderLayerDidScroll(const RenderLayer&);
+
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;

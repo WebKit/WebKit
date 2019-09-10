@@ -1675,4 +1675,12 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     return true;
 }
 
+RefPtr<Range> ReplaceSelectionCommand::insertedContentRange() const
+{
+    if (auto document = makeRefPtr(m_startOfInsertedContent.document()))
+        return Range::create(*document, m_startOfInsertedContent, m_endOfInsertedContent);
+
+    return nullptr;
+}
+
 } // namespace WebCore

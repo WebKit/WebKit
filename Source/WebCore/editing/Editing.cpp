@@ -27,6 +27,7 @@
 #include "Editing.h"
 
 #include "AXObjectCache.h"
+#include "CachedImage.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
@@ -34,6 +35,7 @@
 #include "HTMLDListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElementFactory.h"
+#include "HTMLImageElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
@@ -1300,6 +1302,21 @@ IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, c
     LayoutRect localRect(rect);
     rendererForCaretPainting->flipForWritingMode(localRect);
     return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), UseTransforms, insideFixed).enclosingBoundingBox();
+}
+
+HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const Range& range)
+{
+    HashSet<RefPtr<HTMLImageElement>> result;
+    for (TextIterator iterator(&range); !iterator.atEnd(); iterator.advance()) {
+        if (!is<HTMLImageElement>(iterator.node()))
+            continue;
+
+        auto& imageElement = downcast<HTMLImageElement>(*iterator.node());
+        auto* cachedImage = imageElement.cachedImage();
+        if (cachedImage && cachedImage->isLoading())
+            result.add(&imageElement);
+    }
+    return result;
 }
 
 } // namespace WebCore

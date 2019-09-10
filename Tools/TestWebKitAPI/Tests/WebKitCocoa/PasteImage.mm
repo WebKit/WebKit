@@ -33,7 +33,7 @@
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <MobileCoreServices/MobileCoreServices.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -135,6 +135,21 @@ TEST(PasteImage, PastePNGImage)
     [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(pngItem.file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("200", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
+}
+
+TEST(PasteImage, RevealSelectionAfterPastingImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body contenteditable>Hello world</body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
+
+    writeImageDataToPasteboard((__bridge NSString *)kUTTypeJPEG, [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-600px" ofType:@"jpg" inDirectory:@"TestWebKitAPI.resources"]]);
+    [webView paste:nil];
+
+    while ([[webView stringByEvaluatingJavaScript:@"document.scrollingElement.scrollTop"] doubleValue] <= 0)
+        [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 }
 
 #if PLATFORM(MAC)

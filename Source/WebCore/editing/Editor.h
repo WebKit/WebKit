@@ -72,6 +72,7 @@ class KeyboardEvent;
 class KillRing;
 class Pasteboard;
 class PasteboardWriterData;
+class RenderLayer;
 class SharedBuffer;
 class Font;
 class SpellCheckRequest;
@@ -182,6 +183,9 @@ public:
 #if !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void copyImage(const HitTestResult&);
 #endif
+
+    void renderLayerDidScroll(const RenderLayer&);
+    void revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement&);
 
     String readPlainTextFromPasteboard(Pasteboard&);
 
@@ -628,6 +632,7 @@ private:
 #endif
 
     bool m_isGettingDictionaryPopupInfo { false };
+    HashSet<RefPtr<HTMLImageElement>> m_imageElementsToLoadBeforeRevealingSelection;
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)
