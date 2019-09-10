@@ -1,3 +1,12 @@
+2019-09-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION(r236540-r236595): ASSERTION FAILED: !frameView || !frameView->isPainting() on plugins/window-open.html
+        https://bugs.webkit.org/show_bug.cgi?id=199089
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Skip the test.
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html
