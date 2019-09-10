@@ -29,6 +29,7 @@
 #import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
 #import "LegacyCustomProtocolManagerClient.h"
+#import "Logging.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
@@ -579,5 +580,16 @@ int webProcessThroughputQOS()
     static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessThroughputQOS"];
     return qos;
 }
+
+#if PLATFORM(IOS_FAMILY)
+void WebProcessPool::applicationIsAboutToSuspend()
+{
+    RELEASE_LOG(ProcessSuspension, "Application is about to suspend so we simulate memory pressure to terminate non-critical processes");
+    // Simulate memory pressure handling so free as much memory as possible before suspending.
+    // In particular, this will terminate prewarmed and PageCache processes.
+    for (auto* processPool : allProcessPools())
+        processPool->handleMemoryPressureWarning(Critical::Yes);
+}
+#endif
 
 } // namespace WebKit

@@ -30,6 +30,7 @@
 
 #import "AssertionServicesSPI.h"
 #import "Logging.h"
+#import "WebProcessPool.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/HashMap.h>
 #import <wtf/RunLoop.h>
@@ -81,6 +82,9 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
         _applicationIsBackgrounded = YES;
+        
+        if (_backgroundTask == UIBackgroundTaskInvalid)
+            WebKit::WebProcessPool::applicationIsAboutToSuspend();
     }];
 
     return self;
@@ -183,6 +187,8 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         return;
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - endBackgroundTask", self);
+    if (_applicationIsBackgrounded)
+        WebKit::WebProcessPool::applicationIsAboutToSuspend();
     [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
     _backgroundTask = UIBackgroundTaskInvalid;
 }

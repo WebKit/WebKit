@@ -222,6 +222,10 @@ public:
 
     void populateVisitedLinks();
 
+#if PLATFORM(IOS_FAMILY)
+    static void applicationIsAboutToSuspend();
+#endif
+
     void handleMemoryPressureWarning(Critical);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

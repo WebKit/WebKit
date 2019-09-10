@@ -1,5 +1,42 @@
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] We sometimes attempt to use a terminated prewarmed WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=201614
+        <rdar://problem/54714507>
+
+        Reviewed by Geoffrey Garen.
+
+        On iOS, it is possible for our processes to get terminated (e.g. jetsammed) while the UIProcess
+        is suspended. Upon resuming, it takes a little while for the UIProcess to get the notification
+        that the mac connection to its child process has been severed and the UIProcess may try to use
+        it for a load. This is especially problematic for prewarmed process because the client will end
+        up showing a crash banner and reloading when we could have used a new process rather the prewarmed
+        one if we had known it was dead.
+
+        This patch makes 2 improvements:
+        1. It makes AuxiliaryProcessProxy::state() return Terminated if we still have a connection but
+           the PID is not the PID of a running process. I also added a check in tryTakePrewarmedProcess()
+           to not use the prewarmed process if it state() is Terminated.
+        2. When the UIProcess is about to get suspended, have the process pools terminate their non-critical
+           processes (i.e. prewarmed + the ones used for PageCache). This makes WebKit friendlier with
+           other apps on the system when suspended with regards to memory. Also, it makes it less likely
+           useful WebContent processes will get jetsammed.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::state const):
+        (WebKit::AuxiliaryProcessProxy::isRunningProcessPID):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::applicationIsAboutToSuspend):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html is frequently timing out on iOS EWS bots
         https://bugs.webkit.org/show_bug.cgi?id=201550
 
