@@ -93,6 +93,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << enableAdClickAttributionDebugMode;
     encoder << hstsStorageDirectory;
     encoder << hstsStorageDirectoryExtensionHandle;
+    encoder << enableLegacyTLS;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -228,6 +229,9 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.hstsStorageDirectoryExtensionHandle))
         return false;
     
+    if (!decoder.decode(result.enableLegacyTLS))
+        return false;
+
     return true;
 }
 

@@ -27,6 +27,7 @@
 
 #include <thread>
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 #if HAVE(SSL)
@@ -46,7 +47,7 @@ public:
     enum class Protocol : uint8_t {
         HTTPS, HTTPSProxy, HTTPSWithClientCertificateRequest
     };
-    TCPServer(Protocol, Function<void(SSL*)>&&);
+    TCPServer(Protocol, Function<void(SSL*)>&&, Optional<uint16_t> maxTLSVersion = WTF::nullopt);
 #endif // HAVE(SSL)
     ~TCPServer();
     

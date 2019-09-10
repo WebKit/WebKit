@@ -55,7 +55,9 @@ extern const CFStringRef _kCFWindowsSSLPeerCert;
 
 WTF_EXTERN_C_END
 
-#endif
+#else // PLATFORM(WIN)
+#include <CFNetwork/CFSocketStreamPriv.h>
+#endif // PLATFORM(WIN)
 
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
@@ -282,6 +284,7 @@ extern const CFStringRef kCFURLRequestAllowAllPOSTCaching;
 extern const CFStringRef _kCFURLCachePartitionKey;
 extern const CFStringRef _kCFURLConnectionPropertyShouldSniff;
 extern const CFStringRef _kCFURLStorageSessionIsPrivate;
+extern const CFStringRef kCFStreamSocketSecurityLevelTLSv1_2;
 
 #if HAVE(CFNETWORK_WITH_CONTENT_ENCODING_SNIFFING_OVERRIDE)
 extern const CFStringRef kCFURLRequestContentDecoderSkipURLCheck;

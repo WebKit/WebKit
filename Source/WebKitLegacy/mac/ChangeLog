@@ -1,3 +1,13 @@
+2019-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Disable TLS 1.0 and 1.1 in WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=201573
+
+        Reviewed by Youenn Fablet.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2019-09-06  Alex Christensen  <achristensen@webkit.org>
 
         When disabling legacy private browsing for testing, change the SessionID back to what it was, not the defaultSessionID

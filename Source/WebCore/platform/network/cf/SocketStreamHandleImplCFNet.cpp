@@ -305,6 +305,13 @@ static void setCONNECTProxyForStream(CFReadStreamRef stream, CFStringRef proxyHo
     CFReadStreamSetProperty(stream, kCFStreamPropertyCONNECTProxy, connectDictionary.get());
 }
 
+static bool gLegacyTLSEnabled = false;
+
+void SocketStreamHandleImpl::setLegacyTLSEnabled(bool enabled)
+{
+    gLegacyTLSEnabled = enabled;
+}
+
 void SocketStreamHandleImpl::createStreams()
 {
     if (m_connectionType == Unknown)
@@ -327,7 +334,6 @@ void SocketStreamHandleImpl::createStreams()
         CFReadStreamSetProperty(readStream, kCFStreamPropertySourceApplication, m_auditData.sourceApplicationAuditData.get());
         CFWriteStreamSetProperty(writeStream, kCFStreamPropertySourceApplication, m_auditData.sourceApplicationAuditData.get());
     }
-    
 #endif
 
     m_readStream = adoptCF(readStream);
@@ -355,8 +361,20 @@ void SocketStreamHandleImpl::createStreams()
 
     if (shouldUseSSL()) {
         CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
-        const void* keys[] = { kCFStreamSSLPeerName, kCFStreamSSLLevel, kCFStreamSSLValidatesCertificateChain };
-        const void* values[] = { host.get(), kCFStreamSocketSecurityLevelNegotiatedSSL, validateCertificateChain };
+        const void* keys[] = {
+            kCFStreamSSLPeerName,
+            kCFStreamSSLLevel,
+            kCFStreamSSLValidatesCertificateChain
+        };
+        const void* values[] = {
+            host.get(),
+#if PLATFORM(COCOA)
+            gLegacyTLSEnabled ? kCFStreamSocketSecurityLevelNegotiatedSSL : kCFStreamSocketSecurityLevelTLSv1_2,
+#else
+            kCFStreamSocketSecurityLevelNegotiatedSSL,
+#endif
+            validateCertificateChain
+        };
         RetainPtr<CFDictionaryRef> settings = adoptCF(CFDictionaryCreate(0, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySSLSettings, settings.get());
         CFWriteStreamSetProperty(m_writeStream.get(), kCFStreamPropertySSLSettings, settings.get());

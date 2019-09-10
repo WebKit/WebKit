@@ -205,6 +205,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/ShouldTreatAsContinuingLoad.h>
 #import <WebCore/SocketProvider.h>
+#import <WebCore/SocketStreamHandleImpl.h>
 #import <WebCore/StringUtilities.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
@@ -1419,6 +1420,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if (IOSApplication::isMobileSafari())
             DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableLegacyTLS"])
+            SocketStreamHandleImpl::setLegacyTLSEnabled(true);
 
         didOneTimeInitialization = true;
     }

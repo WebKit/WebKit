@@ -647,4 +647,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace(protectionSpace));
 }
 
+- (void)_allowAnyTLSCertificateForWebSocketTesting
+{
+    _processPool->setAllowsAnySSLCertificateForWebSocket(true);
+}
+
 @end

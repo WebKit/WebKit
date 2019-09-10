@@ -1,3 +1,30 @@
+2019-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Disable TLS 1.0 and 1.1 in WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=201573
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TCPServer.cpp:
+        (sk_CRYPTO_BUFFER_num):
+        (sk_CRYPTO_BUFFER_value):
+        (TestWebKitAPI::deleter<CRYPTO_BUFFER>::operator()):
+        (TestWebKitAPI::TCPServer::TCPServer):
+        (TestWebKitAPI::TCPServer::listenForConnections):
+        (TestWebKitAPI::deleter<X509>::operator()): Deleted.
+        (TestWebKitAPI::deleter<uint8_t::operator()): Deleted.
+        * TestWebKitAPI/TCPServer.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm: Added.
+        (-[WebSocketDelegate waitForMessage]):
+        (-[WebSocketDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[TestNavigationDelegate waitForDidFailProvisionalNavigation]):
+
 2019-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] WebKitLegacyBrowserWindow is leaked by circular references

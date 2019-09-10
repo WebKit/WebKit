@@ -39,6 +39,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
+#import <WebCore/SocketStreamHandleImpl.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
@@ -69,6 +70,8 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+    WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(parameters.enableLegacyTLS);
+
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     WebCore::setApplicationSDKVersion(parameters.uiProcessSDKVersion);
 

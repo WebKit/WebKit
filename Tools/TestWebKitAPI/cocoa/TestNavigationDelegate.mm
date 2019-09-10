@@ -75,6 +75,14 @@
         _renderingProgressDidChange(webView, progressEvents);
 }
 
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
+{
+    if (_didReceiveAuthenticationChallenge)
+        _didReceiveAuthenticationChallenge(webView, challenge, completionHandler);
+    else
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
 - (void)waitForDidStartProvisionalNavigation
 {
     EXPECT_FALSE(self.didStartProvisionalNavigation);
@@ -101,6 +109,20 @@
     TestWebKitAPI::Util::run(&finished);
 
     self.didFinishNavigation = nil;
+}
+
+- (void)waitForDidFailProvisionalNavigation
+{
+    EXPECT_FALSE(self.didFailProvisionalNavigation);
+
+    __block bool finished = false;
+    self.didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+        finished = true;
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.didFailProvisionalNavigation = nil;
 }
 
 @end

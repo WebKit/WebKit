@@ -33,46 +33,59 @@
 #include <wtf/text/Base64.h>
 
 #if HAVE(SSL)
+
+#define STACK_OF(type) struct stack_st_##type
+
 extern "C" {
 
+enum ssl_verify_result_t {
+    ssl_verify_ok,
+    ssl_verify_invalid,
+    ssl_verify_retry,
+};
+
 struct BIO;
-struct X509;
+struct CRYPTO_BUFFER;
 struct SSL_CTX;
 struct EVP_PKEY;
 struct SSL_METHOD;
-struct X509_STORE_CTX {
-    void* unused;
-    X509* cert;
-};
+struct SSL_PRIVATE_KEY_METHOD;
+struct _STACK;
+struct CRYPTO_BUFFER_POOL;
 struct pem_password_cb;
 int BIO_free(BIO*);
 int SSL_free(SSL*);
-int X509_free(X509*);
 int SSL_CTX_free(SSL_CTX*);
 int EVP_PKEY_free(EVP_PKEY*);
 int SSL_library_init();
-const SSL_METHOD* SSLv23_server_method();
+const SSL_METHOD* TLS_with_buffers_method();
 BIO* BIO_new_mem_buf(const void*, int);
-X509* PEM_read_bio_X509(BIO*, X509**, pem_password_cb*, void*);
 EVP_PKEY* PEM_read_bio_PrivateKey(BIO*, EVP_PKEY**, pem_password_cb*, void*);
 SSL_CTX* SSL_CTX_new(const SSL_METHOD*);
-const SSL_METHOD* SSLv23_server_method();
-int SSL_CTX_use_certificate(SSL_CTX*, X509*);
-int SSL_CTX_use_PrivateKey(SSL_CTX*, EVP_PKEY*);
 SSL* SSL_new(SSL_CTX*);
 int SSL_accept(SSL*);
 int SSL_set_fd(SSL*, int);
-void SSL_CTX_set_verify(SSL_CTX*, int, int (*)(int, X509_STORE_CTX*));
-void SSL_CTX_set_cert_verify_callback(SSL_CTX*, int (*)(X509_STORE_CTX*, void*), void*);
 int SSL_get_error(const SSL*, int);
+void SSL_CTX_set_custom_verify(SSL_CTX*, int mode, enum ssl_verify_result_t (*callback)(SSL *ssl, uint8_t *out_alert));
 int SSL_read(SSL*, void*, int);
 int SSL_write(SSL*, const void*, int);
-int i2d_X509(X509*, unsigned char**);
+const uint8_t* CRYPTO_BUFFER_data(const CRYPTO_BUFFER*);
+size_t CRYPTO_BUFFER_len(const CRYPTO_BUFFER*);
 void OPENSSL_free(void*);
+int SSL_CTX_set_chain_and_key(SSL_CTX*, CRYPTO_BUFFER *const *certs, size_t num_certs, EVP_PKEY*, const SSL_PRIVATE_KEY_METHOD*);
+CRYPTO_BUFFER* CRYPTO_BUFFER_new(const uint8_t*, size_t, CRYPTO_BUFFER_POOL*);
+void CRYPTO_BUFFER_free(CRYPTO_BUFFER*);
+size_t sk_num(const _STACK*);
+void* sk_value(const _STACK*, size_t);
+const STACK_OF(CRYPTO_BUFFER) *SSL_get0_peer_certificates(const SSL*);
+void SSL_CTX_set_max_proto_version(SSL_CTX*, uint16_t);
 #define SSL_VERIFY_PEER 0x01
 #define SSL_VERIFY_FAIL_IF_NO_PEER_CERT 0x02
 
 } // extern "C"
+
+inline size_t sk_CRYPTO_BUFFER_num(const STACK_OF(CRYPTO_BUFFER) *sk) { return sk_num((const _STACK *)sk); }
+inline CRYPTO_BUFFER* sk_CRYPTO_BUFFER_value(const STACK_OF(CRYPTO_BUFFER) *sk, size_t i) { return (CRYPTO_BUFFER *)sk_value((const _STACK *)sk, i); }
 #endif // HAVE(SSL)
 
 namespace TestWebKitAPI {
@@ -91,12 +104,6 @@ template<> struct deleter<SSL> {
         SSL_free(ssl);
     }
 };
-template<> struct deleter<X509> {
-    void operator()(X509* x509)
-    {
-        X509_free(x509);
-    }
-};
 template<> struct deleter<SSL_CTX> {
     void operator()(SSL_CTX* ctx)
     {
@@ -109,12 +116,15 @@ template<> struct deleter<EVP_PKEY> {
         EVP_PKEY_free(key);
     }
 };
-template<> struct deleter<uint8_t[]> {
-    void operator()(uint8_t* buffer)
+template<> struct deleter<CRYPTO_BUFFER> {
+    void operator()(CRYPTO_BUFFER* buffer)
     {
-        OPENSSL_free(buffer);
+        CRYPTO_BUFFER_free(buffer);
     }
 };
+namespace ssl {
+template <typename T> using unique_ptr = std::unique_ptr<T, deleter<T>>;
+}
 #endif // HAVE(SSL)
 
 TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connections)
@@ -124,49 +134,32 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
 }
 
 #if HAVE(SSL)
-TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler)
+TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, Optional<uint16_t> maxTLSVersion)
 {
-    auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler), protocol] (Socket socket) {
+    auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler), protocol, maxTLSVersion] (Socket socket) {
         SSL_library_init();
 
-        std::unique_ptr<SSL_CTX, deleter<SSL_CTX>> ctx(SSL_CTX_new(SSLv23_server_method()));
+        ssl::unique_ptr<SSL_CTX> ctx(SSL_CTX_new(TLS_with_buffers_method()));
 
         // This is a test certificate from BoringSSL.
-        char kCertPEM[] =
-        "-----BEGIN CERTIFICATE-----\n"
-        "MIICWDCCAcGgAwIBAgIJAPuwTC6rEJsMMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n"
-        "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\n"
-        "aWRnaXRzIFB0eSBMdGQwHhcNMTQwNDIzMjA1MDQwWhcNMTcwNDIyMjA1MDQwWjBF\n"
-        "MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\n"
-        "ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\n"
-        "gQDYK8imMuRi/03z0K1Zi0WnvfFHvwlYeyK9Na6XJYaUoIDAtB92kWdGMdAQhLci\n"
-        "HnAjkXLI6W15OoV3gA/ElRZ1xUpxTMhjP6PyY5wqT5r6y8FxbiiFKKAnHmUcrgfV\n"
-        "W28tQ+0rkLGMryRtrukXOgXBv7gcrmU7G1jC2a7WqmeI8QIDAQABo1AwTjAdBgNV\n"
-        "HQ4EFgQUi3XVrMsIvg4fZbf6Vr5sp3Xaha8wHwYDVR0jBBgwFoAUi3XVrMsIvg4f\n"
-        "Zbf6Vr5sp3Xaha8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQA76Hht\n"
-        "ldY9avcTGSwbwoiuIqv0jTL1fHFnzy3RHMLDh+Lpvolc5DSrSJHCP5WuK0eeJXhr\n"
-        "T5oQpHL9z/cCDLAKCKRa4uV0fhEdOWBqyR9p8y5jJtye72t6CuFUV5iqcpF4BH4f\n"
-        "j2VNHwsSrJwkD4QUGlUtH7vwnQmyCFxZMmWAJg==\n"
-        "-----END CERTIFICATE-----\n";
-
-        std::unique_ptr<BIO, deleter<BIO>> certBIO(BIO_new_mem_buf(kCertPEM, strlen(kCertPEM)));
-        std::unique_ptr<X509, deleter<X509>> certX509(PEM_read_bio_X509(certBIO.get(), nullptr, nullptr, nullptr));
-        ASSERT(certX509);
-        SSL_CTX_use_certificate(ctx.get(), certX509.get());
-
-        if (protocol == Protocol::HTTPSWithClientCertificateRequest) {
-            SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, nullptr);
-            SSL_CTX_set_cert_verify_callback(ctx.get(), [] (X509_STORE_CTX* store_ctx, void*) -> int {
-                uint8_t* bufferPointer = nullptr;
-                auto length = i2d_X509(store_ctx->cert, &bufferPointer);
-                std::unique_ptr<uint8_t[], deleter<uint8_t[]>> buffer(bufferPointer);
-                auto expectedCert = testCertificate();
-                EXPECT_EQ(static_cast<int>(expectedCert.size()), length);
-                for (int i = 0; i < length; ++i)
-                    EXPECT_EQ(buffer.get()[i], expectedCert[i]);
-                return 1;
-            }, nullptr);
-        }
+        String certPEM(
+        "MIICWDCCAcGgAwIBAgIJAPuwTC6rEJsMMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV"
+        "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX"
+        "aWRnaXRzIFB0eSBMdGQwHhcNMTQwNDIzMjA1MDQwWhcNMTcwNDIyMjA1MDQwWjBF"
+        "MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50"
+        "ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB"
+        "gQDYK8imMuRi/03z0K1Zi0WnvfFHvwlYeyK9Na6XJYaUoIDAtB92kWdGMdAQhLci"
+        "HnAjkXLI6W15OoV3gA/ElRZ1xUpxTMhjP6PyY5wqT5r6y8FxbiiFKKAnHmUcrgfV"
+        "W28tQ+0rkLGMryRtrukXOgXBv7gcrmU7G1jC2a7WqmeI8QIDAQABo1AwTjAdBgNV"
+        "HQ4EFgQUi3XVrMsIvg4fZbf6Vr5sp3Xaha8wHwYDVR0jBBgwFoAUi3XVrMsIvg4f"
+        "Zbf6Vr5sp3Xaha8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQA76Hht"
+        "ldY9avcTGSwbwoiuIqv0jTL1fHFnzy3RHMLDh+Lpvolc5DSrSJHCP5WuK0eeJXhr"
+        "T5oQpHL9z/cCDLAKCKRa4uV0fhEdOWBqyR9p8y5jJtye72t6CuFUV5iqcpF4BH4f"
+        "j2VNHwsSrJwkD4QUGlUtH7vwnQmyCFxZMmWAJg==");
+        Vector<uint8_t> certDER;
+        base64Decode(certPEM, certDER, WTF::Base64DecodeOptions::Base64Default);
+        ssl::unique_ptr<CRYPTO_BUFFER> cert(CRYPTO_BUFFER_new(certDER.data(), certDER.size(), nullptr));
+        ASSERT(cert);
 
         // This is a test key from BoringSSL.
         char kKeyPEM[] =
@@ -186,19 +179,33 @@ TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionH
         "moZWgjHvB2W9Ckn7sDqsPB+U2tyX0joDdQEyuiMECDY8oQ==\n"
         "-----END RSA PRIVATE KEY-----\n";
 
-        std::unique_ptr<BIO, deleter<BIO>> privateKeyBIO(BIO_new_mem_buf(kKeyPEM, strlen(kKeyPEM)));
-        std::unique_ptr<EVP_PKEY, deleter<EVP_PKEY>> privateKey(PEM_read_bio_PrivateKey(privateKeyBIO.get(), nullptr, nullptr, nullptr));
+        ssl::unique_ptr<BIO> privateKeyBIO(BIO_new_mem_buf(kKeyPEM, strlen(kKeyPEM)));
+        ssl::unique_ptr<EVP_PKEY> privateKey(PEM_read_bio_PrivateKey(privateKeyBIO.get(), nullptr, nullptr, nullptr));
         ASSERT(privateKey);
-        SSL_CTX_use_PrivateKey(ctx.get(), privateKey.get());
 
-        std::unique_ptr<SSL, deleter<SSL>> ssl(SSL_new(ctx.get()));
+        SSL_CTX_set_chain_and_key(ctx.get(), reinterpret_cast<CRYPTO_BUFFER *const *>(&cert), 1, privateKey.get(), nullptr);
+
+        if (protocol == Protocol::HTTPSWithClientCertificateRequest) {
+            SSL_CTX_set_custom_verify(ctx.get(), SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, [] (SSL* ssl, uint8_t*) -> ssl_verify_result_t {
+                auto chain = SSL_get0_peer_certificates(ssl);
+                EXPECT_EQ(sk_CRYPTO_BUFFER_num(chain), 2u);
+                auto cert = sk_CRYPTO_BUFFER_value(chain, 0);
+                auto expectedCert = testCertificate();
+                EXPECT_EQ(CRYPTO_BUFFER_len(cert), expectedCert.size());
+                EXPECT_TRUE(!memcmp(CRYPTO_BUFFER_data(cert), expectedCert.data(), expectedCert.size()));
+                return ssl_verify_ok;
+            });
+        }
+
+        if (maxTLSVersion)
+            SSL_CTX_set_max_proto_version(ctx.get(), *maxTLSVersion);
+
+        ssl::unique_ptr<SSL> ssl(SSL_new(ctx.get()));
         ASSERT(ssl);
         SSL_set_fd(ssl.get(), socket);
 
         auto acceptResult = SSL_accept(ssl.get());
-        ASSERT_UNUSED(acceptResult, acceptResult > 0);
-        
-        secureConnectionHandler(ssl.get());
+        secureConnectionHandler(acceptResult > 0 ? ssl.get() : nullptr);
     };
 
     switch (protocol) {
@@ -239,6 +246,7 @@ void TCPServer::listenForConnections(size_t connections)
                 close(connectionSocket);
             }));
         }
+        close(listeningSocket);
     });
 }
 

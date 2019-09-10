@@ -1,3 +1,22 @@
+2019-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Disable TLS 1.0 and 1.1 in WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=201573
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _allowAnyTLSCertificateForWebSocketTesting]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2019-09-09  Tim Horton  <timothy_horton@apple.com>
 
         Clarify some macCatalyst feature flags
