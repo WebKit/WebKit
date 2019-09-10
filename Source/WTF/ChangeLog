@@ -1,3 +1,14 @@
+2019-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        Clarify some macCatalyst feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=201619
+        <rdar://problem/54615618>
+
+        Reviewed by Megan Gardner.
+
+        * wtf/Platform.h:
+        We prefer specific flags over platform checks.
+
 2019-09-07  David Quesada  <david_quesada@apple.com>
 
         REGRESSION(r248533): Unable to use WTF::RefCounted when building in a debug configuration against a non-debug WebKit

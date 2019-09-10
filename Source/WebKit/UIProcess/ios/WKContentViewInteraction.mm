@@ -128,9 +128,12 @@
 #endif
 
 #if PLATFORM(MACCATALYST)
+#import <UIKit/_UILookupGestureRecognizer.h>
+#endif
+
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
 #import "NativeWebMouseEvent.h"
 #import <UIKit/UIHoverGestureRecognizer.h>
-#import <UIKit/_UILookupGestureRecognizer.h>
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -717,11 +720,13 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if PLATFORM(MACCATALYST)
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
     _hoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognizerChanged:)]);
     [_hoverGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
-    
+#endif
+
+#if PLATFORM(MACCATALYST)    
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -867,10 +872,12 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if PLATFORM(MACCATALYST)
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
     [_hoverGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
-    
+#endif
+
+#if PLATFORM(MACCATALYST)    
     [_lookupGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -978,8 +985,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-#if PLATFORM(MACCATALYST)
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
+#if PLATFORM(MACCATALYST)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 #if ENABLE(POINTER_EVENTS)
@@ -998,8 +1007,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-#if PLATFORM(MACCATALYST)
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
+#if PLATFORM(MACCATALYST)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 #if ENABLE(POINTER_EVENTS)
@@ -1881,6 +1892,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
 
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
+    if ([gestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]])
+        return YES;
+#endif
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
 #if PLATFORM(MACCATALYST)
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _textSelectionAssistant.get().loupeGesture, _textSelectionAssistant.get().forcePressGesture))
@@ -1889,12 +1905,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textSelectionAssistant.get().loupeGesture))
         return YES;
 
-    if ([gestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]])
-        return YES;
-    
     if (([gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) || ([otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && [gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]]))
         return YES;
-
 #endif
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _textSelectionAssistant.get().forcePressGesture))
         return YES;
@@ -6226,7 +6238,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:_webView]);
     [_shareSheet setDelegate:self];
 
-#if PLATFORM(MACCATALYST)
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
     if (!rect) {
         auto hoverLocationInWebView = [self convertPoint:_lastHoverLocation toView:_webView];
         rect = WebCore::FloatRect(hoverLocationInWebView.x, hoverLocationInWebView.y, 1, 1);
@@ -7514,7 +7526,9 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:self];
     _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(locationInViewCoordinates));
 }
+#endif
 
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
 static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags)
 {
     WebEventFlags eventFlags = 0;

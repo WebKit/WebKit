@@ -228,8 +228,11 @@ struct WKAutoCorrectionData {
 #endif
 
 #if PLATFORM(MACCATALYST)
-    RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
+#endif
+
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
+    RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
     CGPoint _lastHoverLocation;
 #endif
 
