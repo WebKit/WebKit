@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if HAVE(SSL)
+
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "TestNavigationDelegate.h"
@@ -205,3 +207,5 @@ TEST(WebKit, TLSVersionNetworkSession)
 }
 
 }
+
+#endif // HAVE(SSL)
