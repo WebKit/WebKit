@@ -218,7 +218,7 @@ rect: style.getPropertyValue(letter-spacing) : normal
 rect: style.getPropertyCSSValue(letter-spacing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(lighting-color) : rgb(255, 255, 255)
 rect: style.getPropertyCSSValue(lighting-color) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(line-height) : 20px
+rect: style.getPropertyValue(line-height) : normal
 rect: style.getPropertyCSSValue(line-height) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(list-style-image) : none
 rect: style.getPropertyCSSValue(list-style-image) : [object CSSPrimitiveValue]
@@ -764,7 +764,7 @@ g: style.getPropertyValue(letter-spacing) : normal
 g: style.getPropertyCSSValue(letter-spacing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(lighting-color) : rgb(255, 255, 255)
 g: style.getPropertyCSSValue(lighting-color) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(line-height) : 20px
+g: style.getPropertyValue(line-height) : normal
 g: style.getPropertyCSSValue(line-height) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(list-style-image) : none
 g: style.getPropertyCSSValue(list-style-image) : [object CSSPrimitiveValue]

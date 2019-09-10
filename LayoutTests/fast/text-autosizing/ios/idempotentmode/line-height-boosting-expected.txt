@@ -2,7 +2,7 @@ PASS result is >= 18
 PASS result is >= 13
 PASS result is >= 11
 PASS result is 12
-PASS result is 22
+PASS result is NaN
 PASS result is 18
 PASS result is 18
 PASS result is 18

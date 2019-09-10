@@ -1,3 +1,60 @@
+2019-09-09  Joonghun Park  <pjh0718@gmail.com>
+
+        getComputedStyle for line-height: normal should return the keyword instead of a length
+        https://bugs.webkit.org/show_bug.cgi?id=201296
+
+        Reviewed by Ryosuke Niwa.
+
+        Per https://github.com/w3c/csswg-drafts/issues/3749,
+        Gecko and Blink has this behavior already.
+
+        This patch makes WebKit has the same behavior with them.
+
+        * css3/calc/line-height-expected.txt:
+        * fast/css/font-calculated-value-expected.txt:
+        * fast/css/font-calculated-value.html:
+        * fast/css/font-shorthand-from-longhands-expected.txt:
+        * fast/css/font-shorthand-from-longhands.html:
+        * fast/css/font-shorthand-line-height-expected.txt:
+        * fast/css/font-shorthand-line-height.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font.html:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/ruby/ruby-line-height-expected.txt:
+        * fast/ruby/ruby-line-height.html:
+        * fast/text-autosizing/ios/idempotentmode/line-height-boosting-expected.txt:
+        * fast/text-autosizing/ios/idempotentmode/line-height-boosting.html:
+        * fast/text-autosizing/ios/line-height-text-autosizing-expected.txt:
+        * fast/text-autosizing/ios/line-height-text-autosizing.html:
+        * media/track/track-cue-rendering-on-resize-expected.txt:
+        * media/track/track-cue-rendering-on-resize.html:
+        * platform/gtk/fast/css/css2-system-fonts-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/css3/calc/line-height-expected.txt:
+        * platform/ios/fast/css/css2-system-fonts-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac-sierra/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac-sierra/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac-sierra/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/text-autosizing/ios/line-height-text-autosizing-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/wincairo/css3/calc/line-height-expected.txt:
+        * platform/wincairo/fast/css/css2-system-fonts-expected.txt:
+        * platform/wpe/fast/css/css2-system-fonts-expected.txt:
+        * platform/wpe/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/wpe/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/wpe/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2019-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, update test expectations for rdar://problem/51229282.

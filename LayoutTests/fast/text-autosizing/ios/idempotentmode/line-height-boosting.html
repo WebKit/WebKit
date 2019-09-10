@@ -36,7 +36,7 @@ result = Number.parseInt(window.getComputedStyle(target4).getPropertyValue("line
 shouldBe("result", "12");
 
 result = Number.parseInt(window.getComputedStyle(target5).getPropertyValue("line-height"));
-shouldBe("result", "22");
+shouldBe("result", "NaN");
 
 result = Number.parseInt(window.getComputedStyle(target6).getPropertyValue("line-height"));
 shouldBe("result", "18");

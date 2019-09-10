@@ -25,7 +25,7 @@
             multiLineCueDisplayElement = textTrackDisplayElement(video, 'display', 0);
 
             consoleWrite("<br>** Line height of the cue element should be 'normal' **");
-            testExpected("getComputedStyle(multiLineCueDisplayElement).lineHeight", "14px");
+            testExpected("getComputedStyle(multiLineCueDisplayElement).lineHeight", "normal");
 
             endTest();
         }

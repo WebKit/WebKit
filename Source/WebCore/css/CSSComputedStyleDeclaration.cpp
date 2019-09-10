@@ -2022,8 +2022,8 @@ static Ref<CSSValue> fontFamilyFromStyle(const RenderStyle& style)
 static Ref<CSSPrimitiveValue> lineHeightFromStyle(const RenderStyle& style)
 {
     Length length = style.lineHeight();
-    if (length.isNegative()) // If true, line-height not set; use the font's line spacing.
-        return zoomAdjustedPixelValue(style.fontMetrics().floatLineSpacing(), style);
+    if (length.isNegative())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
     if (length.isPercent()) {
         // This is imperfect, because it doesn't include the zoom factor and the real computation
         // for how high to be in pixels does include things like minimum font size and the zoom factor.

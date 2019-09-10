@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Case without text size adjust.
-PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "23px"
+PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "normal"
 PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('font-size') is "20px"
 testDivNoAdjust.style['line-height'] = '1.6'
 PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "32px"

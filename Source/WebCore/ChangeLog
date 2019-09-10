@@ -1,3 +1,22 @@
+2019-09-09  Joonghun Park  <jh718.park@samsung.com>
+
+        getComputedStyle for line-height: normal should return the keyword instead of a length
+        https://bugs.webkit.org/show_bug.cgi?id=201296
+
+        Reviewed by Ryosuke Niwa.
+
+        Per https://github.com/w3c/csswg-drafts/issues/3749,
+        Gecko and Blink has this behavior already.
+
+        This patch makes WebKit has the same behavior with them.
+
+        Tests: imported/w3c/web-platform-tests/css/css-inline/parsing/line-height-computed.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-line-height.html
+               imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-1-line-height.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::lineHeightFromStyle):
+
 2019-09-09  Alex Christensen  <achristensen@webkit.org>
 
         Disable TLS 1.0 and 1.1 in WebSockets

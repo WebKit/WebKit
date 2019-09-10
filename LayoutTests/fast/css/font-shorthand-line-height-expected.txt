@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS lineHeight(system_font_1) is '100px'
-PASS lineHeight(system_font_2) is '16px'
+PASS lineHeight(system_font_2) is 'normal'
 PASS lineHeight(shorthand_normal_1) is '100px'
-PASS lineHeight(shorthand_normal_2) is '12px'
+PASS lineHeight(shorthand_normal_2) is 'normal'
 PASS lineHeight(shorthand_line_height_1) is '100px'
 PASS lineHeight(shorthand_line_height_2) is '200px'
 PASS successfullyParsed is true
