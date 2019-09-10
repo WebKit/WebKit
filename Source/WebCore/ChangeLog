@@ -1,53 +1,87 @@
 2019-09-09  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r249565. rdar://problem/55113261
+        Cherry-pick r249581. rdar://problem/55202922
 
-    AccessibilityRenderObject::setSelectedTextRange fails to set the selection passed an empty line.
-    https://bugs.webkit.org/show_bug.cgi?id=201518
-    <rdar://problem/54835122>
+    REGRESSION (iOS 13): If an overflow:hidden with a non-zero scroll position is toggled to overflow:scroll, some other scroll causes its scroll position to get reset
+    https://bugs.webkit.org/show_bug.cgi?id=201528
+    rdar://problem/55044885
     
-    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-09-06
-    Reviewed by Ryosuke Niwa.
-    
+    Reviewed by Frédéric Wang.
     Source/WebCore:
     
-    Test: accessibility/set-selected-text-range-after-newline.html
+    If, when an overflow scrolling node is created, the scroller has non-zero scroll
+    position (for example, via toggling to overflow:hidden, setting scrollTop, then toggling
+    to overflow:scroll), then on the next update its scroll position will reset back to zero.
     
-    In the case of an empty line, the CharacterIterator range start and end
-    were not equal, thus we were not advancing the iterator and returning
-    the iterator range end, which is not correct. With this change we are
-    always advancing the iterator if its text is just '\n'. This covers all
-    the cases we fixed before plus empty lines.
+    The bug was that newly created ScrollingTreeScrollingNodes didn't set m_currentScrollPosition
+    to the scroll position coming from the state node, so a subsequent update could cause
+    the 0,0 currentScrollPosition to get applied. If we're making a new node, and there's no
+    requestedScrollPosition, then initialize m_currentScrollPosition.
     
-    * editing/Editing.cpp:
-    (WebCore::visiblePositionForIndexUsingCharacterIterator):
+    Test: scrollingcoordinator/ios/scroller-initial-scroll-position.html
+    
+    * page/scrolling/ScrollingTreeScrollingNode.cpp:
+    (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+    (WebCore::ScrollingTreeScrollingNode::commitStateAfterChildren):
+    * page/scrolling/ScrollingTreeScrollingNode.h:
     
     LayoutTests:
     
-    Extended this test to set the selection range passed an empty line.
-    * accessibility/set-selected-text-range-after-newline-expected.txt:
-    * accessibility/set-selected-text-range-after-newline.html:
+    * scrollingcoordinator/ios/scroller-initial-scroll-position-expected.html: Added.
+    * scrollingcoordinator/ios/scroller-initial-scroll-position.html: Added.
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249565 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249581 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-09-06  Andres Gonzalez  <andresg_22@apple.com>
+    2019-09-09  Kocsen Chung  <kocsen_chung@apple.com>
 
-            AccessibilityRenderObject::setSelectedTextRange fails to set the selection passed an empty line.
-            https://bugs.webkit.org/show_bug.cgi?id=201518
-            <rdar://problem/54835122>
+            Cherry-pick r249565. rdar://problem/55113261
 
-            Reviewed by Ryosuke Niwa.
+        AccessibilityRenderObject::setSelectedTextRange fails to set the selection passed an empty line.
+        https://bugs.webkit.org/show_bug.cgi?id=201518
+        <rdar://problem/54835122>
 
-            Test: accessibility/set-selected-text-range-after-newline.html
+        Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-09-06
+        Reviewed by Ryosuke Niwa.
 
-            In the case of an empty line, the CharacterIterator range start and end
-            were not equal, thus we were not advancing the iterator and returning
-            the iterator range end, which is not correct. With this change we are
-            always advancing the iterator if its text is just '\n'. This covers all
-            the cases we fixed before plus empty lines.
+        Source/WebCore:
 
-            * editing/Editing.cpp:
-            (WebCore::visiblePositionForIndexUsingCharacterIterator):
+        Test: accessibility/set-selected-text-range-after-newline.html
+
+        In the case of an empty line, the CharacterIterator range start and end
+        were not equal, thus we were not advancing the iterator and returning
+        the iterator range end, which is not correct. With this change we are
+        always advancing the iterator if its text is just '\n'. This covers all
+        the cases we fixed before plus empty lines.
+
+        * editing/Editing.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+
+        LayoutTests:
+
+        Extended this test to set the selection range passed an empty line.
+        * accessibility/set-selected-text-range-after-newline-expected.txt:
+        * accessibility/set-selected-text-range-after-newline.html:
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249565 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-09-06  Andres Gonzalez  <andresg_22@apple.com>
+
+                AccessibilityRenderObject::setSelectedTextRange fails to set the selection passed an empty line.
+                https://bugs.webkit.org/show_bug.cgi?id=201518
+                <rdar://problem/54835122>
+
+                Reviewed by Ryosuke Niwa.
+
+                Test: accessibility/set-selected-text-range-after-newline.html
+
+                In the case of an empty line, the CharacterIterator range start and end
+                were not equal, thus we were not advancing the iterator and returning
+                the iterator range end, which is not correct. With this change we are
+                always advancing the iterator if its text is just '\n'. This covers all
+                the cases we fixed before plus empty lines.
+
+                * editing/Editing.cpp:
+                (WebCore::visiblePositionForIndexUsingCharacterIterator):
 
 2019-09-09  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -511,6 +545,30 @@
     conversion for 8-bit strings.
     
     Tools:
+2019-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (iOS 13): If an overflow:hidden with a non-zero scroll position is toggled to overflow:scroll, some other scroll causes its scroll position to get reset
+        https://bugs.webkit.org/show_bug.cgi?id=201528
+        rdar://problem/55044885
+
+        Reviewed by Frédéric Wang.
+        
+        If, when an overflow scrolling node is created, the scroller has non-zero scroll
+        position (for example, via toggling to overflow:hidden, setting scrollTop, then toggling
+        to overflow:scroll), then on the next update its scroll position will reset back to zero.
+
+        The bug was that newly created ScrollingTreeScrollingNodes didn't set m_currentScrollPosition
+        to the scroll position coming from the state node, so a subsequent update could cause
+        the 0,0 currentScrollPosition to get applied. If we're making a new node, and there's no
+        requestedScrollPosition, then initialize m_currentScrollPosition.
+
+        Test: scrollingcoordinator/ios/scroller-initial-scroll-position.html
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::commitStateAfterChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
     
     * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add
     DataDetectorsTestIOS.mm to the project.

@@ -151,6 +151,7 @@ private:
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
     bool m_expectsWheelEventTestTrigger { false };
+    bool m_isFirstCommit { true };
 
 #if PLATFORM(COCOA)
     RetainPtr<CALayer> m_scrollContainerLayer;
