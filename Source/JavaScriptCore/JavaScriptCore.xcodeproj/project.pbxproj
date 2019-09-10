@@ -1109,7 +1109,6 @@
 		53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */; };
 		53F40E8D1D5901F20099A1B6 /* WasmParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WasmParser.h */; };
 		53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */; };
-		53F40E951D5A7AEF0099A1B6 /* WasmModuleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */; };
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53F8D2001E8387D400D21116 /* WasmBBQPlanInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F8D1FF1E8387D400D21116 /* WasmBBQPlanInlines.h */; };
 		53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3780,8 +3779,6 @@
 		53F40E8C1D5901F20099A1B6 /* WasmParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmParser.h; sourceTree = "<group>"; };
 		53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmB3IRGenerator.cpp; sourceTree = "<group>"; };
 		53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmB3IRGenerator.h; sourceTree = "<group>"; };
-		53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmModuleParser.h; sourceTree = "<group>"; };
-		53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModuleParser.cpp; sourceTree = "<group>"; };
 		53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunctionAllocationProfile.h; sourceTree = "<group>"; };
 		53F8D1FF1E8387D400D21116 /* WasmBBQPlanInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBBQPlanInlines.h; sourceTree = "<group>"; };
 		53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
@@ -6758,8 +6755,6 @@
 				790081371E95A8EC0052D7CD /* WasmModule.h */,
 				53E777E11E92E265007CBEC4 /* WasmModuleInformation.cpp */,
 				53E777E21E92E265007CBEC4 /* WasmModuleInformation.h */,
-				53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */,
-				53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */,
 				AD5B416E1EBAFB65008EFA43 /* WasmName.h */,
 				AD7B4B2D1FA3E28600C9DF79 /* WasmNameSection.h */,
 				ADD8FA441EB3077100DF542F /* WasmNameSectionParser.cpp */,
@@ -10163,7 +10158,6 @@
 				AD5C36EF1F7A263A000BCAAF /* WasmMemoryMode.h in Headers */,
 				790081391E95A8EC0052D7CD /* WasmModule.h in Headers */,
 				53E777E41E92E265007CBEC4 /* WasmModuleInformation.h in Headers */,
-				53F40E951D5A7AEF0099A1B6 /* WasmModuleParser.h in Headers */,
 				AD5B416F1EBAFB77008EFA43 /* WasmName.h in Headers */,
 				AD7B4B2E1FA3E29800C9DF79 /* WasmNameSection.h in Headers */,
 				ADD8FA461EB3079700DF542F /* WasmNameSectionParser.h in Headers */,

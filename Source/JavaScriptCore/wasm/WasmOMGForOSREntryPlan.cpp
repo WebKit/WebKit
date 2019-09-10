@@ -79,12 +79,12 @@ void OMGForOSREntryPlan::work(CompilationEffort)
 
     SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
     const Signature& signature = SignatureInformation::get(signatureIndex);
-    ASSERT(validateFunction(function.data.data(), function.data.size(), signature, m_moduleInformation.get()));
+    ASSERT(validateFunction(function, signature, m_moduleInformation.get()));
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
     unsigned osrEntryScratchBufferSize = 0;
-    auto parseAndCompileResult = parseAndCompile(context, function.data.data(), function.data.size(), signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         fail(holdLock(m_lock), makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));

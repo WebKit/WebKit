@@ -31,6 +31,7 @@
 #include "WasmB3IRGenerator.h"
 #include "WasmModuleInformation.h"
 #include "WasmPlan.h"
+#include "WasmStreamingParser.h"
 #include "WasmTierUpCount.h"
 #include <wtf/Bag.h>
 #include <wtf/Function.h>
@@ -44,7 +45,7 @@ class CallLinkInfo;
 
 namespace Wasm {
 
-class BBQPlan final : public Plan {
+class BBQPlan final : public Plan, public StreamingParserClient {
 public:
     using Base = Plan;
     enum AsyncWork : uint8_t { FullCompile, Validation };
@@ -121,6 +122,8 @@ public:
     bool hasBeenPrepared() const { return m_state >= State::Prepared; }
     bool multiThreaded() const override { return hasBeenPrepared(); }
 
+    void didReceiveFunctionData(unsigned, const FunctionData&) override;
+
 private:
     class ThreadCountHolder;
     friend class ThreadCountHolder;
@@ -143,6 +146,7 @@ private:
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
 
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
+    StreamingParser m_streamingParser;
     State m_state;
 
     const AsyncWork m_asyncWork;

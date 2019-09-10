@@ -411,30 +411,10 @@ auto SectionParser::parseElement() -> PartialResult
     return { };
 }
 
-// This function will be changed to be RELEASE_ASSERT_NOT_REACHED once we switch our parsing infrastructure to the streaming parser.
 auto SectionParser::parseCode() -> PartialResult
 {
-    m_info->codeSectionSize = length();
-    uint32_t count;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Code section's count");
-    WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Code section's count is too big ", count);
-    WASM_PARSER_FAIL_IF(count != m_info->functions.size(), "Code section count ", count, " exceeds the declared number of functions ", m_info->functions.size());
-
-    for (uint32_t i = 0; i < count; ++i) {
-        uint32_t functionSize;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(functionSize), "can't get ", i, "th Code function's size");
-        WASM_PARSER_FAIL_IF(functionSize > length(), "Code function's size ", functionSize, " exceeds the module's size ", length());
-        WASM_PARSER_FAIL_IF(functionSize > length() - m_offset, "Code function's size ", functionSize, " exceeds the module's remaining size", length() - m_offset);
-        WASM_PARSER_FAIL_IF(functionSize > maxFunctionSize, "Code function's size ", functionSize, " is too big");
-
-        Vector<uint8_t> data(functionSize);
-        std::memcpy(data.data(), source() + m_offset, functionSize);
-        m_info->functions[i].start = m_offsetInSource + m_offset;
-        m_info->functions[i].end = m_offsetInSource + m_offset + functionSize;
-        m_info->functions[i].data = WTFMove(data);
-        m_offset += functionSize;
-    }
-
+    // The Code section is handled specially in StreamingParser.
+    RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 

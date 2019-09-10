@@ -2229,7 +2229,7 @@ auto AirIRGenerator::origin() -> B3::Origin
     return B3::Origin();
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -2253,7 +2253,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
     AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, throwWasmException, signature);
-    FunctionParser<AirIRGenerator> parser(irGenerator, functionStart, functionLength, signature, info);
+    FunctionParser<AirIRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
 

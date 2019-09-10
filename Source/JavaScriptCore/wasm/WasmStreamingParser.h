@@ -37,6 +37,11 @@
 namespace JSC { namespace Wasm {
 
 class StreamingParserClient {
+public:
+    virtual ~StreamingParserClient() = default;
+    virtual void didReceiveSectionData(Section) { }
+    virtual void didReceiveFunctionData(unsigned, const FunctionData&) { }
+    virtual void didFinishParsing() { }
 };
 
 class StreamingParser {
@@ -67,7 +72,7 @@ public:
 
     enum class IsEndOfStream { Yes, No };
 
-    StreamingParser(ModuleInformation&);
+    StreamingParser(ModuleInformation&, StreamingParserClient&);
 
     State addBytes(const uint8_t* bytes, size_t length) { return addBytes(bytes, length, IsEndOfStream::No); }
     State finalize();
@@ -97,6 +102,7 @@ private:
     State failOnState(State);
 
     Ref<ModuleInformation> m_info;
+    StreamingParserClient& m_client;
     Vector<uint8_t> m_remaining;
     String m_errorMessage;
 

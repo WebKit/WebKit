@@ -35,7 +35,6 @@
 #include "WasmCallingConvention.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
-#include "WasmModuleParser.h"
 #include "WasmValidate.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
@@ -131,6 +130,9 @@ bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
 
 void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
 {
+    ASSERT(errorMessage);
+    if (failed())
+        return;
     dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
     complete(locker);

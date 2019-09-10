@@ -1110,10 +1110,25 @@ static EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserFinalize(ExecStat
 
 class WasmStreamingParser : public JSDestructibleObject {
 public:
+    class Client final : public Wasm::StreamingParserClient {
+    public:
+        explicit Client(WasmStreamingParser* parser)
+            : m_parser(parser)
+        {
+        }
+
+        void didReceiveSectionData(Wasm::Section) override { }
+        void didReceiveFunctionData(unsigned, const Wasm::FunctionData&) override { }
+        void didFinishParsing() override { }
+
+        WasmStreamingParser* m_parser;
+    };
+
     WasmStreamingParser(VM& vm, Structure* structure)
         : Base(vm, structure)
         , m_info(Wasm::ModuleInformation::create())
-        , m_streamingParser(m_info.get())
+        , m_client(this)
+        , m_streamingParser(m_info.get(), m_client)
     {
     }
 
@@ -1146,6 +1161,7 @@ public:
     DECLARE_INFO;
 
     Ref<Wasm::ModuleInformation> m_info;
+    Client m_client;
     Wasm::StreamingParser m_streamingParser;
 };
 

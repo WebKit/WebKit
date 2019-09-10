@@ -461,10 +461,10 @@ void Validate::dump(const Vector<ControlEntry>& controlStack, const Stack* expre
     dataLogLn();
 }
 
-Expected<void, String> validateFunction(const uint8_t* source, size_t length, const Signature& signature, const ModuleInformation& module)
+Expected<void, String> validateFunction(const FunctionData& function, const Signature& signature, const ModuleInformation& module)
 {
     Validate context(module);
-    FunctionParser<Validate> validator(context, source, length, signature, module);
+    FunctionParser<Validate> validator(context, function.data.data(), function.data.size(), signature, module);
     WASM_FAIL_IF_HELPER_FAILS(validator.parse());
     return { };
 }

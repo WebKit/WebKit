@@ -34,7 +34,7 @@ namespace JSC {
 
 namespace Wasm {
 
-Expected<void, String> validateFunction(const uint8_t*, size_t, const Signature&, const ModuleInformation&);
+Expected<void, String> validateFunction(const FunctionData&, const Signature&, const ModuleInformation&);
 
 } } // namespace JSC::Wasm
 

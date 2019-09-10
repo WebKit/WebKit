@@ -1013,7 +1013,6 @@ wasm/WasmMemoryInformation.cpp
 wasm/WasmMemoryMode.cpp
 wasm/WasmModule.cpp
 wasm/WasmModuleInformation.cpp
-wasm/WasmModuleParser.cpp
 wasm/WasmNameSectionParser.cpp
 wasm/WasmOMGForOSREntryPlan.cpp
 wasm/WasmOMGPlan.cpp

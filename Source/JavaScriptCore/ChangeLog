@@ -1,3 +1,61 @@
+2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WebAssembly] Use StreamingParser in existing Wasm::BBQPlan
+        https://bugs.webkit.org/show_bug.cgi?id=189043
+
+        Reviewed by Keith Miller.
+
+        This patch integrates Wasm::StreamingParser into the existing Wasm::BBQPlan.
+        And remove Wasm::ModuleParser. This patch paves the way to implementing Wasm streaming features by
+        using Wasm::StreamingParser.
+
+        Currently, we are not using streaming feature of StreamingParser. In a subsequent patch, we will
+        create a mechanism to pipe a chunk of data to streaming parser to enable WebAssembly.compileStreaming
+        and instantiateStreaming.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * tools/JSDollarVM.cpp:
+        (JSC::WasmStreamingParser::WasmStreamingParser):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::parseAndCompileAir):
+        * wasm/WasmAirIRGenerator.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile): Use FunctionData, it is good since it is more strongly typed.
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::didReceiveFunctionData): Add a callback, which invokes validation.
+        (JSC::Wasm::BBQPlan::parseAndValidateModule): Use StreamingParser instead of old ModuleParser.
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmModuleParser.cpp: Removed.
+        * wasm/WasmModuleParser.h: Removed.
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::fail): Make fail function callable multiple times. The first error will be used.
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseCode): Since the Code section is specially handled in StreamingParser, this code is never used.
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::StreamingParser):
+        (JSC::Wasm::StreamingParser::parseCodeSectionSize):
+        (JSC::Wasm::StreamingParser::parseFunctionPayload):
+        (JSC::Wasm::StreamingParser::parseSectionPayload):
+        (JSC::Wasm::StreamingParser::finalize): Call client's callbacks at appropriate timings.
+        * wasm/WasmStreamingParser.h:
+        (JSC::Wasm::StreamingParserClient::didReceiveSectionData):
+        (JSC::Wasm::StreamingParserClient::didReceiveFunctionData):
+        (JSC::Wasm::StreamingParserClient::didFinishParsing): Add StreamingParserClient,
+        which has 3 callbacks right now. StreamingParser gets this client and call these callbacks
+        at appropriate timings.
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h: Use FunctionData, it is good since it is more strongly typed.
+
 2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CodeBlock::m_constantRegisters should be guarded by ConcurrentJSLock when Vector reallocate memory

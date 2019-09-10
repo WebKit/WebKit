@@ -1,3 +1,15 @@
+2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WebAssembly] Use StreamingParser in existing Wasm::BBQPlan
+        https://bugs.webkit.org/show_bug.cgi?id=189043
+
+        Reviewed by Keith Miller.
+
+        The offset performing the validation becomes a bit different.
+        The offset 0 is nice since it is the starting offset of the Module header signature compared to the offset 8.
+
+        * wasm/js-api/version.js:
+
 2019-09-07  Keith Miller  <keith_miller@apple.com>
 
         OSR entry into wasm misses some contexts
