@@ -206,9 +206,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.h
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
 
-# This test is a flaky timeout.
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
-
 # Newly imported service worker tests that are flaky.
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-client-id.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/xhr/event-timeout-order.htm [ Pass Failure ]

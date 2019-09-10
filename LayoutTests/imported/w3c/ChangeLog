@@ -1,5 +1,17 @@
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r249724.
+
+        Patch included a lot more changes than intended
+
+        Reverted changeset:
+
+        "Unreviewed, re-skip service worker test that was unskipped in
+        r249716."
+        https://trac.webkit.org/changeset/249724
+
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
         Re-sync workers web platform tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=201629
 
