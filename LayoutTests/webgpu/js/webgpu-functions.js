@@ -38,7 +38,7 @@ function drawGreenAndBlueCheckerboardInSoftware(canvas) {
     context.fillStyle = 'rgb(0, 0, 255)';
     for (let x = 0; x < numColumns; ++x) {
         for (let y = 0; y < numRows; ++y) {
-            if ((x + y) % 2 == 1)
+            if ((x + y) % 2 == 0)
                 context.rect(
                     x * canvas.width / numColumns,
                     y * canvas.height / numRows,
