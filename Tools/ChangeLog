@@ -1,5 +1,15 @@
 2019-09-09  Alex Christensen  <achristensen@webkit.org>
 
+        Rebase API test after r249675
+        https://bugs.webkit.org/show_bug.cgi?id=201596
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        We removed the restriction on WebsitePolicies with non-default persistent sessions.
+        We needed to change the expectations of the test that exercised that code path.
+
+2019-09-09  Alex Christensen  <achristensen@webkit.org>
+
         Fix iOS API tests after r249684
         https://bugs.webkit.org/show_bug.cgi?id=201573
 

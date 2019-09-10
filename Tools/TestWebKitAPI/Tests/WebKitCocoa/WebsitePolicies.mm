@@ -1543,7 +1543,7 @@ IGNORE_WARNINGS_END
         } @catch (NSException *exception) {
             sawException = true;
         }
-        EXPECT_TRUE(sawException);
+        EXPECT_FALSE(sawException);
 
         done = true;
     }
