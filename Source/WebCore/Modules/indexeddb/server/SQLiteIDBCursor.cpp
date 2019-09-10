@@ -472,20 +472,24 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             return FetchResult::Failure;
         }
 
-        SQLiteStatement objectStoreStatement(m_statement->database(), "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
+        if (!m_cachedObjectStoreStatement || m_cachedObjectStoreStatement->reset() != SQLITE_OK) {
+            m_cachedObjectStoreStatement = makeUnique<SQLiteStatement>(m_statement->database(), "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
+            if (m_cachedObjectStoreStatement->prepare() != SQLITE_OK)
+                m_cachedObjectStoreStatement = nullptr;
+        }
 
-        if (objectStoreStatement.prepare() != SQLITE_OK
-            || objectStoreStatement.bindBlob(1, keyData.data(), keyData.size()) != SQLITE_OK
-            || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLITE_OK) {
+        if (!m_cachedObjectStoreStatement
+            || m_cachedObjectStoreStatement->bindBlob(1, keyData.data(), keyData.size()) != SQLITE_OK
+            || m_cachedObjectStoreStatement->bindInt64(2, m_objectStoreID) != SQLITE_OK) {
             LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", m_statement->database().lastError(), m_statement->database().lastErrorMsg());
             markAsErrored(record);
             return FetchResult::Failure;
         }
 
-        int result = objectStoreStatement.step();
+        int result = m_cachedObjectStoreStatement->step();
 
         if (result == SQLITE_ROW) {
-            objectStoreStatement.getColumnBlobAsVector(0, keyData);
+            m_cachedObjectStoreStatement->getColumnBlobAsVector(0, keyData);
             record.record.value = makeUnique<IDBValue>(ThreadSafeDataBuffer::create(WTFMove(keyData)));
         } else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.

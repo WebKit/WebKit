@@ -123,6 +123,8 @@ private:
     IDBKeyData m_currentKeyForUniqueness;
 
     std::unique_ptr<SQLiteStatement> m_statement;
+    std::unique_ptr<SQLiteStatement> m_cachedObjectStoreStatement;
+
     bool m_statementNeedsReset { true };
     int64_t m_boundID { 0 };
 
