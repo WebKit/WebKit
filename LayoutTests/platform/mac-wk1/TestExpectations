@@ -764,9 +764,4 @@ webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing
 [ Mojave+ ] fast/images/animated-heics-draw.html [ Skip ]
 [ Mojave+ ] fast/images/animated-heics-verify.html [ Skip ]
 
-# <rdar://problem/51229282> REGRESSION: [ Catalina WK1 ] Three image tests are failing with an extra pixel of boarder
-[ Catalina+ ] http/tests/security/cached-svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
-[ Catalina+ ] http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
-[ Catalina+ ] imported/blink/svg/as-image/svgview-references.html [ ImageOnlyFailure ]
-
 webkit.org/b/200002 [ Mojave+ Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]
