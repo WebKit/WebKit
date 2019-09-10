@@ -50,10 +50,12 @@ public:
     
     bool hasPhysicalPages() { return m_hasPhysicalPages; }
     void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
-    
+
+#if !BPLATFORM(MAC)
     bool usedSinceLastScavenge() { return m_usedSinceLastScavenge; }
     void clearUsedSinceLastScavenge() { m_usedSinceLastScavenge = false; }
     void setUsedSinceLastScavenge() { m_usedSinceLastScavenge = true; }
+#endif
 
     SmallLine* begin();
 
@@ -63,7 +65,9 @@ public:
 private:
     unsigned char m_hasFreeLines: 1;
     unsigned char m_hasPhysicalPages: 1;
+#if !BPLATFORM(MAC)
     unsigned char m_usedSinceLastScavenge: 1;
+#endif
     unsigned char m_refCount: 7;
     unsigned char m_sizeClass;
     unsigned char m_slide;
