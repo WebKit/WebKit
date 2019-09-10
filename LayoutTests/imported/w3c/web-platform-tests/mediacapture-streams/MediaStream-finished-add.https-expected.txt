@@ -5,5 +5,5 @@ Description
 This test checks that adding a track to an inactive MediaStream is allowed.
 
 
-FAIL Tests that adding a track to an inactive MediaStream is allowed assert_false: audio stream is inactive after stopping its only audio track expected false got true
+PASS Tests that adding a track to an inactive MediaStream is allowed 
 

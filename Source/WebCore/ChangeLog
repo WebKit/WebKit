@@ -1,5 +1,41 @@
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
+        Remove MediaStreamPrivate::scheduleDeferredTask
+        https://bugs.webkit.org/show_bug.cgi?id=200975
+
+        Reviewed by Eric Carlson.
+
+        All calls to scheduleDeferredTask are done on the main thread.
+        This was initially done to trigger less reconfiguration.
+        But this makes the implementation significantly more complex.
+
+        For instance, we have to wait for the document to update its media state
+        and send it to UIProcess before calling the allow completion handler.
+
+        Covered by existing tests.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        Make sure to update the document media state once the tracks have been added, similarly to the other constructor.
+        This ensures the document media state is computed with the new MediaStreamTrack.
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::isMediaStreamCorrectlyStarted):
+        (WebCore::UserMediaRequest::allow):
+        (WebCore::UserMediaRequest::stop):
+        (WebCore::UserMediaRequest::mediaStreamDidFail):
+        * Modules/mediastream/UserMediaRequest.h:
+        * page/MediaProducer.h:
+        (WebCore::MediaProducer::isCapturing):
+        Make sure to include getDisplayMedia as part of capture check.
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::trackMutedChanged):
+        (WebCore::MediaStreamPrivate::trackEnabledChanged):
+        (WebCore::MediaStreamPrivate::trackStarted):
+        (WebCore::MediaStreamPrivate::trackEnded):
+        * platform/mediastream/MediaStreamPrivate.h:
+
+2019-09-10  Youenn Fablet  <youenn@apple.com>
+
         Audio sometimes fail to capture in WebRTC
         https://bugs.webkit.org/show_bug.cgi?id=180748
         <rdar://problem/36032346>

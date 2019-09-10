@@ -47,7 +47,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -57,7 +56,6 @@ class OrientationNotifier;
 class MediaStreamPrivate final
     : public MediaStreamTrackPrivate::Observer
     , public RefCounted<MediaStreamPrivate>
-    , public CanMakeWeakPtr<MediaStreamPrivate>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -128,7 +126,6 @@ private:
     void characteristicsChanged();
     void updateActiveVideoTrack();
 
-    void scheduleDeferredTask(Function<void ()>&&);
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
 #if !RELEASE_LOG_DISABLED
