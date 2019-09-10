@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 1774: TypeError: null is not an object (evaluating 'this.message_target.removeEventListener')
-CONSOLE MESSAGE: line 457: WebIDLParseError: Syntax error at line 82, since `interface WindowOrWorkerGlobalScope`:
-WorkerGlobalScope implements WindowOrWorkerGlobalScope;
-^ Unrecognised tokens
-
-FAIL Untitled WebIDLParseError: Syntax error at line 82, since `interface WindowOrWorkerGlobalScope`:
-WorkerGlobalScope implements WindowOrWorkerGlobalScope;
-^ Unrecognised tokens
-

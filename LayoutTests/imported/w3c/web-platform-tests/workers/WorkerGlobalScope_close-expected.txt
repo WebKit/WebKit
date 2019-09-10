@@ -1,3 +1,0 @@
-
-PASS  WorkerGlobalScope close(): clear events queue  
-

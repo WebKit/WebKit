@@ -1,0 +1,3 @@
+
+FAIL Test simple shared worker construction case. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+

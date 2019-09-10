@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: SharedWorker
+
+FAIL Base URL in workers: new SharedWorker() assert_unreached: Got error event Reached unreachable code
+

@@ -1,3 +1,566 @@
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync workers web platform tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201629
+
+        Reviewed by Alex Christensen.
+
+        Re-sync workers web platform tests from upstream 603a271948a7162.
+
+        * web-platform-tests/workers/META.yml: Added.
+        * web-platform-tests/workers/OWNERS: Removed.
+        * web-platform-tests/workers/README.md:
+        * web-platform-tests/workers/SharedWorker-constructor-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-constructor.html: Added.
+        * web-platform-tests/workers/SharedWorker-detach-frame-in-error-event-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-detach-frame-in-error-event.html: Added.
+        * web-platform-tests/workers/SharedWorker-exception-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-exception-propagation-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-exception-propagation.html: Added.
+        * web-platform-tests/workers/SharedWorker-exception.html: Added.
+        * web-platform-tests/workers/SharedWorker-script-error-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-script-error.html: Added.
+        * web-platform-tests/workers/SharedWorker-simple-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-simple.html: Added.
+        * web-platform-tests/workers/SharedWorkerPerformanceNow-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorkerPerformanceNow.html: Added.
+        * web-platform-tests/workers/SharedWorker_dataUrl-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker_dataUrl.html: Added.
+        * web-platform-tests/workers/Worker-call.worker-expected.txt: Added.
+        * web-platform-tests/workers/Worker-call.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/Worker-call.worker.js: Added.
+        (test):
+        * web-platform-tests/workers/Worker-messageport-expected.txt: Added.
+        * web-platform-tests/workers/Worker-messageport.html: Added.
+        * web-platform-tests/workers/Worker-multi-port-expected.txt: Added.
+        * web-platform-tests/workers/Worker-multi-port.html: Added.
+        * web-platform-tests/workers/Worker-nested-importScripts-error-expected.txt: Added.
+        * web-platform-tests/workers/Worker-nested-importScripts-error.html: Added.
+        * web-platform-tests/workers/Worker-simultaneous-errors-expected.txt: Added.
+        * web-platform-tests/workers/Worker-simultaneous-errors.html: Added.
+        * web-platform-tests/workers/Worker-structure-message-expected.txt: Added.
+        * web-platform-tests/workers/Worker-structure-message.html: Added.
+        * web-platform-tests/workers/Worker-terminate-forever-expected.txt: Added.
+        * web-platform-tests/workers/Worker-terminate-forever.html: Added.
+        * web-platform-tests/workers/Worker-termination-with-port-messages-expected.txt: Added.
+        * web-platform-tests/workers/Worker-termination-with-port-messages.html: Added.
+        * web-platform-tests/workers/Worker-timeout-cancel-order-expected.txt: Added.
+        * web-platform-tests/workers/Worker-timeout-cancel-order.html: Added.
+        * web-platform-tests/workers/Worker-timeout-decreasing-order-expected.txt: Added.
+        * web-platform-tests/workers/Worker-timeout-decreasing-order.html: Added.
+        * web-platform-tests/workers/Worker-timeout-increasing-order-expected.txt: Added.
+        * web-platform-tests/workers/Worker-timeout-increasing-order.html: Added.
+        * web-platform-tests/workers/WorkerGlobalScope-close-expected.txt: Added.
+        * web-platform-tests/workers/WorkerGlobalScope-close.html: Added.
+        * web-platform-tests/workers/WorkerGlobalScope_close-expected.txt: Removed.
+        * web-platform-tests/workers/WorkerGlobalScope_close.htm: Removed.
+        * web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker-expected.txt: Added.
+        * web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker.js: Added.
+        * web-platform-tests/workers/WorkerLocation-origin.sub.window.js: Removed.
+        * web-platform-tests/workers/WorkerPerformanceNow-expected.txt: Added.
+        * web-platform-tests/workers/WorkerPerformanceNow.html: Added.
+        * web-platform-tests/workers/Worker_cross_origin_security_err.htm:
+        * web-platform-tests/workers/baseurl/alpha/import-in-moduleworker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/import-in-moduleworker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/workers/baseurl/alpha/importScripts.html.
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-sharedworker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-sharedworker.html: Added.
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-worker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-worker.html: Added.
+        * web-platform-tests/workers/baseurl/alpha/sharedworker-in-worker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/sharedworker-in-worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/workers/baseurl/alpha/sharedworker.html.
+        * web-platform-tests/workers/baseurl/alpha/w3c-import.log:
+        * web-platform-tests/workers/baseurl/alpha/worker-in-worker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/worker-in-worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/workers/baseurl/alpha/worker.html.
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-moduleworker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-moduleworker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/workers/baseurl/alpha/xhr.html.
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-sharedworker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-sharedworker.html: Added.
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-worker-expected.txt: Added.
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-worker.html: Added.
+        * web-platform-tests/workers/baseurl/beta/import.py: Added.
+        (main):
+        * web-platform-tests/workers/baseurl/beta/script.js:
+        * web-platform-tests/workers/baseurl/beta/w3c-import.log:
+        * web-platform-tests/workers/baseurl/beta/xhr-worker.py: Added.
+        (main):
+        * web-platform-tests/workers/baseurl/gamma/import.js: Added.
+        * web-platform-tests/workers/baseurl/gamma/importScripts.js:
+        (test):
+        * web-platform-tests/workers/baseurl/gamma/script-module.js: Added.
+        * web-platform-tests/workers/baseurl/gamma/script.js:
+        * web-platform-tests/workers/baseurl/gamma/w3c-import.log:
+        * web-platform-tests/workers/baseurl/gamma/xhr-worker.js: Added.
+        * web-platform-tests/workers/constructors/SharedWorker/connect-event.html:
+        * web-platform-tests/workers/constructors/SharedWorker/connect-event.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/constructors/SharedWorker/dummy-name.html:
+        * web-platform-tests/workers/constructors/SharedWorker/dummy-shared-worker.html:
+        * web-platform-tests/workers/constructors/SharedWorker/dummy-shared-worker.js: Added.
+        * web-platform-tests/workers/constructors/SharedWorker/empty-name.html:
+        * web-platform-tests/workers/constructors/SharedWorker/empty.js: Added.
+        * web-platform-tests/workers/constructors/SharedWorker/global-members.html:
+        * web-platform-tests/workers/constructors/SharedWorker/global-members.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/constructors/SharedWorker/interface-objects.html:
+        * web-platform-tests/workers/constructors/SharedWorker/interface-objects.js: Added.
+        (handleCall):
+        (onconnect):
+        * web-platform-tests/workers/constructors/SharedWorker/name.html:
+        * web-platform-tests/workers/constructors/SharedWorker/name.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/constructors/SharedWorker/port-onmessage.html:
+        * web-platform-tests/workers/constructors/SharedWorker/port-onmessage.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/constructors/SharedWorker/port-properties.html:
+        * web-platform-tests/workers/constructors/SharedWorker/port-readonly.html:
+        * web-platform-tests/workers/constructors/SharedWorker/same-origin.html:
+        * web-platform-tests/workers/constructors/SharedWorker/unexpected-global-properties.html:
+        * web-platform-tests/workers/constructors/SharedWorker/unexpected-global-properties.js: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/unexpected-global-properties.html.
+        (onconnect):
+        * web-platform-tests/workers/constructors/SharedWorker/w3c-import.log:
+        * web-platform-tests/workers/constructors/Worker/AbstractWorker.onerror-expected.txt:
+        * web-platform-tests/workers/constructors/Worker/AbstractWorker.onerror.html:
+        * web-platform-tests/workers/constructors/Worker/AbstractWorker.onerror.js: Added.
+        * web-platform-tests/workers/constructors/Worker/Worker-constructor-expected.txt: Added.
+        * web-platform-tests/workers/constructors/Worker/Worker-constructor.html: Added.
+        * web-platform-tests/workers/constructors/Worker/no-arguments-ctor-expected.txt: Removed.
+        * web-platform-tests/workers/constructors/Worker/no-arguments-ctor.html: Removed.
+        * web-platform-tests/workers/constructors/Worker/resolve-empty-string-expected.txt: Removed.
+        * web-platform-tests/workers/constructors/Worker/resolve-empty-string.html: Removed.
+        * web-platform-tests/workers/constructors/Worker/same-origin.html:
+        * web-platform-tests/workers/constructors/Worker/sample_worker/w3c-import.log:
+        * web-platform-tests/workers/constructors/Worker/terminate.html:
+        * web-platform-tests/workers/constructors/Worker/terminate.js: Added.
+        (f):
+        * web-platform-tests/workers/constructors/Worker/unresolvable-url-expected.txt: Removed.
+        * web-platform-tests/workers/constructors/Worker/unresolvable-url.html: Removed.
+        * web-platform-tests/workers/constructors/Worker/w3c-import.log:
+        * web-platform-tests/workers/dedicated-worker-from-blob-url.window-expected.txt: Added.
+        * web-platform-tests/workers/dedicated-worker-from-blob-url.window.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/dedicated-worker-from-blob-url.window.js: Added.
+        (message_from_port):
+        * web-platform-tests/workers/examples/fetch_tests_from_worker-expected.txt: Added.
+        * web-platform-tests/workers/examples/fetch_tests_from_worker.html: Added.
+        * web-platform-tests/workers/examples/fetch_tests_from_worker.js: Added.
+        (test):
+        * web-platform-tests/workers/examples/general.worker-expected.txt: Added.
+        * web-platform-tests/workers/examples/general.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/examples/general.worker.js: Added.
+        (test):
+        * web-platform-tests/workers/examples/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/baseurl/alpha/w3c-import.log.
+        * web-platform-tests/workers/interfaces.worker-expected.txt: Removed.
+        * web-platform-tests/workers/interfaces.worker.js: Removed.
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/event-ports-dedicated.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/event-ports-dedicated.js: Added.
+        (onmessage):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/imagedata-cloned-canvas-in-array.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/imagedata-cloned-canvas-in-array.js: Added.
+        (onmessage):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-dictionary-expected.txt: Added.
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-dictionary.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null-in-array.html.
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-dictionary.js: Added.
+        (onmessage):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null-expected.txt:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null-in-array.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null-in-array.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-undefined.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-undefined.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/setting-postMessage.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/setting-postMessage.js: Added.
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/structured-clone-imagedata.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/structured-clone-imagedata.js: Added.
+        (onmessage):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/structured-clone-message.html:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/structured-clone-message.js: Added.
+        (i.catch):
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/w3c-import.log:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/w3c-import.log:
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/name/getting.html:
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/name/getting.js: Added.
+        (switch):
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/name/setting.html:
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/name/setting.js: Added.
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/name/w3c-import.log:
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/onconnect.html:
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/onconnect.js: Added.
+        (catch):
+        (try.self.onconnect.handleEvent):
+        (f):
+        * web-platform-tests/workers/interfaces/SharedWorkerGlobalScope/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/incoming-message.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/incoming-message.js: Added.
+        (onmessage):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/sending-messages.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/sending-messages.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/setInterval.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/setInterval.js: Added.
+        (interval1.setInterval):
+        (interval2.setInterval):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/setTimeout.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/setTimeout.js: Added.
+        (x):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/close/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/members.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/members.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-module-expected.txt: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-module.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.html.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-sharedworker-expected.txt: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-sharedworker.html: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/setting-members.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/setting-members.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/exception-in-onerror-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/exception-in-onerror.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/exception-in-onerror.js: Added.
+        (onerror):
+        (x):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/handled.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/handled.js: Added.
+        (onerror):
+        (x):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/not-handled.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/not-handled.js: Added.
+        (onerror):
+        (x):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/propagate-to-window-onerror.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/propagate-to-window-onerror.js: Added.
+        (x):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/self.html:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/self.js: Added.
+        (check):
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/001.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/001.js: Added.
+        (setTimeout):
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/002.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/002.js: Added.
+        (t.setTimeout):
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/003.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/003.js: Added.
+        (setInterval):
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/004.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/004.js: Added.
+        (t.setInterval):
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/005-expected.txt: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/001.html.
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/005.js: Added.
+        (t.setInterval):
+        * web-platform-tests/workers/interfaces/WorkerUtils/WindowTimers/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/003.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/003.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/004.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/004.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/005.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/005.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/007.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/007.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/008.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/008.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/009.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/009.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/010.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/010.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/011.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/011.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/012.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/012.js: Added.
+        (catch):
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/1.headers: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/null.headers: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/undefined.headers: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/w3c-import.log:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/002.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/002.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/003.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/003.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/004.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/004.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/005.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/005.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/006.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/006.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/007.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/007.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/language.html:
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/language.js: Added.
+        * web-platform-tests/workers/interfaces/WorkerUtils/navigator/w3c-import.log:
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any.js: Added.
+        (import_blob_url_test):
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/modules/dedicated-worker-import-csp-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-csp.html: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url.any-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url.any.js: Added.
+        (import_data_url_test):
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/modules/dedicated-worker-import-failure-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-failure.html: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-meta-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-meta.html: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-referrer-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import-referrer.html: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import.any-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/modules/dedicated-worker-import.any.js: Added.
+        (import_test):
+        * web-platform-tests/workers/modules/dedicated-worker-import.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-import.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/modules/dedicated-worker-options-credentials-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-options-credentials.html: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-options-credentials.html.headers: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-options-type-expected.txt: Added.
+        * web-platform-tests/workers/modules/dedicated-worker-options-type.html: Added.
+        * web-platform-tests/workers/modules/resources/credentials.py: Added.
+        (main):
+        * web-platform-tests/workers/modules/resources/dynamic-import-and-then-static-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-given-url-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-remote-origin-credentials-checker-worker.sub.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-remote-origin-referrer-checker-worker.sub.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-remote-origin-script-worker.sub.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-same-origin-credentials-checker-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-same-origin-referrer-checker-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/dynamic-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/empty-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/eval-dynamic-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/export-on-dynamic-import-script.js: Added.
+        * web-platform-tests/workers/modules/resources/export-on-dynamic-import-script.js.headers: Added.
+        * web-platform-tests/workers/modules/resources/export-on-load-script.js: Added.
+        * web-platform-tests/workers/modules/resources/export-on-load-script.js.headers: Added.
+        * web-platform-tests/workers/modules/resources/export-on-static-import-script.js: Added.
+        * web-platform-tests/workers/modules/resources/export-on-static-import-script.js.headers: Added.
+        * web-platform-tests/workers/modules/resources/import-meta-url-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/import-scripts-worker.js: Added.
+        (catch):
+        * web-platform-tests/workers/modules/resources/import-test-cases.js: Added.
+        * web-platform-tests/workers/modules/resources/nested-dynamic-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/nested-static-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/new-worker-window.html: Added.
+        * web-platform-tests/workers/modules/resources/post-message-on-load-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/referrer-checker.py: Added.
+        (main):
+        * web-platform-tests/workers/modules/resources/static-import-and-then-dynamic-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-non-existent-script-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-remote-origin-credentials-checker-worker.sub.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-remote-origin-referrer-checker-worker.sub.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-remote-origin-script-worker.sub.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-same-origin-credentials-checker-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-same-origin-referrer-checker-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/static-import-worker.js: Added.
+        * web-platform-tests/workers/modules/resources/w3c-import.log: Added.
+        * web-platform-tests/workers/modules/w3c-import.log: Added.
+        * web-platform-tests/workers/name-property-expected.txt:
+        * web-platform-tests/workers/name-property.html:
+        * web-platform-tests/workers/nested_worker.worker.js:
+        (async_test):
+        * web-platform-tests/workers/nested_worker_close_from_parent_worker-expected.txt: Added.
+        * web-platform-tests/workers/nested_worker_close_from_parent_worker.html: Added.
+        * web-platform-tests/workers/nested_worker_close_self.worker-expected.txt: Added.
+        * web-platform-tests/workers/nested_worker_close_self.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/nested_worker_close_self.worker.js: Added.
+        (async_test):
+        * web-platform-tests/workers/nested_worker_importScripts.worker-expected.txt: Added.
+        * web-platform-tests/workers/nested_worker_importScripts.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/nested_worker_importScripts.worker.js: Added.
+        (async_test):
+        * web-platform-tests/workers/nested_worker_sync_xhr.worker-expected.txt: Added.
+        * web-platform-tests/workers/nested_worker_sync_xhr.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/nested_worker_sync_xhr.worker.js: Added.
+        (async_test):
+        * web-platform-tests/workers/nested_worker_terminate_from_document-expected.txt: Added.
+        * web-platform-tests/workers/nested_worker_terminate_from_document.html: Added.
+        * web-platform-tests/workers/non-automated/navigator-onLine.html:
+        * web-platform-tests/workers/non-automated/navigator-onLine.js: Added.
+        (string_appeared_here.in.self.onmessage):
+        (else.e.ports.0.onmessage):
+        (else.onconnect):
+        * web-platform-tests/workers/non-automated/w3c-import.log:
+        * web-platform-tests/workers/opaque-origin.html:
+        * web-platform-tests/workers/semantics/encodings/001.html:
+        * web-platform-tests/workers/semantics/encodings/001.html.headers: Removed.
+        * web-platform-tests/workers/semantics/encodings/001.js: Added.
+        * web-platform-tests/workers/semantics/encodings/001.js.headers: Added.
+        * web-platform-tests/workers/semantics/encodings/002.html:
+        * web-platform-tests/workers/semantics/encodings/002.html.headers: Removed.
+        * web-platform-tests/workers/semantics/encodings/002.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/encodings/002.js.headers: Added.
+        * web-platform-tests/workers/semantics/encodings/003.html:
+        * web-platform-tests/workers/semantics/encodings/003.js: Added.
+        * web-platform-tests/workers/semantics/encodings/004.html:
+        * web-platform-tests/workers/semantics/encodings/004.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/encodings/w3c-import.log:
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+        * web-platform-tests/workers/semantics/interface-objects/001.worker.js:
+        * web-platform-tests/workers/semantics/interface-objects/002.worker-expected.txt:
+        * web-platform-tests/workers/semantics/interface-objects/002.worker.js:
+        * web-platform-tests/workers/semantics/interface-objects/003.html:
+        * web-platform-tests/workers/semantics/interface-objects/003.js: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.html.
+        (onconnect):
+        * web-platform-tests/workers/semantics/interface-objects/004.html:
+        * web-platform-tests/workers/semantics/interface-objects/004.js: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.html.
+        (onconnect):
+        * web-platform-tests/workers/semantics/interface-objects/w3c-import.log:
+        * web-platform-tests/workers/semantics/multiple-workers/001.html:
+        * web-platform-tests/workers/semantics/multiple-workers/001.js: Added.
+        (string_appeared_here.in.self.onmessage):
+        (else.e.ports.0.onmessage):
+        (else.onconnect):
+        * web-platform-tests/workers/semantics/multiple-workers/002.html:
+        * web-platform-tests/workers/semantics/multiple-workers/002.js: Added.
+        * web-platform-tests/workers/semantics/multiple-workers/003.html:
+        * web-platform-tests/workers/semantics/multiple-workers/003.js: Added.
+        (location.hash.string_appeared_here.w2.onmessage):
+        (else.w3.onmessage):
+        (else):
+        * web-platform-tests/workers/semantics/multiple-workers/004-expected.txt:
+        * web-platform-tests/workers/semantics/multiple-workers/004.html:
+        * web-platform-tests/workers/semantics/multiple-workers/005.html:
+        * web-platform-tests/workers/semantics/multiple-workers/006.html:
+        * web-platform-tests/workers/semantics/multiple-workers/007.html:
+        * web-platform-tests/workers/semantics/multiple-workers/008-1.html:
+        * web-platform-tests/workers/semantics/multiple-workers/008.html:
+        * web-platform-tests/workers/semantics/multiple-workers/008.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/multiple-workers/w3c-import.log:
+        * web-platform-tests/workers/semantics/navigation/001-1.html:
+        * web-platform-tests/workers/semantics/navigation/001-1.js: Added.
+        (setInterval):
+        * web-platform-tests/workers/semantics/navigation/w3c-import.log:
+        * web-platform-tests/workers/semantics/reporting-errors/001.html:
+        * web-platform-tests/workers/semantics/reporting-errors/001.js: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/semantics/reporting-errors/001.html.
+        (onerror):
+        (onconnect):
+        * web-platform-tests/workers/semantics/reporting-errors/002.html:
+        * web-platform-tests/workers/semantics/reporting-errors/002.js: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/semantics/reporting-errors/002.html.
+        (onconnect):
+        * web-platform-tests/workers/semantics/reporting-errors/003.html:
+        * web-platform-tests/workers/semantics/reporting-errors/003.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/reporting-errors/004-1.html:
+        * web-platform-tests/workers/semantics/reporting-errors/004.html:
+        * web-platform-tests/workers/semantics/reporting-errors/004.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/reporting-errors/w3c-import.log:
+        * web-platform-tests/workers/semantics/run-a-worker/001.html:
+        * web-platform-tests/workers/semantics/run-a-worker/001.js: Added.
+        * web-platform-tests/workers/semantics/run-a-worker/002.html:
+        * web-platform-tests/workers/semantics/run-a-worker/002.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/run-a-worker/003.html:
+        * web-platform-tests/workers/semantics/run-a-worker/w3c-import.log:
+        * web-platform-tests/workers/semantics/structured-clone/w3c-import.log:
+        * web-platform-tests/workers/semantics/xhr/001.html:
+        * web-platform-tests/workers/semantics/xhr/001.js: Added.
+        (xhr.onreadystatechange):
+        * web-platform-tests/workers/semantics/xhr/002.html:
+        * web-platform-tests/workers/semantics/xhr/002.js: Added.
+        * web-platform-tests/workers/semantics/xhr/003.html:
+        * web-platform-tests/workers/semantics/xhr/003.js: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/semantics/xhr/003.html.
+        (xhr.onreadystatechange):
+        (onconnect):
+        * web-platform-tests/workers/semantics/xhr/004.html:
+        * web-platform-tests/workers/semantics/xhr/004.js: Added.
+        (onconnect):
+        * web-platform-tests/workers/semantics/xhr/support/w3c-import.log:
+        * web-platform-tests/workers/semantics/xhr/w3c-import.log:
+        * web-platform-tests/workers/shared-worker-from-blob-url.window-expected.txt: Added.
+        * web-platform-tests/workers/shared-worker-from-blob-url.window.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.html.
+        * web-platform-tests/workers/shared-worker-from-blob-url.window.js: Added.
+        (message_from_port):
+        * web-platform-tests/workers/support/SharedWorker-common.js: Added.
+        (generateError):
+        (event.ports.0.onmessage):
+        (onconnect):
+        (handleMessage):
+        * web-platform-tests/workers/support/SharedWorker-create-common.js: Added.
+        (createWorker.worker.port.onmessage):
+        (createWorker.worker.postMessage):
+        (createWorker):
+        * web-platform-tests/workers/support/SharedWorker-script-error.js: Added.
+        (event.ports.0.onmessage):
+        (onconnect):
+        (else.onerror):
+        (handleMessage):
+        * web-platform-tests/workers/support/Worker-common.js: Added.
+        (onmessage):
+        * web-platform-tests/workers/support/Worker-create-common.js: Added.
+        (createWorker):
+        * web-platform-tests/workers/support/Worker-messageport.js: Added.
+        (onmessage):
+        (pingBack):
+        * web-platform-tests/workers/support/Worker-run-forever.js: Added.
+        * web-platform-tests/workers/support/Worker-structure-message.js: Added.
+        (self.onmessage):
+        * web-platform-tests/workers/support/Worker-termination-with-port-messages.js: Added.
+        (echo):
+        (onmessage):
+        * web-platform-tests/workers/support/Worker-thread-multi-port.js: Added.
+        (onmessage):
+        (testPassed):
+        (testFailed):
+        * web-platform-tests/workers/support/Worker-timeout-cancel-order.js: Added.
+        (t1.setTimeout):
+        (setTimeout):
+        * web-platform-tests/workers/support/Worker-timeout-decreasing-order.js: Added.
+        (setTimeout):
+        * web-platform-tests/workers/support/Worker-timeout-increasing-order.js: Added.
+        (setTimeout):
+        * web-platform-tests/workers/support/WorkerGlobalScope-close.js: Added.
+        (else.messagePort.onmessage):
+        (onmessage):
+        * web-platform-tests/workers/support/WorkerSendingPerformanceNow.js: Added.
+        (calcResponse):
+        (self.onmessage):
+        (port.onmessage):
+        * web-platform-tests/workers/support/iframe_sw_dataUrl.html: Added.
+        * web-platform-tests/workers/support/importScripts-1.js: Added.
+        * web-platform-tests/workers/support/importScripts-2.js: Added.
+        * web-platform-tests/workers/support/importScripts-3.js: Added.
+        * web-platform-tests/workers/support/imported_script.py: Added.
+        (main):
+        * web-platform-tests/workers/support/invalidScript.js: Added.
+        * web-platform-tests/workers/support/name.js:
+        (test):
+        * web-platform-tests/workers/support/parent_of_nested_worker.js: Added.
+        (try.worker.onmessage):
+        (catch):
+        * web-platform-tests/workers/support/sync_xhr.js: Added.
+        (catch):
+        * web-platform-tests/workers/support/sync_xhr_target.xml: Added.
+        * web-platform-tests/workers/support/throw-on-message-Worker.js: Added.
+        (self.onerror):
+        (self.onmessage):
+        * web-platform-tests/workers/support/w3c-import.log:
+        * web-platform-tests/workers/w3c-import.log:
+        * web-platform-tests/workers/worker-performance.worker-expected.txt:
+
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaStreamPrivate::scheduleDeferredTask

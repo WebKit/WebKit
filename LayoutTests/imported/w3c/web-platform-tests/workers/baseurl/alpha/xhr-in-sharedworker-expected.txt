@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 7: ReferenceError: Can't find variable: SharedWorker
+
+FAIL Base URL in classic shared workers: XHR ReferenceError: Can't find variable: SharedWorker
+

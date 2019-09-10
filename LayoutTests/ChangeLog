@@ -1,3 +1,13 @@
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync workers web platform tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201629
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaStreamPrivate::scheduleDeferredTask

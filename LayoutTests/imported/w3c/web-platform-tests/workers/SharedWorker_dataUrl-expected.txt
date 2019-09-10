@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 6: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: line 6: ReferenceError: Can't find variable: SharedWorker
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Data URL not shared by cross-origin SharedWorkers Test timed out
+NOTRUN Data URLs shared by same-origin SharedWorkers 
+

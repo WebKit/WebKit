@@ -1,0 +1,3 @@
+
+FAIL Untitled assert_equals: expected "gamma\n" but got "beta\n"
+

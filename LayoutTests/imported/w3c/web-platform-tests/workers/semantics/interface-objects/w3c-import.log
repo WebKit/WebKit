@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,4 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/001.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/002.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.js

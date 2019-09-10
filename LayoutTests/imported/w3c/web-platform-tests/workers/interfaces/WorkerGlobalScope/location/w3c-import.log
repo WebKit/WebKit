@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -16,8 +16,14 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/helper-redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/members.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/members.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/post-location-members.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-module.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-sharedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/setting-members.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/setting-members.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/worker-separate-file.html

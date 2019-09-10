@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -19,18 +19,43 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/ImportScripts.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/ImportScriptsNetworkErr.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/ImportScriptsNosniffErr.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/SharedWorker-common.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/SharedWorker-create-common.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/SharedWorker-script-error.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/Timer.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-common.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-create-common.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-messageport.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-run-forever.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-structure-message.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-termination-with-port-messages.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-thread-multi-port.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-timeout-cancel-order.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-timeout-decreasing-order.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/Worker-timeout-increasing-order.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerBasic.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerClose.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerDataCloneErr.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerFetchURL.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerGlobalScope-close.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerLocation-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerLocation.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerNavigator.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerSendingPerformanceNow.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerTerminate.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerText.txt
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/iframe_sw_dataUrl.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-1.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-2.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-3.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/imported_script.py
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/invalidScript.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/name-as-accidental-global.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/name.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/nosiniff-error-worker.py
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/parent_of_nested_worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/sandboxed-tests.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/shared-name.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/sync_xhr.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/sync_xhr_target.xml
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/throw-on-message-Worker.js
