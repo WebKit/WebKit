@@ -1969,6 +1969,7 @@ RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
         // We could be at the start of a word, try forward.
         range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward);
     }
+
     if (range)
         return range;
 
@@ -1977,18 +1978,6 @@ RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
         currentPosition = positionOfNextBoundaryOfGranularity(currentPosition, WordGranularity, DirectionBackward);
     } while (currentPosition.isNotNull() && !atBoundaryOfGranularity(currentPosition, WordGranularity, DirectionBackward));
 
-    // If the position is an empty paragraph and at the end of the document
-    // the word iterator could not pass the paragraph boundary, therefore iterating to
-    // the previous line is required.
-    if (currentPosition.isNull() && isEndOfDocument(position)) {
-        VisiblePosition previousLinePosition = positionOfNextBoundaryOfGranularity(position, LineGranularity, DirectionBackward);
-        if (previousLinePosition.isNotNull()) {
-            currentPosition = positionOfNextBoundaryOfGranularity(previousLinePosition, WordGranularity, DirectionBackward);
-            if (currentPosition.isNull())
-                currentPosition = previousLinePosition;
-        }
-    }
-
     if (currentPosition.isNull())
         currentPosition = positionOfNextBoundaryOfGranularity(position, WordGranularity, DirectionForward);
 
@@ -1996,6 +1985,7 @@ RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
         range = Range::create(position.deepEquivalent().deprecatedNode()->document(), currentPosition, position);
         ASSERT(range);
     }
+
     return range;
 }
 

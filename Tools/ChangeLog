@@ -1,3 +1,14 @@
+2019-09-09  Timothy Hatcher  <timothy@apple.com>
+
+        Tap and hold on Facebook sometimes creates a tall empty selection.
+        https://bugs.webkit.org/show_bug.cgi?id=201618
+        rdar://53630145
+
+        Reviewed by Megan Gardner.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/SelectionByWord.mm: Added.
+
 2019-09-09  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Watchlist doesn't work sometimes

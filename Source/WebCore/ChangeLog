@@ -1,3 +1,19 @@
+2019-09-09  Timothy Hatcher  <timothy@apple.com>
+
+        Tap and hold on Facebook sometimes creates a tall empty selection.
+        https://bugs.webkit.org/show_bug.cgi?id=201618
+        rdar://53630145
+
+        Reviewed by Megan Gardner.
+
+        API Test: SelectionTests.ByWordAtEndOfDocument
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordRangeFromPosition):
+        Remove special case code for the possibility of an empty paragraph and at the end
+        of the document. This is no longer needed and was causing a large selection to be
+        created on Facebook due to large areas of non-selectable content on the page.
+
 2019-09-09  Joonghun Park  <jh718.park@samsung.com>
 
         getComputedStyle for line-height: normal should return the keyword instead of a length
