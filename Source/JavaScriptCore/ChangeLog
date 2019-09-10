@@ -1,5 +1,31 @@
 2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] CodeBlock::calleeSaveRegisters should not see half-baked JITData
+        https://bugs.webkit.org/show_bug.cgi?id=201664
+        <rdar://problem/52126927>
+
+        Reviewed by Tadeu Zagallo.
+
+        We are hitting the crash accessing invalid-pointer as CodeBlock::calleeSaveRegisters result.
+        This is because concurrent Baseline JIT compiler can access m_jitData without taking a lock through CodeBlock::calleeSaveRegisters.
+        Since m_jitData can be initialized in the main thread while calling CodeBlock::calleeSaveRegisters from concurrent Baseline JIT compiler thread,
+        we can see half-baked JITData structure which holds garbage pointers.
+
+        But we do not want to make CodeBlock::calleeSaveRegisters() call with CodeBlock::m_lock due to several reasons.
+
+        1. This function is very primitive one and it is called from various AssemblyHelpers functions and other code-generation functions. Some of these functions are
+           called while taking this exact same lock, so dead-lock can happen.
+        2. JITData::m_calleeSaveRegisters is filled only for DFG and FTL CodeBlock. And DFG and FTL code accesses these field after initializing properly. For Baseline JIT
+           compiler case, only thing we should do is that JITData should say m_calleeSaveRegisters is nullptr and it won't be filled for this CodeBlock.
+
+        Instead of guarding CodeBlock::calleeSaveRegisters() function with CodeBlock::m_lock, this patch inserts WTF::storeStoreFence when filling m_jitData. This ensures that
+        JITData::m_calleeSaveRegisters is initialized with nullptr when this JITData pointer is exposed to concurrent Baseline JIT compiler thread.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::ensureJITDataSlow):
+
+2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ResultType implementation is wrong for bit ops, and ends up making ArithDiv take the DFG Int32 fast path even if Baseline constantly produces Double result
         https://bugs.webkit.org/show_bug.cgi?id=198253
 
