@@ -133,7 +133,7 @@ public:
 
     void setAllowsAnySSLCertificate(bool);
 
-    void statisticsNotifyObserver();
+    bool statisticsNotifyObserver();
 
     void textDidChangeInTextField();
     void textFieldDidBeginEditing();

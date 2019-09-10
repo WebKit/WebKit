@@ -1931,9 +1931,9 @@ void TestRunner::statisticsDidRunTelemetryCallback(unsigned totalPrevalentResour
     callTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, 1, &result);
 }
 
-void TestRunner::statisticsNotifyObserver()
+bool TestRunner::statisticsNotifyObserver()
 {
-    InjectedBundle::singleton().statisticsNotifyObserver();
+    return InjectedBundle::singleton().statisticsNotifyObserver();
 }
 
 void TestRunner::statisticsProcessStatisticsAndDataRecords()

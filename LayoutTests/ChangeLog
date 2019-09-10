@@ -1,3 +1,15 @@
+2019-09-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html is frequently timing out on iOS EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=201550
+
+        Reviewed by Alex Christensen.
+
+        Update test to do checks on a timer if its call to testRunner.statisticsNotifyObserver() is a no-op
+        due to having no statistics to send to the network process.
+
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html:
+
 2019-09-09  Joonghun Park  <pjh0718@gmail.com>
 
         getComputedStyle for line-height: normal should return the keyword instead of a length

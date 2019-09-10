@@ -56,6 +56,8 @@ public:
     String statisticsForURL(PAL::SessionID, const URL&) final;
     void updateCentralStatisticsStore() final;
     void clearState() final;
+    
+    bool hasStatistics() const final { return !m_perSessionResourceStatisticsMap.isEmpty(); }
 
 private:
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(PAL::SessionID, const WebCore::RegistrableDomain&);

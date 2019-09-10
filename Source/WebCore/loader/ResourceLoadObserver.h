@@ -57,6 +57,8 @@ public:
     virtual void updateCentralStatisticsStore() { }
     virtual void clearState() { }
     
+    virtual bool hasStatistics() const { return false; }
+    
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     virtual void setShouldLogUserInteraction(bool) { }
 #endif

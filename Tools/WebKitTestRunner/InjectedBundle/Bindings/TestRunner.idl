@@ -321,7 +321,7 @@ interface TestRunner {
     void setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
-    void statisticsNotifyObserver();
+    boolean statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking(object completionHandler);
     void statisticsSubmitTelemetry();

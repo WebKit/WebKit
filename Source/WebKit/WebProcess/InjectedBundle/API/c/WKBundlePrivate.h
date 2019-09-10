@@ -92,7 +92,7 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundle, WKBundlePageRef page, bool enabled);
 
 WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef);
-WK_EXPORT void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
+WK_EXPORT bool WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
 
 WK_EXPORT void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes);
 

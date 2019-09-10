@@ -311,9 +311,13 @@ void WKBundleClearResourceLoadStatistics(WKBundleRef)
     WebCore::ResourceLoadObserver::shared().clearState();
 }
 
-void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
+bool WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
 {
+    if (!WebCore::ResourceLoadObserver::shared().hasStatistics())
+        return false;
+
     WebCore::ResourceLoadObserver::shared().updateCentralStatisticsStore();
+    return true;
 }
 
 

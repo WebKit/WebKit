@@ -10,7 +10,12 @@
     description("Test that a non-redirected top frame navigation doesn't get captured in statistics.");
     jsTestIsAsync = true;
 
+    let timerHandle = 0;
+
     function finishTest() {
+        if (timerHandle)
+          clearTimeout(timerHandle);
+
         shouldBeFalse('testRunner.isStatisticsRegisteredAsSubFrameUnder("http://localhost", "http://127.0.0.1")');
         shouldBeFalse('testRunner.isStatisticsRegisteredAsSubFrameUnder("http://127.0.0.1", "http://localhost")');
         setEnableFeature(false, finishJSTest);
@@ -28,7 +33,8 @@
             case "localhost:8000":
                 testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
-                testRunner.statisticsNotifyObserver();
+                if (!testRunner.statisticsNotifyObserver())
+                    timerHandle = setTimeout(finishTest, 100);
                 break;
             default:
                 testFailed("Unknown host: " + document.location.host);

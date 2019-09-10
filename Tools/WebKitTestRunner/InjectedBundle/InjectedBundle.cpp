@@ -1017,9 +1017,9 @@ void InjectedBundle::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
     WebCoreTestSupport::setAllowsAnySSLCertificate(allowsAnySSLCertificate);
 }
 
-void InjectedBundle::statisticsNotifyObserver()
+bool InjectedBundle::statisticsNotifyObserver()
 {
-    WKBundleResourceLoadStatisticsNotifyObserver(m_bundle);
+    return WKBundleResourceLoadStatisticsNotifyObserver(m_bundle);
 }
 
 void InjectedBundle::textDidChangeInTextField()
