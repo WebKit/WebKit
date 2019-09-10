@@ -247,6 +247,13 @@
 
         * TestExpectations:
 
+2019-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to make this test not flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=201482
+
+        * legacy-animation-engine/compositing/transitions/add-remove-transition.html:
+
 2019-09-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         Layout Test http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html is flaky

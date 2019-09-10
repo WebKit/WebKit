@@ -23,18 +23,20 @@
             transform: translateZ(0);
         }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner)
             testRunner.waitUntilDone();
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             target.classList.add('transitioning');
             document.body.offsetWidth;
             target.classList.add('no-transition');
-            setTimeout(() => {
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, 20);
+            
+            await UIHelper.ensurePresentationUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
     </script>
 </head>
