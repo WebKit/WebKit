@@ -5,8 +5,8 @@ PASS Data channel should be able to send unicode string and receive as unicode s
 PASS Data channel should ignore binaryType and always receive string message as string 
 PASS Data channel should be able to send Uint8Array message and receive as ArrayBuffer 
 PASS Data channel should be able to send ArrayBuffer message and receive as ArrayBuffer 
-FAIL Data channel should be able to send Blob message and receive as ArrayBuffer promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Data channel should be able to send Blob message and receive as ArrayBuffer 
 PASS Data channel should be able to send ArrayBuffer message and receive as Blob 
 FAIL Data channel binaryType should receive message as Blob by default assert_equals: Expect initial binaryType value to be blob expected "blob" but got "arraybuffer"
-FAIL Sending multiple messages with different types should succeed and be received assert_unreached: Unexpected promise rejection: NotSupportedError: The operation is not supported. Reached unreachable code
+PASS Sending multiple messages with different types should succeed and be received 
 

@@ -31,6 +31,7 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "NetworkSendQueue.h"
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "ScriptWrappable.h"
@@ -80,6 +81,8 @@ public:
 private:
     RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
+    static NetworkSendQueue createMessageQueue(Document&, RTCDataChannel&);
+
     void scheduleDispatchEvent(Ref<Event>&&);
     void scheduledEventTimerFired();
 
@@ -88,8 +91,6 @@ private:
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-
-    ExceptionOr<void> sendRawData(const char* data, size_t length);
 
     // ActiveDOMObject API
     void stop() final;
@@ -118,6 +119,8 @@ private:
     String m_label;
     RTCDataChannelInit m_options;
     size_t m_bufferedAmountLowThreshold { 0 };
+
+    NetworkSendQueue m_messageQueue;
 };
 
 } // namespace WebCore
