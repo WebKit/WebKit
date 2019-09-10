@@ -3314,10 +3314,6 @@ http/wpt/resource-timing/rt-initiatorType-script-module.html [ Pass Failure ]
 http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
 http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]
 
-# <rdar://problem/51766135> imported/w3c/web-platform-tests/preload/ tests landed failing after import
-imported/w3c/web-platform-tests/preload/dynamic-adding-preload-imagesrcset.html [ Failure ]
-imported/w3c/web-platform-tests/preload/link-header-preload-imagesrcset.html [ Failure ]
-
 # <rdar://problem/51826131> REGRESSION (r241747) 2 Layout tests are failing on Internal iOS 13 iOS / iPad Simulator testers fast/repaint/placeholder-after-caps-lock-hidden.html imported/blink/svg/custom/focus-ring-2.svg
 imported/blink/svg/custom/focus-ring-2.svg [ ImageOnlyFailure ]
 fast/repaint/placeholder-after-caps-lock-hidden.html [ Failure ]
