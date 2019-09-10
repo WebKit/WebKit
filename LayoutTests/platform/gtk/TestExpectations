@@ -3718,6 +3718,7 @@ webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 webkit.org/b/195133 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-3.html [ Failure ]
+webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
 
 webkit.org/b/195134 inspector/cpu-profiler/threads.html [ Failure ]
 

@@ -1,3 +1,31 @@
+2019-09-10  Frederic Wang  <fwang@igalia.com>
+
+        Ensure tests for legacy features are in LayoutTests/mathml
+        https://bugs.webkit.org/show_bug.cgi?id=201604
+
+        Reviewed by Rob Buis.
+
+        This patch copies MathML WPT tests verifying legacy support for features removed from MathML
+        Core. These tests will be overriden or removed in a future WPT synchronization, so we need
+        to keep local copies to check these legacy features when the "MathML Core" option is
+        disabled.
+
+        * TestExpectations: Copy expectation.
+        * mathml/non-core/frac-linethickness-001-expected.html: Added.
+        * mathml/non-core/frac-linethickness-001.html: Added.
+        * mathml/non-core/frac-linethickness-002-expected.html: Added.
+        * mathml/non-core/frac-linethickness-002.html: Added.
+        * mathml/non-core/frac-numalign-denomalign-001-expected.html: Added.
+        * mathml/non-core/frac-numalign-denomalign-001.html: Added.
+        * mathml/non-core/lengths-1-expected.html: Added.
+        * mathml/non-core/lengths-1.html: Added.
+        * mathml/non-core/lengths-2-expected.html: Added.
+        * mathml/non-core/lengths-2.html: Added.
+        * mathml/non-core/lengths-3-expected.txt: Added.
+        * mathml/non-core/lengths-3.html: Added.
+        * platform/gtk/TestExpectations: Copy expectation.
+        * platform/win/TestExpectations: Add failure expectations.
+
 2019-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Option + arrow moves caret past whitespace on iOS
