@@ -1,3 +1,28 @@
+2019-09-09  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Upload Babylon.js, WSL compile, and MotionMark links to demo page
+        https://bugs.webkit.org/show_bug.cgi?id=201621
+
+        Reviewed by Dean Jackson.
+
+        Add new demos to the WebGPU demo collection.
+        Ensure error alerts/divs display properly if WebGPU is not enabled.
+
+        * demos/webgpu/babylon/oneHelmetWebGPU.html:
+        * demos/webgpu/babylon/oneSphereWebGPU.html:
+        * demos/webgpu/compute-blur.html:
+        * demos/webgpu/compute-boids-compile.html:
+        * demos/webgpu/compute-boids.html:
+        * demos/webgpu/hello-cube.html:
+        * demos/webgpu/hello-triangle.html:
+        * demos/webgpu/index.html:
+        * demos/webgpu/resources/babylon-helmet.png: Added.
+        * demos/webgpu/resources/babylon-sphere.png: Added.
+        * demos/webgpu/resources/motionmark.jpeg: Added.
+        * demos/webgpu/resources/webkit-logo.png: Added.
+        * demos/webgpu/scripts/compute-boids-compile.js:
+        * demos/webgpu/textured-cube.html:
+
 2019-09-09  Jon Lee  <jonlee@apple.com>
 
         Add Babylon demos

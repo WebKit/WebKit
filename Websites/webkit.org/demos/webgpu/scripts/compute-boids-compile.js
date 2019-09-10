@@ -1,7 +1,5 @@
-if (!navigator.gpu) {
-    document.getElementById('not-supported').style.display = 'block';
-    alert('WebGPU not supported! Please visit webgpu.io to see the current implementation status.');
-}
+if (!navigator.gpu)
+    document.body.className = "error";
 
 const isChrome = navigator.userAgent.indexOf("Chrome") >= 0;
 

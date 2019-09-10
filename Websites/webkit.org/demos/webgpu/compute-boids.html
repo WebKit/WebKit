@@ -1,9 +1,10 @@
+<!-- Based off of https://github.com/austinEng/webgpu-samples/blob/master/compute_boids.html -->
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta name="viewport" content="width=1200">
-  <title>WebGPU Compute Flocking</title>
+  <title>WebGPU Compute Shader Flocking</title>
   <script src="scripts/gl-matrix-min.js"></script>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
@@ -20,18 +21,18 @@
 </head>
 <body>
   <div id="contents">
-    <h1>Compute Flocking</h1>
+    <h1>Compute Shader Flocking</h1>
     <p>
         This demo uses a compute shader to update the positions of objects in parallel.
     </p>
-    <canvas width="1200" height="1200"></canvas>
+    <canvas></canvas>
   </div>
   <div id="error">
       <h2>WebGPU not available</h2>
       <p>
           Make sure you are on a system with WebGPU enabled. In
-          Safari, first make sure the Developer Menu is visible (Preferences →
-          Advanced), then Develop → Experimental Features → WebGPU.
+          Safari, first make sure the Developer Menu is visible (Preferences >
+          Advanced), then Develop > Experimental Features > WebGPU.
       </p>
   </div>
   <script>
@@ -140,6 +141,10 @@ compute void compute_main(constant SimParams[] paramsBuffer : register(b0), devi
       const device = await adapter.requestDevice();
 
       const canvas = document.querySelector('canvas');
+      let size = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+      size *= 0.75;
+      canvas.width = size;
+      canvas.height = size;
       const context = canvas.getContext('gpu');
 
       const swapChain = context.configureSwapChain({
