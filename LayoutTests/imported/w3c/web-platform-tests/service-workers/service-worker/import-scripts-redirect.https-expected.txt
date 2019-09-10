@@ -2,5 +2,6 @@
 Harness Error (TIMEOUT), message = null
 
 PASS importScripts() supports redirects 
-TIMEOUT importScripts() supports redirects and can be updated Test timed out
+TIMEOUT an imported script redirects, and the body changes during the update check Test timed out
+NOTRUN an imported script doesn't redirect initially, then redirects during the update check and the body changes 
 

@@ -1,3 +1,27 @@
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip / rebaseline a few service worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=201626
+
+        * web-platform-tests/service-workers/service-worker/client-navigate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/embed-and-object-are-not-intercepted.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-with-range-request.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-module-scripts.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multipart-image.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ready.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-not-allowed.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https-expected.txt:
+
 2019-09-10  Youenn Fablet  <youenn@apple.com>
 
         Add support to RTCDataChannel.send(Blob)

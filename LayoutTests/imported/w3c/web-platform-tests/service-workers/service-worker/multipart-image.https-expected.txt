@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: 
-CONSOLE MESSAGE: Cannot load .
 CONSOLE MESSAGE: The operation couldn’t be completed. ( error 0.)
 CONSOLE MESSAGE: Cannot load .
 
@@ -7,8 +5,8 @@ CONSOLE MESSAGE: Cannot load .
 Harness Error (TIMEOUT), message = null
 
 PASS initialize global state 
-FAIL same-origin multipart image via SW should be readable promise_test: Unhandled rejection with value: object "NetworkError: load failed"
-TIMEOUT cross-origin multipart image via SW with approved CORS should be readable Test timed out
+TIMEOUT same-origin multipart image via SW should be readable Test timed out
+NOTRUN cross-origin multipart image via SW with approved CORS should be readable 
 NOTRUN cross-origin multipart image with no-cors via SW should not be readable 
 NOTRUN cross-origin multipart image via SW with rejected CORS should fail to load 
 NOTRUN restore global state 

@@ -1,7 +1,4 @@
 
-
-Harness Error (TIMEOUT), message = null
-
 PASS initialize global state 
 PASS test: type=basic 
 PASS test: type=opaque 
@@ -16,10 +13,10 @@ PASS test: type=basic&passThroughCache=true
 PASS test: type=opaque&passThroughCache=true 
 PASS test: type=default&passThroughCache=true 
 PASS test: type=basic&clone=1&passThroughCache=true 
-TIMEOUT test: type=opaque&clone=1&passThroughCache=true Test timed out
-NOTRUN test: type=default&clone=1&passThroughCache=true 
-NOTRUN test: type=basic&clone=2&passThroughCache=true 
-NOTRUN test: type=opaque&clone=2&passThroughCache=true 
-NOTRUN test: type=default&clone=2&passThroughCache=true 
-NOTRUN restore global state 
+PASS test: type=opaque&clone=1&passThroughCache=true 
+PASS test: type=default&clone=1&passThroughCache=true 
+PASS test: type=basic&clone=2&passThroughCache=true 
+PASS test: type=opaque&clone=2&passThroughCache=true 
+PASS test: type=default&clone=2&passThroughCache=true 
+PASS restore global state 
 

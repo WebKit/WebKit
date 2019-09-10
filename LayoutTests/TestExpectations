@@ -202,23 +202,15 @@ imported/w3c/web-platform-tests/referrer-policy [ Skip ]
 
 # Newly imported service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/embed-and-object-are-not-intercepted.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-with-range-request.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Skip ]
 
 # Newly imported service worker tests that are flaky.
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-client-id.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/xhr/event-timeout-order.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-not-allowed.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
 
 # The tests prints out a UUID that is different every time.
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure ]
@@ -227,8 +219,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html
 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Skip ]
 
 # Skip service worker tests that are timing out.
-imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
@@ -257,8 +247,6 @@ imported/w3c/web-platform-tests/server-timing/test_server_timing.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/test_server_timing.https.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [ Skip ]
-
-imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
 # This test seems wrong as the order of setting ServiceWorker#state to 'activated' and resolving skipWaiting() promise is not deterministic.
 # Run this test to ensure this test does not crash.
@@ -2475,7 +2463,6 @@ webkit.org/b/179851 imported/w3c/web-platform-tests/html/browsers/offline/manife
 
 webkit.org/b/182177 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html [ Pass Failure ]
 
-webkit.org/b/182311 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure ]
 
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]

@@ -24,6 +24,7 @@ PASS SW-fetched redirect to same-origin same-scope.
 PASS SW-fetched redirect to same-origin other-scope. 
 PASS SW-fetched redirect to other-origin out-scope. 
 PASS SW-fetched redirect to other-origin in-scope. 
+PASS SW-fetched response from different URL, same-origin same-scope. 
 PASS Redirect to same-origin out-scope with opaque redirect response. 
 PASS Redirect to same-origin same-scope with opaque redirect response. 
 PASS Redirect to same-origin other-scope with opaque redirect response. 

@@ -1,5 +1,5 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 56600)
-FAIL: Timed out waiting for notifyDone to be called
 
-#EOF
-#EOF
+FAIL range responses from single origin (same-origin) assert_equals: expected "NOT_TAINTED" but got "LOAD_ERROR"
+FAIL range responses from multiple origins (cross-origin first) assert_equals: expected "TAINTED" but got "LOAD_ERROR"
+FAIL range responses from single origin with both opaque and non-opaque responses assert_equals: expected "TAINTED" but got "LOAD_ERROR"
+
