@@ -130,13 +130,18 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
 #if ENABLE(SANDBOX_EXTENSIONS)
     bool hasAudioCapture = false;
     bool hasVideoCapture = false;
+    bool hasPendingCapture = false;
 
-    UserMediaPermissionRequestManagerProxy::forEach([&hasAudioCapture, &hasVideoCapture, &process](auto& managerProxy) {
+    UserMediaPermissionRequestManagerProxy::forEach([&hasAudioCapture, &hasVideoCapture, &hasPendingCapture, &process](auto& managerProxy) {
         if (&process != &managerProxy.page().process())
             return;
         hasAudioCapture |= managerProxy.page().isCapturingAudio();
         hasVideoCapture |= managerProxy.page().isCapturingVideo();
+        hasPendingCapture |= managerProxy.hasPendingCapture();
     });
+
+    if (hasPendingCapture)
+        return;
 
     if (hasAudioCapture && hasVideoCapture)
         return;

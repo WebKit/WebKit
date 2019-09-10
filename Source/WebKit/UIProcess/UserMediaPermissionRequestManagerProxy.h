@@ -87,6 +87,7 @@ public:
     };
 
     void setMockCaptureDevicesEnabledOverride(Optional<bool> enabled) { m_mockDevicesEnabledOverride = enabled; }
+    bool hasPendingCapture() const { return m_hasPendingCapture; }
 
 private:
 #if !RELEASE_LOG_DISABLED

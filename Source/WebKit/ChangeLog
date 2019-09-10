@@ -1,3 +1,24 @@
+2019-09-10  Youenn Fablet  <youenn@apple.com>
+
+        UserMediaProcessManager is revoking sandbox extensions too aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=201638
+
+        Reviewed by Eric Carlson.
+
+        Sandbox revocation was sometimes happening when a page is being closed while another page from the same process is starting capture.
+        In that case, revocation might happen while it should not.
+        To prevent this, we do not revoke sandbox extensions if there are pending captures for a page of the process.
+        Whenever a page does not have any pending capture, sandbox extensions may be revoked.
+
+        Covered by OnDeviceChangeCrash API test in debug mode.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        (WebKit::UserMediaPermissionRequestManagerProxy::hasPendingCapture const):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::revokeSandboxExtensionsIfNeeded):
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         [iOS] We sometimes attempt to use a terminated prewarmed WebContent process

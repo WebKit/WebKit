@@ -241,7 +241,8 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     m_page.process().connection()->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt() }, [this, weakThis = makeWeakPtr(this)] {
         if (!weakThis)
             return;
-        --m_hasPendingCapture;
+        if (!--m_hasPendingCapture)
+            UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
     }, m_page.webPageID());
 
     processNextUserMediaRequestIfNeeded();
