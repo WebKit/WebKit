@@ -1,5 +1,16 @@
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
+        Add missing origin check for Service-Worker-Allowed header
+        https://bugs.webkit.org/show_bug.cgi?id=201653
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/service-workers/service-worker/Service-Worker-Allowed-header.https-expected.txt:
+
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
         Re-sync web-platform-tests IDL interfaces from upstream
         https://bugs.webkit.org/show_bug.cgi?id=201630
 
