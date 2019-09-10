@@ -1,3 +1,31 @@
+2019-09-10  Youenn Fablet  <youenn@apple.com>
+
+        Audio sometimes fail to capture in WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=180748
+        <rdar://problem/36032346>
+
+        Reviewed by Eric Carlson.
+
+        In some cases, Safari is not receiving unsuspend notifications.
+        In that case, the capture unit might stay in suspend state forever.
+        To work around that, we force to unsuspend whenever there is a new capture happening.
+        This will make it so that reloading the page will unsuspend the page.
+
+        Manually tested by triggering Siri, starting to use the microphone and quickly going back to a capturing page.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::provideSpeakerData):
+        When suspension happens, the buffer size might change.
+        Since this is only an issue if there are some references data, we now do not fail the capture when there
+        is no reference data.
+        (WebCore::CoreAudioSharedUnit::resume):
+        (WebCore::CoreAudioSharedUnit::prepareForNewCapture):
+        Make sure to start with a clean slate by setting suspend state to false for the shared unit.
+        And failing all previous sources in case we are going back from suspension.
+        (WebCore::CoreAudioSharedUnit::startInternal):
+        (WebCore::CoreAudioCaptureSourceFactory::audioCaptureDeviceManager):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+
 2019-09-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fixes for non-unified builds after r249022

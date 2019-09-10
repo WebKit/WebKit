@@ -107,6 +107,8 @@ public:
 
     void devicesChanged(const Vector<CaptureDevice>&);
 
+    void prepareForNewCapture();
+
 private:
     OSStatus configureSpeakerProc();
     OSStatus configureMicrophoneProc();
@@ -450,7 +452,10 @@ OSStatus CoreAudioSharedUnit::provideSpeakerData(AudioUnitRenderActionFlags& /*i
 #endif
 
     if (m_speakerSampleBuffer->sampleCapacity() < inNumberFrames) {
+        if (m_activeSources.isEmpty())
+            return 0;
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::provideSpeakerData: speaker sample buffer size (%d) too small for amount of sample data requested (%d)!", m_speakerSampleBuffer->sampleCapacity(), (int)inNumberFrames);
+        // FIXME: This fails the capture, we should thus either reconfigure the audio unit or notify all clients that capture is failing.
         return kAudio_ParamError;
     }
 
@@ -629,6 +634,19 @@ OSStatus CoreAudioSharedUnit::resume()
     return 0;
 }
 
+void CoreAudioSharedUnit::prepareForNewCapture()
+{
+    if (!m_suspended)
+        return;
+    m_suspended = false;
+
+    if (!m_producingCount)
+        return;
+
+    RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::prepareForNewCapture, notifying suspended sources of capture failure");
+    captureFailed();
+}
+
 OSStatus CoreAudioSharedUnit::startInternal()
 {
     OSStatus err;
@@ -647,6 +665,8 @@ OSStatus CoreAudioSharedUnit::startInternal()
     err = AudioOutputUnitStart(m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::start(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
+        cleanupAudioUnit();
+        ASSERT(!m_ioUnit);
         return err;
     }
 
@@ -853,6 +873,11 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt))
     , m_captureDeviceID(captureDeviceID)
 {
+#if PLATFORM(IOS_FAMILY)
+    // We ensure that we unsuspend ourselves on the constructor as a capture source
+    // is created when getUserMedia grants access which only happens when the process is foregrounded.
+    CoreAudioSharedUnit::singleton().prepareForNewCapture();
+#endif
 }
 
 void CoreAudioCaptureSource::initializeToStartProducingData()
@@ -871,13 +896,6 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
     initializeVolume(unit.volume());
 
     unit.addClient(*this);
-
-#if PLATFORM(IOS_FAMILY)
-    // We ensure that we unsuspend ourselves on the constructor as a capture source
-    // is created when getUserMedia grants access which only happens when the process is foregrounded.
-    if (unit.isSuspended())
-        unit.reconfigureAudioUnit();
-#endif
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
