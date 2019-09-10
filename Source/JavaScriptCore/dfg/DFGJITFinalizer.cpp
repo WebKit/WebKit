@@ -82,8 +82,11 @@ bool JITFinalizer::finalizeFunction()
 void JITFinalizer::finalizeCommon()
 {
     // Some JIT finalizers may have added more constants. Shrink-to-fit those things now.
-    m_plan.codeBlock()->constants().shrinkToFit();
-    m_plan.codeBlock()->constantsSourceCodeRepresentation().shrinkToFit();
+    {
+        ConcurrentJSLocker locker(m_plan.codeBlock()->m_lock);
+        m_plan.codeBlock()->constants().shrinkToFit();
+        m_plan.codeBlock()->constantsSourceCodeRepresentation().shrinkToFit();
+    }
 
 #if ENABLE(FTL_JIT)
     m_jitCode->optimizeAfterWarmUp(m_plan.codeBlock());

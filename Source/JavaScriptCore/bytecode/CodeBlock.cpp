@@ -596,7 +596,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 if (op.type == ModuleVar) {
                     // Keep the linked module environment strongly referenced.
                     if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
-                        addConstant(op.lexicalEnvironment);
+                        addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
                     metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
                 } else
                     metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
@@ -899,7 +899,10 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
 
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
     size_t count = constants.size();
-    m_constantRegisters.resizeToFit(count);
+    {
+        ConcurrentJSLocker locker(m_lock);
+        m_constantRegisters.resizeToFit(count);
+    }
     for (size_t i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
 

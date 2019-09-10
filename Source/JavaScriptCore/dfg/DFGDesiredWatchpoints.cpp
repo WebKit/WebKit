@@ -43,7 +43,7 @@ void ArrayBufferViewWatchpointAdaptor::add(
     ArrayBufferNeuteringWatchpointSet* neuteringWatchpoint =
         ArrayBufferNeuteringWatchpointSet::create(vm);
     neuteringWatchpoint->set().add(watchpoint);
-    codeBlock->addConstant(neuteringWatchpoint);
+    codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), neuteringWatchpoint);
     // FIXME: We don't need to set this watchpoint at all for shared buffers.
     // https://bugs.webkit.org/show_bug.cgi?id=164108
     vm.heap.addReference(neuteringWatchpoint, view->possiblySharedBuffer());
@@ -52,14 +52,14 @@ void ArrayBufferViewWatchpointAdaptor::add(
 void SymbolTableAdaptor::add(
     CodeBlock* codeBlock, SymbolTable* symbolTable, CommonData& common)
 {
-    codeBlock->addConstant(symbolTable); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
+    codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), symbolTable); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
     symbolTable->singleton().add(common.watchpoints.add(codeBlock));
 }
 
 void FunctionExecutableAdaptor::add(
     CodeBlock* codeBlock, FunctionExecutable* executable, CommonData& common)
 {
-    codeBlock->addConstant(executable); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
+    codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), executable); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
     executable->singleton().add(common.watchpoints.add(codeBlock));
 }
 

@@ -1405,6 +1405,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value, ArrayMode arrayMode)
 
 void Graph::registerFrozenValues()
 {
+    ConcurrentJSLocker locker(m_codeBlock->m_lock);
     m_codeBlock->constants().shrink(0);
     m_codeBlock->constantsSourceCodeRepresentation().resize(0);
     for (FrozenValue* value : m_frozenValues) {
@@ -1420,7 +1421,7 @@ void Graph::registerFrozenValues()
             break;
         }
         case StrongValue: {
-            unsigned constantIndex = m_codeBlock->addConstantLazily();
+            unsigned constantIndex = m_codeBlock->addConstantLazily(locker);
             // We already have a barrier on the code block.
             m_codeBlock->constants()[constantIndex].setWithoutWriteBarrier(value->value());
             break;

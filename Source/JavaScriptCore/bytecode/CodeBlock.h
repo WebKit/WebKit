@@ -546,7 +546,7 @@ public:
 
     Vector<WriteBarrier<Unknown>>& constants() { return m_constantRegisters; }
     Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
-    unsigned addConstant(JSValue v)
+    unsigned addConstant(const ConcurrentJSLocker&, JSValue v)
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
@@ -555,7 +555,7 @@ public:
         return result;
     }
 
-    unsigned addConstantLazily()
+    unsigned addConstantLazily(const ConcurrentJSLocker&)
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());

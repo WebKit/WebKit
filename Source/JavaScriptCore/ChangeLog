@@ -1,3 +1,31 @@
+2019-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] CodeBlock::m_constantRegisters should be guarded by ConcurrentJSLock when Vector reallocate memory
+        https://bugs.webkit.org/show_bug.cgi?id=201622
+
+        Reviewed by Mark Lam.
+
+        CodeBlock::visitChildren takes ConcurrentJSLock while iterating m_constantRegisters, some of the places reallocate
+        this Vector without taking a lock. If a Vector memory is reallocated while iterating it in concurrent collector,
+        the concurrent collector can see a garbage. This patch guards m_constantRegisters reallocation with ConcurrentJSLock.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::addConstantLazily):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        (JSC::DFG::SymbolTableAdaptor::add):
+        (JSC::DFG::FunctionExecutableAdaptor::add):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::registerFrozenValues):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::emit const):
+
 2019-09-09  Robin Morisset  <rmorisset@apple.com>
 
         [Air] highOrderAdjacents in AbstractColoringAllocator::conservativeHeuristic should be some kind of array

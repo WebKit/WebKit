@@ -254,7 +254,7 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
             JSValue realValue = thisValue.getValue(codeBlock->vm());
             RELEASE_ASSERT(realValue.isCell());
 
-            codeBlock->addConstant(realValue);
+            codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), realValue);
             
             if (thisValue.m_kind == NewStringImpl)
                 thisValue.u.stringImpl->deref();
