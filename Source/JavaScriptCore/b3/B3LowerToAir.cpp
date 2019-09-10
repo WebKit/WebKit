@@ -2749,7 +2749,7 @@ private:
                 return;
             }
 
-            if (m_value->child(1)->isInt(0xffffffff)) {
+            if (m_value->child(1)->isInt64(0xffffffff) || m_value->child(1)->isInt32(0xffffffff)) {
                 appendUnOp<Move32, Move32>(m_value->child(0));
                 return;
             }

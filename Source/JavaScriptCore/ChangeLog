@@ -1,5 +1,70 @@
 2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] 32bit bitwide operation with all-one (-1) is wrong in B3
+        https://bugs.webkit.org/show_bug.cgi?id=201634
+
+        Reviewed by Mark Lam.
+
+        Accidentally, the B3::Value is ConstInt32(-1), `value->isInt(std::numeric_limits<uint32_t>::max())` returns `false`!
+        For example, in BitAnd strength reduction,
+
+            1034             // Turn this: BitAnd(value, all-ones)
+            1035             // Into this: value.
+            1036             if ((m_value->type() == Int64 && m_value->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+            1037                 || (m_value->type() == Int32 && m_value->child(1)->isInt(std::numeric_limits<uint32_t>::max()))) {
+            1038                 replaceWithIdentity(m_value->child(0));
+            1039                 break;
+            1040             }
+
+        We use `m_value->child(1)->isInt(std::numeric_limits<uint32_t>::max())`. However, Value::isInt is,
+
+            262 inline bool Value::isInt(int64_t value) const
+            263 {
+            264     return hasInt() && asInt() == value;
+            265 }
+
+        So, UINT32_MAX is expanded to int64_t, but it is not -1 since UINT32_MAX can be representable in int64_t. And Value::asInt implementation is,
+
+            257 inline int64_t Value::asInt() const
+            258 {
+            259     return hasInt32() ? asInt32() : asInt64();
+            260 }
+
+        So, we perform `static_cast<int64_t>(-1) == static_cast<int64_t>(UINT32_MAX)`. This is false, but this comparison is not what we want!
+        We should use `isInt32` and `isInt64` for bit patterns (like, operands for Bitwise opcodes).
+
+        We also fix the following optimization.
+
+            // Turn this: BitAnd(Op(value, constant1), constant2)
+            //     where !(constant1 & constant2)
+            //       and Op is BitOr or BitXor
+            // into this: BitAnd(value, constant2)
+
+        Since we stop further optimization when we match `if (m_value->child(1)->hasInt())`, the following optimization is never taken.
+
+            // Turn this: BitAnd(BitXor(x, allOnes), c)
+            // Into this: BitXor(BitOr(x, ~c), allOnes)
+
+        We add 32bit version of B3 tests for these optimizations.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testBitAndNotNot32):
+        (testBitAndNotImm):
+        (testBitAndNotImm32):
+        (testBitOrAndAndArgs32):
+        (testBitOrAndSameArgs32):
+        (testBitOrNotNot32):
+        (testBitOrNotImm32):
+        (addBitTests):
+        * b3/testb3_3.cpp:
+        (testBitXorAndAndArgs32):
+        (testBitXorAndSameArgs32):
+
+2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WebAssembly] Use StreamingParser in existing Wasm::BBQPlan
         https://bugs.webkit.org/show_bug.cgi?id=189043
 

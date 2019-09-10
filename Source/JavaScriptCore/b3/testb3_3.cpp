@@ -259,6 +259,34 @@ void testBitXorAndAndArgs(int64_t a, int64_t b, int64_t c)
     }
 }
 
+void testBitXorAndAndArgs32(int32_t a, int32_t b, int32_t c)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a & b) ^ (a & c))
+    // ((a & b) ^ (c & a))
+    // ((b & a) ^ (a & c))
+    // ((b & a) ^ (c & a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* argB = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* argC = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+        Value* andAB = i & 2 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argB, argA);
+        Value* andAC = i & 1 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argC)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argC, argA);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, BitXor, Origin(),
+                andAB,
+                andAC));
+
+        CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c), ((a & b) ^ (a & c)));
+    }
+}
+
 void testBitXorAndSameArgs(int64_t a, int64_t b)
 {
     // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
@@ -278,6 +306,28 @@ void testBitXorAndSameArgs(int64_t a, int64_t b)
         root->appendNewControlValue(proc, Return, Origin(), result);
     
         CHECK_EQ(compileAndRun<int64_t>(proc, a, b), ((a & b) ^ a));
+    }
+}
+
+void testBitXorAndSameArgs32(int32_t a, int32_t b)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a & b) ^ a)
+    // ((b & a) ^ a)
+    // (a ^ (a & b))
+    // (a ^ (b & a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* argB = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* andAB = i & 1 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argB, argA);
+        Value* result = i & 2 ? root->appendNew<Value>(proc, BitXor, Origin(), andAB, argA)
+            : root->appendNew<Value>(proc, BitXor, Origin(), argA, andAB);
+        root->appendNewControlValue(proc, Return, Origin(), result);
+
+        CHECK_EQ(compileAndRun<int32_t>(proc, a, b), ((a & b) ^ a));
     }
 }
 
