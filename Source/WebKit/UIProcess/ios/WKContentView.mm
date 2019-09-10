@@ -749,10 +749,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (BOOL)_waitForDrawToPDFCallback
 {
-    if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->webPageID(), Seconds::infinity())) {
-        ASSERT_NOT_REACHED();
+    if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->pageID(), Seconds::infinity()))
         return false;
-    }
     ASSERT(!_isPrintingToPDF);
     return true;
 }
