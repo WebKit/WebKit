@@ -1,3 +1,15 @@
+2019-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS API tests after r249684
+        https://bugs.webkit.org/show_bug.cgi?id=201573
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::getWebSocketEventWebKitLegacy):
+        (TestWebKitAPI::TEST):
+        The web thread still exists :(
+        That makes iOS immediate failure results more like WK2, which is fine.
+        The point is that the connection fails somehow and the server sees a TLS failure, which the test verifies.
+
 2019-09-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html is frequently timing out on iOS EWS bots

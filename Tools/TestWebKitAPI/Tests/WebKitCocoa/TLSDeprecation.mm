@@ -34,6 +34,11 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <WebKit/WebUIKitSupport.h>
+#import <WebKit/WebCoreThread.h>
+#endif
+
 @interface WebSocketDelegate : NSObject <WKUIDelegate, WebUIDelegate>
 - (NSString *)waitForMessage;
 @end
@@ -106,6 +111,10 @@ TEST(WebKit, TLSVersionWebSocket)
 
 NSString *getWebSocketEventWebKitLegacy(bool clientAllowDeprecatedTLS, bool serverLimitTLS)
 {
+#if PLATFORM(IOS_FAMILY)
+    WebKitInitialize();
+    WebThreadLock();
+#endif
     Optional<uint16_t> maxServerTLSVersion;
     if (serverLimitTLS)
         maxServerTLSVersion = tls1_1;
@@ -141,7 +150,12 @@ TEST(WebKit, TLSVersionWebSocketWebKitLegacy1)
 
 TEST(WebKit, TLSVersionWebSocketWebKitLegacy2)
 {
-    EXPECT_WK_STREQ(getWebSocketEventWebKitLegacy(false, true), "close");
+#if PLATFORM(IOS_FAMILY)
+    const char* expected = "error: undefined";
+#else
+    const char* expected = "close";
+#endif
+    EXPECT_WK_STREQ(getWebSocketEventWebKitLegacy(false, true), expected);
 }
 
 TEST(WebKit, TLSVersionWebSocketWebKitLegacy3)
