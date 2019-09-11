@@ -1,3 +1,17 @@
+2019-09-11  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Do not adopt floating references.
+        https://bugs.webkit.org/show_bug.cgi?id=201685
+
+        Reviewed by Carlos Garcia Campos.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamer): gst_element_factory_make returns
+        floating references, you do not adopt such references, rather you
+        sink them.
+
 2019-09-11  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Ensure structs/arrays with pointers as fields are disallowed
