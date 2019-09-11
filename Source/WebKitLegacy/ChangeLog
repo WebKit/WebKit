@@ -1,3 +1,18 @@
+2019-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed, rolling out r239097.
+
+        This is not a right fix. DumpRenderTree, MiniBrowser and
+        TestWebKitAPI are still reporting the same warning.
+
+        Reverted changeset:
+
+        "[Win][WebKitLegacy][Clang] WebKit.h warning:
+        'IWebEditingDelegate2::shouldInsertNode' hides overloaded
+        virtual function [-Woverloaded-virtual]"
+        https://bugs.webkit.org/show_bug.cgi?id=192581
+        https://trac.webkit.org/changeset/239097
+
 2019-09-03  Chris Dumez  <cdumez@apple.com>
 
         FrameLoader::FrameProgressTracker::progressCompleted() does not need a pageID
