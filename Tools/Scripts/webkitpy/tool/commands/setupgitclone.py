@@ -49,7 +49,7 @@ class SetupGitClone(Command):
         # FIXME: We shouldn't be using a private method.
         run_git = tool.scm()._run_git
         run_git(["pull"])
-        run_git(["svn", "init", "--prefix=origin/", "-T", "trunk", "http://svn.webkit.org/repository/webkit"])
+        run_git(["svn", "init", "--prefix=origin/", "-T", "trunk", "https://svn.webkit.org/repository/webkit"])
         run_git(["config", "--replace", "svn-remote.svn.fetch", "trunk:refs/remotes/origin/master"])
         run_git(["svn", "fetch"])
 

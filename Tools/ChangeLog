@@ -1,3 +1,13 @@
+2019-09-10  Dean Jackson  <dino@apple.com>
+
+        setup-git-clone is using http not https
+        https://bugs.webkit.org/show_bug.cgi?id=201658
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone.execute):
+
 2019-09-10  Matt Lewis  <jlewis3@apple.com>
 
         run-webkit-test: Allow results to be uploaded without scm checkout
