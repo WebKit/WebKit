@@ -1,3 +1,17 @@
+2019-09-11  Youenn Fablet  <youenn@apple.com>
+
+        Protect UserMediaRequest when stopping it
+        https://bugs.webkit.org/show_bug.cgi?id=201687
+        <rdar://problem/55241215>
+
+        Reviewed by Eric Carlson.
+
+        By removing the request from the map, we may destroy the request.
+        To make sure it stays alive, take the request from the map.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::cancelUserMediaRequest):
+
 2019-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249768.

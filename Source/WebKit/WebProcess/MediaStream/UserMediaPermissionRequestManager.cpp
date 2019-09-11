@@ -98,7 +98,8 @@ void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest&
         return;
 
     request.deny(UserMediaRequest::OtherFailure, emptyString());
-    m_idToUserMediaRequestMap.remove(requestID);
+    auto removedRequest = m_idToUserMediaRequestMap.take(requestID);
+    ASSERT(removedRequest.get() == &request);
     removeMediaRequestFromMaps(request);
 }
 
