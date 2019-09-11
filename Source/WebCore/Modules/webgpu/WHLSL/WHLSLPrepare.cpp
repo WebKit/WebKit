@@ -30,6 +30,7 @@
 
 #include "WHLSLASTDumper.h"
 #include "WHLSLCheckDuplicateFunctions.h"
+#include "WHLSLCheckReferenceTypes.h"
 #include "WHLSLCheckTextureReferences.h"
 #include "WHLSLChecker.h"
 #include "WHLSLComputeDimensions.h"
@@ -231,6 +232,7 @@ static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, const Str
 
     RUN_PASS(checkLiteralTypes, program);
     CHECK_PASS(checkTextureReferences, program);
+    CHECK_PASS(checkReferenceTypes, program);
     RUN_PASS(resolveProperties, program);
     RUN_PASS(findHighZombies, program);
     CHECK_PASS(checkStatementBehavior, program);

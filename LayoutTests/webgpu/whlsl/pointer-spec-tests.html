@@ -29,8 +29,8 @@ whlslTests.pointerToPointer = async () =>
             result += x;
             return result;
         }
-    `;;
-    assert_equals(await callIntFunction(program, "foo", []), 76 + 39 + 83);
+    `;
+    await checkFail(program);
 }
 
 whlslTests.pointerToMember = async () =>

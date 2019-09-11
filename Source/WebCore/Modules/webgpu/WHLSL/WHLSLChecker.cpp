@@ -936,7 +936,6 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
         auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
         if (is<AST::PointerType>(unnamedType)) {
             auto& pointerType = downcast<AST::PointerType>(unnamedType);
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198163 Save the fact that we're not targetting the item; we're targetting the item's inner element.
             assignConcreteType(makeArrayReferenceExpression, AST::ArrayReferenceType::create(makeArrayReferenceExpression.codeLocation(), pointerType.addressSpace(), pointerType.elementType()));
             return;
         }
