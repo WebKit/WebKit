@@ -1327,18 +1327,14 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, Frame& frame, CompletionHandler<void(bool)>&& completionHandler)
+void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, PageIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
-    ASSERT(webFrame);
-    m_page.hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, WTFMove(completionHandler));
+    m_page.hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, WTFMove(completionHandler));
 }
 
-void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, Frame& frame, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
+void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, PageIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
-    ASSERT(webFrame);
-    m_page.requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, WTFMove(completionHandler));
+    m_page.requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, WTFMove(completionHandler));
 }
 #endif
 
