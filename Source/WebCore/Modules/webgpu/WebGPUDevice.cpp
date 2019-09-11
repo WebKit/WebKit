@@ -47,6 +47,7 @@
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUTextureDescriptor.h"
 #include "GPUUncapturedErrorEvent.h"
+#include "InspectorInstrumentation.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUValidationError.h"
@@ -73,10 +74,16 @@
 #include "WebGPUTexture.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
+#include <wtf/HashSet.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -90,6 +97,22 @@ RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(ScriptExecutionContext& context, Re
     return nullptr;
 }
 
+HashSet<WebGPUDevice*>& WebGPUDevice::instances(const LockHolder&)
+{
+    static NeverDestroyed<HashSet<WebGPUDevice*>> instances;
+    return instances;
+}
+
+Lock& WebGPUDevice::instancesMutex()
+{
+    static LazyNeverDestroyed<Lock> mutex;
+    static std::once_flag initializeMutex;
+    std::call_once(initializeMutex, [] {
+        mutex.construct();
+    });
+    return mutex.get();
+}
+
 WebGPUDevice::WebGPUDevice(ScriptExecutionContext& context, Ref<const WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
     : m_scriptExecutionContext(context)
     , m_adapter(WTFMove(adapter))
@@ -100,6 +123,18 @@ WebGPUDevice::WebGPUDevice(ScriptExecutionContext& context, Ref<const WebGPUAdap
     }))
 {
     ASSERT(m_scriptExecutionContext.isDocument());
+
+    LockHolder lock(instancesMutex());
+    instances(lock).add(this);
+}
+
+WebGPUDevice::~WebGPUDevice()
+{
+    InspectorInstrumentation::willDestroyWebGPUDevice(*this);
+
+    LockHolder lock(instancesMutex());
+    ASSERT(instances(lock).contains(this));
+    instances(lock).remove(this);
 }
 
 Ref<WebGPUBuffer> WebGPUDevice::createBuffer(const GPUBufferDescriptor& descriptor) const

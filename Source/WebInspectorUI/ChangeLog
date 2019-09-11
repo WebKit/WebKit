@@ -1,3 +1,52 @@
+2019-09-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: instrument WebGPUDevice instead of GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=201650
+
+        Reviewed by Joseph Pecoraro.
+
+        Most of the actual "work" done with Web GPU actually uses a `WebGPUDevice`.
+
+        A `GPUCanvasContext` is basically just a display "client" of the device, and isn't even
+        required (e.g. compute pipeline).  We should treat the `GPUCanvasContext` almost like a
+        `-webkit-canvas` client of a `WebGPUDevice`.
+
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WI.CanvasObserver.prototype.clientNodesChanged): Added.
+        (WI.CanvasObserver.prototype.cssCanvasClientNodesChanged):
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.clientNodesChanged): Added.
+        (WI.CanvasManager.prototype.cssCanvasClientNodesChanged): Deleted.
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.resetUniqueDisplayNameNumbers):
+        (WI.Canvas.prototype.get displayName):
+        (WI.Canvas.prototype.requestNode):
+        (WI.Canvas.prototype.requestClientNodes): Added.
+        (WI.Canvas.prototype.requestSize):
+        (WI.Canvas.prototype.clientNodesChanged): Added.
+        (WI.Canvas.prototype.requestCSSCanvasClientNodes): Deleted.
+        (WI.Canvas.prototype.cssCanvasClientNodesChanged): Deleted.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.resolveCanvasContext):
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype._refreshPixelSize):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.set canvas):
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WI.CanvasDetailsSidebarPanel.prototype.layout):
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshSourceSection):
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshClientsSection): Added.
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshCSSCanvasSection): Deleted.
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._contentViewMouseEnter):
+        * UserInterface/Views/CanvasTreeElement.js:
+        (WI.CanvasTreeElement.prototype._handleMouseOver):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove legacy CodeMirror based pretty printers

@@ -191,9 +191,9 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             return;
 
         let canvas = contentView.representedObject;
-        if (canvas.cssCanvasName) {
-            canvas.requestCSSCanvasClientNodes((cssCanvasClientNodes) => {
-                WI.domManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id));
+        if (canvas.cssCanvasName || canvas.contextType === WI.Canvas.ContextType.WebGPU) {
+            canvas.requestClientNodes((clientNodes) => {
+                WI.domManager.highlightDOMNodeList(clientNodes.map((node) => node.id));
             });
             return;
         }

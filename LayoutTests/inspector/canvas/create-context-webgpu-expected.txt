@@ -5,37 +5,17 @@ Test that CanvasManager tracks creation and destruction of WebGPU canvases.
 -- Running test case: Canvas.CreateContextWebGPU.NoCanvases
 PASS: CanvasManager should have no canvases.
 
--- Running test case: Canvas.CreateContextWebGPU.Attached
+-- Running test case: Canvas.CreateContextWebGPU.Device
 PASS: Canvas context should be Web GPU.
-  0: getContext - [native code]
-  1: createAttachedCanvas - inspector/canvas/resources/create-context-utilities.js:4:36
-  2: Global Code - [program code]
-  3: evaluateWithScopeExtension - [native code]
-  4: (anonymous function) - [native code]
-  5: _wrapCall - [native code]
 
 PASS: Removed canvas has expected ID.
 
--- Running test case: Canvas.CreateContextWebGPU.Detached
-PASS: Canvas context should be Web GPU.
-  0: getContext - [native code]
-  1: createDetachedCanvas - inspector/canvas/resources/create-context-utilities.js:11:62
-  2: Global Code - [program code]
-  3: evaluateWithScopeExtension - [native code]
-  4: (anonymous function) - [native code]
-  5: _wrapCall - [native code]
+-- Running test case: Canvas.CreateContextWebGPU.Canvas.Attached
+PASS: Inspector canvas should not be created for attached GPUCanvasContext without connected WebGPUDevice.
 
-PASS: Removed canvas has expected ID.
+-- Running test case: Canvas.CreateContextWebGPU.Canvas.Detached
+PASS: Inspector canvas should not be created for detached GPUCanvasContext without connected WebGPUDevice.
 
--- Running test case: Canvas.CreateContextWebGPU.CSSCanvas
-Create CSS canvas from -webkit-canvas(css-canvas).
-PASS: Canvas context should be Web GPU.
-  0: getCSSCanvasContext - [native code]
-  1: createCSSCanvas - inspector/canvas/resources/create-context-utilities.js:18:47
-  2: Global Code - [program code]
-  3: evaluateWithScopeExtension - [native code]
-  4: (anonymous function) - [native code]
-  5: _wrapCall - [native code]
-
-PASS: Canvas name should equal the identifier passed to -webkit-canvas.
+-- Running test case: Canvas.CreateContextWebGPU.Canvas.CSS
+PASS: Inspector canvas should not be created for CSS GPUCanvasContext without connected WebGPUDevice.
 

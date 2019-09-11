@@ -516,7 +516,7 @@ webkit.org/b/166536 inspector/canvas/recording-webgl2-full.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/recording-webgl2-memoryLimit.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/recording-webgl2-snapshots.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/requestContent-webgl2.html [ Skip ]
-webkit.org/b/166536 inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
+webkit.org/b/166536 inspector/canvas/resolveContext-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
 webkit.org/b/166536 webgl/2.0.0/ [ Skip ]
 
@@ -1150,7 +1150,8 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 # No support for WebGPU yet
 webkit.org/b/191005 webgpu/ [ Skip ]
 webkit.org/b/191005 inspector/canvas/create-context-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+webkit.org/b/191005 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+webkit.org/b/191005 inspector/canvas/resolveContext-webgpu.html [ Skip ]
 
 # No support for resource load statistics yet
 http/tests/resourceLoadStatistics/ [ Skip ]

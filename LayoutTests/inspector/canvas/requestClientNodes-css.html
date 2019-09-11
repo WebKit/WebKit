@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.context2d = document.getCSSCanvasContext("2d", "css-canvas", 10, 10);
+
+    runTest();
+}
+
+let clients = [];
+
+function createClient() {
+    clients.push(document.body.appendChild(document.createElement("div")));
+}
+
+function destroyClients() {
+    for (let client of clients)
+        client.remove();
+
+    clients = [];
+
+    setTimeout(() => { GCController.collect(); }, 0);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestClientNodes.CSS");
+
+    function logClientNodes(clientNodes) {
+        for (let clientNode of clientNodes) {
+            if (clientNode)
+                InspectorTest.pass(`Client node "${clientNode.appropriateSelectorFor()}" is valid.`);
+            else
+                InspectorTest.fail("Invalid client node.");
+        }
+    }
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.CSS.Create",
+        description: "Check that creating a CSS canvas client node is tracked correctly.",
+        test(resolve, reject) {
+            WI.Canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged)
+            .then((event) => {
+                InspectorTest.expectEqual(event.target.cssCanvasName, "css-canvas", `Canvas with created client should have CSS name "css-canvas".`);
+                event.target.requestClientNodes((clientNodes) => {
+                    InspectorTest.expectEqual(clientNodes.length, 1, "There should be one client node.");
+                    logClientNodes(clientNodes);
+                    resolve();
+                });
+            });
+
+            InspectorTest.evaluateInPage(`createClient()`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.CSS.Destroy",
+        description: "Check that destroying a CSS canvas client node is tracked correctly.",
+        test(resolve, reject) {
+            WI.Canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged)
+            .then((event) => {
+                InspectorTest.expectEqual(event.target.cssCanvasName, "css-canvas", `Canvas with destroyed client should have CSS name "css-canvas".`);
+                event.target.requestClientNodes((clientNodes) => {
+                    InspectorTest.expectEqual(clientNodes.length, 0, "There should be no client nodes.");
+                    logClientNodes(clientNodes);
+                    resolve();
+                });
+            });
+
+            InspectorTest.evaluateInPage(`destroyClients()`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    div {
+        width: 10px;
+        height: 10px;
+        background-image: -webkit-canvas(css-canvas);
+    }
+</style>
+</head>
+<body onload="load()">
+    <p>Test that CanvasAgent tracks changes in the client nodes of a CSS canvas.</p>
+</body>
+</html>

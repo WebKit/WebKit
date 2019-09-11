@@ -302,7 +302,8 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 # No WebGPU support yet
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/resolveContext-webgpu.html [ Skip ]
 
 # Skipped due to untestable DRM key system. ClearKey counterparts are tested instead.
 imported/w3c/web-platform-tests/encrypted-media/drm-check-initdata-type.https.html [ Skip ]

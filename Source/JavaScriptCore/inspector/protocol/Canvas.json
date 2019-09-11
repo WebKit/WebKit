@@ -30,13 +30,14 @@
             "type": "object",
             "description": "Drawing surface attributes.",
             "properties": [
-                { "name": "alpha", "type": "boolean", "optional": true },
-                { "name": "depth", "type": "boolean", "optional": true },
-                { "name": "stencil", "type": "boolean", "optional": true },
-                { "name": "antialias", "type": "boolean", "optional": true },
-                { "name": "premultipliedAlpha", "type": "boolean", "optional": true },
-                { "name": "preserveDrawingBuffer", "type": "boolean", "optional": true },
-                { "name": "failIfMajorPerformanceCaveat", "type": "boolean", "optional": true }
+                { "name": "alpha", "type": "boolean", "optional": true, "description": "WebGL, WebGL2, ImageBitmapRenderingContext" },
+                { "name": "depth", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "stencil", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "antialias", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "premultipliedAlpha", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "preserveDrawingBuffer", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "failIfMajorPerformanceCaveat", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "powerPreference", "type": "string", "optional": true, "description": "WebGL, WebGL2, WebGPU" }
             ]
         },
         {
@@ -84,8 +85,8 @@
             ]
         },
         {
-            "name": "requestCSSCanvasClientNodes",
-            "description": "Gets all the nodes that are using this canvas via -webkit-canvas.",
+            "name": "requestClientNodes",
+            "description": "Gets all <code>-webkit-canvas</code> nodes or active <code>HTMLCanvasElement</code> for a <code>WebGPUDevice</code>.",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" }
             ],
@@ -94,8 +95,8 @@
             ]
         },
         {
-            "name": "resolveCanvasContext",
-            "description": "Resolves JavaScript canvas context object for given canvasId.",
+            "name": "resolveContext",
+            "description": "Resolves JavaScript canvas/device context object for given canvasId.",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
@@ -192,7 +193,7 @@
             ]
         },
         {
-            "name": "cssCanvasClientNodesChanged",
+            "name": "clientNodesChanged",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
             ]

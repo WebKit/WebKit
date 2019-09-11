@@ -1,29 +1,29 @@
-let contexts = [];
+window.contexts = [];
 
 function createAttachedCanvas(contextType) {
     let canvas = document.body.appendChild(document.createElement("canvas"));
     let context = canvas.getContext(contextType);
     if (!context)
         TestPage.addResult("FAIL: missing context for type " + contextType);
-    contexts.push(context);
+    window.contexts.push(context);
 }
 
 function createDetachedCanvas(contextType) {
     let context = document.createElement("canvas").getContext(contextType);
     if (!context)
         TestPage.addResult("FAIL: missing context for type " + contextType);
-    contexts.push(context);
+    window.contexts.push(context);
 }
 
 function createCSSCanvas(contextType, canvasName) {
     let context = document.getCSSCanvasContext(contextType, canvasName, 10, 10);
     if (!context)
         TestPage.addResult("FAIL: missing context for type " + contextType);
-    contexts.push();
+    window.contexts.push();
 }
 
 function destroyCanvases() {
-    for (let context of contexts) {
+    for (let context of window.contexts) {
         if (!context)
             continue;
 
@@ -32,7 +32,7 @@ function destroyCanvases() {
             canvasElement.remove();
     }
 
-    contexts = [];
+    window.contexts = [];
 
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
     // does not receive WI.CanvasManager.Event.CanvasRemoved events.

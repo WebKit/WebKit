@@ -1,3 +1,93 @@
+2019-09-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: instrument WebGPUDevice instead of GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=201650
+
+        Reviewed by Joseph Pecoraro.
+
+        Most of the actual "work" done with Web GPU actually uses a `WebGPUDevice`.
+
+        A `GPUCanvasContext` is basically just a display "client" of the device, and isn't even
+        required (e.g. compute pipeline).  We should treat the `GPUCanvasContext` almost like a
+        `-webkit-canvas` client of a `WebGPUDevice`.
+
+        Tests: inspector/canvas/create-context-webgpu.html
+               inspector/canvas/requestClientNodes-webgpu.html
+               inspector/canvas/resolveContext-webgpu.html
+
+        * Modules/webgpu/WebGPUAdapter.cpp:
+        (WebCore::WebGPUAdapter::requestDevice const):
+        Notify web inspector after a device is created.
+
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::instances): Added.
+        (WebCore::WebGPUDevice::instancesMutex): Added.
+        (WebCore::WebGPUDevice::~WebGPUDevice): Added.
+        Notify web inspector when the device is about to be destructed.
+
+        * Modules/webgpu/GPUCanvasContext.h:
+        * Modules/webgpu/GPUCanvasContext.cpp:
+        (WebCore::GPUCanvasContext::create):
+        (WebCore::GPUCanvasContext::configureSwapChain):
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::canvasIfContextMatchesDevice): Added.
+        (WebCore::InspectorCanvas::create):
+        (WebCore::InspectorCanvas::InspectorCanvas):
+        (WebCore::InspectorCanvas::canvasContext const): Added.
+        (WebCore::InspectorCanvas::canvasElement const): Added.
+        (WebCore::InspectorCanvas::isDeviceForCanvasContext const): Added.
+        (WebCore::InspectorCanvas::deviceContext const): Added.
+        (WebCore::InspectorCanvas::scriptExecutionContext const): Added.
+        (WebCore::InspectorCanvas::resolveContext const): Added.
+        (WebCore::InspectorCanvas::clientNodes const): Added.
+        (WebCore::InspectorCanvas::canvasChanged):
+        (WebCore::InspectorCanvas::resetRecordingData):
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        (WebCore::InspectorCanvas::releaseObjectForRecording):
+        (WebCore::InspectorCanvas::getCanvasContentAsDataURL):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::InspectorCanvas::canvasElement): Deleted.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDeviceImpl): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDeviceImpl): Added.
+        (WebCore::InspectorInstrumentation::willConfigureSwapChainImpl): Added.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDevice): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDevice): Added.
+        (WebCore::InspectorInstrumentation::willConfigureSwapChain): Added.
+
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::requestClientNodes): Added.
+        (WebCore::InspectorCanvasAgent::resolveContext): Added.
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::stopRecording):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didChangeCSSCanvasClientNodes):
+        (WebCore::InspectorCanvasAgent::didChangeCanvasMemory):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        (WebCore::InspectorCanvasAgent::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUDevice): Added.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGPUDevice): Added.
+        (WebCore::InspectorCanvasAgent::willConfigureSwapChain): Added.
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+        (WebCore::InspectorCanvasAgent::bindCanvas):
+        (WebCore::InspectorCanvasAgent::unbindCanvas):
+        (WebCore::InspectorCanvasAgent::findInspectorCanvas):
+        (WebCore::InspectorCanvasAgent::requestCSSCanvasClientNodes): Deleted.
+        (WebCore::contextAsScriptValue): Deleted.
+        (WebCore::InspectorCanvasAgent::resolveCanvasContext): Deleted.
+
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::context const):
+
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
         Nullptr crash in Page::sessionID() via WebKit::WebFrameLoaderClient::detachedFromParent2()

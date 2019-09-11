@@ -4,30 +4,30 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function load() {
-    window.contextBitmapRenderer = document.body.appendChild(document.createElement("canvas")).getContext("bitmaprenderer");
+    window.contextWebGL = document.body.appendChild(document.createElement("canvas")).getContext("webgl");
 
     runTest();
 }
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Canvas.resolveCanvasContextBitmapRenderer");
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContextWebGL");
 
     suite.addTestCase({
-        name: `Canvas.resolveCanvasContextBitmapRenderer.validIdentifier`,
+        name: `Canvas.resolveContextWebGL.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;
             }
 
             const objectGroup = "test";
-            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup)
+            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
             .then(({object}) => {
                 InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
-                InspectorTest.expectEqual(object.className, "ImageBitmapRenderingContext", `Payload should have className "ImageBitmapRenderingContext".`);
+                InspectorTest.expectEqual(object.className, "WebGLRenderingContext", `Payload should have className "WebGLRenderingContext".`);
             })
             .then(resolve, reject);
         }
@@ -38,6 +38,6 @@ function test()
 </script>
 </head>
 <body onload="load()">
-    <p>Tests for the Canvas.resolveCanvasContext command for BitmapRenderer contexts.</p>
+    <p>Tests for the Canvas.resolveContext command for WebGL contexts.</p>
 </body>
 </html>

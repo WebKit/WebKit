@@ -34,10 +34,8 @@
 #include "WebGPUAdapter.h"
 #include "WebGPUQueue.h"
 #include "WebGPUSwapChainDescriptor.h"
-#include <wtf/Ref.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -80,7 +78,12 @@ using ErrorPromise = DOMPromiseDeferred<IDLNullable<ErrorIDLUnion>>;
 class WebGPUDevice : public RefCounted<WebGPUDevice>, public EventTargetWithInlineData, public CanMakeWeakPtr<WebGPUDevice> {
     WTF_MAKE_ISO_ALLOCATED(WebGPUDevice);
 public:
+    virtual ~WebGPUDevice();
+
     static RefPtr<WebGPUDevice> tryCreate(ScriptExecutionContext&, Ref<const WebGPUAdapter>&&);
+
+    static HashSet<WebGPUDevice*>& instances(const LockHolder&);
+    static Lock& instancesMutex();
 
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     GPUDevice& device() { return m_device.get(); }
@@ -106,6 +109,8 @@ public:
     void pushErrorScope(GPUErrorFilter filter) { m_errorScopes->pushErrorScope(filter); }
     void popErrorScope(ErrorPromise&&);
 
+    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
+
     using RefCounted::ref;
     using RefCounted::deref;
 
@@ -114,7 +119,6 @@ private:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return WebGPUDeviceEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

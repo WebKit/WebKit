@@ -289,7 +289,7 @@ inspector/canvas/requestContent-webgl2.html [ Skip ]
 inspector/canvas/create-context-webgl2.html [ Skip ]
 inspector/canvas/recording-webgl2.html [ Skip ]
 inspector/canvas/recording-webgl2-snapshots.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
+inspector/canvas/resolveContext-webgl2.html [ Skip ]
 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webgl/webgl2-rendering-context-obtain.html [ Skip ]
@@ -297,7 +297,8 @@ webgl/webgl2-rendering-context-obtain.html [ Skip ]
 # WEBGPU is disabled
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/resolveContext-webgpu.html [ Skip ]
 
 # WIRELESS_PLAYBACK_TARGET is disabled
 media/airplay-target-availability.html [ Skip ]

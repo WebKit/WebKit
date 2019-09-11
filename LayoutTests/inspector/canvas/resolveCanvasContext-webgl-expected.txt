@@ -1,8 +1,0 @@
-Tests for the Canvas.resolveCanvasContext command for WebGL contexts.
-
-
-== Running test suite: Canvas.resolveCanvasContextWebGL
--- Running test case: Canvas.resolveCanvasContextWebGL.validIdentifier
-PASS: Payload should have type "object".
-PASS: Payload should have className "WebGLRenderingContext".
-
