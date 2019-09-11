@@ -1,3 +1,37 @@
+2019-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Align our XPath API with the specification and other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=201660
+
+        Reviewed by Geoffrey Garen.
+
+        Align our XPath API with the specification and other browsers:
+        - Document/XPathEvaluator.createExpression()'s first parameter should be mandatory
+        - Document/XPathEvaluator.evaluate()'s first 2 parameters should be mandatory
+        - XPathExpression.evaluate()'s first parameter should be mandatory
+
+        I have confirmed in the latest Chrome and Firefox that they match the specification.
+        
+        No new tests, rebaselined existing test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::evaluate):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::searchUsingXPath):
+        * xml/XPathEvaluator.cpp:
+        (WebCore::XPathEvaluator::evaluate):
+        * xml/XPathEvaluator.h:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate):
+        * xml/XPathExpression.h:
+        * xml/XPathExpression.idl:
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::isValidContextNode):
+        * xml/XPathUtil.h:
+
 2019-09-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r249753.

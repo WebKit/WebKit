@@ -46,7 +46,7 @@ Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node* nodeResolver)
     return NativeXPathNSResolver::create(nodeResolver);
 }
 
-ExceptionOr<Ref<XPathResult>> XPathEvaluator::evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
+ExceptionOr<Ref<XPathResult>> XPathEvaluator::evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
 {
     if (!isValidContextNode(contextNode))
         return Exception { NotSupportedError };

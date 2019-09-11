@@ -41,7 +41,7 @@ namespace WebCore {
         String stringValue(Node*);
 
         /* @return whether the given node is a valid context node */
-        bool isValidContextNode(Node*);
+        bool isValidContextNode(Node&);
 
     } // namespace XPath
 

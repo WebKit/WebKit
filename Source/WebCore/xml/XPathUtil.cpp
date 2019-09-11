@@ -54,11 +54,9 @@ String stringValue(Node* node)
     return String();
 }
 
-bool isValidContextNode(Node* node)
+bool isValidContextNode(Node& node)
 {
-    if (!node)
-        return false;
-    switch (node->nodeType()) {
+    switch (node.nodeType()) {
         case Node::ATTRIBUTE_NODE:
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:

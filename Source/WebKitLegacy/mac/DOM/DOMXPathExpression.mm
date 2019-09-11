@@ -54,8 +54,11 @@
 
 - (DOMXPathResult *)evaluate:(DOMNode *)contextNode type:(unsigned short)type inResult:(DOMXPathResult *)inResult
 {
+    if (!contextNode)
+        return nullptr;
+
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->evaluate(core(contextNode), type, core(inResult))).ptr());
+    return kit(raiseOnDOMError(IMPL->evaluate(*core(contextNode), type, core(inResult))).ptr());
 }
 
 @end

@@ -1,3 +1,14 @@
+2019-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Align our XPath API with the specification and other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=201660
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
 2019-09-11  Frederic Wang  <fwang@igalia.com>
 
         Bug 201603 - Synchronize MathML WPT tests against upstream

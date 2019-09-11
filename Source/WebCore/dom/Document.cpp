@@ -5765,7 +5765,7 @@ Ref<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
-ExceptionOr<Ref<XPathResult>> Document::evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
+ExceptionOr<Ref<XPathResult>> Document::evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = XPathEvaluator::create();

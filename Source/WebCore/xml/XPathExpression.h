@@ -43,7 +43,7 @@ public:
     static ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
     WEBCORE_EXPORT ~XPathExpression();
 
-    WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(Node* contextNode, unsigned short type, XPathResult*);
+    WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(Node& contextNode, unsigned short type, XPathResult*);
 
 private:
     explicit XPathExpression(std::unique_ptr<XPath::Expression>);

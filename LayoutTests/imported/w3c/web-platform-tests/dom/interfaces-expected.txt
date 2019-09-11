@@ -341,9 +341,9 @@ PASS Document interface: operation prepend([object Object],[object Object])
 PASS Document interface: operation append([object Object],[object Object]) 
 PASS Document interface: operation querySelector(DOMString) 
 PASS Document interface: operation querySelectorAll(DOMString) 
-FAIL Document interface: operation createExpression(DOMString, XPathNSResolver) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation createExpression(DOMString, XPathNSResolver) 
 PASS Document interface: operation createNSResolver(Node) 
-FAIL Document interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) assert_equals: property has wrong .length expected 2 but got 0
+PASS Document interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) 
 PASS Document must be primary interface of new Document() 
 PASS Stringification of new Document() 
 PASS Document interface: new Document() must inherit property "implementation" with the proper type 
@@ -406,15 +406,11 @@ PASS Document interface: calling querySelector(DOMString) on new Document() with
 PASS Document interface: new Document() must inherit property "querySelectorAll(DOMString)" with the proper type 
 PASS Document interface: calling querySelectorAll(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createExpression(DOMString, XPathNSResolver)" with the proper type 
-FAIL Document interface: calling createExpression(DOMString, XPathNSResolver) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createExpression(DOMString, XPathNSResolver) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "createNSResolver(Node)" with the proper type 
 PASS Document interface: calling createNSResolver(Node) on new Document() with too few arguments must throw TypeError 
 PASS Document interface: new Document() must inherit property "evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult)" with the proper type 
-FAIL Document interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "ELEMENT_NODE" with the proper type 
 PASS Node interface: new Document() must inherit property "ATTRIBUTE_NODE" with the proper type 
 PASS Node interface: new Document() must inherit property "TEXT_NODE" with the proper type 
@@ -549,15 +545,11 @@ PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few
 PASS Document interface: xmlDoc must inherit property "querySelectorAll(DOMString)" with the proper type 
 PASS Document interface: calling querySelectorAll(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createExpression(DOMString, XPathNSResolver)" with the proper type 
-FAIL Document interface: calling createExpression(DOMString, XPathNSResolver) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Document interface: calling createExpression(DOMString, XPathNSResolver) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createNSResolver(Node)" with the proper type 
 PASS Document interface: calling createNSResolver(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult)" with the proper type 
-FAIL Document interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "ELEMENT_NODE" with the proper type 
 PASS Node interface: xmlDoc must inherit property "ATTRIBUTE_NODE" with the proper type 
 PASS Node interface: xmlDoc must inherit property "TEXT_NODE" with the proper type 
@@ -1779,7 +1771,7 @@ PASS XPathExpression interface object name
 PASS XPathExpression interface: existence and properties of interface prototype object 
 PASS XPathExpression interface: existence and properties of interface prototype object's "constructor" property 
 PASS XPathExpression interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL XPathExpression interface: operation evaluate(Node, unsigned short, XPathResult) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathExpression interface: operation evaluate(Node, unsigned short, XPathResult) 
 PASS XPathNSResolver interface: existence and properties of interface object 
 PASS XPathNSResolver interface: existence and properties of interface prototype object 
 PASS XPathNSResolver interface: existence and properties of interface prototype object's "constructor" property 
@@ -1791,8 +1783,8 @@ PASS XPathEvaluator interface object name
 PASS XPathEvaluator interface: existence and properties of interface prototype object 
 PASS XPathEvaluator interface: existence and properties of interface prototype object's "constructor" property 
 PASS XPathEvaluator interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL XPathEvaluator interface: operation createExpression(DOMString, XPathNSResolver) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathEvaluator interface: operation createExpression(DOMString, XPathNSResolver) 
 FAIL XPathEvaluator interface: operation createNSResolver(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL XPathEvaluator interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) assert_equals: property has wrong .length expected 2 but got 0
+PASS XPathEvaluator interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) 
 PASS Window interface: attribute event 
 
