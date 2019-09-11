@@ -200,7 +200,6 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 #endif
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasFrameSpecificStorageAccess() final { return false; }
-    void setHasFrameSpecificStorageAccess(bool) final { }
 #endif
 };
 

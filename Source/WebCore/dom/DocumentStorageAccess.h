@@ -65,7 +65,6 @@ private:
     static DocumentStorageAccess* from(Document&);
     static const char* supplementName();
     bool hasFrameSpecificStorageAccess() const;
-    void setHasFrameSpecificStorageAccess(bool);
     void setWasExplicitlyDeniedFrameSpecificStorageAccess() { ++m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
     bool isAllowedToRequestFrameSpecificStorageAccess() { return m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess < maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
     void enableTemporaryTimeUserGesture();
