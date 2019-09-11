@@ -1033,8 +1033,8 @@ private:
 
             // Turn this: BitAnd(value, all-ones)
             // Into this: value.
-            if ((m_value->type() == Int64 && m_value->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
-                || (m_value->type() == Int32 && m_value->child(1)->isInt(std::numeric_limits<uint32_t>::max()))) {
+            if ((m_value->type() == Int64 && m_value->child(1)->isInt64(std::numeric_limits<uint64_t>::max()))
+                || (m_value->type() == Int32 && m_value->child(1)->isInt32(std::numeric_limits<uint32_t>::max()))) {
                 replaceWithIdentity(m_value->child(0));
                 break;
             }
@@ -1083,6 +1083,7 @@ private:
             //       and Op is BitOr or BitXor
             // into this: BitAnd(value, constant2)
             if (m_value->child(1)->hasInt()) {
+                bool replaced = false;
                 int64_t constant2 = m_value->child(1)->asInt();
                 switch (m_value->child(0)->opcode()) {
                 case BitOr:
@@ -1091,13 +1092,15 @@ private:
                         && !(m_value->child(0)->child(1)->asInt() & constant2)) {
                         m_value->child(0) = m_value->child(0)->child(0);
                         m_changed = true;
+                        replaced = true;
                         break;
                     }
                     break;
                 default:
                     break;
                 }
-                break;
+                if (replaced)
+                    break;
             }
 
             // Turn this: BitAnd(BitXor(x1, allOnes), BitXor(x2, allOnes)
@@ -1106,11 +1109,11 @@ private:
             if (m_value->child(0)->opcode() == BitXor
                 && m_value->child(1)->opcode() == BitXor
                 && ((m_value->type() == Int64
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max())
-                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                        && m_value->child(0)->child(1)->isInt64(std::numeric_limits<uint64_t>::max())
+                        && m_value->child(1)->child(1)->isInt64(std::numeric_limits<uint64_t>::max()))
                     || (m_value->type() == Int32
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())
-                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
+                        && m_value->child(0)->child(1)->isInt32(std::numeric_limits<uint32_t>::max())
+                        && m_value->child(1)->child(1)->isInt32(std::numeric_limits<uint32_t>::max())))) {
                 Value* bitOr = m_insertionSet.insert<Value>(m_index, BitOr, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->child(0));
                 replaceWithNew<Value>(BitXor, m_value->origin(), bitOr, m_value->child(1)->child(1));
                 break;
@@ -1123,10 +1126,13 @@ private:
             if (m_value->child(0)->opcode() == BitXor
                 && m_value->child(1)->hasInt()
                 && ((m_value->type() == Int64
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                        && m_value->child(0)->child(1)->isInt64(std::numeric_limits<uint64_t>::max()))
                     || (m_value->type() == Int32
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
-                Value* bitOr = m_insertionSet.insert<Value>(m_index, BitOr, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1)));
+                        && m_value->child(0)->child(1)->isInt32(std::numeric_limits<uint32_t>::max())))) {
+                Value* newConstant = m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1));
+                ASSERT(newConstant);
+                m_insertionSet.insertValue(m_index, newConstant);
+                Value* bitOr = m_insertionSet.insert<Value>(m_index, BitOr, m_value->origin(), m_value->child(0)->child(0), newConstant);
                 replaceWithNew<Value>(BitXor, m_value->origin(), bitOr, m_value->child(0)->child(1));
                 break;
             }
@@ -1171,8 +1177,8 @@ private:
 
             // Turn this: BitOr(value, all-ones)
             // Into this: all-ones.
-            if ((m_value->type() == Int64 && m_value->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
-                || (m_value->type() == Int32 && m_value->child(1)->isInt(std::numeric_limits<uint32_t>::max()))) {
+            if ((m_value->type() == Int64 && m_value->child(1)->isInt64(std::numeric_limits<uint64_t>::max()))
+                || (m_value->type() == Int32 && m_value->child(1)->isInt32(std::numeric_limits<uint32_t>::max()))) {
                 replaceWithIdentity(m_value->child(1));
                 break;
             }
@@ -1183,11 +1189,11 @@ private:
             if (m_value->child(0)->opcode() == BitXor
                 && m_value->child(1)->opcode() == BitXor
                 && ((m_value->type() == Int64
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max())
-                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                        && m_value->child(0)->child(1)->isInt64(std::numeric_limits<uint64_t>::max())
+                        && m_value->child(1)->child(1)->isInt64(std::numeric_limits<uint64_t>::max()))
                     || (m_value->type() == Int32
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())
-                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
+                        && m_value->child(0)->child(1)->isInt32(std::numeric_limits<uint32_t>::max())
+                        && m_value->child(1)->child(1)->isInt32(std::numeric_limits<uint32_t>::max())))) {
                 Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->child(0));
                 replaceWithNew<Value>(BitXor, m_value->origin(), bitAnd, m_value->child(1)->child(1));
                 break;
@@ -1200,10 +1206,13 @@ private:
             if (m_value->child(0)->opcode() == BitXor
                 && m_value->child(1)->hasInt()
                 && ((m_value->type() == Int64
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                        && m_value->child(0)->child(1)->isInt64(std::numeric_limits<uint64_t>::max()))
                     || (m_value->type() == Int32
-                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
-                Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1)));
+                        && m_value->child(0)->child(1)->isInt32(std::numeric_limits<uint32_t>::max())))) {
+                Value* newConstant = m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1));
+                ASSERT(newConstant);
+                m_insertionSet.insertValue(m_index, newConstant);
+                Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0), newConstant);
                 replaceWithNew<Value>(BitXor, m_value->origin(), bitAnd, m_value->child(0)->child(1));
                 break;
             }
