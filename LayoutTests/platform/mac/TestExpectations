@@ -1032,11 +1032,11 @@ webkit.org/b/174066 inspector/canvas/console-record-webgl2.html [ Pass Timeout ]
 webkit.org/b/173931 inspector/canvas/context-attributes.html [ Pass Timeout ]
 webkit.org/b/178028 inspector/canvas/create-context-2d.html [ Pass Timeout ]
 webkit.org/b/174066 inspector/canvas/create-context-webgl2.html [ Pass Timeout ]
+webkit.org/b/174272 inspector/canvas/css-canvas-clients.html [ Pass Failure ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-frameCount.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-full.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-memoryLimit.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-snapshots.html [ Pass Failure Timeout ]
-webkit.org/b/174272 inspector/canvas/requestClientNodes-css.html [ Pass Failure ]
 webkit.org/b/174066 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass Failure Timeout ]
 webkit.org/b/160048 [ Debug ] inspector/codemirror/prettyprinting-javascript.html [ Pass Timeout ]
 webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Timeout ]
@@ -1783,8 +1783,7 @@ webkit.org/b/190976 imported/w3c/web-platform-tests/media-source/mediasource-cha
 
 webkit.org/b/199275 [ HighSierra ] webgpu [ Skip ]
 webkit.org/b/199275 [ HighSierra ] inspector/canvas/create-context-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/resolveContext-webgpu.html [ Skip ]
+webkit.org/b/199275 [ HighSierra ] inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 
 webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html [ Pass Timeout ]
 

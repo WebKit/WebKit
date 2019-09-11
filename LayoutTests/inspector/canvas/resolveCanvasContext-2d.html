@@ -11,10 +11,10 @@ function load() {
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContext2D");
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveCanvasContext2D");
 
     suite.addTestCase({
-        name: `Canvas.resolveContext2D.validIdentifier`,
+        name: `Canvas.resolveCanvasContext2D.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         test(resolve, reject) {
             let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
@@ -24,7 +24,7 @@ function test()
             }
 
             const objectGroup = "test";
-            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup)
             .then(({object}) => {
                 InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
                 InspectorTest.expectEqual(object.className, "CanvasRenderingContext2D", `Payload should have className "CanvasRenderingContext2D".`);
@@ -36,12 +36,12 @@ function test()
     // ------
 
     suite.addTestCase({
-        name: "Canvas.resolveContext.invalidIdentifier",
+        name: "Canvas.resolveCanvasContext.invalidIdentifier",
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const identifier = "DOES_NOT_EXIST";
             const objectGroup = "test";
-            CanvasAgent.resolveContext(identifier, objectGroup, (error) => {
+            CanvasAgent.resolveCanvasContext(identifier, objectGroup, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
@@ -54,6 +54,6 @@ function test()
 </script>
 </head>
 <body onload="load()">
-    <p>Tests for the Canvas.resolveContext command for 2D contexts.</p>
+    <p>Tests for the Canvas.resolveCanvasContext command for 2D contexts.</p>
 </body>
 </html>

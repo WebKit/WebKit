@@ -3,34 +3,31 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-if (window.internals)
-    window.internals.settings.setWebGL2Enabled(true);
-
 function load() {
-    window.contextWebGL2 = document.body.appendChild(document.createElement("canvas")).getContext("webgl2");
+    window.contextWebGL = document.body.appendChild(document.createElement("canvas")).getContext("webgl");
 
     runTest();
 }
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContextWebGL2");
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveCanvasContextWebGL");
 
     suite.addTestCase({
-        name: `Canvas.resolveContextWebGL2.validIdentifier`,
+        name: `Canvas.resolveCanvasContextWebGL.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL2);
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;
             }
 
             const objectGroup = "test";
-            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup)
             .then(({object}) => {
                 InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
-                InspectorTest.expectEqual(object.className, "WebGL2RenderingContext", `Payload should have className "WebGL2RenderingContext".`);
+                InspectorTest.expectEqual(object.className, "WebGLRenderingContext", `Payload should have className "WebGLRenderingContext".`);
             })
             .then(resolve, reject);
         }
@@ -41,6 +38,6 @@ function test()
 </script>
 </head>
 <body onload="load()">
-    <p>Tests for the Canvas.resolveContext command for WebGL2 contexts.</p>
+    <p>Tests for the Canvas.resolveCanvasContext command for WebGL contexts.</p>
 </body>
 </html>

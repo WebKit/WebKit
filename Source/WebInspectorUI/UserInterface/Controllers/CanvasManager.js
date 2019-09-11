@@ -184,14 +184,14 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         canvas.memoryCost = memoryCost;
     }
 
-    clientNodesChanged(canvasIdentifier)
+    cssCanvasClientNodesChanged(canvasIdentifier)
     {
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
         if (!canvas)
             return;
 
-        canvas.clientNodesChanged();
+        canvas.cssCanvasClientNodesChanged();
     }
 
     recordingStarted(canvasIdentifier, initiator)

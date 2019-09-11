@@ -3,31 +3,34 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
+if (window.internals)
+    window.internals.settings.setWebGPUEnabled(true);
+
 function load() {
-    window.contextBitmapRenderer = document.body.appendChild(document.createElement("canvas")).getContext("bitmaprenderer");
+    window.contextWebGPU = document.body.appendChild(document.createElement("canvas")).getContext("gpu");
 
     runTest();
 }
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContextBitmapRenderer");
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveCanvasContextWebGPU");
 
     suite.addTestCase({
-        name: `Canvas.resolveContextBitmapRenderer.validIdentifier`,
+        name: `Canvas.resolveCanvasContextWebGPU.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;
             }
 
             const objectGroup = "test";
-            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup)
             .then(({object}) => {
                 InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
-                InspectorTest.expectEqual(object.className, "ImageBitmapRenderingContext", `Payload should have className "ImageBitmapRenderingContext".`);
+                InspectorTest.expectEqual(object.className, "GPUCanvasContext", `Payload should have className "GPUCanvasContext".`);
             })
             .then(resolve, reject);
         }
@@ -38,6 +41,6 @@ function test()
 </script>
 </head>
 <body onload="load()">
-    <p>Tests for the Canvas.resolveContext command for BitmapRenderer contexts.</p>
+    <p>Tests for the Canvas.resolveCanvasContext command for WebGPU contexts.</p>
 </body>
 </html>

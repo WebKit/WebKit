@@ -53,11 +53,6 @@ class CanvasRenderingContext;
 class WebGLProgram;
 class WebGLRenderingContextBase;
 #endif
-#if ENABLE(WEBGPU)
-class GPUCanvasContext;
-class WebGPUDevice;
-class WebGPUSwapChain;
-#endif
 
 typedef String ErrorString;
 
@@ -78,8 +73,8 @@ public:
     void disable(ErrorString&);
     void requestNode(ErrorString&, const String& canvasId, int* nodeId);
     void requestContent(ErrorString&, const String& canvasId, String* content);
-    void requestClientNodes(ErrorString&, const String& canvasId, RefPtr<JSON::ArrayOf<int>>&);
-    void resolveContext(ErrorString&, const String& canvasId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&);
+    void requestCSSCanvasClientNodes(ErrorString&, const String& canvasId, RefPtr<JSON::ArrayOf<int>>&);
+    void resolveCanvasContext(ErrorString&, const String& canvasId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&);
     void setRecordingAutoCaptureFrameCount(ErrorString&, int count);
     void startRecording(ErrorString&, const String& canvasId, const int* frameCount, const int* memoryLimit);
     void stopRecording(ErrorString&, const String& canvasId);
@@ -97,6 +92,7 @@ public:
     void frameNavigated(Frame&);
     void didChangeCSSCanvasClientNodes(CanvasBase&);
     void didCreateCanvasRenderingContext(CanvasRenderingContext&);
+    void willDestroyCanvasRenderingContext(CanvasRenderingContext&);
     void didChangeCanvasMemory(CanvasRenderingContext&);
     void recordCanvasAction(CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
@@ -107,11 +103,6 @@ public:
     void willDeleteProgram(WebGLProgram&);
     bool isShaderProgramDisabled(WebGLProgram&);
     bool isShaderProgramHighlighted(WebGLProgram&);
-#endif
-#if ENABLE(WEBGPU)
-    void didCreateWebGPUDevice(WebGPUDevice&);
-    void willDestroyWebGPUDevice(WebGPUDevice&);
-    void willConfigureSwapChain(GPUCanvasContext&, WebGPUSwapChain&);
 #endif
 
 private:
@@ -125,16 +116,9 @@ private:
     void canvasDestroyedTimerFired();
     void clearCanvasData();
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
-#if ENABLE(WEBGPU)
-    InspectorCanvas& bindCanvas(WebGPUDevice&, bool captureBacktrace);
-#endif
-    void unbindCanvas(InspectorCanvas&);
+    String unbindCanvas(InspectorCanvas&);
     RefPtr<InspectorCanvas> assertInspectorCanvas(ErrorString&, const String& canvasId);
     RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
-#if ENABLE(WEBGPU)
-    RefPtr<InspectorCanvas> findInspectorCanvas(WebGPUDevice&);
-#endif
-
 #if ENABLE(WEBGL)
     String unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& programId);

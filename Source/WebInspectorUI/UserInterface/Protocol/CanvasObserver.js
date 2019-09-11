@@ -42,9 +42,9 @@ WI.CanvasObserver = class CanvasObserver
         WI.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
     }
 
-    clientNodesChanged(canvasId)
+    cssCanvasClientNodesChanged(canvasId)
     {
-        WI.canvasManager.clientNodesChanged(canvasId);
+        WI.canvasManager.cssCanvasClientNodesChanged(canvasId);
     }
 
     recordingStarted(canvasId, initiator)
@@ -75,11 +75,5 @@ WI.CanvasObserver = class CanvasObserver
     programDeleted(programId)
     {
         WI.canvasManager.programDeleted(programId);
-    }
-
-    // COMPATIBILITY (iOS 13): Canvas.events.cssCanvasClientNodesChanged was renamed to Canvas.events.clientNodesChanged.
-    cssCanvasClientNodesChanged(canvasId)
-    {
-        WI.canvasManager.clientNodesChanged(canvasId);
     }
 };

@@ -1,0 +1,8 @@
+Tests for the Canvas.resolveCanvasContext command for BitmapRenderer contexts.
+
+
+== Running test suite: Canvas.resolveCanvasContextBitmapRenderer
+-- Running test case: Canvas.resolveCanvasContextBitmapRenderer.validIdentifier
+PASS: Payload should have type "object".
+PASS: Payload should have className "ImageBitmapRenderingContext".
+

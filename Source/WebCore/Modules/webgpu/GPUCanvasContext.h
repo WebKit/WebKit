@@ -43,7 +43,6 @@ public:
 
     HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
 
-    WebGPUSwapChain* swapChain() const { return m_swapChain.get(); }
     Ref<WebGPUSwapChain> configureSwapChain(const WebGPUSwapChainDescriptor&);
 
 private:

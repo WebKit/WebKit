@@ -78,7 +78,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (this._canvas) {
             this._canvas.removeEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
             this._canvas.removeEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
-            this._canvas.removeEventListener(WI.Canvas.Event.ClientNodesChanged, this._refreshClientsSection, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
         }
 
         this._canvas = canvas || null;
@@ -86,7 +86,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (this._canvas) {
             this._canvas.addEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
             this._canvas.addEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
-            this._canvas.addEventListener(WI.Canvas.Event.ClientNodesChanged, this._refreshClientsSection, this);
+            this._canvas.addEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
         }
 
         this.needsLayout();
@@ -111,10 +111,10 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._cssCanvasRow = new WI.DetailsSectionSimpleRow(WI.UIString("CSS Canvas"));
         this._widthRow = new WI.DetailsSectionSimpleRow(WI.UIString("Width"));
         this._heightRow = new WI.DetailsSectionSimpleRow(WI.UIString("Height"));
-        this._detachedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Detached"));
+        this._datachedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Detached"));
 
         let sourceSection = new WI.DetailsSection("canvas-source", WI.UIString("Source"));
-        sourceSection.groups = [new WI.DetailsSectionGroup([this._nodeRow, this._cssCanvasRow, this._widthRow, this._heightRow, this._detachedRow])];
+        sourceSection.groups = [new WI.DetailsSectionGroup([this._nodeRow, this._cssCanvasRow, this._widthRow, this._heightRow, this._datachedRow])];
         this._sections.push(sourceSection);
 
         this._attributesDataGridRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Attributes"));
@@ -128,12 +128,12 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._extensionsSection.element.hidden = true;
         this._sections.push(this._extensionsSection);
 
-        this._clientNodesRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
+        this._cssCanvasClientsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
 
-        this._clientsSection = new WI.DetailsSection("canvas-clients", WI.UIString("Clients"));
-        this._clientsSection.groups = [new WI.DetailsSectionGroup([this._clientNodesRow])];
-        this._clientsSection.element.hidden = true;
-        this._sections.push(this._clientsSection);
+        this._cssCanvasSection = new WI.DetailsSection("canvas-css", WI.UIString("CSS"));
+        this._cssCanvasSection.groups = [new WI.DetailsSectionGroup([this._cssCanvasClientsRow])];
+        this._cssCanvasSection.element.hidden = true;
+        this._sections.push(this._cssCanvasSection);
 
         const selectable = false;
         let backtraceTreeOutline = new WI.TreeOutline(selectable);
@@ -168,7 +168,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._refreshSourceSection();
         this._refreshAttributesSection();
         this._refreshExtensionsSection();
-        this._refreshClientsSection();
+        this._refreshCSSCanvasSection();
         this._refreshBacktraceSection();
     }
 
@@ -194,20 +194,13 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (!this.didInitialLayout)
             return;
 
-        let hideNode = this._canvas.cssCanvasName || this._canvas.contextType === WI.Canvas.ContextType.WebGPU;
-
-        this._nodeRow.value = hideNode ? null : emDash;
+        this._nodeRow.value = this._canvas.cssCanvasName ? null : emDash;
         this._cssCanvasRow.value = this._canvas.cssCanvasName || null;
         this._widthRow.value = emDash;
         this._heightRow.value = emDash;
-        this._detachedRow.value = null;
+        this._datachedRow.value = null;
 
         this._canvas.requestNode().then((node) => {
-            if (!node) {
-                this._nodeRow.value = null;
-                return;
-            }
-
             if (node !== this._node) {
                 if (this._node) {
                     this._node.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
@@ -222,12 +215,8 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
                 this._node.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
             }
 
-            if (!hideNode) {
+            if (!this._canvas.cssCanvasName)
                 this._nodeRow.value = WI.linkifyNodeReference(this._node);
-
-                if (!this._node.parentNode)
-                    this._detachedRow.value = WI.UIString("Yes");
-            }
 
             let setRowValueIfValidAttributeValue = (row, attribute) => {
                 let value = Number(this._node.getAttribute(attribute));
@@ -259,6 +248,9 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
                     remoteObject.release();
                 });
             }
+
+            if (!this._canvas.cssCanvasName && !this._node.parentNode)
+                this._datachedRow.value = WI.UIString("Yes");
         });
     }
 
@@ -303,28 +295,28 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._extensionsSection.groups = [{element}];
     }
 
-    _refreshClientsSection()
+    _refreshCSSCanvasSection()
     {
         if (!this.didInitialLayout)
             return;
 
-        if (!this._canvas.cssCanvasName && this._canvas.contextType !== WI.Canvas.ContextType.WebGPU) {
-            this._clientsSection.element.hidden = true;
+        if (!this._canvas.cssCanvasName) {
+            this._cssCanvasSection.element.hidden = true;
             return;
         }
 
-        this._clientNodesRow.value = emDash;
+        this._cssCanvasClientsRow.value = emDash;
 
-        this._clientsSection.element.hidden = false;
+        this._cssCanvasSection.element.hidden = false;
 
-        this._canvas.requestClientNodes((clientNodes) => {
-            if (!clientNodes.length)
+        this._canvas.requestCSSCanvasClientNodes((cssCanvasClientNodes) => {
+            if (!cssCanvasClientNodes.length)
                 return;
 
             let fragment = document.createDocumentFragment();
-            for (let clientNode of clientNodes)
+            for (let clientNode of cssCanvasClientNodes)
                 fragment.appendChild(WI.linkifyNodeReference(clientNode));
-            this._clientNodesRow.value = fragment;
+            this._cssCanvasClientsRow.value = fragment;
         });
     }
 

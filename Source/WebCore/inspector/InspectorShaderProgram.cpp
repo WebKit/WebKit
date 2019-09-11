@@ -55,9 +55,8 @@ InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorC
 
 WebGLRenderingContextBase& InspectorShaderProgram::context() const
 {
-    ASSERT(m_canvas.canvasContext());
-    ASSERT(is<WebGLRenderingContextBase>(*m_canvas.canvasContext()));
-    return downcast<WebGLRenderingContextBase>(*m_canvas.canvasContext());
+    ASSERT(is<WebGLRenderingContextBase>(m_canvas.context()));
+    return downcast<WebGLRenderingContextBase>(m_canvas.context());
 }
 
 WebGLShader* InspectorShaderProgram::shaderForType(const String& protocolType)

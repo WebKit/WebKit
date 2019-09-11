@@ -60,11 +60,6 @@
 #include "WebGLRenderingContextBase.h"
 #endif
 
-#if ENABLE(WEBGPU)
-#include "GPUCanvasContext.h"
-#include "WebGPUDevice.h"
-#endif
-
 namespace Inspector {
 class ConsoleMessage;
 class ScriptArguments;
@@ -97,16 +92,11 @@ class SecurityOrigin;
 class ShadowRoot;
 class SharedBuffer;
 class TimerBase;
-class WebKitNamedFlow;
-class WorkerInspectorProxy;
-
 #if ENABLE(WEBGL)
 class WebGLProgram;
 #endif
-
-#if ENABLE(WEBGPU)
-class WebGPUSwapChain;
-#endif
+class WebKitNamedFlow;
+class WorkerInspectorProxy;
 
 enum class StorageType;
 
@@ -294,11 +284,6 @@ public:
     static bool isShaderProgramDisabled(WebGLRenderingContextBase&, WebGLProgram&);
     static bool isShaderProgramHighlighted(WebGLRenderingContextBase&, WebGLProgram&);
 #endif
-#if ENABLE(WEBGPU)
-    static void didCreateWebGPUDevice(WebGPUDevice&);
-    static void willDestroyWebGPUDevice(WebGPUDevice&);
-    static void willConfigureSwapChain(GPUCanvasContext&, WebGPUSwapChain&);
-#endif
 
     static void networkStateChanged(Page&);
     static void updateApplicationCacheStatus(Frame*);
@@ -485,11 +470,6 @@ private:
     static void willDeleteProgramImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isShaderProgramDisabledImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isShaderProgramHighlightedImpl(InstrumentingAgents&, WebGLProgram&);
-#endif
-#if ENABLE(WEBGPU)
-    static void didCreateWebGPUDeviceImpl(InstrumentingAgents&, WebGPUDevice&);
-    static void willDestroyWebGPUDeviceImpl(InstrumentingAgents&, WebGPUDevice&);
-    static void willConfigureSwapChainImpl(InstrumentingAgents&, GPUCanvasContext&, WebGPUSwapChain&);
 #endif
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
@@ -1412,29 +1392,6 @@ inline bool InspectorInstrumentation::isShaderProgramHighlighted(WebGLRenderingC
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
         return isShaderProgramHighlightedImpl(*instrumentingAgents, program);
     return false;
-}
-#endif
-
-#if ENABLE(WEBGPU)
-inline void InspectorInstrumentation::didCreateWebGPUDevice(WebGPUDevice& device)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(device.scriptExecutionContext()))
-        didCreateWebGPUDeviceImpl(*instrumentingAgents, device);
-}
-
-inline void InspectorInstrumentation::willDestroyWebGPUDevice(WebGPUDevice& device)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(device.scriptExecutionContext()))
-        willDestroyWebGPUDeviceImpl(*instrumentingAgents, device);
-}
-
-inline void InspectorInstrumentation::willConfigureSwapChain(GPUCanvasContext& contextGPU, WebGPUSwapChain& newSwapChain)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(contextGPU.canvasBase().scriptExecutionContext()))
-        willConfigureSwapChainImpl(*instrumentingAgents, contextGPU, newSwapChain);
 }
 #endif
 
