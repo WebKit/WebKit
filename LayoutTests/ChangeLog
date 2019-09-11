@@ -1,3 +1,14 @@
+2019-09-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=201665
+
+        Unreviewed test gardening.
+
+        This test was unskipped as part of r249716, but it is still frequently failing.
+
+        * TestExpectations: Skip the test again.
+
 2019-09-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION: [ Catalina WK2 ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html is failing

@@ -202,6 +202,7 @@ imported/w3c/web-platform-tests/referrer-policy [ Skip ]
 
 # Newly imported service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
+webkit.org/b/201665 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
