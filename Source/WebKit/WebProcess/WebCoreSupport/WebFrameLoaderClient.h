@@ -61,7 +61,7 @@ public:
     
     struct FrameSpecificStorageAccessIdentifier {
         PAL::SessionID sessionID;
-        WebCore::FrameIdentifier frameID;
+        uint64_t frameID;
         WebCore::PageIdentifier pageID;
     };
     void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
