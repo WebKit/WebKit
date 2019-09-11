@@ -95,11 +95,6 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
     if (m_isStopped || !context.sessionID().isValid())
         return Exception { InvalidStateError };
 
-    if (state() == State::Redundant)
-        return Exception { InvalidStateError, "Service Worker state is redundant"_s };
-
-    // FIXME: Invoke Run Service Worker algorithm with serviceWorker as the argument.
-
     auto* execState = context.execState();
     ASSERT(execState);
 

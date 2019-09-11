@@ -1,5 +1,23 @@
 2019-09-11  Chris Dumez  <cdumez@apple.com>
 
+        Posting a message to a redundant service worker should fail silently instead of throwing
+        https://bugs.webkit.org/show_bug.cgi?id=201696
+
+        Reviewed by Geoffrey Garen.
+
+        Posting a message to a redundant service worker should fail silently instead of throwing:
+        - https://w3c.github.io/ServiceWorker/#dom-serviceworker-postmessage-message-options
+        - https://w3c.github.io/ServiceWorker/#run-service-worker (step 2)
+
+        No new tests, rebaselined existing test.
+
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::runServiceWorkerIfNecessary):
+
+2019-09-11  Chris Dumez  <cdumez@apple.com>
+
         Align our XPath API with the specification and other browsers
         https://bugs.webkit.org/show_bug.cgi?id=201660
 

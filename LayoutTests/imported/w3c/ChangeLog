@@ -1,5 +1,16 @@
 2019-09-11  Chris Dumez  <cdumez@apple.com>
 
+        Posting a message to a redundant service worker should fail silently instead of throwing
+        https://bugs.webkit.org/show_bug.cgi?id=201696
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test now that one more check is passing.
+
+        * web-platform-tests/service-workers/service-worker/postmessage.https-expected.txt:
+
+2019-09-11  Chris Dumez  <cdumez@apple.com>
+
         Align our XPath API with the specification and other browsers
         https://bugs.webkit.org/show_bug.cgi?id=201660
 

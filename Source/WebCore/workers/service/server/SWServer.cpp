@@ -603,6 +603,11 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
         callback(contextConnection);
         return;
     }
+    
+    if (worker->state() == ServiceWorkerState::Redundant) {
+        callback(nullptr);
+        return;
+    }
 
     if (!contextConnection) {
         auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker->registrableDomain(), [] {
