@@ -29,7 +29,7 @@ whlslTests.arrayRefToArrayRef = async () => {
             return result;
         }
     `;
-    await checkFail(program);
+    assert_equals(await callIntFunction(program, "foo", []), 76 + 39 + 83);
 }
 
 whlslTests.assignLength = async () => {

@@ -158,7 +158,6 @@ class Data {
 class Harness {
     constructor ()
     {
-        this._loaded = false;
     }
 
     async requestDevice()
@@ -170,8 +169,6 @@ class Harness {
             // WebGPU is not supported.
             // FIXME: Add support for GPUAdapterRequestOptions and GPUDeviceDescriptor,
             // and differentiate between descriptor validation errors and no WebGPU support.
-        } finally {
-            this._loaded = true;
         }
     }
 
@@ -185,9 +182,6 @@ class Harness {
      */
     async callTypedFunction(type, functions, name, args)
     {   
-        if (!this._loaded)
-            throw new Error("GPU device not loaded.");
-
         if (this._device === undefined)
             throw new WebGPUUnsupportedError();
 
@@ -269,11 +263,8 @@ compute void _compute_main(${argsDeclarations.join(", ")})
      */
     async checkCompileFail(source)
     {
-        if (!this._loaded)
-            throw new Error("GPU device not loaded.");
-
         if (this._device === undefined)
-            throw new WebGPUUnsupportedError();
+            return;
         
         let entryPointCode = `
 [numthreads(1, 1, 1)]
@@ -528,7 +519,6 @@ const webGPUPromiseTest = (testFunc, msg) => {
 
 function runTests(obj) {
     window.addEventListener("load", async () => {
-        await harness.requestDevice();
         try {
             for (const name in obj) {
                 if (!name.startsWith("_")) 
