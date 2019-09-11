@@ -186,8 +186,9 @@ whlslTests.checkFailTests = () => {
     }, "Successfully compiling code in checkFail is an error.")
 };
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
     try {
+        await harness.requestDevice();
         for (const name in whlslTests) {
             if (!name.startsWith("_"))
                 whlslTests[name]();
