@@ -130,22 +130,8 @@ Optional<uint64_t> WebFrameLoaderClient::frameID() const
 
 PAL::SessionID WebFrameLoaderClient::sessionID() const
 {
-    WebPage* page = m_frame ? m_frame->page() : nullptr;
-    if (!page || !page->corePage()) {
-        ASSERT_NOT_REACHED();
-        return PAL::SessionID::defaultSessionID();
-    }
-    return page->sessionID();
+    return m_frame && m_frame->page() ? m_frame->page()->sessionID() : PAL::SessionID::defaultSessionID();
 }
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebFrameLoaderClient::setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&& frameSpecificStorageAccessIdentifier )
-{
-    ASSERT(!m_frameSpecificStorageAccessIdentifier);
-
-    m_frameSpecificStorageAccessIdentifier = WTFMove(frameSpecificStorageAccessIdentifier);
-}
-#endif
 
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
@@ -187,10 +173,9 @@ void WebFrameLoaderClient::detachedFromParent2()
         return;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_frameSpecificStorageAccessIdentifier) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
-            m_frameSpecificStorageAccessIdentifier->sessionID, m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
-        m_frameSpecificStorageAccessIdentifier = WTF::nullopt;
+    if (m_hasFrameSpecificStorageAccess) {
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(sessionID(), frameID().value(), pageID().value()), 0);
+        m_hasFrameSpecificStorageAccess = false;
     }
 #endif
 
@@ -415,10 +400,9 @@ void WebFrameLoaderClient::dispatchWillChangeDocument(const URL& currentUrl, con
     if (!webPage)
         return;
 
-    if (m_frameSpecificStorageAccessIdentifier && !WebCore::areRegistrableDomainsEqual(currentUrl, newUrl)) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
-            m_frameSpecificStorageAccessIdentifier->sessionID, m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
-        m_frameSpecificStorageAccessIdentifier = WTF::nullopt;
+    if (m_hasFrameSpecificStorageAccess && !WebCore::areRegistrableDomainsEqual(currentUrl, newUrl)) {
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(sessionID(), frameID().value(), pageID().value()), 0);
+        m_hasFrameSpecificStorageAccess = false;
     }
 #endif
 }

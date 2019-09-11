@@ -181,9 +181,10 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
             }));
         }
 
-        if (wasGranted == StorageAccessWasGranted::Yes)
+        if (wasGranted == StorageAccessWasGranted::Yes) {
+            setHasFrameSpecificStorageAccess(true);
             promise->resolve();
-        else {
+        } else {
             if (promptWasShown == StorageAccessPromptWasShown::Yes)
                 setWasExplicitlyDeniedFrameSpecificStorageAccess();
             promise->reject();
@@ -212,6 +213,12 @@ bool DocumentStorageAccess::hasFrameSpecificStorageAccess() const
 {
     auto* frame = m_document.frame();
     return frame && frame->loader().client().hasFrameSpecificStorageAccess();
+}
+
+void DocumentStorageAccess::setHasFrameSpecificStorageAccess(bool value)
+{
+    if (auto* frame = m_document.frame())
+        frame->loader().client().setHasFrameSpecificStorageAccess(value);
 }
 
 } // namespace WebCore
