@@ -189,6 +189,11 @@ interface IWebEditingDelegate : IUnknown
     HRESULT updateGrammar();
 }
 
+cpp_quote("#if defined(__GNUC__) || defined(__clang__)")
+cpp_quote("#pragma GCC diagnostic push")
+cpp_quote("#pragma GCC diagnostic ignored \"-Woverloaded-virtual\"")
+cpp_quote("#endif")
+
 [
     uuid(9973D190-3346-4CAA-AB76-F070CAB0B59B)
 ]
@@ -199,3 +204,7 @@ interface IWebEditingDelegate2 : IWebEditingDelegate
     */
     HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action, [out, retval] BOOL* result);
 }
+
+cpp_quote("#if defined(__GNUC__) || defined(__clang__)")
+cpp_quote("#pragma GCC diagnostic pop")
+cpp_quote("#endif")

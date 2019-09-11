@@ -1,3 +1,20 @@
+2019-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKitLegacy][Clang] WebKit.h warning: 'IWebEditingDelegate2::shouldInsertNode' hides overloaded virtual function [-Woverloaded-virtual]
+        https://bugs.webkit.org/show_bug.cgi?id=192581
+        <rdar://problem/46651605>
+
+        Reviewed by Alex Christensen.
+
+        WebKitLegacy COM interfaces have same name methods within the old
+        and new interfaces. For example, both IWebEditingDelegate and
+        IWebEditingDelegate2 interfaces have 'shouldInsertNode' method.
+        This is a part of public API, can't be renamed.
+
+        * Interfaces/IWebEditingDelegate.idl:
+        * Interfaces/IWebViewPrivate.idl:
+        Added #pragma to ignore the warning.
+
 2019-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKitLegacy] WebKitDLL.h(53,37): warning: 'gClassNameCount' has C-linkage specified, but returns user-defined type 'HashCountedSet<WTF::String> &' which is incompatible with C [-Wreturn-type-c-linkage]

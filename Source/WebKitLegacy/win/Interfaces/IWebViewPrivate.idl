@@ -297,6 +297,11 @@ interface IWebViewPrivate : IUnknown
     HRESULT selectedRangeForTesting([out] UINT* location, [out] UINT* length);
 }
 
+cpp_quote("#if defined(__GNUC__) || defined(__clang__)")
+cpp_quote("#pragma GCC diagnostic push")
+cpp_quote("#pragma GCC diagnostic ignored \"-Woverloaded-virtual\"")
+cpp_quote("#endif")
+
 [ uuid(671FB259-ABEF-48FC-88FB-EC4CF304E866) ]
 interface IWebViewPrivate2 : IWebViewPrivate
 {
@@ -320,6 +325,10 @@ interface IWebViewPrivate2 : IWebViewPrivate
         [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
         [in] WebUserContentInjectedFrames injectedFrames);
 }
+
+cpp_quote("#if defined(__GNUC__) || defined(__clang__)")
+cpp_quote("#pragma GCC diagnostic pop")
+cpp_quote("#endif")
 
 typedef enum {
     WebFindOptionsCaseInsensitive = 1 << 0,
