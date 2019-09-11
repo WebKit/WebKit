@@ -2567,5 +2567,7 @@ void TestRunner::willNavigate()
     if (m_shouldSwapToEphemeralSessionOnNextNavigation || m_shouldSwapToDefaultSessionOnNextNavigation) {
         ASSERT(m_shouldSwapToEphemeralSessionOnNextNavigation != m_shouldSwapToDefaultSessionOnNextNavigation);
         setPrivateBrowsingEnabled(m_shouldSwapToEphemeralSessionOnNextNavigation);
+        m_shouldSwapToEphemeralSessionOnNextNavigation = false;
+        m_shouldSwapToDefaultSessionOnNextNavigation = false;
     }
 }

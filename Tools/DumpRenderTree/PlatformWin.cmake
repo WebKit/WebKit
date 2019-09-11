@@ -6,6 +6,7 @@ set(DumpRenderTreeLib_SOURCES
     win/DRTDataObject.cpp
     win/DRTDesktopNotificationPresenter.cpp
     win/DRTDropSource.cpp
+    win/DefaultPolicyDelegate.cpp
     win/DumpRenderTree.cpp
     win/EditingDelegate.cpp
     win/EventSender.cpp

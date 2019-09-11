@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DumpRenderTree.h"
 
+#include "DefaultPolicyDelegate.h"
 #include "EditingDelegate.h"
 #include "FrameLoadDelegate.h"
 #include "GCController.h"
@@ -995,7 +996,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
         webViewPrivate->setTabKeyCyclesThroughElements(TRUE);
     }
 
-    webView->setPolicyDelegate(nullptr);
+    webView->setPolicyDelegate(DefaultPolicyDelegate::sharedInstance());
     policyDelegate->setPermissive(false);
     policyDelegate->setControllerToNotifyDone(nullptr);
     sharedFrameLoadDelegate->resetToConsistentState();

@@ -1,3 +1,18 @@
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/cookies/private-cookie-storage.html
+        https://bugs.webkit.org/show_bug.cgi?id=201648
+
+        Reviewed by Alex Christensen.
+
+        Use testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() / setShouldSwapToDefaultSessionOnNextNavigation() to
+        truly switch session on WebKit2 instead of using the testRunner.setPrivateBrowsingEnabled_DEPRECATED() hack.
+
+        * http/tests/cookies/private-cookie-storage-expected.txt:
+        * http/tests/cookies/private-cookie-storage.html:
+        * http/tests/cookies/resources/cookies-test-pre.js:
+        (testCookies):
+
 2019-09-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html is flaky

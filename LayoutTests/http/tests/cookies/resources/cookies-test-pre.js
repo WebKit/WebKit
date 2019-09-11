@@ -47,10 +47,13 @@ function testCookies(result)
     result = normalizeCookie(result);
     cookie = normalizeCookie(cookie);
     
-    if (cookie === result)
+    if (cookie === result) {
         testPassed("cookie is '" + cookie + "'.");
-    else
+        return true;
+    } else {
         testFailed("cookie was '" + cookie + "'. Expected '" + result + "'.");
+        return false;
+    }
 }
 
 function clearAllCookies()
