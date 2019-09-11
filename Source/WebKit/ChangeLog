@@ -1,3 +1,19 @@
+2019-09-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
+        https://bugs.webkit.org/show_bug.cgi?id=201683
+        <rdar://problem/54582602>
+
+        Reviewed by Simon Fraser.
+
+        Content <body> has 'overflow:hidden'.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+
+        Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
+
 2019-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary abstractions around WebsiteDataStore

@@ -33,8 +33,10 @@
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingCoordinatorMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
+#include "VersionChecks.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStatePositionedNode.h>
@@ -246,6 +248,11 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
     auto* rootNode = m_scrollingTree->rootNode();
     if (!rootNode)
         return false;
+
+#if PLATFORM(IOS_FAMILY)
+    if (WebCore::IOSApplication::isEventbrite() && !linkedOnOrAfter(WebKit::SDKVersion::FirstThatSupportsOverflowHiddenOnMainFrame))
+        return true;
+#endif
 
     return rootNode->canHaveScrollbars() || rootNode->visualViewportIsSmallerThanLayoutViewport();
 }

@@ -1,3 +1,15 @@
+2019-09-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
+        https://bugs.webkit.org/show_bug.cgi?id=201683
+        <rdar://problem/54582602>
+
+        Reviewed by Simon Fraser.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isEventbrite):
+
 2019-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249758.
