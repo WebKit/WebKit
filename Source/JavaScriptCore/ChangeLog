@@ -1,3 +1,19 @@
+2019-09-11  Michael Saboff  <msaboff@apple.com>
+
+        JSC crashes due to stack overflow while building RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=201649
+
+        Reviewed by Yusuke Suzuki.
+
+        Check for running out of stack when we are optimizing RegExp containing BOL terms or
+        other deep copying of disjunctions.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::copyDisjunction):
+        (JSC::Yarr::YarrPatternConstructor::copyTerm):
+        (JSC::Yarr::YarrPatternConstructor::error):
+        (JSC::Yarr::YarrPattern::compile):
+
 2019-09-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r249753.

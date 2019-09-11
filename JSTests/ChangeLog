@@ -1,3 +1,16 @@
+2019-09-10  Michael Saboff  <msaboff@apple.com>
+
+        JSC crashes due to stack overflow while building RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=201649
+
+        Reviewed by Yusuke Suzuki.
+
+        New regression test.
+
+        * stress/regexp-bol-optimize-out-of-stack.js: Added.
+        (test):
+        (catch):
+
 2019-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WebAssembly] Use StreamingParser in existing Wasm::BBQPlan
