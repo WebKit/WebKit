@@ -1,3 +1,11 @@
+2019-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, re-skip service worker test that was unskipped in r249716
+
+        This test is still a flaky timeout.
+
+        * TestExpectations:
+
 2019-09-11  Frederic Wang  <fwang@igalia.com>
 
         Bug 201603 - Synchronize MathML WPT tests against upstream

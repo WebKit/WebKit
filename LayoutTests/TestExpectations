@@ -209,6 +209,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandbox
 
 # This test is a flaky timeout.
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
+webkit.org/b/201666 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-with-range-request.https.html [ Skip ]
 
 # Newly imported service worker tests that are flaky.
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-client-id.https.html [ Pass Failure ]
