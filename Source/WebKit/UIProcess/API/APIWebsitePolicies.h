@@ -41,11 +41,12 @@
 #include <wtf/Vector.h>
 
 namespace WebKit {
-class WebsiteDataStore;
 struct WebsitePoliciesData;
 }
 
 namespace API {
+
+class WebsiteDataStore;
 
 class WebsitePolicies final : public API::ObjectImpl<API::Object::Type::WebsitePolicies> {
 public:
@@ -78,8 +79,8 @@ public:
     WebKit::WebsitePopUpPolicy popUpPolicy() const { return m_popUpPolicy; }
     void setPopUpPolicy(WebKit::WebsitePopUpPolicy policy) { m_popUpPolicy = policy; }
 
-    WebKit::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
-    void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
+    WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    void setWebsiteDataStore(RefPtr<WebsiteDataStore>&&);
 
     WebKit::WebsitePoliciesData data();
 
@@ -117,7 +118,7 @@ public:
     void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
 
 private:
-    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, Vector<WebCore::CustomHeaderFields>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebKit::WebsiteDataStore>&&);
+    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, Vector<WebCore::CustomHeaderFields>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
     bool m_contentBlockersEnabled { true };
     OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
@@ -128,7 +129,7 @@ private:
     Vector<WebCore::HTTPHeaderField> m_legacyCustomHeaderFields;
     Vector<WebCore::CustomHeaderFields> m_customHeaderFields;
     WebKit::WebsitePopUpPolicy m_popUpPolicy { WebKit::WebsitePopUpPolicy::Default };
-    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
+    RefPtr<WebsiteDataStore> m_websiteDataStore;
     WTF::String m_customUserAgent;
     WTF::String m_customJavaScriptUserAgentAsSiteSpecificQuirks;
     WTF::String m_customNavigatorPlatform;

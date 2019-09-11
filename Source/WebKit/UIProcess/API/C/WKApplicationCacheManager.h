@@ -27,19 +27,18 @@
 #define WKApplicationCacheManager_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKApplicationCacheManagerGetTypeID() WK_C_API_DEPRECATED;
+WK_EXPORT WKTypeID WKApplicationCacheManagerGetTypeID();
 
 typedef void (*WKApplicationCacheManagerGetApplicationCacheOriginsFunction)(WKArrayRef, WKErrorRef, void*);
-WK_EXPORT void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManager, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction function) WK_C_API_DEPRECATED;
+WK_EXPORT void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManager, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction function);
 
-WK_EXPORT void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManager, WKSecurityOriginRef origin) WK_C_API_DEPRECATED;
-WK_EXPORT void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManager) WK_C_API_DEPRECATED;
+WK_EXPORT void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManager, WKSecurityOriginRef origin);
+WK_EXPORT void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManager);
 
 #ifdef __cplusplus
 }

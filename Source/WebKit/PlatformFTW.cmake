@@ -46,6 +46,8 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/API/C/win/WKView.cpp
 
+    UIProcess/API/win/APIWebsiteDataStoreWin.cpp
+
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp

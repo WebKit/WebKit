@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebsiteDataStore.h"
+#include "APIWebsiteDataStore.h"
 
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -35,7 +35,7 @@
 #define BASE_DIRECTORY "wpe"
 #endif
 
-namespace WebKit {
+namespace API {
 
 WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
 {

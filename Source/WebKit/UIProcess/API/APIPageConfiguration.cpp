@@ -151,12 +151,12 @@ void PageConfiguration::setVisitedLinkStore(VisitedLinkStore* visitedLinkStore)
     m_visitedLinkStore = visitedLinkStore;
 }
 
-WebsiteDataStore* PageConfiguration::websiteDataStore()
+API::WebsiteDataStore* PageConfiguration::websiteDataStore()
 {
     return m_websiteDataStore.get();
 }
 
-void PageConfiguration::setWebsiteDataStore(WebsiteDataStore* websiteDataStore)
+void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataStore)
 {
     m_websiteDataStore = websiteDataStore;
 }

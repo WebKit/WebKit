@@ -25,13 +25,12 @@
 
 #import "WKWebsiteDataStorePrivate.h"
 
+#import "APIWebsiteDataStore.h"
 #import "WKObject.h"
-#import "WebsiteDataStore.h"
-#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 
-template<> struct WrapperTraits<WebsiteDataStore> {
+template<> struct WrapperTraits<API::WebsiteDataStore> {
     using WrapperClass = WKWebsiteDataStore;
 };
 
@@ -39,7 +38,7 @@ template<> struct WrapperTraits<WebsiteDataStore> {
 
 @interface WKWebsiteDataStore () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebsiteDataStore> _websiteDataStore;
-    WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > _delegate;
+    API::ObjectStorage<API::WebsiteDataStore> _websiteDataStore;
+    RetainPtr<id <_WKWebsiteDataStoreDelegate> > _delegate;
 }
 @end

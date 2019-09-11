@@ -26,19 +26,67 @@
 #include "config.h"
 #include "WKResourceCacheManager.h"
 
+#include "APIArray.h"
+#include "APIWebsiteDataStore.h"
+#include "WKAPICast.h"
+#include "WebsiteDataRecord.h"
+
+using namespace WebKit;
+
 WKTypeID WKResourceCacheManagerGetTypeID()
 {
-    return 0;
+    return toAPI(API::WebsiteDataStore::APIType);
 }
 
-void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef, void*, WKResourceCacheManagerGetCacheOriginsFunction)
+static OptionSet<WebsiteDataType> toWebsiteDataTypes(WKResourceCachesToClear cachesToClear)
 {
+    OptionSet<WebsiteDataType> websiteDataTypes { WebsiteDataType::MemoryCache };
+
+    if (cachesToClear == WKResourceCachesToClearAll)
+        websiteDataTypes.add(WebsiteDataType::DiskCache);
+
+    return websiteDataTypes;
 }
 
-void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef, WKSecurityOriginRef, WKResourceCachesToClear)
+void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManager, void* context, WKResourceCacheManagerGetCacheOriginsFunction callback)
 {
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(cacheManager))->websiteDataStore();
+    websiteDataStore.fetchData(toWebsiteDataTypes(WKResourceCachesToClearAll), { }, [context, callback](auto dataRecords) {
+        Vector<RefPtr<API::Object>> securityOrigins;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& origin : dataRecord.origins)
+                securityOrigins.append(API::SecurityOrigin::create(origin.securityOrigin()));
+        }
+
+        callback(toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), nullptr, context);
+    });
 }
 
-void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef, WKResourceCachesToClear)
+void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManager, WKSecurityOriginRef origin, WKResourceCachesToClear cachesToClear)
 {
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(cacheManager))->websiteDataStore();
+
+    Vector<WebsiteDataRecord> dataRecords;
+
+    {
+        WebsiteDataRecord dataRecord;
+        dataRecord.add(WebsiteDataType::MemoryCache, toImpl(origin)->securityOrigin().data());
+
+        dataRecords.append(dataRecord);
+    }
+
+    if (cachesToClear == WKResourceCachesToClearAll) {
+        WebsiteDataRecord dataRecord;
+        dataRecord.add(WebsiteDataType::DiskCache, toImpl(origin)->securityOrigin().data());
+
+        dataRecords.append(dataRecord);
+    }
+
+    websiteDataStore.removeData(toWebsiteDataTypes(cachesToClear), dataRecords, [] { });
+}
+
+void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManager, WKResourceCachesToClear cachesToClear)
+{
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(cacheManager))->websiteDataStore();
+    websiteDataStore.removeData(toWebsiteDataTypes(cachesToClear), -WallTime::infinity(), [] { });
 }

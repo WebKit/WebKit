@@ -26,16 +26,15 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
-#include "APIHTTPCookieStore.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
+#include "APIWebsiteDataStore.h"
 #include "AuthenticatorManager.h"
 #include "DeviceIdHashSaltStorage.h"
 #include "MockAuthenticatorManager.h"
 #include "NetworkProcessMessages.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
-#include "WebKit2Initialize.h"
 #include "WebPageProxy.h"
 #include "WebProcessCache.h"
 #include "WebProcessMessages.h"
@@ -138,57 +137,6 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
     platformInitialize();
 
     ASSERT(RunLoop::isMain());
-}
-
-static RefPtr<WebsiteDataStore>& globalDefaultDataStore()
-{
-    static NeverDestroyed<RefPtr<WebsiteDataStore>> globalDefaultDataStore;
-    return globalDefaultDataStore.get();
-}
-
-Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
-{
-    InitializeWebKit2();
-
-    auto& store = globalDefaultDataStore();
-    if (!store)
-        store = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration(), PAL::SessionID::defaultSessionID()));
-
-    return *store;
-}
-
-void WebsiteDataStore::deleteDefaultDataStoreForTesting()
-{
-    globalDefaultDataStore() = nullptr;
-}
-
-bool WebsiteDataStore::defaultDataStoreExists()
-{
-    return !!globalDefaultDataStore();
-}
-
-Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
-{
-    auto configuration = WebsiteDataStoreConfiguration::create();
-
-    configuration->setPersistent(true);
-
-    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
-    configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());
-    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
-    configuration->setMediaCacheDirectory(defaultMediaCacheDirectory());
-
-    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
-    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
-    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
-    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
-    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
-    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
-    configuration->setDeviceIdHashSaltsStorageDirectory(defaultDeviceIdHashSaltsStorageDirectory());
-
-    configuration->setJavaScriptConfigurationDirectory(defaultJavaScriptConfigurationDirectory());
-
-    return configuration;
 }
 
 WebsiteDataStore::~WebsiteDataStore()
@@ -1780,7 +1728,7 @@ void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandle
 bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) const
 {
     if (auto* processPoolDataStore = processPool.websiteDataStore())
-        return processPoolDataStore == this;
+        return &processPoolDataStore->websiteDataStore() == this;
     return false;
 }
 
@@ -1806,7 +1754,7 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, boo
     }
 
     if (processPools.isEmpty() && count && ensureAPoolExists) {
-        auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::create());
+        auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(m_configuration));
         processPools.add(processPool.ptr());
     }
 
@@ -2050,28 +1998,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)
 {
     m_secKeyProxyStores.append(WTFMove(store));
-}
-#endif
-
-#if !PLATFORM(COCOA)
-WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
-{
-    // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=156369 and https://bugs.webkit.org/show_bug.cgi?id=156370
-    return WTF::String();
-}
-
-WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
-{
-    // FIXME: Implement.
-    return WTF::String();
-}
-#endif
-
-#if !USE(GLIB)
-WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
-{
-    // Not implemented.
-    return WTF::String();
 }
 #endif
 

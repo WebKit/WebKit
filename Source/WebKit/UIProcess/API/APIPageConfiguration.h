@@ -44,12 +44,12 @@ class WebPreferences;
 class WebProcessPool;
 class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
-class WebsiteDataStore;
 }
 
 namespace API {
 
 class ApplicationManifest;
+class WebsiteDataStore;
 class WebsitePolicies;
 
 class PageConfiguration : public ObjectImpl<Object::Type::PageConfiguration> {
@@ -84,8 +84,8 @@ public:
     WebKit::VisitedLinkStore* visitedLinkStore();
     void setVisitedLinkStore(WebKit::VisitedLinkStore*);
 
-    WebKit::WebsiteDataStore* websiteDataStore();
-    void setWebsiteDataStore(WebKit::WebsiteDataStore*);
+    WebsiteDataStore* websiteDataStore();
+    void setWebsiteDataStore(WebsiteDataStore*);
 
     WebsitePolicies* defaultWebsitePolicies() const;
     void setDefaultWebsitePolicies(WebsitePolicies*);
@@ -145,7 +145,7 @@ private:
     RefPtr<WebKit::WebPageProxy> m_relatedPage;
     RefPtr<WebKit::VisitedLinkStore> m_visitedLinkStore;
 
-    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
+    RefPtr<WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
 
     bool m_treatsSHA1SignedCertificatesAsInsecure { true };

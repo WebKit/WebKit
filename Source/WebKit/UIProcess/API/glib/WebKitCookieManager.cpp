@@ -58,7 +58,7 @@ struct _WebKitCookieManagerPrivate {
     PAL::SessionID sessionID() const
     {
         ASSERT(dataManager);
-        return webkitWebsiteDataManagerGetDataStore(dataManager).sessionID();
+        return webkitWebsiteDataManagerGetDataStore(dataManager).websiteDataStore().sessionID();
     }
 
     ~_WebKitCookieManagerPrivate()

@@ -87,7 +87,7 @@ NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     connect();
 
     if (auto* websiteDataStore = m_processPool.websiteDataStore())
-        m_websiteDataStores.set(websiteDataStore->sessionID(), makeRef(*websiteDataStore));
+        m_websiteDataStores.set(websiteDataStore->websiteDataStore().sessionID(), makeRef(websiteDataStore->websiteDataStore()));
 }
 
 NetworkProcessProxy::~NetworkProcessProxy()
@@ -1134,14 +1134,14 @@ WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::Sessio
         return iterator->value.get();
 
     if (auto* websiteDataStore = m_processPool.websiteDataStore()) {
-        if (sessionID == websiteDataStore->sessionID())
-            return websiteDataStore;
+        if (sessionID == websiteDataStore->websiteDataStore().sessionID())
+            return &websiteDataStore->websiteDataStore();
     }
 
     if (sessionID != PAL::SessionID::defaultSessionID())
         return nullptr;
 
-    return WebsiteDataStore::defaultDataStore().ptr();
+    return &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
 }
 
 void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionID)
