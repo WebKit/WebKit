@@ -1,3 +1,26 @@
+2019-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove legacy CodeMirror based pretty printers
+        https://bugs.webkit.org/show_bug.cgi?id=201624
+
+        Reviewed by Devin Rousso.
+
+        * Tools/PrettyPrinting/FormatterDebug.js: Removed.
+        * Tools/PrettyPrinting/Utilities.js: Removed.
+        * Tools/PrettyPrinting/codemirror-additions.css: Removed.
+        * Tools/PrettyPrinting/index.html: Removed.
+        * Tools/PrettyPrinting/populate/apple.css: Removed.
+        * UserInterface/Controllers/Formatter.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Views/CodeMirrorFormatters.js: Removed.
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.prettyPrint):
+        (WI.TextEditor.prototype._canUseFormatterWorker): Deleted.
+        (WI.TextEditor.prototype._startCodeMirrorPrettyPrint): Deleted.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2019-09-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Dark Mode: Overview Timeline View has jarring white box-shadows in dark mode

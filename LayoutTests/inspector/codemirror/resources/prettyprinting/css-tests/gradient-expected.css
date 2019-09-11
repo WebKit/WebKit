@@ -1,9 +1,0 @@
-.dot-nav:nth-child(1n) li a.active {
-    top: 0;
-    background: #08c;
-    background: -webkit-gradient(linear, lefttop, leftbottom, color-stop(0%, rgb(126, 198, 234)), color-stop(24%, rgb(70, 179, 234)), color-stop(100%, rgb(3, 135, 201)));
-    background: -webkit-linear-gradient(top, rgb(126, 198, 234) 0%, rgb(70, 179, 234) 45%, rgb(3, 135, 201) 100%);
-    background: -moz-linear-gradient(top, rgb(126, 198, 234) 0%, rgb(70, 179, 234) 45%, rgb(3, 135, 201) 100%);
-    background: linear-gradient(top, rgb(126, 198, 234) 0%, rgb(70, 179, 234) 45%, rgb(3, 135, 201) 100%);
-}
-

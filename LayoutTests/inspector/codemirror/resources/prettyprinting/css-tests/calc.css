@@ -1,7 +1,0 @@
-/* CALC EXPRESSIONS */
-/* FIXME: negative numbers can be improved */
-div{width:-webkit-calc(100%+80px+1em);}
-div{width:-webkit-calc(100%/6);}
-div{width:-webkit-calc(10%*6);}
-div{width:calc(-960px+75%);}
-div{width:calc(100vw-50vw);}

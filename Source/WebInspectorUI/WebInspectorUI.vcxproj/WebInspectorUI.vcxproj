@@ -306,7 +306,6 @@
     <None Include="..\UserInterface\CodeMirrorCompletionController.js" />
     <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.css" />
     <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.js" />
-    <None Include="..\UserInterface\CodeMirrorFormatters.js" />
     <None Include="..\UserInterface\CodeMirrorOverrides.css" />
     <None Include="..\UserInterface\CodeMirrorTokenTrackingController.css" />
     <None Include="..\UserInterface\CodeMirrorTokenTrackingController.js" />
@@ -441,7 +440,6 @@
     <None Include="..\UserInterface\FolderizedTreeElement.js" />
     <None Include="..\UserInterface\FontResourceContentView.css" />
     <None Include="..\UserInterface\FontResourceContentView.js" />
-    <None Include="..\UserInterface\Formatter.js" />
     <None Include="..\UserInterface\FormatterContentBuilder.js" />
     <None Include="..\UserInterface\FormatterSourceMap.js" />
     <None Include="..\UserInterface\Frame.js" />

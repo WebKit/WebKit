@@ -168,9 +168,6 @@
     <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\CodeMirrorFormatters.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\CodeMirrorOverrides.css">
       <Filter>UserInterface</Filter>
     </None>
@@ -508,9 +505,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\FontResourceContentView.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\Formatter.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\FormatterContentBuilder.js">

@@ -1,3 +1,48 @@
+2019-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove legacy CodeMirror based pretty printers
+        https://bugs.webkit.org/show_bug.cgi?id=201624
+
+        Reviewed by Devin Rousso.
+
+        * inspector/codemirror/prettyprinting-css-expected.txt: Removed.
+        * inspector/codemirror/prettyprinting-css.html: Removed.
+        * inspector/codemirror/prettyprinting-javascript-expected.txt: Removed.
+        * inspector/codemirror/prettyprinting-javascript.html: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/basic-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/basic.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/calc-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/calc.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/gradient-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/gradient.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/keyframes-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/keyframes.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/media-query-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/media-query.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/selectors-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/selectors.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/wrapping-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-tests/wrapping.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/block-comment-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/block-comment.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/do-while-loop-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/do-while-loop.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/do-while-within-if-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/do-while-within-if.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/if-followed-by-while-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/if-followed-by-while.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/if-while-within-do-while-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/if-while-within-do-while.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/single-statement-blocks-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/single-statement-blocks.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/switch-case-default-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/switch-case-default.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/unary-binary-operators-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/unary-binary-operators.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/while-within-do-while-expected.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/while-within-do-while.js: Removed.
+        * inspector/codemirror/resources/prettyprinting/utilities.js: Removed.
+
 2019-09-10  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/cookies/private-cookie-storage.html
