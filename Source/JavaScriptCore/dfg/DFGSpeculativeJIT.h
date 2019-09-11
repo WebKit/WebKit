@@ -1493,6 +1493,7 @@ public:
     void compileExtractCatchLocal(Node*);
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
+    void compileStringCodePointAt(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

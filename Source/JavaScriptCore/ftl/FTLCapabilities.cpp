@@ -159,6 +159,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckStringIdent:
     case CheckTraps:
     case StringCharCodeAt:
+    case StringCodePointAt:
     case StringFromCharCode:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:

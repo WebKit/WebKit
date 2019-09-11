@@ -4198,6 +4198,7 @@ void SpeculativeJIT::compile(Node* node)
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:
+    case StringCodePointAt:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

@@ -1909,6 +1909,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case StringCharCodeAt:
+    case StringCodePointAt:
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
         

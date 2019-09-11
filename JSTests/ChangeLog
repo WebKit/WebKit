@@ -1,3 +1,36 @@
+2019-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add StringCodePointAt intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=201673
+
+        Reviewed by Michael Saboff.
+
+        * stress/string-char-at-constant-index-out-of-range.js: Added.
+        (shouldBe):
+        (test):
+        * stress/string-char-code-at-constant-index-out-of-range.js: Added.
+        (shouldBe):
+        (test):
+        * stress/string-code-point-at--out-of-range.js: Added.
+        (shouldBe):
+        (test):
+        * stress/string-code-point-at-basic.js: Added.
+        (test):
+        * stress/string-code-point-at-constant-index-out-of-range.js: Added.
+        (shouldBe):
+        (test):
+        * stress/string-code-point-at-constant-int32-max-index-out-of-range.js: Added.
+        (shouldBe):
+        (test):
+        * stress/string-code-point-at-constant-surrogate-pair.js: Added.
+        (shouldBe):
+        (test):
+        (breaking):
+        * stress/string-code-point-at-surrogate-pair.js: Added.
+        (shouldBe):
+        * stress/string-code-point-at.js: Added.
+        (shouldBe):
+
 2019-09-10  Michael Saboff  <msaboff@apple.com>
 
         JSC crashes due to stack overflow while building RegExp

@@ -303,6 +303,7 @@ namespace JSC { namespace DFG {
     \
     /* Optimizations for string access */ \
     macro(StringCharCodeAt, NodeResultInt32) \
+    macro(StringCodePointAt, NodeResultInt32) \
     macro(StringCharAt, NodeResultJS) \
     macro(StringFromCharCode, NodeResultJS | NodeMustGenerate) \
     \

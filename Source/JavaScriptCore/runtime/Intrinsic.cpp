@@ -123,6 +123,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "ObjectKeysIntrinsic";
     case ReflectGetPrototypeOfIntrinsic:
         return "ReflectGetPrototypeOfIntrinsic";
+    case StringPrototypeCodePointAtIntrinsic:
+        return "StringPrototypeCodePointAtIntrinsic";
     case StringPrototypeValueOfIntrinsic:
         return "StringPrototypeValueOfIntrinsic";
     case StringPrototypeReplaceIntrinsic:

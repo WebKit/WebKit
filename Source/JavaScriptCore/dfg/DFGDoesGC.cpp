@@ -192,6 +192,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetArrayLength:
     case GetVectorLength:
     case StringCharCodeAt:
+    case StringCodePointAt:
     case GetTypedArrayByteOffset:
     case GetPrototypeOf:
     case PutStructure:

@@ -1113,6 +1113,9 @@ private:
         case StringCharCodeAt:
             compileStringCharCodeAt();
             break;
+        case StringCodePointAt:
+            compileStringCodePointAt();
+            break;
         case StringFromCharCode:
             compileStringFromCharCode();
             break;
@@ -7129,6 +7132,64 @@ private:
         m_out.appendTo(continuation, lastNext);
         
         setInt32(m_out.phi(Int32, char8Bit, char16Bit));
+    }
+
+    void compileStringCodePointAt()
+    {
+        LBasicBlock is8Bit = m_out.newBlock();
+        LBasicBlock is16Bit = m_out.newBlock();
+        LBasicBlock isLeadSurrogate = m_out.newBlock();
+        LBasicBlock mayHaveTrailSurrogate = m_out.newBlock();
+        LBasicBlock hasTrailSurrogate = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue base = lowString(m_node->child1());
+        LValue index = lowInt32(m_node->child2());
+        LValue storage = lowStorage(m_node->child3());
+
+        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+        LValue length = m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length);
+
+        speculate(Uncountable, noValue(), 0, m_out.aboveOrEqual(index, length));
+
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(is16Bit), unsure(is8Bit));
+
+        LBasicBlock lastNext = m_out.appendTo(is8Bit, is16Bit);
+        // FIXME: Need to cage strings!
+        // https://bugs.webkit.org/show_bug.cgi?id=174924
+        ValueFromBlock char8Bit = m_out.anchor(
+            m_out.load8ZeroExt32(m_out.baseIndex(
+                m_heaps.characters8, storage, m_out.zeroExtPtr(index),
+                provenValue(m_node->child2()))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(is16Bit, isLeadSurrogate);
+        LValue leadCharacter = m_out.load16ZeroExt32(m_out.baseIndex(m_heaps.characters16, storage, m_out.zeroExtPtr(index), provenValue(m_node->child2())));
+        ValueFromBlock char16Bit = m_out.anchor(leadCharacter);
+        LValue nextIndex = m_out.add(index, m_out.int32One);
+        m_out.branch(m_out.aboveOrEqual(nextIndex, length), unsure(continuation), unsure(isLeadSurrogate));
+
+        m_out.appendTo(isLeadSurrogate, mayHaveTrailSurrogate);
+        m_out.branch(m_out.notEqual(m_out.bitAnd(leadCharacter, m_out.constInt32(0xfffffc00)), m_out.constInt32(0xd800)), unsure(continuation), unsure(mayHaveTrailSurrogate));
+
+        m_out.appendTo(mayHaveTrailSurrogate, hasTrailSurrogate);
+        JSValue indexValue = provenValue(m_node->child2());
+        JSValue nextIndexValue;
+        if (indexValue && indexValue.isInt32() && indexValue.asInt32() != INT32_MAX)
+            nextIndexValue = jsNumber(indexValue.asInt32() + 1);
+        LValue trailCharacter = m_out.load16ZeroExt32(m_out.baseIndex(m_heaps.characters16, storage, m_out.zeroExtPtr(nextIndex), nextIndexValue));
+        m_out.branch(m_out.notEqual(m_out.bitAnd(trailCharacter, m_out.constInt32(0xfffffc00)), m_out.constInt32(0xdc00)), unsure(continuation), unsure(hasTrailSurrogate));
+
+        m_out.appendTo(hasTrailSurrogate, continuation);
+        ValueFromBlock charSurrogatePair = m_out.anchor(m_out.sub(m_out.add(m_out.shl(leadCharacter, m_out.constInt32(10)), trailCharacter), m_out.constInt32(U16_SURROGATE_OFFSET)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setInt32(m_out.phi(Int32, char8Bit, char16Bit, charSurrogatePair));
     }
 
     void compileStringFromCharCode()

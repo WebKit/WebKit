@@ -906,7 +906,8 @@ private:
             break;
         }
 
-        case StringCharCodeAt: {
+        case StringCharCodeAt:
+        case StringCodePointAt: {
             setPrediction(SpecInt32Only);
             break;
         }

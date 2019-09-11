@@ -1,3 +1,62 @@
+2019-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add StringCodePointAt intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=201673
+
+        Reviewed by Michael Saboff.
+
+        JetStream2/UniPoker executes String#codePointAt frequently. We should handle it in ThunkGenerator, DFG, and FTL like we are doing so for String#charCodeAt.
+        This patch adds these supports for String#codePointAt to get ~10% score improvement in JetStream2/UniPoker.
+
+        In ThunkGenerator, we add a thunk for String#codePointAt, which accelerates LLInt and Baseline. In DFG, we handle this as StringCodePointAt node, and emit
+        inlined code in DFG and FTL. The characteristics of StringCodePointAt node is basically the same to StringCharAt. It has String array-mode, so it emits
+        preceding CheckArray. This ensures that (1) StringCodePointAt node itself does not do GC since the string is always resolved, and (2) we can skip the rope
+        check. This thing is just the same to the existing StringCharCodeAt mechanism.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileStringCodePointAt):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCodePointAt):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadCharacterString):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringGetByValGenerator):
+        (JSC::stringCharLoad):
+        (JSC::stringPrototypeCodePointAtThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+
 2019-09-11  Michael Saboff  <msaboff@apple.com>
 
         JSC crashes due to stack overflow while building RegExp

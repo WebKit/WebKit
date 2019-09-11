@@ -2094,6 +2094,7 @@ public:
         case GetByVal:
         case StringCharAt:
         case StringCharCodeAt:
+        case StringCodePointAt:
         case CheckArray:
         case Arrayify:
         case ArrayifyToStructure:

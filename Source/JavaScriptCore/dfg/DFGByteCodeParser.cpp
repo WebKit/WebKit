@@ -2610,6 +2610,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (argumentCountIncludingThis != 2)
                 return false;
 
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable))
+                return false;
+
             insertChecks();
             VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
             VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
@@ -2619,9 +2622,32 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             return true;
         }
 
+        case StringPrototypeCodePointAtIntrinsic: {
+            if (!is64Bit())
+                return false;
+
+            if (argumentCountIncludingThis != 2)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable))
+                return false;
+
+            insertChecks();
+            VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            Node* result = addToGraph(StringCodePointAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
+
+            setResult(result);
+            return true;
+        }
+
         case CharAtIntrinsic: {
             if (argumentCountIncludingThis != 2)
                 return false;
+
+            // FIXME: String#charAt returns empty string when index is out-of-bounds, and this does not break the AI's claim.
+            // Only FTL supports out-of-bounds version now. We should support out-of-bounds version even in DFG.
+            // https://bugs.webkit.org/show_bug.cgi?id=201678
 
             insertChecks();
             VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);

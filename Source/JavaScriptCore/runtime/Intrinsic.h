@@ -74,6 +74,7 @@ enum Intrinsic : uint8_t {
     ObjectIsIntrinsic,
     ObjectKeysIntrinsic,
     ReflectGetPrototypeOfIntrinsic,
+    StringPrototypeCodePointAtIntrinsic,
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,
     StringPrototypeReplaceRegExpIntrinsic,
