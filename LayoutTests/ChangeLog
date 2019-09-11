@@ -1,3 +1,45 @@
+2019-09-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: instrument WebGPUDevice instead of GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=201650
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/create-context-webgpu.html:
+        * inspector/canvas/create-context-webgpu-expected.txt:
+        * inspector/canvas/resources/create-context-utilities.js:
+        (createDetachedCanvas):
+        (createCSSCanvas):
+        (destroyCanvases):
+
+        * inspector/canvas/requestClientNodes.html: Added.
+        * inspector/canvas/requestClientNodes-expected.txt: Added.
+        * inspector/canvas/requestClientNodes-css.html: Renamed from LayoutTests/inspector/canvas/css-canvas-clients.html.
+        * inspector/canvas/requestClientNodes-css-expected.txt: Renamed from LayoutTests/inspector/canvas/css-canvas-clients-expected.txt.
+        * inspector/canvas/requestClientNodes-webgpu.html: Added.
+        * inspector/canvas/requestClientNodes-webgpu-expected.txt: Added.
+
+        * inspector/canvas/resolveContext-2d.html: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-2d.html.
+        * inspector/canvas/resolveContext-2d-expected.txt: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-2d-expected.txt.
+        * inspector/canvas/resolveContext-bitmaprenderer.html: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-bitmaprenderer.html.
+        * inspector/canvas/resolveContext-bitmaprenderer-expected.txt: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-bitmaprenderer-expected.txt.
+        * inspector/canvas/resolveContext-webgl.html: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgl.html.
+        * inspector/canvas/resolveContext-webgl-expected.txt: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgl-expected.txt.
+        * inspector/canvas/resolveContext-webgl2.html: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgl2.html.
+        * inspector/canvas/resolveContext-webgl2-expected.txt: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgl2-expected.txt.
+        * inspector/canvas/resolveContext-webgpu.html: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgpu.html.
+        * inspector/canvas/resolveContext-webgpu-expected.txt: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgpu-expected.txt.
+
+        * inspector/canvas/context-attributes-expected.txt:
+
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-09-11  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/cache-storage/cache-persistency.https.html

@@ -41,7 +41,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._memoryCost = memoryCost || NaN;
         this._backtrace = backtrace || [];
 
-        this._cssCanvasClientNodes = null;
+        this._clientNodes = null;
         this._shaderProgramCollection = new WI.ShaderProgramCollection;
         this._recordingCollection = new WI.RecordingCollection;
 
@@ -113,7 +113,8 @@ WI.Canvas = class Canvas extends WI.Object
 
     static resetUniqueDisplayNameNumbers()
     {
-        WI.Canvas._nextUniqueDisplayNameNumber = 1;
+        Canvas._nextContextUniqueDisplayNameNumber = 1;
+        Canvas._nextDeviceUniqueDisplayNameNumber = 1;
     }
 
     // Public
@@ -160,8 +161,14 @@ WI.Canvas = class Canvas extends WI.Object
                 return WI.UIString("Canvas %s").format(idSelector);
         }
 
+        if (this._contextType === Canvas.ContextType.WebGPU) {
+            if (!this._uniqueDisplayNameNumber)
+                this._uniqueDisplayNameNumber = Canvas._nextDeviceUniqueDisplayNameNumber++;
+            return WI.UIString("Device %d").format(this._uniqueDisplayNameNumber);
+        }
+
         if (!this._uniqueDisplayNameNumber)
-            this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
+            this._uniqueDisplayNameNumber = Canvas._nextContextUniqueDisplayNameNumber++;
         return WI.UIString("Canvas %d").format(this._uniqueDisplayNameNumber);
     }
 
@@ -171,17 +178,22 @@ WI.Canvas = class Canvas extends WI.Object
             this._requestNodePromise = new Promise((resolve, reject) => {
                 WI.domManager.ensureDocument();
 
-                CanvasAgent.requestNode(this._identifier).then((result) => {
-                    this._domNode = WI.domManager.nodeForId(result.nodeId);
-                    if (!this._domNode) {
-                        reject(`No DOM node for identifier: ${result.nodeId}.`);
+                CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
+                    if (error) {
+                        resolve(null);
                         return;
                     }
+
+                    this._domNode = WI.domManager.nodeForId(nodeId);
+                    if (!this._domNode) {
+                        resolve(null);
+                        return;
+                    }
+
                     resolve(this._domNode);
-                }).catch(reject);
+                });
             });
         }
-
         return this._requestNodePromise;
     }
 
@@ -190,30 +202,33 @@ WI.Canvas = class Canvas extends WI.Object
         return CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => console.error(error));
     }
 
-    requestCSSCanvasClientNodes(callback)
+    requestClientNodes(callback)
     {
-        if (!this._cssCanvasName) {
-            callback([]);
-            return;
-        }
-
-        if (this._cssCanvasClientNodes) {
-            callback(this._cssCanvasClientNodes);
+        if (this._clientNodes) {
+            callback(this._clientNodes);
             return;
         }
 
         WI.domManager.ensureDocument();
 
-        CanvasAgent.requestCSSCanvasClientNodes(this._identifier, (error, clientNodeIds) => {
+        let wrappedCallback = (error, clientNodeIds) => {
             if (error) {
                 callback([]);
                 return;
             }
 
             clientNodeIds = Array.isArray(clientNodeIds) ? clientNodeIds : [];
-            this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.domManager.nodeForId(clientNodeId));
-            callback(this._cssCanvasClientNodes);
-        });
+            this._clientNodes = clientNodeIds.map((clientNodeId) => WI.domManager.nodeForId(clientNodeId));
+            callback(this._clientNodes);
+        };
+
+        // COMPATIBILITY (iOS 13): Canvas.requestCSSCanvasClientNodes was renamed to Canvas.requestClientNodes.
+        if (!CanvasAgent.requestClientNodes) {
+            CanvasAgent.requestCSSCanvasClientNodes(this._identifier, wrappedCallback);
+            return;
+        }
+
+        CanvasAgent.requestClientNodes(this._identifier, wrappedCallback);
     }
 
     requestSize()
@@ -245,6 +260,9 @@ WI.Canvas = class Canvas extends WI.Object
         }
 
         return this.requestNode().then((domNode) => {
+            if (!domNode)
+                return null;
+
             let size = calculateSize(domNode);
             if (!isNaN(size.width) && !isNaN(size.height))
                 return size;
@@ -327,16 +345,13 @@ WI.Canvas = class Canvas extends WI.Object
         this.dispatchEventToListeners(WI.Canvas.Event.ExtensionEnabled, {extension});
     }
 
-    cssCanvasClientNodesChanged()
+    clientNodesChanged()
     {
         // Called from WI.CanvasManager.
 
-        if (!this._cssCanvasName)
-            return;
+        this._clientNodes = null;
 
-        this._cssCanvasClientNodes = null;
-
-        this.dispatchEventToListeners(WI.Canvas.Event.CSSCanvasClientNodesChanged);
+        this.dispatchEventToListeners(Canvas.Event.ClientNodesChanged);
     }
 
     recordingStarted(initiator)
@@ -402,7 +417,8 @@ WI.Canvas = class Canvas extends WI.Object
     }
 };
 
-WI.Canvas._nextUniqueDisplayNameNumber = 1;
+WI.Canvas._nextContextUniqueDisplayNameNumber = 1;
+WI.Canvas._nextDeviceUniqueDisplayNameNumber = 1;
 
 WI.Canvas.FrameURLCookieKey = "canvas-frame-url";
 WI.Canvas.CSSCanvasNameCookieKey = "canvas-css-canvas-name";
@@ -426,7 +442,7 @@ WI.Canvas.RecordingState = {
 WI.Canvas.Event = {
     MemoryChanged: "canvas-memory-changed",
     ExtensionEnabled: "canvas-extension-enabled",
-    CSSCanvasClientNodesChanged: "canvas-css-canvas-client-nodes-changed",
+    ClientNodesChanged: "canvas-client-nodes-changed",
     RecordingStarted: "canvas-recording-started",
     RecordingProgress: "canvas-recording-progress",
     RecordingStopped: "canvas-recording-stopped",

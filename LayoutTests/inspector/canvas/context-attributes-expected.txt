@@ -32,6 +32,7 @@ PASS: Canvas context should be "WebGL".
   "antialias": true,
   "premultipliedAlpha": true,
   "preserveDrawingBuffer": false,
+  "powerPreference": "default",
   "failIfMajorPerformanceCaveat": false
 }
 
@@ -45,6 +46,7 @@ PASS: Canvas context should be "WebGL".
   "antialias": true,
   "premultipliedAlpha": true,
   "preserveDrawingBuffer": false,
+  "powerPreference": "default",
   "failIfMajorPerformanceCaveat": false
 }
 PASS: Canvas context should have attribute "alpha" with value "false".

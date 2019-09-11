@@ -163,12 +163,20 @@ WI.RemoteObject = class RemoteObject
     {
         console.assert(typeof callback === "function");
 
-        CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup, (error, object) => {
+        function wrapCallback(error, object) {
             if (error || !object)
                 callback(null);
             else
                 callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
-        });
+        }
+
+        // COMPATIBILITY (iOS 13): Canvas.resolveCanvasContext was renamed to Canvas.resolveContext.
+        if (!CanvasAgent.resolveContext) {
+            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup, wrapCallback);
+            return;
+        }
+
+        CanvasAgent.resolveContext(canvas.identifier, objectGroup, wrapCallback);
     }
 
     // Public

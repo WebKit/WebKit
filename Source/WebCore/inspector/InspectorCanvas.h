@@ -26,19 +26,26 @@
 #pragma once
 
 #include "CallTracerTypes.h"
+#include "CanvasRenderingContext.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <initializer_list>
+#include <wtf/HashSet.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(WEBGPU)
+#include "WebGPUDevice.h"
+#endif
 
 namespace WebCore {
 
 class CanvasGradient;
 class CanvasPattern;
-class CanvasRenderingContext;
+class Element;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -53,11 +60,25 @@ typedef String ErrorString;
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
     static Ref<InspectorCanvas> create(CanvasRenderingContext&);
+#if ENABLE(WEBGPU)
+    static Ref<InspectorCanvas> create(WebGPUDevice&);
+#endif
 
-    const String& identifier() { return m_identifier; }
-    CanvasRenderingContext& context() { return m_context; }
+    const String& identifier() const { return m_identifier; }
 
-    HTMLCanvasElement* canvasElement();
+    CanvasRenderingContext* canvasContext() const;
+    HTMLCanvasElement* canvasElement() const;
+
+#if ENABLE(WEBGPU)
+    WebGPUDevice* deviceContext() const;
+    bool isDeviceForCanvasContext(CanvasRenderingContext&) const;
+#endif
+
+    ScriptExecutionContext* scriptExecutionContext() const;
+
+    JSC::JSValue resolveContext(JSC::ExecState*) const;
+
+    HashSet<Element*> clientNodes() const;
 
     void canvasChanged();
 
@@ -87,6 +108,10 @@ public:
 
 private:
     InspectorCanvas(CanvasRenderingContext&);
+#if ENABLE(WEBGPU)
+    InspectorCanvas(WebGPUDevice&);
+#endif
+
     void appendActionSnapshotIfNeeded();
 
     using DuplicateDataVariant = Variant<
@@ -116,7 +141,14 @@ private:
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
 
     String m_identifier;
-    CanvasRenderingContext& m_context;
+
+    Variant<
+        std::reference_wrapper<CanvasRenderingContext>,
+#if ENABLE(WEBGPU)
+        std::reference_wrapper<WebGPUDevice>,
+#endif
+        Monostate
+    > m_context;
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> m_frames;

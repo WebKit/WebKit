@@ -210,6 +210,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
 
         this.representedObject.requestNode().then((node) => {
+            if (!node)
+                return;
+
             console.assert(!this._canvasNode || this._canvasNode === node);
             if (this._canvasNode === node)
                 return;
@@ -281,12 +284,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this.refreshPreview();
         };
 
-        this.representedObject.requestSize()
-        .then((size) => {
+        this.representedObject.requestSize().then((size) => {
             updatePixelSize(size);
-        })
-        .catch((error) => {
-            updatePixelSize(null);
         });
     }
 

@@ -46,7 +46,8 @@ css-dark-mode [ Skip ]
 
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/resolveContext-webgpu.html [ Skip ]
 
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream
