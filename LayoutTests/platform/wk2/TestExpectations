@@ -162,6 +162,9 @@ webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure 
 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
 
+# This test leaves state behind for future tests in the same directory
+webkit.org/b/147075 http/tests/cache/disk-cache/disk-cache-disable.html [ Skip ]
+
 webkit.org/b/141122 editing/selection/programmatic-selection-on-mac-is-directionless.html [ Pass Failure ]
 
 http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]

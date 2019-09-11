@@ -311,18 +311,6 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     }
 }
 
-static inline Ref<WebsiteDataStoreConfiguration> websiteDataStoreConfigurationForWebProcessPoolConfiguration(const API::ProcessPoolConfiguration& processPoolconfigurarion)
-{
-    auto configuration = WebsiteDataStoreConfiguration::create();
-    configuration->setApplicationCacheDirectory(String(processPoolconfigurarion.applicationCacheDirectory()));
-    configuration->setNetworkCacheDirectory(String(processPoolconfigurarion.diskCacheDirectory()));
-    configuration->setWebSQLDatabaseDirectory(String(processPoolconfigurarion.webSQLDatabaseDirectory()));
-    configuration->setLocalStorageDirectory(String(processPoolconfigurarion.localStorageDirectory()));
-    configuration->setDeviceIdHashSaltsStorageDirectory(String(processPoolconfigurarion.deviceIdHashSaltsStorageDirectory()));
-    configuration->setMediaKeysStorageDirectory(String(processPoolconfigurarion.mediaKeysStorageDirectory()));
-    return configuration;
-}
-
 static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
@@ -335,22 +323,14 @@ static void webkitWebContextConstructed(GObject* object)
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
-    if (priv->websiteDataManager && !webkit_website_data_manager_is_ephemeral(priv->websiteDataManager.get())) {
-        configuration.setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_local_storage_directory(priv->websiteDataManager.get())));
-        configuration.setDiskCacheDirectory(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_disk_cache_directory(priv->websiteDataManager.get())), networkCacheSubdirectory));
-        configuration.setApplicationCacheDirectory(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_offline_application_cache_directory(priv->websiteDataManager.get())));
-        configuration.setIndexedDBDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_indexeddb_directory(priv->websiteDataManager.get())));
-        configuration.setHSTSStorageDirectory(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_hsts_cache_directory(priv->websiteDataManager.get())));
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        configuration.setWebSQLDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_websql_directory(priv->websiteDataManager.get())));
-ALLOW_DEPRECATED_DECLARATIONS_END
-    } else if (!priv->localStorageDirectory.isNull())
-        configuration.setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.data()));
-
-    priv->processPool = WebProcessPool::create(configuration);
 
     if (!priv->websiteDataManager)
-        priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration)));
+        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
+
+    if (!webkit_website_data_manager_is_ephemeral(priv->websiteDataManager.get()))
+        configuration.setHSTSStorageDirectory(FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_hsts_cache_directory(priv->websiteDataManager.get())));
+
+    priv->processPool = WebProcessPool::create(configuration);
     priv->processPool->setPrimaryDataStore(webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()));
 
     webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), *priv->processPool);
@@ -777,7 +757,7 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
     OptionSet<WebsiteDataType> websiteDataTypes;
     websiteDataTypes.add(WebsiteDataType::MemoryCache);
     websiteDataTypes.add(WebsiteDataType::DiskCache);
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()).websiteDataStore();
+    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
     websiteDataStore.removeData(websiteDataTypes, -WallTime::infinity(), [] { });
 }
 
@@ -1474,12 +1454,9 @@ void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebCon
  *
  * Deprecated: 2.10. Use webkit_web_context_new_with_website_data_manager() instead.
  */
-void webkit_web_context_set_disk_cache_directory(WebKitWebContext* context, const char* directory)
+void webkit_web_context_set_disk_cache_directory(WebKitWebContext*, const char*)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-    g_return_if_fail(directory);
-
-    context->priv->processPool->configuration().setDiskCacheDirectory(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(directory), networkCacheSubdirectory));
+    g_warning("webkit_web_context_set_disk_cache_directory is deprecated and does nothing, use WebKitWebsiteDataManager instead");
 }
 #endif
 

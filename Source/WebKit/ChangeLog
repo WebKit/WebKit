@@ -1,3 +1,267 @@
+2019-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary abstractions around WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=201655
+
+        Reviewed by Chris Dumez.
+
+        This patch does four things to simplify WebsiteDataStore code:
+        1. It removes API::WebsiteDataStore, which was just an unnecessary wrapper around WebKit::WebsiteDataStore.
+        2. It deprecates the unused aliases of WebsiteDataStore, WKApplicationCacheManagerRef and WKKeyValueStorageManagerRef
+        3. It removes the unused APIProcessPoolConfiguration properties that have been moved to WebsiteDataStore.
+        4. It makes WKWebsiteDataStore._delegate weak instead of strong, as already annotated in WKWebsiteDataStorePrivate.h
+        There should be no change in behavior from this patch.
+
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::websiteDataStore):
+        (API::PageConfiguration::setWebsiteDataStore):
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::copy):
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp: Removed.
+        * UIProcess/API/APIWebsiteDataStore.h: Removed.
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetTypeID):
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+        (WKApplicationCacheManagerDeleteEntriesForOrigin):
+        (WKApplicationCacheManagerDeleteAllEntries):
+        * UIProcess/API/C/WKApplicationCacheManager.h:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (useWithPolicies):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetTypeID):
+        (WKKeyValueStorageManagerGetOriginKey):
+        (WKKeyValueStorageManagerGetCreationTimeKey):
+        (WKKeyValueStorageManagerGetModificationTimeKey):
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        (WKKeyValueStorageManagerDeleteEntriesForOrigin):
+        (WKKeyValueStorageManagerDeleteAllEntries):
+        * UIProcess/API/C/WKKeyValueStorageManager.h:
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetTypeID):
+        (WKResourceCacheManagerGetCacheOrigins):
+        (WKResourceCacheManagerClearCacheForOrigin):
+        (WKResourceCacheManagerClearCacheForAllOrigins):
+        (toWebsiteDataTypes): Deleted.
+        * UIProcess/API/C/WKResourceCacheManager.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreGetTypeID):
+        (WKWebsiteDataStoreGetDefaultDataStore):
+        (WKWebsiteDataStoreCreateNonPersistentDataStore):
+        (WKWebsiteDataStoreCreateWithConfiguration):
+        (WKWebsiteDataStoreGetHTTPCookieStore):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode):
+        (WKWebsiteDataStoreSetStatisticsLastSeen):
+        (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreDumpResourceLoadStatistics):
+        (WKWebsiteDataStoreIsStatisticsPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubFrameUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsRedirectingTo):
+        (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreSetStatisticsGrandfathered):
+        (WKWebsiteDataStoreIsStatisticsGrandfathered):
+        (WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration):
+        (WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction):
+        (WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords):
+        (WKWebsiteDataStoreStatisticsUpdateCookieBlocking):
+        (WKWebsiteDataStoreStatisticsSubmitTelemetry):
+        (WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WKWebsiteDataStoreSetStatisticsIsRunningTest):
+        (WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WKWebsiteDataStoreSetStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        (WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        (WKWebsiteDataStoreSetStatisticsGrandfatheringTime):
+        (WKWebsiteDataStoreSetStatisticsMaxStatisticsEntries):
+        (WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval):
+        (WKWebsiteDataStoreStatisticsDeleteCookiesForTesting):
+        (WKWebsiteDataStoreStatisticsHasLocalStorage):
+        (WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap):
+        (WKWebsiteDataStoreStatisticsHasIsolatedSession):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        (WKWebsiteDataStoreRemoveAllFetchCaches):
+        (WKWebsiteDataStoreRemoveFetchCacheForOrigin):
+        (WKWebsiteDataStoreRemoveAllIndexedDatabases):
+        (WKWebsiteDataStoreRemoveLocalStorage):
+        (WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations):
+        (WKWebsiteDataStoreGetFetchCacheOrigins):
+        (WKWebsiteDataStoreGetFetchCacheSizeForOrigin):
+        (WKWebsiteDataStoreCopyServiceWorkerRegistrationDirectory):
+        (WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory):
+        (WKWebsiteDataStoreSetPerOriginStorageQuota):
+        (WKWebsiteDataStoreClearAllDeviceOrientationPermissions):
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        (WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval):
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm: Removed.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore defaultDataStore]):
+        (+[WKWebsiteDataStore nonPersistentDataStore]):
+        (-[WKWebsiteDataStore dealloc]):
+        (-[WKWebsiteDataStore httpCookieStore]):
+        (-[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        (-[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:]):
+        (+[WKWebsiteDataStore _defaultDataStoreExists]):
+        (+[WKWebsiteDataStore _deleteDefaultDataStoreForTesting]):
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        (-[WKWebsiteDataStore _fetchDataRecordsOfTypes:withOptions:completionHandler:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsEnabled]):
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsEnabled:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsDebugMode]):
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsDebugMode:]):
+        (-[WKWebsiteDataStore _perOriginStorageQuota]):
+        (-[WKWebsiteDataStore _setPerOriginStorageQuota:]):
+        (-[WKWebsiteDataStore _cacheStorageDirectory]):
+        (-[WKWebsiteDataStore _setCacheStorageDirectory:]):
+        (-[WKWebsiteDataStore _serviceWorkerRegistrationDirectory]):
+        (-[WKWebsiteDataStore _setServiceWorkerRegistrationDirectory:]):
+        (-[WKWebsiteDataStore _setBoundInterfaceIdentifier:]):
+        (-[WKWebsiteDataStore _boundInterfaceIdentifier]):
+        (-[WKWebsiteDataStore _setAllowsCellularAccess:]):
+        (-[WKWebsiteDataStore _allowsCellularAccess]):
+        (-[WKWebsiteDataStore _setProxyConfiguration:]):
+        (-[WKWebsiteDataStore _sourceApplicationBundleIdentifier]):
+        (-[WKWebsiteDataStore _setSourceApplicationBundleIdentifier:]):
+        (-[WKWebsiteDataStore _sourceApplicationSecondaryIdentifier]):
+        (-[WKWebsiteDataStore _setSourceApplicationSecondaryIdentifier:]):
+        (-[WKWebsiteDataStore _setAllowsTLSFallback:]):
+        (-[WKWebsiteDataStore _allowsTLSFallback]):
+        (-[WKWebsiteDataStore _proxyConfiguration]):
+        (-[WKWebsiteDataStore _indexedDBDatabaseDirectory]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldSubmitTelemetry:]):
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsTestingCallback:]):
+        (-[WKWebsiteDataStore _getAllStorageAccessEntriesFor:completionHandler:]):
+        (-[WKWebsiteDataStore _scheduleCookieBlockingUpdate:]):
+        (-[WKWebsiteDataStore _setPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _getIsPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _clearPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _processStatisticsAndDataRecords:]):
+        (-[WKWebsiteDataStore _hasRegisteredServiceWorker]):
+        (-[WKWebsiteDataStore _delegate]):
+        (-[WKWebsiteDataStore set_delegate:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStoreInternal.h:
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp: Removed.
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory): Deleted.
+        (API::WebsiteDataStore::defaultCacheStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory): Deleted.
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory): Deleted.
+        (API::WebsiteDataStore::defaultLocalStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory): Deleted.
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation): Deleted.
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation): Deleted.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::websiteDataStoreFromSessionID):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_webProcessCache):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::resolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::sendWebProcessDataStoreParameters):
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::mayHaveRegisteredServiceWorkers):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultCacheStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultMediaCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (WebKit::WebsiteDataStore::defaultLocalStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (WebKit::WebsiteDataStore::defaultJavaScriptConfigurationDirectory):
+        (WebKit::WebsiteDataStore::tempDirectoryFileSystemRepresentation):
+        (WebKit::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (WebKit::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::globalDefaultDataStore):
+        (WebKit::WebsiteDataStore::defaultDataStore):
+        (WebKit::WebsiteDataStore::deleteDefaultDataStoreForTesting):
+        (WebKit::WebsiteDataStore::defaultDataStoreExists):
+        (WebKit::WebsiteDataStore::defaultDataStoreConfiguration):
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool const):
+        (WebKit::WebsiteDataStore::processPools const):
+        (WebKit::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        * UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp:
+        (WebKit::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultCacheStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (WebKit::WebsiteDataStore::defaultLocalStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (WebKit::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (WebKit::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/glib/WebsiteDataStoreGLib.cpp: Copied from Source/WebKit/UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp.
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory): Deleted.
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory): Deleted.
+        (API::WebsiteDataStore::defaultCacheStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory): Deleted.
+        (API::WebsiteDataStore::defaultLocalStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory): Deleted.
+        (API::WebsiteDataStore::defaultHSTSDirectory): Deleted.
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory): Deleted.
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation): Deleted.
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-09-11  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: Scrubbing on ted.com does not work well

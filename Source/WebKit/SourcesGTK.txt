@@ -125,7 +125,6 @@ UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
 UIProcess/API/C/gtk/WKView.cpp
 
 UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify
-UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp @no-unify
 UIProcess/API/glib/IconDatabase.cpp @no-unify
 UIProcess/API/glib/WebKitApplicationInfo.cpp @no-unify
 UIProcess/API/glib/WebKitAuthenticationRequest.cpp @no-unify
@@ -232,6 +231,7 @@ UIProcess/cairo/BackingStoreCairo.cpp @no-unify
 UIProcess/glib/RemoteInspectorClient.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
+UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp

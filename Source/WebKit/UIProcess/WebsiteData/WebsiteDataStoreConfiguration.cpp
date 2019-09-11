@@ -26,12 +26,12 @@
 #include "config.h"
 #include "WebsiteDataStoreConfiguration.h"
 
-#include "APIWebsiteDataStore.h"
+#include "WebsiteDataStore.h"
 
 namespace WebKit {
 
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration()
-    : m_resourceLoadStatisticsDirectory(API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
+    : m_resourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
 {
 }
 

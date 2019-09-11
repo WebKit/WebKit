@@ -1,3 +1,12 @@
+2019-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary abstractions around WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=201655
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249758.

@@ -26,14 +26,14 @@
 #include "config.h"
 #include "APIWebsitePolicies.h"
 
-#include "APIWebsiteDataStore.h"
+#include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
 namespace API {
 
 WebsitePolicies::WebsitePolicies() = default;
 
-WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& legacyCustomHeaderFields, Vector<WebCore::CustomHeaderFields>&& customHeaderFields, WebKit::WebsitePopUpPolicy popUpPolicy, RefPtr<WebsiteDataStore>&& websiteDataStore)
+WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& legacyCustomHeaderFields, Vector<WebCore::CustomHeaderFields>&& customHeaderFields, WebKit::WebsitePopUpPolicy popUpPolicy, RefPtr<WebKit::WebsiteDataStore>&& websiteDataStore)
     : m_contentBlockersEnabled(contentBlockersEnabled)
     , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
     , m_autoplayPolicy(autoplayPolicy)
@@ -84,7 +84,7 @@ WebsitePolicies::~WebsitePolicies()
 {
 }
 
-void WebsitePolicies::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteDataStore)
+void WebsitePolicies::setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&& websiteDataStore)
 {
     m_websiteDataStore = WTFMove(websiteDataStore);
 }
@@ -108,7 +108,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
 #endif
         WTFMove(customHeaderFields),
         popUpPolicy(),
-        m_websiteDataStore ? Optional<WebKit::WebsiteDataStoreParameters> { m_websiteDataStore->websiteDataStore().parameters() } : WTF::nullopt,
+        m_websiteDataStore ? Optional<WebKit::WebsiteDataStoreParameters> { m_websiteDataStore->parameters() } : WTF::nullopt,
         m_customUserAgent,
         m_customJavaScriptUserAgentAsSiteSpecificQuirks,
         m_customNavigatorPlatform,

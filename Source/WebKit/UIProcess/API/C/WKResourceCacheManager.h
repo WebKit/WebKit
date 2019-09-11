@@ -27,6 +27,7 @@
 #define WKResourceCacheManager_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,13 +39,13 @@ enum {
 };
 typedef uint32_t WKResourceCachesToClear;
 
-WK_EXPORT WKTypeID WKResourceCacheManagerGetTypeID();
+WK_EXPORT WKTypeID WKResourceCacheManagerGetTypeID() WK_C_API_DEPRECATED;
 
 typedef void (*WKResourceCacheManagerGetCacheOriginsFunction)(WKArrayRef, WKErrorRef, void*);
-WK_EXPORT void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef contextRef, void* context, WKResourceCacheManagerGetCacheOriginsFunction function);
+WK_EXPORT void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef contextRef, void* context, WKResourceCacheManagerGetCacheOriginsFunction function) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManger, WKSecurityOriginRef origin, WKResourceCachesToClear cachesToClear);
-WK_EXPORT void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManager, WKResourceCachesToClear cachesToClear);
+WK_EXPORT void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManger, WKSecurityOriginRef origin, WKResourceCachesToClear cachesToClear) WK_C_API_DEPRECATED;
+WK_EXPORT void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManager, WKResourceCachesToClear cachesToClear) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

@@ -27,6 +27,7 @@
 #include "WebsiteDataStore.h"
 
 #include <WebCore/NotImplemented.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -43,6 +44,61 @@ void WebsiteDataStore::platformDestroy()
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
 {
     notImplemented();
+}
+
+String WebsiteDataStore::defaultApplicationCacheDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ApplicationCache");
+}
+
+String WebsiteDataStore::defaultCacheStorageDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "CacheStorage");
+}
+
+String WebsiteDataStore::defaultNetworkCacheDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "NetworkCache");
+}
+
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "IndexedDB");
+}
+
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ServiceWorkers");
+}
+
+String WebsiteDataStore::defaultLocalStorageDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "LocalStorage");
+}
+
+String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage");
+}
+
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "WebSQL");
+}
+
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ResourceLoadStatistics");
+}
+
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
+}
+
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
+{
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }
 
 } // namespace WebKit

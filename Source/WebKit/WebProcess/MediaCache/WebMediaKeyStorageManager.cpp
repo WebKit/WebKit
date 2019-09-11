@@ -37,7 +37,6 @@ using namespace WebCore;
 
 void WebMediaKeyStorageManager::setWebsiteDataStore(const WebProcessDataStoreParameters& parameters)
 {
-    ASSERT(!parameters.mediaKeyStorageDirectory.isEmpty());
     m_mediaKeyStorageDirectory = parameters.mediaKeyStorageDirectory;
 }
 

@@ -1358,7 +1358,7 @@ void WebAutomationSession::addSingleCookie(const String& browsingContextHandle, 
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'httpOnly' was not found.");
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback = callback.copyRef()](CallbackBase::Error error) {
+    cookieManager->setCookies(page->sessionID(), { cookie }, [callback = callback.copyRef()](CallbackBase::Error error) {
         if (error == CallbackBase::Error::None)
             callback->sendSuccess();
         else
@@ -1378,7 +1378,7 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     String host = activeURL.host().toString();
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
+    cookieManager->deleteCookiesForHostnames(page->sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
 }
 
 void WebAutomationSession::getSessionPermissions(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions)
