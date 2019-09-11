@@ -1,3 +1,32 @@
+2019-09-11  Ali Juma  <ajuma@chromium.org>
+
+        Prevent reentrancy FrameLoader::dispatchUnloadEvents()
+        https://bugs.webkit.org/show_bug.cgi?id=200738
+
+        Reviewed by Brady Eidson.
+
+        Reentrancy causes m_pageDismissalEventBeingDispatched to be incorrectly
+        updated, so don't allow reentrancy.
+
+        Since this prevents m_pageDismissalEventBeingDispatched from being reset
+        inside a reentrant call, it can have the unintended effect of causing
+        FrameLoader::stopAllLoaders to early-out when called from
+        FrameLoader::detachFromParent while a frame's unload event handler
+        calls document.open() on a parent frame and causes itself to become
+        detached. Allowing a load to continue in a detached frame will lead to
+        a crash. To prevent this, add a new argument to FrameLoader::stopAllLoaders
+        that FrameLoader::detachFromParent can use to prevent an early-out.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent):
+        Ensure that m_pageDismissalEventBeingDispatched is reset to its previous value, even if this is not None.
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        Add a StopLoadingPolicy enum.
+
 2019-09-11  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Do not adopt floating references.
