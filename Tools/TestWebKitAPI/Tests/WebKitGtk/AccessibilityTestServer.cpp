@@ -76,15 +76,17 @@ int main(int argc, char** argv)
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(webView));
     gtk_widget_show_all(window);
 
-    g_bus_own_name(G_BUS_TYPE_SESSION, "org.webkit.gtk.AccessibilityTest", G_BUS_NAME_OWNER_FLAGS_NONE,
-        [](GDBusConnection* connection, const char* name, gpointer userData) {
+    g_dbus_connection_new_for_address(argv[1], G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, nullptr,
+        [](GObject*, GAsyncResult* result, gpointer userData) {
+            GDBusConnection* connection = g_dbus_connection_new_for_address_finish(result, nullptr);
+
             static GDBusNodeInfo *introspectionData = nullptr;
             if (!introspectionData)
                 introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
 
             g_dbus_connection_register_object(connection, "/org/webkit/gtk/AccessibilityTest", introspectionData->interfaces[0],
                 &interfaceVirtualTable, userData, nullptr, nullptr);
-        }, nullptr, nullptr, webView, nullptr);
+        }, webView);
 
     gtk_main();
 }

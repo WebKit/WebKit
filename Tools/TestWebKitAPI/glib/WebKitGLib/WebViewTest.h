@@ -96,6 +96,8 @@ public:
 
     static gboolean webProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason, WebViewTest*);
 
+    GRefPtr<GDBusProxy> extensionProxy();
+
     GRefPtr<WebKitUserContentManager> m_userContentManager;
     WebKitWebView* m_webView { nullptr };
     GMainLoop* m_mainLoop;

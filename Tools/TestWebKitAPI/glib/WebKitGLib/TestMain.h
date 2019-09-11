@@ -21,7 +21,9 @@
 
 #include <cairo.h>
 #include <glib-object.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -150,7 +152,8 @@ public:
     virtual void initializeWebExtensions()
     {
         webkit_web_context_set_web_extensions_directory(m_webContext.get(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
-        webkit_web_context_set_web_extensions_initialization_user_data(m_webContext.get(), g_variant_new_uint32(++s_webExtensionID));
+        webkit_web_context_set_web_extensions_initialization_user_data(m_webContext.get(),
+            g_variant_new("(ss)", g_dbus_server_get_guid(s_dbusServer.get()), g_dbus_server_get_client_address(s_dbusServer.get())));
     }
 
 #if PLATFORM(WPE)
@@ -272,5 +275,7 @@ public:
 
     HashSet<GObject*> m_watchedObjects;
     GRefPtr<WebKitWebContext> m_webContext;
-    static uint32_t s_webExtensionID;
+    static GRefPtr<GDBusServer> s_dbusServer;
+    static Vector<GRefPtr<GDBusConnection>> s_dbusConnections;
+    static HashMap<uint64_t, GDBusConnection*> s_dbusConnectionPageMap;
 };

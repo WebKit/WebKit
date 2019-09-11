@@ -20,12 +20,10 @@
 #include "config.h"
 
 #include "TestMain.h"
-#include "WebKitTestBus.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
 
 static const unsigned numViews = 2;
-static WebKitTestBus* bus;
 
 class MultiprocessTest: public Test {
 public:
@@ -54,7 +52,7 @@ public:
         g_main_loop_quit(test->m_mainLoop);
     }
 
-    void loadWebViewAndWaitUntilLoaded(unsigned index)
+    void loadWebViewAndWaitUntilPageCreated(unsigned index)
     {
         g_assert_cmpuint(index, <, numViews);
 
@@ -62,19 +60,24 @@ public:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webViews[index].get()));
 
         webkit_web_view_load_html(m_webViews[index].get(), "<html></html>", nullptr);
-        g_signal_connect(m_webViews[index].get(), "load-changed", G_CALLBACK(loadChanged), this);
-        g_main_loop_run(m_mainLoop);
+        g_idle_add([](gpointer userData) -> gboolean {
+            auto* test = static_cast<MultiprocessTest*>(userData);
+            if (!s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(test->m_webViews[test->m_initializeWebExtensionsSignalCount - 1].get())))
+                return TRUE;
 
-        m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+            g_main_loop_quit(test->m_mainLoop);
+            return FALSE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
     }
 
     unsigned webProcessPid(unsigned index)
     {
         g_assert_cmpuint(index, <, numViews);
 
-        GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(m_webViewBusNames[index].get(),
-            "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", m_mainLoop));
-
+        GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_sync(s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webViews[index].get())),
+            static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
+            nullptr, nullptr, "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", nullptr, nullptr));
         GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
             proxy.get(),
             "GetProcessIdentifier",
@@ -89,20 +92,15 @@ public:
     }
 
 #if PLATFORM(GTK)
-    static void nameVanishedCallback(GDBusConnection* connection, const gchar* name, gpointer userData)
-    {
-        g_main_loop_quit(static_cast<GMainLoop*>(userData));
-    }
-
     void destroyWebViewAndWaitUntilWebProcessFinishes(unsigned index)
     {
         g_assert_cmpuint(index, <, numViews);
 
-        unsigned watcherID = g_bus_watch_name_on_connection(bus->connection(), m_webViewBusNames[index].get(), G_BUS_NAME_WATCHER_FLAGS_NONE,
-            nullptr, nameVanishedCallback, m_mainLoop, nullptr);
+        auto* connection = s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webViews[index].get()));
+        g_assert_nonnull(connection);
+        g_signal_connect_swapped(connection, "closed", G_CALLBACK(g_main_loop_quit), m_mainLoop);
         gtk_widget_destroy(GTK_WIDGET(m_webViews[index].get()));
         g_main_loop_run(m_mainLoop);
-        g_bus_unwatch_name(watcherID);
     }
 #endif
 
@@ -121,13 +119,13 @@ static void testProcessPerWebView(MultiprocessTest* test, gconstpointer)
     // process identifiers).
 
     for (unsigned i = 0; i < numViews; i++) {
-        test->loadWebViewAndWaitUntilLoaded(i);
+        test->loadWebViewAndWaitUntilPageCreated(i);
         g_assert_true(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
-        g_assert_nonnull(test->m_webViewBusNames[i]);
+        g_assert_nonnull(Test::s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(test->m_webViews[i].get())));
     }
 
     g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, numViews);
-    g_assert_cmpstr(test->m_webViewBusNames[0].get(), !=, test->m_webViewBusNames[1].get());
+    g_assert_false(Test::s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(test->m_webViews[0].get())) == Test::s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(test->m_webViews[1].get())));
     g_assert_cmpuint(test->webProcessPid(0), !=, test->webProcessPid(1));
 
 #if PLATFORM(GTK)
@@ -253,15 +251,10 @@ void beforeAll()
     // Check that default setting is the one stated in the documentation
     g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()), ==, WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
-    bus = new WebKitTestBus();
-    if (!bus->run())
-        return;
-
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
 }
 
 void afterAll()
 {
-    delete bus;
 }

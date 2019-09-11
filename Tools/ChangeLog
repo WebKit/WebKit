@@ -1,3 +1,62 @@
+2019-09-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using the session bus in the unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=201636
+
+        Reviewed by Žan Doberšek.
+
+        We are actually using GTestDBus, not the actual session bus of the user session, but it would still be better to
+        use a private p2p DBus connection. This is also the way we encourage apps to implement the communication with
+        the web process extension. This patch removes the WebKitTestBus class and starts a DBus server before every
+        test. The server address is passed to the web extension as initialization parameter to connect directly to
+        it. We keep a global list of connections to the server and a HashMap to get the current active connection for
+        a WebKitWebView.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp:
+        (testProcessPerWebView):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionGetTitle):
+        (testWebExtensionInputElementIsUserEdited):
+        (testDocumentLoadedSignal):
+        (testWebKitWebViewProcessCrashed):
+        (testWebExtensionIsolatedWorld):
+        (testInstallMissingPluginsPermissionRequest):
+        (testWebExtensionFormControlsAssociated):
+        (FormSubmissionTest::FormSubmissionTest):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (DelayedSignal::DelayedSignal):
+        (emitPageCreated):
+        (pageCreatedCallback):
+        (webkit_web_extension_initialize_with_user_data):
+        * TestWebKitAPI/Tests/WebKitGtk/AccessibilityTestServer.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (AccessibilityTest::AccessibilityTest):
+        (AccessibilityTest::ensureProxy):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp:
+        (dbusConnectionClosed):
+        (dbusServerConnection):
+        (startDBusServer):
+        (stopDBusServer):
+        (main):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::initializeWebExtensions):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp: Removed.
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.h: Removed.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::~WebViewTest):
+        (WebViewTest::extensionProxy):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2019-09-10  Dean Jackson  <dino@apple.com>
 
         setup-git-clone is using http not https

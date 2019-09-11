@@ -63,6 +63,9 @@ static const char introspectionXML[] =
     "  </method>"
     "  <method name='RemoveAVPluginsFromGSTRegistry'>"
     "  </method>"
+    "  <signal name='PageCreated'>"
+    "   <arg type='t' name='pageID' direction='out'/>"
+    "  </signal>"
     "  <signal name='DocumentLoaded'/>"
     "  <signal name='FormControlsAssociated'>"
     "   <arg type='s' name='formIds' direction='out'/>"
@@ -89,6 +92,7 @@ static const char introspectionXML[] =
 
 
 typedef enum {
+    PageCreatedSignal,
     DocumentLoadedSignal,
     URIChangedSignal,
     FormControlsAssociatedSignal,
@@ -99,6 +103,12 @@ typedef enum {
 struct DelayedSignal {
     explicit DelayedSignal(DelayedSignalType type)
         : type(type)
+    {
+    }
+
+    DelayedSignal(DelayedSignalType type, guint64 n)
+        : type(type)
+        , n(n)
     {
     }
 
@@ -124,6 +134,7 @@ struct DelayedSignal {
     CString str3;
     gboolean b;
     gboolean b2;
+    guint64 n;
 };
 
 Deque<DelayedSignal> delayedSignalsQueue;
@@ -405,8 +416,26 @@ static void willSubmitFormCallback(WebKitWebPage* webPage, WebKitDOMElement* for
     }
 }
 
+static void emitPageCreated(GDBusConnection* connection, guint64 pageID)
+{
+    bool ok = g_dbus_connection_emit_signal(
+        connection,
+        nullptr,
+        "/org/webkit/gtk/WebExtensionTest",
+        "org.webkit.gtk.WebExtensionTest",
+        "PageCreated",
+        g_variant_new("(t)", pageID),
+        nullptr);
+    g_assert_true(ok);
+}
+
 static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* webPage, gpointer)
 {
+    if (auto* data = g_object_get_data(G_OBJECT(extension), "dbus-connection"))
+        emitPageCreated(G_DBUS_CONNECTION(data), webkit_web_page_get_id(webPage));
+    else
+        delayedSignalsQueue.append(DelayedSignal(PageCreatedSignal, webkit_web_page_get_id(webPage)));
+
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
@@ -520,13 +549,17 @@ static const GDBusInterfaceVTable interfaceVirtualTable = {
     methodCallCallback, 0, 0, { 0, }
 };
 
-static void busAcquiredCallback(GDBusConnection* connection, const char* name, gpointer userData)
+static void dbusConnectionCreated(GObject*, GAsyncResult* result, gpointer userData)
 {
-    static GDBusNodeInfo* introspectionData = 0;
-    if (!introspectionData)
-        introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, 0);
-
     GUniqueOutPtr<GError> error;
+    GDBusConnection* connection = g_dbus_connection_new_for_address_finish(result, &error.outPtr());
+    g_assert(G_IS_DBUS_CONNECTION(connection));
+    g_assert_no_error(error.get());
+
+    static GDBusNodeInfo* introspectionData = nullptr;
+    if (!introspectionData)
+        introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
+
     unsigned registrationID = g_dbus_connection_register_object(
         connection,
         "/org/webkit/gtk/WebExtensionTest",
@@ -536,12 +569,15 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
         static_cast<GDestroyNotify>(g_object_unref),
         &error.outPtr());
     if (!registrationID)
-        g_warning("Failed to register object: %s\n", error->message);
+        g_error("Failed to register object: %s\n", error->message);
 
-    g_object_set_data(G_OBJECT(userData), "dbus-connection", connection);
+    g_object_set_data_full(G_OBJECT(userData), "dbus-connection", connection, g_object_unref);
     while (delayedSignalsQueue.size()) {
         DelayedSignal delayedSignal = delayedSignalsQueue.takeFirst();
         switch (delayedSignal.type) {
+        case PageCreatedSignal:
+            emitPageCreated(connection, delayedSignal.n);
+            break;
         case DocumentLoadedSignal:
             emitDocumentLoaded(connection);
             break;
@@ -584,14 +620,12 @@ extern "C" void webkit_web_extension_initialize_with_user_data(WebKitWebExtensio
     registerGResource();
 
     g_assert_nonnull(userData);
-    g_assert_true(g_variant_is_of_type(userData, G_VARIANT_TYPE_UINT32));
-    GUniquePtr<char> busName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", g_variant_get_uint32(userData)));
-    g_bus_own_name(
-        G_BUS_TYPE_SESSION,
-        busName.get(),
-        G_BUS_NAME_OWNER_FLAGS_NONE,
-        busAcquiredCallback,
-        0, 0,
-        g_object_ref(extension),
-        static_cast<GDestroyNotify>(g_object_unref));
+    const char* guid;
+    const char* address;
+    g_variant_get(userData, "(&s&s)", &guid, &address);
+    g_assert_nonnull(guid);
+    g_assert_nonnull(address);
+
+    g_dbus_connection_new_for_address(address, G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, nullptr,
+        dbusConnectionCreated, extension);
 }

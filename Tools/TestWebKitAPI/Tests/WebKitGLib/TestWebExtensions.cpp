@@ -19,11 +19,9 @@
 
 #include "config.h"
 
-#include "WebKitTestBus.h"
 #include "WebViewTest.h"
 #include <wtf/glib/GRefPtr.h>
 
-static WebKitTestBus* bus;
 static GUniquePtr<char> scriptDialogResult;
 
 #define INPUT_ID "input-id"
@@ -34,12 +32,10 @@ static GUniquePtr<char> scriptDialogResult;
 
 static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 {
-    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", 0);
+    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", "http://bar.com");
     test->waitUntilLoadFinished();
 
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    auto proxy = test->extensionProxy();
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
         proxy.get(),
         "GetTitle",
@@ -75,9 +71,7 @@ static void testWebExtensionInputElementIsUserEdited(WebViewTest* test, gconstpo
     test->loadHtml("<html><body id='body'><input id='input'></input><textarea id='textarea'></textarea></body></html>", nullptr);
     test->waitUntilLoadFinished();
 
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    auto proxy = test->extensionProxy();
 
     uint64_t pageID = webkit_web_view_get_page_id(test->m_webView);
     g_assert_false(inputElementIsUserEdited(proxy.get(), pageID, "input"));
@@ -114,23 +108,22 @@ static void documentLoadedCallback(GDBusConnection*, const char*, const char*, c
 
 static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
 {
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    auto proxy = test->extensionProxy();
+
     GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
     guint id = g_dbus_connection_signal_subscribe(connection,
-        0,
+        nullptr,
         "org.webkit.gtk.WebExtensionTest",
         "DocumentLoaded",
         "/org/webkit/gtk/WebExtensionTest",
-        0,
+        nullptr,
         G_DBUS_SIGNAL_FLAGS_NONE,
         reinterpret_cast<GDBusSignalCallback>(documentLoadedCallback),
         test,
-        0);
+        nullptr);
     g_assert_cmpuint(id, !=, 0);
 
-    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", 0);
+    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", nullptr);
     g_main_loop_run(test->m_mainLoop);
     g_dbus_connection_signal_unsubscribe(connection, id);
 }
@@ -145,7 +138,7 @@ static gboolean webProcessTerminatedCallback(WebKitWebView*, WebKitWebProcessTer
 
 static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
 {
-    test->loadHtml("<html></html>", 0);
+    test->loadHtml("<html></html>", nullptr);
     test->waitUntilLoadFinished();
 
     g_signal_connect_after(test->m_webView, "web-process-terminated",
@@ -153,10 +146,7 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
 
     test->m_expectedWebProcessCrash = true;
 
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
-
+    auto proxy = test->extensionProxy();
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
         proxy.get(),
         "AbortProcess",
@@ -225,9 +215,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
         "document.getElementById('console').innerHTML = top.foo;\n"
         "window.open = function () { alert('Isolated World'); }\n"
         "window.open();";
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest" , "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    auto proxy = test->extensionProxy();
     g_dbus_proxy_call(proxy.get(),
         "RunJavaScriptInIsolatedWorld",
         g_variant_new("(t&s)", webkit_web_view_get_page_id(test->m_webView), isolatedWorldScript),
@@ -264,9 +252,7 @@ static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionReques
 
 static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconstpointer)
 {
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    auto proxy = test->extensionProxy();
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(proxy.get(), "RemoveAVPluginsFromGSTRegistry",
         nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr));
 
@@ -292,9 +278,7 @@ static void didAssociateFormControlsCallback(GDBusConnection*, const char*, cons
 
 static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpointer)
 {
-    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    auto proxy = test->extensionProxy();
     GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
     guint id = g_dbus_connection_signal_subscribe(connection,
         nullptr,
@@ -346,9 +330,7 @@ public:
 
     FormSubmissionTest()
     {
-        GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", s_webExtensionID));
-        m_proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-            "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", m_mainLoop));
+        m_proxy = extensionProxy();
         GDBusConnection* connection = g_dbus_proxy_get_connection(m_proxy.get());
 
         m_willSendDOMEventCallbackID = g_dbus_connection_signal_subscribe(connection,
@@ -462,10 +444,6 @@ static void testWebExtensionFormSubmissionSteps(FormSubmissionTest* test, gconst
 
 void beforeAll()
 {
-    bus = new WebKitTestBus();
-    if (!bus->run())
-        return;
-
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitWebExtension", "dom-input-element-is-user-edited", testWebExtensionInputElementIsUserEdited);
@@ -483,5 +461,4 @@ void beforeAll()
 
 void afterAll()
 {
-    delete bus;
 }

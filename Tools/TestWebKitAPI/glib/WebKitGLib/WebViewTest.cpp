@@ -41,6 +41,7 @@ WebViewTest::~WebViewTest()
         webkit_javascript_result_unref(m_javascriptResult);
     if (m_surface)
         cairo_surface_destroy(m_surface);
+    s_dbusConnectionPageMap.remove(webkit_web_view_get_page_id(m_webView));
     g_object_unref(m_webView);
     g_main_loop_unref(m_mainLoop);
 }
@@ -392,4 +393,35 @@ bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName,
     loadURI("about:blank");
     waitUntilLoadFinished();
     return javascriptResultToBoolean(javascriptResult);
+}
+
+GRefPtr<GDBusProxy> WebViewTest::extensionProxy()
+{
+    GDBusConnection* connection = nullptr;
+
+    // If nothing has been loaded yet, load about:blank to force the web process to be spawned.
+    if (!webkit_web_view_get_uri(m_webView)) {
+        loadURI("about:blank");
+        waitUntilLoadFinished();
+
+        connection = s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webView));
+        if (!connection) {
+            // Wait for page created signal.
+            g_idle_add([](gpointer userData) -> gboolean {
+                auto* test = static_cast<WebViewTest*>(userData);
+                if (!s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(test->m_webView)))
+                    return TRUE;
+
+                test->quitMainLoop();
+                return FALSE;
+            }, this);
+            g_main_loop_run(m_mainLoop);
+            // FIXME: we can cache this once we can monitor the page id on the web view.
+            connection = s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webView));
+        }
+    } else
+        connection = s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webView));
+
+    return adoptGRef(g_dbus_proxy_new_sync(connection, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
+        nullptr, nullptr, "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", nullptr, nullptr));
 }

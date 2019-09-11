@@ -26,7 +26,9 @@
 #include <gtk/gtk.h>
 #endif
 
-uint32_t Test::s_webExtensionID = 0;
+GRefPtr<GDBusServer> Test::s_dbusServer;
+Vector<GRefPtr<GDBusConnection>> Test::s_dbusConnections;
+HashMap<uint64_t, GDBusConnection*> Test::s_dbusConnectionPageMap;
 
 void beforeAll();
 void afterAll();
@@ -64,6 +66,54 @@ static void removeNonEmptyDirectory(const char* directoryPath)
     g_rmdir(directoryPath);
 }
 
+static void dbusConnectionClosed(GDBusConnection* connection)
+{
+    auto it = Test::s_dbusConnections.find(connection);
+    g_assert(it != notFound);
+
+    for (auto it : Test::s_dbusConnectionPageMap) {
+        if (it.value == connection)
+            it.value = nullptr;
+    }
+    Test::s_dbusConnections.remove(it);
+}
+
+static gboolean dbusServerConnection(GDBusServer* server, GDBusConnection* connection)
+{
+    g_signal_connect(connection, "closed", G_CALLBACK(dbusConnectionClosed), nullptr);
+    g_assert(!Test::s_dbusConnections.contains(connection));
+    Test::s_dbusConnections.append(connection);
+
+    g_dbus_connection_signal_subscribe(connection, nullptr, "org.webkit.gtk.WebExtensionTest", "PageCreated", "/org/webkit/gtk/WebExtensionTest",
+        nullptr, G_DBUS_SIGNAL_FLAGS_NONE, [](GDBusConnection* connection, const char*, const char*, const char*, const char*, GVariant* parameters, gpointer) {
+            guint64 pageID;
+            g_variant_get(parameters, "(t)", &pageID);
+            g_assert(Test::s_dbusConnections.contains(connection));
+            Test::s_dbusConnectionPageMap.set(pageID, connection);
+        }, nullptr, nullptr);
+
+    return TRUE;
+}
+
+static void startDBusServer()
+{
+    GUniqueOutPtr<GError> error;
+    GUniquePtr<char> address(g_strdup_printf("unix:tmpdir=%s", testDataDirectory.get()));
+    GUniquePtr<char> guid(g_dbus_generate_guid());
+    Test::s_dbusServer = adoptGRef(g_dbus_server_new_sync(address.get(), G_DBUS_SERVER_FLAGS_NONE, guid.get(), nullptr, nullptr, &error.outPtr()));
+    if (!Test::s_dbusServer)
+        g_error("Failed to start DBus server: %s", error->message);
+
+    g_signal_connect(Test::s_dbusServer.get(), "new-connection", G_CALLBACK(dbusServerConnection), nullptr);
+    g_dbus_server_start(Test::s_dbusServer.get());
+}
+
+static void stopDBusServer()
+{
+    g_dbus_server_stop(Test::s_dbusServer.get());
+    Test::s_dbusServer = nullptr;
+}
+
 int main(int argc, char** argv)
 {
     g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
@@ -82,11 +132,13 @@ int main(int argc, char** argv)
     g_test_bug_base("https://bugs.webkit.org/");
 
     registerGResource();
+    startDBusServer();
 
     beforeAll();
     int returnValue = g_test_run();
     afterAll();
 
+    stopDBusServer();
     removeNonEmptyDirectory(testDataDirectory.get());
 
     return returnValue;

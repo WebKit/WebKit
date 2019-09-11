@@ -22,14 +22,12 @@
 #include "config.h"
 
 #include "LoadTrackingTest.h"
-#include "WebKitTestBus.h"
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <libsoup/soup.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
-static WebKitTestBus* bus;
 static WebKitTestServer* kServer;
 
 const char* kDNTHeaderNotPresent = "DNT header not present";
@@ -493,11 +491,9 @@ public:
 
     WebPageURITest()
     {
-        GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
-        GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
-            "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", m_mainLoop));
+        m_proxy = extensionProxy();
         m_uriChangedSignalID = g_dbus_connection_signal_subscribe(
-            g_dbus_proxy_get_connection(proxy.get()),
+            g_dbus_proxy_get_connection(m_proxy.get()),
             0,
             "org.webkit.gtk.WebExtensionTest",
             "URIChanged",
@@ -515,7 +511,7 @@ public:
     ~WebPageURITest()
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
-        g_dbus_connection_signal_unsubscribe(bus->connection(), m_uriChangedSignalID);
+        g_dbus_connection_signal_unsubscribe(g_dbus_proxy_get_connection(m_proxy.get()), m_uriChangedSignalID);
     }
 
     void loadURI(const char* uri)
@@ -532,6 +528,7 @@ public:
             ASSERT_CMP_CSTRING(m_webPageURIs[i], ==, m_webViewURIs[i]);
     }
 
+    GRefPtr<GDBusProxy> m_proxy;
     unsigned m_uriChangedSignalID;
     Vector<CString> m_webPageURIs;
     Vector<CString> m_webViewURIs;
@@ -729,10 +726,6 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
-    bus = new WebKitTestBus();
-    if (!bus->run())
-        return;
-
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
@@ -767,6 +760,5 @@ void beforeAll()
 
 void afterAll()
 {
-    delete bus;
     delete kServer;
 }

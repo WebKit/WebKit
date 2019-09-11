@@ -20,14 +20,11 @@
 #include "config.h"
 
 #include "TestMain.h"
-#include "WebKitTestBus.h"
 
 // The libatspi headers don't use G_BEGIN_DECLS
 extern "C" {
 #include <atspi/atspi.h>
 }
-
-static WebKitTestBus* bus;
 
 class AccessibilityTest : public Test {
 public:
@@ -36,9 +33,10 @@ public:
     AccessibilityTest()
     {
         GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "AccessibilityTestServer", nullptr));
-        char* args[2];
+        char* args[3];
         args[0] = testServerPath.get();
-        args[1] = nullptr;
+        args[1] = const_cast<char*>(g_dbus_server_get_client_address(s_dbusServer.get()));
+        args[2] = nullptr;
 
         g_assert_true(g_spawn_async(nullptr, args, nullptr, G_SPAWN_DEFAULT, nullptr, nullptr, &m_childProcessID, nullptr));
     }
@@ -123,7 +121,21 @@ private:
             return;
 
         m_mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
-        m_proxy = adoptGRef(bus->createProxy("org.webkit.gtk.AccessibilityTest", "/org/webkit/gtk/AccessibilityTest", "org.webkit.gtk.AccessibilityTest", m_mainLoop.get()));
+
+        if (s_dbusConnections.isEmpty()) {
+            g_idle_add([](gpointer userData) -> gboolean {
+                if (s_dbusConnections.isEmpty())
+                    return TRUE;
+
+                g_main_loop_quit(static_cast<GMainLoop*>(userData));
+                return FALSE;
+            }, m_mainLoop.get());
+            g_main_loop_run(m_mainLoop.get());
+        }
+
+        m_proxy = adoptGRef(g_dbus_proxy_new_sync(s_dbusConnections[0].get(), static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
+            nullptr, nullptr, "/org/webkit/gtk/AccessibilityTest", "org.webkit.gtk.AccessibilityTest", nullptr, nullptr));
+        g_assert_true(G_IS_DBUS_PROXY(m_proxy.get()));
     }
 
     GPid m_childProcessID { 0 };
@@ -216,14 +228,9 @@ static void testAtspiBasicHierarchy(AccessibilityTest* test, gconstpointer)
 
 void beforeAll()
 {
-    bus = new WebKitTestBus();
-    if (!bus->run())
-        return;
-
     AccessibilityTest::add("WebKitAccessibility", "atspi-basic-hierarchy", testAtspiBasicHierarchy);
 }
 
 void afterAll()
 {
-    delete bus;
 }
