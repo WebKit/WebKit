@@ -172,6 +172,8 @@ public:
     void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
 
+    WebFrameLoaderClient* frameLoaderClient() const { return m_frameLoaderClient.get(); }
+
 private:
     static Ref<WebFrame> create(std::unique_ptr<WebFrameLoaderClient>);
     explicit WebFrame(std::unique_ptr<WebFrameLoaderClient>);

@@ -6538,7 +6538,11 @@ void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDo
 
 void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier), [completionHandler = WTFMove(completionHandler), frame = makeRef(frame), sessionID = sessionID(), pageID = m_identifier, frameID = frame.frameID()](StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown) mutable {
+        if (wasGranted == StorageAccessWasGranted::Yes)
+            frame->frameLoaderClient()->setHasFrameSpecificStorageAccess({ sessionID, frameID, pageID });
+        completionHandler(wasGranted, promptWasShown);
+    });
 }
 
 void WebPage::wasLoadedWithDataTransferFromPrevalentResource()

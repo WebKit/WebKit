@@ -1,3 +1,31 @@
+2019-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Nullptr crash in Page::sessionID() via WebKit::WebFrameLoaderClient::detachedFromParent2()
+        https://bugs.webkit.org/show_bug.cgi?id=201625
+
+        Reviewed by Ryosuke Niwa.
+
+        This is based on a patch from Ryosuke Niwa.
+
+        The crash was caused by WebFrameLoaderClient::sessionID() calling WebPage::sessionID() without
+        checking the nullity of WebPage::m_page which can be null. Added a null check.
+
+        Because passing a wrong session to RemoveStorageAccessForFrame could result in a leak, this patch
+        also replaces m_hasFrameSpecificStorageAccess boolean with an optioanl struct which stores
+        session ID, frame ID, and page ID even after WebCore::Frame or WebCore::Page had been cleared
+        or before WebFrameLoaderClient::m_frame is set.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::sessionID const):
+        (WebKit::WebFrameLoaderClient::setHasFrameSpecificStorageAccess):
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::frameLoaderClient const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestStorageAccess):
+
 2019-09-10  Brady Eidson  <beidson@apple.com>
 
         Add SPI to save a PDF from the contents of a WKWebView.
