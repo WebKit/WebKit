@@ -1,3 +1,36 @@
+2019-09-10  Matt Lewis  <jlewis3@apple.com>
+
+        run-webkit-test: Allow results to be uploaded without scm checkout
+        https://bugs.webkit.org/show_bug.cgi?id=200787
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        (SCMDetector.detect_scm_system): Added in detection of stub repository.
+        * Scripts/webkitpy/common/checkout/scm/stub_repository.py: Added.
+        (StubRepository):
+        (StubRepository.__init__):
+        (StubRepository._find_parent_path_matching_callback_condition): Checks up the path given to
+        find the directory containing the checkout_information.json of the stub repository.
+        (StubRepository.in_working_directory): Required functions to be implemented.
+        (StubRepository.svn_revision): Required functions to be implemented.
+        (StubRepository.native_revision): Required functions to be implemented.
+        (StubRepository.native_branch): Required functions to be implemented.
+        (StubRepository._decode_json): Decodes checkout_information.json.
+        (StubRepository.find_checkout_root): Required functions to be implemented.
+        * Scripts/webkitpy/common/checkout/scm/stub_repository_unittest.py: Added.
+        (StubRepositoryTest): Unit test for stub_repository SCM.
+        (StubRepositoryTest.mock_host_for_stub_repository):
+        (StubRepositoryTest.test_in_working_directory):
+        (StubRepositoryTest.test_native_revision):
+        (StubRepositoryTest.test_native_branch):
+        (StubRepositoryTest.test_svn_revision):
+        (StubRepositoryTest.test_find_checkout_root):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGenerator._get_svn_revision): Removed unnecessary scm initialization.
+        * Scripts/webkitpy/port/base.py:
+        (Port.commits_for_upload): Removed unnecessary scm initialization.
+
 2019-09-10  Brady Eidson  <beidson@apple.com>
 
         Add SPI to save a PDF from the contents of a WKWebView.

@@ -443,11 +443,6 @@ class JSONResultsGenerator(object):
         Args:
           in_directory: The directory where svn is to be run.
         """
-
-        # FIXME: We initialize this here in order to engage the stupid windows hacks :).
-        # We can't reuse an existing scm object because the specific directories may
-        # be part of other checkouts.
-        self._port.host.initialize_scm()
         scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(in_directory)
         if scm:
             return scm.svn_revision(in_directory)
