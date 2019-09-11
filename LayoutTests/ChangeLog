@@ -1,3 +1,18 @@
+2019-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/cache-storage/cache-persistency.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=201691
+
+        Reviewed by Alex Christensen.
+
+        Split cache-persistency.https.html into 2 tests (one for private session and one for
+        regular session) to avoid relying on legacy testRunner.setPrivateBrowsingEnabled_DEPRECATED().
+
+        * http/tests/cache-storage/cache-persistency-private-expected.txt: Added.
+        * http/tests/cache-storage/cache-persistency-private.html: Added.
+        * http/tests/cache-storage/cache-persistency.https-expected.txt:
+        * http/tests/cache-storage/cache-persistency.https.html:
+
 2019-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249768.

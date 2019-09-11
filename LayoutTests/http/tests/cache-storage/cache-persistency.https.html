@@ -18,45 +18,6 @@
     }, "Cleaning existing caches");
 
     promise_test(test => {
-        if (!window.internals || !window.testRunner)
-            return Promise.reject("Test requires internals");
-
-        testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
-
-        return new Promise((resolve, reject) => {
-            window.addEventListener("message", test.step_func((event) => {
-                if (event.data === "ready") {
-                    internals.clearCacheStorageMemoryRepresentation().then(() => {
-                       check.innerHTML = "<iframe src='resources/cache-persistency-iframe.html#check'></iframe>";
-                    });
-                    return;
-                }
-                assert_true(event.data === false, "No cache object should be found");
-                testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
-                resolve();
-            }));
-            check.innerHTML = "<iframe src='resources/cache-persistency-iframe.html'></iframe>";
-        })
-    }, "Clear memory representation and disable disk persistency");
-
-    promise_test(test => {
-        if (window.testRunner)
-            testRunner.setPrivateBrowsingEnabled_DEPRECATED(false);
-
-        return Promise.resolve().then(() => {
-            if (window.internals)
-                return internals.clearCacheStorageMemoryRepresentation();
-        }).then(() => {
-            return self.caches.keys();
-        }).then(keys => {
-            var pending = [];
-            for (key of keys)
-                pending.push(self.caches.delete(keys[0]));
-            return Promise.all(pending);
-        });
-    }, "Cleaning added caches from previous test 1");
-
-    promise_test(test => {
         if (!window.internals)
             return Promise.reject("Test requires internals");
 
@@ -82,7 +43,7 @@
                 pending.push(self.caches.delete(keys[0]));
             return Promise.all(pending);
         });
-    }, "Cleaning added caches from previous test 2");
+    }, "Cleaning added caches from previous test");
 
     promise_test(test => {
         if (!window.internals)
