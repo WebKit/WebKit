@@ -1,19 +1,54 @@
 
-PASS math element 
-PASS mstyle element 
-PASS mtable element 
-PASS mfrac element 
-PASS mroot element 
-PASS msub element 
-PASS msup element 
-PASS msubsup element 
-PASS munder element 
-PASS mover element 
-PASS munderover element 
+PASS math element (lowercase) 
+PASS math element (explicit display, lowercase) 
+PASS mstyle element (lowercase) 
+PASS mtable element (lowercase) 
+PASS mfrac element (lowercase) 
+PASS mroot element (lowercase) 
+PASS msub element (lowercase) 
+PASS msup element (lowercase) 
+PASS msubsup element (lowercase) 
+PASS munder element (lowercase) 
+PASS mover element (lowercase) 
+PASS munderover element (lowercase) 
+FAIL math element (uppercase) assert_approx_equals: explicit displaystyle true expected 50 +/- 5 but got 11
+FAIL math element (explicit display, uppercase) assert_approx_equals: explicit display block expected 50 +/- 5 but got 11
+FAIL mstyle element (uppercase) assert_approx_equals: explicit displaystyle true expected 50 +/- 5 but got 11
+FAIL mtable element (uppercase) assert_approx_equals: explicit displaystyle true expected 50 +/- 5 but got 11
+FAIL mfrac element (uppercase) assert_approx_equals: sibling expected 50 +/- 5 but got 11
+FAIL mroot element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL msub element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL msup element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL msubsup element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL munder element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL mover element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL munderover element (uppercase) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL math element (alternate_case) assert_approx_equals: explicit displaystyle true expected 50 +/- 5 but got 11
+FAIL math element (explicit display, alternate_case) assert_approx_equals: explicit display block expected 50 +/- 5 but got 11
+FAIL mstyle element (alternate_case) assert_approx_equals: explicit displaystyle true expected 50 +/- 5 but got 11
+FAIL mtable element (alternate_case) assert_approx_equals: explicit displaystyle true expected 50 +/- 5 but got 11
+FAIL mfrac element (alternate_case) assert_approx_equals: sibling expected 50 +/- 5 but got 11
+FAIL mroot element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL msub element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL msup element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL msubsup element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL munder element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL mover element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
+FAIL munderover element (alternate_case) assert_approx_equals: base expected 50 +/- 5 but got 11
 ⫿
  
 ⫿
+ 
 ⫿
+ 
+⫿
+ 
+⫿
+ 
+⫿
+ 
+⫿
+ 
 ⫿
  
 ⫿
@@ -22,6 +57,7 @@ PASS munderover element
  
 ⫿
   ⫿   ⫿   ⫿  
+⫿
 ⫿
 ⫿
  

@@ -1,3 +1,266 @@
+2019-09-11  Frederic Wang  <fwang@igalia.com>
+
+        Bug 201603 - Synchronize MathML WPT tests against upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201603
+
+        Reviewed by Rob Buis.
+
+        * resources/resource-files.json:
+        * web-platform-tests/mathml/presentation-markup/direction/direction-006-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-007-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-007.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-008-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-008.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-009-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-009.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-010-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-010.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-overall-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-overall.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-token-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction-token.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/direction.html: Added.
+        * web-platform-tests/mathml/presentation-markup/direction/w3c-import.log: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-2-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-2.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-3-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-3.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.html: Removed.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-003.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-004-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-mrow-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-numalign-denomalign-001-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-numalign-denomalign-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-002-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-003-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-004-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-visibility-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-baseline-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-baseline.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/w3c-import.log.
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-001-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-002-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-fallback-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-fallback.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-default-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-default.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-dynamic-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-dynamic.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-paint-lspace-rspace-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-paint-lspace-rspace.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-4.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-5.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/mspace-children-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/mspace-children.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-1.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-2.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-001-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-002-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-003-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-004-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height.html:
+        * web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/attribute-mapping-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-003.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-004-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-004.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-1.html: Removed.
+        * web-platform-tests/mathml/relations/css-styling/display-1.html:
+        * web-platform-tests/mathml/relations/css-styling/display-contents-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/display-contents.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-011-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-011.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-012-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-012.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-013-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-013.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-014-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-014.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-015-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-015.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-2-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-2.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/dynamic-dir-1-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/dynamic-dir-1.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/lengths-1.html:
+        * web-platform-tests/mathml/relations/css-styling/lengths-2-expected.html: Removed.
+        * web-platform-tests/mathml/relations/css-styling/lengths-2-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/lengths-2.html:
+        * web-platform-tests/mathml/relations/css-styling/lengths-3-expected.txt: Removed.
+        * web-platform-tests/mathml/relations/css-styling/lengths-3.html: Removed.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-001-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-001-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-002-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-002-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-003-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-003-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-003.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-004-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-004-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathbackground-004.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-001-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-001-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-002-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-002-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-003-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-003-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-003.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-004-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-004-notref.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-004.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-css-keywords-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-css-keywords.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-legacy-values-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-legacy-values.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-auto-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-auto.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-case-sensitivity-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-case-sensitivity.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-initial-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-initial.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-italic-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-looped-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-looped.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-monospace-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-monospace.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-script-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-script.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-stretched-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-stretched.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-tailed-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-tailed.html:
+        * web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-001-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-001-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-002-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-001-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-001-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/w3c-import.log: Added.
+        * web-platform-tests/mathml/relations/css-styling/visibility-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/visibility-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/visibility-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-003.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/visibility-004-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-004.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1.html.
+        * web-platform-tests/mathml/relations/css-styling/w3c-import.log:
+        * web-platform-tests/mathml/relations/css-styling/width-height-001-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/width-height-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/writing-mode/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/w3c-import.log.
+        * web-platform-tests/mathml/relations/css-styling/writing-mode/writing-mode-001-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/writing-mode/writing-mode-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/writing-mode/writing-mode-002-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/writing-mode/writing-mode-002.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/clipboard-event-handlers.tentative-expected.txt:
+        * web-platform-tests/mathml/relations/html5-tree/clipboard-event-handlers.tentative.html:
+        * web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html:
+        * web-platform-tests/mathml/tools/fractions.py:
+        * web-platform-tests/mathml/tools/math-text.py: Added.
+        * web-platform-tests/mathml/tools/mathvariant-transforms.py:
+        * web-platform-tests/mathml/tools/percentscaledown.py: Added.
+        * web-platform-tests/mathml/tools/stacks.py:
+        * web-platform-tests/mathml/tools/w3c-import.log:
+
 2019-09-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline imported/w3c/web-platform-tests/css/cssom/interfaces.html after r249672.

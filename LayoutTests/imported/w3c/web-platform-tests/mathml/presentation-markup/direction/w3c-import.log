@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-007.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-008.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-009.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-token-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-token.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction.html

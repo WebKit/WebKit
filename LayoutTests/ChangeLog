@@ -1,3 +1,18 @@
+2019-09-11  Frederic Wang  <fwang@igalia.com>
+
+        Bug 201603 - Synchronize MathML WPT tests against upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201603
+
+        Reviewed by Rob Buis.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2019-09-11  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Ensure structs/arrays with pointers as fields are disallowed

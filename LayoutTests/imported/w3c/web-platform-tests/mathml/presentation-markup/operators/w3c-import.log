@@ -14,4 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-operator-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-operator-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-fallback-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-default-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-default.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-paint-lspace-rspace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-paint-lspace-rspace.html

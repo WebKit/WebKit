@@ -18,7 +18,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/fractions.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/largeop.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/limits.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/math-text.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/mathvariant-transforms.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/percentscaledown.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/radicals.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/scripts.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stacks.py
