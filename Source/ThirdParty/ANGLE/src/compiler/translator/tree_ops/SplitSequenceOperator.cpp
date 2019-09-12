@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -147,10 +147,7 @@ bool SplitSequenceOperatorTraverser::visitTernary(Visit visit, TIntermTernary *n
 
 }  // namespace
 
-bool SplitSequenceOperator(TCompiler *compiler,
-                           TIntermNode *root,
-                           int patternsToSplitMask,
-                           TSymbolTable *symbolTable)
+void SplitSequenceOperator(TIntermNode *root, int patternsToSplitMask, TSymbolTable *symbolTable)
 {
     SplitSequenceOperatorTraverser traverser(patternsToSplitMask, symbolTable);
     // Separate one expression at a time, and reset the traverser between iterations.
@@ -159,15 +156,8 @@ bool SplitSequenceOperator(TCompiler *compiler,
         traverser.nextIteration();
         root->traverse(&traverser);
         if (traverser.foundExpressionToSplit())
-        {
-            if (!traverser.updateTree(compiler, root))
-            {
-                return false;
-            }
-        }
+            traverser.updateTree();
     } while (traverser.foundExpressionToSplit());
-
-    return true;
 }
 
 }  // namespace sh

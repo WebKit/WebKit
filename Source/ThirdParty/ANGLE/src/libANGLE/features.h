@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -55,6 +55,11 @@
 // Controls if our threading code uses std::async or falls back to single-threaded operations.
 #if !defined(ANGLE_STD_ASYNC_WORKERS)
 #    define ANGLE_STD_ASYNC_WORKERS ANGLE_ENABLED
-#endif  // !defined(ANGLE_STD_ASYNC_WORKERS)
+#endif      // !defined(ANGLE_STD_ASYNC_WORKERS)
+
+// Force thread safety in all of ANGLE by locking a global mutex in every ANGLE entry point.
+#if !defined(ANGLE_FORCE_THREAD_SAFETY)
+#    define ANGLE_FORCE_THREAD_SAFETY ANGLE_DISABLED
+#endif  // !defined(ANGLE_FORCE_THREAD_SAFETY)
 
 #endif  // LIBANGLE_FEATURES_H_

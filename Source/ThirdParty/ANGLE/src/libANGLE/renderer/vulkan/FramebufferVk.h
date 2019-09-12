@@ -14,7 +14,6 @@
 #include "libANGLE/renderer/RenderTargetCache.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/CommandGraph.h"
-#include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 
 namespace rx
@@ -108,7 +107,6 @@ class FramebufferVk : public FramebufferImpl
     void onScissorChange(ContextVk *contextVk);
 
     const gl::DrawBufferMask &getEmulatedAlphaAttachmentMask() const;
-    RenderTargetVk *getColorDrawRenderTarget(size_t colorIndex) const;
     RenderTargetVk *getColorReadRenderTarget() const;
 
     // This will clear the current write operation if it is complete.
@@ -138,21 +136,30 @@ class FramebufferVk : public FramebufferImpl
 
     // The 'in' rectangles must be clipped to the scissor and FBO. The clipping is done in 'blit'.
     angle::Result blitWithCommand(ContextVk *contextVk,
-                                  const gl::Rectangle &sourceArea,
-                                  const gl::Rectangle &destArea,
+                                  const gl::Rectangle &readRectIn,
+                                  const gl::Rectangle &drawRectIn,
                                   RenderTargetVk *readRenderTarget,
                                   RenderTargetVk *drawRenderTarget,
                                   GLenum filter,
                                   bool colorBlit,
                                   bool depthBlit,
                                   bool stencilBlit,
-                                  bool flipX,
-                                  bool flipY);
+                                  bool flipSource,
+                                  bool flipDest);
 
-    // Resolve color with vkCmdResolveImage
-    angle::Result resolveColorWithCommand(ContextVk *contextVk,
-                                          const UtilsVk::BlitResolveParameters &params,
-                                          vk::ImageHelper *srcImage);
+    // Note that 'copyArea' must be clipped to the scissor and FBO. The clipping is done in 'blit'.
+    angle::Result blitWithCopy(ContextVk *contextVk,
+                               const gl::Rectangle &copyArea,
+                               RenderTargetVk *readRenderTarget,
+                               RenderTargetVk *drawRenderTarget,
+                               bool blitDepthBuffer,
+                               bool blitStencilBuffer);
+
+    angle::Result blitWithReadback(ContextVk *contextVk,
+                                   const gl::Rectangle &copyArea,
+                                   VkImageAspectFlagBits aspect,
+                                   RenderTargetVk *readRenderTarget,
+                                   RenderTargetVk *drawRenderTarget);
 
     angle::Result getFramebuffer(ContextVk *contextVk, vk::Framebuffer **framebufferOut);
 
@@ -179,8 +186,6 @@ class FramebufferVk : public FramebufferImpl
                                 uint8_t clearStencilValue);
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc();
-    angle::Result updateColorAttachment(const gl::Context *context, size_t colorIndex);
-    void invalidateImpl(ContextVk *contextVk, size_t count, const GLenum *attachments);
 
     WindowSurfaceVk *mBackbuffer;
 
@@ -194,6 +199,7 @@ class FramebufferVk : public FramebufferImpl
     VkColorComponentFlags mActiveColorComponents;
     gl::DrawBufferMask mActiveColorComponentMasksForClear[4];
     vk::DynamicBuffer mReadPixelBuffer;
+    vk::DynamicBuffer mBlitPixelBuffer;
 
     // When we draw to the framebuffer, and the real format has an alpha channel but the format of
     // the framebuffer does not, we need to mask out the alpha channel. This DrawBufferMask will

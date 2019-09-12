@@ -84,8 +84,10 @@ class EGLBlobCacheTest : public ANGLETest
         forceNewDisplay();
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         EGLDisplay display = getEGLWindow()->getDisplay();
         mHasBlobCache      = IsEGLDisplayExtensionEnabled(display, kEGLExtName);
     }

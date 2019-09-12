@@ -37,14 +37,14 @@ bool Subject::hasObservers() const
     return !mObservers.empty();
 }
 
-void Subject::onStateChange(SubjectMessage message) const
+void Subject::onStateChange(const gl::Context *context, SubjectMessage message) const
 {
     if (mObservers.empty())
         return;
 
     for (const ObserverBindingBase *binding : mObservers)
     {
-        binding->getObserver()->onSubjectStateChange(binding->getSubjectIndex(), message);
+        binding->getObserver()->onSubjectStateChange(context, binding->getSubjectIndex(), message);
     }
 }
 
@@ -89,9 +89,9 @@ void ObserverBinding::bind(Subject *subject)
     }
 }
 
-void ObserverBinding::onStateChange(SubjectMessage message) const
+void ObserverBinding::onStateChange(const gl::Context *context, SubjectMessage message) const
 {
-    getObserver()->onSubjectStateChange(getSubjectIndex(), message);
+    getObserver()->onSubjectStateChange(context, getSubjectIndex(), message);
 }
 
 void ObserverBinding::onSubjectReset()

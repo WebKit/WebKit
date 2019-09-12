@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -32,8 +32,8 @@ class SampleApplication
                       char **argv,
                       EGLint glesMajorVersion = 2,
                       EGLint glesMinorVersion = 0,
-                      uint32_t width          = 1280,
-                      uint32_t height         = 720);
+                      size_t width            = 1280,
+                      size_t height           = 720);
     virtual ~SampleApplication();
 
     virtual bool initialize();
@@ -57,11 +57,11 @@ class SampleApplication
 
   private:
     std::string mName;
-    uint32_t mWidth;
-    uint32_t mHeight;
+    size_t mWidth;
+    size_t mHeight;
     bool mRunning;
 
-    Timer mTimer;
+    std::unique_ptr<Timer> mTimer;
     EGLWindow *mEGLWindow;
     OSWindow *mOSWindow;
 

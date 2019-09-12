@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -101,20 +101,15 @@ class FoldExpressionsTraverser : public TIntermTraverser
 
 }  // anonymous namespace
 
-bool FoldExpressions(TCompiler *compiler, TIntermBlock *root, TDiagnostics *diagnostics)
+void FoldExpressions(TIntermBlock *root, TDiagnostics *diagnostics)
 {
     FoldExpressionsTraverser traverser(diagnostics);
     do
     {
         traverser.nextIteration();
         root->traverse(&traverser);
-        if (!traverser.updateTree(compiler, root))
-        {
-            return false;
-        }
+        traverser.updateTree();
     } while (traverser.didReplace());
-
-    return true;
 }
 
 }  // namespace sh

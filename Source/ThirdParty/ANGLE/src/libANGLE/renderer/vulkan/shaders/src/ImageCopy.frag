@@ -14,7 +14,7 @@
 #if SrcIsFloat
 #define SRC_RESOURCE(type) type
 #define SrcType vec4
-#elif SrcIsSint
+#elif SrcIsInt
 #define SRC_RESOURCE(type) MAKE_SRC_RESOURCE(i, type)
 #define SrcType ivec4
 #elif SrcIsUint
@@ -32,7 +32,7 @@
 
 #if DestIsFloat
 #define DestType vec4
-#elif DestIsSint
+#elif DestIsInt
 #define DestType ivec4
 #elif DestIsUint
 #define DestType uvec4

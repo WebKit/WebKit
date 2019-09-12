@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -50,7 +50,6 @@ class TextureStorage : angle::NonCopyable
 
     virtual angle::Result getRenderTarget(const gl::Context *context,
                                           const gl::ImageIndex &index,
-                                          GLsizei samples,
                                           RenderTargetD3D **outRT)        = 0;
     virtual angle::Result generateMipmap(const gl::Context *context,
                                          const gl::ImageIndex &sourceIndex,
@@ -73,9 +72,6 @@ class TextureStorage : angle::NonCopyable
 
     virtual void invalidateTextures() {}
 
-    // RenderToTexture methods
-    virtual GLsizei getRenderToTextureSamples() const;
-
   protected:
     const angle::Subject *mSubject;
 };
@@ -89,11 +85,6 @@ inline angle::Result TextureStorage::useLevelZeroWorkaroundTexture(const gl::Con
                                                                    bool useLevelZeroTexture)
 {
     return angle::Result::Continue;
-}
-
-inline GLsizei TextureStorage::getRenderToTextureSamples() const
-{
-    return 0;
 }
 
 using TexStoragePointer = angle::UniqueObjectPointer<TextureStorage, gl::Context>;

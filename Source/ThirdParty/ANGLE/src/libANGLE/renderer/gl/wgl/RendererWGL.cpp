@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -17,7 +17,7 @@ RendererWGL::RendererWGL(std::unique_ptr<FunctionsGL> functionsGL,
                          HGLRC context,
                          HGLRC sharedContext,
                          const std::vector<int> workerContextAttribs)
-    : RendererGL(std::move(functionsGL), attribMap, display),
+    : RendererGL(std::move(functionsGL), attribMap),
       mDisplay(display),
       mContext(context),
       mSharedContext(sharedContext),

@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -63,8 +63,8 @@ void RenderbufferState::update(GLsizei width,
 }
 
 // Renderbuffer implementation.
-Renderbuffer::Renderbuffer(rx::GLImplFactory *implFactory, RenderbufferID id)
-    : RefCountObject(id.value),
+Renderbuffer::Renderbuffer(rx::GLImplFactory *implFactory, GLuint id)
+    : RefCountObject(id),
       mState(),
       mImplementation(implFactory->createRenderbuffer(mState)),
       mLabel()
@@ -102,7 +102,7 @@ angle::Result Renderbuffer::setStorage(const Context *context,
 
     mState.update(static_cast<GLsizei>(width), static_cast<GLsizei>(height), Format(internalformat),
                   0, InitState::MayNeedInit);
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    onStateChange(context, angle::SubjectMessage::STORAGE_CHANGED);
 
     return angle::Result::Continue;
 }
@@ -119,7 +119,7 @@ angle::Result Renderbuffer::setStorageMultisample(const Context *context,
 
     mState.update(static_cast<GLsizei>(width), static_cast<GLsizei>(height), Format(internalformat),
                   static_cast<GLsizei>(samples), InitState::MayNeedInit);
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    onStateChange(context, angle::SubjectMessage::STORAGE_CHANGED);
 
     return angle::Result::Continue;
 }
@@ -133,7 +133,7 @@ angle::Result Renderbuffer::setStorageEGLImageTarget(const Context *context, egl
 
     mState.update(static_cast<GLsizei>(image->getWidth()), static_cast<GLsizei>(image->getHeight()),
                   Format(image->getFormat()), 0, image->sourceInitState());
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    onStateChange(context, angle::SubjectMessage::STORAGE_CHANGED);
 
     return angle::Result::Continue;
 }

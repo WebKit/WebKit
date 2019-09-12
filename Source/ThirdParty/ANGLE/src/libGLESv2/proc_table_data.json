@@ -1,0 +1,1000 @@
+{
+    "GLES1 core": [
+        "glAlphaFunc",
+        "glClearColor",
+        "glClearDepthf",
+        "glClipPlanef",
+        "glColor4f",
+        "glDepthRangef",
+        "glFogf",
+        "glFogfv",
+        "glFrustumf",
+        "glGetClipPlanef",
+        "glGetFloatv",
+        "glGetLightfv",
+        "glGetMaterialfv",
+        "glGetTexEnvfv",
+        "glGetTexParameterfv",
+        "glLightModelf",
+        "glLightModelfv",
+        "glLightf",
+        "glLightfv",
+        "glLineWidth",
+        "glLoadMatrixf",
+        "glMaterialf",
+        "glMaterialfv",
+        "glMultMatrixf",
+        "glMultiTexCoord4f",
+        "glNormal3f",
+        "glOrthof",
+        "glPointParameterf",
+        "glPointParameterfv",
+        "glPointSize",
+        "glPolygonOffset",
+        "glRotatef",
+        "glScalef",
+        "glTexEnvf",
+        "glTexEnvfv",
+        "glTexParameterf",
+        "glTexParameterfv",
+        "glTranslatef",
+        "glActiveTexture",
+        "glAlphaFuncx",
+        "glBindBuffer",
+        "glBindTexture",
+        "glBlendFunc",
+        "glBufferData",
+        "glBufferSubData",
+        "glClear",
+        "glClearColorx",
+        "glClearDepthx",
+        "glClearStencil",
+        "glClientActiveTexture",
+        "glClipPlanex",
+        "glColor4ub",
+        "glColor4x",
+        "glColorMask",
+        "glColorPointer",
+        "glCompressedTexImage2D",
+        "glCompressedTexSubImage2D",
+        "glCopyTexImage2D",
+        "glCopyTexSubImage2D",
+        "glCullFace",
+        "glDeleteBuffers",
+        "glDeleteTextures",
+        "glDepthFunc",
+        "glDepthMask",
+        "glDepthRangex",
+        "glDisable",
+        "glDisableClientState",
+        "glDrawArrays",
+        "glDrawElements",
+        "glEnable",
+        "glEnableClientState",
+        "glFinish",
+        "glFlush",
+        "glFogx",
+        "glFogxv",
+        "glFrontFace",
+        "glFrustumx",
+        "glGetBooleanv",
+        "glGetBufferParameteriv",
+        "glGetClipPlanex",
+        "glGenBuffers",
+        "glGenTextures",
+        "glGetError",
+        "glGetFixedv",
+        "glGetIntegerv",
+        "glGetLightxv",
+        "glGetMaterialxv",
+        "glGetPointerv",
+        "glGetString",
+        "glGetTexEnviv",
+        "glGetTexEnvxv",
+        "glGetTexParameteriv",
+        "glGetTexParameterxv",
+        "glHint",
+        "glIsBuffer",
+        "glIsEnabled",
+        "glIsTexture",
+        "glLightModelx",
+        "glLightModelxv",
+        "glLightx",
+        "glLightxv",
+        "glLineWidthx",
+        "glLoadIdentity",
+        "glLoadMatrixx",
+        "glLogicOp",
+        "glMaterialx",
+        "glMaterialxv",
+        "glMatrixMode",
+        "glMultMatrixx",
+        "glMultiTexCoord4x",
+        "glNormal3x",
+        "glNormalPointer",
+        "glOrthox",
+        "glPixelStorei",
+        "glPointParameterx",
+        "glPointParameterxv",
+        "glPointSizex",
+        "glPolygonOffsetx",
+        "glPopMatrix",
+        "glPushMatrix",
+        "glReadPixels",
+        "glRotatex",
+        "glSampleCoverage",
+        "glSampleCoveragex",
+        "glScalex",
+        "glScissor",
+        "glShadeModel",
+        "glStencilFunc",
+        "glStencilMask",
+        "glStencilOp",
+        "glTexCoordPointer",
+        "glTexEnvi",
+        "glTexEnvx",
+        "glTexEnviv",
+        "glTexEnvxv",
+        "glTexImage2D",
+        "glTexParameteri",
+        "glTexParameterx",
+        "glTexParameteriv",
+        "glTexParameterxv",
+        "glTexSubImage2D",
+        "glTranslatex",
+        "glVertexPointer",
+        "glViewport"
+    ],
+
+    "GL_OES_draw_texture": [
+        "glDrawTexsOES",
+        "glDrawTexiOES",
+        "glDrawTexxOES",
+        "glDrawTexsvOES",
+        "glDrawTexivOES",
+        "glDrawTexxvOES",
+        "glDrawTexfOES",
+        "glDrawTexfvOES"
+    ],
+
+    "GL_OES_matrix_palette": [
+        "glCurrentPaletteMatrixOES",
+        "glLoadPaletteFromModelViewMatrixOES",
+        "glMatrixIndexPointerOES",
+        "glWeightPointerOES"
+    ],
+
+    "GL_OES_point_size_array": [
+        "glPointSizePointerOES"
+    ],
+
+    "GL_OES_query_matrix": [
+        "glQueryMatrixxOES"
+    ],
+
+    "GLES2 core": [
+        "glActiveTexture",
+        "glAttachShader",
+        "glBindAttribLocation",
+        "glBindBuffer",
+        "glBindFramebuffer",
+        "glBindRenderbuffer",
+        "glBindTexture",
+        "glBlendColor",
+        "glBlendEquation",
+        "glBlendEquationSeparate",
+        "glBlendFunc",
+        "glBlendFuncSeparate",
+        "glBufferData",
+        "glBufferSubData",
+        "glCheckFramebufferStatus",
+        "glClear",
+        "glClearColor",
+        "glClearDepthf",
+        "glClearStencil",
+        "glCompileShader",
+        "glColorMask",
+        "glCompressedTexImage2D",
+        "glCompressedTexSubImage2D",
+        "glCopyTexImage2D",
+        "glCopyTexSubImage2D",
+        "glCreateProgram",
+        "glCreateShader",
+        "glCullFace",
+        "glDeleteBuffers",
+        "glDeleteFramebuffers",
+        "glDeleteProgram",
+        "glDeleteRenderbuffers",
+        "glDeleteShader",
+        "glDeleteTextures",
+        "glDepthFunc",
+        "glDepthMask",
+        "glDepthRangef",
+        "glDetachShader",
+        "glDisable",
+        "glDisableVertexAttribArray",
+        "glDrawArrays",
+        "glDrawElements",
+        "glEnable",
+        "glEnableVertexAttribArray",
+        "glFinish",
+        "glFlush",
+        "glFramebufferRenderbuffer",
+        "glFramebufferTexture2D",
+        "glFrontFace",
+        "glGenBuffers",
+        "glGenerateMipmap",
+        "glGenFramebuffers",
+        "glGenRenderbuffers",
+        "glGenTextures",
+        "glGetActiveAttrib",
+        "glGetActiveUniform",
+        "glGetAttachedShaders",
+        "glGetAttribLocation",
+        "glGetBooleanv",
+        "glGetBufferParameteriv",
+        "glGetError",
+        "glGetFloatv",
+        "glGetFramebufferAttachmentParameteriv",
+        "glGetIntegerv",
+        "glGetProgramiv",
+        "glGetProgramInfoLog",
+        "glGetRenderbufferParameteriv",
+        "glGetShaderiv",
+        "glGetShaderInfoLog",
+        "glGetShaderPrecisionFormat",
+        "glGetShaderSource",
+        "glGetString",
+        "glGetTexParameterfv",
+        "glGetTexParameteriv",
+        "glGetUniformfv",
+        "glGetUniformiv",
+        "glGetUniformLocation",
+        "glGetVertexAttribfv",
+        "glGetVertexAttribiv",
+        "glGetVertexAttribPointerv",
+        "glHint",
+        "glIsBuffer",
+        "glIsEnabled",
+        "glIsFramebuffer",
+        "glIsProgram",
+        "glIsRenderbuffer",
+        "glIsShader",
+        "glIsTexture",
+        "glLineWidth",
+        "glLinkProgram",
+        "glPixelStorei",
+        "glPolygonOffset",
+        "glReadPixels",
+        "glReleaseShaderCompiler",
+        "glRenderbufferStorage",
+        "glSampleCoverage",
+        "glScissor",
+        "glShaderBinary",
+        "glShaderSource",
+        "glStencilFunc",
+        "glStencilFuncSeparate",
+        "glStencilMask",
+        "glStencilMaskSeparate",
+        "glStencilOp",
+        "glStencilOpSeparate",
+        "glTexImage2D",
+        "glTexParameterf",
+        "glTexParameterfv",
+        "glTexParameteri",
+        "glTexParameteriv",
+        "glTexSubImage2D",
+        "glUniform1f",
+        "glUniform1fv",
+        "glUniform1i",
+        "glUniform1iv",
+        "glUniform2f",
+        "glUniform2fv",
+        "glUniform2i",
+        "glUniform2iv",
+        "glUniform3f",
+        "glUniform3fv",
+        "glUniform3i",
+        "glUniform3iv",
+        "glUniform4f",
+        "glUniform4fv",
+        "glUniform4i",
+        "glUniform4iv",
+        "glUniformMatrix2fv",
+        "glUniformMatrix3fv",
+        "glUniformMatrix4fv",
+        "glUseProgram",
+        "glValidateProgram",
+        "glVertexAttrib1f",
+        "glVertexAttrib1fv",
+        "glVertexAttrib2f",
+        "glVertexAttrib2fv",
+        "glVertexAttrib3f",
+        "glVertexAttrib3fv",
+        "glVertexAttrib4f",
+        "glVertexAttrib4fv",
+        "glVertexAttribPointer",
+        "glViewport"
+    ],
+
+    "GL_ANGLE_framebuffer_blit": [
+        "glBlitFramebufferANGLE"
+    ],
+
+    "GL_ANGLE_framebuffer_multisample": [
+        "glRenderbufferStorageMultisampleANGLE"
+    ],
+
+    "GL_EXT_discard_framebuffer": [
+        "glDiscardFramebufferEXT"
+    ],
+
+    "GL_NV_fence": [
+        "glDeleteFencesNV",
+        "glGenFencesNV",
+        "glIsFenceNV",
+        "glTestFenceNV",
+        "glGetFenceivNV",
+        "glFinishFenceNV",
+        "glSetFenceNV"
+    ],
+
+    "GL_ANGLE_translated_shader_source": [
+        "glGetTranslatedShaderSourceANGLE"
+    ],
+
+    "GL_CHROMIUM_framebuffer_mixed_samples": [
+         "glMatrixLoadfCHROMIUM",
+         "glMatrixLoadIdentityCHROMIUM",
+         "glCoverageModulationCHROMIUM"
+    ],
+
+    "GL_CHROMIUM_path_rendering": [
+         "glGenPathsCHROMIUM",
+         "glDeletePathsCHROMIUM",
+         "glIsPathCHROMIUM",
+         "glPathCommandsCHROMIUM",
+         "glPathParameterfCHROMIUM",
+         "glPathParameteriCHROMIUM",
+         "glGetPathParameterfvCHROMIUM",
+         "glGetPathParameterivCHROMIUM",
+         "glPathStencilFuncCHROMIUM",
+         "glStencilFillPathCHROMIUM",
+         "glStencilStrokePathCHROMIUM",
+         "glCoverFillPathCHROMIUM",
+         "glCoverStrokePathCHROMIUM",
+         "glStencilThenCoverFillPathCHROMIUM",
+         "glStencilThenCoverStrokePathCHROMIUM",
+         "glCoverFillPathInstancedCHROMIUM",
+         "glCoverStrokePathInstancedCHROMIUM",
+         "glStencilFillPathInstancedCHROMIUM",
+         "glStencilStrokePathInstancedCHROMIUM",
+         "glStencilThenCoverFillPathInstancedCHROMIUM",
+         "glStencilThenCoverStrokePathInstancedCHROMIUM",
+         "glBindFragmentInputLocationCHROMIUM",
+         "glProgramPathFragmentInputGenCHROMIUM"
+    ],
+
+    "GL_EXT_blend_func_extended": [
+        "glBindFragDataLocationIndexedEXT",
+        "glBindFragDataLocationEXT",
+        "glGetProgramResourceLocationIndexEXT",
+        "glGetFragDataIndexEXT"
+    ],
+
+    "GL_EXT_texture_storage": [
+        "glTexStorage2DEXT",
+        "glTexStorage3DEXT"
+    ],
+
+    "GL_EXT_robustness": [
+        "glGetGraphicsResetStatusEXT",
+        "glReadnPixelsEXT",
+        "glGetnUniformfvEXT",
+        "glGetnUniformivEXT"
+    ],
+
+    "GL_EXT_occlusion_query_boolean": [
+        "glGenQueriesEXT",
+        "glDeleteQueriesEXT",
+        "glIsQueryEXT",
+        "glBeginQueryEXT",
+        "glEndQueryEXT",
+        "glGetQueryivEXT",
+        "glGetQueryObjectuivEXT"
+    ],
+
+    "GL_EXT_disjoint_timer_query": [
+        "glGenQueriesEXT",
+        "glDeleteQueriesEXT",
+        "glIsQueryEXT",
+        "glBeginQueryEXT",
+        "glEndQueryEXT",
+        "glQueryCounterEXT",
+        "glGetQueryivEXT",
+        "glGetQueryObjectivEXT",
+        "glGetQueryObjectuivEXT",
+        "glGetQueryObjecti64vEXT",
+        "glGetQueryObjectui64vEXT"
+    ],
+
+    "GL_EXT_draw_buffers": [
+        "glDrawBuffersEXT"
+    ],
+
+    "GL_ANGLE_instanced_arrays": [
+        "glDrawArraysInstancedANGLE",
+        "glDrawElementsInstancedANGLE",
+        "glVertexAttribDivisorANGLE"
+    ],
+
+    "GL_EXT_instanced_arrays": [
+        "glDrawArraysInstancedEXT",
+        "glDrawElementsInstancedEXT",
+        "glVertexAttribDivisorEXT"
+    ],
+
+    "GL_OES_get_program_binary": [
+        "glGetProgramBinaryOES",
+        "glProgramBinaryOES"
+    ],
+
+    "GL_OES_mapbuffer": [
+        "glMapBufferOES",
+        "glUnmapBufferOES",
+        "glGetBufferPointervOES"
+    ],
+
+    "GL_EXT_map_buffer_range": [
+        "glMapBufferRangeEXT",
+        "glFlushMappedBufferRangeEXT"
+    ],
+
+    "GL_EXT_debug_marker": [
+        "glInsertEventMarkerEXT",
+        "glPushGroupMarkerEXT",
+        "glPopGroupMarkerEXT"
+    ],
+
+    "GL_OES_EGL_image": [
+        "glEGLImageTargetTexture2DOES",
+        "glEGLImageTargetRenderbufferStorageOES"
+    ],
+
+    "GL_OES_vertex_array_object": [
+        "glBindVertexArrayOES",
+        "glDeleteVertexArraysOES",
+        "glGenVertexArraysOES",
+        "glIsVertexArrayOES"
+    ],
+
+    "GL_KHR_debug": [
+        "glDebugMessageControlKHR",
+        "glDebugMessageInsertKHR",
+        "glDebugMessageCallbackKHR",
+        "glGetDebugMessageLogKHR",
+        "glPushDebugGroupKHR",
+        "glPopDebugGroupKHR",
+        "glObjectLabelKHR",
+        "glGetObjectLabelKHR",
+        "glObjectPtrLabelKHR",
+        "glGetObjectPtrLabelKHR",
+        "glGetPointervKHR"
+    ],
+
+    "GL_CHROMIUM_bind_uniform_location": [
+        "glBindUniformLocationCHROMIUM"
+    ],
+
+    "GL_CHROMIUM_copy_texture": [
+        "glCopyTextureCHROMIUM",
+        "glCopySubTextureCHROMIUM"
+    ],
+
+    "GL_CHROMIUM_copy_compressed_texture": [
+        "glCompressedCopyTextureCHROMIUM"
+    ],
+
+    "GL_ANGLE_copy_texture_3D":[
+        "glCopyTexture3DANGLE",
+        "glCopySubTexture3DANGLE"
+    ],
+
+    "GL_ANGLE_request_extension": [
+        "glRequestExtensionANGLE"
+    ],
+
+    "GL_ANGLE_robust_client_memory": [
+        "glGetBooleanvRobustANGLE",
+        "glGetBufferParameterivRobustANGLE",
+        "glGetFloatvRobustANGLE",
+        "glGetFramebufferAttachmentParameterivRobustANGLE",
+        "glGetIntegervRobustANGLE",
+        "glGetProgramivRobustANGLE",
+        "glGetRenderbufferParameterivRobustANGLE",
+        "glGetShaderivRobustANGLE",
+        "glGetTexParameterfvRobustANGLE",
+        "glGetTexParameterivRobustANGLE",
+        "glGetUniformfvRobustANGLE",
+        "glGetUniformivRobustANGLE",
+        "glGetVertexAttribfvRobustANGLE",
+        "glGetVertexAttribivRobustANGLE",
+        "glGetVertexAttribPointervRobustANGLE",
+        "glReadPixelsRobustANGLE",
+        "glTexImage2DRobustANGLE",
+        "glTexParameterfvRobustANGLE",
+        "glTexParameterivRobustANGLE",
+        "glTexSubImage2DRobustANGLE",
+        "glTexImage3DRobustANGLE",
+        "glTexSubImage3DRobustANGLE",
+        "glCompressedTexImage2DRobustANGLE",
+        "glCompressedTexSubImage2DRobustANGLE",
+        "glCompressedTexImage3DRobustANGLE",
+        "glCompressedTexSubImage3DRobustANGLE",
+        "glGetQueryivRobustANGLE",
+        "glGetQueryObjectuivRobustANGLE",
+        "glGetBufferPointervRobustANGLE",
+        "glGetIntegeri_vRobustANGLE",
+        "glGetInternalformativRobustANGLE",
+        "glGetVertexAttribIivRobustANGLE",
+        "glGetVertexAttribIuivRobustANGLE",
+        "glGetUniformuivRobustANGLE",
+        "glGetActiveUniformBlockivRobustANGLE",
+        "glGetInteger64vRobustANGLE",
+        "glGetInteger64i_vRobustANGLE",
+        "glGetBufferParameteri64vRobustANGLE",
+        "glSamplerParameterivRobustANGLE",
+        "glSamplerParameterfvRobustANGLE",
+        "glGetSamplerParameterivRobustANGLE",
+        "glGetSamplerParameterfvRobustANGLE",
+        "glGetFramebufferParameterivRobustANGLE",
+        "glGetProgramInterfaceivRobustANGLE",
+        "glGetBooleani_vRobustANGLE",
+        "glGetMultisamplefvRobustANGLE",
+        "glGetTexLevelParameterivRobustANGLE",
+        "glGetTexLevelParameterfvRobustANGLE",
+        "glGetPointervRobustANGLERobustANGLE",
+        "glReadnPixelsRobustANGLE",
+        "glGetnUniformfvRobustANGLE",
+        "glGetnUniformivRobustANGLE",
+        "glGetnUniformuivRobustANGLE",
+        "glTexParameterIivRobustANGLE",
+        "glTexParameterIuivRobustANGLE",
+        "glGetTexParameterIivRobustANGLE",
+        "glGetTexParameterIuivRobustANGLE",
+        "glSamplerParameterIivRobustANGLE",
+        "glSamplerParameterIuivRobustANGLE",
+        "glGetSamplerParameterIivRobustANGLE",
+        "glGetSamplerParameterIuivRobustANGLE",
+        "glGetQueryObjectivRobustANGLE",
+        "glGetQueryObjecti64vRobustANGLE",
+        "glGetQueryObjectui64vRobustANGLE"
+    ],
+
+    "GL_ANGLE_multi_draw": [
+      "glMultiDrawArraysANGLE",
+      "glMultiDrawArraysInstancedANGLE",
+      "glMultiDrawElementsANGLE",
+      "glMultiDrawElementsInstancedANGLE"
+    ],
+
+    "GL_OVR_multiview2": [
+        "glFramebufferTextureMultiviewOVR"
+    ],
+
+    "GL_KHR_parallel_shader_compile": [
+        "glMaxShaderCompilerThreadsKHR"
+    ],
+
+    "GL_OES_texture_storage_multisample_2d_array": [
+        "glTexStorage3DMultisampleOES"
+    ],
+
+    "GL_OES_texture_border_clamp": [
+        "glTexParameterIivOES",
+        "glTexParameterIuivOES",
+        "glGetTexParameterIivOES",
+        "glGetTexParameterIuivOES",
+        "glSamplerParameterIivOES",
+        "glSamplerParameterIuivOES",
+        "glGetSamplerParameterIivOES",
+        "glGetSamplerParameterIuivOES"
+    ],
+
+    "GLES3 core": [
+        "glReadBuffer",
+        "glDrawRangeElements",
+        "glTexImage3D",
+        "glTexSubImage3D",
+        "glCopyTexSubImage3D",
+        "glCompressedTexImage3D",
+        "glCompressedTexSubImage3D",
+        "glGenQueries",
+        "glDeleteQueries",
+        "glIsQuery",
+        "glBeginQuery",
+        "glEndQuery",
+        "glGetQueryiv",
+        "glGetQueryObjectuiv",
+        "glUnmapBuffer",
+        "glGetBufferPointerv",
+        "glDrawBuffers",
+        "glUniformMatrix2x3fv",
+        "glUniformMatrix3x2fv",
+        "glUniformMatrix2x4fv",
+        "glUniformMatrix4x2fv",
+        "glUniformMatrix3x4fv",
+        "glUniformMatrix4x3fv",
+        "glBlitFramebuffer",
+        "glRenderbufferStorageMultisample",
+        "glFramebufferTextureLayer",
+        "glMapBufferRange",
+        "glFlushMappedBufferRange",
+        "glBindVertexArray",
+        "glDeleteVertexArrays",
+        "glGenVertexArrays",
+        "glIsVertexArray",
+        "glGetIntegeri_v",
+        "glBeginTransformFeedback",
+        "glEndTransformFeedback",
+        "glBindBufferRange",
+        "glBindBufferBase",
+        "glTransformFeedbackVaryings",
+        "glGetTransformFeedbackVarying",
+        "glVertexAttribIPointer",
+        "glGetVertexAttribIiv",
+        "glGetVertexAttribIuiv",
+        "glVertexAttribI4i",
+        "glVertexAttribI4ui",
+        "glVertexAttribI4iv",
+        "glVertexAttribI4uiv",
+        "glGetUniformuiv",
+        "glGetFragDataLocation",
+        "glUniform1ui",
+        "glUniform2ui",
+        "glUniform3ui",
+        "glUniform4ui",
+        "glUniform1uiv",
+        "glUniform2uiv",
+        "glUniform3uiv",
+        "glUniform4uiv",
+        "glClearBufferiv",
+        "glClearBufferuiv",
+        "glClearBufferfv",
+        "glClearBufferfi",
+        "glGetStringi",
+        "glCopyBufferSubData",
+        "glGetUniformIndices",
+        "glGetActiveUniformsiv",
+        "glGetUniformBlockIndex",
+        "glGetActiveUniformBlockiv",
+        "glGetActiveUniformBlockName",
+        "glUniformBlockBinding",
+        "glDrawArraysInstanced",
+        "glDrawElementsInstanced",
+        "glFenceSync",
+        "glIsSync",
+        "glDeleteSync",
+        "glClientWaitSync",
+        "glWaitSync",
+        "glGetInteger64v",
+        "glGetSynciv",
+        "glGetInteger64i_v",
+        "glGetBufferParameteri64v",
+        "glGenSamplers",
+        "glDeleteSamplers",
+        "glIsSampler",
+        "glBindSampler",
+        "glSamplerParameteri",
+        "glSamplerParameteriv",
+        "glSamplerParameterf",
+        "glSamplerParameterfv",
+        "glGetSamplerParameteriv",
+        "glGetSamplerParameterfv",
+        "glVertexAttribDivisor",
+        "glBindTransformFeedback",
+        "glDeleteTransformFeedbacks",
+        "glGenTransformFeedbacks",
+        "glIsTransformFeedback",
+        "glPauseTransformFeedback",
+        "glResumeTransformFeedback",
+        "glGetProgramBinary",
+        "glProgramBinary",
+        "glProgramParameteri",
+        "glInvalidateFramebuffer",
+        "glInvalidateSubFramebuffer",
+        "glTexStorage2D",
+        "glTexStorage3D",
+        "glGetInternalformativ"
+    ],
+
+    "GLES31 core": [
+        "glDispatchCompute",
+        "glDispatchComputeIndirect",
+        "glDrawArraysIndirect",
+        "glDrawElementsIndirect",
+        "glFramebufferParameteri",
+        "glGetFramebufferParameteriv",
+        "glGetProgramInterfaceiv",
+        "glGetProgramResourceIndex",
+        "glGetProgramResourceName",
+        "glGetProgramResourceiv",
+        "glGetProgramResourceLocation",
+        "glUseProgramStages",
+        "glActiveShaderProgram",
+        "glCreateShaderProgramv",
+        "glBindProgramPipeline",
+        "glDeleteProgramPipelines",
+        "glGenProgramPipelines",
+        "glIsProgramPipeline",
+        "glGetProgramPipelineiv",
+        "glProgramUniform1i",
+        "glProgramUniform2i",
+        "glProgramUniform3i",
+        "glProgramUniform4i",
+        "glProgramUniform1ui",
+        "glProgramUniform2ui",
+        "glProgramUniform3ui",
+        "glProgramUniform4ui",
+        "glProgramUniform1f",
+        "glProgramUniform2f",
+        "glProgramUniform3f",
+        "glProgramUniform4f",
+        "glProgramUniform1iv",
+        "glProgramUniform2iv",
+        "glProgramUniform3iv",
+        "glProgramUniform4iv",
+        "glProgramUniform1uiv",
+        "glProgramUniform2uiv",
+        "glProgramUniform3uiv",
+        "glProgramUniform4uiv",
+        "glProgramUniform1fv",
+        "glProgramUniform2fv",
+        "glProgramUniform3fv",
+        "glProgramUniform4fv",
+        "glProgramUniformMatrix2fv",
+        "glProgramUniformMatrix3fv",
+        "glProgramUniformMatrix4fv",
+        "glProgramUniformMatrix2x3fv",
+        "glProgramUniformMatrix3x2fv",
+        "glProgramUniformMatrix2x4fv",
+        "glProgramUniformMatrix4x2fv",
+        "glProgramUniformMatrix3x4fv",
+        "glProgramUniformMatrix4x3fv",
+        "glValidateProgramPipeline",
+        "glGetProgramPipelineInfoLog",
+        "glBindImageTexture",
+        "glGetBooleani_v",
+        "glMemoryBarrier",
+        "glMemoryBarrierByRegion",
+        "glTexStorage2DMultisample",
+        "glGetMultisamplefv",
+        "glSampleMaski",
+        "glGetTexLevelParameteriv",
+        "glGetTexLevelParameterfv",
+        "glBindVertexBuffer",
+        "glVertexAttribFormat",
+        "glVertexAttribIFormat",
+        "glVertexAttribBinding",
+        "glVertexBindingDivisor"
+    ],
+
+    "GL_EXT_geometry_shader": [
+        "glFramebufferTextureEXT"
+    ],
+
+    "GL_ANGLE_texture_multisample": [
+      "glTexStorage2DMultisampleANGLE",
+      "glGetTexLevelParameterfvANGLE",
+      "glGetTexLevelParameterivANGLE",
+      "glGetMultisamplefvANGLE",
+      "glSampleMaskiANGLE"
+    ],
+
+    "GL_ANGLE_provoking_vertex": [
+      "glProvokingVertexANGLE"
+    ],
+
+    "EGL 1.0": [
+        "eglChooseConfig",
+        "eglCopyBuffers",
+        "eglCreateContext",
+        "eglCreatePbufferSurface",
+        "eglCreatePixmapSurface",
+        "eglCreateWindowSurface",
+        "eglDestroyContext",
+        "eglDestroySurface",
+        "eglGetConfigAttrib",
+        "eglGetConfigs",
+        "eglGetCurrentDisplay",
+        "eglGetCurrentSurface",
+        "eglGetDisplay",
+        "eglGetError",
+        "eglGetProcAddress",
+        "eglInitialize",
+        "eglMakeCurrent",
+        "eglQueryContext",
+        "eglQueryString",
+        "eglQuerySurface",
+        "eglSwapBuffers",
+        "eglTerminate",
+        "eglWaitGL",
+        "eglWaitNative"
+    ],
+
+    "EGL 1.1": [
+        "eglBindTexImage",
+        "eglReleaseTexImage",
+        "eglSurfaceAttrib",
+        "eglSwapInterval"
+    ],
+
+    "EGL 1.2": [
+        "eglBindAPI",
+        "eglQueryAPI",
+        "eglCreatePbufferFromClientBuffer",
+        "eglReleaseThread",
+        "eglWaitClient"
+    ],
+
+    "EGL 1.4": [
+        "eglGetCurrentContext"
+    ],
+
+    "EGL 1.5": [
+        "eglCreateSync",
+        "eglDestroySync",
+        "eglClientWaitSync",
+        "eglGetSyncAttrib",
+        "eglCreateImage",
+        "eglDestroyImage",
+        "eglGetPlatformDisplay",
+        "eglCreatePlatformWindowSurface",
+        "eglCreatePlatformPixmapSurface",
+        "eglWaitSync"
+    ],
+
+    "EGL_ANGLE_query_surface_pointer": [
+        "eglQuerySurfacePointerANGLE"
+    ],
+
+    "EGL_NV_post_sub_buffer": [
+        "eglPostSubBufferNV"
+    ],
+
+    "EGL_EXT_platform_base": [
+        "eglGetPlatformDisplayEXT",
+        "eglCreatePlatformWindowSurfaceEXT",
+        "eglCreatePlatformPixmapSurfaceEXT"
+    ],
+
+    "EGL_EXT_device_query": [
+        "eglQueryDisplayAttribEXT",
+        "eglQueryDeviceAttribEXT",
+        "eglQueryDeviceStringEXT"
+    ],
+
+    "EGL_KHR_image_base/EGL_KHR_image": [
+        "eglCreateImageKHR",
+        "eglDestroyImageKHR"
+    ],
+
+    "EGL_EXT_device_creation": [
+        "eglCreateDeviceANGLE",
+        "eglReleaseDeviceANGLE"
+    ],
+
+    "EGL_KHR_stream": [
+        "eglCreateStreamKHR",
+        "eglDestroyStreamKHR",
+        "eglStreamAttribKHR",
+        "eglQueryStreamKHR",
+        "eglQueryStreamu64KHR"
+    ],
+
+    "EGL_KHR_stream_consumer_gltexture": [
+        "eglStreamConsumerGLTextureExternalKHR",
+        "eglStreamConsumerAcquireKHR",
+        "eglStreamConsumerReleaseKHR"
+    ],
+
+    "EGL_NV_stream_consumer_gltexture_yuv": [
+        "eglStreamConsumerGLTextureExternalAttribsNV"
+    ],
+
+    "EGL_ANGLE_stream_producer_d3d_texture": [
+        "eglCreateStreamProducerD3DTextureANGLE",
+        "eglStreamPostD3DTextureANGLE"
+    ],
+
+    "EGL_KHR_fence_sync": [
+        "eglCreateSyncKHR",
+        "eglDestroySyncKHR",
+        "eglClientWaitSyncKHR",
+        "eglGetSyncAttribKHR"
+    ],
+    "EGL_KHR_wait_sync": [
+        "eglWaitSyncKHR"
+    ],
+    "EGL_CHROMIUM_get_sync_values": [
+        "eglGetSyncValuesCHROMIUM"
+    ],
+
+    "EGL_KHR_swap_buffers_with_damage": [
+        "eglSwapBuffersWithDamageKHR"
+    ],
+
+    "EGL_ANDROID_presentation_time": [
+        "eglPresentationTimeANDROID"
+    ],
+
+    "EGL_ANDROID_blob_cache": [
+        "eglSetBlobCacheFuncsANDROID"
+    ],
+
+    "EGL_ANGLE_program_cache_control": [
+        "eglProgramCacheGetAttribANGLE",
+        "eglProgramCacheQueryANGLE",
+        "eglProgramCachePopulateANGLE",
+        "eglProgramCacheResizeANGLE"
+    ],
+
+    "EGL_KHR_debug": [
+        "eglDebugMessageControlKHR",
+        "eglQueryDebugKHR",
+        "eglLabelObjectKHR"
+    ],
+
+    "EGL_ANDROID_get_frame_timestamps": [
+        "eglGetCompositorTimingSupportedANDROID",
+        "eglGetCompositorTimingANDROID",
+        "eglGetNextFrameIdANDROID",
+        "eglGetFrameTimestampSupportedANDROID",
+        "eglGetFrameTimestampsANDROID"
+    ],
+
+    "angle::Platform related entry points": [
+        "ANGLEGetDisplayPlatform",
+        "ANGLEResetDisplayPlatform"
+    ],
+
+    "GL_EXT_memory_object/GL_EXT_semaphore": [
+        "glGetUnsignedBytevEXT",
+        "glGetUnsignedBytei_vEXT"
+    ],
+
+    "GL_EXT_memory_object": [
+        "glDeleteMemoryObjectsEXT",
+        "glIsMemoryObjectEXT",
+        "glCreateMemoryObjectsEXT",
+        "glMemoryObjectParameterivEXT",
+        "glGetMemoryObjectParameterivEXT",
+        "glTexStorageMem2DEXT",
+        "glTexStorageMem2DMultisampleEXT",
+        "glTexStorageMem3DEXT",
+        "glTexStorageMem3DMultisampleEXT",
+        "glBufferStorageMemEXT"
+    ],
+
+    "GL_EXT_memory_object_fd": [
+        "glImportMemoryFdEXT"
+    ],
+
+    "GL_EXT_semaphore": [
+        "glGenSemaphoresEXT",
+        "glDeleteSemaphoresEXT",
+        "glIsSemaphoreEXT",
+        "glSemaphoreParameterui64vEXT",
+        "glGetSemaphoreParameterui64vEXT",
+        "glWaitSemaphoreEXT",
+        "glSignalSemaphoreEXT"
+    ],
+
+    "GL_EXT_semaphore_fd": [
+        "glImportSemaphoreFdEXT"
+    ],
+
+    "GL_CHROMIUM_lose_context": [
+        "glLoseContextCHROMIUM"
+    ]
+}

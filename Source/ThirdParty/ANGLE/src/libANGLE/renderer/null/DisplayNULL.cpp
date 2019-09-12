@@ -126,11 +126,6 @@ gl::Version DisplayNULL::getMaxSupportedESVersion() const
     return gl::Version(3, 2);
 }
 
-gl::Version DisplayNULL::getMaxConformantESVersion() const
-{
-    return getMaxSupportedESVersion();
-}
-
 SurfaceImpl *DisplayNULL::createWindowSurface(const egl::SurfaceState &state,
                                               EGLNativeWindowType window,
                                               const egl::AttributeMap &attribs)

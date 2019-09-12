@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -20,7 +20,7 @@
 #include "libANGLE/Thread.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/EGLImplFactory.h"
-#include "libANGLE/trace.h"
+#include "third_party/trace_event/trace_event.h"
 
 namespace egl
 {
@@ -136,10 +136,8 @@ void Surface::postSwap(const gl::Context *context)
     if (mRobustResourceInitialization && mSwapBehavior != EGL_BUFFER_PRESERVED)
     {
         mInitState = gl::InitState::MayNeedInit;
-        onStateChange(angle::SubjectMessage::SubjectChanged);
+        onStateChange(context, angle::SubjectMessage::STORAGE_CHANGED);
     }
-
-    context->onPostSwap();
 }
 
 Error Surface::initialize(const Display *display)
@@ -179,17 +177,14 @@ Error Surface::initialize(const Display *display)
     return NoError();
 }
 
-Error Surface::makeCurrent(const gl::Context *context)
+Error Surface::setIsCurrent(const gl::Context *context, bool isCurrent)
 {
-    ANGLE_TRY(mImplementation->makeCurrent(context));
+    if (isCurrent)
+    {
+        mRefCount++;
+        return NoError();
+    }
 
-    mRefCount++;
-    return NoError();
-}
-
-Error Surface::unMakeCurrent(const gl::Context *context)
-{
-    ANGLE_TRY(mImplementation->unMakeCurrent(context));
     return releaseRef(context->getDisplay());
 }
 
@@ -233,9 +228,7 @@ EGLint Surface::getType() const
 
 Error Surface::swap(const gl::Context *context)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "egl::Surface::swap");
-
-    context->getState().getOverlay()->onSwap();
+    TRACE_EVENT0("gpu.angle", "egl::Surface::swap");
 
     ANGLE_TRY(mImplementation->swap(context));
     postSwap(context);
@@ -244,8 +237,6 @@ Error Surface::swap(const gl::Context *context)
 
 Error Surface::swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects)
 {
-    context->getState().getOverlay()->onSwap();
-
     ANGLE_TRY(mImplementation->swapWithDamage(context, rects, n_rects));
     postSwap(context);
     return NoError();
@@ -262,11 +253,7 @@ Error Surface::postSubBuffer(const gl::Context *context,
         return egl::NoError();
     }
 
-    context->getState().getOverlay()->onSwap();
-
-    ANGLE_TRY(mImplementation->postSubBuffer(context, x, y, width, height));
-    postSwap(context);
-    return NoError();
+    return mImplementation->postSubBuffer(context, x, y, width, height);
 }
 
 Error Surface::setPresentationTime(EGLnsecsANDROID time)
@@ -479,10 +466,9 @@ GLuint Surface::getId() const
     return 0;
 }
 
-gl::Framebuffer *Surface::createDefaultFramebuffer(const gl::Context *context,
-                                                   egl::Surface *readSurface)
+gl::Framebuffer *Surface::createDefaultFramebuffer(const gl::Context *context)
 {
-    return new gl::Framebuffer(context, this, readSurface);
+    return new gl::Framebuffer(context, this);
 }
 
 gl::InitState Surface::initState(const gl::ImageIndex & /*imageIndex*/) const

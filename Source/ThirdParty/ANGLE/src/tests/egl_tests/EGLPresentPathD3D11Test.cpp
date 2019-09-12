@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class EGLPresentPathD3D11 : public ANGLETest
+class EGLPresentPathD3D11 : public EGLTest, public testing::WithParamInterface<PlatformParameters>
 {
   protected:
     EGLPresentPathD3D11()
@@ -27,8 +27,10 @@ class EGLPresentPathD3D11 : public ANGLETest
           mWindowWidth(0)
     {}
 
-    void testSetUp() override
+    void SetUp() override
     {
+        EGLTest::SetUp();
+
         mOSWindow    = OSWindow::New();
         mWindowWidth = 64;
         mOSWindow->initialize("EGLPresentPathD3D11", mWindowWidth, mWindowWidth);
@@ -88,13 +90,23 @@ class EGLPresentPathD3D11 : public ANGLETest
         EGLAttrib device      = 0;
         EGLAttrib angleDevice = 0;
 
+        PFNEGLQUERYDISPLAYATTRIBEXTPROC queryDisplayAttribEXT;
+        PFNEGLQUERYDEVICEATTRIBEXTPROC queryDeviceAttribEXT;
+
         const char *extensionString =
             static_cast<const char *>(eglQueryString(mDisplay, EGL_EXTENSIONS));
         EXPECT_TRUE(strstr(extensionString, "EGL_EXT_device_query"));
 
-        ASSERT_EGL_TRUE(eglQueryDisplayAttribEXT(mDisplay, EGL_DEVICE_EXT, &angleDevice));
-        ASSERT_EGL_TRUE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
-                                                EGL_D3D11_DEVICE_ANGLE, &device));
+        queryDisplayAttribEXT =
+            (PFNEGLQUERYDISPLAYATTRIBEXTPROC)eglGetProcAddress("eglQueryDisplayAttribEXT");
+        queryDeviceAttribEXT =
+            (PFNEGLQUERYDEVICEATTRIBEXTPROC)eglGetProcAddress("eglQueryDeviceAttribEXT");
+        ASSERT_NE(nullptr, queryDisplayAttribEXT);
+        ASSERT_NE(nullptr, queryDeviceAttribEXT);
+
+        ASSERT_EGL_TRUE(queryDisplayAttribEXT(mDisplay, EGL_DEVICE_EXT, &angleDevice));
+        ASSERT_EGL_TRUE(queryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
+                                             EGL_D3D11_DEVICE_ANGLE, &device));
         ID3D11Device *d3d11Device = reinterpret_cast<ID3D11Device *>(device);
 
         D3D11_TEXTURE2D_DESC textureDesc = {0};
@@ -132,7 +144,7 @@ class EGLPresentPathD3D11 : public ANGLETest
 
     void makeCurrent() { ASSERT_EGL_TRUE(eglMakeCurrent(mDisplay, mSurface, mSurface, mContext)); }
 
-    void testTearDown() override
+    void TearDown() override
     {
         SafeRelease(mOffscreenSurfaceD3D11Texture);
 
@@ -357,4 +369,4 @@ TEST_P(EGLPresentPathD3D11, ClientBufferPresentPathCopy)
     checkPixelsUsingD3D(false);
 }
 
-ANGLE_INSTANTIATE_TEST(EGLPresentPathD3D11, WithNoFixture(ES2_D3D11()));
+ANGLE_INSTANTIATE_TEST(EGLPresentPathD3D11, ES2_D3D11(), ES2_D3D11_FL9_3());

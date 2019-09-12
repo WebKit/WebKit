@@ -41,15 +41,18 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
                                size_t colorFormatsCount,
                                const GLenum *depthStencilFormats,
                                size_t depthStencilFormatCount,
+                               const EGLint *sampleCounts,
+                               size_t sampleCountsCount,
                                DisplayVk *display);
 
-template <size_t ColorFormatCount, size_t DepthStencilFormatCount>
+template <size_t ColorFormatCount, size_t DepthStencilFormatCount, size_t SampleCountsCount>
 egl::ConfigSet GenerateConfigs(const GLenum (&colorFormats)[ColorFormatCount],
                                const GLenum (&depthStencilFormats)[DepthStencilFormatCount],
+                               const EGLint (&sampleCounts)[SampleCountsCount],
                                DisplayVk *display)
 {
     return GenerateConfigs(colorFormats, ColorFormatCount, depthStencilFormats,
-                           DepthStencilFormatCount, display);
+                           DepthStencilFormatCount, sampleCounts, SampleCountsCount, display);
 }
 }  // namespace egl_vk
 

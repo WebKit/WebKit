@@ -1,5 +1,5 @@
 //
-// Copyright 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -27,7 +27,7 @@ namespace gl
 class Sampler final : public RefCountObject, public LabeledObject, public angle::Subject
 {
   public:
-    Sampler(rx::GLImplFactory *factory, SamplerID id);
+    Sampler(rx::GLImplFactory *factory, GLuint id);
     ~Sampler() override;
 
     void onDestroy(const Context *context) override;
@@ -75,14 +75,11 @@ class Sampler final : public RefCountObject, public LabeledObject, public angle:
 
     rx::SamplerImpl *getImplementation() const;
 
-    angle::Result syncState(const Context *context);
-    bool isDirty() const { return mDirty; }
+    void syncState(const Context *context);
 
   private:
-    void signalDirtyState();
     SamplerState mState;
-    bool mDirty;
-    rx::SamplerImpl *mSampler;
+    rx::SamplerImpl *mImpl;
 
     std::string mLabel;
 };

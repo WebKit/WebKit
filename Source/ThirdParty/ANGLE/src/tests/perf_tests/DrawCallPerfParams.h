@@ -1,5 +1,5 @@
 //
-// Copyright 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -20,21 +20,18 @@ struct DrawCallPerfParams : public RenderTestParams
     DrawCallPerfParams();
     virtual ~DrawCallPerfParams();
 
-    std::string story() const override;
+    std::string suffix() const override;
 
     double runTimeSeconds;
     int numTris;
-    bool offscreen;
+    bool useFBO;
 };
 
-namespace params
-{
-DrawCallPerfParams DrawCallD3D11();
-DrawCallPerfParams DrawCallD3D9();
-DrawCallPerfParams DrawCallOpenGL();
-DrawCallPerfParams DrawCallValidation();
-DrawCallPerfParams DrawCallVulkan();
-DrawCallPerfParams DrawCallWGL();
-}  // namespace params
+DrawCallPerfParams DrawCallPerfD3D11Params(bool useNullDevice, bool renderToTexture);
+DrawCallPerfParams DrawCallPerfD3D9Params(bool useNullDevice, bool renderToTexture);
+DrawCallPerfParams DrawCallPerfOpenGLOrGLESParams(bool useNullDevice, bool renderToTexture);
+DrawCallPerfParams DrawCallPerfValidationOnly();
+DrawCallPerfParams DrawCallPerfVulkanParams(bool useNullDevice, bool renderToTexture);
+DrawCallPerfParams DrawCallPerfWGLParams(bool renderToTexture);
 
 #endif  // TESTS_PERF_TESTS_DRAW_CALL_PERF_PARAMS_H_

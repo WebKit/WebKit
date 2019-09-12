@@ -2,7 +2,6 @@ import os
 import re
 import sys
 
-
 def ReadFileAsLines(filename):
     """Reads a file, removing blank lines and lines that start with #"""
     file = open(filename, "r")
@@ -15,19 +14,16 @@ def ReadFileAsLines(filename):
             lines.append(line)
     return lines
 
-
 def GetSuiteName(testName):
     return testName[:testName.find("/")]
 
-
 def GetTestName(testName):
-    replacements = {".test": "", ".": "_"}
+    replacements = { ".test": "", ".": "_" }
     splitTestName = testName.split("/")
     cleanName = splitTestName[-2] + "_" + splitTestName[-1]
     for replaceKey in replacements:
         cleanName = cleanName.replace(replaceKey, replacements[replaceKey])
     return cleanName
-
 
 def GenerateTests(outFile, testNames):
     # Remove duplicate tests
@@ -47,9 +43,8 @@ def GenerateTests(outFile, testNames):
         outFile.write("    run(\"" + test + "\");\n")
         outFile.write("}\n\n")
 
-
 def GenerateTestList(sourceFile, rootDir):
-    tests = []
+    tests = [ ]
     fileName, fileExtension = os.path.splitext(sourceFile)
     if fileExtension == ".run":
         lines = ReadFileAsLines(sourceFile)
@@ -57,8 +52,7 @@ def GenerateTestList(sourceFile, rootDir):
             tests += GenerateTestList(os.path.join(os.path.dirname(sourceFile), line), rootDir)
     elif fileExtension == ".test":
         tests.append(os.path.relpath(os.path.realpath(sourceFile), rootDir).replace("\\", "/"))
-    return tests
-
+    return tests;
 
 def main(argv):
     tests = GenerateTestList(argv[0], argv[1])
@@ -69,7 +63,6 @@ def main(argv):
     output.close()
 
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

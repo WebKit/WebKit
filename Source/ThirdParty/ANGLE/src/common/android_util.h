@@ -21,17 +21,17 @@ namespace angle
 namespace android
 {
 
-ANativeWindowBuffer *ClientBufferToANativeWindowBuffer(EGLClientBuffer clientBuffer);
-EGLClientBuffer AHardwareBufferToClientBuffer(const AHardwareBuffer *hardwareBuffer);
+struct ANativeWindowBuffer *ClientBufferToANativeWindowBuffer(EGLClientBuffer clientBuffer);
 
-void GetANativeWindowBufferProperties(const ANativeWindowBuffer *buffer,
+void GetANativeWindowBufferProperties(const struct ANativeWindowBuffer *buffer,
                                       int *width,
                                       int *height,
                                       int *depth,
                                       int *pixelFormat);
 GLenum NativePixelFormatToGLInternalFormat(int pixelFormat);
 
-AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(ANativeWindowBuffer *windowBuffer);
+struct AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(
+    struct ANativeWindowBuffer *windowBuffer);
 
 }  // namespace android
 }  // namespace angle

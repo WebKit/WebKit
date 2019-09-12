@@ -21,8 +21,10 @@ class FramebufferRenderMipmapTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    virtual void SetUp()
     {
+        ANGLETest::SetUp();
+
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         if (mProgram == 0)
         {
@@ -43,7 +45,12 @@ class FramebufferRenderMipmapTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    virtual void TearDown()
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     GLuint mProgram;
     GLint mColorLocation;

@@ -81,17 +81,6 @@ angle::Result TextureImpl::copy3DSubTexture(const gl::Context *context,
     return angle::Result::Stop;
 }
 
-angle::Result TextureImpl::setImageExternal(const gl::Context *context,
-                                            const gl::ImageIndex &index,
-                                            GLenum internalFormat,
-                                            const gl::Extents &size,
-                                            GLenum format,
-                                            GLenum type)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
 GLint TextureImpl::getMemorySize() const
 {
     return 0;
@@ -99,12 +88,6 @@ GLint TextureImpl::getMemorySize() const
 
 GLint TextureImpl::getLevelMemorySize(gl::TextureTarget target, GLint level)
 {
-    return 0;
-}
-
-GLint TextureImpl::getNativeID() const
-{
-    UNREACHABLE();
     return 0;
 }
 

@@ -21,25 +21,14 @@ FenceSyncVk::FenceSyncVk() {}
 
 FenceSyncVk::~FenceSyncVk() {}
 
-void FenceSyncVk::onDestroy(ContextVk *contextVk)
+void FenceSyncVk::onDestroy(RendererVk *renderer)
 {
     if (mEvent.valid())
     {
-        contextVk->releaseObject(contextVk->getCurrentQueueSerial(), &mEvent);
+        renderer->releaseObject(renderer->getCurrentQueueSerial(), &mEvent);
     }
 
-    for (vk::Shared<vk::Fence> &fence : mFences)
-    {
-        fence.reset(contextVk->getDevice());
-    }
-}
-
-void FenceSyncVk::onDestroy(DisplayVk *display)
-{
-    std::vector<vk::GarbageObjectBase> garbage;
-    mEvent.dumpResources(&garbage);
-
-    display->getRenderer()->addGarbage(std::move(mFences), std::move(garbage));
+    mFence.reset(renderer->getDevice());
 }
 
 angle::Result FenceSyncVk::initialize(ContextVk *contextVk)
@@ -53,16 +42,14 @@ angle::Result FenceSyncVk::initialize(ContextVk *contextVk)
     eventCreateInfo.sType             = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
     eventCreateInfo.flags             = 0;
 
-    vk::DeviceScoped<vk::Event> event(device);
+    vk::Scoped<vk::Event> event(device);
     ANGLE_VK_TRY(contextVk, event.get().init(device, eventCreateInfo));
 
-    vk::Shared<vk::Fence> fence;
-    ANGLE_TRY(contextVk->getNextSubmitFence(&fence));
+    ANGLE_TRY(renderer->getSubmitFence(contextVk, &mFence));
 
-    mEvent = event.release();
-    mFences.emplace_back(std::move(fence));
+    mEvent        = event.release();
 
-    contextVk->getCommandGraph()->setFenceSync(mEvent);
+    renderer->getCommandGraph()->setFenceSync(mEvent);
     return angle::Result::Continue;
 }
 
@@ -92,13 +79,12 @@ angle::Result FenceSyncVk::clientWait(vk::Context *context,
 
     if (flushCommands && contextVk)
     {
-        ANGLE_TRY(contextVk->flushImpl(nullptr));
+        ANGLE_TRY(contextVk->flushImpl());
     }
 
     // Wait on the fence that's expected to be signaled on the first vkQueueSubmit after
-    // `initialize` was called. The first fence is the fence created to signal this sync.
-    ASSERT(!mFences.empty());
-    VkResult status = mFences[0].get().wait(renderer->getDevice(), timeout);
+    // `initialize` was called.
+    VkResult status = mFence.get().wait(renderer->getDevice(), timeout);
 
     // Check for errors, but don't consider timeout as such.
     if (status != VK_TIMEOUT)
@@ -112,21 +98,13 @@ angle::Result FenceSyncVk::clientWait(vk::Context *context,
 
 angle::Result FenceSyncVk::serverWait(vk::Context *context, ContextVk *contextVk)
 {
-    if (contextVk)
-    {
-        contextVk->getCommandGraph()->waitFenceSync(mEvent);
-
-        // Track fences from Contexts that use this sync for garbage collection.
-        vk::Shared<vk::Fence> nextSubmitFence;
-        ANGLE_TRY(contextVk->getNextSubmitFence(&nextSubmitFence));
-        mFences.emplace_back(std::move(nextSubmitFence));
-    }
+    context->getRenderer()->getCommandGraph()->waitFenceSync(mEvent);
     return angle::Result::Continue;
 }
 
 angle::Result FenceSyncVk::getStatus(vk::Context *context, bool *signaled)
 {
-    VkResult result = mEvent.getStatus(context->getDevice());
+    VkResult result = mEvent.getStatus(context->getRenderer()->getDevice());
     if (result != VK_EVENT_SET && result != VK_EVENT_RESET)
     {
         ANGLE_VK_TRY(context, result);
@@ -141,7 +119,7 @@ SyncVk::~SyncVk() {}
 
 void SyncVk::onDestroy(const gl::Context *context)
 {
-    mFenceSync.onDestroy(vk::GetImpl(context));
+    mFenceSync.onDestroy(vk::GetImpl(context)->getRenderer());
 }
 
 angle::Result SyncVk::set(const gl::Context *context, GLenum condition, GLbitfield flags)
@@ -215,7 +193,7 @@ EGLSyncVk::~EGLSyncVk() {}
 
 void EGLSyncVk::onDestroy(const egl::Display *display)
 {
-    mFenceSync.onDestroy(vk::GetImpl(display));
+    mFenceSync.onDestroy(vk::GetImpl(display)->getRenderer());
 }
 
 egl::Error EGLSyncVk::initialize(const egl::Display *display,
@@ -294,12 +272,6 @@ egl::Error EGLSyncVk::getStatus(const egl::Display *display, EGLint *outStatus)
 
     *outStatus = signaled ? EGL_SIGNALED_KHR : EGL_UNSIGNALED_KHR;
     return egl::NoError();
-}
-
-egl::Error EGLSyncVk::dupNativeFenceFD(const egl::Display *display, EGLint *result) const
-{
-    UNREACHABLE();
-    return egl::EglBadDisplay();
 }
 
 }  // namespace rx

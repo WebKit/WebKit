@@ -37,7 +37,7 @@ struct VulkanBarriersPerfParams final : public RenderTestParams
         doSlowFragmentShaders = slowFS;
     }
 
-    std::string story() const override;
+    std::string suffix() const override;
 
     // Static parameters
     static constexpr int kImageSizes[3] = {256, 512, 4096};
@@ -50,7 +50,7 @@ constexpr int VulkanBarriersPerfParams::kImageSizes[];
 
 std::ostream &operator<<(std::ostream &os, const VulkanBarriersPerfParams &params)
 {
-    os << params.backendAndStory().substr(1);
+    os << params.suffix().substr(1);
     return os;
 }
 
@@ -102,11 +102,11 @@ class VulkanBarriersPerfBenchmark : public ANGLERenderTest,
     static constexpr size_t kHugeSizeIndex  = 2;
 };
 
-std::string VulkanBarriersPerfParams::story() const
+std::string VulkanBarriersPerfParams::suffix() const
 {
     std::ostringstream sout;
 
-    sout << RenderTestParams::story();
+    sout << RenderTestParams::suffix();
 
     if (doLargeTransfers)
     {

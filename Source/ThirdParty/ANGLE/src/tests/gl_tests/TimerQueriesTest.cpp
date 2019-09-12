@@ -28,8 +28,10 @@ class TimerQueriesTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void testSetUp() override
+    virtual void SetUp()
     {
+        ANGLETest::SetUp();
+
         constexpr char kCostlyVS[] =
             "attribute highp vec4 position; varying highp vec4 testPos; void main(void)\n"
             "{\n"
@@ -55,10 +57,11 @@ class TimerQueriesTest : public ANGLETest
         ASSERT_NE(0u, mProgramCostly) << "shader compilation failed.";
     }
 
-    void testTearDown() override
+    virtual void TearDown()
     {
         glDeleteProgram(mProgram);
         glDeleteProgram(mProgramCostly);
+        ANGLETest::TearDown();
     }
 
     GLuint mProgram;

@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,7 +19,7 @@ const int kMaxAllowedTraversalDepth = 256;
 class ValidateGlobalInitializerTraverser : public TIntermTraverser
 {
   public:
-    ValidateGlobalInitializerTraverser(int shaderVersion, bool isWebGL);
+    ValidateGlobalInitializerTraverser(int shaderVersion);
 
     void visitSymbol(TIntermSymbol *node) override;
     void visitConstantUnion(TIntermConstantUnion *node) override;
@@ -32,7 +32,6 @@ class ValidateGlobalInitializerTraverser : public TIntermTraverser
 
   private:
     int mShaderVersion;
-    bool mIsWebGL;
     bool mIsValid;
     bool mIssueWarning;
 };
@@ -51,7 +50,7 @@ void ValidateGlobalInitializerTraverser::visitSymbol(TIntermSymbol *node)
             // We allow these cases to be compatible with legacy ESSL 1.00 content.
             // Implement stricter rules for ESSL 3.00 since there's no legacy content to deal
             // with.
-            if ((mShaderVersion >= 300) || !mIsWebGL)
+            if (mShaderVersion >= 300)
             {
                 mIsValid = false;
             }
@@ -74,7 +73,7 @@ void ValidateGlobalInitializerTraverser::visitConstantUnion(TIntermConstantUnion
         case EvqConst:
             break;
         case EvqTemporary:
-            if ((mShaderVersion >= 300) || !mIsWebGL)
+            if (mShaderVersion >= 300)
             {
                 mIsValid = false;
             }
@@ -119,11 +118,9 @@ bool ValidateGlobalInitializerTraverser::visitUnary(Visit visit, TIntermUnary *n
     return true;
 }
 
-ValidateGlobalInitializerTraverser::ValidateGlobalInitializerTraverser(int shaderVersion,
-                                                                       bool isWebGL)
+ValidateGlobalInitializerTraverser::ValidateGlobalInitializerTraverser(int shaderVersion)
     : TIntermTraverser(true, false, false, nullptr),
       mShaderVersion(shaderVersion),
-      mIsWebGL(isWebGL),
       mIsValid(true),
       mIssueWarning(false)
 {
@@ -132,12 +129,9 @@ ValidateGlobalInitializerTraverser::ValidateGlobalInitializerTraverser(int shade
 
 }  // namespace
 
-bool ValidateGlobalInitializer(TIntermTyped *initializer,
-                               int shaderVersion,
-                               bool isWebGL,
-                               bool *warning)
+bool ValidateGlobalInitializer(TIntermTyped *initializer, int shaderVersion, bool *warning)
 {
-    ValidateGlobalInitializerTraverser validate(shaderVersion, isWebGL);
+    ValidateGlobalInitializerTraverser validate(shaderVersion);
     initializer->traverse(&validate);
     ASSERT(warning != nullptr);
     *warning = validate.issueWarning();

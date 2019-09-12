@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -28,7 +28,7 @@ void TranslatorESSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
     }
 }
 
-bool TranslatorESSL::translate(TIntermBlock *root,
+void TranslatorESSL::translate(TIntermBlock *root,
                                ShCompileOptions compileOptions,
                                PerformanceDiagnostics * /*perfDiagnostics*/)
 {
@@ -54,17 +54,11 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     {
         EmulatePrecision emulatePrecision(&getSymbolTable());
         root->traverse(&emulatePrecision);
-        if (!emulatePrecision.updateTree(this, root))
-        {
-            return false;
-        }
+        emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(sink, shaderVer, SH_ESSL_OUTPUT);
     }
 
-    if (!RecordConstantPrecision(this, root, &getSymbolTable()))
-    {
-        return false;
-    }
+    RecordConstantPrecision(root, &getSymbolTable());
 
     // Write emulated built-in functions if needed.
     if (!getBuiltInFunctionEmulator().isOutputEmpty())
@@ -90,9 +84,11 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     // Write array bounds clamping emulation if needed.
     getArrayBoundsClamper().OutputClampingFunctionDefinition(sink);
 
-    if (getShaderType() == GL_COMPUTE_SHADER)
+    if (getShaderType() == GL_COMPUTE_SHADER && isComputeShaderLocalSizeDeclared())
     {
-        EmitWorkGroupSizeGLSL(*this, sink);
+        const sh::WorkGroupSize &localSize = getComputeShaderLocalSize();
+        sink << "layout (local_size_x=" << localSize[0] << ", local_size_y=" << localSize[1]
+             << ", local_size_z=" << localSize[2] << ") in;\n";
     }
 
     if (getShaderType() == GL_GEOMETRY_SHADER_EXT)
@@ -108,8 +104,6 @@ bool TranslatorESSL::translate(TIntermBlock *root,
                            compileOptions);
 
     root->traverse(&outputESSL);
-
-    return true;
 }
 
 bool TranslatorESSL::shouldFlattenPragmaStdglInvariantAll()
@@ -130,13 +124,15 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
 {
     TInfoSinkBase &sink                   = getInfoSink().obj;
     const TExtensionBehavior &extBehavior = getExtensionBehavior();
+    const bool isMultiviewExtEmulated =
+        (compileOptions & (SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW |
+                           SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER)) != 0u;
     for (TExtensionBehavior::const_iterator iter = extBehavior.begin(); iter != extBehavior.end();
          ++iter)
     {
         if (iter->second != EBhUndefined)
         {
-            const bool isMultiview = (iter->first == TExtension::OVR_multiview) ||
-                                     (iter->first == TExtension::OVR_multiview2);
+            const bool isMultiview = (iter->first == TExtension::OVR_multiview2);
             if (getResources().NV_shader_framebuffer_fetch &&
                 iter->first == TExtension::EXT_shader_framebuffer_fetch)
             {
@@ -148,9 +144,16 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
                 sink << "#extension GL_NV_draw_buffers : " << GetBehaviorString(iter->second)
                      << "\n";
             }
-            else if (isMultiview)
+            else if (isMultiview && isMultiviewExtEmulated)
             {
-                EmitMultiviewGLSL(*this, compileOptions, iter->second, sink);
+                if (getShaderType() == GL_VERTEX_SHADER &&
+                    (compileOptions & SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER) != 0u)
+                {
+                    // Emit the NV_viewport_array2 extension in a vertex shader if the
+                    // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the
+                    // OVR_multiview2 extension is requested.
+                    sink << "#extension GL_NV_viewport_array2 : require\n";
+                }
             }
             else if (iter->first == TExtension::EXT_geometry_shader)
             {
@@ -172,12 +175,6 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
             {
                 // Don't emit anything. This extension is emulated
                 ASSERT((compileOptions & SH_EMULATE_GL_DRAW_ID) != 0);
-                continue;
-            }
-            else if (iter->first == TExtension::ANGLE_base_vertex_base_instance)
-            {
-                // Don't emit anything. This extension is emulated
-                ASSERT((compileOptions & SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE) != 0);
                 continue;
             }
             else

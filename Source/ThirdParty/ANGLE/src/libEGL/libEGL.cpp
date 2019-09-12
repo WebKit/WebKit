@@ -1,12 +1,11 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 // libEGL.cpp: Implements the exported EGL functions.
 
-#include "anglebase/no_destructor.h"
 #include "common/system_utils.h"
 
 #include <memory>
@@ -22,16 +21,11 @@ namespace
 {
 #if defined(ANGLE_USE_EGL_LOADER)
 bool gLoaded = false;
-
-std::unique_ptr<angle::Library> &EntryPointsLib()
-{
-    static angle::base::NoDestructor<std::unique_ptr<angle::Library>> entryPointsLib;
-    return *entryPointsLib;
-}
+std::unique_ptr<angle::Library> gEntryPointsLib;
 
 angle::GenericProc KHRONOS_APIENTRY GlobalLoad(const char *symbol)
 {
-    return reinterpret_cast<angle::GenericProc>(EntryPointsLib()->getSymbol(symbol));
+    return reinterpret_cast<angle::GenericProc>(gEntryPointsLib->getSymbol(symbol));
 }
 
 void EnsureEGLLoaded()
@@ -39,9 +33,8 @@ void EnsureEGLLoaded()
     if (gLoaded)
         return;
 
-    EntryPointsLib().reset(
-        angle::OpenSharedLibrary(ANGLE_GLESV2_LIBRARY_NAME, angle::SearchType::ApplicationDir));
-    angle::LoadEGL_EGL(GlobalLoad);
+    gEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_GLESV2_LIBRARY_NAME));
+    angle::LoadEGL(GlobalLoad);
     if (!EGL_GetPlatformDisplay)
     {
         fprintf(stderr, "Error loading EGL entry points.\n");
@@ -422,14 +415,6 @@ EGLBoolean EGLAPIENTRY eglQueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribute
     return EGL_QueryDisplayAttribEXT(dpy, attribute, value);
 }
 
-EGLBoolean EGLAPIENTRY eglQueryDisplayAttribANGLE(EGLDisplay dpy,
-                                                  EGLint attribute,
-                                                  EGLAttrib *value)
-{
-    EnsureEGLLoaded();
-    return EGL_QueryDisplayAttribANGLE(dpy, attribute, value);
-}
-
 EGLBoolean EGLAPIENTRY eglQueryDeviceAttribEXT(EGLDeviceEXT device,
                                                EGLint attribute,
                                                EGLAttrib *value)
@@ -693,23 +678,4 @@ EGLBoolean EGLAPIENTRY eglGetFrameTimestampsANDROID(EGLDisplay dpy,
     EnsureEGLLoaded();
     return EGL_GetFrameTimestampsANDROID(dpy, surface, frameId, numTimestamps, timestamps, values);
 }
-
-const char *EGLAPIENTRY eglQueryStringiANGLE(EGLDisplay dpy, EGLint name, EGLint index)
-{
-    EnsureEGLLoaded();
-    return EGL_QueryStringiANGLE(dpy, name, index);
-}
-
-EGLClientBuffer EGLAPIENTRY eglGetNativeClientBufferANDROID(const struct AHardwareBuffer *buffer)
-{
-    EnsureEGLLoaded();
-    return EGL_GetNativeClientBufferANDROID(buffer);
-}
-
-EGLint EGLAPIENTRY eglDupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
-{
-    EnsureEGLLoaded();
-    return EGL_DupNativeFenceFDANDROID(dpy, sync);
-}
-
 }  // extern "C"

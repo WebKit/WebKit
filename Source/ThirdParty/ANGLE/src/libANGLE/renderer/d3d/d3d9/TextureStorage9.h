@@ -1,5 +1,5 @@
 //
-// Copyright 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -90,7 +90,6 @@ class TextureStorage9_2D : public TextureStorage9
                                   IDirect3DSurface9 **outSurface) override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
     angle::Result getBaseTexture(const gl::Context *context,
                                  IDirect3DBaseTexture9 **outTexture) override;
@@ -117,7 +116,6 @@ class TextureStorage9_EGLImage final : public TextureStorage9
                                   IDirect3DSurface9 **outSurface) override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
     angle::Result getBaseTexture(const gl::Context *context,
                                  IDirect3DBaseTexture9 **outTexture) override;
@@ -148,7 +146,6 @@ class TextureStorage9_Cube : public TextureStorage9
                                   IDirect3DSurface9 **outSurface) override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
     angle::Result getBaseTexture(const gl::Context *context,
                                  IDirect3DBaseTexture9 **outTexture) override;

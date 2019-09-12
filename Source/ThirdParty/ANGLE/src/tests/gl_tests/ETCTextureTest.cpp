@@ -27,13 +27,20 @@ class ETCTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenTextures(1, &mTexture);
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteTextures(1, &mTexture); }
+    void TearDown() override
+    {
+        glDeleteTextures(1, &mTexture);
+
+        ANGLETest::TearDown();
+    }
 
     GLuint mTexture;
 };
@@ -256,6 +263,7 @@ TEST_P(ETCTextureTest, ETC2SRGB8A1Validation)
 ANGLE_INSTANTIATE_TEST(ETCTextureTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES3_D3D11(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),

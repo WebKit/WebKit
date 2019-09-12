@@ -68,8 +68,6 @@ class BufferImpl : public angle::Subject
     // Override if accurate native memory size information is available
     virtual GLint64 getMemorySize() const;
 
-    virtual void onDataChanged() {}
-
   protected:
     const gl::BufferState &mState;
 };

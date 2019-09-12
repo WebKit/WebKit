@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -28,7 +28,6 @@ class TFunctionLookup : angle::NonCopyable
     ImmutableString getMangledName() const;
     static ImmutableString GetMangledName(const char *functionName,
                                           const TIntermSequence &arguments);
-    std::vector<ImmutableString> getMangledNamesForImplicitConversions() const;
 
     bool isConstructor() const;
     const TType &constructorType() const;

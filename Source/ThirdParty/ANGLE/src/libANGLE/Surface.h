@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -68,8 +68,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     EGLint getType() const;
 
     Error initialize(const Display *display);
-    Error makeCurrent(const gl::Context *context);
-    Error unMakeCurrent(const gl::Context *context);
     Error swap(const gl::Context *context);
     Error swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects);
     Error postSubBuffer(const gl::Context *context,
@@ -87,6 +85,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     EGLint isPostSubBufferSupported() const;
 
     void setSwapInterval(EGLint interval);
+    Error setIsCurrent(const gl::Context *context, bool isCurrent);
     Error onDestroy(const Display *display);
 
     void setMipmapLevel(EGLint level);
@@ -96,8 +95,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     void setFixedWidth(EGLint width);
     void setFixedHeight(EGLint height);
 
-    gl::Framebuffer *createDefaultFramebuffer(const gl::Context *context,
-                                              egl::Surface *readSurface);
+    gl::Framebuffer *createDefaultFramebuffer(const gl::Context *context);
 
     const Config *getConfig() const;
 

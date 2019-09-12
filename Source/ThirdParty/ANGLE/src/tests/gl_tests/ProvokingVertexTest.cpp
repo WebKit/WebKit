@@ -36,8 +36,10 @@ class ProvokingVertexTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] =
             "#version 300 es\n"
             "in int intAttrib;\n"
@@ -76,7 +78,7 @@ class ProvokingVertexTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         if (mProgram != 0)
         {
@@ -107,6 +109,8 @@ class ProvokingVertexTest : public ANGLETest
             glDeleteBuffers(1, &mBuffer);
             mBuffer = 0;
         }
+
+        ANGLETest::TearDown();
     }
 
     GLuint mProgram;

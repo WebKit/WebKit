@@ -67,12 +67,6 @@ class Context9 : public ContextD3D
     // Memory object creation.
     MemoryObjectImpl *createMemoryObject() override;
 
-    // Semaphore creation.
-    SemaphoreImpl *createSemaphore() override;
-
-    // Overlay creation.
-    OverlayImpl *createOverlay(const gl::OverlayState &state) override;
-
     // Flush and finish.
     angle::Result flush(const gl::Context *context) override;
     angle::Result finish(const gl::Context *context) override;
@@ -87,12 +81,6 @@ class Context9 : public ContextD3D
                                       GLint first,
                                       GLsizei count,
                                       GLsizei instanceCount) override;
-    angle::Result drawArraysInstancedBaseInstance(const gl::Context *context,
-                                                  gl::PrimitiveMode mode,
-                                                  GLint first,
-                                                  GLsizei count,
-                                                  GLsizei instanceCount,
-                                                  GLuint baseInstance) override;
 
     angle::Result drawElements(const gl::Context *context,
                                gl::PrimitiveMode mode,
@@ -105,14 +93,6 @@ class Context9 : public ContextD3D
                                         gl::DrawElementsType type,
                                         const void *indices,
                                         GLsizei instances) override;
-    angle::Result drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
-                                                              gl::PrimitiveMode mode,
-                                                              GLsizei count,
-                                                              gl::DrawElementsType type,
-                                                              const void *indices,
-                                                              GLsizei instances,
-                                                              GLint baseVertex,
-                                                              GLuint baseInstance) override;
     angle::Result drawRangeElements(const gl::Context *context,
                                     gl::PrimitiveMode mode,
                                     GLuint start,

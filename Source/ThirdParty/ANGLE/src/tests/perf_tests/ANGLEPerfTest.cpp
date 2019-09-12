@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,7 +12,6 @@
 #include "ANGLEPerfTestArgs.h"
 #include "common/platform.h"
 #include "third_party/perf/perf_test.h"
-#include "third_party/trace_event/trace_event.h"
 #include "util/shader_utils.h"
 #include "util/system_utils.h"
 
@@ -52,23 +51,23 @@ constexpr TraceCategory gTraceCategories[2] = {
 
 void EmptyPlatformMethod(angle::PlatformMethods *, const char *) {}
 
-void OverrideWorkaroundsD3D(angle::PlatformMethods *platform, angle::FeaturesD3D *featuresD3D)
+void OverrideWorkaroundsD3D(angle::PlatformMethods *platform, angle::WorkaroundsD3D *workaroundsD3D)
 {
     auto *angleRenderTest = static_cast<ANGLERenderTest *>(platform->context);
-    angleRenderTest->overrideWorkaroundsD3D(featuresD3D);
+    angleRenderTest->overrideWorkaroundsD3D(workaroundsD3D);
 }
 
-angle::TraceEventHandle AddPerfTraceEvent(angle::PlatformMethods *platform,
-                                          char phase,
-                                          const unsigned char *categoryEnabledFlag,
-                                          const char *name,
-                                          unsigned long long id,
-                                          double timestamp,
-                                          int numArgs,
-                                          const char **argNames,
-                                          const unsigned char *argTypes,
-                                          const unsigned long long *argValues,
-                                          unsigned char flags)
+angle::TraceEventHandle AddTraceEvent(angle::PlatformMethods *platform,
+                                      char phase,
+                                      const unsigned char *categoryEnabledFlag,
+                                      const char *name,
+                                      unsigned long long id,
+                                      double timestamp,
+                                      int numArgs,
+                                      const char **argNames,
+                                      const unsigned char *argTypes,
+                                      const unsigned long long *argValues,
+                                      unsigned char flags)
 {
     if (!gEnableTrace)
         return 0;
@@ -85,7 +84,7 @@ angle::TraceEventHandle AddPerfTraceEvent(angle::PlatformMethods *platform,
     return buffer.size();
 }
 
-const unsigned char *GetPerfTraceCategoryEnabled(angle::PlatformMethods *platform,
+const unsigned char *GetTraceCategoryEnabledFlag(angle::PlatformMethods *platform,
                                                  const char *categoryName)
 {
     if (gEnableTrace)
@@ -113,10 +112,11 @@ void UpdateTraceEventDuration(angle::PlatformMethods *platform,
 
 double MonotonicallyIncreasingTime(angle::PlatformMethods *platform)
 {
+    ANGLERenderTest *renderTest = static_cast<ANGLERenderTest *>(platform->context);
     // Move the time origin to the first call to this function, to avoid generating unnecessarily
     // large timestamps.
-    static double origin = angle::GetCurrentTime();
-    return angle::GetCurrentTime() - origin;
+    static double origin = renderTest->getTimer()->getAbsoluteTime();
+    return renderTest->getTimer()->getAbsoluteTime() - origin;
 }
 
 void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
@@ -131,8 +131,8 @@ void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
         std::stringstream phaseName;
         phaseName << traceEvent.phase;
 
-        const auto microseconds =
-            static_cast<Json::LargestInt>(traceEvent.timestamp * 1000.0 * 1000.0);
+        unsigned long long microseconds =
+            static_cast<unsigned long long>(traceEvent.timestamp * 1000.0 * 1000.0);
 
         value["name"] = traceEvent.name;
         value["cat"]  = traceEvent.categoryName;
@@ -158,34 +158,23 @@ void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
 }  // anonymous namespace
 
 ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
-                             const std::string &backend,
-                             const std::string &story,
+                             const std::string &suffix,
                              unsigned int iterationsPerStep)
     : mName(name),
-      mBackend(backend),
-      mStory(story),
+      mSuffix(suffix),
+      mTimer(CreateTimer()),
       mGPUTimeNs(0),
       mSkipTest(false),
       mStepsToRun(std::numeric_limits<unsigned int>::max()),
       mNumStepsPerformed(0),
       mIterationsPerStep(iterationsPerStep),
       mRunning(true)
-{
-    if (mStory == "")
-    {
-        mStory = "baseline_story";
-    }
-    if (mStory[0] == '_')
-    {
-        mStory = mStory.substr(1);
-    }
-    mReporter = std::make_unique<perf_test::PerfResultReporter>(mName + mBackend, mStory);
-    mReporter->RegisterImportantMetric(".wall_time", "ns");
-    mReporter->RegisterImportantMetric(".gpu_time", "ns");
-    mReporter->RegisterFyiMetric(".steps", "count");
-}
+{}
 
-ANGLEPerfTest::~ANGLEPerfTest() {}
+ANGLEPerfTest::~ANGLEPerfTest()
+{
+    SafeDelete(mTimer);
+}
 
 void ANGLEPerfTest::run()
 {
@@ -200,13 +189,13 @@ void ANGLEPerfTest::run()
         doRunLoop(kCalibrationRunTimeSeconds);
 
         // Scale steps down according to the time that exeeded one second.
-        double scale = kCalibrationRunTimeSeconds / mTimer.getElapsedTime();
+        double scale = kCalibrationRunTimeSeconds / mTimer->getElapsedTime();
         mStepsToRun  = static_cast<size_t>(static_cast<double>(mNumStepsPerformed) * scale);
 
         // Calibration allows the perf test runner script to save some time.
         if (gCalibration)
         {
-            mReporter->AddResult(".steps", static_cast<size_t>(mStepsToRun));
+            printResult("steps", static_cast<size_t>(mStepsToRun), "count", false);
             return;
         }
     }
@@ -224,13 +213,17 @@ void ANGLEPerfTest::run()
         doRunLoop(kMaximumRunTimeSeconds);
         totalTime += printResults();
     }
+    double average = totalTime / kNumTrials;
+    std::ostringstream averageString;
+    averageString << "for " << kNumTrials << " runs";
+    printResult("average", average, averageString.str(), false);
 }
 
 void ANGLEPerfTest::doRunLoop(double maxRunTime)
 {
     mNumStepsPerformed = 0;
     mRunning           = true;
-    mTimer.start();
+    mTimer->start();
     startTest();
 
     while (mRunning)
@@ -239,7 +232,7 @@ void ANGLEPerfTest::doRunLoop(double maxRunTime)
         if (mRunning)
         {
             ++mNumStepsPerformed;
-            if (mTimer.getElapsedTime() > maxRunTime)
+            if (mTimer->getElapsedTime() > maxRunTime)
             {
                 mRunning = false;
             }
@@ -250,7 +243,23 @@ void ANGLEPerfTest::doRunLoop(double maxRunTime)
         }
     }
     finishTest();
-    mTimer.stop();
+    mTimer->stop();
+}
+
+void ANGLEPerfTest::printResult(const std::string &trace,
+                                double value,
+                                const std::string &units,
+                                bool important) const
+{
+    perf_test::PrintResult(mName, mSuffix, trace, value, units, important);
+}
+
+void ANGLEPerfTest::printResult(const std::string &trace,
+                                size_t value,
+                                const std::string &units,
+                                bool important) const
+{
+    perf_test::PrintResult(mName, mSuffix, trace, value, units, important);
 }
 
 void ANGLEPerfTest::SetUp() {}
@@ -260,13 +269,13 @@ void ANGLEPerfTest::TearDown() {}
 double ANGLEPerfTest::printResults()
 {
     double elapsedTimeSeconds[2] = {
-        mTimer.getElapsedTime(),
+        mTimer->getElapsedTime(),
         mGPUTimeNs * 1e-9,
     };
 
     const char *clockNames[2] = {
-        ".wall_time",
-        ".gpu_time",
+        "wall_time",
+        "gpu_time",
     };
 
     // If measured gpu time is non-zero, print that too.
@@ -278,29 +287,19 @@ double ANGLEPerfTest::printResults()
         double secondsPerStep = elapsedTimeSeconds[i] / static_cast<double>(mNumStepsPerformed);
         double secondsPerIteration = secondsPerStep / static_cast<double>(mIterationsPerStep);
 
-        perf_test::MetricInfo metricInfo;
-        std::string units;
-        // Lazily register the metric, re-using the existing units if it is
-        // already registered.
-        if (!mReporter->GetMetricInfo(clockNames[i], &metricInfo))
+        // Give the result a different name to ensure separate graphs if we transition.
+        if (secondsPerIteration > 1e-3)
         {
-            units = secondsPerIteration > 1e-3 ? "us" : "ns";
-            mReporter->RegisterImportantMetric(clockNames[i], units);
+            double microSecondsPerIteration = secondsPerIteration * kMicroSecondsPerSecond;
+            retValue                        = microSecondsPerIteration;
+            printResult(clockNames[i], microSecondsPerIteration, "us", true);
         }
         else
         {
-            units = metricInfo.units;
+            double nanoSecPerIteration = secondsPerIteration * kNanoSecondsPerSecond;
+            retValue                   = nanoSecPerIteration;
+            printResult(clockNames[i], nanoSecPerIteration, "ns", true);
         }
-
-        if (units == "us")
-        {
-            retValue = secondsPerIteration * kMicroSecondsPerSecond;
-        }
-        else
-        {
-            retValue = secondsPerIteration * kNanoSecondsPerSecond;
-        }
-        mReporter->AddResult(clockNames[i], retValue);
     }
     return retValue;
 }
@@ -310,10 +309,8 @@ double ANGLEPerfTest::normalizedTime(size_t value) const
     return static_cast<double>(value) / static_cast<double>(mNumStepsPerformed);
 }
 
-std::string RenderTestParams::backend() const
+std::string RenderTestParams::suffix() const
 {
-    std::stringstream strstr;
-
     switch (driver)
     {
         case angle::GLESDriverType::AngleEGL:
@@ -330,51 +327,25 @@ std::string RenderTestParams::backend() const
     switch (getRenderer())
     {
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
-            strstr << "_d3d11";
-            break;
+            return "_d3d11";
         case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
-            strstr << "_d3d9";
-            break;
+            return "_d3d9";
         case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
-            strstr << "_gl";
-            break;
+            return "_gl";
         case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
-            strstr << "_gles";
-            break;
+            return "_gles";
         case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
-            strstr << "_default";
-            break;
+            return "_default";
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
-            strstr << "_vulkan";
-            break;
+            return "_vulkan";
         default:
             assert(0);
             return "_unk";
     }
-
-    if (eglParameters.deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
-    {
-        strstr << "_null";
-    }
-
-    return strstr.str();
-}
-
-std::string RenderTestParams::story() const
-{
-    return "";
-}
-
-std::string RenderTestParams::backendAndStory() const
-{
-    return backend() + story();
 }
 
 ANGLERenderTest::ANGLERenderTest(const std::string &name, const RenderTestParams &testParams)
-    : ANGLEPerfTest(name,
-                    testParams.backend(),
-                    testParams.story(),
-                    OneFrame() ? 1 : testParams.iterationsPerStep),
+    : ANGLEPerfTest(name, testParams.suffix(), OneFrame() ? 1 : testParams.iterationsPerStep),
       mTestParams(testParams),
       mGLWindow(nullptr),
       mOSWindow(nullptr)
@@ -392,8 +363,7 @@ ANGLERenderTest::ANGLERenderTest(const std::string &name, const RenderTestParams
     {
         case angle::GLESDriverType::AngleEGL:
             mGLWindow = EGLWindow::New(testParams.majorVersion, testParams.minorVersion);
-            mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME,
-                                                           angle::SearchType::ApplicationDir));
+            mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME));
             break;
         case angle::GLESDriverType::SystemEGL:
             std::cerr << "Not implemented." << std::endl;
@@ -402,8 +372,7 @@ ANGLERenderTest::ANGLERenderTest(const std::string &name, const RenderTestParams
         case angle::GLESDriverType::SystemWGL:
 #if defined(ANGLE_USE_UTIL_LOADER) && defined(ANGLE_PLATFORM_WINDOWS)
             mGLWindow = WGLWindow::New(testParams.majorVersion, testParams.minorVersion);
-            mEntryPointsLib.reset(
-                angle::OpenSharedLibrary("opengl32", angle::SearchType::SystemDir));
+            mEntryPointsLib.reset(angle::OpenSharedLibrary("opengl32"));
 #else
             std::cout << "WGL driver not available. Skipping test." << std::endl;
             mSkipTest = true;
@@ -451,8 +420,8 @@ void ANGLERenderTest::SetUp()
     mPlatformMethods.logError                    = EmptyPlatformMethod;
     mPlatformMethods.logWarning                  = EmptyPlatformMethod;
     mPlatformMethods.logInfo                     = EmptyPlatformMethod;
-    mPlatformMethods.addTraceEvent               = AddPerfTraceEvent;
-    mPlatformMethods.getTraceCategoryEnabledFlag = GetPerfTraceCategoryEnabled;
+    mPlatformMethods.addTraceEvent               = AddTraceEvent;
+    mPlatformMethods.getTraceCategoryEnabledFlag = GetTraceCategoryEnabledFlag;
     mPlatformMethods.updateTraceEventDuration    = UpdateTraceEventDuration;
     mPlatformMethods.monotonicallyIncreasingTime = MonotonicallyIncreasingTime;
     mPlatformMethods.context                     = this;
@@ -531,28 +500,8 @@ void ANGLERenderTest::TearDown()
     ANGLEPerfTest::TearDown();
 }
 
-void ANGLERenderTest::beginInternalTraceEvent(const char *name)
-{
-    if (gEnableTrace)
-    {
-        mTraceEventBuffer.emplace_back(TRACE_EVENT_PHASE_BEGIN, gTraceCategories[0].name, name,
-                                       MonotonicallyIncreasingTime(&mPlatformMethods));
-    }
-}
-
-void ANGLERenderTest::endInternalTraceEvent(const char *name)
-{
-    if (gEnableTrace)
-    {
-        mTraceEventBuffer.emplace_back(TRACE_EVENT_PHASE_END, gTraceCategories[0].name, name,
-                                       MonotonicallyIncreasingTime(&mPlatformMethods));
-    }
-}
-
 void ANGLERenderTest::step()
 {
-    beginInternalTraceEvent("step");
-
     // Clear events that the application did not process from this frame
     Event event;
     bool closed = false;
@@ -579,8 +528,6 @@ void ANGLERenderTest::step()
         mGLWindow->swap();
         mOSWindow->messageLoop();
     }
-
-    endInternalTraceEvent("step");
 }
 
 void ANGLERenderTest::startGpuTimer()

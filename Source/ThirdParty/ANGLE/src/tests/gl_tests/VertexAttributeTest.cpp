@@ -186,8 +186,10 @@ class VertexAttributeTest : public ANGLETest
         }
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glClearColor(0, 0, 0, 0);
         glClearDepthf(0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -197,17 +199,19 @@ class VertexAttributeTest : public ANGLETest
         glGenBuffers(1, &mBuffer);
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteProgram(mProgram);
         glDeleteBuffers(1, &mBuffer);
         glDeleteBuffers(1, &mQuadBuffer);
+
+        ANGLETest::TearDown();
     }
 
     // Override a feature to force emulation of attribute formats.
     void overrideFeaturesVk(FeaturesVk *featuresVk) override
     {
-        featuresVk->overrideFeatures({"force_fallback_format"}, true);
+        featuresVk->forceFallbackFormat = true;
     }
 
     GLuint compileMultiAttribProgram(GLint attribCount)
@@ -663,7 +667,7 @@ TEST_P(VertexAttributeTestES3, VertexArrayObjectRendering)
 
     const auto &quadVertices = GetQuadVertices();
 
-    glBindVertexArray(vaos[0]);
+    glBindVertexArrayOES(vaos[0]);
     glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
     glBufferData(GL_ARRAY_BUFFER, quadVertices.size() * sizeof(Vector3), quadVertices.data(),
                  GL_STATIC_DRAW);
@@ -671,7 +675,7 @@ TEST_P(VertexAttributeTestES3, VertexArrayObjectRendering)
     glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     SetupColorsForUnitQuad(colorLoc, kFloatRed, GL_STREAM_DRAW, &colorBuffers[0]);
 
-    glBindVertexArray(vaos[1]);
+    glBindVertexArrayOES(vaos[1]);
     glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
     glEnableVertexAttribArray(positionLoc);
     glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -682,11 +686,11 @@ TEST_P(VertexAttributeTestES3, VertexArrayObjectRendering)
 
     for (int ii = 0; ii < 2; ++ii)
     {
-        glBindVertexArray(vaos[0]);
+        glBindVertexArrayOES(vaos[0]);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
-        glBindVertexArray(vaos[1]);
+        glBindVertexArrayOES(vaos[1]);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     }
@@ -1037,9 +1041,9 @@ class VertexAttributeTestES31 : public VertexAttributeTestES3
         glEnableVertexAttribArray(mExpectedAttrib);
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
-        VertexAttributeTestES3::testTearDown();
+        VertexAttributeTestES3::TearDown();
 
         glDeleteBuffers(1, &mExpectedBuffer);
         glDeleteVertexArrays(1, &mVAO);
@@ -1358,7 +1362,7 @@ void main()
     glUseProgram(computeProgram);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, testBuffer);
     glDispatchCompute(1, 1, 1);
-    glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     // Draw again to verify that testBuffer has been changed.
     glUseProgram(mProgram);
@@ -1526,7 +1530,7 @@ class VertexAttributeCachingTest : public VertexAttributeTest
   protected:
     VertexAttributeCachingTest() {}
 
-    void testSetUp() override;
+    void SetUp() override;
 
     template <typename DestT>
     static std::vector<GLfloat> GetExpectedData(const std::vector<GLubyte> &srcData,
@@ -1621,9 +1625,9 @@ std::vector<GLfloat> VertexAttributeCachingTest::GetExpectedData(
     return expectedData;
 }
 
-void VertexAttributeCachingTest::testSetUp()
+void VertexAttributeCachingTest::SetUp()
 {
-    VertexAttributeTest::testSetUp();
+    VertexAttributeTest::SetUp();
 
     glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
 
@@ -1704,7 +1708,7 @@ TEST_P(VertexAttributeCachingTest, BufferMulticaching)
 
     ASSERT_GL_NO_ERROR();
 
-    for (const AttribData &data : mTestData)
+    for (const auto &data : mTestData)
     {
         const auto &expected =
             (data.normalized) ? mNormExpectedData[data.type] : mExpectedData[data.type];
@@ -1719,7 +1723,7 @@ TEST_P(VertexAttributeCachingTest, BufferMulticaching)
                               sizeof(GLfloat) * baseStride, expected.data());
         drawQuad(mProgram, "position", 0.5f);
         ASSERT_GL_NO_ERROR();
-        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::white);
+        EXPECT_PIXEL_EQ(getWindowWidth() / 2, getWindowHeight() / 2, 255, 255, 255, 255);
     }
 }
 
@@ -2032,38 +2036,28 @@ void main()
 ANGLE_INSTANTIATE_TEST(VertexAttributeTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
                        ES3_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+                       ES2_VULKAN());
 
 ANGLE_INSTANTIATE_TEST(VertexAttributeOORTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+                       ES2_VULKAN());
 
-ANGLE_INSTANTIATE_TEST(VertexAttributeTestES3,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(VertexAttributeTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 
-ANGLE_INSTANTIATE_TEST(VertexAttributeTestES31,
-                       ES31_D3D11(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES(),
-                       ES31_VULKAN());
+ANGLE_INSTANTIATE_TEST(VertexAttributeTestES31, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
 
 ANGLE_INSTANTIATE_TEST(VertexAttributeCachingTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_VULKAN());
+                       ES3_OPENGL());
 
 }  // anonymous namespace

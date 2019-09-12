@@ -24,8 +24,10 @@ class FloatingPointSurfaceTest : public ANGLETest
         setConfigComponentType(EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kFS[] =
             "precision highp float;\n"
             "void main()\n"
@@ -39,7 +41,12 @@ class FloatingPointSurfaceTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    void TearDown() override
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     GLuint mProgram;
 };
@@ -69,4 +76,4 @@ TEST_P(FloatingPointSurfaceTest, Drawing)
 ANGLE_INSTANTIATE_TEST(FloatingPointSurfaceTest,
                        ES2_D3D11(),
                        ES3_D3D11(),
-                       ES2_D3D11_PRESENT_PATH_FAST());
+                       ES2_D3D11(EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE));

@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -134,7 +134,6 @@ class TextureState final : private angle::NonCopyable
     const SamplerState &getSamplerState() const { return mSamplerState; }
     GLenum getUsage() const { return mUsage; }
     GLenum getDepthStencilTextureMode() const { return mDepthStencilTextureMode; }
-    bool isStencilMode() const { return mDepthStencilTextureMode == GL_STENCIL_INDEX; }
 
     // Returns the desc of the base level. Only valid for cube-complete/mip-complete textures.
     const ImageDesc &getBaseLevelDesc() const;
@@ -212,10 +211,13 @@ class TextureState final : private angle::NonCopyable
 bool operator==(const TextureState &a, const TextureState &b);
 bool operator!=(const TextureState &a, const TextureState &b);
 
-class Texture final : public RefCountObject, public egl::ImageSibling, public LabeledObject
+class Texture final : public RefCountObject,
+                      public egl::ImageSibling,
+                      public LabeledObject,
+                      public angle::ObserverInterface
 {
   public:
-    Texture(rx::GLImplFactory *factory, TextureID id, TextureType type);
+    Texture(rx::GLImplFactory *factory, GLuint id, TextureType type);
     ~Texture() override;
 
     void onDestroy(const Context *context) override;
@@ -396,14 +398,6 @@ class Texture final : public RefCountObject, public egl::ImageSibling, public La
                                            MemoryObject *memoryObject,
                                            GLuint64 offset);
 
-    angle::Result setImageExternal(Context *context,
-                                   TextureTarget target,
-                                   GLint level,
-                                   GLenum internalFormat,
-                                   const Extents &size,
-                                   GLenum format,
-                                   GLenum type);
-
     angle::Result setEGLImageTarget(Context *context, TextureType type, egl::Image *imageTarget);
 
     angle::Result generateMipmap(Context *context);
@@ -414,7 +408,7 @@ class Texture final : public RefCountObject, public egl::ImageSibling, public La
     GLint getMemorySize() const;
     GLint getLevelMemorySize(TextureTarget target, GLint level) const;
 
-    void signalDirtyStorage(InitState initState);
+    void signalDirtyStorage(const Context *context, InitState initState);
 
     bool isSamplerComplete(const Context *context, const Sampler *optionalSampler);
 
@@ -439,7 +433,6 @@ class Texture final : public RefCountObject, public egl::ImageSibling, public La
     void onAttach(const Context *context) override;
     void onDetach(const Context *context) override;
     GLuint getId() const override;
-    GLuint getNativeID() const;
 
     // Needed for robust resource init.
     angle::Result ensureInitialized(const Context *context);
@@ -485,7 +478,9 @@ class Texture final : public RefCountObject, public egl::ImageSibling, public La
     bool hasAnyDirtyBit() const { return mDirtyBits.any(); }
 
     // ObserverInterface implementation.
-    void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
+    void onSubjectStateChange(const gl::Context *context,
+                              angle::SubjectIndex index,
+                              angle::SubjectMessage message) override;
 
   private:
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
@@ -513,7 +508,7 @@ class Texture final : public RefCountObject, public egl::ImageSibling, public La
 
     angle::Result handleMipmapGenerationHint(Context *context, int level);
 
-    void signalDirtyState(size_t dirtyBit);
+    void signalDirtyState(const Context *context, size_t dirtyBit);
 
     TextureState mState;
     DirtyBits mDirtyBits;

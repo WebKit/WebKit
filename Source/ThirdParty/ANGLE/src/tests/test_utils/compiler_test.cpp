@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -156,27 +156,6 @@ bool MatchOutputCodeTest::compileWithSettings(ShShaderOutput output,
                              compileOptions, translatedCode, infoLog);
 }
 
-bool MatchOutputCodeTest::foundInCodeRegex(ShShaderOutput output,
-                                           const std::regex &regexToFind,
-                                           std::smatch *match) const
-{
-    const auto code = mOutputCode.find(output);
-    EXPECT_NE(mOutputCode.end(), code);
-    if (code == mOutputCode.end())
-    {
-        return std::string::npos;
-    }
-
-    if (match)
-    {
-        return std::regex_search(code->second, *match, regexToFind);
-    }
-    else
-    {
-        return std::regex_search(code->second, regexToFind);
-    }
-}
-
 bool MatchOutputCodeTest::foundInCode(ShShaderOutput output, const char *stringToFind) const
 {
     const auto code = mOutputCode.find(output);
@@ -246,18 +225,6 @@ bool MatchOutputCodeTest::foundInCode(const char *stringToFind) const
     for (auto &code : mOutputCode)
     {
         if (!foundInCode(code.first, stringToFind))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool MatchOutputCodeTest::foundInCodeRegex(const std::regex &regexToFind, std::smatch *match) const
-{
-    for (auto &code : mOutputCode)
-    {
-        if (!foundInCodeRegex(code.first, regexToFind, match))
         {
             return false;
         }

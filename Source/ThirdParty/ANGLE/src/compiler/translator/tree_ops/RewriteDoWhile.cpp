@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,7 +9,6 @@
 
 #include "compiler/translator/tree_ops/RewriteDoWhile.h"
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
@@ -135,13 +134,11 @@ class DoWhileRewriter : public TIntermTraverser
 
 }  // anonymous namespace
 
-bool RewriteDoWhile(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
+void RewriteDoWhile(TIntermNode *root, TSymbolTable *symbolTable)
 {
     DoWhileRewriter rewriter(symbolTable);
 
     root->traverse(&rewriter);
-
-    return compiler->validateAST(root);
 }
 
 }  // namespace sh

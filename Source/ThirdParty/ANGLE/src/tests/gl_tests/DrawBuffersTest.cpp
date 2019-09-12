@@ -23,11 +23,13 @@ class DrawBuffersTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteFramebuffers(1, &mFBO);
         glDeleteFramebuffers(1, &mReadFramebuffer);
         glDeleteTextures(4, mTextures);
+
+        ANGLETest::TearDown();
     }
 
     // We must call a different DrawBuffers method depending on extension support. Use this
@@ -256,13 +258,6 @@ TEST_P(DrawBuffersTest, Gaps)
     // TODO(ynovikov): Investigate the failure (http://anglebug.com/1535)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
 
-    // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
-    // http://anglebug.com/3423
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
-
-    // Fails on Intel Ubuntu 19.04 Mesa 19.0.2 Vulkan. http://anglebug.com/3616
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
-
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mTextures[0], 0);
 
@@ -286,10 +281,6 @@ TEST_P(DrawBuffersTest, FirstAndLast)
 
     // TODO(ynovikov): Investigate the failure (https://anglebug.com/1533)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
-
-    // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
-    // http://anglebug.com/3423
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[0], 0);
@@ -321,13 +312,6 @@ TEST_P(DrawBuffersTest, FirstHalfNULL)
 
     // TODO(ynovikov): Investigate the failure (https://anglebug.com/1533)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
-
-    // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
-    // http://anglebug.com/3423
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
-
-    // Fails on Intel Ubuntu 19.04 Mesa 19.0.2 Vulkan. http://anglebug.com/3616
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     bool flags[8]  = {false};
     GLenum bufs[8] = {GL_NONE};
@@ -381,10 +365,6 @@ TEST_P(DrawBuffersWebGL2Test, TwoProgramsWithDifferentOutputsAndClear)
 
     // TODO(ynovikov): Investigate the failure (https://anglebug.com/1533)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
-
-    // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
-    // http://anglebug.com/3423
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     ANGLE_SKIP_TEST_IF(!setupTest());
 
@@ -448,21 +428,6 @@ TEST_P(DrawBuffersWebGL2Test, TwoProgramsWithDifferentOutputsAndClear)
 
     // Active draw buffers with no fragment output is not allowed.
     setDrawBuffers(kMaxBuffers, allBufs);
-    drawQuad(program, positionAttrib(), 0.5, 1.0f, true);
-    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
-    // Exception: when RASTERIZER_DISCARD is enabled.
-    glEnable(GL_RASTERIZER_DISCARD);
-    drawQuad(program, positionAttrib(), 0.5, 1.0f, true);
-    ASSERT_GL_NO_ERROR();
-    glDisable(GL_RASTERIZER_DISCARD);
-    // Exception: when all 4 channels of color mask are set to false.
-    glColorMask(false, false, false, false);
-    drawQuad(program, positionAttrib(), 0.5, 1.0f, true);
-    ASSERT_GL_NO_ERROR();
-    glColorMask(false, true, false, false);
-    drawQuad(program, positionAttrib(), 0.5, 1.0f, true);
-    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
-    glColorMask(true, true, true, true);
     drawQuad(program, positionAttrib(), 0.5, 1.0f, true);
     ASSERT_GL_ERROR(GL_INVALID_OPERATION);
 
@@ -648,9 +613,8 @@ ANGLE_INSTANTIATE_TEST(DrawBuffersTest,
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
                        ES3_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+                       ES2_VULKAN());
 
-ANGLE_INSTANTIATE_TEST(DrawBuffersWebGL2Test, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(DrawBuffersWebGL2Test, ES3_D3D11(), ES3_OPENGL());
 
-ANGLE_INSTANTIATE_TEST(DrawBuffersTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(DrawBuffersTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());

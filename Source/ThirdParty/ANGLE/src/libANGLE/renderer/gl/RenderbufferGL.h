@@ -11,15 +11,10 @@
 
 #include "libANGLE/renderer/RenderbufferImpl.h"
 
-namespace angle
-{
-struct FeaturesGL;
-}  // namespace angle
-
 namespace gl
 {
 class TextureCapsMap;
-}  // namespace gl
+}
 
 namespace rx
 {
@@ -27,13 +22,14 @@ namespace rx
 class BlitGL;
 class FunctionsGL;
 class StateManagerGL;
+struct WorkaroundsGL;
 
 class RenderbufferGL : public RenderbufferImpl
 {
   public:
     RenderbufferGL(const gl::RenderbufferState &state,
                    const FunctionsGL *functions,
-                   const angle::FeaturesGL &features,
+                   const WorkaroundsGL &workarounds,
                    StateManagerGL *stateManager,
                    BlitGL *blitter,
                    const gl::TextureCapsMap &textureCaps);
@@ -58,7 +54,7 @@ class RenderbufferGL : public RenderbufferImpl
 
   private:
     const FunctionsGL *mFunctions;
-    const angle::FeaturesGL &mFeatures;
+    const WorkaroundsGL &mWorkarounds;
     StateManagerGL *mStateManager;
     BlitGL *mBlitter;
     const gl::TextureCapsMap &mTextureCaps;

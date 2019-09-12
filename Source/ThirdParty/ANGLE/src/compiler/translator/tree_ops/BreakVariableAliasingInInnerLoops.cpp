@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,7 +10,6 @@
 
 #include "BreakVariableAliasingInInnerLoops.h"
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -99,12 +98,10 @@ class AliasingBreaker : public TIntermTraverser
 
 }  // anonymous namespace
 
-bool BreakVariableAliasingInInnerLoops(TCompiler *compiler, TIntermNode *root)
+void BreakVariableAliasingInInnerLoops(TIntermNode *root)
 {
     AliasingBreaker breaker;
     root->traverse(&breaker);
-
-    return compiler->validateAST(root);
 }
 
 }  // namespace sh

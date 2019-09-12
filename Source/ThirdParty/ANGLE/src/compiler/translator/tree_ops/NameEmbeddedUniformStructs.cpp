@@ -92,10 +92,10 @@ class Traverser : public TIntermTraverser
 };
 }  // anonymous namespace
 
-bool NameEmbeddedStructUniforms(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
+void NameEmbeddedStructUniforms(TIntermBlock *root, TSymbolTable *symbolTable)
 {
     Traverser nameStructs(symbolTable);
     root->traverse(&nameStructs);
-    return nameStructs.updateTree(compiler, root);
+    nameStructs.updateTree();
 }
 }  // namespace sh

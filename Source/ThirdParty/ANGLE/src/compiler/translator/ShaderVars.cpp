@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -39,15 +39,6 @@ ShaderVariable::ShaderVariable(GLenum typeIn)
       staticUse(false),
       active(false),
       isRowMajorLayout(false),
-      location(-1),
-      binding(-1),
-      imageUnitFormat(GL_NONE),
-      offset(-1),
-      readonly(false),
-      writeonly(false),
-      index(-1),
-      interpolation(INTERPOLATION_SMOOTH),
-      isInvariant(false),
       flattenedOffsetInParentArrays(-1)
 {}
 
@@ -70,15 +61,6 @@ ShaderVariable::ShaderVariable(const ShaderVariable &other)
       fields(other.fields),
       structName(other.structName),
       isRowMajorLayout(other.isRowMajorLayout),
-      location(other.location),
-      binding(other.binding),
-      imageUnitFormat(other.imageUnitFormat),
-      offset(other.offset),
-      readonly(other.readonly),
-      writeonly(other.writeonly),
-      index(other.index),
-      interpolation(other.interpolation),
-      isInvariant(other.isInvariant),
       flattenedOffsetInParentArrays(other.flattenedOffsetInParentArrays)
 {}
 
@@ -95,15 +77,6 @@ ShaderVariable &ShaderVariable::operator=(const ShaderVariable &other)
     structName                    = other.structName;
     isRowMajorLayout              = other.isRowMajorLayout;
     flattenedOffsetInParentArrays = other.flattenedOffsetInParentArrays;
-    location                      = other.location;
-    binding                       = other.binding;
-    imageUnitFormat               = other.imageUnitFormat;
-    offset                        = other.offset;
-    readonly                      = other.readonly;
-    writeonly                     = other.writeonly;
-    writeonly                     = other.index;
-    interpolation                 = other.interpolation;
-    isInvariant                   = other.isInvariant;
     return *this;
 }
 
@@ -113,11 +86,7 @@ bool ShaderVariable::operator==(const ShaderVariable &other) const
         mappedName != other.mappedName || arraySizes != other.arraySizes ||
         staticUse != other.staticUse || active != other.active ||
         fields.size() != other.fields.size() || structName != other.structName ||
-        isRowMajorLayout != other.isRowMajorLayout || location != other.location ||
-        binding != other.binding || imageUnitFormat != other.imageUnitFormat ||
-        offset != other.offset || readonly != other.readonly || writeonly != other.writeonly ||
-        index != other.index || interpolation != other.interpolation ||
-        isInvariant != other.isInvariant)
+        isRowMajorLayout != other.isRowMajorLayout)
     {
         return false;
     }
@@ -141,9 +110,9 @@ void ShaderVariable::setArraySize(unsigned int size)
 unsigned int ShaderVariable::getInnerArraySizeProduct() const
 {
     unsigned int arraySizeProduct = 1u;
-    for (size_t idx = 1; idx < arraySizes.size(); ++idx)
+    for (size_t index = 1; index < arraySizes.size(); ++index)
     {
-        arraySizeProduct *= getNestedArraySize(static_cast<unsigned int>(idx));
+        arraySizeProduct *= getNestedArraySize(static_cast<unsigned int>(index));
     }
     return arraySizeProduct;
 }
@@ -294,7 +263,40 @@ bool ShaderVariable::isSameVariableAtLinkTime(const ShaderVariable &other,
     return true;
 }
 
-bool ShaderVariable::isSameUniformAtLinkTime(const ShaderVariable &other) const
+Uniform::Uniform()
+    : binding(-1), imageUnitFormat(GL_NONE), offset(-1), readonly(false), writeonly(false)
+{}
+
+Uniform::~Uniform() {}
+
+Uniform::Uniform(const Uniform &other)
+    : VariableWithLocation(other),
+      binding(other.binding),
+      imageUnitFormat(other.imageUnitFormat),
+      offset(other.offset),
+      readonly(other.readonly),
+      writeonly(other.writeonly)
+{}
+
+Uniform &Uniform::operator=(const Uniform &other)
+{
+    VariableWithLocation::operator=(other);
+    binding                       = other.binding;
+    imageUnitFormat               = other.imageUnitFormat;
+    offset                        = other.offset;
+    readonly                      = other.readonly;
+    writeonly                     = other.writeonly;
+    return *this;
+}
+
+bool Uniform::operator==(const Uniform &other) const
+{
+    return VariableWithLocation::operator==(other) && binding == other.binding &&
+           imageUnitFormat == other.imageUnitFormat && offset == other.offset &&
+           readonly == other.readonly && writeonly == other.writeonly;
+}
+
+bool Uniform::isSameUniformAtLinkTime(const Uniform &other) const
 {
     // Enforce a consistent match.
     // https://cvs.khronos.org/bugzilla/show_bug.cgi?id=16261
@@ -318,20 +320,112 @@ bool ShaderVariable::isSameUniformAtLinkTime(const ShaderVariable &other) const
     {
         return false;
     }
-    return ShaderVariable::isSameVariableAtLinkTime(other, true, true);
+    return VariableWithLocation::isSameVariableAtLinkTime(other, true, true);
 }
 
-bool ShaderVariable::isSameInterfaceBlockFieldAtLinkTime(const ShaderVariable &other) const
+VariableWithLocation::VariableWithLocation() : location(-1) {}
+
+VariableWithLocation::~VariableWithLocation() {}
+
+VariableWithLocation::VariableWithLocation(const VariableWithLocation &other)
+    : ShaderVariable(other), location(other.location)
+{}
+
+VariableWithLocation &VariableWithLocation::operator=(const VariableWithLocation &other)
+{
+    ShaderVariable::operator=(other);
+    location                = other.location;
+    return *this;
+}
+
+bool VariableWithLocation::operator==(const VariableWithLocation &other) const
+{
+    return (ShaderVariable::operator==(other) && location == other.location);
+}
+
+Attribute::Attribute() {}
+
+Attribute::~Attribute() {}
+
+Attribute::Attribute(const Attribute &other) : VariableWithLocation(other) {}
+
+Attribute &Attribute::operator=(const Attribute &other)
+{
+    VariableWithLocation::operator=(other);
+    return *this;
+}
+
+bool Attribute::operator==(const Attribute &other) const
+{
+    return VariableWithLocation::operator==(other);
+}
+
+OutputVariable::OutputVariable() : index(-1) {}
+
+OutputVariable::~OutputVariable() {}
+
+OutputVariable::OutputVariable(const OutputVariable &other) = default;
+OutputVariable &OutputVariable::operator=(const OutputVariable &other) = default;
+
+bool OutputVariable::operator==(const OutputVariable &other) const
+{
+    return VariableWithLocation::operator==(other) && index == other.index;
+}
+
+InterfaceBlockField::InterfaceBlockField() {}
+
+InterfaceBlockField::~InterfaceBlockField() {}
+
+InterfaceBlockField::InterfaceBlockField(const InterfaceBlockField &other) : ShaderVariable(other)
+{}
+
+InterfaceBlockField &InterfaceBlockField::operator=(const InterfaceBlockField &other)
+{
+    ShaderVariable::operator=(other);
+    return *this;
+}
+
+bool InterfaceBlockField::operator==(const InterfaceBlockField &other) const
+{
+    return ShaderVariable::operator==(other);
+}
+
+bool InterfaceBlockField::isSameInterfaceBlockFieldAtLinkTime(
+    const InterfaceBlockField &other) const
 {
     return (ShaderVariable::isSameVariableAtLinkTime(other, true, true));
 }
 
-bool ShaderVariable::isSameVaryingAtLinkTime(const ShaderVariable &other) const
+Varying::Varying() : interpolation(INTERPOLATION_SMOOTH), isInvariant(false) {}
+
+Varying::~Varying() {}
+
+Varying::Varying(const Varying &other)
+    : VariableWithLocation(other),
+      interpolation(other.interpolation),
+      isInvariant(other.isInvariant)
+{}
+
+Varying &Varying::operator=(const Varying &other)
+{
+    VariableWithLocation::operator=(other);
+    interpolation                 = other.interpolation;
+    isInvariant                   = other.isInvariant;
+    return *this;
+}
+
+bool Varying::operator==(const Varying &other) const
+{
+    return (VariableWithLocation::operator==(other) && interpolation == other.interpolation &&
+            isInvariant == other.isInvariant);
+}
+
+bool Varying::isSameVaryingAtLinkTime(const Varying &other) const
 {
     return isSameVaryingAtLinkTime(other, 100);
 }
 
-bool ShaderVariable::isSameVaryingAtLinkTime(const ShaderVariable &other, int shaderVersion) const
+bool Varying::isSameVaryingAtLinkTime(const Varying &other, int shaderVersion) const
 {
     return (ShaderVariable::isSameVariableAtLinkTime(other, false, false) &&
             InterpolationTypesMatch(interpolation, other.interpolation) &&

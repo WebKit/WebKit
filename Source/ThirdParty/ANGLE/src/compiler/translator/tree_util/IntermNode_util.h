@@ -1,5 +1,5 @@
 //
-// Copyright 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,7 +10,6 @@
 #define COMPILER_TRANSLATOR_INTERMNODEUTIL_H_
 
 #include "compiler/translator/IntermNode.h"
-#include "compiler/translator/tree_util/FindFunction.h"
 
 namespace sh
 {
@@ -23,7 +22,6 @@ TIntermFunctionDefinition *CreateInternalFunctionDefinitionNode(const TFunction 
                                                                 TIntermBlock *functionBody);
 
 TIntermTyped *CreateZeroNode(const TType &type);
-TIntermConstantUnion *CreateFloatNode(float value);
 TIntermConstantUnion *CreateIndexNode(int index);
 TIntermConstantUnion *CreateBoolNode(bool value);
 
@@ -44,14 +42,6 @@ TVariable *DeclareTempVariable(TSymbolTable *symbolTable,
                                TIntermTyped *initializer,
                                TQualifier qualifier,
                                TIntermDeclaration **declarationOut);
-const TVariable *DeclareInterfaceBlock(TIntermBlock *root,
-                                       TSymbolTable *symbolTable,
-                                       TFieldList *fieldList,
-                                       TQualifier qualifier,
-                                       const TMemoryQualifier &memoryQualifier,
-                                       uint32_t arraySize,
-                                       const ImmutableString &blockTypeName,
-                                       const ImmutableString &blockVariableName);
 
 // If the input node is nullptr, return nullptr.
 // If the input node is a block node, return it.
@@ -63,7 +53,7 @@ TIntermSymbol *ReferenceGlobalVariable(const ImmutableString &name,
                                        const TSymbolTable &symbolTable);
 
 // Note: this can't access desktop GLSL built-ins. Those can only be accessed directly through
-// BuiltIn.h.
+// BuiltIn_autogen.h.
 TIntermSymbol *ReferenceBuiltInVariable(const ImmutableString &name,
                                         const TSymbolTable &symbolTable,
                                         int shaderVersion);

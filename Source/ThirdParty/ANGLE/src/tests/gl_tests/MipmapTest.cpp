@@ -123,8 +123,10 @@ void main()
         ASSERT_NE(0u, mCubeProgram);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         setUp2DProgram();
 
         setUpCubeProgram();
@@ -164,13 +166,15 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteProgram(m2DProgram);
         glDeleteProgram(mCubeProgram);
         glDeleteFramebuffers(1, &mOffscreenFramebuffer);
         glDeleteTextures(1, &mTexture2D);
         glDeleteTextures(1, &mTextureCube);
+
+        ANGLETest::TearDown();
     }
 
     std::vector<GLubyte> createRGBInitData(GLint width, GLint height, GLint r, GLint g, GLint b)
@@ -355,8 +359,10 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenTextures(1, &mTexture);
         ASSERT_GL_NO_ERROR();
 
@@ -366,7 +372,7 @@ void main()
         setUpCubeProgram();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteTextures(1, &mTexture);
 
@@ -374,6 +380,8 @@ void main()
         glDeleteProgram(m3DProgram);
         glDeleteProgram(m2DProgram);
         glDeleteProgram(mCubeProgram);
+
+        ANGLETest::TearDown();
     }
 
     GLuint mTexture;
@@ -1093,7 +1101,6 @@ TEST_P(MipmapTestES3, GenerateMipmapCubeBaseLevel)
 
     // Observed incorrect rendering on NVIDIA, level zero seems to be incorrectly affected by
     // GenerateMipmap.
-    // http://anglebug.com/3851
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGL());
 
     // Draw using level 0. It should still be blue.
@@ -1235,11 +1242,13 @@ TEST_P(MipmapTestES3, BaseLevelTextureBug)
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
+// tests should be run against. Note: we run these tests against 9_3 on WARP due to hardware driver
+// issues on Win7
 ANGLE_INSTANTIATE_TEST(MipmapTest,
                        ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_D3D11_PRESENT_PATH_FAST(),
+                       ES2_D3D11(EGL_EXPERIMENTAL_PRESENT_PATH_COPY_ANGLE),
+                       ES2_D3D11(EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE),
+                       ES2_D3D11_FL9_3_WARP(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),

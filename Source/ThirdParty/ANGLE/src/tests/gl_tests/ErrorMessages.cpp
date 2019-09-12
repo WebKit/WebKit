@@ -68,6 +68,8 @@ class ErrorMessagesTest : public ANGLETest
         setConfigAlphaBits(8);
         setWebGLCompatibilityEnabled(true);
     }
+
+    void SetUp() override { ANGLETest::SetUp(); }
 };
 
 // Verify functionality of WebGL specific errors using KHR_debug

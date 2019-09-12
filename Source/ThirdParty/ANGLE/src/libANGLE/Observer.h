@@ -16,6 +16,11 @@
 #include "common/FastVector.h"
 #include "common/angleutils.h"
 
+namespace gl
+{
+class Context;
+}  // namespace gl
+
 namespace angle
 {
 template <typename HaystackT, typename NeedleT>
@@ -26,31 +31,14 @@ bool IsInContainer(const HaystackT &haystack, const NeedleT &needle)
 
 using SubjectIndex = size_t;
 
-// Messages are used to distinguish different Subject events that get sent to a single Observer.
-// It could be possible to improve the handling by using different callback functions instead
-// of a single handler function. But in some cases we want to share a single binding between
-// Observer and Subject and handle different types of events.
 enum class SubjectMessage
 {
-    // Used by gl::VertexArray to notify gl::Context of a gl::Buffer binding count change. Triggers
-    // a validation cache update.
-    BindingChanged,
-
-    // Only the contents (pixels, bytes, etc) changed in this Subject. Distinct from the object
-    // storage.
-    ContentsChanged,
-
-    // Sent by gl::Sampler, gl::Texture, gl::Framebuffer and others to notifiy gl::Context. This
-    // flag indicates to call syncState before next use.
-    DirtyBitsFlagged,
-
-    // Generic state change message. Used in multiple places for different purposes.
-    SubjectChanged,
-
-    // Indicates a bound gl::Buffer is now mapped or unmapped. Passed from gl::Buffer, through
-    // gl::VertexArray, into gl::Context. Used to track validation.
-    SubjectMapped,
-    SubjectUnmapped,
+    CONTENTS_CHANGED,
+    STORAGE_CHANGED,
+    BINDING_CHANGED,
+    DEPENDENT_DIRTY_BITS,
+    RESOURCE_MAPPED,
+    RESOURCE_UNMAPPED,
 };
 
 // The observing class inherits from this interface class.
@@ -58,7 +46,9 @@ class ObserverInterface
 {
   public:
     virtual ~ObserverInterface();
-    virtual void onSubjectStateChange(SubjectIndex index, SubjectMessage message) = 0;
+    virtual void onSubjectStateChange(const gl::Context *context,
+                                      SubjectIndex index,
+                                      SubjectMessage message) = 0;
 };
 
 class ObserverBindingBase
@@ -86,7 +76,7 @@ class Subject : NonCopyable
     Subject();
     virtual ~Subject();
 
-    void onStateChange(SubjectMessage message) const;
+    void onStateChange(const gl::Context *context, SubjectMessage message) const;
     bool hasObservers() const;
     void resetObservers();
 
@@ -122,7 +112,7 @@ class ObserverBinding final : public ObserverBindingBase
 
     ANGLE_INLINE void reset() { bind(nullptr); }
 
-    void onStateChange(SubjectMessage message) const;
+    void onStateChange(const gl::Context *context, SubjectMessage message) const;
     void onSubjectReset() override;
 
     ANGLE_INLINE const Subject *getSubject() const { return mSubject; }

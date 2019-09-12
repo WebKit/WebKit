@@ -17,12 +17,8 @@ fi
 # First, preserve WebKit's additional files
 TEMPDIR=`mktemp -d`
 function cleanup {
-	echo "Copying WebKit-added files into the updated ANGLE:"
-	pushd "$TEMPDIR" &> /dev/null
-	popd &> /dev/null
     cp -a "$TEMPDIR/." "$ANGLE_DIR"
     rm -rf "$TEMPDIR"
-	git ls-files --others --exclude-standard | sed 's/^/     /'
 }
 trap cleanup EXIT
 mv \
@@ -46,43 +42,27 @@ echo "Downloading latest ANGLE via git clone."
 git clone https://chromium.googlesource.com/angle/angle . --depth 1
 echo "Successfully downloaded latest ANGLE."
 echo -n "Commit hash: "
-COMMIT_HASH=`git rev-parse HEAD`
-echo "$COMMIT_HASH"
+git rev-parse HEAD
 
 trap - EXIT
 cleanup
 
-echo "Updating ANGLE.plist commit hashes."
-sed -i.bak -e "s/\([^a-z0-9]\)[a-z0-9]\{40\}\([^a-z0-9]\)/\1$COMMIT_HASH\2/g" ANGLE.plist
-echo "Updating ANGLE.plist date."
-sed -i.bak -e "s/<string>[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]<\/string>/<string>`date +%Y-%m-%d`<\/string>/g" ANGLE.plist
-rm ANGLE.plist.bak
-
 echo "Applying patch from changes.diff."
 if ! git am changes.diff; then
     echo "ERROR: Patch failed."
-    echo "You must resolve merge conflicts manually."
+    echo "You must resolve any merge conflicts, then use \`git format-patch master\`"
+    echo "to regenerate changes.diff so that it will apply cleanly next time."
+    echo "Once you are done, be sure to delete the .git directory."
     FAILED_PATCH=true
+else
+    rm -rf .git
 fi
 
-echo "________________________________________________________________________"
-echo ""
-echo "There is now a git repository for the latest ANGLE in the directory:"
-echo "$ANGLE_DIR"
-echo ""
+echo
 echo "Required manual steps:"
 if [ "$FAILED_PATCH" = true ]; then
-    echo "    - Resolve the merge conflicts created while applying changes.diff."
+    echo "    - Finish the patching process as described above."
 fi
 echo "    - Update the XCode project with any new or deleted ANGLE source files."
 echo "    - Update the CMake files with any new or deleted ANGLE source files."
-echo "    - Fix any build/test failures and commit any modified ANGLE files to the"
-echo "      ANGLE git repository."
-echo "        - Be sure not to commit the WebKit-added files listed above, such as"
-echo "          this script or ANGLE.xcodeproj."
-echo "    - Once you have committed any changes you made to upstream ANGLE files,"
-echo "      regenerate changes.diff using this command:"
-echo "          $ git format-patch origin/master --stdout > changes.diff"
-echo "    - Once changes.diff is updated, remove the ANGLE git repository by"
-echo "      deleting the .git directory:"
-echo "          $ rm -rf \"$ANGLE_DIR/.git\""
+echo "    - Update ANGLE.plist with the new commit hash."

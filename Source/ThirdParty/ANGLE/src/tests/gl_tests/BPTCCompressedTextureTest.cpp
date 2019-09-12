@@ -36,8 +36,10 @@ class BPTCCompressedTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] = R"(precision highp float;
 attribute vec4 position;
 varying vec2 texcoord;
@@ -69,7 +71,12 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteProgram(mTextureProgram); }
+    void TearDown() override
+    {
+        glDeleteProgram(mTextureProgram);
+
+        ANGLETest::TearDown();
+    }
 
     void setupTextureParameters(GLuint texture)
     {

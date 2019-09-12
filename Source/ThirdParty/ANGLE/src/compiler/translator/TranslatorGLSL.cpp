@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -44,7 +44,7 @@ void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
     InitBuiltInFunctionEmulatorForGLSLMissingFunctions(emu, getShaderType(), targetGLSLVersion);
 }
 
-bool TranslatorGLSL::translate(TIntermBlock *root,
+void TranslatorGLSL::translate(TIntermBlock *root,
                                ShCompileOptions compileOptions,
                                PerformanceDiagnostics * /*perfDiagnostics*/)
 {
@@ -95,18 +95,12 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
 
     if ((compileOptions & SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH) != 0)
     {
-        if (!sh::RewriteTexelFetchOffset(this, root, getSymbolTable(), getShaderVersion()))
-        {
-            return false;
-        }
+        sh::RewriteTexelFetchOffset(root, getSymbolTable(), getShaderVersion());
     }
 
     if ((compileOptions & SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR) != 0)
     {
-        if (!sh::RewriteUnaryMinusOperatorFloat(this, root))
-        {
-            return false;
-        }
+        sh::RewriteUnaryMinusOperatorFloat(root);
     }
 
     bool precisionEmulation =
@@ -116,10 +110,7 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
     {
         EmulatePrecision emulatePrecision(&getSymbolTable());
         root->traverse(&emulatePrecision);
-        if (!emulatePrecision.updateTree(this, root))
-        {
-            return false;
-        }
+        emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(sink, getShaderVersion(), getOutputType());
     }
 
@@ -203,9 +194,11 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
     }
 
-    if (getShaderType() == GL_COMPUTE_SHADER)
+    if (getShaderType() == GL_COMPUTE_SHADER && isComputeShaderLocalSizeDeclared())
     {
-        EmitWorkGroupSizeGLSL(*this, sink);
+        const sh::WorkGroupSize &localSize = getComputeShaderLocalSize();
+        sink << "layout (local_size_x=" << localSize[0] << ", local_size_y=" << localSize[1]
+             << ", local_size_z=" << localSize[2] << ") in;\n";
     }
 
     if (getShaderType() == GL_GEOMETRY_SHADER_EXT)
@@ -221,8 +214,6 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
                            compileOptions);
 
     root->traverse(&outputGLSL);
-
-    return true;
 }
 
 bool TranslatorGLSL::shouldFlattenPragmaStdglInvariantAll()
@@ -286,11 +277,14 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions 
             }
         }
 
-        const bool isMultiview =
-            (iter.first == TExtension::OVR_multiview) || (iter.first == TExtension::OVR_multiview2);
-        if (isMultiview)
+        const bool isMultiview = (iter.first == TExtension::OVR_multiview2);
+        if (isMultiview && getShaderType() == GL_VERTEX_SHADER &&
+            (compileOptions & SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER) != 0u)
         {
-            EmitMultiviewGLSL(*this, compileOptions, iter.second, sink);
+            // Emit the NV_viewport_array2 extension in a vertex shader if the
+            // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the OVR_multiview2(2)
+            // extension is requested.
+            sink << "#extension GL_NV_viewport_array2 : require\n";
         }
 
         // Support ANGLE_texture_multisample extension on GLSL300

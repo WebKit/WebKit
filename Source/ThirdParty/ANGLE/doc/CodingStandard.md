@@ -69,11 +69,9 @@ underscore and use CamelCase.
 use CamelCase (chosen for consistency)
 * {DO} Constants: start with a **`k`** and use CamelCase
 * Namespaces: short names. use all lower case
-* {DEV} Enum Names: use strongly typed class enums when possible. Use CamelCase for class enum members. See [official docs][EnumsOfficial].
+* Enum Names: use class enums when possible. The values should be uppercase with underscores or CamelCase.
 * Macros: all uppercase with underscores
 * Exceptions to naming: use common sense!
-
-[EnumsOfficial]: https://google.github.io/styleguide/cppguide.html#Enumerator_Names
 
 ### [Comments](https://google.github.io/styleguide/cppguide.html#Comments)
 

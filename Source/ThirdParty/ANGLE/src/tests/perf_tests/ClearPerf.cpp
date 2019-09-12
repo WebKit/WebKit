@@ -33,7 +33,7 @@ struct ClearParams final : public RenderTestParams
         textureSize = 16;
     }
 
-    std::string story() const override;
+    std::string suffix() const override;
 
     GLsizei fboSize;
     GLsizei textureSize;
@@ -41,15 +41,15 @@ struct ClearParams final : public RenderTestParams
 
 std::ostream &operator<<(std::ostream &os, const ClearParams &params)
 {
-    os << params.backendAndStory().substr(1);
+    os << params.suffix().substr(1);
     return os;
 }
 
-std::string ClearParams::story() const
+std::string ClearParams::suffix() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::story();
+    strstr << RenderTestParams::suffix();
 
     return strstr.str();
 }
@@ -179,7 +179,7 @@ ClearParams D3D11Params()
 ClearParams OpenGLOrGLESParams()
 {
     ClearParams params;
-    params.eglParameters = egl_platform::OPENGL_OR_GLES();
+    params.eglParameters = egl_platform::OPENGL_OR_GLES(false);
     return params;
 }
 

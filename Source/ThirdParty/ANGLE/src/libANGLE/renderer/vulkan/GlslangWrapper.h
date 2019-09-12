@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,22 +22,26 @@ class GlslangWrapper
     static void Initialize();
     static void Release();
 
-    static void GetShaderSource(bool useOldRewriteStructSamplers,
-                                const gl::ProgramState &programState,
+    static void GetShaderSource(const gl::ProgramState &programState,
                                 const gl::ProgramLinkedResources &resources,
-                                gl::ShaderMap<std::string> *shaderSourcesOut);
+                                std::string *vertexSourceOut,
+                                std::string *fragmentSourceOut);
 
     static angle::Result GetShaderCode(vk::Context *context,
                                        const gl::Caps &glCaps,
                                        bool enableLineRasterEmulation,
-                                       const gl::ShaderMap<std::string> &shaderSources,
-                                       gl::ShaderMap<std::vector<uint32_t>> *shaderCodesOut);
+                                       const std::string &vertexSource,
+                                       const std::string &fragmentSource,
+                                       std::vector<uint32_t> *vertexCodeOut,
+                                       std::vector<uint32_t> *fragmentCodeOut);
 
   private:
     static angle::Result GetShaderCodeImpl(vk::Context *context,
                                            const gl::Caps &glCaps,
-                                           const gl::ShaderMap<std::string> &shaderSources,
-                                           gl::ShaderMap<std::vector<uint32_t>> *shaderCodesOut);
+                                           const std::string &vertexSource,
+                                           const std::string &fragmentSource,
+                                           std::vector<uint32_t> *vertexCodeOut,
+                                           std::vector<uint32_t> *fragmentCodeOut);
 };
 }  // namespace rx
 

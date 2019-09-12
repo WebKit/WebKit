@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -52,11 +52,6 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
 
-    ExternalImageSiblingImpl *createExternalImageSibling(const gl::Context *context,
-                                                         EGLenum target,
-                                                         EGLClientBuffer buffer,
-                                                         const egl::AttributeMap &attribs) override;
-
     egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
@@ -71,10 +66,6 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
                                     EGLenum buftype,
                                     EGLClientBuffer clientBuffer,
                                     const egl::AttributeMap &attribs) const override;
-    egl::Error validateImageClientBuffer(const gl::Context *context,
-                                         EGLenum target,
-                                         EGLClientBuffer clientBuffer,
-                                         const egl::AttributeMap &attribs) const override;
 
     DeviceImpl *createDevice() override;
 
@@ -83,7 +74,6 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
     egl::Error waitClient(const gl::Context *context) override;
     egl::Error waitNative(const gl::Context *context, EGLint engine) override;
     gl::Version getMaxSupportedESVersion() const override;
-    gl::Version getMaxConformantESVersion() const override;
 
     void handleResult(HRESULT hr,
                       const char *message,
@@ -92,8 +82,6 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
                       unsigned int line) override;
 
     const std::string &getStoredErrorString() const { return mStoredErrorString; }
-
-    void populateFeatureList(angle::FeatureList *features) override;
 
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

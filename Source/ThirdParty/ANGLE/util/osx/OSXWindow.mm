@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,7 +12,6 @@
 // Include Carbon to use the keycode names in Carbon's Event.h
 #include <Carbon/Carbon.h>
 
-#include "anglebase/no_destructor.h"
 #include "common/debug.h"
 
 // On OSX 10.12 a number of AppKit interfaces have been renamed for consistency, and the previous
@@ -24,11 +23,7 @@
 // Some events such as "ShouldTerminate" are sent to the whole application so we keep a list of
 // all the windows in order to forward the event to each of them. However this and calling pushEvent
 // in ApplicationDelegate is inherently unsafe in a multithreaded environment.
-static std::set<OSXWindow *> &AllWindows()
-{
-    static angle::base::NoDestructor<std::set<OSXWindow *>> allWindows;
-    return *allWindows;
-}
+static std::set<OSXWindow *> gAllWindows;
 
 @interface Application : NSApplication
 @end
@@ -38,7 +33,7 @@ static std::set<OSXWindow *> &AllWindows()
 {
     if ([nsEvent type] == NSApplicationDefined)
     {
-        for (auto window : AllWindows())
+        for (auto window : gAllWindows)
         {
             if ([window->getNSWindow() windowNumber] == [nsEvent windowNumber])
             {
@@ -61,7 +56,7 @@ static std::set<OSXWindow *> &AllWindows()
 {
     Event event;
     event.Type = Event::EVENT_CLOSED;
-    for (auto window : AllWindows())
+    for (auto window : gAllWindows)
     {
         window->pushEvent(event);
     }
@@ -134,8 +129,8 @@ static float YCoordToFromCG(float y)
     NSSize windowSize = [[mWindow->getNSWindow() contentView] frame].size;
     Event event;
     event.Type        = Event::EVENT_RESIZED;
-    event.Size.Width  = (int)windowSize.width;
-    event.Size.Height = (int)windowSize.height;
+    event.Size.Width  = windowSize.width;
+    event.Size.Height = windowSize.height;
     mWindow->pushEvent(event);
 }
 
@@ -144,8 +139,8 @@ static float YCoordToFromCG(float y)
     NSRect screenspace = [mWindow->getNSWindow() frame];
     Event event;
     event.Type   = Event::EVENT_MOVED;
-    event.Move.X = (int)screenspace.origin.x;
-    event.Move.Y = (int)YCoordToFromCG(screenspace.origin.y + screenspace.size.height);
+    event.Move.X = screenspace.origin.x;
+    event.Move.Y = YCoordToFromCG(screenspace.origin.y + screenspace.size.height);
     mWindow->pushEvent(event);
 }
 
@@ -384,7 +379,7 @@ static Key NSCodeToKey(int keyCode)
     return Key(0);
 }
 
-static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
+static void AddNSKeyStateToEvent(Event *event, int state)
 {
     event->Key.Shift   = state & NSShiftKeyMask;
     event->Key.Control = state & NSControlKeyMask;
@@ -392,7 +387,7 @@ static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
     event->Key.System  = state & NSCommandKeyMask;
 }
 
-static MouseButton TranslateMouseButton(NSInteger button)
+static MouseButton TranslateMouseButton(int button)
 {
     switch (button)
     {
@@ -479,8 +474,8 @@ static MouseButton TranslateMouseButton(NSInteger button)
     Event event;
     event.Type               = eventType;
     event.MouseButton.Button = button;
-    event.MouseButton.X      = (int)[nsEvent locationInWindow].x;
-    event.MouseButton.Y      = (int)[self translateMouseY:[nsEvent locationInWindow].y];
+    event.MouseButton.X      = [nsEvent locationInWindow].x;
+    event.MouseButton.Y      = [self translateMouseY:[nsEvent locationInWindow].y];
     mWindow->pushEvent(event);
 }
 
@@ -503,8 +498,8 @@ static MouseButton TranslateMouseButton(NSInteger button)
 {
     Event event;
     event.Type        = Event::EVENT_MOUSE_MOVED;
-    event.MouseMove.X = (int)[nsEvent locationInWindow].x;
-    event.MouseMove.Y = (int)[self translateMouseY:[nsEvent locationInWindow].y];
+    event.MouseMove.X = [nsEvent locationInWindow].x;
+    event.MouseMove.Y = [self translateMouseY:[nsEvent locationInWindow].y];
     mWindow->pushEvent(event);
 }
 
@@ -565,7 +560,7 @@ static MouseButton TranslateMouseButton(NSInteger button)
 
     Event event;
     event.Type             = Event::EVENT_MOUSE_WHEEL_MOVED;
-    event.MouseWheel.Delta = (int)[nsEvent deltaY];
+    event.MouseWheel.Delta = [nsEvent deltaY];
     mWindow->pushEvent(event);
 }
 
@@ -622,7 +617,7 @@ OSXWindow::~OSXWindow()
     destroy();
 }
 
-bool OSXWindow::initialize(const std::string &name, int width, int height)
+bool OSXWindow::initialize(const std::string &name, size_t width, size_t height)
 {
     if (!InitializeAppKit())
     {
@@ -667,13 +662,13 @@ bool OSXWindow::initialize(const std::string &name, int width, int height)
     mWidth  = width;
     mHeight = height;
 
-    AllWindows().insert(this);
+    gAllWindows.insert(this);
     return true;
 }
 
 void OSXWindow::destroy()
 {
-    AllWindows().erase(this);
+    gAllWindows.erase(this);
 
     [mView release];
     mView = nil;
@@ -723,7 +718,7 @@ void OSXWindow::messageLoop()
 
 void OSXWindow::setMousePosition(int x, int y)
 {
-    y = (int)([mWindow frame].size.height) - y - 1;
+    y = [mWindow frame].size.height - y - 1;
     NSPoint screenspace;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_7
@@ -738,7 +733,7 @@ bool OSXWindow::setPosition(int x, int y)
 {
     // Given CG and NS's coordinate system, the "Y" position of a window is the Y coordinate
     // of the bottom of the window.
-    int newBottom    = (int)([mWindow frame].size.height) + y;
+    int newBottom    = [mWindow frame].size.height + y;
     NSRect emptyRect = NSMakeRect(x, YCoordToFromCG(newBottom), 0, 0);
     [mWindow setFrameOrigin:[mWindow frameRectForContentRect:emptyRect].origin];
     return true;

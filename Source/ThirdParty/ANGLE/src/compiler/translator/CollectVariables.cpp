@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -68,6 +68,8 @@ VarT *FindVariable(const ImmutableString &name, std::vector<VarT> *infoList)
     return nullptr;
 }
 
+// Note that this shouldn't be called for interface blocks - active information is collected for
+// individual fields in case of interface blocks.
 void MarkActive(ShaderVariable *variable)
 {
     if (!variable->active)
@@ -80,7 +82,7 @@ void MarkActive(ShaderVariable *variable)
                 MarkActive(&field);
             }
         }
-        variable->staticUse = true;
+        ASSERT(variable->staticUse);
         variable->active = true;
     }
 }
@@ -104,11 +106,11 @@ ShaderVariable *FindVariableInInterfaceBlock(const ImmutableString &name,
 class CollectVariablesTraverser : public TIntermTraverser
 {
   public:
-    CollectVariablesTraverser(std::vector<ShaderVariable> *attribs,
-                              std::vector<ShaderVariable> *outputVariables,
-                              std::vector<ShaderVariable> *uniforms,
-                              std::vector<ShaderVariable> *inputVaryings,
-                              std::vector<ShaderVariable> *outputVaryings,
+    CollectVariablesTraverser(std::vector<Attribute> *attribs,
+                              std::vector<OutputVariable> *outputVariables,
+                              std::vector<Uniform> *uniforms,
+                              std::vector<Varying> *inputVaryings,
+                              std::vector<Varying> *outputVaryings,
                               std::vector<InterfaceBlock> *uniformBlocks,
                               std::vector<InterfaceBlock> *shaderStorageBlocks,
                               std::vector<InterfaceBlock> *inBlocks,
@@ -136,34 +138,34 @@ class CollectVariablesTraverser : public TIntermTraverser
                                      const TVariable &variable,
                                      ShaderVariable *variableOut) const;
 
-    ShaderVariable recordAttribute(const TIntermSymbol &variable) const;
-    ShaderVariable recordOutputVariable(const TIntermSymbol &variable) const;
-    ShaderVariable recordVarying(const TIntermSymbol &variable) const;
+    Attribute recordAttribute(const TIntermSymbol &variable) const;
+    OutputVariable recordOutputVariable(const TIntermSymbol &variable) const;
+    Varying recordVarying(const TIntermSymbol &variable) const;
     void recordInterfaceBlock(const char *instanceName,
                               const TType &interfaceBlockType,
                               InterfaceBlock *interfaceBlock) const;
-    ShaderVariable recordUniform(const TIntermSymbol &variable) const;
+    Uniform recordUniform(const TIntermSymbol &variable) const;
 
     void setBuiltInInfoFromSymbol(const TVariable &variable, ShaderVariable *info);
 
     void recordBuiltInVaryingUsed(const TVariable &variable,
                                   bool *addedFlag,
-                                  std::vector<ShaderVariable> *varyings);
+                                  std::vector<Varying> *varyings);
     void recordBuiltInFragmentOutputUsed(const TVariable &variable, bool *addedFlag);
     void recordBuiltInAttributeUsed(const TVariable &variable, bool *addedFlag);
     InterfaceBlock *recordGLInUsed(const TType &glInType);
     InterfaceBlock *findNamedInterfaceBlock(const ImmutableString &name) const;
 
-    std::vector<ShaderVariable> *mAttribs;
-    std::vector<ShaderVariable> *mOutputVariables;
-    std::vector<ShaderVariable> *mUniforms;
-    std::vector<ShaderVariable> *mInputVaryings;
-    std::vector<ShaderVariable> *mOutputVaryings;
+    std::vector<Attribute> *mAttribs;
+    std::vector<OutputVariable> *mOutputVariables;
+    std::vector<Uniform> *mUniforms;
+    std::vector<Varying> *mInputVaryings;
+    std::vector<Varying> *mOutputVaryings;
     std::vector<InterfaceBlock> *mUniformBlocks;
     std::vector<InterfaceBlock> *mShaderStorageBlocks;
     std::vector<InterfaceBlock> *mInBlocks;
 
-    std::map<std::string, ShaderVariable *> mInterfaceBlockFields;
+    std::map<std::string, InterfaceBlockField *> mInterfaceBlockFields;
 
     // Shader uniforms
     bool mDepthRangeAdded;
@@ -173,8 +175,6 @@ class CollectVariablesTraverser : public TIntermTraverser
     bool mVertexIDAdded;
     bool mPointSizeAdded;
     bool mDrawIDAdded;
-    bool mBaseVertexAdded;
-    bool mBaseInstanceAdded;
 
     // Vertex Shader and Geometry Shader builtins
     bool mPositionAdded;
@@ -207,11 +207,11 @@ class CollectVariablesTraverser : public TIntermTraverser
 };
 
 CollectVariablesTraverser::CollectVariablesTraverser(
-    std::vector<sh::ShaderVariable> *attribs,
-    std::vector<sh::ShaderVariable> *outputVariables,
-    std::vector<sh::ShaderVariable> *uniforms,
-    std::vector<sh::ShaderVariable> *inputVaryings,
-    std::vector<sh::ShaderVariable> *outputVaryings,
+    std::vector<sh::Attribute> *attribs,
+    std::vector<sh::OutputVariable> *outputVariables,
+    std::vector<sh::Uniform> *uniforms,
+    std::vector<sh::Varying> *inputVaryings,
+    std::vector<sh::Varying> *outputVaryings,
     std::vector<sh::InterfaceBlock> *uniformBlocks,
     std::vector<sh::InterfaceBlock> *shaderStorageBlocks,
     std::vector<sh::InterfaceBlock> *inBlocks,
@@ -233,8 +233,6 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mVertexIDAdded(false),
       mPointSizeAdded(false),
       mDrawIDAdded(false),
-      mBaseVertexAdded(false),
-      mBaseInstanceAdded(false),
       mPositionAdded(false),
       mPointCoordAdded(false),
       mFrontFacingAdded(false),
@@ -278,12 +276,12 @@ void CollectVariablesTraverser::setBuiltInInfoFromSymbol(const TVariable &variab
 
 void CollectVariablesTraverser::recordBuiltInVaryingUsed(const TVariable &variable,
                                                          bool *addedFlag,
-                                                         std::vector<ShaderVariable> *varyings)
+                                                         std::vector<Varying> *varyings)
 {
     ASSERT(varyings);
     if (!(*addedFlag))
     {
-        ShaderVariable info;
+        Varying info;
         setBuiltInInfoFromSymbol(variable, &info);
         info.staticUse   = true;
         info.active      = true;
@@ -298,7 +296,7 @@ void CollectVariablesTraverser::recordBuiltInFragmentOutputUsed(const TVariable 
 {
     if (!(*addedFlag))
     {
-        ShaderVariable info;
+        OutputVariable info;
         setBuiltInInfoFromSymbol(variable, &info);
         info.staticUse = true;
         info.active    = true;
@@ -312,7 +310,7 @@ void CollectVariablesTraverser::recordBuiltInAttributeUsed(const TVariable &vari
 {
     if (!(*addedFlag))
     {
-        ShaderVariable info;
+        Attribute info;
         setBuiltInInfoFromSymbol(variable, &info);
         info.staticUse = true;
         info.active    = true;
@@ -388,7 +386,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
 
         if (!mDepthRangeAdded)
         {
-            ShaderVariable info;
+            Uniform info;
             const char kName[] = "gl_DepthRange";
             info.name          = kName;
             info.mappedName    = kName;
@@ -491,12 +489,6 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqDrawID:
                 recordBuiltInAttributeUsed(symbol->variable(), &mDrawIDAdded);
                 return;
-            case EvqBaseVertex:
-                recordBuiltInAttributeUsed(symbol->variable(), &mBaseVertexAdded);
-                return;
-            case EvqBaseInstance:
-                recordBuiltInAttributeUsed(symbol->variable(), &mBaseInstanceAdded);
-                return;
             case EvqLastFragData:
                 recordBuiltInVaryingUsed(symbol->variable(), &mLastFragDataAdded, mInputVaryings);
                 return;
@@ -506,7 +498,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqFragData:
                 if (!mFragDataAdded)
                 {
-                    ShaderVariable info;
+                    OutputVariable info;
                     setBuiltInInfoFromSymbol(symbol->variable(), &info);
                     if (!IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers))
                     {
@@ -562,8 +554,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
                 else
                 {
                     ASSERT(mShaderType == GL_VERTEX_SHADER &&
-                           (IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview2) ||
-                            IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview)));
+                           IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview2));
                 }
                 break;
             default:
@@ -640,24 +631,24 @@ void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
     variableOut->mappedName = getMappedName(&variable);
 }
 
-ShaderVariable CollectVariablesTraverser::recordAttribute(const TIntermSymbol &variable) const
+Attribute CollectVariablesTraverser::recordAttribute(const TIntermSymbol &variable) const
 {
     const TType &type = variable.getType();
     ASSERT(!type.getStruct());
 
-    ShaderVariable attribute;
+    Attribute attribute;
     setCommonVariableProperties(type, variable.variable(), &attribute);
 
     attribute.location = type.getLayoutQualifier().location;
     return attribute;
 }
 
-ShaderVariable CollectVariablesTraverser::recordOutputVariable(const TIntermSymbol &variable) const
+OutputVariable CollectVariablesTraverser::recordOutputVariable(const TIntermSymbol &variable) const
 {
     const TType &type = variable.getType();
     ASSERT(!type.getStruct());
 
-    ShaderVariable outputVariable;
+    OutputVariable outputVariable;
     setCommonVariableProperties(type, variable.variable(), &outputVariable);
 
     outputVariable.location = type.getLayoutQualifier().location;
@@ -665,11 +656,11 @@ ShaderVariable CollectVariablesTraverser::recordOutputVariable(const TIntermSymb
     return outputVariable;
 }
 
-ShaderVariable CollectVariablesTraverser::recordVarying(const TIntermSymbol &variable) const
+Varying CollectVariablesTraverser::recordVarying(const TIntermSymbol &variable) const
 {
     const TType &type = variable.getType();
 
-    ShaderVariable varying;
+    Varying varying;
     setCommonVariableProperties(type, variable.variable(), &varying);
     varying.location = type.getLayoutQualifier().location;
 
@@ -759,7 +750,7 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
             }
         }
 
-        ShaderVariable fieldVariable;
+        InterfaceBlockField fieldVariable;
         setFieldProperties(fieldType, field->name(), staticUse, &fieldVariable);
         fieldVariable.isRowMajorLayout =
             (fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor);
@@ -771,9 +762,9 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
     }
 }
 
-ShaderVariable CollectVariablesTraverser::recordUniform(const TIntermSymbol &variable) const
+Uniform CollectVariablesTraverser::recordUniform(const TIntermSymbol &variable) const
 {
-    ShaderVariable uniform;
+    Uniform uniform;
     setCommonVariableProperties(variable.getType(), variable.variable(), &uniform);
     uniform.binding = variable.getType().getLayoutQualifier().binding;
     uniform.imageUnitFormat =
@@ -929,8 +920,8 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         // TODO(oetuaho): Would be nicer to record static use of fields of named interface blocks
         // more accurately at parse time - now we only mark the fields statically used if they are
         // active. http://anglebug.com/2440
-        // We need to mark this field and all of its sub-fields, as static/active
-        MarkActive(&namedBlock->fields[fieldIndex]);
+        namedBlock->fields[fieldIndex].staticUse = true;
+        namedBlock->fields[fieldIndex].active    = true;
 
         if (traverseIndexExpression)
         {
@@ -946,11 +937,11 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
 }  // anonymous namespace
 
 void CollectVariables(TIntermBlock *root,
-                      std::vector<ShaderVariable> *attributes,
-                      std::vector<ShaderVariable> *outputVariables,
-                      std::vector<ShaderVariable> *uniforms,
-                      std::vector<ShaderVariable> *inputVaryings,
-                      std::vector<ShaderVariable> *outputVaryings,
+                      std::vector<Attribute> *attributes,
+                      std::vector<OutputVariable> *outputVariables,
+                      std::vector<Uniform> *uniforms,
+                      std::vector<Varying> *inputVaryings,
+                      std::vector<Varying> *outputVaryings,
                       std::vector<InterfaceBlock> *uniformBlocks,
                       std::vector<InterfaceBlock> *shaderStorageBlocks,
                       std::vector<InterfaceBlock> *inBlocks,

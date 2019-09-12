@@ -27,8 +27,10 @@ class IndexedPointsTest : public ANGLETest
 
     float getIndexPositionY(size_t idx) { return (idx == 2 || idx == 3) ? -0.5f : 0.5f; }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] = R"(precision highp float;
 attribute vec2 position;
 
@@ -98,7 +100,7 @@ void main()
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW);
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteBuffers(1, &mVertexBuffer);
         glDeleteBuffers(1, &mIndexBuffer);
@@ -106,6 +108,7 @@ void main()
 
         glDeleteBuffers(1, &mVertexWithColorBuffer);
         glDeleteProgram(mVertexWithColorBufferProgram);
+        ANGLETest::TearDown();
     }
 
     void runTest(GLuint firstIndex, bool useVertexBufferWithColor = false)
@@ -158,17 +161,19 @@ void main()
 
             if (i < firstIndex)
             {
-                EXPECT_PIXEL_COLOR_EQ(x, y, GLColor::black);
+                EXPECT_PIXEL_EQ(x, y, 0, 0, 0, 255);
             }
             else
             {
                 if (useVertexBufferWithColor)
                 {
-                    EXPECT_PIXEL_COLOR_EQ(x, y, GLColor::green);
+                    // Pixel data is assumed to be GREEN
+                    EXPECT_PIXEL_EQ(x, y, 0, 255, 0, 255);
                 }
                 else
                 {
-                    EXPECT_PIXEL_COLOR_EQ(x, y, GLColor::red);
+                    // Pixel data is assumed to be RED
+                    EXPECT_PIXEL_EQ(x, y, 255, 0, 0, 255);
                 }
             }
         }
@@ -398,16 +403,19 @@ TEST_P(IndexedPointsTestUInt, VertexWithColorUnsignedIntOffset3)
 // TODO(geofflang): Figure out why this test fails on Intel OpenGL
 ANGLE_INSTANTIATE_TEST(IndexedPointsTestUByte,
                        ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());
 ANGLE_INSTANTIATE_TEST(IndexedPointsTestUShort,
                        ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());
 ANGLE_INSTANTIATE_TEST(IndexedPointsTestUInt,
                        ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());

@@ -128,7 +128,11 @@ class GLES1ConformanceTest : public ANGLETest
         setConfigStencilBits(8);
     }
 
-    void testSetUp() override { ExtTestDriverSetup(); }
+    void SetUp() override
+    {
+        ANGLETest::SetUp();
+        ExtTestDriverSetup();
+    }
 };
 
 TEST_P(GLES1ConformanceTest, AmbLight)
@@ -254,8 +258,6 @@ TEST_P(GLES1ConformanceTest, LineHV)
 
 TEST_P(GLES1ConformanceTest, LineRaster)
 {
-    // http://g.co/anglebug/3862
-    ANGLE_SKIP_TEST_IF(IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, LineRasterExec());
 }
 
@@ -341,15 +343,11 @@ TEST_P(GLES1ConformanceTest, RescaleNormal)
 
 TEST_P(GLES1ConformanceTest, Scissor)
 {
-    // http://g.co/anglebug/3867
-    ANGLE_SKIP_TEST_IF(IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, ScissorExec());
 }
 
 TEST_P(GLES1ConformanceTest, SPClear)
 {
-    // http://g.co/anglebug/3863
-    ANGLE_SKIP_TEST_IF(IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SPClearExec());
 }
 
@@ -471,8 +469,6 @@ TEST_P(GLES1ConformanceTest, XFormHomogenous)
 
 TEST_P(GLES1ConformanceTest, ZBClear)
 {
-    // http://g.co/anglebug/3864
-    ANGLE_SKIP_TEST_IF(IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, ZBClearExec());
 }
 
@@ -551,5 +547,5 @@ TEST_P(GLES1ConformanceTest, MatrixPalette)
     ASSERT_NE(CONFORMANCE_TEST_ERROR, MatrixPaletteExec());
 }
 
-ANGLE_INSTANTIATE_TEST(GLES1ConformanceTest, ES1_OPENGL(), ES1_VULKAN());
+ANGLE_INSTANTIATE_TEST(GLES1ConformanceTest, ES1_OPENGL());
 }  // namespace angle

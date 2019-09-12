@@ -32,6 +32,8 @@ class TransformFeedback11 : public TransformFeedbackImpl
     angle::Result pause(const gl::Context *context) override;
     angle::Result resume(const gl::Context *context) override;
 
+    angle::Result bindGenericBuffer(const gl::Context *context,
+                                    const gl::BindingPointer<gl::Buffer> &binding) override;
     angle::Result bindIndexedBuffer(const gl::Context *context,
                                     size_t index,
                                     const gl::OffsetBindingPointer<gl::Buffer> &binding) override;

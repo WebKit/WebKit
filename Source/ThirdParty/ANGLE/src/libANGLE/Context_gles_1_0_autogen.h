@@ -10,7 +10,7 @@
 #ifndef ANGLE_CONTEXT_GLES_1_0_AUTOGEN_H_
 #define ANGLE_CONTEXT_GLES_1_0_AUTOGEN_H_
 
-#define ANGLE_GLES_1_0_CONTEXT_API                                                               \
+#define ANGLE_GLES1_CONTEXT_API                                                                  \
     void alphaFunc(AlphaTestFunc funcPacked, GLfloat ref);                                       \
     void alphaFuncx(AlphaTestFunc funcPacked, GLfixed ref);                                      \
     void clearColorx(GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha);                   \
@@ -104,6 +104,35 @@
     void translatef(GLfloat x, GLfloat y, GLfloat z);                                            \
     void translatex(GLfixed x, GLfixed y, GLfixed z);                                            \
     void vertexPointer(GLint size, VertexAttribType typePacked, GLsizei stride,                  \
-                       const void *pointer);
+                       const void *pointer);                                                     \
+    /* GL_OES_draw_texture */                                                                    \
+    void drawTexf(GLfloat x, GLfloat y, GLfloat z, GLfloat width, GLfloat height);               \
+    void drawTexfv(const GLfloat *coords);                                                       \
+    void drawTexi(GLint x, GLint y, GLint z, GLint width, GLint height);                         \
+    void drawTexiv(const GLint *coords);                                                         \
+    void drawTexs(GLshort x, GLshort y, GLshort z, GLshort width, GLshort height);               \
+    void drawTexsv(const GLshort *coords);                                                       \
+    void drawTexx(GLfixed x, GLfixed y, GLfixed z, GLfixed width, GLfixed height);               \
+    void drawTexxv(const GLfixed *coords);                                                       \
+    /* GL_OES_framebuffer_object */                                                              \
+    /* GL_OES_matrix_palette */                                                                  \
+    void currentPaletteMatrix(GLuint matrixpaletteindex);                                        \
+    void loadPaletteFromModelViewMatrix();                                                       \
+    void matrixIndexPointer(GLint size, GLenum type, GLsizei stride, const void *pointer);       \
+    void weightPointer(GLint size, GLenum type, GLsizei stride, const void *pointer);            \
+    /* GL_OES_point_size_array */                                                                \
+    void pointSizePointer(VertexAttribType typePacked, GLsizei stride, const void *pointer);     \
+    /* GL_OES_query_matrix */                                                                    \
+    GLbitfield queryMatrixx(GLfixed *mantissa, GLint *exponent);                                 \
+    /* GL_OES_texture_cube_map */                                                                \
+    void getTexGenfv(GLenum coord, GLenum pname, GLfloat *params);                               \
+    void getTexGeniv(GLenum coord, GLenum pname, GLint *params);                                 \
+    void getTexGenxv(GLenum coord, GLenum pname, GLfixed *params);                               \
+    void texGenf(GLenum coord, GLenum pname, GLfloat param);                                     \
+    void texGenfv(GLenum coord, GLenum pname, const GLfloat *params);                            \
+    void texGeni(GLenum coord, GLenum pname, GLint param);                                       \
+    void texGeniv(GLenum coord, GLenum pname, const GLint *params);                              \
+    void texGenx(GLenum coord, GLenum pname, GLfixed param);                                     \
+    void texGenxv(GLenum coord, GLenum pname, const GLfixed *params);
 
 #endif  // ANGLE_CONTEXT_API_1_0_AUTOGEN_H_

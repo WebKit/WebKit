@@ -51,7 +51,7 @@ angle::Result TransformFeedback11::begin(const gl::Context *context,
 angle::Result TransformFeedback11::end(const gl::Context *context)
 {
     mRenderer->getStateManager()->invalidateTransformFeedback();
-    if (mRenderer->getFeatures().flushAfterEndingTransformFeedback.enabled)
+    if (mRenderer->getWorkarounds().flushAfterEndingTransformFeedback)
     {
         mRenderer->getDeviceContext()->Flush();
     }
@@ -65,6 +65,13 @@ angle::Result TransformFeedback11::pause(const gl::Context *context)
 }
 
 angle::Result TransformFeedback11::resume(const gl::Context *context)
+{
+    mRenderer->getStateManager()->invalidateTransformFeedback();
+    return angle::Result::Continue;
+}
+
+angle::Result TransformFeedback11::bindGenericBuffer(const gl::Context *context,
+                                                     const gl::BindingPointer<gl::Buffer> &binding)
 {
     mRenderer->getStateManager()->invalidateTransformFeedback();
     return angle::Result::Continue;

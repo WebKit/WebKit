@@ -16,10 +16,7 @@ namespace rx
 {
 
 SyncEGL::SyncEGL(const egl::AttributeMap &attribs, const FunctionsEGL *egl)
-    : mEGL(egl),
-      mNativeFenceFD(
-          attribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID)),
-      mSync(EGL_NO_SYNC_KHR)
+    : mEGL(egl), mSync(EGL_NO_SYNC_KHR)
 {}
 
 SyncEGL::~SyncEGL()
@@ -38,22 +35,12 @@ egl::Error SyncEGL::initialize(const egl::Display *display,
                                const gl::Context *context,
                                EGLenum type)
 {
-    ASSERT(type == EGL_SYNC_FENCE_KHR || type == EGL_SYNC_NATIVE_FENCE_ANDROID);
-
-    std::vector<EGLint> attribs;
-    if (type == EGL_SYNC_NATIVE_FENCE_ANDROID)
-    {
-        attribs.push_back(EGL_SYNC_NATIVE_FENCE_FD_ANDROID);
-        attribs.push_back(mNativeFenceFD);
-    }
-    attribs.push_back(EGL_NONE);
-
-    mSync = mEGL->createSyncKHR(type, attribs.data());
+    ASSERT(type == EGL_SYNC_FENCE_KHR);
+    mSync = mEGL->createSyncKHR(type, nullptr);
     if (mSync == EGL_NO_SYNC_KHR)
     {
         return egl::Error(mEGL->getError(), "eglCreateSync failed to create sync object");
     }
-
     return egl::NoError();
 }
 
@@ -98,18 +85,6 @@ egl::Error SyncEGL::getStatus(const egl::Display *display, EGLint *outStatus)
     if (result == EGL_FALSE)
     {
         return egl::Error(mEGL->getError(), "eglGetSyncAttribKHR with EGL_SYNC_STATUS_KHR failed");
-    }
-
-    return egl::NoError();
-}
-
-egl::Error SyncEGL::dupNativeFenceFD(const egl::Display *display, EGLint *result) const
-{
-    ASSERT(mSync != EGL_NO_SYNC_KHR);
-    *result = mEGL->dupNativeFenceFDANDROID(mSync);
-    if (*result == EGL_NO_NATIVE_FENCE_FD_ANDROID)
-    {
-        return egl::Error(mEGL->getError(), "eglDupNativeFenceFDANDROID failed");
     }
 
     return egl::NoError();

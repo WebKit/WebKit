@@ -44,7 +44,6 @@ set(ANGLE_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/KHR"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/common/third_party/base"
-    "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
 
 set(ANGLE_DEFINITIONS
@@ -57,7 +56,6 @@ set(ANGLE_SOURCES
     ${angle_translator_essl_sources}
     ${angle_translator_glsl_sources}
     ${angle_translator_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h
 )
 
 set(ANGLEGLESv2_LIBRARIES
@@ -70,8 +68,6 @@ add_subdirectory(include)
 
 add_library(ANGLEFramework INTERFACE)
 add_dependencies(ANGLEFramework GLSLANGHeaders ANGLEHeaders)
-
-configure_file(src/commit.h ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h COPYONLY)
 
 if (USE_ANGLE_EGL)
     add_library(ANGLE STATIC
@@ -87,18 +83,12 @@ if (USE_ANGLE_EGL)
     )
     target_compile_definitions(ANGLE PUBLIC ${ANGLE_DEFINITIONS})
 
-    add_library(GLESv2 SHARED
-        ${libglesv2_sources}
-        ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h
-    )
+    add_library(GLESv2 SHARED ${libglesv2_sources})
     target_include_directories(GLESv2 PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
     target_compile_definitions(GLESv2 PRIVATE LIBGLESV2_IMPLEMENTATION)
     target_link_libraries(GLESv2 ${ANGLEGLESv2_LIBRARIES})
 
-    add_library(EGL SHARED
-        ${libegl_sources}
-        ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h
-    )
+    add_library(EGL SHARED ${libegl_sources})
     target_include_directories(EGL PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
     target_compile_definitions(EGL PRIVATE
         ${gl_prototypes}

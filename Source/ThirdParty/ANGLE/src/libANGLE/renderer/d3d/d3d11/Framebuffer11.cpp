@@ -234,7 +234,7 @@ angle::Result Framebuffer11::invalidateAttachment(const gl::Context *context,
     ASSERT(attachment && attachment->isAttached());
 
     RenderTarget11 *renderTarget = nullptr;
-    ANGLE_TRY(attachment->getRenderTarget(context, 0, &renderTarget));
+    ANGLE_TRY(attachment->getRenderTarget(context, &renderTarget));
     const auto &rtv = renderTarget->getRenderTargetView();
 
     if (rtv.valid())
@@ -284,11 +284,11 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
 {
     if (blitRenderTarget)
     {
-        const gl::FramebufferAttachment *readBuffer = sourceFramebuffer->getReadColorAttachment();
+        const gl::FramebufferAttachment *readBuffer = sourceFramebuffer->getReadColorbuffer();
         ASSERT(readBuffer);
 
         RenderTargetD3D *readRenderTarget = nullptr;
-        ANGLE_TRY(readBuffer->getRenderTarget(context, 0, &readRenderTarget));
+        ANGLE_TRY(readBuffer->getRenderTarget(context, &readRenderTarget));
         ASSERT(readRenderTarget);
 
         const auto &colorAttachments = mState.getColorAttachments();
@@ -302,8 +302,7 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
             if (drawBuffer.isAttached() && drawBufferStates[colorAttachment] != GL_NONE)
             {
                 RenderTargetD3D *drawRenderTarget = nullptr;
-                ANGLE_TRY(drawBuffer.getRenderTarget(
-                    context, drawBuffer.getRenderToTextureSamples(), &drawRenderTarget));
+                ANGLE_TRY(drawBuffer.getRenderTarget(context, &drawRenderTarget));
                 ASSERT(drawRenderTarget);
 
                 const bool invertColorSource   = UsePresentPathFast(mRenderer, readBuffer);
@@ -333,11 +332,10 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
 
     if (blitDepth || blitStencil)
     {
-        const gl::FramebufferAttachment *readBuffer =
-            sourceFramebuffer->getDepthOrStencilAttachment();
+        const gl::FramebufferAttachment *readBuffer = sourceFramebuffer->getDepthOrStencilbuffer();
         ASSERT(readBuffer);
         RenderTargetD3D *readRenderTarget = nullptr;
-        ANGLE_TRY(readBuffer->getRenderTarget(context, 0, &readRenderTarget));
+        ANGLE_TRY(readBuffer->getRenderTarget(context, &readRenderTarget));
         ASSERT(readRenderTarget);
 
         const bool invertSource        = UsePresentPathFast(mRenderer, readBuffer);
@@ -352,8 +350,7 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
         const gl::FramebufferAttachment *drawBuffer = mState.getDepthOrStencilAttachment();
         ASSERT(drawBuffer);
         RenderTargetD3D *drawRenderTarget = nullptr;
-        ANGLE_TRY(drawBuffer->getRenderTarget(context, drawBuffer->getRenderToTextureSamples(),
-                                              &drawRenderTarget));
+        ANGLE_TRY(drawBuffer->getRenderTarget(context, &drawRenderTarget));
         ASSERT(drawRenderTarget);
 
         bool invertDest              = UsePresentPathFast(mRenderer, drawBuffer);

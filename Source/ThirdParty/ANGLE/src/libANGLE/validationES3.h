@@ -14,23 +14,7 @@
 
 namespace gl
 {
-bool ValidateES3TexImageParametersBase(Context *context,
-                                       TextureTarget target,
-                                       GLint level,
-                                       GLenum internalformat,
-                                       bool isCompressed,
-                                       bool isSubImage,
-                                       GLint xoffset,
-                                       GLint yoffset,
-                                       GLint zoffset,
-                                       GLsizei width,
-                                       GLsizei height,
-                                       GLsizei depth,
-                                       GLint border,
-                                       GLenum format,
-                                       GLenum type,
-                                       GLsizei imageSize,
-                                       const void *pixels);
+// Nothing here yet.
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES3_H_

@@ -9,7 +9,7 @@
 
 #if IsFloat
 #define Type vec4
-#elif IsSint
+#elif IsInt
 #define Type ivec4
 #elif IsUint
 #define Type uvec4

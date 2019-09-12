@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -44,12 +44,4 @@ const char *GetSharedLibraryExtension()
 {
     return "so";
 }
-
-double GetCurrentTime()
-{
-    struct timespec currentTime;
-    clock_gettime(CLOCK_MONOTONIC, &currentTime);
-    return currentTime.tv_sec + currentTime.tv_nsec * 1e-9;
-}
-
 }  // namespace angle

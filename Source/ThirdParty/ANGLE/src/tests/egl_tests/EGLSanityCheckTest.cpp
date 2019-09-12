@@ -15,11 +15,11 @@
 
 using namespace angle;
 
-class EGLSanityCheckTest : public ANGLETest
+class EGLSanityCheckTest : public EGLTest
 {};
 
 // Checks the tests are running against ANGLE
-TEST_P(EGLSanityCheckTest, IsRunningOnANGLE)
+TEST_F(EGLSanityCheckTest, IsRunningOnANGLE)
 {
     const char *extensionString =
         static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
@@ -27,13 +27,13 @@ TEST_P(EGLSanityCheckTest, IsRunningOnANGLE)
 }
 
 // Checks that getting function pointer works
-TEST_P(EGLSanityCheckTest, HasGetPlatformDisplayEXT)
+TEST_F(EGLSanityCheckTest, HasGetPlatformDisplayEXT)
 {
     ASSERT_NE(eglGetPlatformDisplayEXT, nullptr);
 }
 
 // Checks that calling GetProcAddress for a non-existant function fails.
-TEST_P(EGLSanityCheckTest, GetProcAddressNegativeTest)
+TEST_F(EGLSanityCheckTest, GetProcAddressNegativeTest)
 {
     auto check = eglGetProcAddress("WigglyWombats");
     EXPECT_EQ(nullptr, check);
@@ -43,7 +43,7 @@ TEST_P(EGLSanityCheckTest, GetProcAddressNegativeTest)
 // We can add specific exceptions here if needed.
 // Disabled because it was creating a large number of configs. This could even result
 // in a BDOD on Windows.
-TEST_P(EGLSanityCheckTest, DISABLED_WhitelistMatchesSupport)
+TEST_F(EGLSanityCheckTest, DISABLED_WhitelistMatchesSupport)
 {
     // Has issues with Vulkan support detection on Android.
     ANGLE_SKIP_TEST_IF(IsAndroid());
@@ -87,5 +87,3 @@ TEST_P(EGLSanityCheckTest, DISABLED_WhitelistMatchesSupport)
     check(ES3_NULL());
     check(ES31_NULL());
 }
-
-ANGLE_INSTANTIATE_TEST(EGLSanityCheckTest, WithNoFixture(PlatformParameters()));

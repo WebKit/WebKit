@@ -26,6 +26,8 @@ class TransformFeedbackImpl : angle::NonCopyable
     virtual angle::Result pause(const gl::Context *context)                                  = 0;
     virtual angle::Result resume(const gl::Context *context)                                 = 0;
 
+    virtual angle::Result bindGenericBuffer(const gl::Context *context,
+                                            const gl::BindingPointer<gl::Buffer> &binding) = 0;
     virtual angle::Result bindIndexedBuffer(
         const gl::Context *context,
         size_t index,

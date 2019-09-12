@@ -78,7 +78,6 @@ class TextureD3D : public TextureImpl
 
     virtual angle::Result getRenderTarget(const gl::Context *context,
                                           const gl::ImageIndex &index,
-                                          GLsizei samples,
                                           RenderTargetD3D **outRT) = 0;
 
     // Returns an iterator over all "Images" for this particular Texture.
@@ -100,7 +99,6 @@ class TextureD3D : public TextureImpl
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
                                             const gl::ImageIndex &imageIndex,
-                                            GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
     angle::Result setBaseLevel(const gl::Context *context, GLuint baseLevel) override;
@@ -110,8 +108,6 @@ class TextureD3D : public TextureImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
-
-    GLsizei getRenderToTextureSamples();
 
   protected:
     angle::Result setImageImpl(const gl::Context *context,
@@ -294,7 +290,6 @@ class TextureD3D_2D : public TextureD3D
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;
@@ -423,7 +418,6 @@ class TextureD3D_Cube : public TextureD3D
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;
@@ -555,7 +549,6 @@ class TextureD3D_3D : public TextureD3D
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;
@@ -684,7 +677,6 @@ class TextureD3D_2DArray : public TextureD3D
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;
@@ -800,7 +792,6 @@ class TextureD3D_External : public TextureD3DImmutableBase
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;
@@ -842,7 +833,6 @@ class TextureD3D_2DMultisample : public TextureD3DImmutableBase
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;
@@ -887,7 +877,6 @@ class TextureD3D_2DMultisampleArray : public TextureD3DImmutableBase
 
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
 
     gl::ImageIndexIterator imageIterator() const override;

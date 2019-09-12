@@ -28,8 +28,10 @@ class TransformFeedbackTestBase : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenBuffers(1, &mTransformFeedbackBuffer);
         glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, mTransformFeedbackBuffer);
         glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, mTransformFeedbackBufferSize, nullptr,
@@ -40,7 +42,7 @@ class TransformFeedbackTestBase : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         if (mProgram != 0)
         {
@@ -59,6 +61,8 @@ class TransformFeedbackTestBase : public ANGLETest
             glDeleteTransformFeedbacks(1, &mTransformFeedback);
             mTransformFeedback = 0;
         }
+
+        ANGLETest::TearDown();
     }
 
     GLuint mProgram;
@@ -105,7 +109,7 @@ TEST_P(TransformFeedbackTest, ZeroSizedViewport)
 
     drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
 
-    // End the query and transform feedback
+    // End the query and transform feedkback
     glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
     glEndTransformFeedback();
 
@@ -236,7 +240,7 @@ TEST_P(TransformFeedbackTest, RecordAndDraw)
 
     glDisableVertexAttribArray(positionLocation);
     glVertexAttribPointer(positionLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-    // End the query and transform feedback
+    // End the query and transform feedkback
     glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
     glEndTransformFeedback();
 
@@ -1040,8 +1044,10 @@ class TransformFeedbackLifetimeTest : public TransformFeedbackTest
   protected:
     TransformFeedbackLifetimeTest() : mVertexArray(0) {}
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenVertexArrays(1, &mVertexArray);
         glBindVertexArray(mVertexArray);
 
@@ -1060,10 +1066,10 @@ class TransformFeedbackLifetimeTest : public TransformFeedbackTest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteVertexArrays(1, &mVertexArray);
-        TransformFeedbackTest::testTearDown();
+        TransformFeedbackTest::TearDown();
     }
 
     GLuint mVertexArray;
@@ -1644,16 +1650,8 @@ TEST_P(TransformFeedbackTest, EndWithDifferentProgramContextSwitch)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(TransformFeedbackTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
-ANGLE_INSTANTIATE_TEST(TransformFeedbackLifetimeTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(TransformFeedbackTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(TransformFeedbackLifetimeTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 ANGLE_INSTANTIATE_TEST(TransformFeedbackTestES31, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
 
 }  // anonymous namespace

@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -11,18 +11,13 @@
 #ifndef COMPILER_TRANSLATOR_TREEOPS_FOLDEXPRESSIONS_H_
 #define COMPILER_TRANSLATOR_TREEOPS_FOLDEXPRESSIONS_H_
 
-#include "common/angleutils.h"
-
 namespace sh
 {
 
-class TCompiler;
 class TIntermBlock;
 class TDiagnostics;
 
-ANGLE_NO_DISCARD bool FoldExpressions(TCompiler *compiler,
-                                      TIntermBlock *root,
-                                      TDiagnostics *diagnostics);
+void FoldExpressions(TIntermBlock *root, TDiagnostics *diagnostics);
 
 }  // namespace sh
 

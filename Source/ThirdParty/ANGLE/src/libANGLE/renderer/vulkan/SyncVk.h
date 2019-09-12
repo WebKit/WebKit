@@ -30,8 +30,7 @@ class FenceSyncVk
     FenceSyncVk();
     ~FenceSyncVk();
 
-    void onDestroy(ContextVk *contextVk);
-    void onDestroy(DisplayVk *display);
+    void onDestroy(RendererVk *renderer);
 
     angle::Result initialize(ContextVk *contextVk);
     angle::Result clientWait(vk::Context *context,
@@ -46,9 +45,9 @@ class FenceSyncVk
     // The vkEvent that's signaled on `init` and can be waited on in `serverWait`, or queried with
     // `getStatus`.
     vk::Event mEvent;
-    // The first fence in the list is signaled once the CB including the `init` signal is executed.
-    // `clientWait` waits on this fence. The other fences are referenced to prevent deletion.
-    std::vector<vk::Shared<vk::Fence>> mFences;
+    // The vkFence that's signaled once the command buffer including the `init` signal is executed.
+    // `clientWait` waits on this fence.
+    vk::Shared<vk::Fence> mFence;
 };
 
 class SyncVk final : public SyncImpl
@@ -93,8 +92,6 @@ class EGLSyncVk final : public EGLSyncImpl
                           const gl::Context *context,
                           EGLint flags) override;
     egl::Error getStatus(const egl::Display *display, EGLint *outStatus) override;
-
-    egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *result) const override;
 
   private:
     FenceSyncVk mFenceSync;

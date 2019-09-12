@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -11,7 +11,6 @@
 
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/Diagnostics.h"
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/StaticType.h"
@@ -522,8 +521,7 @@ void RemoveDynamicIndexingTraverser::nextIteration()
 
 }  // namespace
 
-bool RemoveDynamicIndexing(TCompiler *compiler,
-                           TIntermNode *root,
+void RemoveDynamicIndexing(TIntermNode *root,
                            TSymbolTable *symbolTable,
                            PerformanceDiagnostics *perfDiagnostics)
 {
@@ -532,10 +530,7 @@ bool RemoveDynamicIndexing(TCompiler *compiler,
     {
         traverser.nextIteration();
         root->traverse(&traverser);
-        if (!traverser.updateTree(compiler, root))
-        {
-            return false;
-        }
+        traverser.updateTree();
     } while (traverser.usedTreeInsertion());
     // TODO(oetuaho@nvidia.com): It might be nicer to add the helper definitions also in the middle
     // of traversal. Now the tree ends up in an inconsistent state in the middle, since there are
@@ -543,7 +538,6 @@ bool RemoveDynamicIndexing(TCompiler *compiler,
     // TIntermLValueTrackingTraverser, and creates intricacies that are not easily apparent from a
     // superficial reading of the code.
     traverser.insertHelperDefinitions(root);
-    return compiler->validateAST(root);
 }
 
 }  // namespace sh

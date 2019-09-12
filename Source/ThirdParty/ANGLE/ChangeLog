@@ -1,3 +1,15 @@
+2019-09-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r249791.
+
+        Breaks internal production builds.
+
+        Reverted changeset:
+
+        "Update ANGLE"
+        https://bugs.webkit.org/show_bug.cgi?id=201156
+        https://trac.webkit.org/changeset/249791
+
 2019-09-11  James Darpinian  <jdarpinian@chromium.org>
 
         Update ANGLE

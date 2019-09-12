@@ -18,7 +18,7 @@
  *
  */
 
-#include "egluNativeDisplay.hpp"
+#include "egluNativeDisplay_override.hpp"
 
 #include "tcuANGLENativeDisplayFactory.h"
 

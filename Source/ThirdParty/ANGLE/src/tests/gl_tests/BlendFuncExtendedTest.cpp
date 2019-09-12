@@ -103,8 +103,10 @@ class EXTBlendFuncExtendedDrawTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenBuffers(1, &mVBO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 
@@ -116,7 +118,7 @@ class EXTBlendFuncExtendedDrawTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteBuffers(1, &mVBO);
         if (mProgram)
@@ -125,6 +127,8 @@ class EXTBlendFuncExtendedDrawTest : public ANGLETest
         }
 
         ASSERT_GL_NO_ERROR();
+
+        ANGLETest::TearDown();
     }
 
     void makeProgram(const char *vertSource, const char *fragSource)
@@ -207,9 +211,9 @@ class EXTBlendFuncExtendedDrawTestES3 : public EXTBlendFuncExtendedDrawTest
   protected:
     EXTBlendFuncExtendedDrawTestES3() : EXTBlendFuncExtendedDrawTest(), mIsES31OrNewer(false) {}
 
-    void testSetUp() override
+    void SetUp() override
     {
-        EXTBlendFuncExtendedDrawTest::testSetUp();
+        EXTBlendFuncExtendedDrawTest::SetUp();
         if (getClientMajorVersion() > 3 || getClientMinorVersion() >= 1)
         {
             mIsES31OrNewer = true;

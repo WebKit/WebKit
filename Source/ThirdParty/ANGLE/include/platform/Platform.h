@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,7 +35,7 @@
 
 namespace angle
 {
-struct FeaturesD3D;
+struct WorkaroundsD3D;
 struct FeaturesVk;
 using TraceEventHandle = uint64_t;
 using EGLDisplayType   = void *;
@@ -215,14 +215,15 @@ inline void DefaultHistogramBoolean(PlatformMethods *platform, const char *name,
 
 // Allows us to programatically override ANGLE's default workarounds for testing purposes.
 using OverrideWorkaroundsD3DFunc = void (*)(PlatformMethods *platform,
-                                            angle::FeaturesD3D *featuresD3D);
+                                            angle::WorkaroundsD3D *workaroundsD3D);
 inline void DefaultOverrideWorkaroundsD3D(PlatformMethods *platform,
-                                          angle::FeaturesD3D *featuresD3D)
+                                          angle::WorkaroundsD3D *workaroundsD3D)
 {}
 
 using OverrideFeaturesVkFunc = void (*)(PlatformMethods *platform,
-                                        angle::FeaturesVk *featuresVulkan);
-inline void DefaultOverrideFeaturesVk(PlatformMethods *platform, angle::FeaturesVk *featuresVulkan)
+                                        angle::FeaturesVk *workaroundsVulkan);
+inline void DefaultOverrideFeaturesVk(PlatformMethods *platform,
+                                      angle::FeaturesVk *workaroundsVulkan)
 {}
 
 // Callback on a successful program link with the program binary. Can be used to store

@@ -22,11 +22,12 @@
 
 using namespace angle;
 
-class EGLDeviceCreationTest : public ANGLETest
+class EGLDeviceCreationTest : public EGLTest
 {
   protected:
     EGLDeviceCreationTest()
-        : mD3D11Module(nullptr),
+        : mD3D11Available(false),
+          mD3D11Module(nullptr),
           mD3D11CreateDevice(nullptr),
           mDevice(nullptr),
           mDeviceContext(nullptr),
@@ -38,9 +39,9 @@ class EGLDeviceCreationTest : public ANGLETest
           mConfig(0)
     {}
 
-    void testSetUp() override
+    void SetUp() override
     {
-        ASSERT_TRUE(isD3D11Renderer());
+        EGLTest::SetUp();
 
         mD3D11Module = LoadLibrary(TEXT("d3d11.dll"));
         if (mD3D11Module == nullptr)
@@ -57,6 +58,8 @@ class EGLDeviceCreationTest : public ANGLETest
             return;
         }
 
+        mD3D11Available = true;
+
         const char *extensionString =
             static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
         if (strstr(extensionString, "EGL_ANGLE_device_creation"))
@@ -68,7 +71,7 @@ class EGLDeviceCreationTest : public ANGLETest
         }
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         SafeRelease(mDevice);
         SafeRelease(mDeviceContext);
@@ -96,6 +99,7 @@ class EGLDeviceCreationTest : public ANGLETest
 
     void CreateD3D11Device()
     {
+        ASSERT_TRUE(mD3D11Available);
         ASSERT_EQ(nullptr, mDevice);  // The device shouldn't be created twice
 
         HRESULT hr =
@@ -108,6 +112,7 @@ class EGLDeviceCreationTest : public ANGLETest
 
     void CreateD3D11FL9_3Device()
     {
+        ASSERT_TRUE(mD3D11Available);
         ASSERT_EQ(nullptr, mDevice);
 
         D3D_FEATURE_LEVEL fl93 = D3D_FEATURE_LEVEL_9_3;
@@ -171,6 +176,7 @@ class EGLDeviceCreationTest : public ANGLETest
         ASSERT_TRUE(FAILED(result));
     }
 
+    bool mD3D11Available;
     HMODULE mD3D11Module;
     PFN_D3D11_CREATE_DEVICE mD3D11CreateDevice;
 
@@ -190,9 +196,13 @@ class EGLDeviceCreationTest : public ANGLETest
 
 // Test that creating a EGLDeviceEXT from D3D11 device works, and it can be queried to retrieve
 // D3D11 device
-TEST_P(EGLDeviceCreationTest, BasicD3D11Device)
+TEST_F(EGLDeviceCreationTest, BasicD3D11Device)
 {
-    ANGLE_SKIP_TEST_IF(!mDeviceCreationD3D11ExtAvailable);
+    if (!mDeviceCreationD3D11ExtAvailable || !mD3D11Available)
+    {
+        std::cout << "EGLDevice creation and/or D3D11 not available, skipping test" << std::endl;
+        return;
+    }
 
     CreateD3D11Device();
 
@@ -213,9 +223,13 @@ TEST_P(EGLDeviceCreationTest, BasicD3D11Device)
 
 // Test that creating a EGLDeviceEXT from D3D11 device works, and it can be queried to retrieve
 // D3D11 device
-TEST_P(EGLDeviceCreationTest, BasicD3D11DeviceViaFuncPointer)
+TEST_F(EGLDeviceCreationTest, BasicD3D11DeviceViaFuncPointer)
 {
-    ANGLE_SKIP_TEST_IF(!mDeviceCreationD3D11ExtAvailable);
+    if (!mDeviceCreationD3D11ExtAvailable || !mD3D11Available)
+    {
+        std::cout << "EGLDevice creation and/or D3D11 not available, skipping test" << std::endl;
+        return;
+    }
 
     CreateD3D11Device();
 
@@ -235,8 +249,14 @@ TEST_P(EGLDeviceCreationTest, BasicD3D11DeviceViaFuncPointer)
 }
 
 // Test that creating a EGLDeviceEXT from D3D11 device works, and can be used for rendering
-TEST_P(EGLDeviceCreationTest, RenderingUsingD3D11Device)
+TEST_F(EGLDeviceCreationTest, RenderingUsingD3D11Device)
 {
+    if (!mD3D11Available)
+    {
+        std::cout << "D3D11 not available, skipping test" << std::endl;
+        return;
+    }
+
     CreateD3D11Device();
 
     EGLDeviceEXT eglDevice =
@@ -257,14 +277,20 @@ TEST_P(EGLDeviceCreationTest, RenderingUsingD3D11Device)
 
     // Note that we must call TearDown() before we release the EGL device, since the display
     // depends on the device
-    testTearDown();
+    TearDown();
 
     eglReleaseDeviceANGLE(eglDevice);
 }
 
 // Test that ANGLE doesn't try to recreate a D3D11 device if the inputted one is lost
-TEST_P(EGLDeviceCreationTest, D3D11DeviceRecovery)
+TEST_F(EGLDeviceCreationTest, D3D11DeviceRecovery)
 {
+    if (!mD3D11Available)
+    {
+        std::cout << "D3D11 not available, skipping test" << std::endl;
+        return;
+    }
+
     // Force Feature Level 9_3 so we can easily trigger a device lost later
     CreateD3D11FL9_3Device();
 
@@ -319,14 +345,20 @@ TEST_P(EGLDeviceCreationTest, D3D11DeviceRecovery)
 
     // Note that we must call TearDown() before we release the EGL device, since the display
     // depends on the device
-    testTearDown();
+    TearDown();
 
     eglReleaseDeviceANGLE(eglDevice);
 }
 
 // Test that calling eglGetPlatformDisplayEXT with the same device returns the same display
-TEST_P(EGLDeviceCreationTest, GetPlatformDisplayTwice)
+TEST_F(EGLDeviceCreationTest, getPlatformDisplayTwice)
 {
+    if (!mD3D11Available)
+    {
+        std::cout << "D3D11 not available, skipping test" << std::endl;
+        return;
+    }
+
     CreateD3D11Device();
 
     EGLDeviceEXT eglDevice =
@@ -347,9 +379,13 @@ TEST_P(EGLDeviceCreationTest, GetPlatformDisplayTwice)
 }
 
 // Test that creating a EGLDeviceEXT from an invalid D3D11 device fails
-TEST_P(EGLDeviceCreationTest, InvalidD3D11Device)
+TEST_F(EGLDeviceCreationTest, InvalidD3D11Device)
 {
-    ANGLE_SKIP_TEST_IF(!mDeviceCreationD3D11ExtAvailable);
+    if (!mDeviceCreationD3D11ExtAvailable || !mD3D11Available)
+    {
+        std::cout << "EGLDevice creation and/or D3D11 not available, skipping test" << std::endl;
+        return;
+    }
 
     CreateD3D11Device();
 
@@ -361,9 +397,13 @@ TEST_P(EGLDeviceCreationTest, InvalidD3D11Device)
 }
 
 // Test that EGLDeviceEXT holds a ref to the D3D11 device
-TEST_P(EGLDeviceCreationTest, D3D11DeviceReferenceCounting)
+TEST_F(EGLDeviceCreationTest, D3D11DeviceReferenceCounting)
 {
-    ANGLE_SKIP_TEST_IF(!mDeviceCreationD3D11ExtAvailable);
+    if (!mDeviceCreationD3D11ExtAvailable || !mD3D11Available)
+    {
+        std::cout << "EGLDevice creation and/or D3D11 not available, skipping test" << std::endl;
+        return;
+    }
 
     CreateD3D11Device();
 
@@ -387,9 +427,13 @@ TEST_P(EGLDeviceCreationTest, D3D11DeviceReferenceCounting)
 }
 
 // Test that creating a EGLDeviceEXT from a D3D9 device fails
-TEST_P(EGLDeviceCreationTest, AnyD3D9Device)
+TEST_F(EGLDeviceCreationTest, AnyD3D9Device)
 {
-    ANGLE_SKIP_TEST_IF(!mDeviceCreationD3D11ExtAvailable);
+    if (!mDeviceCreationD3D11ExtAvailable)
+    {
+        std::cout << "EGLDevice creation not available, skipping test" << std::endl;
+        return;
+    }
 
     std::string fakeD3DDevice = "This is a string, not a D3D device";
 
@@ -404,8 +448,10 @@ class EGLDeviceQueryTest : public ANGLETest
   protected:
     EGLDeviceQueryTest() {}
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         const char *extensionString =
             static_cast<const char *>(eglQueryString(getEGLWindow()->getDisplay(), EGL_EXTENSIONS));
 
@@ -516,5 +562,4 @@ TEST_P(EGLDeviceQueryTest, GetPlatformDisplayDeviceReuse)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(EGLDeviceCreationTest, WithNoFixture(ES2_D3D11()));
 ANGLE_INSTANTIATE_TEST(EGLDeviceQueryTest, ES2_D3D9(), ES2_D3D11());

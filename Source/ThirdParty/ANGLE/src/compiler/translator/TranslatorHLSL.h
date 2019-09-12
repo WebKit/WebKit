@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -16,7 +16,9 @@ class TranslatorHLSL : public TCompiler
 {
   public:
     TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
+#ifdef ANGLE_ENABLE_HLSL
     TranslatorHLSL *getAsTranslatorHLSL() override { return this; }
+#endif
 
     bool hasShaderStorageBlock(const std::string &interfaceBlockName) const;
     unsigned int getShaderStorageBlockRegister(const std::string &interfaceBlockName) const;
@@ -30,9 +32,9 @@ class TranslatorHLSL : public TCompiler
     const std::set<std::string> *getUsedImage2DFunctionNames() const;
 
   protected:
-    ANGLE_NO_DISCARD bool translate(TIntermBlock *root,
-                                    ShCompileOptions compileOptions,
-                                    PerformanceDiagnostics *perfDiagnostics) override;
+    void translate(TIntermBlock *root,
+                   ShCompileOptions compileOptions,
+                   PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
     // collectVariables needs to be run always so registers can be assigned.

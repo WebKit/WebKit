@@ -44,7 +44,6 @@ class DisplayNULL : public DisplayImpl
     egl::Error waitClient(const gl::Context *context) override;
     egl::Error waitNative(const gl::Context *context, EGLint engine) override;
     gl::Version getMaxSupportedESVersion() const override;
-    gl::Version getMaxConformantESVersion() const override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
                                      EGLNativeWindowType window,
@@ -72,8 +71,6 @@ class DisplayNULL : public DisplayImpl
 
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
-
-    void populateFeatureList(angle::FeatureList *features) override {}
 
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

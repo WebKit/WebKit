@@ -22,7 +22,7 @@ DebugAnnotator11::~DebugAnnotator11() {}
 void DebugAnnotator11::beginEvent(const char *eventName, const char *eventMessage)
 {
     angle::LoggingAnnotator::beginEvent(eventName, eventMessage);
-    if (loggingEnabledForThisThread())
+    if (mUserDefinedAnnotation != nullptr)
     {
         std::mbstate_t state = std::mbstate_t();
         std::mbsrtowcs(mWCharMessage, &eventMessage, kMaxMessageLength, &state);
@@ -33,7 +33,7 @@ void DebugAnnotator11::beginEvent(const char *eventName, const char *eventMessag
 void DebugAnnotator11::endEvent(const char *eventName)
 {
     angle::LoggingAnnotator::endEvent(eventName);
-    if (loggingEnabledForThisThread())
+    if (mUserDefinedAnnotation != nullptr)
     {
         mUserDefinedAnnotation->EndEvent();
     }
@@ -42,7 +42,7 @@ void DebugAnnotator11::endEvent(const char *eventName)
 void DebugAnnotator11::setMarker(const char *markerName)
 {
     angle::LoggingAnnotator::setMarker(markerName);
-    if (loggingEnabledForThisThread())
+    if (mUserDefinedAnnotation != nullptr)
     {
         std::mbstate_t state = std::mbstate_t();
         std::mbsrtowcs(mWCharMessage, &markerName, kMaxMessageLength, &state);
@@ -52,17 +52,12 @@ void DebugAnnotator11::setMarker(const char *markerName)
 
 bool DebugAnnotator11::getStatus()
 {
-    if (loggingEnabledForThisThread())
+    if (mUserDefinedAnnotation != nullptr)
     {
         return !!(mUserDefinedAnnotation->GetStatus());
     }
 
     return false;
-}
-
-bool DebugAnnotator11::loggingEnabledForThisThread() const
-{
-    return mUserDefinedAnnotation != nullptr && std::this_thread::get_id() == mAnnotationThread;
 }
 
 void DebugAnnotator11::initialize(ID3D11DeviceContext *context)
@@ -74,7 +69,6 @@ void DebugAnnotator11::initialize(ID3D11DeviceContext *context)
     // If you want debug annotations, you must use Windows 10.
     if (IsWindows10OrGreater())
     {
-        mAnnotationThread = std::this_thread::get_id();
         mUserDefinedAnnotation.Attach(
             d3d11::DynamicCastComObject<ID3DUserDefinedAnnotation>(context));
     }

@@ -50,15 +50,17 @@ class ClearTestBase : public ANGLETest
         setConfigStencilBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         mFBOs.resize(2, 0);
         glGenFramebuffers(2, mFBOs.data());
 
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         if (!mFBOs.empty())
         {
@@ -69,6 +71,8 @@ class ClearTestBase : public ANGLETest
         {
             glDeleteTextures(static_cast<GLsizei>(mTextures.size()), mTextures.data());
         }
+
+        ANGLETest::TearDown();
     }
 
     std::vector<GLuint> mFBOs;
@@ -248,8 +252,10 @@ class MaskedScissoredClearTest : public MaskedScissoredClearTestBase
 class VulkanClearTest : public MaskedScissoredClearTestBase
 {
   protected:
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETestWithParam::SetUp();
+
         glBindTexture(GL_TEXTURE_2D, mColorTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, nullptr);
@@ -301,7 +307,7 @@ class VulkanClearTest : public MaskedScissoredClearTestBase
     // depth/stencil format
     void overrideFeaturesVk(FeaturesVk *featuresVk) override
     {
-        featuresVk->overrideFeatures({"force_fallback_format"}, true);
+        featuresVk->forceFallbackFormat = true;
     }
 
   private:
@@ -515,6 +521,10 @@ TEST_P(ClearTest, DepthRangefIsClamped)
 // Test scissored clears on Depth16
 TEST_P(ClearTest, Depth16Scissored)
 {
+    // Crashes on NVIDIA and Android in FramebufferVk::clearWithClearAttachments.
+    // http://anglebug.com/3081
+    ANGLE_SKIP_TEST_IF(IsNVIDIA() || IsAndroid() || IsFuchsia());
+
     GLRenderbuffer renderbuffer;
     glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
     constexpr int kRenderbufferSize = 64;
@@ -543,6 +553,10 @@ TEST_P(ClearTest, Depth16Scissored)
 // Test scissored clears on Stencil8
 TEST_P(ClearTest, Stencil8Scissored)
 {
+    // Crashes on NVIDIA and Android in FramebufferVk::clearWithClearAttachments.
+    // http://anglebug.com/3081
+    ANGLE_SKIP_TEST_IF(IsNVIDIA() || IsAndroid() || IsFuchsia());
+
     GLRenderbuffer renderbuffer;
     glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
     constexpr int kRenderbufferSize = 64;
@@ -977,9 +991,8 @@ TEST_P(ClearTestES3, MaskedClearHeterogeneousAttachments)
 // mistakenly clear every channel (including the masked-out ones)
 TEST_P(ClearTestES3, MaskedClearBufferBug)
 {
-    // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
-    // http://anglebug.com/3423
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
+    // Vulkan doesn't support gaps in render targets yet.  http://anglebug.com/2394
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     unsigned char pixelData[] = {255, 255, 255, 255};
 
@@ -1116,8 +1129,8 @@ TEST_P(ClearTestES3, MixedSRGBClear)
 // flush or finish after ClearBufferfv or each draw.
 TEST_P(ClearTestES3, RepeatedClear)
 {
-    // Fails on 431.02 driver. http://anglebug.com/3748
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
+    // ES3 shaders are not yet supported on Vulkan.
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -1249,9 +1262,6 @@ void MaskedScissoredClearTestBase::MaskedScissoredColorDepthStencilClear(
 
     ParseMaskedScissoredClearVariationsTestParams(params, &clearColor, &clearDepth, &clearStencil,
                                                   &maskColor, &maskDepth, &maskStencil, &scissor);
-
-    // clearDepth && !maskDepth fails on Intel Ubuntu 19.04 Mesa 19.0.2 GL. http://anglebug.com/3614
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsDesktopOpenGL() && clearDepth && !maskDepth);
 
     // Clear to a random color, 0.9 depth and 0x00 stencil
     Vector4 color1(0.1f, 0.2f, 0.3f, 0.4f);

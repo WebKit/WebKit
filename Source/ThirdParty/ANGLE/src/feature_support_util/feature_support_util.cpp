@@ -745,7 +745,8 @@ class RuleList
         }
 
         // Make sure there is at least one, default rule.  If not, add it here:
-        if (rules->mRuleList.size() == 0)
+        int nRules = rules->mRuleList.size();
+        if (nRules == 0)
         {
             Rule defaultRule("Default Rule", false);
             rules->addRule(defaultRule);

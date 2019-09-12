@@ -57,7 +57,7 @@ std::vector<std::string> SplitString(const std::string &input,
 
         if (resultType == SPLIT_WANT_ALL || !piece.empty())
         {
-            result.push_back(std::move(piece));
+            result.push_back(piece);
         }
     }
 
@@ -101,26 +101,6 @@ std::string TrimString(const std::string &input, const std::string &trimChars)
     return input.substr(begin, end - begin + 1);
 }
 
-std::string GetPrefix(const std::string &input, size_t offset, const char *delimiter)
-{
-    size_t match = input.find(delimiter, offset);
-    if (match == std::string::npos)
-    {
-        return input.substr(offset);
-    }
-    return input.substr(offset, match - offset);
-}
-
-std::string GetPrefix(const std::string &input, size_t offset, char delimiter)
-{
-    size_t match = input.find(delimiter, offset);
-    if (match == std::string::npos)
-    {
-        return input.substr(offset);
-    }
-    return input.substr(offset, match - offset);
-}
-
 bool HexStringToUInt(const std::string &input, unsigned int *uintOut)
 {
     unsigned int offset = 0;
@@ -155,6 +135,27 @@ bool ReadFileToString(const std::string &path, std::string *stringOut)
 
     stringOut->assign(std::istreambuf_iterator<char>(inFile), std::istreambuf_iterator<char>());
     return !inFile.fail();
+}
+
+Optional<std::vector<wchar_t>> WidenString(size_t length, const char *cString)
+{
+    std::vector<wchar_t> wcstring(length + 1);
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+    mbstate_t mbstate = {};
+    size_t written    = mbsrtowcs(wcstring.data(), &cString, length + 1, &mbstate);
+    if (written == 0)
+    {
+        return Optional<std::vector<wchar_t>>::Invalid();
+    }
+#else
+    size_t convertedChars = 0;
+    errno_t err = mbstowcs_s(&convertedChars, wcstring.data(), length + 1, cString, _TRUNCATE);
+    if (err != 0)
+    {
+        return Optional<std::vector<wchar_t>>::Invalid();
+    }
+#endif
+    return Optional<std::vector<wchar_t>>(wcstring);
 }
 
 bool BeginsWith(const std::string &str, const std::string &prefix)

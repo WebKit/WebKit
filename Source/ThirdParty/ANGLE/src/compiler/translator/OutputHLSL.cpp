@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -173,49 +173,6 @@ TReferencedBlock::TReferencedBlock(const TInterfaceBlock *aBlock,
     : block(aBlock), instanceVariable(aInstanceVariable)
 {}
 
-bool OutputHLSL::needStructMapping(TIntermTyped *node)
-{
-    ASSERT(node->getBasicType() == EbtStruct);
-    for (unsigned int n = 0u; getAncestorNode(n) != nullptr; ++n)
-    {
-        TIntermNode *ancestor               = getAncestorNode(n);
-        const TIntermBinary *ancestorBinary = ancestor->getAsBinaryNode();
-        if (ancestorBinary)
-        {
-            switch (ancestorBinary->getOp())
-            {
-                case EOpIndexDirectStruct:
-                {
-                    const TStructure *structure = ancestorBinary->getLeft()->getType().getStruct();
-                    const TIntermConstantUnion *index =
-                        ancestorBinary->getRight()->getAsConstantUnion();
-                    const TField *field = structure->fields()[index->getIConst(0)];
-                    if (field->type()->getStruct() == nullptr)
-                    {
-                        return false;
-                    }
-                    break;
-                }
-                case EOpIndexDirect:
-                case EOpIndexIndirect:
-                    break;
-                default:
-                    return true;
-            }
-        }
-        else
-        {
-            const TIntermAggregate *ancestorAggregate = ancestor->getAsAggregate();
-            if (ancestorAggregate)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-    return true;
-}
-
 void OutputHLSL::writeFloat(TInfoSinkBase &out, float f)
 {
     // This is known not to work for NaN on all drivers but make the best effort to output NaNs
@@ -271,14 +228,12 @@ const TConstantUnion *OutputHLSL::writeConstantUnionArray(TInfoSinkBase &out,
 }
 
 OutputHLSL::OutputHLSL(sh::GLenum shaderType,
-                       ShShaderSpec shaderSpec,
                        int shaderVersion,
                        const TExtensionBehavior &extensionBehavior,
                        const char *sourcePath,
                        ShShaderOutput outputType,
                        int numRenderTargets,
-                       int maxDualSourceDrawBuffers,
-                       const std::vector<ShaderVariable> &uniforms,
+                       const std::vector<Uniform> &uniforms,
                        ShCompileOptions compileOptions,
                        sh::WorkGroupSize workGroupSize,
                        TSymbolTable *symbolTable,
@@ -286,7 +241,6 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
                        const std::vector<InterfaceBlock> &shaderStorageBlocks)
     : TIntermTraverser(true, true, true, symbolTable),
       mShaderType(shaderType),
-      mShaderSpec(shaderSpec),
       mShaderVersion(shaderVersion),
       mExtensionBehavior(extensionBehavior),
       mSourcePath(sourcePath),
@@ -295,11 +249,9 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
       mInsideFunction(false),
       mInsideMain(false),
       mNumRenderTargets(numRenderTargets),
-      mMaxDualSourceDrawBuffers(maxDualSourceDrawBuffers),
       mCurrentFunctionMetadata(nullptr),
       mWorkGroupSize(workGroupSize),
-      mPerfDiagnostics(perfDiagnostics),
-      mNeedStructMapping(false)
+      mPerfDiagnostics(perfDiagnostics)
 {
     mUsesFragColor   = false;
     mUsesFragData    = false;
@@ -310,7 +262,6 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mUsesPointSize   = false;
     mUsesInstanceID  = false;
     mHasMultiviewExtensionEnabled =
-        IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview) ||
         IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview2);
     mUsesViewID                  = false;
     mUsesVertexID                = false;
@@ -325,7 +276,6 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mUsesNestedBreak             = false;
     mRequiresIEEEStrictCompiling = false;
     mUseZeroArray                = false;
-    mUsesSecondaryColor          = false;
 
     mUniqueIndex = 0;
 
@@ -610,11 +560,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
                         const std::vector<MappedStruct> &std140Structs,
                         const BuiltInFunctionEmulator *builtInFunctionEmulator) const
 {
-    TString mappedStructs;
-    if (mNeedStructMapping)
-    {
-        mappedStructs = generateStructMapping(std140Structs);
-    }
+    TString mappedStructs = generateStructMapping(std140Structs);
 
     out << mStructureHLSL->structsHeader();
 
@@ -684,15 +630,12 @@ void OutputHLSL::header(TInfoSinkBase &out,
     {
         const bool usingMRTExtension =
             IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers);
-        const bool usingBFEExtension =
-            IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_blend_func_extended);
 
         out << "// Varyings\n";
         writeReferencedVaryings(out);
         out << "\n";
 
-        if ((IsDesktopGLSpec(mShaderSpec) && mShaderVersion >= 130) ||
-            (!IsDesktopGLSpec(mShaderSpec) && mShaderVersion >= 300))
+        if (mShaderVersion >= 300)
         {
             for (const auto &outputVariable : mReferencedOutputVariables)
             {
@@ -721,23 +664,6 @@ void OutputHLSL::header(TInfoSinkBase &out,
             }
 
             out << "};\n";
-
-            if (usingBFEExtension && mUsesSecondaryColor)
-            {
-                out << "static float4 gl_SecondaryColor[" << mMaxDualSourceDrawBuffers
-                    << "] = \n"
-                       "{\n";
-                for (int i = 0; i < mMaxDualSourceDrawBuffers; i++)
-                {
-                    out << "    float4(0, 0, 0, 0)";
-                    if (i + 1 != mMaxDualSourceDrawBuffers)
-                    {
-                        out << ",";
-                    }
-                    out << "\n";
-                }
-                out << "};\n";
-            }
         }
 
         if (mUsesFragDepth)
@@ -854,11 +780,6 @@ void OutputHLSL::header(TInfoSinkBase &out,
         if (mUsesFragData)
         {
             out << "#define GL_USES_FRAG_DATA\n";
-        }
-
-        if (mShaderVersion < 300 && usingBFEExtension && mUsesSecondaryColor)
-        {
-            out << "#define GL_USES_SECONDARY_COLOR\n";
         }
     }
     else if (mShaderType == GL_VERTEX_SHADER)
@@ -1105,10 +1026,8 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
     TInfoSinkBase &out = getInfoSink();
 
     // Handle accessing std140 structs by value
-    if (IsInStd140UniformBlock(node) && node->getBasicType() == EbtStruct &&
-        needStructMapping(node))
+    if (IsInStd140UniformBlock(node) && node->getBasicType() == EbtStruct)
     {
-        mNeedStructMapping = true;
         out << "map";
     }
 
@@ -1198,16 +1117,6 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         {
             out << "gl_Color";
             mUsesFragData = true;
-        }
-        else if (qualifier == EvqSecondaryFragColorEXT)
-        {
-            out << "gl_SecondaryColor[0]";
-            mUsesSecondaryColor = true;
-        }
-        else if (qualifier == EvqSecondaryFragDataEXT)
-        {
-            out << "gl_SecondaryColor";
-            mUsesSecondaryColor = true;
         }
         else if (qualifier == EvqFragCoord)
         {
@@ -1647,12 +1556,10 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
         case EOpIndexDirectInterfaceBlock:
         {
             ASSERT(!IsInShaderStorageBlock(node->getLeft()));
-            bool structInStd140UniformBlock = node->getBasicType() == EbtStruct &&
-                                              IsInStd140UniformBlock(node->getLeft()) &&
-                                              needStructMapping(node);
+            bool structInStd140UniformBlock =
+                node->getBasicType() == EbtStruct && IsInStd140UniformBlock(node->getLeft());
             if (visit == PreVisit && structInStd140UniformBlock)
             {
-                mNeedStructMapping = true;
                 out << "map";
             }
             if (visit == InVisit)
@@ -2308,8 +2215,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
         {
             TIntermSequence *arguments = node->getSequence();
 
-            bool lod0 = (mInsideDiscontinuousLoop || mOutputLod0Function) &&
-                        mShaderType == GL_FRAGMENT_SHADER;
+            bool lod0 = mInsideDiscontinuousLoop || mOutputLod0Function;
             if (node->getOp() == EOpCallFunctionInAST)
             {
                 if (node->isArray())

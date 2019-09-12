@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -26,18 +26,18 @@ namespace
 class SeparateDeclarationsTraverser : private TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler, TIntermNode *root);
+    static void apply(TIntermNode *root);
 
   private:
     SeparateDeclarationsTraverser();
     bool visitDeclaration(Visit, TIntermDeclaration *node) override;
 };
 
-bool SeparateDeclarationsTraverser::apply(TCompiler *compiler, TIntermNode *root)
+void SeparateDeclarationsTraverser::apply(TIntermNode *root)
 {
     SeparateDeclarationsTraverser separateDecl;
     root->traverse(&separateDecl);
-    return separateDecl.updateTree(compiler, root);
+    separateDecl.updateTree();
 }
 
 SeparateDeclarationsTraverser::SeparateDeclarationsTraverser()
@@ -70,9 +70,9 @@ bool SeparateDeclarationsTraverser::visitDeclaration(Visit, TIntermDeclaration *
 
 }  // namespace
 
-bool SeparateDeclarations(TCompiler *compiler, TIntermNode *root)
+void SeparateDeclarations(TIntermNode *root)
 {
-    return SeparateDeclarationsTraverser::apply(compiler, root);
+    SeparateDeclarationsTraverser::apply(root);
 }
 
 }  // namespace sh

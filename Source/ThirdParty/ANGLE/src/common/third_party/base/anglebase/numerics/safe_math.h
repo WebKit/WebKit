@@ -89,14 +89,6 @@ class CheckedNumeric
     // IsValid() is the public API to test if a CheckedNumeric is currently valid.
     bool IsValid() const { return validity() == RANGE_VALID; }
 
-    // AssignIfValid(Dst) - Assigns the underlying value if it is currently valid and is within the
-    // range supported by the destination type. Returns true if successful and false otherwise.
-    template <typename Dst>
-    constexpr bool AssignIfValid(Dst *result) const
-    {
-        return IsValid() ? ((*result = static_cast<Dst>(state_.value())), true) : false;
-    }
-
     // ValueOrDie() The primary accessor for the underlying value. If the current
     // state is not valid it will CHECK and crash.
     T ValueOrDie() const

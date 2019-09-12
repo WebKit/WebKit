@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -151,7 +151,7 @@ void RecordConstantPrecisionTraverser::nextIteration()
 
 }  // namespace
 
-bool RecordConstantPrecision(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
+void RecordConstantPrecision(TIntermNode *root, TSymbolTable *symbolTable)
 {
     RecordConstantPrecisionTraverser traverser(symbolTable);
     // Iterate as necessary, and reset the traverser between iterations.
@@ -160,15 +160,8 @@ bool RecordConstantPrecision(TCompiler *compiler, TIntermNode *root, TSymbolTabl
         traverser.nextIteration();
         root->traverse(&traverser);
         if (traverser.foundHigherPrecisionConstant())
-        {
-            if (!traverser.updateTree(compiler, root))
-            {
-                return false;
-            }
-        }
+            traverser.updateTree();
     } while (traverser.foundHigherPrecisionConstant());
-
-    return true;
 }
 
 }  // namespace sh

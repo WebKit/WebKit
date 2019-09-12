@@ -11,7 +11,7 @@
     ],
     "Format": [
         "IsFloat",
-        "IsSint",
+        "IsInt",
         "IsUint"
     ],
     "Function": [

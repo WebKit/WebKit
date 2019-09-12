@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,7 +22,6 @@
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/ShaderImpl.h"
-#include "platform/FrontendFeatures.h"
 
 namespace gl
 {
@@ -131,7 +130,7 @@ Shader::Shader(ShaderProgramManager *manager,
                rx::GLImplFactory *implFactory,
                const gl::Limitations &rendererLimitations,
                ShaderType type,
-               ShaderProgramID handle)
+               GLuint handle)
     : mState(type),
       mImplementation(implFactory->createShader(mState)),
       mRendererLimitations(rendererLimitations),
@@ -169,7 +168,7 @@ const std::string &Shader::getLabel() const
     return mState.mLabel;
 }
 
-ShaderProgramID Shader::getHandle() const
+GLuint Shader::getHandle() const
 {
     return mHandle;
 }
@@ -322,8 +321,7 @@ void Shader::compile(const Context *context)
     mState.mCompileStatus = CompileStatus::COMPILE_REQUESTED;
     mBoundCompiler.set(context, context->getCompiler());
 
-    ShCompileOptions options = (SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID |
-                                SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE);
+    ShCompileOptions options = (SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID);
 
     // Add default options to WebGL shaders to prevent unexpected behavior during
     // compilation.
@@ -342,11 +340,6 @@ void Shader::compile(const Context *context)
     if (mRendererLimitations.shadersRequireIndexedLoopValidation)
     {
         options |= SH_VALIDATE_LOOP_INDEXING;
-    }
-
-    if (context->getFrontendFeatures().scalarizeVecAndMatConstructorArgs.enabled)
-    {
-        options |= SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS;
     }
 
     mCurrentMaxComputeWorkGroupInvocations = context->getCaps().maxComputeWorkGroupInvocations;
@@ -407,15 +400,7 @@ void Shader::resolveCompile()
         // Remove null characters from the source line
         line.erase(std::remove(line.begin(), line.end(), '\0'), line.end());
 
-        shaderStream << "// " << line;
-
-        // glslang complains if a comment ends with backslash
-        if (!line.empty() && line.back() == '\\')
-        {
-            shaderStream << "\\";
-        }
-
-        shaderStream << std::endl;
+        shaderStream << "// " << line << std::endl;
     }
     shaderStream << "\n\n";
     shaderStream << mState.mTranslatedSource;
@@ -462,16 +447,16 @@ void Shader::resolveCompile()
         }
         case ShaderType::Vertex:
         {
-            mState.mOutputVaryings   = GetShaderVariables(sh::GetOutputVaryings(compilerHandle));
-            mState.mAllAttributes    = GetShaderVariables(sh::GetAttributes(compilerHandle));
-            mState.mActiveAttributes = GetActiveShaderVariables(&mState.mAllAttributes);
-            mState.mNumViews         = sh::GetVertexShaderNumViews(compilerHandle);
+            {
+                mState.mOutputVaryings = GetShaderVariables(sh::GetOutputVaryings(compilerHandle));
+                mState.mAllAttributes    = GetShaderVariables(sh::GetAttributes(compilerHandle));
+                mState.mActiveAttributes = GetActiveShaderVariables(&mState.mAllAttributes);
+                mState.mNumViews         = sh::GetVertexShaderNumViews(compilerHandle);
+            }
             break;
         }
         case ShaderType::Fragment:
         {
-            mState.mAllAttributes    = GetShaderVariables(sh::GetAttributes(compilerHandle));
-            mState.mActiveAttributes = GetActiveShaderVariables(&mState.mAllAttributes);
             mState.mInputVaryings = GetShaderVariables(sh::GetInputVaryings(compilerHandle));
             // TODO(jmadill): Figure out why we only sort in the FS, and if we need to.
             std::sort(mState.mInputVaryings.begin(), mState.mInputVaryings.end(), CompareShaderVar);
@@ -559,19 +544,19 @@ int Shader::getShaderVersion()
     return mState.mShaderVersion;
 }
 
-const std::vector<sh::ShaderVariable> &Shader::getInputVaryings()
+const std::vector<sh::Varying> &Shader::getInputVaryings()
 {
     resolveCompile();
     return mState.getInputVaryings();
 }
 
-const std::vector<sh::ShaderVariable> &Shader::getOutputVaryings()
+const std::vector<sh::Varying> &Shader::getOutputVaryings()
 {
     resolveCompile();
     return mState.getOutputVaryings();
 }
 
-const std::vector<sh::ShaderVariable> &Shader::getUniforms()
+const std::vector<sh::Uniform> &Shader::getUniforms()
 {
     resolveCompile();
     return mState.getUniforms();
@@ -589,19 +574,19 @@ const std::vector<sh::InterfaceBlock> &Shader::getShaderStorageBlocks()
     return mState.getShaderStorageBlocks();
 }
 
-const std::vector<sh::ShaderVariable> &Shader::getActiveAttributes()
+const std::vector<sh::Attribute> &Shader::getActiveAttributes()
 {
     resolveCompile();
     return mState.getActiveAttributes();
 }
 
-const std::vector<sh::ShaderVariable> &Shader::getAllAttributes()
+const std::vector<sh::Attribute> &Shader::getAllAttributes()
 {
     resolveCompile();
     return mState.getAllAttributes();
 }
 
-const std::vector<sh::ShaderVariable> &Shader::getActiveOutputVariables()
+const std::vector<sh::OutputVariable> &Shader::getActiveOutputVariables()
 {
     resolveCompile();
     return mState.getActiveOutputVariables();
@@ -636,8 +621,7 @@ std::string Shader::getTransformFeedbackVaryingMappedName(const std::string &tfV
             }
             else if (varying.isStruct())
             {
-                GLuint fieldIndex = 0;
-                const auto *field = FindShaderVarField(varying, tfVaryingName, &fieldIndex);
+                const auto *field = FindShaderVarField(varying, tfVaryingName);
                 ASSERT(field != nullptr && !field->isStruct() && !field->isArray());
                 return varying.mappedName + "." + field->mappedName;
             }

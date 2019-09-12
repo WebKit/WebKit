@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -113,9 +113,7 @@ void SeparateExpressionsTraverser::nextIteration()
 
 }  // namespace
 
-bool SeparateExpressionsReturningArrays(TCompiler *compiler,
-                                        TIntermNode *root,
-                                        TSymbolTable *symbolTable)
+void SeparateExpressionsReturningArrays(TIntermNode *root, TSymbolTable *symbolTable)
 {
     SeparateExpressionsTraverser traverser(symbolTable);
     // Separate one expression at a time, and reset the traverser between iterations.
@@ -124,15 +122,8 @@ bool SeparateExpressionsReturningArrays(TCompiler *compiler,
         traverser.nextIteration();
         root->traverse(&traverser);
         if (traverser.foundArrayExpression())
-        {
-            if (!traverser.updateTree(compiler, root))
-            {
-                return false;
-            }
-        }
+            traverser.updateTree();
     } while (traverser.foundArrayExpression());
-
-    return true;
 }
 
 }  // namespace sh

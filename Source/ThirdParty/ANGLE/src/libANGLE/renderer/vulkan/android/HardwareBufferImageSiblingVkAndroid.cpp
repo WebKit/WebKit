@@ -122,11 +122,8 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     externalMemoryImageCreateInfo.handleTypes =
         VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
 
-    VkExtent3D vkExtents;
-    gl_vk::GetExtent(mSize, &vkExtents);
-
     mImage = new vk::ImageHelper();
-    ANGLE_TRY(mImage->initExternal(displayVk, gl::TextureType::_2D, vkExtents, vkFormat, 1, usage,
+    ANGLE_TRY(mImage->initExternal(displayVk, gl::TextureType::_2D, mSize, vkFormat, 1, usage,
                                    vk::ImageLayout::ExternalPreInitialized,
                                    &externalMemoryImageCreateInfo, 1, 1));
 
@@ -167,7 +164,15 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
 
 void HardwareBufferImageSiblingVkAndroid::onDestroy(const egl::Display *display)
 {
-    ASSERT(mImage == nullptr);
+    DisplayVk *displayVk = vk::GetImpl(display);
+    RendererVk *renderer = displayVk->getRenderer();
+
+    if (mImage != nullptr)
+    {
+        mImage->releaseImage(renderer);
+        mImage->releaseStagingBuffer(renderer);
+        SafeDelete(mImage);
+    }
 }
 
 gl::Format HardwareBufferImageSiblingVkAndroid::getFormat() const
@@ -200,16 +205,4 @@ vk::ImageHelper *HardwareBufferImageSiblingVkAndroid::getImage() const
 {
     return mImage;
 }
-
-void HardwareBufferImageSiblingVkAndroid::release(DisplayVk *display,
-                                                  std::vector<vk::GarbageObjectBase> *garbageQueue)
-{
-    if (mImage != nullptr)
-    {
-        mImage->releaseImage(display, garbageQueue);
-        mImage->releaseStagingBuffer(display, garbageQueue);
-        SafeDelete(mImage);
-    }
-}
-
 }  // namespace rx

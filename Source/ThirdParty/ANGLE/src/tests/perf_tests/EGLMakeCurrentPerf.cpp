@@ -40,7 +40,7 @@ class EGLMakeCurrentPerfTest : public ANGLEPerfTest,
 };
 
 EGLMakeCurrentPerfTest::EGLMakeCurrentPerfTest()
-    : ANGLEPerfTest("EGLMakeCurrent", "", "_run", ITERATIONS),
+    : ANGLEPerfTest("EGLMakeCurrent", "_run", ITERATIONS),
       mOSWindow(nullptr),
       mDisplay(EGL_NO_DISPLAY),
       mSurface(EGL_NO_SURFACE),
@@ -63,8 +63,7 @@ EGLMakeCurrentPerfTest::EGLMakeCurrentPerfTest()
     mOSWindow = OSWindow::New();
     mOSWindow->initialize("EGLMakeCurrent Test", 64, 64);
 
-    mEGLLibrary.reset(
-        angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
+    mEGLLibrary.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME));
 
     angle::LoadProc getProc =
         reinterpret_cast<angle::LoadProc>(mEGLLibrary->getSymbol("eglGetProcAddress"));

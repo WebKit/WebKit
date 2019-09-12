@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -74,11 +74,11 @@ bool SeparateArrayConstructorStatementsTraverser::visitAggregate(Visit visit,
 
 }  // namespace
 
-bool SeparateArrayConstructorStatements(TCompiler *compiler, TIntermBlock *root)
+void SeparateArrayConstructorStatements(TIntermBlock *root)
 {
     SeparateArrayConstructorStatementsTraverser traverser;
     root->traverse(&traverser);
-    return traverser.updateTree(compiler, root);
+    traverser.updateTree();
 }
 
 }  // namespace sh

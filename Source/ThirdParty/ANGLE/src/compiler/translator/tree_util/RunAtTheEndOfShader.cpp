@@ -1,5 +1,5 @@
 //
-// Copyright 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -21,7 +21,6 @@
 
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
@@ -102,22 +101,16 @@ void WrapMainAndAppend(TIntermBlock *root,
 
 }  // anonymous namespace
 
-bool RunAtTheEndOfShader(TCompiler *compiler,
-                         TIntermBlock *root,
-                         TIntermNode *codeToRun,
-                         TSymbolTable *symbolTable)
+void RunAtTheEndOfShader(TIntermBlock *root, TIntermNode *codeToRun, TSymbolTable *symbolTable)
 {
     TIntermFunctionDefinition *main = FindMain(root);
     if (!ContainsReturn(main))
     {
         main->getBody()->appendStatement(codeToRun);
-    }
-    else
-    {
-        WrapMainAndAppend(root, main, codeToRun, symbolTable);
+        return;
     }
 
-    return compiler->validateAST(root);
+    WrapMainAndAppend(root, main, codeToRun, symbolTable);
 }
 
 }  // namespace sh

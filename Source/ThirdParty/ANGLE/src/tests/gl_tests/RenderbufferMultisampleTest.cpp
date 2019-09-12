@@ -27,17 +27,21 @@ class RenderbufferMultisampleTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenRenderbuffers(1, &mRenderbuffer);
 
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteRenderbuffers(1, &mRenderbuffer);
         mRenderbuffer = 0;
+
+        ANGLETest::TearDown();
     }
 
     GLuint mRenderbuffer = 0;

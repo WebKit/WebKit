@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -16,15 +16,12 @@
 #ifndef COMPILER_TRANSLATOR_TREEOPS_REWRITEREPEATEDASSIGNTOSWIZZLED_H_
 #define COMPILER_TRANSLATOR_TREEOPS_REWRITEREPEATEDASSIGNTOSWIZZLED_H_
 
-#include "common/angleutils.h"
-
 namespace sh
 {
 
-class TCompiler;
 class TIntermBlock;
 
-ANGLE_NO_DISCARD bool RewriteRepeatedAssignToSwizzled(TCompiler *compiler, TIntermBlock *root);
+void RewriteRepeatedAssignToSwizzled(TIntermBlock *root);
 
 }  // namespace sh
 

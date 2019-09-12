@@ -11,12 +11,12 @@
     ],
     "SrcFormat": [
         "SrcIsFloat",
-        "SrcIsSint",
+        "SrcIsInt",
         "SrcIsUint"
     ],
     "DestFormat": [
         "DestIsFloat",
-        "DestIsSint",
+        "DestIsInt",
         "DestIsUint"
     ]
 }

@@ -86,23 +86,11 @@ class FramebufferImpl : angle::NonCopyable
                                             size_t index,
                                             GLfloat *xy) const = 0;
 
-    // Special configuration option for checkStatus(). Some back-ends don't require a syncState
-    // before calling checkStatus. In practice the GL back-end is the only config that needs
-    // syncState because it depends on the behaviour of the driver. Allowing the Vulkan and
-    // D3D back-ends to skip syncState lets us do more work in the syncState call.
-    virtual bool shouldSyncStateBeforeCheckStatus() const;
-
     const gl::FramebufferState &getState() const { return mState; }
 
   protected:
     const gl::FramebufferState &mState;
 };
-
-inline bool FramebufferImpl::shouldSyncStateBeforeCheckStatus() const
-{
-    return false;
-}
-
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_FRAMEBUFFERIMPL_H_

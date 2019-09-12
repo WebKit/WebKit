@@ -7,7 +7,7 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
-#include "media/pixel.inc"
+#include "media/pixel.inl"
 
 using namespace angle;
 
@@ -24,8 +24,10 @@ class DXT1CompressedTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    virtual void SetUp()
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] = R"(precision highp float;
 attribute vec4 position;
 varying vec2 texcoord;
@@ -57,7 +59,12 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteProgram(mTextureProgram); }
+    virtual void TearDown()
+    {
+        glDeleteProgram(mTextureProgram);
+
+        ANGLETest::TearDown();
+    }
 
     GLuint mTextureProgram;
     GLint mTextureUniformLocation;
@@ -415,6 +422,7 @@ TEST_P(DXT1CompressedTextureTestES3, CopyTexSubImage3DDisallowed)
 ANGLE_INSTANTIATE_TEST(DXT1CompressedTextureTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),

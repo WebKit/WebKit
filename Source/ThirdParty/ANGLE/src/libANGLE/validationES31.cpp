@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -298,7 +298,7 @@ bool ValidateProgramResourceIndex(const Program *programObject,
 
 bool ValidateProgramUniform(Context *context,
                             GLenum valueType,
-                            ShaderProgramID program,
+                            GLuint program,
                             GLint location,
                             GLsizei count)
 {
@@ -317,7 +317,7 @@ bool ValidateProgramUniform(Context *context,
 
 bool ValidateProgramUniformMatrix(Context *context,
                                   GLenum valueType,
-                                  ShaderProgramID program,
+                                  GLuint program,
                                   GLint location,
                                   GLsizei count,
                                   GLboolean transpose)
@@ -352,7 +352,7 @@ bool ValidateVertexAttribFormatCommon(Context *context, GLuint relativeOffset)
 
     // [OpenGL ES 3.1] Section 10.3.1 page 243:
     // An INVALID_OPERATION error is generated if the default vertex array object is bound.
-    if (context->getState().getVertexArrayId().value == 0)
+    if (context->getState().getVertexArrayId() == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultVertexArray);
         return false;
@@ -431,7 +431,7 @@ bool ValidateDrawIndirectBase(Context *context, PrimitiveMode mode, const void *
 
     // An INVALID_OPERATION error is generated if zero is bound to VERTEX_ARRAY_BINDING,
     // DRAW_INDIRECT_BUFFER or to any enabled vertex array.
-    if (state.getVertexArrayId().value == 0)
+    if (!state.getVertexArrayId())
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultVertexArray);
         return false;
@@ -539,23 +539,19 @@ bool ValidateDrawElementsIndirect(Context *context,
     return true;
 }
 
-bool ValidateProgramUniform1i(Context *context, ShaderProgramID program, GLint location, GLint v0)
+bool ValidateProgramUniform1i(Context *context, GLuint program, GLint location, GLint v0)
 {
     return ValidateProgramUniform1iv(context, program, location, 1, &v0);
 }
 
-bool ValidateProgramUniform2i(Context *context,
-                              ShaderProgramID program,
-                              GLint location,
-                              GLint v0,
-                              GLint v1)
+bool ValidateProgramUniform2i(Context *context, GLuint program, GLint location, GLint v0, GLint v1)
 {
     GLint xy[2] = {v0, v1};
     return ValidateProgramUniform2iv(context, program, location, 1, xy);
 }
 
 bool ValidateProgramUniform3i(Context *context,
-                              ShaderProgramID program,
+                              GLuint program,
                               GLint location,
                               GLint v0,
                               GLint v1,
@@ -566,7 +562,7 @@ bool ValidateProgramUniform3i(Context *context,
 }
 
 bool ValidateProgramUniform4i(Context *context,
-                              ShaderProgramID program,
+                              GLuint program,
                               GLint location,
                               GLint v0,
                               GLint v1,
@@ -577,13 +573,13 @@ bool ValidateProgramUniform4i(Context *context,
     return ValidateProgramUniform4iv(context, program, location, 1, xyzw);
 }
 
-bool ValidateProgramUniform1ui(Context *context, ShaderProgramID program, GLint location, GLuint v0)
+bool ValidateProgramUniform1ui(Context *context, GLuint program, GLint location, GLuint v0)
 {
     return ValidateProgramUniform1uiv(context, program, location, 1, &v0);
 }
 
 bool ValidateProgramUniform2ui(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLuint v0,
                                GLuint v1)
@@ -593,7 +589,7 @@ bool ValidateProgramUniform2ui(Context *context,
 }
 
 bool ValidateProgramUniform3ui(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLuint v0,
                                GLuint v1,
@@ -604,7 +600,7 @@ bool ValidateProgramUniform3ui(Context *context,
 }
 
 bool ValidateProgramUniform4ui(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLuint v0,
                                GLuint v1,
@@ -615,13 +611,13 @@ bool ValidateProgramUniform4ui(Context *context,
     return ValidateProgramUniform4uiv(context, program, location, 1, xyzw);
 }
 
-bool ValidateProgramUniform1f(Context *context, ShaderProgramID program, GLint location, GLfloat v0)
+bool ValidateProgramUniform1f(Context *context, GLuint program, GLint location, GLfloat v0)
 {
     return ValidateProgramUniform1fv(context, program, location, 1, &v0);
 }
 
 bool ValidateProgramUniform2f(Context *context,
-                              ShaderProgramID program,
+                              GLuint program,
                               GLint location,
                               GLfloat v0,
                               GLfloat v1)
@@ -631,7 +627,7 @@ bool ValidateProgramUniform2f(Context *context,
 }
 
 bool ValidateProgramUniform3f(Context *context,
-                              ShaderProgramID program,
+                              GLuint program,
                               GLint location,
                               GLfloat v0,
                               GLfloat v1,
@@ -642,7 +638,7 @@ bool ValidateProgramUniform3f(Context *context,
 }
 
 bool ValidateProgramUniform4f(Context *context,
-                              ShaderProgramID program,
+                              GLuint program,
                               GLint location,
                               GLfloat v0,
                               GLfloat v1,
@@ -654,7 +650,7 @@ bool ValidateProgramUniform4f(Context *context,
 }
 
 bool ValidateProgramUniform1iv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLint *value)
@@ -673,7 +669,7 @@ bool ValidateProgramUniform1iv(Context *context,
 }
 
 bool ValidateProgramUniform2iv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLint *value)
@@ -682,7 +678,7 @@ bool ValidateProgramUniform2iv(Context *context,
 }
 
 bool ValidateProgramUniform3iv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLint *value)
@@ -691,7 +687,7 @@ bool ValidateProgramUniform3iv(Context *context,
 }
 
 bool ValidateProgramUniform4iv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLint *value)
@@ -700,7 +696,7 @@ bool ValidateProgramUniform4iv(Context *context,
 }
 
 bool ValidateProgramUniform1uiv(Context *context,
-                                ShaderProgramID program,
+                                GLuint program,
                                 GLint location,
                                 GLsizei count,
                                 const GLuint *value)
@@ -709,7 +705,7 @@ bool ValidateProgramUniform1uiv(Context *context,
 }
 
 bool ValidateProgramUniform2uiv(Context *context,
-                                ShaderProgramID program,
+                                GLuint program,
                                 GLint location,
                                 GLsizei count,
                                 const GLuint *value)
@@ -718,7 +714,7 @@ bool ValidateProgramUniform2uiv(Context *context,
 }
 
 bool ValidateProgramUniform3uiv(Context *context,
-                                ShaderProgramID program,
+                                GLuint program,
                                 GLint location,
                                 GLsizei count,
                                 const GLuint *value)
@@ -727,7 +723,7 @@ bool ValidateProgramUniform3uiv(Context *context,
 }
 
 bool ValidateProgramUniform4uiv(Context *context,
-                                ShaderProgramID program,
+                                GLuint program,
                                 GLint location,
                                 GLsizei count,
                                 const GLuint *value)
@@ -736,7 +732,7 @@ bool ValidateProgramUniform4uiv(Context *context,
 }
 
 bool ValidateProgramUniform1fv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLfloat *value)
@@ -745,7 +741,7 @@ bool ValidateProgramUniform1fv(Context *context,
 }
 
 bool ValidateProgramUniform2fv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLfloat *value)
@@ -754,7 +750,7 @@ bool ValidateProgramUniform2fv(Context *context,
 }
 
 bool ValidateProgramUniform3fv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLfloat *value)
@@ -763,7 +759,7 @@ bool ValidateProgramUniform3fv(Context *context,
 }
 
 bool ValidateProgramUniform4fv(Context *context,
-                               ShaderProgramID program,
+                               GLuint program,
                                GLint location,
                                GLsizei count,
                                const GLfloat *value)
@@ -772,7 +768,7 @@ bool ValidateProgramUniform4fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix2fv(Context *context,
-                                     ShaderProgramID program,
+                                     GLuint program,
                                      GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
@@ -783,7 +779,7 @@ bool ValidateProgramUniformMatrix2fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix3fv(Context *context,
-                                     ShaderProgramID program,
+                                     GLuint program,
                                      GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
@@ -794,7 +790,7 @@ bool ValidateProgramUniformMatrix3fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix4fv(Context *context,
-                                     ShaderProgramID program,
+                                     GLuint program,
                                      GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
@@ -805,7 +801,7 @@ bool ValidateProgramUniformMatrix4fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix2x3fv(Context *context,
-                                       ShaderProgramID program,
+                                       GLuint program,
                                        GLint location,
                                        GLsizei count,
                                        GLboolean transpose,
@@ -816,7 +812,7 @@ bool ValidateProgramUniformMatrix2x3fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix3x2fv(Context *context,
-                                       ShaderProgramID program,
+                                       GLuint program,
                                        GLint location,
                                        GLsizei count,
                                        GLboolean transpose,
@@ -827,7 +823,7 @@ bool ValidateProgramUniformMatrix3x2fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix2x4fv(Context *context,
-                                       ShaderProgramID program,
+                                       GLuint program,
                                        GLint location,
                                        GLsizei count,
                                        GLboolean transpose,
@@ -838,7 +834,7 @@ bool ValidateProgramUniformMatrix2x4fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix4x2fv(Context *context,
-                                       ShaderProgramID program,
+                                       GLuint program,
                                        GLint location,
                                        GLsizei count,
                                        GLboolean transpose,
@@ -849,7 +845,7 @@ bool ValidateProgramUniformMatrix4x2fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix3x4fv(Context *context,
-                                       ShaderProgramID program,
+                                       GLuint program,
                                        GLint location,
                                        GLsizei count,
                                        GLboolean transpose,
@@ -860,7 +856,7 @@ bool ValidateProgramUniformMatrix3x4fv(Context *context,
 }
 
 bool ValidateProgramUniformMatrix4x3fv(Context *context,
-                                       ShaderProgramID program,
+                                       GLuint program,
                                        GLint location,
                                        GLsizei count,
                                        GLboolean transpose,
@@ -949,7 +945,7 @@ bool ValidateTexStorageMem2DMultisampleEXT(Context *context,
                                            GLsizei width,
                                            GLsizei height,
                                            GLboolean fixedSampleLocations,
-                                           MemoryObjectID memory,
+                                           GLuint memory,
                                            GLuint64 offset)
 {
     if (!context->getExtensions().memoryObject)
@@ -1058,7 +1054,7 @@ bool ValidateFramebufferParameteri(Context *context, GLenum target, GLenum pname
 
     const Framebuffer *framebuffer = context->getState().getTargetFramebuffer(target);
     ASSERT(framebuffer);
-    if (framebuffer->isDefault())
+    if (framebuffer->id() == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultFramebuffer);
         return false;
@@ -1102,7 +1098,7 @@ bool ValidateGetFramebufferParameteriv(Context *context, GLenum target, GLenum p
     const Framebuffer *framebuffer = context->getState().getTargetFramebuffer(target);
     ASSERT(framebuffer);
 
-    if (framebuffer->isDefault())
+    if (framebuffer->id() == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultFramebuffer);
         return false;
@@ -1122,7 +1118,7 @@ bool ValidateGetFramebufferParameterivRobustANGLE(Context *context,
 }
 
 bool ValidateGetProgramResourceIndex(Context *context,
-                                     ShaderProgramID program,
+                                     GLuint program,
                                      GLenum programInterface,
                                      const GLchar *name)
 {
@@ -1149,7 +1145,7 @@ bool ValidateGetProgramResourceIndex(Context *context,
 
 bool ValidateBindVertexBuffer(Context *context,
                               GLuint bindingIndex,
-                              BufferID buffer,
+                              GLuint buffer,
                               GLintptr offset,
                               GLsizei stride)
 {
@@ -1186,7 +1182,7 @@ bool ValidateBindVertexBuffer(Context *context,
 
     // [OpenGL ES 3.1] Section 10.3.1 page 244:
     // An INVALID_OPERATION error is generated if the default vertex array object is bound.
-    if (context->getState().getVertexArrayId().value == 0)
+    if (context->getState().getVertexArrayId() == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultVertexArray);
         return false;
@@ -1212,7 +1208,7 @@ bool ValidateVertexBindingDivisor(Context *context, GLuint bindingIndex, GLuint 
 
     // [OpenGL ES 3.1] Section 10.3.1 page 243:
     // An INVALID_OPERATION error is generated if the default vertex array object is bound.
-    if (context->getState().getVertexArrayId().value == 0)
+    if (context->getState().getVertexArrayId() == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultVertexArray);
         return false;
@@ -1260,7 +1256,7 @@ bool ValidateVertexAttribBinding(Context *context, GLuint attribIndex, GLuint bi
 
     // [OpenGL ES 3.1] Section 10.3.1 page 243:
     // An INVALID_OPERATION error is generated if the default vertex array object is bound.
-    if (context->getState().getVertexArrayId().value == 0)
+    if (context->getState().getVertexArrayId() == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kDefaultVertexArray);
         return false;
@@ -1283,7 +1279,7 @@ bool ValidateVertexAttribBinding(Context *context, GLuint attribIndex, GLuint bi
 }
 
 bool ValidateGetProgramResourceName(Context *context,
-                                    ShaderProgramID program,
+                                    GLuint program,
                                     GLenum programInterface,
                                     GLuint index,
                                     GLsizei bufSize,
@@ -1413,7 +1409,7 @@ bool ValidateDispatchComputeIndirect(Context *context, GLintptr indirect)
 
 bool ValidateBindImageTexture(Context *context,
                               GLuint unit,
-                              TextureID texture,
+                              GLuint texture,
                               GLint level,
                               GLboolean layered,
                               GLint layer,
@@ -1466,7 +1462,7 @@ bool ValidateBindImageTexture(Context *context,
             return false;
     }
 
-    if (texture.value != 0)
+    if (texture != 0)
     {
         Texture *tex = context->getTexture(texture);
 
@@ -1487,7 +1483,7 @@ bool ValidateBindImageTexture(Context *context,
 }
 
 bool ValidateGetProgramResourceLocation(Context *context,
-                                        ShaderProgramID program,
+                                        GLuint program,
                                         GLenum programInterface,
                                         const GLchar *name)
 {
@@ -1518,7 +1514,7 @@ bool ValidateGetProgramResourceLocation(Context *context,
 }
 
 bool ValidateGetProgramResourceiv(Context *context,
-                                  ShaderProgramID program,
+                                  GLuint program,
                                   GLenum programInterface,
                                   GLuint index,
                                   GLsizei propCount,
@@ -1575,7 +1571,7 @@ bool ValidateGetProgramResourceiv(Context *context,
 }
 
 bool ValidateGetProgramInterfaceiv(Context *context,
-                                   ShaderProgramID program,
+                                   GLuint program,
                                    GLenum programInterface,
                                    GLenum pname,
                                    GLint *params)
@@ -1635,7 +1631,7 @@ bool ValidateGetProgramInterfaceiv(Context *context,
 }
 
 bool ValidateGetProgramInterfaceivRobustANGLE(Context *context,
-                                              ShaderProgramID program,
+                                              GLuint program,
                                               GLenum programInterface,
                                               GLenum pname,
                                               GLsizei bufSize,
@@ -1657,17 +1653,17 @@ static bool ValidateGenOrDeleteES31(Context *context, GLint n)
     return ValidateGenOrDelete(context, n);
 }
 
-bool ValidateGenProgramPipelines(Context *context, GLint n, ProgramPipelineID *pipelines)
+bool ValidateGenProgramPipelines(Context *context, GLint n, GLuint *)
 {
     return ValidateGenOrDeleteES31(context, n);
 }
 
-bool ValidateDeleteProgramPipelines(Context *context, GLint n, const ProgramPipelineID *pipelines)
+bool ValidateDeleteProgramPipelines(Context *context, GLint n, const GLuint *)
 {
     return ValidateGenOrDeleteES31(context, n);
 }
 
-bool ValidateBindProgramPipeline(Context *context, ProgramPipelineID pipeline)
+bool ValidateBindProgramPipeline(Context *context, GLuint pipeline)
 {
     if (context->getClientVersion() < ES_3_1)
     {
@@ -1675,7 +1671,7 @@ bool ValidateBindProgramPipeline(Context *context, ProgramPipelineID pipeline)
         return false;
     }
 
-    if (!context->isProgramPipelineGenerated({pipeline}))
+    if (!context->isProgramPipelineGenerated(pipeline))
     {
         context->validationError(GL_INVALID_OPERATION, kObjectNotGenerated);
         return false;
@@ -1684,7 +1680,7 @@ bool ValidateBindProgramPipeline(Context *context, ProgramPipelineID pipeline)
     return true;
 }
 
-bool ValidateIsProgramPipeline(Context *context, ProgramPipelineID pipeline)
+bool ValidateIsProgramPipeline(Context *context, GLuint pipeline)
 {
     if (context->getClientVersion() < ES_3_1)
     {
@@ -1695,18 +1691,13 @@ bool ValidateIsProgramPipeline(Context *context, ProgramPipelineID pipeline)
     return true;
 }
 
-bool ValidateUseProgramStages(Context *context,
-                              ProgramPipelineID pipeline,
-                              GLbitfield stages,
-                              ShaderProgramID program)
+bool ValidateUseProgramStages(Context *context, GLuint pipeline, GLbitfield stages, GLuint program)
 {
     UNIMPLEMENTED();
     return false;
 }
 
-bool ValidateActiveShaderProgram(Context *context,
-                                 ProgramPipelineID pipeline,
-                                 ShaderProgramID program)
+bool ValidateActiveShaderProgram(Context *context, GLuint pipeline, GLuint program)
 {
     UNIMPLEMENTED();
     return false;
@@ -1721,23 +1712,20 @@ bool ValidateCreateShaderProgramv(Context *context,
     return false;
 }
 
-bool ValidateGetProgramPipelineiv(Context *context,
-                                  ProgramPipelineID pipeline,
-                                  GLenum pname,
-                                  GLint *params)
+bool ValidateGetProgramPipelineiv(Context *context, GLuint pipeline, GLenum pname, GLint *params)
 {
     UNIMPLEMENTED();
     return false;
 }
 
-bool ValidateValidateProgramPipeline(Context *context, ProgramPipelineID pipeline)
+bool ValidateValidateProgramPipeline(Context *context, GLuint pipeline)
 {
     UNIMPLEMENTED();
     return false;
 }
 
 bool ValidateGetProgramPipelineInfoLog(Context *context,
-                                       ProgramPipelineID pipeline,
+                                       GLuint pipeline,
                                        GLsizei bufSize,
                                        GLsizei *length,
                                        GLchar *infoLog)
@@ -1814,7 +1802,7 @@ bool ValidateSampleMaski(Context *context, GLuint maskNumber, GLbitfield mask)
 bool ValidateFramebufferTextureEXT(Context *context,
                                    GLenum target,
                                    GLenum attachment,
-                                   TextureID texture,
+                                   GLuint texture,
                                    GLint level)
 {
     if (!context->getExtensions().geometryShader)
@@ -1823,7 +1811,7 @@ bool ValidateFramebufferTextureEXT(Context *context,
         return false;
     }
 
-    if (texture.value != 0)
+    if (texture != 0)
     {
         gl::Texture *tex = context->getTexture(texture);
 
@@ -1898,7 +1886,7 @@ bool ValidateTexStorageMem3DMultisampleEXT(Context *context,
                                            GLsizei height,
                                            GLsizei depth,
                                            GLboolean fixedSampleLocations,
-                                           MemoryObjectID memory,
+                                           GLuint memory,
                                            GLuint64 offset)
 {
     if (!context->getExtensions().memoryObject)
@@ -1912,7 +1900,7 @@ bool ValidateTexStorageMem3DMultisampleEXT(Context *context,
 }
 
 bool ValidateGetProgramResourceLocationIndexEXT(Context *context,
-                                                ShaderProgramID program,
+                                                GLuint program,
                                                 GLenum programInterface,
                                                 const char *name)
 {

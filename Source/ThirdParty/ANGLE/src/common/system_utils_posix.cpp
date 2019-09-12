@@ -11,10 +11,13 @@
 #include <array>
 
 #include <dlfcn.h>
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+// On BSDs (including mac), environ is not declared anywhere:
+// https://stackoverflow.com/a/31347357/912144
+extern char **environ;
 
 namespace angle
 {
@@ -154,7 +157,7 @@ bool RunApp(const std::vector<const char *> &args,
             }
         }
 
-        // Execute the application, which doesn't return unless failed.  Note: execv takes argv as
+        // Execute the application, which doesn't return unless failed.  Note: execve takes argv as
         // `char * const *` for historical reasons.  It is safe to const_cast it:
         //
         // http://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
@@ -167,7 +170,7 @@ bool RunApp(const std::vector<const char *> &args,
         // modify either the array of pointers or the characters to which the function points, but
         // this would disallow existing correct code. Instead, only the array of pointers is noted
         // as constant.
-        execv(args[0], const_cast<char *const *>(args.data()));
+        execve(args[0], const_cast<char *const *>(args.data()), environ);
         _exit(errno);
     }
 
@@ -214,22 +217,14 @@ bool RunApp(const std::vector<const char *> &args,
 class PosixLibrary : public Library
 {
   public:
-    PosixLibrary(const char *libraryName, SearchType searchType)
+    PosixLibrary(const char *libraryName)
     {
-        std::string directory;
-        if (searchType == SearchType::ApplicationDir)
+        char buffer[1000];
+        int ret = snprintf(buffer, 1000, "%s.%s", libraryName, GetSharedLibraryExtension());
+        if (ret > 0 && ret < 1000)
         {
-            static int dummySymbol = 0;
-            Dl_info dlInfo;
-            if (dladdr(&dummySymbol, &dlInfo) != 0)
-            {
-                std::string moduleName = dlInfo.dli_fname;
-                directory              = moduleName.substr(0, moduleName.find_last_of('/') + 1);
-            }
+            mModule = dlopen(buffer, RTLD_NOW);
         }
-
-        std::string fullPath = directory + libraryName + "." + GetSharedLibraryExtension();
-        mModule              = dlopen(fullPath.c_str(), RTLD_NOW);
     }
 
     ~PosixLibrary() override
@@ -256,29 +251,8 @@ class PosixLibrary : public Library
     void *mModule = nullptr;
 };
 
-Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
+Library *OpenSharedLibrary(const char *libraryName)
 {
-    return new PosixLibrary(libraryName, searchType);
-}
-
-bool IsDirectory(const char *filename)
-{
-    struct stat st;
-    int result = stat(filename, &st);
-    return result == 0 && ((st.st_mode & S_IFDIR) == S_IFDIR);
-}
-
-bool IsDebuggerAttached()
-{
-    // This could have a fuller implementation.
-    // See https://cs.chromium.org/chromium/src/base/debug/debugger_posix.cc
-    return false;
-}
-
-void BreakDebugger()
-{
-    // This could have a fuller implementation.
-    // See https://cs.chromium.org/chromium/src/base/debug/debugger_posix.cc
-    abort();
+    return new PosixLibrary(libraryName);
 }
 }  // namespace angle

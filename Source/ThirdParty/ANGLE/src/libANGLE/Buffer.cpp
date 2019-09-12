@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -38,8 +38,8 @@ BufferState::BufferState()
 
 BufferState::~BufferState() {}
 
-Buffer::Buffer(rx::GLImplFactory *factory, BufferID id)
-    : RefCountObject(id.value),
+Buffer::Buffer(rx::GLImplFactory *factory, GLuint id)
+    : RefCountObject(id),
       mImpl(factory->createBuffer(mState)),
       mImplObserver(this, kImplementationSubjectIndex)
 {
@@ -94,7 +94,7 @@ angle::Result Buffer::bufferData(Context *context,
     mState.mSize  = size;
 
     // Notify when storage changes.
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    onStateChange(context, angle::SubjectMessage::STORAGE_CHANGED);
 
     return angle::Result::Continue;
 }
@@ -111,7 +111,7 @@ angle::Result Buffer::bufferSubData(const Context *context,
                                      static_cast<unsigned int>(size));
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::ContentsChanged);
+    onStateChange(context, angle::SubjectMessage::CONTENTS_CHANGED);
 
     return angle::Result::Continue;
 }
@@ -129,7 +129,7 @@ angle::Result Buffer::copyBufferSubData(const Context *context,
                                      static_cast<unsigned int>(size));
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::ContentsChanged);
+    onStateChange(context, angle::SubjectMessage::CONTENTS_CHANGED);
 
     return angle::Result::Continue;
 }
@@ -151,7 +151,7 @@ angle::Result Buffer::map(const Context *context, GLenum access)
     mIndexRangeCache.clear();
 
     // Notify when state changes.
-    onStateChange(angle::SubjectMessage::SubjectMapped);
+    onStateChange(context, angle::SubjectMessage::RESOURCE_MAPPED);
 
     return angle::Result::Continue;
 }
@@ -185,7 +185,7 @@ angle::Result Buffer::mapRange(const Context *context,
     }
 
     // Notify when state changes.
-    onStateChange(angle::SubjectMessage::SubjectMapped);
+    onStateChange(context, angle::SubjectMessage::RESOURCE_MAPPED);
 
     return angle::Result::Continue;
 }
@@ -205,19 +205,25 @@ angle::Result Buffer::unmap(const Context *context, GLboolean *result)
     mState.mAccessFlags = 0;
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::SubjectUnmapped);
+    onStateChange(context, angle::SubjectMessage::RESOURCE_UNMAPPED);
 
     return angle::Result::Continue;
 }
 
-void Buffer::onDataChanged()
+void Buffer::onTransformFeedback(const Context *context)
 {
     mIndexRangeCache.clear();
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::ContentsChanged);
+    onStateChange(context, angle::SubjectMessage::CONTENTS_CHANGED);
+}
 
-    mImpl->onDataChanged();
+void Buffer::onPixelPack(const Context *context)
+{
+    mIndexRangeCache.clear();
+
+    // Notify when data changes.
+    onStateChange(context, angle::SubjectMessage::CONTENTS_CHANGED);
 }
 
 angle::Result Buffer::getIndexRange(const gl::Context *context,
@@ -260,7 +266,7 @@ void Buffer::onTFBindingChanged(const Context *context, bool bound, bool indexed
         ASSERT(bound || mState.mTransformFeedbackIndexedBindingCount > 0);
         mState.mTransformFeedbackIndexedBindingCount += bound ? 1 : -1;
 
-        onStateChange(angle::SubjectMessage::BindingChanged);
+        onStateChange(context, angle::SubjectMessage::BINDING_CHANGED);
     }
     else
     {
@@ -268,11 +274,12 @@ void Buffer::onTFBindingChanged(const Context *context, bool bound, bool indexed
     }
 }
 
-void Buffer::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
+void Buffer::onSubjectStateChange(const gl::Context *context,
+                                  angle::SubjectIndex index,
+                                  angle::SubjectMessage message)
 {
     // Pass it along!
     ASSERT(index == kImplementationSubjectIndex);
-    ASSERT(message == angle::SubjectMessage::SubjectChanged);
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    onStateChange(context, message);
 }
 }  // namespace gl

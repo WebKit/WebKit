@@ -8,8 +8,6 @@
 
 #include "common/android_util.h"
 
-#include <cstdint>
-
 // Taken from cutils/native_handle.h:
 // https://android.googlesource.com/platform/system/core/+/master/libcutils/include/cutils/native_handle.h
 typedef struct native_handle
@@ -165,20 +163,6 @@ enum {
 namespace
 {
 
-// In the Android system:
-// - AHardwareBuffer is essentially a typedef of GraphicBuffer. Conversion functions simply
-// reinterpret_cast.
-// - GraphicBuffer inherits from two base classes, ANativeWindowBuffer and RefBase.
-//
-// GraphicBuffer implements a getter for ANativeWindowBuffer (getNativeBuffer) by static_casting
-// itself to its base class ANativeWindowBuffer. The offset of the ANativeWindowBuffer pointer
-// from the GraphicBuffer pointer is 16 bytes. This is likely due to two pointers: The vtable of
-// GraphicBuffer and the one pointer member of the RefBase class.
-//
-// This is not future proof at all. We need to look into getting utilities added to Android to
-// perform this cast for us.
-constexpr int kAHardwareBufferToANativeWindowBufferOffset = static_cast<int>(sizeof(void *)) * 2;
-
 template <typename T1, typename T2>
 T1 *offsetPointer(T2 *ptr, int bytes)
 {
@@ -193,12 +177,12 @@ namespace angle
 namespace android
 {
 
-ANativeWindowBuffer *ClientBufferToANativeWindowBuffer(EGLClientBuffer clientBuffer)
+struct ANativeWindowBuffer *ClientBufferToANativeWindowBuffer(EGLClientBuffer clientBuffer)
 {
-    return reinterpret_cast<ANativeWindowBuffer *>(clientBuffer);
+    return reinterpret_cast<struct ANativeWindowBuffer *>(clientBuffer);
 }
 
-void GetANativeWindowBufferProperties(const ANativeWindowBuffer *buffer,
+void GetANativeWindowBufferProperties(const struct ANativeWindowBuffer *buffer,
                                       int *width,
                                       int *height,
                                       int *depth,
@@ -252,16 +236,23 @@ GLenum NativePixelFormatToGLInternalFormat(int pixelFormat)
     }
 }
 
-AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(ANativeWindowBuffer *windowBuffer)
+struct AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(
+    struct ANativeWindowBuffer *windowBuffer)
 {
-    return offsetPointer<AHardwareBuffer>(windowBuffer,
-                                          -kAHardwareBufferToANativeWindowBufferOffset);
-}
-
-EGLClientBuffer AHardwareBufferToClientBuffer(const AHardwareBuffer *hardwareBuffer)
-{
-    return offsetPointer<EGLClientBuffer>(hardwareBuffer,
-                                          kAHardwareBufferToANativeWindowBufferOffset);
+    // In the Android system:
+    // - AHardwareBuffer is essentially a typedef of GraphicBuffer. Conversion functions simply
+    // reinterpret_cast.
+    // - GraphicBuffer inherits from two base classes, ANativeWindowBuffer and RefBase.
+    //
+    // GraphicBuffer implements a getter for ANativeWindowBuffer (getNativeBuffer) by static_casting
+    // itself to its base class ANativeWindowBuffer. The offset of the ANativeWindowBuffer pointer
+    // from the GraphicBuffer pointer is 16 bytes. This is likely due to two pointers: The vtable of
+    // GraphicBuffer and the one pointer member of the RefBase class.
+    //
+    // This is not future proof at all. We need to look into getting utilities added to Android to
+    // perform this cast for us.
+    int offset = -(static_cast<int>(sizeof(void *)) * 2);
+    return offsetPointer<struct AHardwareBuffer>(windowBuffer, offset);
 }
 
 }  // namespace android

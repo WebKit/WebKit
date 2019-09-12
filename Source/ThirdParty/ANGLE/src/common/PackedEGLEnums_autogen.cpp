@@ -47,26 +47,6 @@ EGLenum ToEGLenum(CompositorTiming from)
     }
 }
 
-std::ostream &operator<<(std::ostream &os, CompositorTiming value)
-{
-    switch (value)
-    {
-        case CompositorTiming::CompositeDeadline:
-            os << "EGL_COMPOSITE_DEADLINE_ANDROID";
-            break;
-        case CompositorTiming::CompositInterval:
-            os << "EGL_COMPOSITE_INTERVAL_ANDROID";
-            break;
-        case CompositorTiming::CompositToPresentLatency:
-            os << "EGL_COMPOSITE_TO_PRESENT_LATENCY_ANDROID";
-            break;
-        default:
-            os << "GL_INVALID_ENUM";
-            break;
-    }
-    return os;
-}
-
 template <>
 MessageType FromEGLenum<MessageType>(EGLenum from)
 {
@@ -101,29 +81,6 @@ EGLenum ToEGLenum(MessageType from)
             UNREACHABLE();
             return 0;
     }
-}
-
-std::ostream &operator<<(std::ostream &os, MessageType value)
-{
-    switch (value)
-    {
-        case MessageType::Critical:
-            os << "EGL_DEBUG_MSG_CRITICAL_KHR";
-            break;
-        case MessageType::Error:
-            os << "EGL_DEBUG_MSG_ERROR_KHR";
-            break;
-        case MessageType::Warn:
-            os << "EGL_DEBUG_MSG_WARN_KHR";
-            break;
-        case MessageType::Info:
-            os << "EGL_DEBUG_MSG_INFO_KHR";
-            break;
-        default:
-            os << "GL_INVALID_ENUM";
-            break;
-    }
-    return os;
 }
 
 template <>
@@ -174,38 +131,6 @@ EGLenum ToEGLenum(ObjectType from)
     }
 }
 
-std::ostream &operator<<(std::ostream &os, ObjectType value)
-{
-    switch (value)
-    {
-        case ObjectType::Thread:
-            os << "EGL_OBJECT_THREAD_KHR";
-            break;
-        case ObjectType::Display:
-            os << "EGL_OBJECT_DISPLAY_KHR";
-            break;
-        case ObjectType::Context:
-            os << "EGL_OBJECT_CONTEXT_KHR";
-            break;
-        case ObjectType::Surface:
-            os << "EGL_OBJECT_SURFACE_KHR";
-            break;
-        case ObjectType::Image:
-            os << "EGL_OBJECT_IMAGE_KHR";
-            break;
-        case ObjectType::Sync:
-            os << "EGL_OBJECT_SYNC_KHR";
-            break;
-        case ObjectType::Stream:
-            os << "EGL_OBJECT_STREAM_KHR";
-            break;
-        default:
-            os << "GL_INVALID_ENUM";
-            break;
-    }
-    return os;
-}
-
 template <>
 TextureFormat FromEGLenum<TextureFormat>(EGLenum from)
 {
@@ -236,26 +161,6 @@ EGLenum ToEGLenum(TextureFormat from)
             UNREACHABLE();
             return 0;
     }
-}
-
-std::ostream &operator<<(std::ostream &os, TextureFormat value)
-{
-    switch (value)
-    {
-        case TextureFormat::NoTexture:
-            os << "EGL_NO_TEXTURE";
-            break;
-        case TextureFormat::RGB:
-            os << "EGL_TEXTURE_RGB";
-            break;
-        case TextureFormat::RGBA:
-            os << "EGL_TEXTURE_RGBA";
-            break;
-        default:
-            os << "GL_INVALID_ENUM";
-            break;
-    }
-    return os;
 }
 
 template <>
@@ -312,44 +217,6 @@ EGLenum ToEGLenum(Timestamp from)
             UNREACHABLE();
             return 0;
     }
-}
-
-std::ostream &operator<<(std::ostream &os, Timestamp value)
-{
-    switch (value)
-    {
-        case Timestamp::RequestedPresentTime:
-            os << "EGL_REQUESTED_PRESENT_TIME_ANDROID";
-            break;
-        case Timestamp::RenderingCompleteTime:
-            os << "EGL_RENDERING_COMPLETE_TIME_ANDROID";
-            break;
-        case Timestamp::CompositionLatchTime:
-            os << "EGL_COMPOSITION_LATCH_TIME_ANDROID";
-            break;
-        case Timestamp::FirstCompositionStartTime:
-            os << "EGL_FIRST_COMPOSITION_START_TIME_ANDROID";
-            break;
-        case Timestamp::LastCompositionStartTime:
-            os << "EGL_LAST_COMPOSITION_START_TIME_ANDROID";
-            break;
-        case Timestamp::FirstCompositionGPUFinishedTime:
-            os << "EGL_FIRST_COMPOSITION_GPU_FINISHED_TIME_ANDROID";
-            break;
-        case Timestamp::DisplayPresentTime:
-            os << "EGL_DISPLAY_PRESENT_TIME_ANDROID";
-            break;
-        case Timestamp::DequeueReadyTime:
-            os << "EGL_DEQUEUE_READY_TIME_ANDROID";
-            break;
-        case Timestamp::ReadsDoneTime:
-            os << "EGL_READS_DONE_TIME_ANDROID";
-            break;
-        default:
-            os << "GL_INVALID_ENUM";
-            break;
-    }
-    return os;
 }
 
 }  // namespace egl

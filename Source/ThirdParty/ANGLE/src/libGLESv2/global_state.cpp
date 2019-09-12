@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright(c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -35,11 +35,6 @@ namespace
 {
 static TLSIndex threadTLS = TLS_INVALID_INDEX;
 Debug *g_Debug            = nullptr;
-std::atomic<std::mutex *> g_Mutex;
-static_assert(std::is_trivially_constructible<decltype(g_Mutex)>::value,
-              "global mutex is not trivially constructible");
-static_assert(std::is_trivially_destructible<decltype(g_Mutex)>::value,
-              "global mutex is not trivially destructible");
 
 Thread *AllocateCurrentThread()
 {
@@ -61,33 +56,14 @@ Thread *AllocateCurrentThread()
 
 void AllocateDebug()
 {
-    // All EGL calls use a global lock, this is thread safe
+    // TODO(geofflang): Lock around global allocation. http://anglebug.com/2464
     if (g_Debug == nullptr)
     {
         g_Debug = new Debug();
     }
 }
 
-void AllocateMutex()
-{
-    if (g_Mutex == nullptr)
-    {
-        std::unique_ptr<std::mutex> newMutex(new std::mutex());
-        std::mutex *expected = nullptr;
-        if (g_Mutex.compare_exchange_strong(expected, newMutex.get()))
-        {
-            newMutex.release();
-        }
-    }
-}
-
 }  // anonymous namespace
-
-std::mutex &GetGlobalMutex()
-{
-    AllocateMutex();
-    return *g_Mutex;
-}
 
 Thread *GetCurrentThread()
 {
@@ -133,6 +109,21 @@ void SetContextCurrent(Thread *thread, gl::Context *context)
 }
 }  // namespace egl
 
+#if ANGLE_FORCE_THREAD_SAFETY == ANGLE_ENABLED
+namespace angle
+{
+namespace
+{
+std::mutex g_Mutex;
+}  // anonymous namespace
+
+std::mutex &GetGlobalMutex()
+{
+    return g_Mutex;
+}
+}  // namespace angle
+#endif
+
 #ifdef ANGLE_PLATFORM_WINDOWS
 namespace egl
 {
@@ -147,27 +138,15 @@ bool DeallocateCurrentThread()
     return SetTLSValue(threadTLS, nullptr);
 }
 
-void DeallocateDebug()
+void DealocateDebug()
 {
     SafeDelete(g_Debug);
-}
-
-void DeallocateMutex()
-{
-    std::mutex *mutex = g_Mutex.exchange(nullptr);
-    {
-        // Wait for the mutex to become released by other threads before deleting.
-        std::lock_guard<std::mutex> lock(*mutex);
-    }
-    SafeDelete(mutex);
 }
 
 bool InitializeProcess()
 {
     ASSERT(g_Debug == nullptr);
     AllocateDebug();
-
-    AllocateMutex();
 
     threadTLS = CreateTLSIndex();
     if (threadTLS == TLS_INVALID_INDEX)
@@ -180,9 +159,7 @@ bool InitializeProcess()
 
 bool TerminateProcess()
 {
-    DeallocateDebug();
-
-    DeallocateMutex();
+    DealocateDebug();
 
     if (!DeallocateCurrentThread())
     {

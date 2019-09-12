@@ -10,7 +10,6 @@
 
 #include "compiler/translator/tree_ops/UseInterfaceBlockFields.h"
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/FindMain.h"
@@ -94,15 +93,12 @@ void InsertUseCode(TIntermSequence *sequence,
 
 }  // namespace
 
-bool UseInterfaceBlockFields(TCompiler *compiler,
-                             TIntermBlock *root,
+void UseInterfaceBlockFields(TIntermBlock *root,
                              const InterfaceBlockList &blocks,
                              const TSymbolTable &symbolTable)
 {
     TIntermBlock *mainBody = FindMainBody(root);
     InsertUseCode(mainBody->getSequence(), blocks, symbolTable);
-
-    return compiler->validateAST(root);
 }
 
 }  // namespace sh

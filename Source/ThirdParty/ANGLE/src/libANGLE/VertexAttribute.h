@@ -1,5 +1,5 @@
 //
-// Copyright 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -11,7 +11,6 @@
 
 #include "libANGLE/Buffer.h"
 #include "libANGLE/angletypes.h"
-#include "libANGLE/renderer/Format.h"
 
 namespace gl
 {
@@ -82,7 +81,10 @@ struct VertexAttribute final : private angle::NonCopyable
     GLint64 getCachedElementLimit() const { return mCachedElementLimit; }
 
     bool enabled;  // For glEnable/DisableVertexAttribArray
-    const angle::Format *format;
+    VertexAttribType type;
+    GLuint size;
+    bool normalized;
+    bool pureInteger;
 
     const void *pointer;
     GLuint relativeOffset;
@@ -100,8 +102,36 @@ struct VertexAttribute final : private angle::NonCopyable
 
 ANGLE_INLINE size_t ComputeVertexAttributeTypeSize(const VertexAttribute &attrib)
 {
-    ASSERT(attrib.format);
-    return attrib.format->pixelBytes;
+    switch (attrib.type)
+    {
+        case VertexAttribType::Byte:
+            return attrib.size * sizeof(GLbyte);
+        case VertexAttribType::UnsignedByte:
+            return attrib.size * sizeof(GLubyte);
+        case VertexAttribType::Short:
+            return attrib.size * sizeof(GLshort);
+        case VertexAttribType::UnsignedShort:
+            return attrib.size * sizeof(GLushort);
+        case VertexAttribType::Int:
+            return attrib.size * sizeof(GLint);
+        case VertexAttribType::UnsignedInt:
+            return attrib.size * sizeof(GLuint);
+        case VertexAttribType::Float:
+            return attrib.size * sizeof(GLfloat);
+        case VertexAttribType::HalfFloat:
+            return attrib.size * sizeof(GLhalf);
+        case VertexAttribType::Fixed:
+            return attrib.size * sizeof(GLfixed);
+        case VertexAttribType::Int2101010:
+            // Packed attribute types don't scale by their component size.
+            return 4;
+        case VertexAttribType::UnsignedInt2101010:
+            // Packed attribute types don't scale by their component size.
+            return 4;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
 }
 
 // Warning: you should ensure binding really matches attrib.bindingIndex before using this function.
@@ -119,7 +149,7 @@ struct VertexAttribCurrentValueData
         GLfloat FloatValues[4];
         GLint IntValues[4];
         GLuint UnsignedIntValues[4];
-    } Values;
+    };
     VertexAttribType Type;
 
     VertexAttribCurrentValueData();
@@ -134,6 +164,6 @@ bool operator!=(const VertexAttribCurrentValueData &a, const VertexAttribCurrent
 
 }  // namespace gl
 
-#include "VertexAttribute.inc"
+#include "VertexAttribute.inl"
 
 #endif  // LIBANGLE_VERTEXATTRIBUTE_H_

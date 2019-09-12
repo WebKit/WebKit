@@ -1,5 +1,5 @@
 //
-// Copyright 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -18,13 +18,16 @@ using namespace angle;
 namespace
 {
 
-class EGLSurfacelessContextTest : public ANGLETest
+class EGLSurfacelessContextTest : public EGLTest,
+                                  public testing::WithParamInterface<PlatformParameters>
 {
   public:
     EGLSurfacelessContextTest() : mDisplay(0) {}
 
-    void testSetUp() override
+    void SetUp() override
     {
+        EGLTest::SetUp();
+
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
             EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
@@ -54,7 +57,7 @@ class EGLSurfacelessContextTest : public ANGLETest
         ASSERT_NE(nullptr, mConfig);
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
@@ -258,7 +261,7 @@ TEST_P(EGLSurfacelessContextTest, Switcheroo)
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST(EGLSurfacelessContextTest,
-                       WithNoFixture(ES2_D3D9()),
-                       WithNoFixture(ES2_D3D11()),
-                       WithNoFixture(ES2_OPENGL()),
-                       WithNoFixture(ES2_VULKAN()));
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES2_OPENGL(),
+                       ES2_VULKAN());

@@ -83,10 +83,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderImpl::compileImpl(
     const std::string &source,
     ShCompileOptions compileOptions)
 {
-#if defined(ANGLE_ENABLE_ASSERTS)
-    compileOptions |= SH_VALIDATE_AST;
-#endif
-
     auto workerThreadPool = context->getWorkerThreadPool();
     auto translateTask =
         std::make_shared<TranslateTask>(compilerInstance->getHandle(), compileOptions, source);

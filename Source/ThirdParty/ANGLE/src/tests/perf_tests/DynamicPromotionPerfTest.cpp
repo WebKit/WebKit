@@ -24,19 +24,19 @@ struct DynamicPromotionParams final : public RenderTestParams
 {
     DynamicPromotionParams() { iterationsPerStep = kIterationsPerStep; }
 
-    std::string story() const override;
+    std::string suffix() const override;
 
     size_t vertexCount = 1024;
 };
 
-std::string DynamicPromotionParams::story() const
+std::string DynamicPromotionParams::suffix() const
 {
-    return RenderTestParams::story();
+    return RenderTestParams::suffix();
 }
 
 std::ostream &operator<<(std::ostream &os, const DynamicPromotionParams &params)
 {
-    os << params.backendAndStory().substr(1);
+    os << params.suffix().substr(1);
     return os;
 }
 

@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -17,7 +17,6 @@
 
 #include <vector>
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
@@ -126,8 +125,7 @@ void InsertInitCallToMain(TIntermBlock *root,
 
 }  // namespace
 
-bool DeferGlobalInitializers(TCompiler *compiler,
-                             TIntermBlock *root,
+void DeferGlobalInitializers(TIntermBlock *root,
                              bool initializeUninitializedGlobals,
                              bool canUseLoopsToInitialize,
                              bool highPrecisionSupported,
@@ -162,13 +160,8 @@ bool DeferGlobalInitializers(TCompiler *compiler,
         replacementType->setQualifier(EvqGlobal);
         TVariable *replacement =
             new TVariable(symbolTable, var->name(), replacementType, var->symbolType());
-        if (!ReplaceVariable(compiler, root, var, replacement))
-        {
-            return false;
-        }
+        ReplaceVariable(root, var, replacement);
     }
-
-    return true;
 }
 
 }  // namespace sh

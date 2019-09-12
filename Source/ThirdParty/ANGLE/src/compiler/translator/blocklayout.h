@@ -1,5 +1,5 @@
 //
-// Copyright 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2013-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -20,6 +20,9 @@
 namespace sh
 {
 struct ShaderVariable;
+struct InterfaceBlockField;
+struct Uniform;
+struct Varying;
 struct InterfaceBlock;
 
 struct BlockMemberInfo
@@ -173,13 +176,13 @@ class Std430BlockEncoder : public Std140BlockEncoder
 
 using BlockLayoutMap = std::map<std::string, BlockMemberInfo>;
 
-void GetInterfaceBlockInfo(const std::vector<ShaderVariable> &fields,
+void GetInterfaceBlockInfo(const std::vector<InterfaceBlockField> &fields,
                            const std::string &prefix,
                            BlockLayoutEncoder *encoder,
                            BlockLayoutMap *blockInfoOut);
 
 // Used for laying out the default uniform block on the Vulkan backend.
-void GetUniformBlockInfo(const std::vector<ShaderVariable> &uniforms,
+void GetUniformBlockInfo(const std::vector<Uniform> &uniforms,
                          const std::string &prefix,
                          BlockLayoutEncoder *encoder,
                          BlockLayoutMap *blockInfoOut);
@@ -227,14 +230,12 @@ class VariableNameVisitor : public ShaderVariableVisitor
   protected:
     virtual void visitNamedSampler(const sh::ShaderVariable &sampler,
                                    const std::string &name,
-                                   const std::string &mappedName,
-                                   const std::vector<unsigned int> &arraySizes)
+                                   const std::string &mappedName)
     {}
     virtual void visitNamedVariable(const ShaderVariable &variable,
                                     bool isRowMajor,
                                     const std::string &name,
-                                    const std::string &mappedName,
-                                    const std::vector<unsigned int> &arraySizes) = 0;
+                                    const std::string &mappedName) = 0;
 
     std::string collapseNameStack() const;
     std::string collapseMappedNameStack() const;
@@ -245,7 +246,6 @@ class VariableNameVisitor : public ShaderVariableVisitor
 
     std::vector<std::string> mNameStack;
     std::vector<std::string> mMappedNameStack;
-    std::vector<unsigned int> mArraySizeStack;
 };
 
 class BlockEncoderVisitor : public VariableNameVisitor
@@ -264,8 +264,7 @@ class BlockEncoderVisitor : public VariableNameVisitor
     void visitNamedVariable(const ShaderVariable &variable,
                             bool isRowMajor,
                             const std::string &name,
-                            const std::string &mappedName,
-                            const std::vector<unsigned int> &arraySizes) override;
+                            const std::string &mappedName) override;
 
     virtual void encodeVariable(const ShaderVariable &variable,
                                 const BlockMemberInfo &variableInfo,

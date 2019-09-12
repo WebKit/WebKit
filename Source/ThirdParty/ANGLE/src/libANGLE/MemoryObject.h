@@ -27,7 +27,7 @@ class Context;
 class MemoryObject final : public RefCountObject
 {
   public:
-    MemoryObject(rx::GLImplFactory *factory, MemoryObjectID id);
+    MemoryObject(rx::GLImplFactory *factory, GLuint id);
     ~MemoryObject() override;
 
     void onDestroy(const Context *context) override;

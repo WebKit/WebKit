@@ -1,27 +1,31 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 // DisplayCGL.mm: CGL implementation of egl::Display
 
+
 #if __has_include(<Cocoa/Cocoa.h>)
 
-#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-#    import <Cocoa/Cocoa.h>
-#    include <EGL/eglext.h>
-#    include <dlfcn.h>
+#import <Cocoa/Cocoa.h>
+#include <EGL/eglext.h>
+#include <dlfcn.h>
 
-#    include "common/debug.h"
-#    include "gpu_info_util/SystemInfo.h"
-#    include "libANGLE/Display.h"
-#    include "libANGLE/renderer/gl/cgl/ContextCGL.h"
-#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/RendererCGL.h"
-#    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+#include "common/debug.h"
+#include "gpu_info_util/SystemInfo.h"
+#include "libANGLE/Display.h"
+#include "libANGLE/renderer/gl/cgl/ContextCGL.h"
+#include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
+#include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
+#include "libANGLE/renderer/gl/cgl/RendererCGL.h"
+#include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 namespace
 {
@@ -428,16 +432,8 @@ void DisplayCGL::unreferenceDiscreteGPU()
         mDiscreteGPUPixelFormat = nullptr;
     }
 }
-
-void DisplayCGL::initializeFrontendFeatures(angle::FrontendFeatures *features) const
-{
-    mRenderer->initializeFrontendFeatures(features);
 }
 
-void DisplayCGL::populateFeatureList(angle::FeatureList *features)
-{
-    mRenderer->getFeatures().populateFeatureList(features);
-}
-}
+#pragma clang diagnostic pop
 
-#endif  // __has_include(<Cocoa/Cocoa.h>)
+#endif // __has_include(<Cocoa/Cocoa.h>)

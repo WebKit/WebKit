@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -52,18 +52,18 @@ bool AreEmptyBlocks(TIntermSequence *statements)
 class PruneEmptyCasesTraverser : private TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler, TIntermBlock *root);
+    static void apply(TIntermBlock *root);
 
   private:
     PruneEmptyCasesTraverser();
     bool visitSwitch(Visit visit, TIntermSwitch *node) override;
 };
 
-bool PruneEmptyCasesTraverser::apply(TCompiler *compiler, TIntermBlock *root)
+void PruneEmptyCasesTraverser::apply(TIntermBlock *root)
 {
     PruneEmptyCasesTraverser prune;
     root->traverse(&prune);
-    return prune.updateTree(compiler, root);
+    prune.updateTree();
 }
 
 PruneEmptyCasesTraverser::PruneEmptyCasesTraverser() : TIntermTraverser(true, false, false) {}
@@ -119,9 +119,9 @@ bool PruneEmptyCasesTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
 
 }  // namespace
 
-bool PruneEmptyCases(TCompiler *compiler, TIntermBlock *root)
+void PruneEmptyCases(TIntermBlock *root)
 {
-    return PruneEmptyCasesTraverser::apply(compiler, root);
+    PruneEmptyCasesTraverser::apply(root);
 }
 
 }  // namespace sh

@@ -42,20 +42,24 @@ class TextureMultisampleTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenFramebuffers(1, &mFramebuffer);
         glGenTextures(1, &mTexture);
 
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteFramebuffers(1, &mFramebuffer);
         mFramebuffer = 0;
         glDeleteTextures(1, &mTexture);
         mTexture = 0;
+
+        ANGLETest::TearDown();
     }
 
     void texStorageMultisample(GLenum target,

@@ -23,8 +23,10 @@ class SRGBTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] =
             "precision highp float;\n"
             "attribute vec4 position;\n"
@@ -53,7 +55,12 @@ class SRGBTextureTest : public ANGLETest
         ASSERT_NE(-1, mTextureLocation);
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    void TearDown() override
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     GLenum getSRGBA8TextureInternalFormat() const
     {

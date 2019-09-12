@@ -1,5 +1,5 @@
 //
-// Copyright 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -33,7 +33,7 @@ struct BufferSubDataParams final : public RenderTestParams
         updateRate        = 1;
     }
 
-    std::string story() const override;
+    std::string suffix() const override;
 
     GLboolean vertexNormalized;
     GLenum vertexType;
@@ -47,7 +47,7 @@ struct BufferSubDataParams final : public RenderTestParams
 
 std::ostream &operator<<(std::ostream &os, const BufferSubDataParams &params)
 {
-    os << params.backendAndStory().substr(1);
+    os << params.suffix().substr(1);
     return os;
 }
 
@@ -203,11 +203,11 @@ GLsizeiptr GetVertexData(GLenum type,
     return triDataSize;
 }
 
-std::string BufferSubDataParams::story() const
+std::string BufferSubDataParams::suffix() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::story();
+    strstr << RenderTestParams::suffix();
 
     if (vertexNormalized)
     {
@@ -363,7 +363,7 @@ BufferSubDataParams BufferUpdateD3D9Params()
 BufferSubDataParams BufferUpdateOpenGLOrGLESParams()
 {
     BufferSubDataParams params;
-    params.eglParameters        = egl_platform::OPENGL_OR_GLES();
+    params.eglParameters        = egl_platform::OPENGL_OR_GLES(false);
     params.vertexType           = GL_FLOAT;
     params.vertexComponentCount = 4;
     params.vertexNormalized     = GL_FALSE;

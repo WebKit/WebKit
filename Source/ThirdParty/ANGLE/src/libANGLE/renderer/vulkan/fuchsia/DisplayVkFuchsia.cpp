@@ -34,7 +34,9 @@ SurfaceImpl *DisplayVkFuchsia::createWindowSurfaceVk(const egl::SurfaceState &st
 egl::ConfigSet DisplayVkFuchsia::generateConfigs()
 {
     constexpr GLenum kColorFormats[] = {GL_BGRA8_EXT, GL_BGRX8_ANGLEX};
-    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
+    constexpr EGLint kSampleCounts[] = {0};
+    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, kSampleCounts,
+                                   this);
 }
 
 bool DisplayVkFuchsia::checkConfigSupport(egl::Config *config)

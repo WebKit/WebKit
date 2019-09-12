@@ -1,5 +1,5 @@
 //
-// Copyright 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -26,25 +26,30 @@ DrawCallPerfParams::DrawCallPerfParams()
 #endif
     runTimeSeconds = 10.0;
     numTris        = 1;
-    offscreen      = false;
+    useFBO         = false;
 }
 
 DrawCallPerfParams::~DrawCallPerfParams() = default;
 
-std::string DrawCallPerfParams::story() const
+std::string DrawCallPerfParams::suffix() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::story();
+    strstr << RenderTestParams::suffix();
 
     if (numTris == 0)
     {
         strstr << "_validation_only";
     }
 
-    if (offscreen)
+    if (useFBO)
     {
-        strstr << "_offscreen";
+        strstr << "_render_to_texture";
+    }
+
+    if (eglParameters.deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
+    {
+        strstr << "_null";
     }
 
     return strstr.str();
@@ -52,30 +57,31 @@ std::string DrawCallPerfParams::story() const
 
 using namespace angle::egl_platform;
 
-namespace params
-{
-DrawCallPerfParams DrawCallD3D11()
+DrawCallPerfParams DrawCallPerfD3D11Params(bool useNullDevice, bool renderToTexture)
 {
     DrawCallPerfParams params;
-    params.eglParameters = D3D11();
+    params.eglParameters = useNullDevice ? D3D11_NULL() : D3D11();
+    params.useFBO        = renderToTexture;
     return params;
 }
 
-DrawCallPerfParams DrawCallD3D9()
+DrawCallPerfParams DrawCallPerfD3D9Params(bool useNullDevice, bool renderToTexture)
 {
     DrawCallPerfParams params;
-    params.eglParameters = D3D9();
+    params.eglParameters = useNullDevice ? D3D9_NULL() : D3D9();
+    params.useFBO        = renderToTexture;
     return params;
 }
 
-DrawCallPerfParams DrawCallOpenGL()
+DrawCallPerfParams DrawCallPerfOpenGLOrGLESParams(bool useNullDevice, bool renderToTexture)
 {
     DrawCallPerfParams params;
-    params.eglParameters = OPENGL_OR_GLES();
+    params.eglParameters = OPENGL_OR_GLES(useNullDevice);
+    params.useFBO        = renderToTexture;
     return params;
 }
 
-DrawCallPerfParams DrawCallValidation()
+DrawCallPerfParams DrawCallPerfValidationOnly()
 {
     DrawCallPerfParams params;
     params.eglParameters  = DEFAULT();
@@ -84,17 +90,18 @@ DrawCallPerfParams DrawCallValidation()
     return params;
 }
 
-DrawCallPerfParams DrawCallVulkan()
+DrawCallPerfParams DrawCallPerfVulkanParams(bool useNullDevice, bool renderToTexture)
 {
     DrawCallPerfParams params;
-    params.eglParameters = VULKAN();
+    params.eglParameters = useNullDevice ? VULKAN_NULL() : VULKAN();
+    params.useFBO        = renderToTexture;
     return params;
 }
 
-DrawCallPerfParams DrawCallWGL()
+DrawCallPerfParams DrawCallPerfWGLParams(bool renderToTexture)
 {
     DrawCallPerfParams params;
+    params.useFBO = renderToTexture;
     params.driver = angle::GLESDriverType::SystemWGL;
     return params;
 }
-}  // namespace params

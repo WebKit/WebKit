@@ -23,8 +23,10 @@ class LineLoopTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    virtual void SetUp()
     {
+        ANGLETest::SetUp();
+
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         if (mProgram == 0)
         {
@@ -41,7 +43,12 @@ class LineLoopTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    virtual void TearDown()
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     void runTest(GLenum indexType, GLuint indexBuffer, const void *indexPtr)
     {

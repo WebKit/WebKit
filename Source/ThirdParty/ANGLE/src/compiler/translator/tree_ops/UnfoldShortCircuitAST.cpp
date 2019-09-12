@@ -1,5 +1,5 @@
 //
-// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -64,11 +64,11 @@ bool UnfoldShortCircuitASTTraverser::visitBinary(Visit visit, TIntermBinary *nod
 
 }  // anonymous namespace
 
-bool UnfoldShortCircuitAST(TCompiler *compiler, TIntermBlock *root)
+void UnfoldShortCircuitAST(TIntermBlock *root)
 {
     UnfoldShortCircuitASTTraverser traverser;
     root->traverse(&traverser);
-    return traverser.updateTree(compiler, root);
+    traverser.updateTree();
 }
 
 }  // namespace sh

@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -15,19 +15,13 @@
 #ifndef COMPILER_TRANSLATOR_TREEOPS_REWRITE_TEXELFETCHOFFSET_H_
 #define COMPILER_TRANSLATOR_TREEOPS_REWRITE_TEXELFETCHOFFSET_H_
 
-#include "common/angleutils.h"
+class TIntermNode;
+class TSymbolTable;
 
 namespace sh
 {
 
-class TCompiler;
-class TIntermNode;
-class TSymbolTable;
-
-ANGLE_NO_DISCARD bool RewriteTexelFetchOffset(TCompiler *compiler,
-                                              TIntermNode *root,
-                                              const TSymbolTable &symbolTable,
-                                              int shaderVersion);
+void RewriteTexelFetchOffset(TIntermNode *root, const TSymbolTable &symbolTable, int shaderVersion);
 
 }  // namespace sh
 

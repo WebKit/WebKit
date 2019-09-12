@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -14,7 +14,6 @@
 #include <EGL/eglext.h>
 #include <platform/Platform.h>
 
-#include "anglebase/no_destructor.h"
 #include "common/debug.h"
 #include "common/platform.h"
 #include "libANGLE/renderer/DeviceImpl.h"
@@ -40,8 +39,8 @@ static std::string GenerateExtensionsString(const T &extensions)
 typedef std::set<egl::Device *> DeviceSet;
 static DeviceSet *GetDeviceSet()
 {
-    static angle::base::NoDestructor<DeviceSet> devices;
-    return devices.get();
+    static DeviceSet devices;
+    return &devices;
 }
 
 // Static factory methods

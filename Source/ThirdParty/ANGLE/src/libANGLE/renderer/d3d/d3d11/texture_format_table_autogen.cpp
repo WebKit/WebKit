@@ -392,65 +392,9 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
-        case GL_COMPRESSED_RGBA_ASTC_3x3x3_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_3x3x3_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_4x3x3_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_4x3x3_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
         {
             static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_4x4_KHR,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_4x4x3_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_4x4x3_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_4x4x4_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_4x4x4_OES,
                                          angle::FormatID::NONE,
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_UNKNOWN,
@@ -476,51 +420,9 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
-        case GL_COMPRESSED_RGBA_ASTC_5x4x4_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_5x4x4_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_RGBA_ASTC_5x5_KHR:
         {
             static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_5x5_KHR,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_5x5x4_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_5x5x4_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_5x5x5_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_5x5x5_OES,
                                          angle::FormatID::NONE,
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_UNKNOWN,
@@ -546,51 +448,9 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
-        case GL_COMPRESSED_RGBA_ASTC_6x5x5_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_6x5x5_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_RGBA_ASTC_6x6_KHR:
         {
             static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_6x6_KHR,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_6x6x5_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_6x6x5_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_RGBA_ASTC_6x6x6_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_6x6x6_OES,
                                          angle::FormatID::NONE,
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_UNKNOWN,
@@ -854,65 +714,9 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x3x3_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x3x3_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR:
         {
             static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x3_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x3_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x4_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x4_OES,
                                          angle::FormatID::NONE,
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_UNKNOWN,
@@ -938,51 +742,9 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4x4_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4x4_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR:
         {
             static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x4_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x4_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x5_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x5_OES,
                                          angle::FormatID::NONE,
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_UNKNOWN,
@@ -1008,51 +770,9 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5x5_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5x5_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR:
         {
             static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES,
-                                         angle::FormatID::NONE,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_NONE,
-                                         nullptr);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES,
                                          angle::FormatID::NONE,
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_UNKNOWN,

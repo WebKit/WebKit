@@ -1,4 +1,4 @@
-// Copyright 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,8 +9,9 @@
 namespace angle
 {
 
-const unsigned char *GetTraceCategoryEnabledFlag(PlatformMethods *platform, const char *name)
+const unsigned char *GetTraceCategoryEnabledFlag(const char *name)
 {
+    auto *platform = ANGLEPlatformCurrent();
     ASSERT(platform);
 
     const unsigned char *categoryEnabledFlag =
@@ -24,8 +25,7 @@ const unsigned char *GetTraceCategoryEnabledFlag(PlatformMethods *platform, cons
     return &disabled;
 }
 
-angle::TraceEventHandle AddTraceEvent(PlatformMethods *platform,
-                                      char phase,
+angle::TraceEventHandle AddTraceEvent(char phase,
                                       const unsigned char *categoryGroupEnabled,
                                       const char *name,
                                       unsigned long long id,
@@ -35,6 +35,7 @@ angle::TraceEventHandle AddTraceEvent(PlatformMethods *platform,
                                       const unsigned long long *argValues,
                                       unsigned char flags)
 {
+    auto *platform = ANGLEPlatformCurrent();
     ASSERT(platform);
 
     double timestamp = platform->monotonicallyIncreasingTime(platform);

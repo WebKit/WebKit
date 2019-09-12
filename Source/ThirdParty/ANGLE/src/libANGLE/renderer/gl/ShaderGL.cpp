@@ -13,7 +13,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
-#include "platform/FeaturesGL.h"
+#include "libANGLE/renderer/gl/WorkaroundsGL.h"
 
 #include <iostream>
 
@@ -250,74 +250,79 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
         additionalOptions |= SH_INIT_OUTPUT_VARIABLES;
     }
 
-    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    const WorkaroundsGL &workarounds = GetWorkaroundsGL(context);
 
-    if (features.doWhileGLSLCausesGPUHang.enabled)
+    if (workarounds.doWhileGLSLCausesGPUHang)
     {
         additionalOptions |= SH_REWRITE_DO_WHILE_LOOPS;
     }
 
-    if (features.emulateAbsIntFunction.enabled)
+    if (workarounds.emulateAbsIntFunction)
     {
         additionalOptions |= SH_EMULATE_ABS_INT_FUNCTION;
     }
 
-    if (features.addAndTrueToLoopCondition.enabled)
+    if (workarounds.addAndTrueToLoopCondition)
     {
         additionalOptions |= SH_ADD_AND_TRUE_TO_LOOP_CONDITION;
     }
 
-    if (features.emulateIsnanFloat.enabled)
+    if (workarounds.emulateIsnanFloat)
     {
         additionalOptions |= SH_EMULATE_ISNAN_FLOAT_FUNCTION;
     }
 
-    if (features.emulateAtan2Float.enabled)
+    if (workarounds.emulateAtan2Float)
     {
         additionalOptions |= SH_EMULATE_ATAN2_FLOAT_FUNCTION;
     }
 
-    if (features.useUnusedBlocksWithStandardOrSharedLayout.enabled)
+    if (workarounds.useUnusedBlocksWithStandardOrSharedLayout)
     {
         additionalOptions |= SH_USE_UNUSED_STANDARD_SHARED_BLOCKS;
     }
 
-    if (features.removeInvariantAndCentroidForESSL3.enabled)
+    if (workarounds.dontRemoveInvariantForFragmentInput)
+    {
+        additionalOptions |= SH_DONT_REMOVE_INVARIANT_FOR_FRAGMENT_INPUT;
+    }
+
+    if (workarounds.removeInvariantAndCentroidForESSL3)
     {
         additionalOptions |= SH_REMOVE_INVARIANT_AND_CENTROID_FOR_ESSL3;
     }
 
-    if (features.rewriteFloatUnaryMinusOperator.enabled)
+    if (workarounds.rewriteFloatUnaryMinusOperator)
     {
         additionalOptions |= SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR;
     }
 
-    if (!features.dontInitializeUninitializedLocals.enabled)
+    if (!workarounds.dontInitializeUninitializedLocals)
     {
         additionalOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
     }
 
-    if (features.clampPointSize.enabled)
+    if (workarounds.clampPointSize)
     {
         additionalOptions |= SH_CLAMP_POINT_SIZE;
     }
 
-    if (features.rewriteVectorScalarArithmetic.enabled)
+    if (workarounds.rewriteVectorScalarArithmetic)
     {
         additionalOptions |= SH_REWRITE_VECTOR_SCALAR_ARITHMETIC;
     }
 
-    if (features.dontUseLoopsToInitializeVariables.enabled)
+    if (workarounds.dontUseLoopsToInitializeVariables)
     {
         additionalOptions |= SH_DONT_USE_LOOPS_TO_INITIALIZE_VARIABLES;
     }
 
-    if (features.clampFragDepth.enabled)
+    if (workarounds.clampFragDepth)
     {
         additionalOptions |= SH_CLAMP_FRAG_DEPTH;
     }
 
-    if (features.rewriteRepeatedAssignToSwizzled.enabled)
+    if (workarounds.rewriteRepeatedAssignToSwizzled)
     {
         additionalOptions |= SH_REWRITE_REPEATED_ASSIGN_TO_SWIZZLED;
     }
@@ -326,16 +331,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
     {
         additionalOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
         additionalOptions |= SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER;
-    }
-
-    if (features.clampArrayAccess.enabled)
-    {
-        additionalOptions |= SH_CLAMP_INDIRECT_ARRAY_BOUNDS;
-    }
-
-    if (features.addBaseVertexToVertexID.enabled)
-    {
-        additionalOptions |= SH_ADD_BASE_VERTEX_TO_VERTEX_ID;
     }
 
     options |= additionalOptions;

@@ -110,8 +110,10 @@ class BlendMinMaxTest : public ANGLETest
         }
     }
 
-    void testSetUp() override
+    virtual void SetUp()
     {
+        ANGLETest::SetUp();
+
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         if (mProgram == 0)
         {
@@ -147,11 +149,13 @@ class BlendMinMaxTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    virtual void TearDown()
     {
         glDeleteProgram(mProgram);
         glDeleteFramebuffers(1, &mFramebuffer);
         glDeleteRenderbuffers(1, &mColorRenderbuffer);
+
+        ANGLETest::TearDown();
     }
 
     GLuint mProgram;
@@ -191,6 +195,7 @@ ANGLE_INSTANTIATE_TEST(BlendMinMaxTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES3_D3D11(),
+                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),

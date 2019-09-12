@@ -1,5 +1,5 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -18,7 +18,9 @@ namespace
 
 struct ObserverClass : public ObserverInterface
 {
-    void onSubjectStateChange(SubjectIndex index, SubjectMessage message) override
+    void onSubjectStateChange(const gl::Context *context,
+                              SubjectIndex index,
+                              SubjectMessage message) override
     {
         wasNotified = true;
     }
@@ -34,7 +36,7 @@ TEST(ObserverTest, BasicUsage)
 
     binding.bind(&subject);
     ASSERT_FALSE(observer.wasNotified);
-    subject.onStateChange(SubjectMessage::SubjectChanged);
+    subject.onStateChange(nullptr, SubjectMessage::STORAGE_CHANGED);
     ASSERT_TRUE(observer.wasNotified);
 }
 

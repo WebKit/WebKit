@@ -31,8 +31,10 @@ class DifferentStencilMasksTest : public ANGLETest
         setWebGLCompatibilityEnabled(true);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         mProgram = CompileProgram(essl1_shaders::vs::Zero(), essl1_shaders::fs::Blue());
         ASSERT_NE(0u, mProgram);
 
@@ -40,11 +42,13 @@ class DifferentStencilMasksTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDisable(GL_STENCIL_TEST);
         if (mProgram != 0)
             glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
     }
 
     GLuint mProgram;

@@ -24,8 +24,10 @@ class IncompleteTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] = R"(precision highp float;
 attribute vec4 position;
 varying vec2 texcoord;
@@ -54,7 +56,12 @@ void main()
         mTextureUniformLocation = glGetUniformLocation(mProgram, "tex");
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    void TearDown() override
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     GLuint mProgram;
     GLint mTextureUniformLocation;

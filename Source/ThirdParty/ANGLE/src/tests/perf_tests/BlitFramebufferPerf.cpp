@@ -103,16 +103,16 @@ struct BlitFramebufferParams final : public RenderTestParams
         windowHeight      = 256;
     }
 
-    std::string story() const override
+    std::string suffix() const override
     {
-        std::stringstream storyStr;
-        storyStr << RenderTestParams::story();
-        storyStr << "_" << BufferTypeString(type);
+        std::stringstream suffixStr;
+        suffixStr << RenderTestParams::suffix();
+        suffixStr << "_" << BufferTypeString(type);
         if (samples > 1)
         {
-            storyStr << "_" << samples << "_samples";
+            suffixStr << "_" << samples << "_samples";
         }
-        return storyStr.str();
+        return suffixStr.str();
     }
 
     BufferType type              = BufferType::COLOR;
@@ -122,7 +122,7 @@ struct BlitFramebufferParams final : public RenderTestParams
 
 std::ostream &operator<<(std::ostream &os, const BlitFramebufferParams &params)
 {
-    os << params.backendAndStory().substr(1);
+    os << params.suffix().substr(1);
     return os;
 }
 

@@ -1,5 +1,5 @@
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -250,8 +250,6 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
                 }
                 break;
             }
-            // Depth and stencil redundant state changes are guarded in the
-            // frontend so for related cases here just set the dirty bit.
             case gl::State::DIRTY_BIT_DEPTH_MASK:
                 if (state.getDepthStencilState().depthMask != mCurDepthStencilState.depthMask)
                 {
@@ -259,39 +257,92 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
                 }
                 break;
             case gl::State::DIRTY_BIT_DEPTH_TEST_ENABLED:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_FUNC);
+                if (state.getDepthStencilState().depthTest != mCurDepthStencilState.depthTest)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_FUNC);
+                }
                 break;
             case gl::State::DIRTY_BIT_DEPTH_FUNC:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_FUNC);
+                if (state.getDepthStencilState().depthFunc != mCurDepthStencilState.depthFunc)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_FUNC);
+                }
                 break;
             case gl::State::DIRTY_BIT_STENCIL_TEST_ENABLED:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_TEST_ENABLED);
-                // If we enable the stencil test, all of these must be set
-                mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_BACK);
-                mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
-                mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_FRONT);
-                mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_BACK);
-                mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_FRONT);
-                mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_BACK);
+                if (state.getDepthStencilState().stencilTest != mCurDepthStencilState.stencilTest)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_TEST_ENABLED);
+                    // If we enable the stencil test, all of these must be set
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_BACK);
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_FRONT);
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_BACK);
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_FRONT);
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_BACK);
+                }
                 break;
             case gl::State::DIRTY_BIT_STENCIL_FUNCS_FRONT:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_FRONT);
+            {
+                const gl::DepthStencilState &depthStencilState = state.getDepthStencilState();
+                if (depthStencilState.stencilFunc != mCurDepthStencilState.stencilFunc ||
+                    depthStencilState.stencilMask != mCurDepthStencilState.stencilMask ||
+                    state.getStencilRef() != mCurStencilRef)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_FRONT);
+                }
                 break;
+            }
             case gl::State::DIRTY_BIT_STENCIL_FUNCS_BACK:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_BACK);
+            {
+                const gl::DepthStencilState &depthStencilState = state.getDepthStencilState();
+                if (depthStencilState.stencilBackFunc != mCurDepthStencilState.stencilBackFunc ||
+                    depthStencilState.stencilBackMask != mCurDepthStencilState.stencilBackMask ||
+                    state.getStencilBackRef() != mCurStencilBackRef)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_BACK);
+                }
                 break;
+            }
             case gl::State::DIRTY_BIT_STENCIL_WRITEMASK_FRONT:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
+                if (state.getDepthStencilState().stencilWritemask !=
+                    mCurDepthStencilState.stencilWritemask)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
+                }
                 break;
             case gl::State::DIRTY_BIT_STENCIL_WRITEMASK_BACK:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_BACK);
+                if (state.getDepthStencilState().stencilBackWritemask !=
+                    mCurDepthStencilState.stencilBackWritemask)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_BACK);
+                }
                 break;
             case gl::State::DIRTY_BIT_STENCIL_OPS_FRONT:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_FRONT);
+            {
+                const gl::DepthStencilState &depthStencilState = state.getDepthStencilState();
+                if (depthStencilState.stencilFail != mCurDepthStencilState.stencilFail ||
+                    depthStencilState.stencilPassDepthFail !=
+                        mCurDepthStencilState.stencilPassDepthFail ||
+                    depthStencilState.stencilPassDepthPass !=
+                        mCurDepthStencilState.stencilPassDepthPass)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_FRONT);
+                }
                 break;
+            }
             case gl::State::DIRTY_BIT_STENCIL_OPS_BACK:
-                mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_BACK);
+            {
+                const gl::DepthStencilState &depthStencilState = state.getDepthStencilState();
+                if (depthStencilState.stencilBackFail != mCurDepthStencilState.stencilBackFail ||
+                    depthStencilState.stencilBackPassDepthFail !=
+                        mCurDepthStencilState.stencilBackPassDepthFail ||
+                    depthStencilState.stencilBackPassDepthPass !=
+                        mCurDepthStencilState.stencilBackPassDepthPass)
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_BACK);
+                }
                 break;
+            }
             case gl::State::DIRTY_BIT_SCISSOR_TEST_ENABLED:
                 if (state.isScissorTestEnabled() != mCurScissorEnabled)
                 {
@@ -307,7 +358,10 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
                 }
                 break;
             case gl::State::DIRTY_BIT_DEPTH_RANGE:
-                mDirtyBits.set(DIRTY_BIT_VIEWPORT);
+                if (state.getNearPlane() != mCurNear || state.getFarPlane() != mCurFar)
+                {
+                    mDirtyBits.set(DIRTY_BIT_VIEWPORT);
+                }
                 break;
             case gl::State::DIRTY_BIT_VIEWPORT:
                 if (state.getViewport() != mCurViewport)
@@ -775,7 +829,7 @@ void StateManager9::setColorMask(const gl::Framebuffer *framebuffer,
 {
     // Set the color mask
 
-    const auto *attachment = framebuffer->getFirstColorAttachment();
+    const auto *attachment = framebuffer->getFirstColorbuffer();
     const auto &format     = attachment ? attachment->getFormat() : gl::Format::Invalid();
 
     DWORD colorMask = gl_d3d9::ConvertColorMask(

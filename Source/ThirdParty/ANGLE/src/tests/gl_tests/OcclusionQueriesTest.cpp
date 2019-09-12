@@ -25,13 +25,20 @@ class OcclusionQueriesTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
         ASSERT_NE(0u, mProgram);
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    void TearDown() override
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     GLuint mProgram;
     RNG mRNG;

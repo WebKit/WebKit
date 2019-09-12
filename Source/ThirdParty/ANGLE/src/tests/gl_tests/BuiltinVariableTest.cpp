@@ -26,8 +26,10 @@ class BuiltinVariableVertexIdTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         constexpr char kVS[] =
             "#version 300 es\n"
             "precision highp float;\n"
@@ -67,12 +69,14 @@ class BuiltinVariableVertexIdTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteBuffers(1, &mPositionBuffer);
         glDeleteBuffers(1, &mExpectedIdBuffer);
         glDeleteBuffers(1, &mIndexBuffer);
         glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
     }
 
     // Renders a primitive using the specified mode, each vertex color will
@@ -195,17 +199,15 @@ TEST_P(BuiltinVariableVertexIdTest, Triangles)
     runTest(GL_TRIANGLES, indices, 6);
 }
 
-ANGLE_INSTANTIATE_TEST(BuiltinVariableVertexIdTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(BuiltinVariableVertexIdTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 
 class BuiltinVariableFragDepthClampingFloatRBOTest : public ANGLETest
 {
   protected:
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         // Writes a fixed detph value and green.
         // Section 15.2.3 of the GL 4.5 specification says that conversion is not
         // done but clamping is so the output depth should be in [0.0, 1.0]
@@ -245,7 +247,12 @@ class BuiltinVariableFragDepthClampingFloatRBOTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    void TearDown() override
+    {
+        glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
+    }
 
     void CheckDepthWritten(float expectedDepth, float fsDepth)
     {

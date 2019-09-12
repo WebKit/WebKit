@@ -1,5 +1,5 @@
 //
-// Copyright 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -234,8 +234,7 @@ class TFunction : public TSymbol
     bool isMain() const;
     bool isImageFunction() const;
     bool isAtomicCounterFunction() const;
-    bool hasSamplerInStructOrArrayParams() const;
-    bool hasSamplerInStructOrArrayOfArrayParams() const;
+    bool hasSamplerInStructParams() const;
 
     // Note: Only to be used for static built-in functions!
     constexpr TFunction(const TSymbolUniqueId &id,

@@ -1,5 +1,5 @@
 //
-// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -23,7 +23,7 @@ struct DispatchComputePerfParams final : public RenderTestParams
         minorVersion      = 1;
     }
 
-    std::string story() const override;
+    std::string suffix() const override;
 
     unsigned int localSizeX    = 16;
     unsigned int localSizeY    = 16;
@@ -31,21 +31,21 @@ struct DispatchComputePerfParams final : public RenderTestParams
     unsigned int textureHeight = 32;
 };
 
-std::string DispatchComputePerfParams::story() const
+std::string DispatchComputePerfParams::suffix() const
 {
-    std::stringstream storyStr;
-    storyStr << RenderTestParams::story();
+    std::stringstream suffixStr;
+    suffixStr << RenderTestParams::suffix();
 
     if (eglParameters.deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
     {
-        storyStr << "_null";
+        suffixStr << "_null";
     }
-    return storyStr.str();
+    return suffixStr.str();
 }
 
 std::ostream &operator<<(std::ostream &os, const DispatchComputePerfParams &params)
 {
-    os << params.backendAndStory().substr(1);
+    os << params.suffix().substr(1);
     return os;
 }
 
@@ -150,7 +150,7 @@ void DispatchComputePerfBenchmark::drawBenchmark()
     for (unsigned int it = 0; it < params.iterationsPerStep; it++)
     {
         glDispatchCompute(mDispatchX, mDispatchY, 1);
-        glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
+        glMemoryBarrier(GL_TEXTURE_UPDATE_BARRIER_BIT);
     }
     ASSERT_GL_NO_ERROR();
 }
@@ -158,8 +158,7 @@ void DispatchComputePerfBenchmark::drawBenchmark()
 DispatchComputePerfParams DispatchComputePerfOpenGLOrGLESParams(bool useNullDevice)
 {
     DispatchComputePerfParams params;
-    params.eglParameters = useNullDevice ? angle::egl_platform::OPENGL_OR_GLES_NULL()
-                                         : angle::egl_platform::OPENGL_OR_GLES();
+    params.eglParameters = angle::egl_platform::OPENGL_OR_GLES(useNullDevice);
     return params;
 }
 

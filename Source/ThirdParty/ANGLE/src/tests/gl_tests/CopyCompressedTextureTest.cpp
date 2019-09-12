@@ -24,8 +24,10 @@ class CopyCompressedTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void testSetUp() override
+    void SetUp() override
     {
+        ANGLETest::SetUp();
+
         glGenTextures(2, mTextures);
 
         constexpr char kVS[] =
@@ -48,12 +50,21 @@ class CopyCompressedTextureTest : public ANGLETest
 
         mProgram = CompileProgram(kVS, kFS);
         ASSERT_NE(0u, mProgram);
+
+        if (IsGLExtensionEnabled("GL_CHROMIUM_copy_compressed_texture"))
+        {
+            glCompressedCopyTextureCHROMIUM =
+                reinterpret_cast<PFNGLCOMPRESSEDCOPYTEXTURECHROMIUMPROC>(
+                    eglGetProcAddress("glCompressedCopyTextureCHROMIUM"));
+        }
     }
 
-    void testTearDown() override
+    void TearDown() override
     {
         glDeleteTextures(2, mTextures);
         glDeleteProgram(mProgram);
+
+        ANGLETest::TearDown();
     }
 
     bool checkExtensions() const
@@ -77,6 +88,8 @@ class CopyCompressedTextureTest : public ANGLETest
 
     GLuint mProgram     = 0;
     GLuint mTextures[2] = {0, 0};
+
+    PFNGLCOMPRESSEDCOPYTEXTURECHROMIUMPROC glCompressedCopyTextureCHROMIUM = nullptr;
 };
 
 namespace
