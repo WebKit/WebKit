@@ -841,9 +841,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 
     ASSERT(m_prewarmedProcess->isPrewarmed());
     m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
-
     m_prewarmedProcess->setWebsiteDataStore(websiteDataStore);
-    sendWebProcessDataStoreParameters(*m_prewarmedProcess, websiteDataStore);
 
     return std::exchange(m_prewarmedProcess, nullptr);
 }
@@ -871,50 +869,71 @@ static void registerDisplayConfigurationCallback()
 }
 #endif
 
-void WebProcessPool::sendWebProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
+WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {
-    WebProcessDataStoreParameters parameters;
-
     websiteDataStore.resolveDirectoriesIfNecessary();
 
-    parameters.applicationCacheDirectory = websiteDataStore.resolvedApplicationCacheDirectory();
-    if (parameters.applicationCacheDirectory.isEmpty())
-        parameters.applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
-    if (!parameters.applicationCacheDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.applicationCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
-    parameters.applicationCacheFlatFileSubdirectoryName = websiteDataStore.applicationCacheFlatFileSubdirectoryName();
-    if (parameters.applicationCacheFlatFileSubdirectoryName.isEmpty())
-        parameters.applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName();
+    String applicationCacheDirectory = websiteDataStore.resolvedApplicationCacheDirectory();
+    if (applicationCacheDirectory.isEmpty())
+        applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
 
-    parameters.webSQLDatabaseDirectory = websiteDataStore.resolvedDatabaseDirectory();
-    if (parameters.webSQLDatabaseDirectory.isEmpty())
-        parameters.webSQLDatabaseDirectory = m_resolvedPaths.webSQLDatabaseDirectory;
-    if (!parameters.webSQLDatabaseDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.webSQLDatabaseDirectory, SandboxExtension::Type::ReadWrite, parameters.webSQLDatabaseDirectoryExtensionHandle);
+    SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
+    if (!applicationCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(applicationCacheDirectory, SandboxExtension::Type::ReadWrite, applicationCacheDirectoryExtensionHandle);
 
-    parameters.mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
-    if (parameters.mediaCacheDirectory.isEmpty())
-        parameters.mediaCacheDirectory = m_resolvedPaths.mediaCacheDirectory;
-    if (!parameters.mediaCacheDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaCacheDirectoryExtensionHandle);
+    String applicationCacheFlatFileSubdirectoryName = websiteDataStore.applicationCacheFlatFileSubdirectoryName();
+    if (applicationCacheFlatFileSubdirectoryName.isEmpty())
+        applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName();
 
-    parameters.mediaKeyStorageDirectory = websiteDataStore.resolvedMediaKeysDirectory();
-    if (parameters.mediaKeyStorageDirectory.isEmpty())
-        parameters.mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
-    if (!parameters.mediaKeyStorageDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
+    String webSQLDatabaseDirectory = websiteDataStore.resolvedDatabaseDirectory();
+    if (webSQLDatabaseDirectory.isEmpty())
+        webSQLDatabaseDirectory = m_resolvedPaths.webSQLDatabaseDirectory;
 
-    
+    SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
+    if (!webSQLDatabaseDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(webSQLDatabaseDirectory, SandboxExtension::Type::ReadWrite, webSQLDatabaseDirectoryExtensionHandle);
+
+    String mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
+    if (mediaCacheDirectory.isEmpty())
+        mediaCacheDirectory = m_resolvedPaths.mediaCacheDirectory;
+
+    SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+    if (!mediaCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(mediaCacheDirectory, SandboxExtension::Type::ReadWrite, mediaCacheDirectoryExtensionHandle);
+
+    String mediaKeyStorageDirectory = websiteDataStore.resolvedMediaKeysDirectory();
+    if (mediaKeyStorageDirectory.isEmpty())
+        mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
+
+    SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
+    if (!mediaKeyStorageDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite, mediaKeyStorageDirectoryExtensionHandle);
+
+    String javaScriptConfigurationDirectory;
     if (!m_javaScriptConfigurationDirectory.isEmpty())
-        parameters.javaScriptConfigurationDirectory = m_javaScriptConfigurationDirectory;
+        javaScriptConfigurationDirectory = m_javaScriptConfigurationDirectory;
     else if (javaScriptConfigurationFileEnabled())
-        parameters.javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
-    if (!parameters.javaScriptConfigurationDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, parameters.javaScriptConfigurationDirectoryExtensionHandle);
+        javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
 
-    parameters.resourceLoadStatisticsEnabled = websiteDataStore.resourceLoadStatisticsEnabled();
+    SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
+    if (!javaScriptConfigurationDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, javaScriptConfigurationDirectoryExtensionHandle);
 
-    process.send(Messages::WebProcess::SetWebsiteDataStoreParameters(parameters), 0);
+    return WebProcessDataStoreParameters {
+        websiteDataStore.sessionID(),
+        WTFMove(applicationCacheDirectory),
+        WTFMove(applicationCacheDirectoryExtensionHandle),
+        WTFMove(applicationCacheFlatFileSubdirectoryName),
+        WTFMove(webSQLDatabaseDirectory),
+        WTFMove(webSQLDatabaseDirectoryExtensionHandle),
+        WTFMove(mediaCacheDirectory),
+        WTFMove(mediaCacheDirectoryExtensionHandle),
+        WTFMove(mediaKeyStorageDirectory),
+        WTFMove(mediaKeyStorageDirectoryExtensionHandle),
+        WTFMove(javaScriptConfigurationDirectory),
+        WTFMove(javaScriptConfigurationDirectoryExtensionHandle),
+        websiteDataStore.resourceLoadStatisticsEnabled()
+    };
 }
 
 void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
@@ -1012,15 +1031,15 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     parameters.initializationUserData = UserData(process.transformObjectsToHandles(injectedBundleInitializationUserData.get()));
+    
+    if (websiteDataStore)
+        parameters.websiteDataStoreParameters = webProcessDataStoreParameters(process, *websiteDataStore);
 
     process.send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
 
 #if PLATFORM(COCOA)
     process.send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
 #endif
-
-    if (websiteDataStore)
-        sendWebProcessDataStoreParameters(process, *websiteDataStore);
 
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);

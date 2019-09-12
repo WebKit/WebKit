@@ -275,6 +275,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     ASSERT(m_pageMap.isEmpty());
 
+    if (parameters.websiteDataStoreParameters)
+        setWebsiteDataStoreParameters(WTFMove(*parameters.websiteDataStoreParameters));
+
     WebCore::setPresentingApplicationPID(parameters.presentingApplicationPID);
 
 #if OS(LINUX)
@@ -436,6 +439,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
 void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
 {
+    ASSERT(!m_sessionID);
+    m_sessionID = parameters.sessionID;
+    
     auto& databaseManager = DatabaseManager::singleton();
     databaseManager.initialize(parameters.webSQLDatabaseDirectory);
 

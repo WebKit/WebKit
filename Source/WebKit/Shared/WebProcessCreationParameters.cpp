@@ -156,6 +156,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << hostClientFileDescriptor;
     encoder << implementationLibraryName;
 #endif
+
+    encoder << websiteDataStoreParameters;
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -379,6 +381,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.implementationLibraryName))
         return false;
 #endif
+
+    Optional<Optional<WebProcessDataStoreParameters>> websiteDataStoreParameters;
+    decoder >> websiteDataStoreParameters;
+    if (!websiteDataStoreParameters)
+        return false;
+    parameters.websiteDataStoreParameters = WTFMove(*websiteDataStoreParameters);
 
     return true;
 }

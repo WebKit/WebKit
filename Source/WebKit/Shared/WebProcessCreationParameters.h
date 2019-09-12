@@ -29,6 +29,7 @@
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
+#include "WebProcessDataStoreParameters.h"
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
@@ -194,6 +195,8 @@ struct WebProcessCreationParameters {
     IPC::Attachment hostClientFileDescriptor;
     CString implementationLibraryName;
 #endif
+
+    Optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
 };
 
 } // namespace WebKit

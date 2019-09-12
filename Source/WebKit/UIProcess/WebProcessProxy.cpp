@@ -228,6 +228,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     ASSERT(!m_websiteDataStore);
     m_websiteDataStore = &dataStore;
     updateRegistrationWithDataStore();
+    send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
 }
 
 void WebProcessProxy::updateRegistrationWithDataStore()

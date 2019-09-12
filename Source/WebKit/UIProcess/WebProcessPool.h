@@ -528,6 +528,8 @@ public:
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
     
+    WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
+
 private:
     void platformInitialize();
 
@@ -540,7 +542,6 @@ private:
 
     WebProcessProxy& createNewWebProcess(WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
-    void sendWebProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
 
     void requestWebContentStatistics(StatisticsRequest&);
     void requestNetworkingStatistics(StatisticsRequest&);

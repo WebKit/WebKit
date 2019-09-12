@@ -1,5 +1,38 @@
 2019-09-12  Chris Dumez  <cdumez@apple.com>
 
+        Pass sessionID to WebProcess with other WebProcessDataStoreParameters
+        https://bugs.webkit.org/show_bug.cgi?id=201730
+
+        Reviewed by Alex Christensen.
+
+        Pass sessionID to WebProcess with other WebProcessDataStoreParameters and store
+        it on the WebProcess object. In follow-up patches, I will use this sessionID
+        more and leverage the fact that we have one sessionID per Webprocess to simplify
+        the WebKit2-layer code.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::sendWebProcessDataStoreParameters): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setWebsiteDataStore):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::sessionID const):
+
+2019-09-12  Chris Dumez  <cdumez@apple.com>
+
         [WKTR] Drop TestRunner.setPrivateBrowsingEnabled_DEPRECATED()
         https://bugs.webkit.org/show_bug.cgi?id=201546
 
