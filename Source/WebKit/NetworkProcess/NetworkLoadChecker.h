@@ -118,7 +118,7 @@ private:
         const WebCore::ContentRuleListResults& results;
     };
     using ContentExtensionResultOrError = Expected<ContentExtensionResult, WebCore::ResourceError>;
-    using ContentExtensionCallback = CompletionHandler<void(ContentExtensionResultOrError)>;
+    using ContentExtensionCallback = CompletionHandler<void(ContentExtensionResultOrError&&)>;
     void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
 

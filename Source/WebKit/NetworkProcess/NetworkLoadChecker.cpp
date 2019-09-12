@@ -225,7 +225,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
 {
     ResourceRequest originalRequest = request;
 
-    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto request) mutable {
+    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto&& request) mutable {
         if (!weakThis)
             return handler({ ResourceError { ResourceError::Type::Cancellation }});
 
@@ -241,7 +241,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
         }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-        this->processContentRuleListsForLoad(WTFMove(request), [this, weakThis = WTFMove(weakThis), handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
+        this->processContentRuleListsForLoad(WTFMove(request), [this, weakThis = WTFMove(weakThis), handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto&& result) mutable {
             if (!result.has_value()) {
                 ASSERT(result.error().isCancellation());
                 handler(WTFMove(result.error()));
