@@ -1,3 +1,17 @@
+2019-09-11  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Remove null from the standard library
+        https://bugs.webkit.org/show_bug.cgi?id=201672
+
+        Reviewed by Robin Morisset.
+
+        I meant to remove `null` from the standard library in r249351, but
+        I had omitted the code I wrote to do that when I rebased that patch.
+        This patch removes it and ensures all tests pass when parsing the entire
+        standard library.
+
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-09-11  Chris Dumez  <cdumez@apple.com>
 
         Use same parser for <meta http-equiv="refresh"> and `Refresh` HTTP header
