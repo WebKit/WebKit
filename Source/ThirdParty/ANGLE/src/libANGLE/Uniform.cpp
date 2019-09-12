@@ -1,12 +1,10 @@
 //
-// Copyright (c) 2010-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2010 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 #include "libANGLE/Uniform.h"
-
-#include "common/utilities.h"
 
 #include <cstring>
 
@@ -24,12 +22,6 @@ void ActiveVariable::setActive(ShaderType shaderType, bool used)
 {
     ASSERT(shaderType != ShaderType::InvalidEnum);
     mActiveUseBits.set(shaderType, used);
-}
-
-bool ActiveVariable::isActive(ShaderType shaderType) const
-{
-    ASSERT(shaderType != ShaderType::InvalidEnum);
-    return mActiveUseBits[shaderType];
 }
 
 void ActiveVariable::unionReferencesWith(const ActiveVariable &other)
@@ -73,8 +65,8 @@ LinkedUniform::LinkedUniform(GLenum typeIn,
     ASSERT(!isArray() || !isStruct());
 }
 
-LinkedUniform::LinkedUniform(const sh::Uniform &uniform)
-    : sh::Uniform(uniform),
+LinkedUniform::LinkedUniform(const sh::ShaderVariable &uniform)
+    : sh::ShaderVariable(uniform),
       typeInfo(&GetUniformTypeInfo(type)),
       bufferIndex(-1),
       blockInfo(sh::kDefaultBlockMemberInfo)
@@ -84,59 +76,26 @@ LinkedUniform::LinkedUniform(const sh::Uniform &uniform)
 }
 
 LinkedUniform::LinkedUniform(const LinkedUniform &uniform)
-    : sh::Uniform(uniform),
+    : sh::ShaderVariable(uniform),
       ActiveVariable(uniform),
       typeInfo(uniform.typeInfo),
       bufferIndex(uniform.bufferIndex),
-      blockInfo(uniform.blockInfo)
+      blockInfo(uniform.blockInfo),
+      outerArraySizes(uniform.outerArraySizes)
 {}
 
 LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
 {
-    sh::Uniform::operator   =(uniform);
+    sh::ShaderVariable::operator=(uniform);
     ActiveVariable::operator=(uniform);
     typeInfo                = uniform.typeInfo;
     bufferIndex             = uniform.bufferIndex;
     blockInfo               = uniform.blockInfo;
+    outerArraySizes         = uniform.outerArraySizes;
     return *this;
 }
 
 LinkedUniform::~LinkedUniform() {}
-
-bool LinkedUniform::isInDefaultBlock() const
-{
-    return bufferIndex == -1;
-}
-
-bool LinkedUniform::isSampler() const
-{
-    return typeInfo->isSampler;
-}
-
-bool LinkedUniform::isImage() const
-{
-    return typeInfo->isImageType;
-}
-
-bool LinkedUniform::isAtomicCounter() const
-{
-    return IsAtomicCounterType(type);
-}
-
-bool LinkedUniform::isField() const
-{
-    return name.find('.') != std::string::npos;
-}
-
-size_t LinkedUniform::getElementSize() const
-{
-    return typeInfo->externalSize;
-}
-
-size_t LinkedUniform::getElementComponents() const
-{
-    return typeInfo->componentCount;
-}
 
 BufferVariable::BufferVariable()
     : bufferIndex(-1), blockInfo(sh::kDefaultBlockMemberInfo), topLevelArraySize(-1)

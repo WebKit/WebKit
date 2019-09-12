@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -29,6 +29,6 @@ bool operator<(const Version &a, const Version &b);
 bool operator>(const Version &a, const Version &b);
 }  // namespace gl
 
-#include "Version.inl"
+#include "Version.inc"
 
 #endif  // LIBANGLE_VERSION_H_

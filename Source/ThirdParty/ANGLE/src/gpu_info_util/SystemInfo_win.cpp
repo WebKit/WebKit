@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -88,14 +88,12 @@ bool GetSystemInfo(SystemInfo *info)
         return false;
     }
 
-    // Call FindActiveGPU to populate activeGPUIndex, isOptimus, and isAMDSwitchable.
-    FindActiveGPU(info);
+    // Call GetDualGPUInfo to populate activeGPUIndex, isOptimus, and isAMDSwitchable.
+    GetDualGPUInfo(info);
 
     // Override activeGPUIndex. The first index returned by EnumAdapters is the active GPU. We
     // can override the heuristic to find the active GPU
     info->activeGPUIndex = 0;
-    // Deprecated: set primaryGPUIndex to the same index.
-    info->primaryGPUIndex = 0;
 
     // Override isOptimus. nvd3d9wrap.dll is loaded into all processes when Optimus is enabled.
     HMODULE nvd3d9wrap = GetModuleHandleW(L"nvd3d9wrap.dll");

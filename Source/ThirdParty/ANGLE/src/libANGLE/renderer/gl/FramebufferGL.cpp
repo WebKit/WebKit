@@ -23,9 +23,9 @@
 #include "libANGLE/renderer/gl/RenderbufferGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/TextureGL.h"
-#include "libANGLE/renderer/gl/WorkaroundsGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
+#include "platform/FeaturesGL.h"
 #include "platform/Platform.h"
 
 using namespace gl;
@@ -36,6 +36,42 @@ namespace rx
 
 namespace
 {
+
+struct BlitFramebufferBounds
+{
+    gl::Rectangle sourceBounds;
+    gl::Rectangle sourceRegion;
+
+    gl::Rectangle destBounds;
+    gl::Rectangle destRegion;
+
+    bool xFlipped;
+    bool yFlipped;
+};
+
+static BlitFramebufferBounds GetBlitFramebufferBounds(const gl::Context *context,
+                                                      const gl::Rectangle &sourceArea,
+                                                      const gl::Rectangle &destArea)
+{
+    BlitFramebufferBounds bounds;
+
+    const Framebuffer *sourceFramebuffer = context->getState().getReadFramebuffer();
+    const Framebuffer *destFramebuffer   = context->getState().getDrawFramebuffer();
+
+    gl::Extents readSize = sourceFramebuffer->getExtents();
+    gl::Extents drawSize = destFramebuffer->getExtents();
+
+    bounds.sourceBounds = gl::Rectangle(0, 0, readSize.width, readSize.height);
+    bounds.sourceRegion = sourceArea.removeReversal();
+
+    bounds.destBounds = gl::Rectangle(0, 0, drawSize.width, drawSize.height);
+    bounds.destRegion = destArea.removeReversal();
+
+    bounds.xFlipped = sourceArea.isReversedX() != destArea.isReversedX();
+    bounds.yFlipped = sourceArea.isReversedY() != destArea.isReversedY();
+
+    return bounds;
+}
 
 void BindFramebufferAttachment(const FunctionsGL *functions,
                                GLenum attachmentPoint,
@@ -182,12 +218,28 @@ bool RequiresMultiviewClear(const FramebufferState &state, bool scissorTestEnabl
     return false;
 }
 
+bool IsEmulatedAlphaChannelTextureAttachment(const FramebufferAttachment *attachment)
+{
+    if (!attachment || attachment->type() != GL_TEXTURE)
+    {
+        return false;
+    }
+
+    const Texture *texture     = attachment->getTexture();
+    const TextureGL *textureGL = GetImplAs<TextureGL>(texture);
+    return textureGL->hasEmulatedAlphaChannel(attachment->getTextureImageIndex());
+}
+
 }  // namespace
 
-FramebufferGL::FramebufferGL(const gl::FramebufferState &data, GLuint id, bool isDefault)
+FramebufferGL::FramebufferGL(const gl::FramebufferState &data,
+                             GLuint id,
+                             bool isDefault,
+                             bool emulatedAlpha)
     : FramebufferImpl(data),
       mFramebufferID(id),
       mIsDefault(isDefault),
+      mHasEmulatedAlphaAttachment(emulatedAlpha),
       mAppliedEnabledDrawBuffers(1)
 {}
 
@@ -425,10 +477,10 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
                                         GLenum type,
                                         void *pixels)
 {
-    ContextGL *contextGL             = GetImplAs<ContextGL>(context);
-    const FunctionsGL *functions     = GetFunctionsGL(context);
-    StateManagerGL *stateManager     = GetStateManagerGL(context);
-    const WorkaroundsGL &workarounds = GetWorkaroundsGL(context);
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
 
     // Clip read area to framebuffer.
     const gl::Extents fbSize = getState().getReadAttachment()->getSize();
@@ -445,13 +497,13 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
         context->getState().getTargetBuffer(gl::BufferBinding::PixelPack);
 
     nativegl::ReadPixelsFormat readPixelsFormat =
-        nativegl::GetReadPixelsFormat(functions, workarounds, format, type);
+        nativegl::GetReadPixelsFormat(functions, features, format, type);
     GLenum readFormat = readPixelsFormat.format;
     GLenum readType   = readPixelsFormat.type;
 
     stateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, mFramebufferID);
 
-    bool useOverlappingRowsWorkaround = workarounds.packOverlappingRowsSeparatelyPackBuffer &&
+    bool useOverlappingRowsWorkaround = features.packOverlappingRowsSeparatelyPackBuffer.enabled &&
                                         packBuffer && packState.rowLength != 0 &&
                                         packState.rowLength < clippedArea.width;
 
@@ -487,7 +539,7 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
     }
 
     bool useLastRowPaddingWorkaround = false;
-    if (workarounds.packLastRowSeparatelyForPaddingInclusion)
+    if (features.packLastRowSeparatelyForPaddingInclusion.enabled)
     {
         ANGLE_TRY(ShouldApplyLastRowPaddingWorkaround(
             contextGL, gl::Extents(clippedArea.width, clippedArea.height, 1), packState, packBuffer,
@@ -504,13 +556,14 @@ angle::Result FramebufferGL::blit(const gl::Context *context,
                                   GLbitfield mask,
                                   GLenum filter)
 {
-    const FunctionsGL *functions = GetFunctionsGL(context);
-    StateManagerGL *stateManager = GetStateManagerGL(context);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
 
     const Framebuffer *sourceFramebuffer = context->getState().getReadFramebuffer();
     const Framebuffer *destFramebuffer   = context->getState().getDrawFramebuffer();
 
-    const FramebufferAttachment *colorReadAttachment = sourceFramebuffer->getReadColorbuffer();
+    const FramebufferAttachment *colorReadAttachment = sourceFramebuffer->getReadColorAttachment();
 
     GLsizei readAttachmentSamples = 0;
     if (colorReadAttachment != nullptr)
@@ -583,9 +636,367 @@ angle::Result FramebufferGL::blit(const gl::Context *context,
     stateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, sourceFramebufferGL->getFramebufferID());
     stateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebufferID);
 
-    functions->blitFramebuffer(sourceArea.x, sourceArea.y, sourceArea.x1(), sourceArea.y1(),
-                               destArea.x, destArea.y, destArea.x1(), destArea.y1(), blitMask,
-                               filter);
+    gl::Rectangle finalSourceArea(sourceArea);
+    gl::Rectangle finalDestArea(destArea);
+
+    if (features.adjustSrcDstRegionBlitFramebuffer.enabled)
+    {
+        angle::Result result =
+            adjustSrcDstRegion(context, sourceArea, destArea, &finalSourceArea, &finalDestArea);
+        if (result != angle::Result::Continue)
+        {
+            return result;
+        }
+    }
+    if (features.clipSrcRegionBlitFramebuffer.enabled)
+    {
+        angle::Result result =
+            clipSrcRegion(context, sourceArea, destArea, &finalSourceArea, &finalDestArea);
+        if (result != angle::Result::Continue)
+        {
+            return result;
+        }
+    }
+
+    functions->blitFramebuffer(finalSourceArea.x, finalSourceArea.y, finalSourceArea.x1(),
+                               finalSourceArea.y1(), finalDestArea.x, finalDestArea.y,
+                               finalDestArea.x1(), finalDestArea.y1(), blitMask, filter);
+
+    return angle::Result::Continue;
+}
+
+angle::Result FramebufferGL::adjustSrcDstRegion(const gl::Context *context,
+                                                const gl::Rectangle &sourceArea,
+                                                const gl::Rectangle &destArea,
+                                                gl::Rectangle *newSourceArea,
+                                                gl::Rectangle *newDestArea)
+{
+    BlitFramebufferBounds bounds = GetBlitFramebufferBounds(context, sourceArea, destArea);
+
+    if (bounds.destRegion.width == 0 || bounds.sourceRegion.width == 0 ||
+        bounds.destRegion.height == 0 || bounds.sourceRegion.height == 0)
+    {
+        return angle::Result::Stop;
+    }
+    if (!ClipRectangle(bounds.destBounds, bounds.destRegion, nullptr))
+    {
+        return angle::Result::Stop;
+    }
+
+    if (!bounds.destBounds.encloses(bounds.destRegion))
+    {
+        // destRegion is not within destBounds. We want to adjust it to a
+        // reasonable size. This is done by halving the destRegion until it is at
+        // most twice the size of the framebuffer. We cut it in half instead
+        // of arbitrarily shrinking it to fit so that we don't end up with
+        // non-power-of-two scale factors which could mess up pixel interpolation.
+        // Naively clipping the dst rect and then proportionally sizing the
+        // src rect yields incorrect results.
+
+        GLuint destXHalvings = 0;
+        GLuint destYHalvings = 0;
+        GLint destOriginX    = bounds.destRegion.x;
+        GLint destOriginY    = bounds.destRegion.y;
+
+        GLint destClippedWidth = bounds.destRegion.width;
+        while (destClippedWidth > 2 * bounds.destBounds.width)
+        {
+            destClippedWidth = destClippedWidth / 2;
+            destXHalvings++;
+        }
+
+        GLint destClippedHeight = bounds.destRegion.height;
+        while (destClippedHeight > 2 * bounds.destBounds.height)
+        {
+            destClippedHeight = destClippedHeight / 2;
+            destYHalvings++;
+        }
+
+        // Before this block, we check that the two rectangles intersect.
+        // Now, compute the location of a new region origin such that we use the
+        // scaled dimensions but the new region has the same intersection as the
+        // original region.
+
+        GLint left   = bounds.destRegion.x0();
+        GLint right  = bounds.destRegion.x1();
+        GLint top    = bounds.destRegion.y0();
+        GLint bottom = bounds.destRegion.y1();
+
+        GLint extraXOffset = 0;
+        if (left >= 0 && left < bounds.destBounds.width)
+        {
+            // Left edge is in-bounds
+            destOriginX = bounds.destRegion.x;
+        }
+        else if (right > 0 && right <= bounds.destBounds.width)
+        {
+            // Right edge is in-bounds
+            destOriginX = right - destClippedWidth;
+        }
+        else
+        {
+            // Region completely spans bounds
+            extraXOffset = (bounds.destRegion.width - destClippedWidth) / 2;
+            destOriginX  = bounds.destRegion.x + extraXOffset;
+        }
+
+        GLint extraYOffset = 0;
+        if (top >= 0 && top < bounds.destBounds.height)
+        {
+            // Top edge is in-bounds
+            destOriginY = bounds.destRegion.y;
+        }
+        else if (bottom > 0 && bottom <= bounds.destBounds.height)
+        {
+            // Bottom edge is in-bounds
+            destOriginY = bottom - destClippedHeight;
+        }
+        else
+        {
+            // Region completely spans bounds
+            extraYOffset = (bounds.destRegion.height - destClippedHeight) / 2;
+            destOriginY  = bounds.destRegion.y + extraYOffset;
+        }
+
+        // Offsets from the bottom left corner of the original region to
+        // the bottom left corner of the clipped region.
+        // This value (after it is scaled) is the respective offset we will apply
+        // to the src origin.
+
+        CheckedNumeric<GLuint> checkedXOffset(destOriginX - bounds.destRegion.x - extraXOffset / 2);
+        CheckedNumeric<GLuint> checkedYOffset(destOriginY - bounds.destRegion.y - extraYOffset / 2);
+
+        // if X/Y is reversed, use the top/right out-of-bounds region to compute
+        // the origin offset instead of the left/bottom out-of-bounds region
+        if (bounds.xFlipped)
+        {
+            checkedXOffset =
+                (bounds.destRegion.x1() - (destOriginX + destClippedWidth) + extraXOffset / 2);
+        }
+        if (bounds.yFlipped)
+        {
+            checkedYOffset =
+                (bounds.destRegion.y1() - (destOriginY + destClippedHeight) + extraYOffset / 2);
+        }
+
+        // These offsets should never overflow
+        GLuint xOffset, yOffset;
+        if (!checkedXOffset.AssignIfValid(&xOffset) || !checkedYOffset.AssignIfValid(&yOffset))
+        {
+            UNREACHABLE();
+            return angle::Result::Stop;
+        }
+
+        bounds.destRegion =
+            gl::Rectangle(destOriginX, destOriginY, destClippedWidth, destClippedHeight);
+
+        // Adjust the src region by the same factor
+        bounds.sourceRegion = gl::Rectangle(bounds.sourceRegion.x + (xOffset >> destXHalvings),
+                                            bounds.sourceRegion.y + (yOffset >> destYHalvings),
+                                            bounds.sourceRegion.width >> destXHalvings,
+                                            bounds.sourceRegion.height >> destYHalvings);
+
+        // if the src was scaled to 0, set it to 1 so the src is non-empty
+        if (bounds.sourceRegion.width == 0)
+        {
+            bounds.sourceRegion.width = 1;
+        }
+        if (bounds.sourceRegion.height == 0)
+        {
+            bounds.sourceRegion.height = 1;
+        }
+    }
+
+    if (!bounds.sourceBounds.encloses(bounds.sourceRegion))
+    {
+        // sourceRegion is not within sourceBounds. We want to adjust it to a
+        // reasonable size. This is done by halving the sourceRegion until it is at
+        // most twice the size of the framebuffer. We cut it in half instead
+        // of arbitrarily shrinking it to fit so that we don't end up with
+        // non-power-of-two scale factors which could mess up pixel interpolation.
+        // Naively clipping the source rect and then proportionally sizing the
+        // dest rect yields incorrect results.
+
+        GLuint sourceXHalvings = 0;
+        GLuint sourceYHalvings = 0;
+        GLint sourceOriginX    = bounds.sourceRegion.x;
+        GLint sourceOriginY    = bounds.sourceRegion.y;
+
+        GLint sourceClippedWidth = bounds.sourceRegion.width;
+        while (sourceClippedWidth > 2 * bounds.sourceBounds.width)
+        {
+            sourceClippedWidth = sourceClippedWidth / 2;
+            sourceXHalvings++;
+        }
+
+        GLint sourceClippedHeight = bounds.sourceRegion.height;
+        while (sourceClippedHeight > 2 * bounds.sourceBounds.height)
+        {
+            sourceClippedHeight = sourceClippedHeight / 2;
+            sourceYHalvings++;
+        }
+
+        // Before this block, we check that the two rectangles intersect.
+        // Now, compute the location of a new region origin such that we use the
+        // scaled dimensions but the new region has the same intersection as the
+        // original region.
+
+        GLint left   = bounds.sourceRegion.x0();
+        GLint right  = bounds.sourceRegion.x1();
+        GLint top    = bounds.sourceRegion.y0();
+        GLint bottom = bounds.sourceRegion.y1();
+
+        GLint extraXOffset = 0;
+        if (left >= 0 && left < bounds.sourceBounds.width)
+        {
+            // Left edge is in-bounds
+            sourceOriginX = bounds.sourceRegion.x;
+        }
+        else if (right > 0 && right <= bounds.sourceBounds.width)
+        {
+            // Right edge is in-bounds
+            sourceOriginX = right - sourceClippedWidth;
+        }
+        else
+        {
+            // Region completely spans bounds
+            extraXOffset  = (bounds.sourceRegion.width - sourceClippedWidth) / 2;
+            sourceOriginX = bounds.sourceRegion.x + extraXOffset;
+        }
+
+        GLint extraYOffset = 0;
+        if (top >= 0 && top < bounds.sourceBounds.height)
+        {
+            // Top edge is in-bounds
+            sourceOriginY = bounds.sourceRegion.y;
+        }
+        else if (bottom > 0 && bottom <= bounds.sourceBounds.height)
+        {
+            // Bottom edge is in-bounds
+            sourceOriginY = bottom - sourceClippedHeight;
+        }
+        else
+        {
+            // Region completely spans bounds
+            extraYOffset  = (bounds.sourceRegion.height - sourceClippedHeight) / 2;
+            sourceOriginY = bounds.sourceRegion.y + extraYOffset;
+        }
+
+        // Offsets from the bottom left corner of the original region to
+        // the bottom left corner of the clipped region.
+        // This value (after it is scaled) is the respective offset we will apply
+        // to the dest origin.
+
+        CheckedNumeric<GLuint> checkedXOffset(sourceOriginX - bounds.sourceRegion.x -
+                                              extraXOffset / 2);
+        CheckedNumeric<GLuint> checkedYOffset(sourceOriginY - bounds.sourceRegion.y -
+                                              extraYOffset / 2);
+
+        // if X/Y is reversed, use the top/right out-of-bounds region to compute
+        // the origin offset instead of the left/bottom out-of-bounds region
+        if (bounds.xFlipped)
+        {
+            checkedXOffset = (bounds.sourceRegion.x1() - (sourceOriginX + sourceClippedWidth) +
+                              extraXOffset / 2);
+        }
+        if (bounds.yFlipped)
+        {
+            checkedYOffset = (bounds.sourceRegion.y1() - (sourceOriginY + sourceClippedHeight) +
+                              extraYOffset / 2);
+        }
+
+        // These offsets should never overflow
+        GLuint xOffset, yOffset;
+        if (!checkedXOffset.AssignIfValid(&xOffset) || !checkedYOffset.AssignIfValid(&yOffset))
+        {
+            UNREACHABLE();
+            return angle::Result::Stop;
+        }
+
+        bounds.sourceRegion =
+            gl::Rectangle(sourceOriginX, sourceOriginY, sourceClippedWidth, sourceClippedHeight);
+
+        // Adjust the dest region by the same factor
+        bounds.destRegion = gl::Rectangle(bounds.destRegion.x + (xOffset >> sourceXHalvings),
+                                          bounds.destRegion.y + (yOffset >> sourceYHalvings),
+                                          bounds.destRegion.width >> sourceXHalvings,
+                                          bounds.destRegion.height >> sourceYHalvings);
+    }
+    // Set the src and dst endpoints. If they were previously flipped,
+    // set them as flipped.
+    *newSourceArea = bounds.sourceRegion.flip(sourceArea.isReversedX(), sourceArea.isReversedY());
+    *newDestArea   = bounds.destRegion.flip(destArea.isReversedX(), destArea.isReversedY());
+
+    return angle::Result::Continue;
+}
+
+angle::Result FramebufferGL::clipSrcRegion(const gl::Context *context,
+                                           const gl::Rectangle &sourceArea,
+                                           const gl::Rectangle &destArea,
+                                           gl::Rectangle *newSourceArea,
+                                           gl::Rectangle *newDestArea)
+{
+    BlitFramebufferBounds bounds = GetBlitFramebufferBounds(context, sourceArea, destArea);
+
+    if (bounds.destRegion.width == 0 || bounds.sourceRegion.width == 0 ||
+        bounds.destRegion.height == 0 || bounds.sourceRegion.height == 0)
+    {
+        return angle::Result::Stop;
+    }
+    if (!ClipRectangle(bounds.destBounds, bounds.destRegion, nullptr))
+    {
+        return angle::Result::Stop;
+    }
+
+    if (!bounds.sourceBounds.encloses(bounds.sourceRegion))
+    {
+        // If pixels lying outside the read framebuffer, adjust src region
+        // and dst region to appropriate in-bounds regions respectively.
+        gl::Rectangle realSourceRegion;
+        ClipRectangle(bounds.sourceRegion, bounds.sourceBounds, &realSourceRegion);
+        GLuint xOffset = realSourceRegion.x - bounds.sourceRegion.x;
+        GLuint yOffset = realSourceRegion.y - bounds.sourceRegion.y;
+
+        // if X/Y is reversed, use the top/right out-of-bounds region for mapping
+        // to dst region, instead of left/bottom out-of-bounds region for mapping.
+        if (bounds.xFlipped)
+        {
+            xOffset = bounds.sourceRegion.x1() - realSourceRegion.x1();
+        }
+        if (bounds.yFlipped)
+        {
+            yOffset = bounds.sourceRegion.y1() - realSourceRegion.y1();
+        }
+
+        GLfloat destMappingWidth = static_cast<GLfloat>(realSourceRegion.width) *
+                                   bounds.destRegion.width / bounds.sourceRegion.width;
+        GLfloat destMappingHeight = static_cast<GLfloat>(realSourceRegion.height) *
+                                    bounds.destRegion.height / bounds.sourceRegion.height;
+        GLfloat destMappingXOffset =
+            static_cast<GLfloat>(xOffset) * bounds.destRegion.width / bounds.sourceRegion.width;
+        GLfloat destMappingYOffset =
+            static_cast<GLfloat>(yOffset) * bounds.destRegion.height / bounds.sourceRegion.height;
+
+        GLuint destMappingX0 =
+            static_cast<GLuint>(std::round(bounds.destRegion.x + destMappingXOffset));
+        GLuint destMappingY0 =
+            static_cast<GLuint>(std::round(bounds.destRegion.y + destMappingYOffset));
+
+        GLuint destMappingX1 = static_cast<GLuint>(
+            std::round(bounds.destRegion.x + destMappingXOffset + destMappingWidth));
+        GLuint destMappingY1 = static_cast<GLuint>(
+            std::round(bounds.destRegion.y + destMappingYOffset + destMappingHeight));
+
+        bounds.destRegion =
+            gl::Rectangle(destMappingX0, destMappingY0, destMappingX1 - destMappingX0,
+                          destMappingY1 - destMappingY0);
+
+        bounds.sourceRegion = realSourceRegion;
+    }
+    // Set the src and dst endpoints. If they were previously flipped,
+    // set them as flipped.
+    *newSourceArea = bounds.sourceRegion.flip(sourceArea.isReversedX(), sourceArea.isReversedY());
+    *newDestArea   = bounds.destRegion.flip(destArea.isReversedX(), destArea.isReversedY());
 
     return angle::Result::Continue;
 }
@@ -600,6 +1011,11 @@ angle::Result FramebufferGL::getSamplePosition(const gl::Context *context,
     stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
     functions->getMultisamplefv(GL_SAMPLE_POSITION, static_cast<GLuint>(index), xy);
     return angle::Result::Continue;
+}
+
+bool FramebufferGL::shouldSyncStateBeforeCheckStatus() const
+{
+    return true;
 }
 
 bool FramebufferGL::checkStatus(const gl::Context *context) const
@@ -691,16 +1107,29 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
                 break;
             default:
             {
-                ASSERT(Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0 &&
-                       dirtyBit < Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_MAX);
-                size_t index =
-                    static_cast<size_t>(dirtyBit - Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0);
-                const FramebufferAttachment *newAttachment = mState.getColorAttachment(index);
-                BindFramebufferAttachment(
-                    functions, static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + index), newAttachment);
-                if (newAttachment)
+                static_assert(Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0, "FB dirty bits");
+                if (dirtyBit < Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_MAX)
                 {
-                    attachment = newAttachment;
+                    size_t index =
+                        static_cast<size_t>(dirtyBit - Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0);
+                    const FramebufferAttachment *newAttachment = mState.getColorAttachment(index);
+                    BindFramebufferAttachment(functions,
+                                              static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + index),
+                                              newAttachment);
+                    if (newAttachment)
+                    {
+                        attachment = newAttachment;
+                    }
+
+                    // Hiding an alpha channel is only supported when it's the first attachment
+                    // currently. Assert that these emulated textures are not bound to a framebuffer
+                    // using MRT.
+                    if (index == 0)
+                    {
+                        mHasEmulatedAlphaAttachment =
+                            IsEmulatedAlphaChannelTextureAttachment(attachment);
+                    }
+                    ASSERT(index == 0 || !IsEmulatedAlphaChannelTextureAttachment(attachment));
                 }
                 break;
             }
@@ -726,16 +1155,21 @@ bool FramebufferGL::isDefault() const
     return mIsDefault;
 }
 
+bool FramebufferGL::hasEmulatedAlphaChannelTextureAttachment() const
+{
+    return mHasEmulatedAlphaAttachment;
+}
+
 void FramebufferGL::syncClearState(const gl::Context *context, GLbitfield mask)
 {
     const FunctionsGL *functions = GetFunctionsGL(context);
 
     if (functions->standard == STANDARD_GL_DESKTOP)
     {
-        StateManagerGL *stateManager     = GetStateManagerGL(context);
-        const WorkaroundsGL &workarounds = GetWorkaroundsGL(context);
+        StateManagerGL *stateManager      = GetStateManagerGL(context);
+        const angle::FeaturesGL &features = GetFeaturesGL(context);
 
-        if (workarounds.doesSRGBClearsOnLinearFramebufferAttachments &&
+        if (features.doesSRGBClearsOnLinearFramebufferAttachments.enabled &&
             (mask & GL_COLOR_BUFFER_BIT) != 0 && !mIsDefault)
         {
             bool hasSRGBAttachment = false;
@@ -765,10 +1199,10 @@ void FramebufferGL::syncClearBufferState(const gl::Context *context,
 
     if (functions->standard == STANDARD_GL_DESKTOP)
     {
-        StateManagerGL *stateManager     = GetStateManagerGL(context);
-        const WorkaroundsGL &workarounds = GetWorkaroundsGL(context);
+        StateManagerGL *stateManager      = GetStateManagerGL(context);
+        const angle::FeaturesGL &features = GetFeaturesGL(context);
 
-        if (workarounds.doesSRGBClearsOnLinearFramebufferAttachments && buffer == GL_COLOR &&
+        if (features.doesSRGBClearsOnLinearFramebufferAttachments.enabled && buffer == GL_COLOR &&
             !mIsDefault)
         {
             // If doing a clear on a color buffer, set SRGB blend enabled only if the color buffer

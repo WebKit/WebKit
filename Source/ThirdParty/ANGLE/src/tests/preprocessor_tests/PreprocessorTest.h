@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -38,6 +38,7 @@ class SimplePreprocessorTest : public testing::Test
 
     // Preprocesses the input string and verifies that it matches expected output.
     void preprocess(const char *input, const char *expected);
+    void preprocess(const char *input, const char *expected, ShShaderSpec spec);
 
     // Lexes a single token from input and writes it to token.
     void lexSingleToken(const char *input, pp::Token *token);

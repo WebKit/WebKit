@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -28,5 +28,13 @@
 #        define ANGLE_EXPORT
 #    endif
 #endif  // !defined(ANGLE_EXPORT)
+
+#if !defined(ANGLE_NO_EXPORT)
+#    if defined(__GNUC__)
+#        define ANGLE_NO_EXPORT __attribute__((visibility("hidden")))
+#    else
+#        define ANGLE_NO_EXPORT
+#    endif
+#endif  // !defined(ANGLE_NO_EXPORT)
 
 #endif  // LIBGLESV2_EXPORT_H_

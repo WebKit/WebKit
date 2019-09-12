@@ -19,7 +19,7 @@ class ExternalImageSiblingEGL : public ExternalImageSiblingImpl
 {
   public:
     ExternalImageSiblingEGL() {}
-    virtual ~ExternalImageSiblingEGL() {}
+    ~ExternalImageSiblingEGL() override {}
 
     virtual EGLClientBuffer getBuffer() const = 0;
 };

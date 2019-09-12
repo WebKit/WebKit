@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -359,7 +359,7 @@ egl::Error D3DTextureSurfaceWGL::makeCurrent(const gl::Context *context)
     return egl::NoError();
 }
 
-egl::Error D3DTextureSurfaceWGL::unMakeCurrent()
+egl::Error D3DTextureSurfaceWGL::unMakeCurrent(const gl::Context *context)
 {
     if (!mFunctionsWGL->dxUnlockObjectsNV(mDeviceHandle, 1, &mBoundObjectRenderbufferHandle))
     {
@@ -498,7 +498,7 @@ FramebufferImpl *D3DTextureSurfaceWGL::createDefaultFramebuffer(const gl::Contex
                                            mDepthStencilRenderbufferID);
     }
 
-    return new FramebufferGL(data, framebufferID, true);
+    return new FramebufferGL(data, framebufferID, true, false);
 }
 
 HDC D3DTextureSurfaceWGL::getDC() const

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,6 +13,7 @@
 #include <random>
 #include <sstream>
 
+#include "test_utils/angle_test_instantiate.h"
 #include "util/shader_utils.h"
 
 namespace angle
@@ -40,22 +41,22 @@ struct BindingsParams final : public RenderTestParams
         iterationsPerStep = kIterationsPerStep;
     }
 
-    std::string suffix() const override;
+    std::string story() const override;
     size_t numObjects;
     AllocationStyle allocationStyle;
 };
 
 std::ostream &operator<<(std::ostream &os, const BindingsParams &params)
 {
-    os << params.suffix().substr(1);
+    os << params.backendAndStory().substr(1);
     return os;
 }
 
-std::string BindingsParams::suffix() const
+std::string BindingsParams::story() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::suffix();
+    strstr << RenderTestParams::story();
     strstr << "_" << numObjects << "_objects";
 
     switch (allocationStyle)
@@ -90,7 +91,14 @@ class BindingsBenchmark : public ANGLERenderTest,
     std::vector<GLenum> mBindingPoints;
 };
 
-BindingsBenchmark::BindingsBenchmark() : ANGLERenderTest("Bindings", GetParam()) {}
+BindingsBenchmark::BindingsBenchmark() : ANGLERenderTest("Bindings", GetParam())
+{
+    // Flaky on Windows Intel OpenGL. http://crbug.com/974083
+    if (IsIntel() && GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
+    {
+        mSkipTest = true;
+    }
+}
 
 void BindingsBenchmark::initializeBenchmark()
 {
@@ -196,7 +204,7 @@ BindingsParams D3D9Params(AllocationStyle allocationStyle)
 BindingsParams OpenGLOrGLESParams(AllocationStyle allocationStyle)
 {
     BindingsParams params;
-    params.eglParameters   = egl_platform::OPENGL_OR_GLES(true);
+    params.eglParameters   = egl_platform::OPENGL_OR_GLES_NULL();
     params.allocationStyle = allocationStyle;
     return params;
 }

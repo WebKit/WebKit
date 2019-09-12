@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,7 +13,7 @@
 #include "common/Color.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
-#include "platform/WorkaroundsD3D.h"
+#include "platform/FeaturesD3D.h"
 
 namespace gl
 {
@@ -97,7 +97,7 @@ inline bool isDeviceLostError(HRESULT errorCode)
     }
 }
 
-angle::WorkaroundsD3D GenerateWorkarounds();
+void InitializeFeatures(angle::FeaturesD3D *features);
 }  // namespace d3d9
 
 }  // namespace rx

@@ -84,4 +84,4 @@ TEST_P(PointSpriteTest, TrianglesNotTreatedAsPointSprites)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
-ANGLE_INSTANTIATE_TEST(PointSpriteTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(PointSpriteTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

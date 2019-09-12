@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -74,7 +74,7 @@ gl::Version GetMaximumClientVersion(D3D_FEATURE_LEVEL featureLevel);
 void GenerateCaps(ID3D11Device *device,
                   ID3D11DeviceContext *deviceContext,
                   const Renderer11DeviceCaps &renderer11DeviceCaps,
-                  const angle::WorkaroundsD3D &workarounds,
+                  const angle::FeaturesD3D &features,
                   gl::Caps *caps,
                   gl::TextureCapsMap *textureCapsMap,
                   gl::Extensions *extensions,
@@ -186,6 +186,21 @@ outType *DynamicCastComObject(IUnknown *object)
     else
     {
         SafeRelease(outObject);
+        return nullptr;
+    }
+}
+
+template <typename outType>
+angle::ComPtr<outType> DynamicCastComObjectToComPtr(IUnknown *object)
+{
+    angle::ComPtr<outType> outObject;
+    const HRESULT hr = object->QueryInterface(IID_PPV_ARGS(&outObject));
+    if (SUCCEEDED(hr))
+    {
+        return outObject;
+    }
+    else
+    {
         return nullptr;
     }
 }
@@ -305,8 +320,9 @@ void SetBufferData(ID3D11DeviceContext *context, ID3D11Buffer *constantBuffer, c
     }
 }
 
-angle::WorkaroundsD3D GenerateWorkarounds(const Renderer11DeviceCaps &deviceCaps,
-                                          const DXGI_ADAPTER_DESC &adapterDesc);
+void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
+                        const DXGI_ADAPTER_DESC &adapterDesc,
+                        angle::FeaturesD3D *features);
 
 enum ReservedConstantBufferSlot
 {
@@ -391,6 +407,7 @@ class TextureHelper11 : public Resource11Base<ID3D11Resource, std::shared_ptr, G
     void set(ResourceT *object, const d3d11::Format &format)
     {
         ASSERT(!valid());
+
         mFormatSet     = &format;
         mData->object  = object;
         mData->manager = nullptr;

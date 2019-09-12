@@ -10,7 +10,6 @@
 
 namespace angle
 {
-
 bool PrependPathToEnvironmentVar(const char *variableName, const char *path)
 {
     std::string oldValue = GetEnvironmentVar(variableName);
@@ -29,5 +28,4 @@ bool PrependPathToEnvironmentVar(const char *variableName, const char *path)
     }
     return SetEnvironmentVar(variableName, newValue);
 }
-
 }  // namespace angle

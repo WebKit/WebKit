@@ -805,5 +805,59 @@
     "GL_OVR_multiview2":
     [
         "FramebufferTextureMultiviewOVR"
-    ] 
+    ],
+
+    "GL_EXT_memory_object":
+    [
+        "GetUnsignedBytevEXT",
+        "GetUnsignedBytei_vEXT",
+        "DeleteMemoryObjectsEXT",
+        "IsMemoryObjectEXT",
+        "CreateMemoryObjectsEXT",
+        "MemoryObjectParameterivEXT",
+        "GetMemoryObjectParameterivEXT",
+        "TexStorageMem2DEXT",
+        "TexStorageMem2DMultisampleEXT",
+        "TexStorageMem3DEXT",
+        "TexStorageMem3DMultisampleEXT",
+        "BufferStorageMemEXT",
+        "TextureStorageMem2DEXT",
+        "TextureStorageMem2DMultisampleEXT",
+        "TextureStorageMem3DEXT",
+        "TextureStorageMem3DMultisampleEXT",
+        "NamedBufferStorageMemEXT"
+    ],
+
+    "GL_EXT_semaphore":
+    [
+        "GenSemaphoresEXT",
+        "DeleteSemaphoresEXT",
+        "IsSemaphoreEXT",
+        "SemaphoreParameterui64vEXT",
+        "GetSemaphoreParameterui64vEXT",
+        "WaitSemaphoreEXT",
+        "SignalSemaphoreEXT"
+    ],
+
+    "GL_EXT_memory_object_fd":
+    [
+        "ImportMemoryFdEXT"
+    ],
+
+    "GL_EXT_semaphore_fd":
+    [
+        "ImportSemaphoreFdEXT"
+    ],
+
+    "GL_EXT_memory_object_win32":
+    [
+        "ImportMemoryWin32HandleEXT",
+        "ImportMemoryWin32NameEXT"
+    ],
+
+    "GL_EXT_semaphore_win32":
+    [
+        "ImportSemaphoreWin32HandleEXT",
+        "ImportSemaphoreWin32NameEXT"
+    ]
 }

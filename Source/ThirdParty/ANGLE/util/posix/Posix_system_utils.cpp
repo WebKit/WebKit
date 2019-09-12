@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -70,7 +70,7 @@ bool StabilizeCPUForBenchmarking()
             "default priority");
         success = false;
     }
-#if ANGLE_PLATFORM_LINUX
+#    if ANGLE_PLATFORM_LINUX
     cpu_set_t affinity;
     CPU_SET(0, &affinity);
     errno = 0;
@@ -81,9 +81,9 @@ bool StabilizeCPUForBenchmarking()
             "default affinity");
         success = false;
     }
-#else
+#    else
     // TODO(jmadill): Implement for non-linux. http://anglebug.com/2923
-#endif
+#    endif
 
     return success;
 #else  // defined(ANGLE_PLATFORM_FUCHSIA)

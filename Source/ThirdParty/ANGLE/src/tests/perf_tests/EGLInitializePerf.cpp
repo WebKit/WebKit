@@ -20,7 +20,7 @@ namespace
 // Only applies to D3D11
 struct Captures final : private angle::NonCopyable
 {
-    Timer *timer           = CreateTimer();
+    Timer timer;
     size_t loadDLLsMS      = 0;
     size_t createDeviceMS  = 0;
     size_t initResourcesMS = 0;
@@ -29,7 +29,7 @@ struct Captures final : private angle::NonCopyable
 double CapturePlatform_currentTime(angle::PlatformMethods *platformMethods)
 {
     Captures *captures = static_cast<Captures *>(platformMethods->context);
-    return captures->timer->getElapsedTime();
+    return captures->timer.getElapsedTime();
 }
 
 void CapturePlatform_histogramCustomCounts(angle::PlatformMethods *platformMethods,
@@ -75,7 +75,7 @@ class EGLInitializePerfTest : public ANGLEPerfTest,
 };
 
 EGLInitializePerfTest::EGLInitializePerfTest()
-    : ANGLEPerfTest("EGLInitialize", "_run", 1), mOSWindow(nullptr), mDisplay(EGL_NO_DISPLAY)
+    : ANGLEPerfTest("EGLInitialize", "", "_run", 1), mOSWindow(nullptr), mDisplay(EGL_NO_DISPLAY)
 {
     auto platform = GetParam().eglParameters;
 
@@ -121,6 +121,10 @@ void EGLInitializePerfTest::SetUp()
 
     platformMethods->currentTime           = CapturePlatform_currentTime;
     platformMethods->histogramCustomCounts = CapturePlatform_histogramCustomCounts;
+
+    mReporter->RegisterImportantMetric(".LoadDLLs", "ms");
+    mReporter->RegisterImportantMetric(".D3D11CreateDevice", "ms");
+    mReporter->RegisterImportantMetric(".InitResources", "ms");
 }
 
 EGLInitializePerfTest::~EGLInitializePerfTest()
@@ -141,9 +145,9 @@ void EGLInitializePerfTest::step()
 void EGLInitializePerfTest::TearDown()
 {
     ANGLEPerfTest::TearDown();
-    printResult("LoadDLLs", normalizedTime(mCaptures.loadDLLsMS), "ms", true);
-    printResult("D3D11CreateDevice", normalizedTime(mCaptures.createDeviceMS), "ms", true);
-    printResult("InitResources", normalizedTime(mCaptures.initResourcesMS), "ms", true);
+    mReporter->AddResult(".LoadDLLs", normalizedTime(mCaptures.loadDLLsMS));
+    mReporter->AddResult(".D3D11CreateDevice", normalizedTime(mCaptures.createDeviceMS));
+    mReporter->AddResult(".InitResources", normalizedTime(mCaptures.initResourcesMS));
 
     ANGLEResetDisplayPlatform(mDisplay);
 }

@@ -334,7 +334,7 @@ void android_app_post_exec_cmd(struct android_app* android_app, int8_t cmd);
 /**
  * Dummy function you can call to ensure glue code isn't stripped.
  */
-void app_dummy();
+void app_dummy(void);
 
 /**
  * This is the function that application code must implement, representing

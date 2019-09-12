@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -40,7 +40,9 @@ bool IsNoOp(TIntermNode *node)
 class PruneNoOpsTraverser : private TIntermTraverser
 {
   public:
-    static void apply(TIntermBlock *root, TSymbolTable *symbolTable);
+    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler,
+                                       TIntermBlock *root,
+                                       TSymbolTable *symbolTable);
 
   private:
     PruneNoOpsTraverser(TSymbolTable *symbolTable);
@@ -49,11 +51,11 @@ class PruneNoOpsTraverser : private TIntermTraverser
     bool visitLoop(Visit visit, TIntermLoop *loop) override;
 };
 
-void PruneNoOpsTraverser::apply(TIntermBlock *root, TSymbolTable *symbolTable)
+bool PruneNoOpsTraverser::apply(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
 {
     PruneNoOpsTraverser prune(symbolTable);
     root->traverse(&prune);
-    prune.updateTree();
+    return prune.updateTree(compiler, root);
 }
 
 PruneNoOpsTraverser::PruneNoOpsTraverser(TSymbolTable *symbolTable)
@@ -158,9 +160,9 @@ bool PruneNoOpsTraverser::visitLoop(Visit visit, TIntermLoop *loop)
 
 }  // namespace
 
-void PruneNoOps(TIntermBlock *root, TSymbolTable *symbolTable)
+bool PruneNoOps(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
 {
-    PruneNoOpsTraverser::apply(root, symbolTable);
+    return PruneNoOpsTraverser::apply(compiler, root, symbolTable);
 }
 
 }  // namespace sh

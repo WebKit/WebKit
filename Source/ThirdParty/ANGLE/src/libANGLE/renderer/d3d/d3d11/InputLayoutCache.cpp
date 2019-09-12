@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -30,10 +30,10 @@ namespace rx
 namespace
 {
 
-GLenum GetGLSLAttributeType(const std::vector<sh::Attribute> &shaderAttributes, size_t index)
+GLenum GetGLSLAttributeType(const std::vector<sh::ShaderVariable> &shaderAttributes, size_t index)
 {
     // Count matrices differently
-    for (const sh::Attribute &attrib : shaderAttributes)
+    for (const sh::ShaderVariable &attrib : shaderAttributes)
     {
         if (attrib.location == -1)
         {

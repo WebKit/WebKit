@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,7 +10,9 @@
 
 #include <algorithm>
 
+#include "common/platform.h"
 #include "common/string_utils.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/egl/functionsegl_typedefs.h"
 
@@ -77,7 +79,9 @@ struct FunctionsEGL::EGLDispatchTable
           getCompositorTimingANDROIDPtr(nullptr),
           getNextFrameIdANDROIDPtr(nullptr),
           getFrameTimestampSupportedANDROIDPtr(nullptr),
-          getFrameTimestampsANDROIDPtr(nullptr)
+          getFrameTimestampsANDROIDPtr(nullptr),
+
+          dupNativeFenceFDANDROIDPtr(nullptr)
     {}
 
     // 1.0
@@ -132,6 +136,9 @@ struct FunctionsEGL::EGLDispatchTable
     PFNEGLGETNEXTFRAMEIDANDROIDPROC getNextFrameIdANDROIDPtr;
     PFNEGLGETFRAMETIMESTAMPSUPPORTEDANDROIDPROC getFrameTimestampSupportedANDROIDPtr;
     PFNEGLGETFRAMETIMESTAMPSANDROIDPROC getFrameTimestampsANDROIDPtr;
+
+    // EGL_ANDROID_native_fence_sync
+    PFNEGLDUPNATIVEFENCEFDANDROIDPROC dupNativeFenceFDANDROIDPtr;
 };
 
 FunctionsEGL::FunctionsEGL()
@@ -244,6 +251,22 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
                                 eglGetFrameTimestampSupportedANDROID);
         ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getFrameTimestampsANDROIDPtr,
                                 eglGetFrameTimestampsANDROID);
+    }
+
+    // The native fence sync extension is a bit complicated. It's reported as present for ChromeOS,
+    // but Android currently doesn't report this extension even when it's present, and older devices
+    // may export a useless wrapper function. See crbug.com/775707 for details. In short, if the
+    // symbol is present and we're on Android N or newer, assume that it's usable even if the
+    // extension wasn't reported.
+    if (hasExtension("EGL_ANDROID_native_fence_sync") || GetAndroidSDKVersion() >= 24)
+    {
+        // Don't error trying to load this entry point.
+        if (SetPtr(&mFnPtrs->dupNativeFenceFDANDROIDPtr,
+                   getProcAddress("eglDupNativeFenceFDANDROID")) &&
+            !hasExtension("EGL_ANDROID_native_fence_sync"))
+        {
+            mExtensions.push_back("EGL_ANDROID_native_fence_sync");
+        }
     }
 
 #undef ANGLE_GET_PROC_OR_ERROR
@@ -468,6 +491,11 @@ EGLBoolean FunctionsEGL::getFrameTimestampsANDROID(EGLSurface surface,
 {
     return mFnPtrs->getFrameTimestampsANDROIDPtr(mEGLDisplay, surface, frameId, numTimestamps,
                                                  timestamps, values);
+}
+
+EGLint FunctionsEGL::dupNativeFenceFDANDROID(EGLSync sync) const
+{
+    return mFnPtrs->dupNativeFenceFDANDROIDPtr(mEGLDisplay, sync);
 }
 
 }  // namespace rx

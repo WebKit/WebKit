@@ -37,7 +37,7 @@ void GLES1Renderer::onDestroy(Context *context, State *state)
     {
         (void)state->setProgram(context, 0);
 
-        mShaderPrograms->deleteProgram(context, mProgramState.program);
+        mShaderPrograms->deleteProgram(context, {mProgramState.program});
         mShaderPrograms->release(context);
         mShaderPrograms             = nullptr;
         mRendererProgramInitialized = false;
@@ -503,12 +503,12 @@ void GLES1Renderer::drawTexture(Context *context,
     mDrawTextureEnabled = false;
 }
 
-Shader *GLES1Renderer::getShader(GLuint handle) const
+Shader *GLES1Renderer::getShader(ShaderProgramID handle) const
 {
     return mShaderPrograms->getShader(handle);
 }
 
-Program *GLES1Renderer::getProgram(GLuint handle) const
+Program *GLES1Renderer::getProgram(ShaderProgramID handle) const
 {
     return mShaderPrograms->getProgram(handle);
 }
@@ -516,12 +516,12 @@ Program *GLES1Renderer::getProgram(GLuint handle) const
 angle::Result GLES1Renderer::compileShader(Context *context,
                                            ShaderType shaderType,
                                            const char *src,
-                                           GLuint *shaderOut)
+                                           ShaderProgramID *shaderOut)
 {
     rx::ContextImpl *implementation = context->getImplementation();
     const Limitations &limitations  = implementation->getNativeLimitations();
 
-    GLuint shader = mShaderPrograms->createShader(implementation, limitations, shaderType);
+    ShaderProgramID shader = mShaderPrograms->createShader(implementation, limitations, shaderType);
 
     Shader *shaderObject = getShader(shader);
     ANGLE_CHECK(context, shaderObject, "Missing shader object", GL_INVALID_OPERATION);
@@ -547,12 +547,12 @@ angle::Result GLES1Renderer::compileShader(Context *context,
 
 angle::Result GLES1Renderer::linkProgram(Context *context,
                                          State *glState,
-                                         GLuint vertexShader,
-                                         GLuint fragmentShader,
+                                         ShaderProgramID vertexShader,
+                                         ShaderProgramID fragmentShader,
                                          const std::unordered_map<GLint, std::string> &attribLocs,
-                                         GLuint *programOut)
+                                         ShaderProgramID *programOut)
 {
-    GLuint program = mShaderPrograms->createProgram(context->getImplementation());
+    ShaderProgramID program = mShaderPrograms->createProgram(context->getImplementation());
 
     Program *programObject = getProgram(program);
     ANGLE_CHECK(context, programObject, "Missing program object", GL_INVALID_OPERATION);
@@ -600,8 +600,8 @@ angle::Result GLES1Renderer::initializeRendererProgram(Context *context, State *
 
     mShaderPrograms = new ShaderProgramManager();
 
-    GLuint vertexShader;
-    GLuint fragmentShader;
+    ShaderProgramID vertexShader;
+    ShaderProgramID fragmentShader;
 
     ANGLE_TRY(compileShader(context, ShaderType::Vertex, kGLES1DrawVShader, &vertexShader));
 

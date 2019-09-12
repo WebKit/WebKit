@@ -19,14 +19,14 @@ std::string generateShaderForImage2DBindSignature(
     ProgramD3D &programD3D,
     const gl::ProgramState &programData,
     gl::ShaderType shaderType,
-    std::vector<sh::Uniform> &image2DUniforms,
+    std::vector<sh::ShaderVariable> &image2DUniforms,
     const gl::ImageUnitTextureTypeMap &image2DBindLayout);
 
 inline std::string GenerateComputeShaderForImage2DBindSignature(
     const d3d::Context *context,
     ProgramD3D &programD3D,
     const gl::ProgramState &programData,
-    std::vector<sh::Uniform> &image2DUniforms,
+    std::vector<sh::ShaderVariable> &image2DUniforms,
     const gl::ImageUnitTextureTypeMap &image2DBindLayout)
 {
     return generateShaderForImage2DBindSignature(context, programD3D, programData,

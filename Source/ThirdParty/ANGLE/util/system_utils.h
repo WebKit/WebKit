@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -26,6 +26,13 @@ ANGLE_UTIL_EXPORT void WriteDebugMessage(const char *format, ...);
 
 // Set thread affinity and priority.
 ANGLE_UTIL_EXPORT bool StabilizeCPUForBenchmarking();
+
+// Set a crash handler to print stack traces.
+ANGLE_UTIL_EXPORT void InitCrashHandler();
+ANGLE_UTIL_EXPORT void TerminateCrashHandler();
+
+// Print a stack back trace.
+ANGLE_UTIL_EXPORT void PrintStackBacktrace();
 }  // namespace angle
 
 #endif  // UTIL_SYSTEM_UTILS_H_

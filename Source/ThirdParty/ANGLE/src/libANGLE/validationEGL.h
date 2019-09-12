@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -43,7 +43,7 @@ Error ValidateConfig(const Display *display, const Config *config);
 Error ValidateContext(const Display *display, const gl::Context *context);
 Error ValidateImage(const Display *display, const Image *image);
 Error ValidateDevice(const Device *device);
-Error ValidateSync(const Device *device, const Sync *sync);
+Error ValidateSync(const Display *display, const Sync *sync);
 
 // Return the requested object only if it is valid (otherwise nullptr)
 const Thread *GetThreadIfValid(const Thread *thread);
@@ -85,6 +85,12 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
 
 Error ValidateMakeCurrent(Display *display, Surface *draw, Surface *read, gl::Context *context);
 
+Error ValidateCreateImage(const Display *display,
+                          gl::Context *context,
+                          EGLenum target,
+                          EGLClientBuffer buffer,
+                          const AttributeMap &attributes);
+Error ValidateDestroyImage(const Display *display, const Image *image);
 Error ValidateCreateImageKHR(const Display *display,
                              gl::Context *context,
                              EGLenum target,
@@ -314,6 +320,17 @@ Error ValidateGetFrameTimestampsANDROID(const Display *display,
                                         EGLint numTimestamps,
                                         const EGLint *timestamps,
                                         EGLnsecsANDROID *values);
+
+Error ValidateQueryStringiANGLE(const Display *display, EGLint name, EGLint index);
+
+Error ValidateQueryDisplayAttribEXT(const Display *display, const EGLint attribute);
+Error ValidateQueryDisplayAttribANGLE(const Display *display, const EGLint attribute);
+
+// EGL_ANDROID_get_native_client_buffer
+Error ValidateGetNativeClientBufferANDROID(const struct AHardwareBuffer *buffer);
+
+// EGL_ANDROID_native_fence_sync
+Error ValidateDupNativeFenceFDANDROID(const Display *display, const Sync *sync);
 
 }  // namespace egl
 

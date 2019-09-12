@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -360,7 +360,7 @@ EGLint SwapChain9::swapRect(DisplayD3D *displayD3D, EGLint x, EGLint y, EGLint w
     // windows is in the process of entering/exiting fullscreen. This code doesn't seem to have any
     // documentation.  The device appears to be ok after emitting this error so simply return a
     // failure to swap.
-    if (result == static_cast<HRESULT>(0x88760873))
+    if (result == static_cast<HRESULT>(0x88760873) || result == static_cast<HRESULT>(0x88760872))
     {
         return EGL_BAD_MATCH;
     }

@@ -29,7 +29,68 @@ class MultithreadingTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    bool platformSupportsMultithreading() const { return (IsOpenGLES() && IsAndroid()); }
+    bool platformSupportsMultithreading() const
+    {
+        return (IsOpenGLES() && IsAndroid()) || IsVulkan();
+    }
+
+    void runMultithreadedGLTest(
+        std::function<void(EGLSurface surface, size_t threadIndex)> testBody,
+        size_t threadCount)
+    {
+        std::mutex mutex;
+
+        EGLWindow *window = getEGLWindow();
+        EGLDisplay dpy    = window->getDisplay();
+        EGLConfig config  = window->getConfig();
+
+        constexpr EGLint kPBufferSize = 256;
+
+        std::vector<std::thread> threads(threadCount);
+        for (size_t threadIdx = 0; threadIdx < threadCount; threadIdx++)
+        {
+            threads[threadIdx] = std::thread([&, threadIdx]() {
+                EGLSurface surface = EGL_NO_SURFACE;
+                EGLConfig ctx      = EGL_NO_CONTEXT;
+
+                {
+                    std::lock_guard<decltype(mutex)> lock(mutex);
+
+                    // Initialize the pbuffer and context
+                    EGLint pbufferAttributes[] = {
+                        EGL_WIDTH, kPBufferSize, EGL_HEIGHT, kPBufferSize, EGL_NONE, EGL_NONE,
+                    };
+                    surface = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
+                    EXPECT_EGL_SUCCESS();
+
+                    ctx = window->createContext(EGL_NO_CONTEXT);
+                    EXPECT_NE(EGL_NO_CONTEXT, ctx);
+
+                    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, ctx));
+                    EXPECT_EGL_SUCCESS();
+                }
+
+                testBody(surface, threadIdx);
+
+                {
+                    std::lock_guard<decltype(mutex)> lock(mutex);
+
+                    // Clean up
+                    EXPECT_EGL_TRUE(
+                        eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+                    EXPECT_EGL_SUCCESS();
+
+                    eglDestroySurface(dpy, surface);
+                    eglDestroyContext(dpy, ctx);
+                }
+            });
+        }
+
+        for (std::thread &thread : threads)
+        {
+            thread.join();
+        }
+    }
 };
 
 // Test that it's possible to make one context current on different threads
@@ -74,84 +135,75 @@ TEST_P(MultithreadingTest, MakeCurrentSingleContext)
     EXPECT_EGL_SUCCESS();
 }
 
-// Test that it's possible to make one multiple contexts current on different threads simultaneously
-TEST_P(MultithreadingTest, MakeCurrentMultiContext)
+// Test that multiple threads can clear and readback pixels successfully at the same time
+TEST_P(MultithreadingTest, MultiContextClear)
 {
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsOpenGL() && IsAMD());
 
-    std::mutex mutex;
+    auto testBody = [](EGLSurface surface, size_t thread) {
+        constexpr size_t kIterationsPerThread = 32;
+        for (size_t iteration = 0; iteration < kIterationsPerThread; iteration++)
+        {
+            // Base the clear color on the thread and iteration indexes so every clear color is
+            // unique
+            const GLColor color(static_cast<GLubyte>(thread % 255),
+                                static_cast<GLubyte>(iteration % 255), 0, 255);
+            const angle::Vector4 floatColor = color.toNormalizedVector();
 
-    EGLWindow *window = getEGLWindow();
-    EGLDisplay dpy    = window->getDisplay();
-    EGLConfig config  = window->getConfig();
+            glClearColor(floatColor[0], floatColor[1], floatColor[2], floatColor[3]);
+            EXPECT_GL_NO_ERROR();
 
-    constexpr size_t kThreadCount         = 16;
-    constexpr size_t kIterationsPerThread = 16;
+            glClear(GL_COLOR_BUFFER_BIT);
+            EXPECT_GL_NO_ERROR();
 
-    constexpr EGLint kPBufferSize = 256;
+            EXPECT_PIXEL_COLOR_EQ(0, 0, color);
+        }
+    };
+    runMultithreadedGLTest(testBody, 72);
+}
 
-    std::array<std::thread, kThreadCount> threads;
-    for (size_t thread = 0; thread < kThreadCount; thread++)
-    {
-        threads[thread] = std::thread([&, thread]() {
-            EGLSurface pbuffer = EGL_NO_SURFACE;
-            EGLConfig ctx      = EGL_NO_CONTEXT;
+// Test that multiple threads can draw and readback pixels successfully at the same time
+TEST_P(MultithreadingTest, MultiContextDraw)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
 
+    auto testBody = [](EGLSurface surface, size_t thread) {
+        constexpr size_t kIterationsPerThread = 32;
+        constexpr size_t kDrawsPerIteration   = 500;
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+
+        GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+
+        auto quadVertices = GetQuadVertices();
+
+        GLBuffer vertexBuffer;
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 3 * 6, quadVertices.data(), GL_STATIC_DRAW);
+
+        GLint positionLocation = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+        glEnableVertexAttribArray(positionLocation);
+        glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+        for (size_t iteration = 0; iteration < kIterationsPerThread; iteration++)
+        {
+            // Base the clear color on the thread and iteration indexes so every clear color is
+            // unique
+            const GLColor color(static_cast<GLubyte>(thread % 255),
+                                static_cast<GLubyte>(iteration % 255), 0, 255);
+            const angle::Vector4 floatColor = color.toNormalizedVector();
+            glUniform4fv(colorLocation, 1, floatColor.data());
+
+            for (size_t draw = 0; draw < kDrawsPerIteration; draw++)
             {
-                std::lock_guard<decltype(mutex)> lock(mutex);
-
-                // Initialize the pbuffer and context
-                EGLint pbufferAttributes[] = {
-                    EGL_WIDTH, kPBufferSize, EGL_HEIGHT, kPBufferSize, EGL_NONE, EGL_NONE,
-                };
-                pbuffer = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
-                EXPECT_EGL_SUCCESS();
-
-                ctx = window->createContext(EGL_NO_CONTEXT);
-                EXPECT_NE(EGL_NO_CONTEXT, ctx);
-
-                EXPECT_EGL_TRUE(eglMakeCurrent(dpy, pbuffer, pbuffer, ctx));
-                EXPECT_EGL_SUCCESS();
+                glDrawArrays(GL_TRIANGLES, 0, 6);
             }
 
-            for (size_t iteration = 0; iteration < kIterationsPerThread; iteration++)
-            {
-                std::lock_guard<decltype(mutex)> lock(mutex);
-
-                // Base the clear color on the thread and iteration indexes so every clear color is
-                // unique
-                const GLColor color(static_cast<GLubyte>(thread), static_cast<GLubyte>(iteration),
-                                    0, 255);
-                const angle::Vector4 floatColor = color.toNormalizedVector();
-
-                glClearColor(floatColor[0], floatColor[1], floatColor[2], floatColor[3]);
-                EXPECT_GL_NO_ERROR();
-
-                glClear(GL_COLOR_BUFFER_BIT);
-                EXPECT_GL_NO_ERROR();
-
-                EXPECT_PIXEL_COLOR_EQ(0, 0, color);
-            }
-
-            {
-                std::lock_guard<decltype(mutex)> lock(mutex);
-
-                // Clean up
-                EXPECT_EGL_TRUE(
-                    eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
-                EXPECT_EGL_SUCCESS();
-
-                eglDestroySurface(dpy, pbuffer);
-                eglDestroyContext(dpy, ctx);
-            }
-        });
-    }
-
-    for (std::thread &thread : threads)
-    {
-        thread.join();
-    }
+            EXPECT_PIXEL_COLOR_EQ(0, 0, color);
+        }
+    };
+    runMultithreadedGLTest(testBody, 4);
 }
 
 // TODO(geofflang): Test sharing a program between multiple shared contexts on multiple threads

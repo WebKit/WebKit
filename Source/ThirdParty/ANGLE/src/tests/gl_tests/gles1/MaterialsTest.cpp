@@ -128,4 +128,4 @@ TEST_P(MaterialsTest, SetParameters)
     EXPECT_EQ(kShininessTestValue, actualShininess);
 }
 
-ANGLE_INSTANTIATE_TEST(MaterialsTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(MaterialsTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

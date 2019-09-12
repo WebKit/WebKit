@@ -41,13 +41,6 @@ angle::Result TransformFeedbackNULL::resume(const gl::Context *context)
     return angle::Result::Continue;
 }
 
-angle::Result TransformFeedbackNULL::bindGenericBuffer(
-    const gl::Context *context,
-    const gl::BindingPointer<gl::Buffer> &binding)
-{
-    return angle::Result::Continue;
-}
-
 angle::Result TransformFeedbackNULL::bindIndexedBuffer(
     const gl::Context *context,
     size_t index,

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -99,6 +99,6 @@ using ColorGeneric = angle::ColorGeneric;
 
 }  // namespace gl
 
-#include "Color.inl"
+#include "Color.inc"
 
 #endif  // COMMON_COLOR_H_

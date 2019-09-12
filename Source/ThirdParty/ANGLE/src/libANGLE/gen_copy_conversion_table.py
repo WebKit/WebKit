@@ -58,12 +58,13 @@ template_format_case = """        case {texture_format}:
 template_simple_case = """                case {key}:
 """
 
+
 def parse_texture_format_case(texture_format, framebuffer_formats):
     framebuffer_format_cases = ""
     for framebuffer_format in sorted(framebuffer_formats):
-        framebuffer_format_cases += template_simple_case.format(key = framebuffer_format)
+        framebuffer_format_cases += template_simple_case.format(key=framebuffer_format)
     return template_format_case.format(
-        texture_format = texture_format, framebuffer_format_cases = framebuffer_format_cases)
+        texture_format=texture_format, framebuffer_format_cases=framebuffer_format_cases)
 
 
 def main():
@@ -93,7 +94,7 @@ def main():
         for texture_format, framebuffer_format in data:
             if texture_format not in format_map:
                 format_map[texture_format] = []
-            format_map[texture_format] += [ framebuffer_format ]
+            format_map[texture_format] += [framebuffer_format]
 
     texture_format_cases = ""
 
@@ -102,10 +103,10 @@ def main():
 
     with open(out_file_name, 'wt') as out_file:
         output_cpp = template_cpp.format(
-            script_name = sys.argv[0],
-            data_source_name = data_source_name,
-            copyright_year = date.today().year,
-            texture_format_cases = texture_format_cases)
+            script_name=sys.argv[0],
+            data_source_name=data_source_name,
+            copyright_year=date.today().year,
+            texture_format_cases=texture_format_cases)
         out_file.write(output_cpp)
         out_file.close()
     return 0

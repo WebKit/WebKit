@@ -16,15 +16,16 @@
 namespace gl
 {
 
-template <typename ResourceType>
+template <typename ResourceType, typename IDType>
 class ResourceMap final : angle::NonCopyable
 {
   public:
     ResourceMap();
     ~ResourceMap();
 
-    ANGLE_INLINE ResourceType *query(GLuint handle) const
+    ANGLE_INLINE ResourceType *query(IDType id) const
     {
+        GLuint handle = GetIDValue(id);
         if (handle < mFlatResourcesSize)
         {
             ResourceType *value = mFlatResources[handle];
@@ -35,12 +36,12 @@ class ResourceMap final : angle::NonCopyable
     }
 
     // Returns true if the handle was reserved. Not necessarily if the resource is created.
-    bool contains(GLuint handle) const;
+    bool contains(IDType id) const;
 
     // Returns the element that was at this location.
-    bool erase(GLuint handle, ResourceType **resourceOut);
+    bool erase(IDType id, ResourceType **resourceOut);
 
-    void assign(GLuint handle, ResourceType *resource);
+    void assign(IDType id, ResourceType *resource);
 
     // Clears the map.
     void clear();
@@ -73,7 +74,7 @@ class ResourceMap final : angle::NonCopyable
     // null values represent reserved handles.
     Iterator begin() const;
     Iterator end() const;
-    Iterator find(GLuint handle) const;
+    Iterator find(IDType handle) const;
 
     // Not a constant-time operation, should only be used for verification.
     bool empty() const;
@@ -103,25 +104,25 @@ class ResourceMap final : angle::NonCopyable
     HashMap mHashedResources;
 };
 
-template <typename ResourceType>
-ResourceMap<ResourceType>::ResourceMap()
+template <typename ResourceType, typename IDType>
+ResourceMap<ResourceType, IDType>::ResourceMap()
     : mFlatResourcesSize(kInitialFlatResourcesSize),
-      mFlatResources(new ResourceType *[kInitialFlatResourcesSize]),
-      mHashedResources()
+      mFlatResources(new ResourceType *[kInitialFlatResourcesSize])
 {
     memset(mFlatResources, kInvalidPointer, mFlatResourcesSize * kElementSize);
 }
 
-template <typename ResourceType>
-ResourceMap<ResourceType>::~ResourceMap()
+template <typename ResourceType, typename IDType>
+ResourceMap<ResourceType, IDType>::~ResourceMap()
 {
     ASSERT(empty());
     delete[] mFlatResources;
 }
 
-template <typename ResourceType>
-ANGLE_INLINE bool ResourceMap<ResourceType>::contains(GLuint handle) const
+template <typename ResourceType, typename IDType>
+ANGLE_INLINE bool ResourceMap<ResourceType, IDType>::contains(IDType id) const
 {
+    GLuint handle = GetIDValue(id);
     if (handle < mFlatResourcesSize)
     {
         return (mFlatResources[handle] != InvalidPointer());
@@ -129,9 +130,10 @@ ANGLE_INLINE bool ResourceMap<ResourceType>::contains(GLuint handle) const
     return (mHashedResources.find(handle) != mHashedResources.end());
 }
 
-template <typename ResourceType>
-bool ResourceMap<ResourceType>::erase(GLuint handle, ResourceType **resourceOut)
+template <typename ResourceType, typename IDType>
+bool ResourceMap<ResourceType, IDType>::erase(IDType id, ResourceType **resourceOut)
 {
+    GLuint handle = GetIDValue(id);
     if (handle < mFlatResourcesSize)
     {
         auto &value = mFlatResources[handle];
@@ -155,9 +157,10 @@ bool ResourceMap<ResourceType>::erase(GLuint handle, ResourceType **resourceOut)
     return true;
 }
 
-template <typename ResourceType>
-void ResourceMap<ResourceType>::assign(GLuint handle, ResourceType *resource)
+template <typename ResourceType, typename IDType>
+void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource)
 {
+    GLuint handle = GetIDValue(id);
     if (handle < kFlatResourcesLimit)
     {
         if (handle >= mFlatResourcesSize)
@@ -187,20 +190,22 @@ void ResourceMap<ResourceType>::assign(GLuint handle, ResourceType *resource)
     }
 }
 
-template <typename ResourceType>
-typename ResourceMap<ResourceType>::Iterator ResourceMap<ResourceType>::begin() const
+template <typename ResourceType, typename IDType>
+typename ResourceMap<ResourceType, IDType>::Iterator ResourceMap<ResourceType, IDType>::begin()
+    const
 {
     return Iterator(*this, nextNonNullResource(0), mHashedResources.begin());
 }
 
-template <typename ResourceType>
-typename ResourceMap<ResourceType>::Iterator ResourceMap<ResourceType>::end() const
+template <typename ResourceType, typename IDType>
+typename ResourceMap<ResourceType, IDType>::Iterator ResourceMap<ResourceType, IDType>::end() const
 {
     return Iterator(*this, static_cast<GLuint>(mFlatResourcesSize), mHashedResources.end());
 }
 
-template <typename ResourceType>
-typename ResourceMap<ResourceType>::Iterator ResourceMap<ResourceType>::find(GLuint handle) const
+template <typename ResourceType, typename IDType>
+typename ResourceMap<ResourceType, IDType>::Iterator ResourceMap<ResourceType, IDType>::find(
+    IDType handle) const
 {
     if (handle < mFlatResourcesSize)
     {
@@ -214,22 +219,22 @@ typename ResourceMap<ResourceType>::Iterator ResourceMap<ResourceType>::find(GLu
     }
 }
 
-template <typename ResourceType>
-bool ResourceMap<ResourceType>::empty() const
+template <typename ResourceType, typename IDType>
+bool ResourceMap<ResourceType, IDType>::empty() const
 {
     return (begin() == end());
 }
 
-template <typename ResourceType>
-void ResourceMap<ResourceType>::clear()
+template <typename ResourceType, typename IDType>
+void ResourceMap<ResourceType, IDType>::clear()
 {
     memset(mFlatResources, kInvalidPointer, kInitialFlatResourcesSize * kElementSize);
     mFlatResourcesSize = kInitialFlatResourcesSize;
     mHashedResources.clear();
 }
 
-template <typename ResourceType>
-GLuint ResourceMap<ResourceType>::nextNonNullResource(size_t flatIndex) const
+template <typename ResourceType, typename IDType>
+GLuint ResourceMap<ResourceType, IDType>::nextNonNullResource(size_t flatIndex) const
 {
     for (size_t index = flatIndex; index < mFlatResourcesSize; index++)
     {
@@ -241,37 +246,38 @@ GLuint ResourceMap<ResourceType>::nextNonNullResource(size_t flatIndex) const
     return static_cast<GLuint>(mFlatResourcesSize);
 }
 
-template <typename ResourceType>
+template <typename ResourceType, typename IDType>
 // static
-ResourceType *ResourceMap<ResourceType>::InvalidPointer()
+ResourceType *ResourceMap<ResourceType, IDType>::InvalidPointer()
 {
     return reinterpret_cast<ResourceType *>(kInvalidPointer);
 }
 
-template <typename ResourceType>
-ResourceMap<ResourceType>::Iterator::Iterator(
+template <typename ResourceType, typename IDType>
+ResourceMap<ResourceType, IDType>::Iterator::Iterator(
     const ResourceMap &origin,
     GLuint flatIndex,
-    typename ResourceMap<ResourceType>::HashMap::const_iterator hashIndex)
-    : mOrigin(origin), mFlatIndex(flatIndex), mHashIndex(hashIndex), mValue()
+    typename ResourceMap<ResourceType, IDType>::HashMap::const_iterator hashIndex)
+    : mOrigin(origin), mFlatIndex(flatIndex), mHashIndex(hashIndex)
 {
     updateValue();
 }
 
-template <typename ResourceType>
-bool ResourceMap<ResourceType>::Iterator::operator==(const Iterator &other) const
+template <typename ResourceType, typename IDType>
+bool ResourceMap<ResourceType, IDType>::Iterator::operator==(const Iterator &other) const
 {
     return (mFlatIndex == other.mFlatIndex && mHashIndex == other.mHashIndex);
 }
 
-template <typename ResourceType>
-bool ResourceMap<ResourceType>::Iterator::operator!=(const Iterator &other) const
+template <typename ResourceType, typename IDType>
+bool ResourceMap<ResourceType, IDType>::Iterator::operator!=(const Iterator &other) const
 {
     return !(*this == other);
 }
 
-template <typename ResourceType>
-typename ResourceMap<ResourceType>::Iterator &ResourceMap<ResourceType>::Iterator::operator++()
+template <typename ResourceType, typename IDType>
+typename ResourceMap<ResourceType, IDType>::Iterator &ResourceMap<ResourceType, IDType>::Iterator::
+operator++()
 {
     if (mFlatIndex < static_cast<GLuint>(mOrigin.mFlatResourcesSize))
     {
@@ -285,22 +291,22 @@ typename ResourceMap<ResourceType>::Iterator &ResourceMap<ResourceType>::Iterato
     return *this;
 }
 
-template <typename ResourceType>
-const typename ResourceMap<ResourceType>::IndexAndResource
-    *ResourceMap<ResourceType>::Iterator::operator->() const
+template <typename ResourceType, typename IDType>
+const typename ResourceMap<ResourceType, IDType>::IndexAndResource
+    *ResourceMap<ResourceType, IDType>::Iterator::operator->() const
 {
     return &mValue;
 }
 
-template <typename ResourceType>
-const typename ResourceMap<ResourceType>::IndexAndResource
-    &ResourceMap<ResourceType>::Iterator::operator*() const
+template <typename ResourceType, typename IDType>
+const typename ResourceMap<ResourceType, IDType>::IndexAndResource
+    &ResourceMap<ResourceType, IDType>::Iterator::operator*() const
 {
     return mValue;
 }
 
-template <typename ResourceType>
-void ResourceMap<ResourceType>::Iterator::updateValue()
+template <typename ResourceType, typename IDType>
+void ResourceMap<ResourceType, IDType>::Iterator::updateValue()
 {
     if (mFlatIndex < static_cast<GLuint>(mOrigin.mFlatResourcesSize))
     {

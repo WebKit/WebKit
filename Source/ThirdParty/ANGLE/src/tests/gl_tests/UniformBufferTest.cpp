@@ -25,10 +25,8 @@ class UniformBufferTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mkFS = R"(#version 300 es
 precision highp float;
 uniform uni { vec4 color; };
@@ -49,11 +47,10 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteBuffers(1, &mUniformBuffer);
         glDeleteProgram(mProgram);
-        ANGLETest::TearDown();
     }
 
     const char *mkFS;
@@ -1516,13 +1513,93 @@ TEST_P(UniformBufferTest, DependentBufferChange)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Recreate WebGL conformance test conformance2/uniforms/large-uniform-buffers.html to test
+// regression in http://anglebug.com/3388
+TEST_P(UniformBufferTest, SizeOver65535)
+{
+    // UBOs sized above 65535 do not appear to work on D3D11
+    // http://anglebug.com/3388
+    ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragmentShader);
+
+    glBindAttribLocation(program, 0, essl3_shaders::PositionAttrib());
+    glUseProgram(program);
+    GLint uboIndex = glGetUniformBlockIndex(program, "color_ubo");
+
+    std::array<GLfloat, 12> vertices{{-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0}};
+    GLBuffer vertexBuf;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuf);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(),
+                 GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+
+    std::array<GLshort, 6> indexData = {{0, 1, 2, 2, 1, 3}};
+
+    GLBuffer indexBuf;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexData.size() * sizeof(GLshort), indexData.data(),
+                 GL_STATIC_DRAW);
+
+    GLint uboDataSize = 0;
+    glGetActiveUniformBlockiv(program, uboIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &uboDataSize);
+    EXPECT_NE(uboDataSize, 0);  // uniform block data size invalid
+
+    GLBuffer uboBuf;
+    std::array<GLfloat, 0x20000> uboData;
+
+    GLint offs0 = 0x00000;
+
+    // Red
+    uboData[offs0 + 0] = 1;
+    uboData[offs0 + 1] = 0;
+    uboData[offs0 + 2] = 0;
+    uboData[offs0 + 3] = 1;
+
+    GLint offs1     = 0x10000;
+    GLint alignment = 0;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    EXPECT_EQ(offs1 % alignment, 0);
+
+    // Green
+    uboData[offs1 + 0] = 0;
+    uboData[offs1 + 1] = 1;
+    uboData[offs1 + 2] = 0;
+    uboData[offs1 + 3] = 1;
+
+    glUniformBlockBinding(program, uboIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboBuf);
+    glBufferData(GL_UNIFORM_BUFFER, uboData.size() * sizeof(GLfloat), uboData.data(),
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();  // No errors from setup
+
+    // Draw lower triangle - should be red
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboBuf, offs0 * sizeof(float), 4 * sizeof(float));
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+    ASSERT_GL_NO_ERROR();  // No errors from draw
+
+    // Draw upper triangle - should be green
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboBuf, offs1 * sizeof(float), 4 * sizeof(float));
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT,
+                   reinterpret_cast<void *>(3 * sizeof(GLshort)));
+    ASSERT_GL_NO_ERROR();  // No errors from draw
+
+    GLint width  = getWindowWidth();
+    GLint height = getWindowHeight();
+    // Lower left should be red
+    EXPECT_PIXEL_COLOR_EQ(width / 2 - 5, height / 2 - 5, GLColor::red);
+    // Top right should be green
+    EXPECT_PIXEL_COLOR_EQ(width / 2 + 5, height / 2 + 5, GLColor::green);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(UniformBufferTest,
-                       ES3_D3D11(),
-                       ES3_D3D11_FL11_1(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(UniformBufferTest31, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST(UniformBufferTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(UniformBufferTest31,
+                       ES31_D3D11(),
+                       ES31_OPENGL(),
+                       ES31_OPENGLES(),
+                       ES31_VULKAN());
 
 }  // namespace

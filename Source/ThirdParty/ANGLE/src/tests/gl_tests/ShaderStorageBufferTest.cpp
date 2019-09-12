@@ -315,6 +315,9 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWrite)
 // Tests modifying an existing shader storage buffer
 TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWriteSame)
 {
+    // Missing PBO support in Vulkan.  http://anglebug.com/3210
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
 layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
@@ -346,7 +349,7 @@ void main()
 
     glDispatchCompute(1, 1, 1);
 
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
     const void *bufferData =
@@ -359,7 +362,7 @@ void main()
     // Running shader twice to make sure that the buffer gets updated correctly 123->124->125
     glDispatchCompute(1, 1, 1);
 
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_PIXEL_BUFFER_BARRIER_BIT);
 
     bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
 
@@ -448,7 +451,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     glDispatchCompute(1, 1, 1);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
 
@@ -457,7 +460,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     glDispatchCompute(1, 1, 1);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     // Read back shader storage buffer
     constexpr unsigned int kExpectedValues[2] = {3u, 4u};
@@ -512,6 +515,9 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferVector)
 // Test that the shader works well with an active SSBO but not statically used.
 TEST_P(ShaderStorageBufferTest31, ActiveSSBOButNotStaticallyUsed)
 {
+    // http://anglebug.com/3725
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsPixel2() && IsVulkan());
+
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
  layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
@@ -1587,31 +1593,34 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Tests that alignment is correct for bools inside a SSB and that the values
+// are written correctly by a trivial shader. Currently tests only the alignment
+// of the initial block.
 TEST_P(ShaderStorageBufferTest31, LoadAndStoreBooleanValue)
 {
     // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
     // http://anglebug.com/1951
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
 
-    // Seems to fail on Windows NVIDIA GL when tests are run without interruption.
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsOpenGL());
-
     constexpr char kComputeShaderSource[] = R"(#version 310 es
 layout (local_size_x=1) in;
 layout(binding=0, std140) buffer Storage0
 {
     bool b1;
-    bvec2 b2;
+    bool b2;
+    bool b3;
 } sb_load;
 layout(binding=1, std140) buffer Storage1
 {
     bool b1;
-    bvec2 b2;
+    bool b2;
+    bool b3;
 } sb_store;
 void main()
 {
    sb_store.b1 = sb_load.b1;
    sb_store.b2 = sb_load.b2;
+   sb_store.b3 = sb_load.b3;
 }
 )";
 
@@ -1634,8 +1643,10 @@ void main()
     // upload data to sb_load.b2
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, 2 * kBytesPerComponent, kB2Value);
 
+    constexpr GLuint kStoreBufferContents[3] = {0x1BCD1234, 0x2BCD1234, 0x3BCD1234};
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, 3 * kBytesPerComponent, nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 3 * kBytesPerComponent, kStoreBufferContents,
+                 GL_STATIC_DRAW);
 
     // Bind shader storage buffer
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
@@ -1646,13 +1657,161 @@ void main()
 
     // Read back shader storage buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
-    const GLboolean *ptr = reinterpret_cast<const GLboolean *>(
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
         glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent, GL_MAP_READ_BIT));
-    EXPECT_EQ(GL_TRUE, *ptr);
-    ptr += kBytesPerComponent;
-    EXPECT_EQ(GL_FALSE, *ptr);
-    ptr += kBytesPerComponent;
-    EXPECT_EQ(GL_TRUE, *ptr);
+    EXPECT_EQ(kB1Value, ptr[0]);
+    EXPECT_EQ(kB2Value[0], ptr[1]);
+    EXPECT_EQ(kB2Value[1], ptr[2]);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Tests that alignment is correct for bvecs3 inside a SSB and that the
+// values are written correctly by a trivial shader. Currently tests only the
+// alignment of the initial block.
+TEST_P(ShaderStorageBufferTest31, LoadAndStoreBooleanVec3)
+{
+    // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
+    // http://anglebug.com/1951
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
+
+    constexpr char kComputeShaderSource[] = R"(#version 310 es
+layout (local_size_x=1) in;
+layout(binding=0, std140) buffer Storage0
+{
+    bvec3 b;
+} sb_load;
+layout(binding=1, std140) buffer Storage1
+{
+    bvec3 b;
+} sb_store;
+void main()
+{
+   sb_store.b = sb_load.b;
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+
+    constexpr GLuint kBValues[3]              = {1u, 0u, 1u};
+    constexpr unsigned int kBytesPerComponent = sizeof(GLuint);
+    // Create shader storage buffer
+    GLBuffer shaderStorageBuffer[2];
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 3 * kBytesPerComponent, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent, &kBValues);
+
+    constexpr GLuint kStoreBufferContents[3] = {0x1BCD1234, 0x2BCD1234, 0x3BCD1234};
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 3 * kBytesPerComponent, kStoreBufferContents,
+                 GL_STATIC_DRAW);
+
+    // Bind shader storage buffer
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer[1]);
+
+    glDispatchCompute(1, 1, 1);
+    glFinish();
+
+    // Read back shader storage buffer
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 3 * kBytesPerComponent, GL_MAP_READ_BIT));
+    EXPECT_EQ(kBValues[0], ptr[0]);
+    EXPECT_EQ(kBValues[1], ptr[1]);
+    EXPECT_EQ(kBValues[2], ptr[2]);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Tests that alignment is correct for bool + bvecs2 inside a SSB and that the
+// values are written correctly by a trivial shader. Currently tests only the
+// alignment of the initial block. Compare to LoadAndStoreBooleanVec3 to see how
+// the alignment rules affect the memory layout.
+TEST_P(ShaderStorageBufferTest31, LoadAndStoreBooleanVarAndVec2)
+{
+    // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
+    // http://anglebug.com/1951
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
+
+    constexpr char kComputeShaderSource[] = R"(#version 310 es
+layout (local_size_x=1) in;
+layout(binding=0, std140) buffer Storage0
+{
+    bool b1;
+    bvec2 b2;
+} sb_load;
+layout(binding=1, std140) buffer Storage1
+{
+    bool b1;
+    bvec2 b2;
+} sb_store;
+void main()
+{
+   sb_store.b1 = sb_load.b1;
+   sb_store.b2 = sb_load.b2;
+}
+)";
+    // https://www.khronos.org/registry/OpenGL/specs/es/3.1/es_spec_3.1.pdf
+    // 7.6.2.2 Standard Uniform Block Layout
+
+    // ... A structure and each structure member have a base offset and a base
+    // alignment, from which an aligned offset is computed by rounding the base
+    // offset up to a multiple of the base alignment. The base offset of the
+    // first member of a structure is taken from the aligned offset of the
+    // structure itself. ... The members of a toplevel uniform block are laid
+    // out in buffer storage by treating the uniform block as a structure with a
+    // base offset of zero.
+
+    // 1. If the member is a scalar consuming N basic machine units, the base
+    // alignment is N.
+
+    // 2. If the member is a two- or four-component vector with components
+    // consuming N basic machine units, the base alignment is 2N or 4N,
+    // respectively
+
+    // b1 N == 4, basic offset 0, alignment 4, is at 0..3
+    // b2 N == 4, basic offset 4, alignment 2*4 = 8, is at 8..16.
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    constexpr GLuint kAlignPadding  = 0x1abcd789u;
+    constexpr GLuint kBValues[]     = {1u, kAlignPadding, 0u, 1u};
+    constexpr unsigned int kSsbSize = sizeof(kBValues);
+    // Create shader storage buffer
+    GLBuffer shaderStorageBuffer[2];
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSsbSize, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, kSsbSize, &kBValues);
+
+    constexpr GLuint kStoreBufferContents[4] = {0x1BCD1234, 0x2BCD1234, 0x3BCD1234, 0x3BCD1277};
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSsbSize, kStoreBufferContents, GL_STATIC_DRAW);
+
+    // Bind shader storage buffer
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer[1]);
+
+    glDispatchCompute(1, 1, 1);
+    glFinish();
+
+    // Read back shader storage buffer
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSsbSize, GL_MAP_READ_BIT));
+    EXPECT_EQ(kBValues[0], ptr[0]);
+    // Index 1 is padding.
+    EXPECT_EQ(kBValues[2], ptr[2]);
+    EXPECT_EQ(kBValues[3], ptr[3]);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -1814,9 +1973,6 @@ void main()
 // Test that compond assignment operator for buffer variable is correctly handled.
 TEST_P(ShaderStorageBufferTest31, CompoundAssignmentOperator)
 {
-    // http://anglebug.com/2990
-    ANGLE_SKIP_TEST_IF(IsD3D11());
-
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
 layout (local_size_x=1) in;
@@ -1935,9 +2091,6 @@ TEST_P(ShaderStorageBufferTest31, ReadonlyBinaryOperator)
 // Test that ssbo as an argument of a function can be translated.
 TEST_P(ShaderStorageBufferTest31, SSBOAsFunctionArgument)
 {
-    // http://anglebug.com/2990
-    ANGLE_SKIP_TEST_IF(IsD3D11());
-
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
 layout(local_size_x = 1) in;
@@ -1996,9 +2149,6 @@ void main(void)
 // Test that ssbo as unary operand works well.
 TEST_P(ShaderStorageBufferTest31, SSBOAsUnaryOperand)
 {
-    // http://anglebug.com/2990
-    ANGLE_SKIP_TEST_IF(IsD3D11());
-
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
 layout (local_size_x=1) in;
@@ -2072,6 +2222,10 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST(ShaderStorageBufferTest31, ES31_OPENGL(), ES31_OPENGLES(), ES31_D3D11());
+ANGLE_INSTANTIATE_TEST(ShaderStorageBufferTest31,
+                       ES31_OPENGL(),
+                       ES31_OPENGLES(),
+                       ES31_D3D11(),
+                       ES31_VULKAN());
 
 }  // namespace

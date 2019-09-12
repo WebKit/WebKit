@@ -167,5 +167,10 @@
         [ "GL_RG16_SNORM_EXT",   "GL_RG",   "GL_SHORT" ],
         [ "GL_RGB16_SNORM_EXT",  "GL_RGB",  "GL_SHORT" ],
         [ "GL_RGBA16_SNORM_EXT", "GL_RGBA", "GL_SHORT" ]
+    ],
+    "From GL_EXT_texture_type_2_10_10_10_REV":
+    [
+        [ "GL_RGBA",               "GL_RGBA",            "GL_UNSIGNED_INT_2_10_10_10_REV" ],
+        [ "GL_RGB",                "GL_RGB",             "GL_UNSIGNED_INT_2_10_10_10_REV" ]
     ]
 }

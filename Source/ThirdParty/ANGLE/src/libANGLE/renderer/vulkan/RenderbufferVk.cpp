@@ -26,14 +26,14 @@ RenderbufferVk::~RenderbufferVk() {}
 void RenderbufferVk::onDestroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
-    releaseAndDeleteImage(context, renderer);
+    releaseAndDeleteImage(contextVk);
 }
 
-angle::Result RenderbufferVk::setStorage(const gl::Context *context,
-                                         GLenum internalformat,
-                                         size_t width,
-                                         size_t height)
+angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
+                                             size_t samples,
+                                             GLenum internalformat,
+                                             size_t width,
+                                             size_t height)
 {
     ContextVk *contextVk       = vk::GetImpl(context);
     RendererVk *renderer       = contextVk->getRenderer();
@@ -41,7 +41,7 @@ angle::Result RenderbufferVk::setStorage(const gl::Context *context,
 
     if (!mOwnsImage)
     {
-        releaseAndDeleteImage(context, renderer);
+        releaseAndDeleteImage(contextVk);
     }
 
     if (mImage != nullptr && mImage->valid())
@@ -51,7 +51,7 @@ angle::Result RenderbufferVk::setStorage(const gl::Context *context,
             static_cast<GLsizei>(width) != mState.getWidth() ||
             static_cast<GLsizei>(height) != mState.getHeight())
         {
-            releaseImage(context, renderer);
+            releaseImage(contextVk);
         }
     }
 
@@ -71,8 +71,9 @@ angle::Result RenderbufferVk::setStorage(const gl::Context *context,
             (textureFormat.redBits > 0 ? VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT : 0) |
             (isDepthOrStencilFormat ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : 0);
 
-        gl::Extents extents(static_cast<int>(width), static_cast<int>(height), 1);
-        ANGLE_TRY(mImage->init(contextVk, gl::TextureType::_2D, extents, vkFormat, 1, usage, 1, 1));
+        VkExtent3D extents = {static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1u};
+        ANGLE_TRY(mImage->init(contextVk, gl::TextureType::_2D, extents, vkFormat,
+                               static_cast<uint32_t>(samples), usage, 1, 1));
 
         VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         ANGLE_TRY(mImage->initMemory(contextVk, renderer->getMemoryProperties(), flags));
@@ -85,13 +86,20 @@ angle::Result RenderbufferVk::setStorage(const gl::Context *context,
                                         &mImageView, 0, 1));
 
         // Clear the renderbuffer if it has emulated channels.
-        ANGLE_TRY(mImage->clearIfEmulatedFormat(vk::GetImpl(context), gl::ImageIndex::Make2D(0),
-                                                vkFormat));
+        mImage->stageClearIfEmulatedFormat(gl::ImageIndex::Make2D(0), vkFormat);
 
-        mRenderTarget.init(mImage, &mImageView, 0, 0, nullptr);
+        mRenderTarget.init(mImage, &mImageView, nullptr, 0, 0);
     }
 
     return angle::Result::Continue;
+}
+
+angle::Result RenderbufferVk::setStorage(const gl::Context *context,
+                                         GLenum internalformat,
+                                         size_t width,
+                                         size_t height)
+{
+    return setStorageImpl(context, 1, internalformat, width, height);
 }
 
 angle::Result RenderbufferVk::setStorageMultisample(const gl::Context *context,
@@ -100,8 +108,37 @@ angle::Result RenderbufferVk::setStorageMultisample(const gl::Context *context,
                                                     size_t width,
                                                     size_t height)
 {
-    ANGLE_VK_UNREACHABLE(vk::GetImpl(context));
-    return angle::Result::Stop;
+    // If the specific number of samples requested is not supported, the smallest number that's at
+    // least that many needs to be selected.
+    const RendererVk *renderer           = vk::GetImpl(context)->getRenderer();
+    const angle::Format &format          = renderer->getFormat(internalformat).imageFormat();
+    const VkPhysicalDeviceLimits &limits = renderer->getPhysicalDeviceProperties().limits;
+
+    const uint32_t colorSampleCounts        = limits.framebufferColorSampleCounts;
+    const uint32_t depthSampleCounts        = limits.framebufferDepthSampleCounts;
+    const uint32_t stencilSampleCounts      = limits.framebufferStencilSampleCounts;
+    const uint32_t depthStencilSampleCounts = depthSampleCounts & stencilSampleCounts;
+    uint32_t formatSampleCounts             = colorSampleCounts;
+
+    if (format.depthBits > 0)
+    {
+        if (format.stencilBits > 0)
+        {
+            formatSampleCounts = depthStencilSampleCounts;
+        }
+        else
+        {
+            formatSampleCounts = depthSampleCounts;
+        }
+    }
+    else if (format.stencilBits > 0)
+    {
+        formatSampleCounts = stencilSampleCounts;
+    }
+
+    samples = vk_gl::GetSampleCount(formatSampleCounts, static_cast<uint32_t>(samples));
+
+    return setStorageImpl(context, samples, internalformat, width, height);
 }
 
 angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *context,
@@ -110,7 +147,7 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     ContextVk *contextVk = vk::GetImpl(context);
     RendererVk *renderer = contextVk->getRenderer();
 
-    releaseAndDeleteImage(context, renderer);
+    releaseAndDeleteImage(contextVk);
 
     ImageVk *imageVk = vk::GetImpl(image);
     mImage           = imageVk->getImage();
@@ -135,8 +172,18 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
                                          gl::SwizzleState(), &mImageView, imageVk->getImageLevel(),
                                          1, imageVk->getImageLayer(), 1));
 
-    mRenderTarget.init(mImage, &mImageView, imageVk->getImageLevel(), imageVk->getImageLayer(),
-                       nullptr);
+    if (imageVk->getImageTextureType() == gl::TextureType::CubeMap)
+    {
+        gl::TextureType arrayType = vk::Get2DTextureType(imageVk->getImage()->getLayerCount(),
+                                                         imageVk->getImage()->getSamples());
+        ANGLE_TRY(mImage->initLayerImageView(contextVk, arrayType, aspect, gl::SwizzleState(),
+                                             &mCubeImageFetchView, imageVk->getImageLevel(), 1,
+                                             imageVk->getImageLayer(), 1));
+    }
+
+    mRenderTarget.init(mImage, &mImageView,
+                       mCubeImageFetchView.valid() ? &mCubeImageFetchView : nullptr,
+                       imageVk->getImageLevel(), imageVk->getImageLayer());
 
     return angle::Result::Continue;
 }
@@ -144,9 +191,11 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
 angle::Result RenderbufferVk::getAttachmentRenderTarget(const gl::Context *context,
                                                         GLenum binding,
                                                         const gl::ImageIndex &imageIndex,
+                                                        GLsizei samples,
                                                         FramebufferAttachmentRenderTarget **rtOut)
 {
     ASSERT(mImage && mImage->valid());
+    ANGLE_TRY(mRenderTarget.flushStagedUpdates(vk::GetImpl(context)));
     *rtOut = &mRenderTarget;
     return angle::Result::Continue;
 }
@@ -161,31 +210,31 @@ angle::Result RenderbufferVk::initializeContents(const gl::Context *context,
 void RenderbufferVk::releaseOwnershipOfImage(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
 
     mOwnsImage = false;
-    releaseAndDeleteImage(context, renderer);
+    releaseAndDeleteImage(contextVk);
 }
 
-void RenderbufferVk::releaseAndDeleteImage(const gl::Context *context, RendererVk *renderer)
+void RenderbufferVk::releaseAndDeleteImage(ContextVk *contextVk)
 {
-    releaseImage(context, renderer);
+    releaseImage(contextVk);
     SafeDelete(mImage);
 }
 
-void RenderbufferVk::releaseImage(const gl::Context *context, RendererVk *renderer)
+void RenderbufferVk::releaseImage(ContextVk *contextVk)
 {
     if (mImage && mOwnsImage)
     {
-        mImage->releaseImage(renderer);
-        mImage->releaseStagingBuffer(renderer);
+        mImage->releaseImage(contextVk);
+        mImage->releaseStagingBuffer(contextVk);
     }
     else
     {
         mImage = nullptr;
     }
 
-    renderer->releaseObject(renderer->getCurrentQueueSerial(), &mImageView);
+    contextVk->releaseObject(contextVk->getCurrentQueueSerial(), &mImageView);
+    contextVk->releaseObject(contextVk->getCurrentQueueSerial(), &mCubeImageFetchView);
 }
 
 }  // namespace rx

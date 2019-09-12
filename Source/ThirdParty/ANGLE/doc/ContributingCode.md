@@ -96,7 +96,7 @@
     * `git pull --rebase`
 
 ### Selecting reviewers
-When your CL is ready to review, add any of the following reviewers. They will be able to route your CL to additional reviewers as neccssary and answer any questions you may have about the process.
+When your CL is ready to review, add any of the following reviewers. They will be able to route your CL to additional reviewers as neccssary and answer any questions you may have about the process. All non-trival CLs should be reviewed by two reviewers.
  * `geofflang at chromium dot org`
  * `jmadill at chromium dot org`
  * `syoussefi at chromium dot org`

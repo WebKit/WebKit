@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -157,8 +157,6 @@ void main()
 
         createVertexBuffers();
 
-        mFanTimer     = CreateTimer();
-        mTriTimer     = CreateTimer();
         mFanTotalTime = 0;
         mTriTotalTime = 0;
 
@@ -191,33 +189,33 @@ void main()
         glEnableVertexAttribArray(0);
 
         // Draw using triangle fans, stored in VBO
-        mFanTimer->start();
+        mFanTimer.start();
         for (unsigned i = 0; i < mNumSquares; ++i)
         {
             glBindBuffer(GL_ARRAY_BUFFER, mFanBufId[i]);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
             glDrawArrays(GL_TRIANGLE_FAN, 0, mNumFanVerts);
         }
-        mFanTimer->stop();
+        mFanTimer.stop();
 
         mFanTotalTime += static_cast<unsigned int>(
-            mFanTimer->getElapsedTime() * 1000);  // convert from usec to msec when accumulating
+            mFanTimer.getElapsedTime() * 1000);  // convert from usec to msec when accumulating
 
         // Clear to eliminate driver-side gains from occlusion
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Draw using triangles, stored in VBO
-        mTriTimer->start();
+        mTriTimer.start();
         for (unsigned i = 1; i < mNumSquares; ++i)
         {
             glBindBuffer(GL_ARRAY_BUFFER, mTriBufId[i]);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
             glDrawArrays(GL_TRIANGLES, 0, mNumTriVerts);
         }
-        mTriTimer->stop();
+        mTriTimer.stop();
 
         mTriTotalTime += static_cast<unsigned int>(
-            mTriTimer->getElapsedTime() * 1000);  // convert from usec to msec when accumulating
+            mTriTimer.getElapsedTime() * 1000);  // convert from usec to msec when accumulating
 
         mFrameCount++;
     }
@@ -230,8 +228,8 @@ void main()
     GLuint mFanBufId[mNumSquares];
     GLuint mTriBufId[mNumSquares];
 
-    Timer *mFanTimer;
-    Timer *mTriTimer;
+    Timer mFanTimer;
+    Timer mTriTimer;
     unsigned int mFrameCount;
     unsigned int mTriTotalTime;
     unsigned int mFanTotalTime;

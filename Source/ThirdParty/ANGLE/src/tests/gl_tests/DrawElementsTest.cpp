@@ -312,5 +312,5 @@ TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
 }
 
 ANGLE_INSTANTIATE_TEST(DrawElementsTest, ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(WebGLDrawElementsTest, ES2_OPENGL(), ES2_OPENGLES());
+ANGLE_INSTANTIATE_TEST(WebGLDrawElementsTest, ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN());
 }  // namespace

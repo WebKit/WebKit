@@ -103,6 +103,7 @@ special case, there's little support for it by RenderDoc, though there are worka
 
 On Windows, RenderDoc supports setting the environment variable `RENDERDOC_HOOK_EGL` to 0 to avoid
 this issue.
+
 ### Linux
 
 On Linux, there is no supported workaround by RenderDoc.  See [this
@@ -228,3 +229,7 @@ arguments:
 ```
 -e org.chromium.native_test.NativeTest.StdoutFile /sdcard/chromium_tests_root/out.txt -e org.chromium.native_test.NativeTest.CommandLineFlags "--gtest_filter=*ES2_VULKAN"
 ```
+
+Note that in the above, only a single command line argument is supported with RenderDoc.  If testing
+dEQP on a non-default platform, the easiest way would be to modify `GetDefaultAPIName()` in
+`src/tests/deqp_support/angle_deqp_gtest.cpp` (and avoid `--use-angle=X`).

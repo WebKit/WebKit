@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -116,7 +116,7 @@ Matrix4 Matrix4::frustum(float l, float r, float b, float t, float n, float f)
 Matrix4 Matrix4::perspective(float fovY, float aspectRatio, float nearZ, float farZ)
 {
     const float frustumHeight = tanf(static_cast<float>(fovY / 360.0f * M_PI)) * nearZ;
-    const float frustumWidth = frustumHeight * aspectRatio;
+    const float frustumWidth  = frustumHeight * aspectRatio;
     return frustum(-frustumWidth, frustumWidth, -frustumHeight, frustumHeight, nearZ, farZ);
 }
 

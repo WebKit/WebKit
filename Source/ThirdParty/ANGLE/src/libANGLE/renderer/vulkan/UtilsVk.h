@@ -8,13 +8,18 @@
 //    buffer clear and copy, image clear and copy, texture mip map generation, etc.
 //
 //    - Buffer clear: Implemented, but no current users
-//    - Buffer copy:
-//      * Used by VertexArrayVk::updateIndexTranslation() to convert a ubyte index array to ushort
-//    - Convert vertex attribute:
-//      * Used by VertexArrayVk::convertVertexBuffer() to convert vertex attributes from unsupported
-//        formats to their fallbacks.
+//    - Convert index buffer:
+//      * Used by VertexArrayVk::convertIndexBufferGPU() to convert a ubyte element array to ushort
+//    - Convert vertex buffer:
+//      * Used by VertexArrayVk::convertVertexBufferGPU() to convert vertex attributes from
+//        unsupported formats to their fallbacks.
 //    - Image clear: Used by FramebufferVk::clearWithDraw().
-//    - Image copy: Not yet implemented
+//    - Image copy: Used by TextureVk::copySubImageImplWithDraw().
+//    - Color blit/resolve: Used by FramebufferVk::blit() to implement blit or multisample resolve
+//      on color images.
+//    - Depth/Stencil blit/resolve: Used by FramebufferVk::blit() to implement blit or multisample
+//      resolve on depth/stencil images.
+//    - Overlay Cull/Draw: Used by OverlayVk to efficiently draw a UI for debugging.
 //    - Mipmap generation: Not yet implemented
 //
 
@@ -42,11 +47,11 @@ class UtilsVk : angle::NonCopyable
         size_t size;
     };
 
-    struct CopyParameters
+    struct ConvertIndexParameters
     {
-        size_t destOffset;
-        size_t srcOffset;
-        size_t size;
+        uint32_t srcOffset = 0;
+        uint32_t dstOffset = 0;
+        uint32_t maxIndex  = 0;
     };
 
     struct ConvertVertexParameters
@@ -65,8 +70,6 @@ class UtilsVk : angle::NonCopyable
         // safer way.
         ClearFramebufferParameters();
 
-        const vk::RenderPassDesc *renderPassDesc;
-        GLint renderAreaHeight;
         gl::Rectangle clearArea;
 
         // Note that depth clear is never needed to be done with a draw call.
@@ -75,11 +78,30 @@ class UtilsVk : angle::NonCopyable
 
         uint8_t stencilMask;
         VkColorComponentFlags colorMaskFlags;
-        uint32_t colorAttachmentIndex;
+        uint32_t colorAttachmentIndexGL;
         const angle::Format *colorFormat;
 
         VkClearColorValue colorClearValue;
         uint8_t stencilClearValue;
+    };
+
+    struct BlitResolveParameters
+    {
+        // |srcOffset| and |dstOffset| define the original blit/resolve offsets, possibly flipped.
+        int srcOffset[2];
+        int destOffset[2];
+        // |stretch| is SourceDimension / DestDimension used to transfer dest coordinates to source.
+        float stretch[2];
+        // |srcExtents| is used to normalize source coordinates for sampling.
+        int srcExtents[2];
+        // |blitArea| is the area in destination where blit happens.  It's expected that scissor
+        // and source clipping effects have already been applied to it.
+        gl::Rectangle blitArea;
+        int srcLayer;
+        // Whether linear or point sampling should be used.
+        bool linear;
+        bool flipX;
+        bool flipY;
     };
 
     struct CopyImageParameters
@@ -96,14 +118,26 @@ class UtilsVk : angle::NonCopyable
         bool destFlipY;
     };
 
-    angle::Result clearBuffer(vk::Context *context,
+    struct OverlayCullParameters
+    {
+        uint32_t subgroupSize[2];
+        bool supportsSubgroupBallot;
+        bool supportsSubgroupArithmetic;
+    };
+
+    struct OverlayDrawParameters
+    {
+        uint32_t subgroupSize[2];
+    };
+
+    angle::Result clearBuffer(ContextVk *contextVk,
                               vk::BufferHelper *dest,
                               const ClearParameters &params);
-    angle::Result copyBuffer(vk::Context *context,
-                             vk::BufferHelper *dest,
-                             vk::BufferHelper *src,
-                             const CopyParameters &params);
-    angle::Result convertVertexBuffer(vk::Context *context,
+    angle::Result convertIndexBuffer(ContextVk *contextVk,
+                                     vk::BufferHelper *dest,
+                                     vk::BufferHelper *src,
+                                     const ConvertIndexParameters &params);
+    angle::Result convertVertexBuffer(ContextVk *contextVk,
                                       vk::BufferHelper *dest,
                                       vk::BufferHelper *src,
                                       const ConvertVertexParameters &params);
@@ -112,6 +146,24 @@ class UtilsVk : angle::NonCopyable
                                    FramebufferVk *framebuffer,
                                    const ClearFramebufferParameters &params);
 
+    // Resolve images if multisampled.  Blit otherwise.
+    angle::Result colorBlitResolve(ContextVk *contextVk,
+                                   FramebufferVk *framebuffer,
+                                   vk::ImageHelper *src,
+                                   const vk::ImageView *srcView,
+                                   const BlitResolveParameters &params);
+    angle::Result depthStencilBlitResolve(ContextVk *contextVk,
+                                          FramebufferVk *framebuffer,
+                                          vk::ImageHelper *src,
+                                          const vk::ImageView *srcDepthView,
+                                          const vk::ImageView *srcStencilView,
+                                          const BlitResolveParameters &params);
+    angle::Result stencilBlitResolveNoShaderExport(ContextVk *contextVk,
+                                                   FramebufferVk *framebuffer,
+                                                   vk::ImageHelper *src,
+                                                   const vk::ImageView *srcStencilView,
+                                                   const BlitResolveParameters &params);
+
     angle::Result copyImage(ContextVk *contextVk,
                             vk::ImageHelper *dest,
                             const vk::ImageView *destView,
@@ -119,7 +171,27 @@ class UtilsVk : angle::NonCopyable
                             const vk::ImageView *srcView,
                             const CopyImageParameters &params);
 
+    // Overlay utilities.
+    angle::Result cullOverlayWidgets(ContextVk *contextVk,
+                                     vk::BufferHelper *enabledWidgetsBuffer,
+                                     vk::ImageHelper *dest,
+                                     const vk::ImageView *destView,
+                                     const OverlayCullParameters &params);
+
+    angle::Result drawOverlay(ContextVk *contextVk,
+                              vk::BufferHelper *textWidgetsBuffer,
+                              vk::BufferHelper *graphWidgetsBuffer,
+                              vk::ImageHelper *font,
+                              const vk::ImageView *fontView,
+                              vk::ImageHelper *culledWidgets,
+                              const vk::ImageView *culledWidgetsView,
+                              vk::ImageHelper *dest,
+                              const vk::ImageView *destView,
+                              const OverlayDrawParameters &params);
+
   private:
+    ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
+
     struct BufferUtilsShaderParams
     {
         // Structure matching PushConstants in BufferUtils.comp
@@ -128,6 +200,14 @@ class UtilsVk : angle::NonCopyable
         uint32_t srcOffset           = 0;
         uint32_t padding             = 0;
         VkClearColorValue clearValue = {};
+    };
+
+    struct ConvertIndexShaderParams
+    {
+        uint32_t srcOffset     = 0;
+        uint32_t dstOffsetDiv4 = 0;
+        uint32_t maxIndex      = 0;
+        uint32_t _padding      = 0;
     };
 
     struct ConvertVertexShaderParams
@@ -172,21 +252,67 @@ class UtilsVk : angle::NonCopyable
         uint32_t destDefaultChannelsMask = 0;
     };
 
+    union BlitResolveOffset
+    {
+        int32_t resolve[2];
+        float blit[2];
+    };
+
+    struct BlitResolveShaderParams
+    {
+        // Structure matching PushConstants in BlitResolve.frag
+        BlitResolveOffset offset = {};
+        float stretch[2]         = {};
+        float invSrcExtent[2]    = {};
+        int32_t srcLayer         = 0;
+        int32_t samples          = 0;
+        float invSamples         = 0;
+        uint32_t outputMask      = 0;
+        uint32_t flipX           = 0;
+        uint32_t flipY           = 0;
+    };
+
+    struct BlitResolveStencilNoExportShaderParams
+    {
+        // Structure matching PushConstants in BlitResolveStencilNoExport.comp
+        BlitResolveOffset offset = {};
+        float stretch[2]         = {};
+        float invSrcExtent[2]    = {};
+        int32_t srcLayer         = 0;
+        int32_t srcWidth         = 0;
+        int32_t blitArea[4]      = {};
+        int32_t destPitch        = 0;
+        uint32_t flipX           = 0;
+        uint32_t flipY           = 0;
+    };
+
+    struct OverlayDrawShaderParams
+    {
+        // Structure matching PushConstants in OverlayDraw.comp
+        uint32_t outputSize[2] = {};
+    };
+
+    ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
+
     // Functions implemented by the class:
     enum class Function
     {
         // Functions implemented in graphics
-        ImageClear = 0,
-        ImageCopy  = 1,
+        ImageClear  = 0,
+        ImageCopy   = 1,
+        BlitResolve = 2,
 
         // Functions implemented in compute
-        ComputeStartIndex   = 2,  // Special value to separate draw and dispatch functions.
-        BufferClear         = 2,
-        BufferCopy          = 3,
-        ConvertVertexBuffer = 4,
+        ComputeStartIndex          = 3,  // Special value to separate draw and dispatch functions.
+        BufferClear                = 3,
+        ConvertIndexBuffer         = 4,
+        ConvertVertexBuffer        = 5,
+        BlitResolveStencilNoExport = 6,
+        OverlayCull                = 7,
+        OverlayDraw                = 8,
 
-        InvalidEnum = 5,
-        EnumCount   = 5,
+        InvalidEnum = 9,
+        EnumCount   = 9,
     };
 
     // Common function that creates the pipeline for the specified function, binds it and prepares
@@ -194,7 +320,7 @@ class UtilsVk : angle::NonCopyable
     // compute shader, vsShader and pipelineDesc should be nullptr, and this will set up a dispatch
     // call. Otherwise fsCsShader is expected to be a fragment shader and this will set up a draw
     // call.
-    angle::Result setupProgram(vk::Context *context,
+    angle::Result setupProgram(ContextVk *contextVk,
                                Function function,
                                vk::RefCounted<vk::ShaderAndSerial> *fsCsShader,
                                vk::RefCounted<vk::ShaderAndSerial> *vsShader,
@@ -210,7 +336,7 @@ class UtilsVk : angle::NonCopyable
     // this array has two entries {STORAGE_TEXEL_BUFFER, 1} and {UNIFORM_TEXEL_BUFFER, 3}, then the
     // created set layout would be binding 0 for storage texel buffer and bindings 1 through 3 for
     // uniform texel buffer.  All resources are put in set 0.
-    angle::Result ensureResourcesInitialized(vk::Context *context,
+    angle::Result ensureResourcesInitialized(ContextVk *contextVk,
                                              Function function,
                                              VkDescriptorPoolSize *setSizes,
                                              size_t setSizesCount,
@@ -218,11 +344,17 @@ class UtilsVk : angle::NonCopyable
 
     // Initializers corresponding to functions, calling into ensureResourcesInitialized with the
     // appropriate parameters.
-    angle::Result ensureBufferClearResourcesInitialized(vk::Context *context);
-    angle::Result ensureBufferCopyResourcesInitialized(vk::Context *context);
-    angle::Result ensureConvertVertexResourcesInitialized(vk::Context *context);
-    angle::Result ensureImageClearResourcesInitialized(vk::Context *context);
-    angle::Result ensureImageCopyResourcesInitialized(vk::Context *context);
+    angle::Result ensureBufferClearResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureConvertIndexResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureConvertVertexResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureImageClearResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureImageCopyResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureBlitResolveResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureBlitResolveStencilNoExportResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureOverlayCullResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureOverlayDrawResourcesInitialized(ContextVk *contextVk);
+
+    angle::Result ensureSamplersInitialized(ContextVk *context);
 
     angle::Result startRenderPass(ContextVk *contextVk,
                                   vk::ImageHelper *image,
@@ -231,24 +363,40 @@ class UtilsVk : angle::NonCopyable
                                   const gl::Rectangle &renderArea,
                                   vk::CommandBuffer **commandBufferOut);
 
+    // Blits or resolves either color or depth/stencil, based on which view is given.
+    angle::Result blitResolveImpl(ContextVk *contextVk,
+                                  FramebufferVk *framebuffer,
+                                  vk::ImageHelper *src,
+                                  const vk::ImageView *srcColorView,
+                                  const vk::ImageView *srcDepthView,
+                                  const vk::ImageView *srcStencilView,
+                                  const BlitResolveParameters &params);
+
+    // Allocates a single descriptor set.
+    angle::Result allocateDescriptorSet(ContextVk *contextVk,
+                                        Function function,
+                                        vk::RefCountedDescriptorPoolBinding *bindingOut,
+                                        VkDescriptorSet *descriptorSetOut);
+
     angle::PackedEnumMap<Function, vk::DescriptorSetLayoutPointerArray> mDescriptorSetLayouts;
     angle::PackedEnumMap<Function, vk::BindingPointer<vk::PipelineLayout>> mPipelineLayouts;
     angle::PackedEnumMap<Function, vk::DynamicDescriptorPool> mDescriptorPools;
 
+    vk::ShaderProgramHelper mBufferUtilsPrograms[vk::InternalShader::BufferUtils_comp::kArrayLen];
+    vk::ShaderProgramHelper mConvertIndexPrograms[vk::InternalShader::ConvertIndex_comp::kArrayLen];
     vk::ShaderProgramHelper
-        mBufferUtilsPrograms[vk::InternalShader::BufferUtils_comp::kFlagsMask |
-                             vk::InternalShader::BufferUtils_comp::kFunctionMask |
-                             vk::InternalShader::BufferUtils_comp::kFormatMask];
-    vk::ShaderProgramHelper
-        mConvertVertexPrograms[vk::InternalShader::ConvertVertex_comp::kFlagsMask |
-                               vk::InternalShader::ConvertVertex_comp::kConversionMask];
+        mConvertVertexPrograms[vk::InternalShader::ConvertVertex_comp::kArrayLen];
     vk::ShaderProgramHelper mImageClearProgramVSOnly;
-    vk::ShaderProgramHelper
-        mImageClearProgram[vk::InternalShader::ImageClear_frag::kAttachmentIndexMask |
-                           vk::InternalShader::ImageClear_frag::kFormatMask];
-    vk::ShaderProgramHelper mImageCopyPrograms[vk::InternalShader::ImageCopy_frag::kFlagsMask |
-                                               vk::InternalShader::ImageCopy_frag::kSrcFormatMask |
-                                               vk::InternalShader::ImageCopy_frag::kDestFormatMask];
+    vk::ShaderProgramHelper mImageClearProgram[vk::InternalShader::ImageClear_frag::kArrayLen];
+    vk::ShaderProgramHelper mImageCopyPrograms[vk::InternalShader::ImageCopy_frag::kArrayLen];
+    vk::ShaderProgramHelper mBlitResolvePrograms[vk::InternalShader::BlitResolve_frag::kArrayLen];
+    vk::ShaderProgramHelper mBlitResolveStencilNoExportPrograms
+        [vk::InternalShader::BlitResolveStencilNoExport_comp::kArrayLen];
+    vk::ShaderProgramHelper mOverlayCullPrograms[vk::InternalShader::OverlayCull_comp::kArrayLen];
+    vk::ShaderProgramHelper mOverlayDrawPrograms[vk::InternalShader::OverlayDraw_comp::kArrayLen];
+
+    vk::Sampler mPointSampler;
+    vk::Sampler mLinearSampler;
 };
 
 }  // namespace rx

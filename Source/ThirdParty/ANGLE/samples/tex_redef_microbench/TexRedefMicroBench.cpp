@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -130,12 +130,6 @@ void main()
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-        mOrigTimer         = CreateTimer();
-        mResizeDrawTimer   = CreateTimer();
-        mResizeDefineTimer = CreateTimer();
-        mNewTexDrawTimer   = CreateTimer();
-        mNewTexDefineTimer = CreateTimer();
-
         return true;
     }
 
@@ -191,54 +185,54 @@ void main()
         // unreleated to texture creation. mTimeFrame is set to true on the fifth frame.
         if (mTimeFrame)
         {
-            mOrigTimer->start();
+            mOrigTimer.start();
         }
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 
         if (mTimeFrame)
         {
-            mOrigTimer->stop();
+            mOrigTimer.stop();
             // This timer indicates draw time for an already-created texture resident on the GPU,
             // which needs no updates. It will be faster than the other draws.
-            std::cout << "Original texture draw: " << mOrigTimer->getElapsedTime() * 1000 << "msec"
+            std::cout << "Original texture draw: " << mOrigTimer.getElapsedTime() * 1000 << "msec"
                       << std::endl;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Now, change the texture dimensions of the original texture
-            mResizeDefineTimer->start();
+            mResizeDefineTimer.start();
             defineSquareTexture2D(mTextureIds[0], 512, GL_RGBA, GL_UNSIGNED_BYTE, mPixelsResize);
-            mResizeDefineTimer->stop();
+            mResizeDefineTimer.stop();
 
-            mResizeDrawTimer->start();
+            mResizeDrawTimer.start();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
-            mResizeDrawTimer->stop();
+            mResizeDrawTimer.stop();
             // This timer indicates draw time for a texture which has already been used in a draw,
             // causing the underlying resource to be allocated, and then resized, requiring resource
             // reallocation and related overhead.
             std::cout << "Resized texture definition: "
-                      << mResizeDefineTimer->getElapsedTime() * 1000 << "msec" << std::endl;
-            std::cout << "Resized texture draw: " << mResizeDrawTimer->getElapsedTime() * 1000
+                      << mResizeDefineTimer.getElapsedTime() * 1000 << "msec" << std::endl;
+            std::cout << "Resized texture draw: " << mResizeDrawTimer.getElapsedTime() * 1000
                       << "msec" << std::endl;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Create texure at same dimensions we resized previous texture to
-            mNewTexDefineTimer->start();
+            mNewTexDefineTimer.start();
             defineSquareTexture2D(mTextureIds[1], 512, GL_RGBA, GL_UNSIGNED_BYTE, mPixelsNewTex);
-            mNewTexDefineTimer->stop();
+            mNewTexDefineTimer.stop();
 
-            mNewTexDrawTimer->start();
+            mNewTexDrawTimer.start();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
-            mNewTexDrawTimer->stop();
+            mNewTexDrawTimer.stop();
             // This timer indicates draw time for a texture newly created this frame. The underlying
             // resource will need to be created, but because it has not previously been used, there
             // is no already-resident texture object to manage. This draw is expected to be faster
             // than the resized texture draw.
             std::cout << "Newly created texture definition: "
-                      << mNewTexDefineTimer->getElapsedTime() * 1000 << "msec" << std::endl;
-            std::cout << "Newly created texture draw: " << mNewTexDrawTimer->getElapsedTime() * 1000
+                      << mNewTexDefineTimer.getElapsedTime() * 1000 << "msec" << std::endl;
+            std::cout << "Newly created texture draw: " << mNewTexDrawTimer.getElapsedTime() * 1000
                       << "msec" << std::endl;
         }
 
@@ -269,11 +263,11 @@ void main()
     GLubyte *mPixelsResize;
     GLubyte *mPixelsNewTex;
 
-    Timer *mOrigTimer;
-    Timer *mResizeDrawTimer;
-    Timer *mResizeDefineTimer;
-    Timer *mNewTexDrawTimer;
-    Timer *mNewTexDefineTimer;
+    Timer mOrigTimer;
+    Timer mResizeDrawTimer;
+    Timer mResizeDefineTimer;
+    Timer mNewTexDrawTimer;
+    Timer mNewTexDefineTimer;
     bool mTimeFrame;
     unsigned int mFrameCount;
 };

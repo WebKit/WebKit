@@ -209,7 +209,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserMissingBugId)
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0], "Line 1 : entry with wrong format");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -227,7 +229,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserMissingBugIdWithCon
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0], "Line 1 : entry with wrong format");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -243,7 +247,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserMissingColon)
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0], "Line 1 : entry with wrong format");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -278,7 +284,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserMissingEquals)
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0], "Line 1 : entry with wrong format");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -294,7 +302,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserMissingExpectation)
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0], "Line 1 : entry with wrong format");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -311,7 +321,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserInvalidExpectation)
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0], "Line 1 : entry with wrong format");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -330,8 +342,10 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserUnimplementedCondit
     EXPECT_FALSE(parser.loadTestExpectations(config, line));
     EXPECT_EQ(parser.getErrorMessages().size(), 1u);
     if (parser.getErrorMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getErrorMessages()[0],
                   "Line 1 : entry invalid, likely unimplemented modifiers");
+    }
     // Default behavior is to let missing tests pass
     EXPECT_EQ(
         parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max"),
@@ -368,7 +382,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserMisspelledExpectati
         GPUTestExpectationsParser::kGpuTestPass);
     EXPECT_EQ(parser.getUnusedExpectationsMessages().size(), 1u);
     if (parser.getUnusedExpectationsMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getUnusedExpectationsMessages()[0], "Line 1: expectation was unused.");
+    }
 }
 
 // Wild characters that match groups of expectations can be overridden with more specific lines.
@@ -389,7 +405,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserOverrideExpectation
     // The FAIL expectation was unused because it was overridden.
     EXPECT_EQ(parser.getUnusedExpectationsMessages().size(), 1u);
     if (parser.getUnusedExpectationsMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getUnusedExpectationsMessages()[0], "Line 1: expectation was unused.");
+    }
     // Now try a test that doesn't match the override criteria
     EXPECT_EQ(parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.image.test"),
               GPUTestExpectationsParser::kGpuTestFail);
@@ -414,7 +432,9 @@ TEST(GPUTestExpectationsParserTest, GPUTestExpectationsParserOverrideExpectation
     // The FAIL expectation was unused because it was overridden.
     EXPECT_EQ(parser.getUnusedExpectationsMessages().size(), 1u);
     if (parser.getUnusedExpectationsMessages().size() >= 1)
+    {
         EXPECT_EQ(parser.getUnusedExpectationsMessages()[0], "Line 2: expectation was unused.");
+    }
     // Now try a test that doesn't match the override criteria
     EXPECT_EQ(parser.getTestExpectation("dEQP-GLES31.functional.layout_binding.image.test"),
               GPUTestExpectationsParser::kGpuTestFail);

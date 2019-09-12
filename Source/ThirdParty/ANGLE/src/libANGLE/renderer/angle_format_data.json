@@ -117,6 +117,66 @@
   "ASTC_12x12_UNORM_BLOCK": {
     "blockPixelBytes": "16"
   },
+  "ASTC_3x3x3_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_4x3x3_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_4x4x3_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_4x4x4_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_5x4x4_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_5x5x4_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_5x5x5_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_6x5x5_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_6x6x5_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_6x6x6_UNORM_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_3x3x3_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_4x3x3_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_4x4x3_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_4x4x4_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_5x4x4_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_5x5x4_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_5x5x5_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_6x5x5_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_6x6x5_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
+  "ASTC_6x6x6_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "16"
+  },
   "BC1_RGB_UNORM_BLOCK": {
     "blockPixelBytes": "8"
   },

@@ -36,14 +36,12 @@ class EGLProgramCacheControlTest : public ANGLETest
         // Test flakiness was noticed when reusing displays.
         forceNewDisplay();
         setDeferContextInit(true);
+        setContextProgramCacheEnabled(true);
+        gDefaultPlatformMethods.cacheProgram = TestCacheProgram;
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        setContextProgramCacheEnabled(true, &TestCacheProgram);
-
-        ANGLETest::SetUp();
-
         if (extensionAvailable())
         {
             EGLDisplay display = getEGLWindow()->getDisplay();
@@ -54,11 +52,7 @@ class EGLProgramCacheControlTest : public ANGLETest
         ASSERT_TRUE(getEGLWindow()->initializeContext());
     }
 
-    void TearDown() override
-    {
-        setContextProgramCacheEnabled(false, angle::DefaultCacheProgram);
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { gDefaultPlatformMethods.cacheProgram = DefaultCacheProgram; }
 
     bool extensionAvailable()
     {
@@ -221,8 +215,7 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
     EXPECT_EQ(mCachedBinary, binaryBuffer);
 
     // Restart EGL and GL.
-    TearDown();
-    SetUp();
+    recreateTestFixture();
 
     // Warm up the cache.
     EGLint newCacheSize = eglProgramCacheGetAttribANGLE(display, EGL_PROGRAM_CACHE_SIZE_ANGLE);

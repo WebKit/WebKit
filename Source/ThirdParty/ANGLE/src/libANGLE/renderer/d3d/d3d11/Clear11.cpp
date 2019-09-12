@@ -1,5 +1,5 @@
 
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,7 +19,7 @@
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
-#include "third_party/trace_event/trace_event.h"
+#include "libANGLE/trace.h"
 
 // Precompiled shaders
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clear11_fl9vs.h"
@@ -234,7 +234,7 @@ angle::Result Clear11::ensureResourcesInitialized(const gl::Context *context)
         return angle::Result::Continue;
     }
 
-    TRACE_EVENT0("gpu.angle", "Clear11::ensureResourcesInitialized");
+    ANGLE_TRACE_EVENT0("gpu.angle", "Clear11::ensureResourcesInitialized");
 
     static_assert((sizeof(RtvDsvClearInfo<float>) == sizeof(RtvDsvClearInfo<int>)),
                   "Size of rx::RtvDsvClearInfo<float> is not equal to rx::RtvDsvClearInfo<int>");
@@ -477,7 +477,8 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
         }
 
         RenderTarget11 *renderTarget = nullptr;
-        ANGLE_TRY(attachment.getRenderTarget(context, &renderTarget));
+        ANGLE_TRY(attachment.getRenderTarget(context, attachment.getRenderToTextureSamples(),
+                                             &renderTarget));
 
         const gl::InternalFormat &formatInfo = *attachment.getFormat().info;
 
@@ -551,7 +552,7 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
                 // We shouldn't reach here if deviceContext1 is unavailable.
                 ASSERT(deviceContext1);
                 deviceContext1->ClearView(framebufferRTV.get(), clearValues, &scissorRect, 1);
-                if (mRenderer->getWorkarounds().callClearTwice)
+                if (mRenderer->getFeatures().callClearTwice.enabled)
                 {
                     deviceContext1->ClearView(framebufferRTV.get(), clearValues, &scissorRect, 1);
                 }
@@ -559,7 +560,7 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
             else
             {
                 deviceContext->ClearRenderTargetView(framebufferRTV.get(), clearValues);
-                if (mRenderer->getWorkarounds().callClearTwice)
+                if (mRenderer->getFeatures().callClearTwice.enabled)
                 {
                     deviceContext->ClearRenderTargetView(framebufferRTV.get(), clearValues);
                 }
@@ -574,7 +575,9 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
         RenderTarget11 *depthStencilRenderTarget = nullptr;
 
         ASSERT(depthStencilAttachment != nullptr);
-        ANGLE_TRY(depthStencilAttachment->getRenderTarget(context, &depthStencilRenderTarget));
+        ANGLE_TRY(depthStencilAttachment->getRenderTarget(
+            context, depthStencilAttachment->getRenderToTextureSamples(),
+            &depthStencilRenderTarget));
 
         dsv = depthStencilRenderTarget->getDepthStencilView().get();
         ASSERT(dsv != nullptr);

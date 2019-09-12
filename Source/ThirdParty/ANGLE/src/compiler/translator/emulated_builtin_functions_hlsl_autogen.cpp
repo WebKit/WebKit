@@ -10,7 +10,7 @@
 //   HLSL code for emulating GLSL builtin functions not present in HLSL.
 
 #include "compiler/translator/BuiltInFunctionEmulator.h"
-#include "compiler/translator/tree_util/BuiltIn_autogen.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
 
 namespace sh
 {

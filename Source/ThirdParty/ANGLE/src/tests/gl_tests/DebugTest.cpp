@@ -26,10 +26,8 @@ class DebugTest : public ANGLETest
         setDebugEnabled(true);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mDebugExtensionAvailable = IsGLExtensionEnabled("GL_KHR_debug");
         if (mDebugExtensionAvailable)
         {

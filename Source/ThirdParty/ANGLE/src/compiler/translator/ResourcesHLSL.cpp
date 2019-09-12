@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -98,7 +98,7 @@ void OutputUniformIndexArrayInitializer(TInfoSinkBase &out,
 
 ResourcesHLSL::ResourcesHLSL(StructureHLSL *structureHLSL,
                              ShShaderOutput outputType,
-                             const std::vector<Uniform> &uniforms,
+                             const std::vector<ShaderVariable> &uniforms,
                              unsigned int firstUniformRegister)
     : mUniformRegister(firstUniformRegister),
       mUniformBlockRegister(0),
@@ -120,7 +120,7 @@ void ResourcesHLSL::reserveUniformBlockRegisters(unsigned int registerCount)
     mUniformBlockRegister = registerCount;
 }
 
-const Uniform *ResourcesHLSL::findUniformByName(const ImmutableString &name) const
+const ShaderVariable *ResourcesHLSL::findUniformByName(const ImmutableString &name) const
 {
     for (size_t uniformIndex = 0; uniformIndex < mUniforms.size(); ++uniformIndex)
     {
@@ -138,7 +138,7 @@ unsigned int ResourcesHLSL::assignUniformRegister(const TType &type,
                                                   unsigned int *outRegisterCount)
 {
     unsigned int registerIndex;
-    const Uniform *uniform = findUniformByName(name);
+    const ShaderVariable *uniform = findUniformByName(name);
     ASSERT(uniform);
 
     if (IsSampler(type.getBasicType()) ||
@@ -158,6 +158,24 @@ unsigned int ResourcesHLSL::assignUniformRegister(const TType &type,
     if (uniform->name == "angle_DrawID" && uniform->mappedName == "angle_DrawID")
     {
         mUniformRegisterMap["gl_DrawID"] = registerIndex;
+    }
+    else
+    {
+        mUniformRegisterMap[uniform->name] = registerIndex;
+    }
+
+    if (uniform->name == "angle_BaseVertex" && uniform->mappedName == "angle_BaseVertex")
+    {
+        mUniformRegisterMap["gl_BaseVertex"] = registerIndex;
+    }
+    else
+    {
+        mUniformRegisterMap[uniform->name] = registerIndex;
+    }
+
+    if (uniform->name == "angle_BaseInstance" && uniform->mappedName == "angle_BaseInstance")
+    {
+        mUniformRegisterMap["gl_BaseInstance"] = registerIndex;
     }
     else
     {
@@ -223,7 +241,7 @@ void ResourcesHLSL::outputHLSLSamplerUniformGroup(
 
         // The uniform might be just a regular sampler or one extracted from a struct.
         unsigned int samplerArrayIndex = 0u;
-        const Uniform *uniformByName   = findUniformByName(name);
+        const ShaderVariable *uniformByName = findUniformByName(name);
         if (uniformByName)
         {
             samplerArrayIndex = assignUniformRegister(type, name, &registerCount);
@@ -429,7 +447,7 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
         {
             if (IsImage2D(type.getBasicType()))
             {
-                const Uniform *uniform = findUniformByName(variable.name());
+                const ShaderVariable *uniform = findUniformByName(variable.name());
                 if (type.getMemoryQualifier().readonly)
                 {
                     reservedReadonlyImageRegisterCount +=
@@ -469,7 +487,7 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
             {
                 registerIndex = assignedAtomicCounterBindings[binding];
             }
-            const Uniform *uniform             = findUniformByName(variable.name());
+            const ShaderVariable *uniform      = findUniformByName(variable.name());
             mUniformRegisterMap[uniform->name] = registerIndex;
         }
         else
@@ -592,7 +610,8 @@ void ResourcesHLSL::imageMetadataUniforms(TInfoSinkBase &out, unsigned int regIn
         out << "    struct ImageMetadata\n"
                "    {\n"
                "        int layer;\n"
-               "        int3 padding;\n"
+               "        uint level;\n"
+               "        int2 padding;\n"
                "    };\n";
 
         if (mReadonlyImageCount > 0)

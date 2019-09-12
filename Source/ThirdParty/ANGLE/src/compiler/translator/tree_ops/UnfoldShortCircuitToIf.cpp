@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -177,7 +177,7 @@ void UnfoldShortCircuitTraverser::nextIteration()
 
 }  // namespace
 
-void UnfoldShortCircuitToIf(TIntermNode *root, TSymbolTable *symbolTable)
+bool UnfoldShortCircuitToIf(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
 {
     UnfoldShortCircuitTraverser traverser(symbolTable);
     // Unfold one operator at a time, and reset the traverser between iterations.
@@ -186,8 +186,15 @@ void UnfoldShortCircuitToIf(TIntermNode *root, TSymbolTable *symbolTable)
         traverser.nextIteration();
         root->traverse(&traverser);
         if (traverser.foundShortCircuit())
-            traverser.updateTree();
+        {
+            if (!traverser.updateTree(compiler, root))
+            {
+                return false;
+            }
+        }
     } while (traverser.foundShortCircuit());
+
+    return true;
 }
 
 }  // namespace sh

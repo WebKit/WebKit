@@ -19,7 +19,7 @@ namespace
 TEST(ResourceMapTest, AssignAndErase)
 {
     constexpr size_t kSize = 64;
-    ResourceMap<size_t> resourceMap;
+    ResourceMap<size_t, GLuint> resourceMap;
     std::vector<size_t> objects(kSize, 1);
     for (size_t index = 0; index < kSize; ++index)
     {
@@ -40,7 +40,7 @@ TEST(ResourceMapTest, AssignAndErase)
 TEST(ResourceMapTest, AssignAndClear)
 {
     constexpr size_t kSize = 64;
-    ResourceMap<size_t> resourceMap;
+    ResourceMap<size_t, GLuint> resourceMap;
     std::vector<size_t> objects(kSize, 1);
     for (size_t index = 0; index < kSize; ++index)
     {
@@ -56,7 +56,7 @@ TEST(ResourceMapTest, BigGrowth)
 {
     constexpr size_t kSize = 8;
 
-    ResourceMap<size_t> resourceMap;
+    ResourceMap<size_t, GLuint> resourceMap;
     std::vector<size_t> objects;
 
     for (size_t index = 0; index < kSize; ++index)
@@ -88,7 +88,7 @@ TEST(ResourceMapTest, QueryUnassigned)
 {
     constexpr size_t kSize = 8;
 
-    ResourceMap<size_t> resourceMap;
+    ResourceMap<size_t, GLuint> resourceMap;
     std::vector<size_t> objects;
 
     for (size_t index = 0; index < kSize; ++index)

@@ -168,6 +168,7 @@ const DXGISupport &GetDXGISupport(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL feat
 }} // namespace rx
 """
 
+
 def do_format(format_data):
     table_data = {'9_3': '', '10_0': '', '10_1': '', '11_0': '', '11_1': ''}
 
@@ -270,24 +271,31 @@ def do_format(format_data):
             never = ' | '.join(sorted(never_supported))
             optional = ' | '.join(sorted(optional_for_fl))
 
-            if not always: always = '0'
-            if not never: never = '0'
-            if not optional: optional = '0'
+            if not always:
+                always = '0'
+            if not never:
+                never = '0'
+            if not optional:
+                optional = '0'
 
             table_data[feature_level] += '        case ' + format_name + ':\n'
             table_data[feature_level] += '        {\n'
-            table_data[feature_level] += '            static const DXGISupport info(' + always + ', ' + never + ', ' + optional + ');\n'
+            table_data[
+                feature_level] += '            static const DXGISupport info(' + always + ', ' + never + ', ' + optional + ');\n'
             table_data[feature_level] += '            return info;\n'
             table_data[feature_level] += '        }\n'
 
     return table_data
 
+
 def join_table_data(table_data_1, table_data_2):
-    return {'9_3':  table_data_1['9_3']  + table_data_2['9_3'],
-            '10_0': table_data_1['10_0'] + table_data_2['10_0'],
-            '10_1': table_data_1['10_1'] + table_data_2['10_1'],
-            '11_0': table_data_1['11_0'] + table_data_2['11_0'],
-            '11_1': table_data_1['11_1'] + table_data_2['11_1']}
+    return {
+        '9_3': table_data_1['9_3'] + table_data_2['9_3'],
+        '10_0': table_data_1['10_0'] + table_data_2['10_0'],
+        '10_1': table_data_1['10_1'] + table_data_2['10_1'],
+        '11_0': table_data_1['11_0'] + table_data_2['11_0'],
+        '11_1': table_data_1['11_1'] + table_data_2['11_1']
+    }
 
 
 def main():
@@ -316,12 +324,13 @@ def main():
         for format_data in json_data:
             table_data = join_table_data(table_data, do_format(format_data))
 
-        out_data = template.format(prefix=macro_prefix,
-                                   table_data_9_3=table_data['9_3'],
-                                   table_data_10_0=table_data['10_0'],
-                                   table_data_10_1=table_data['10_1'],
-                                   table_data_11_0=table_data['11_0'],
-                                   table_data_11_1=table_data['11_1'])
+        out_data = template.format(
+            prefix=macro_prefix,
+            table_data_9_3=table_data['9_3'],
+            table_data_10_0=table_data['10_0'],
+            table_data_10_1=table_data['10_1'],
+            table_data_11_0=table_data['11_0'],
+            table_data_11_1=table_data['11_1'])
 
         with open('dxgi_support_table_autogen.cpp', 'wt') as out_file:
             out_file.write(out_data)

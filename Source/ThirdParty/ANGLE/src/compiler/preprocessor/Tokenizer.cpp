@@ -1,6 +1,6 @@
 #line 16 "./Tokenizer.l"
 //
-// Copyright (c) 2011-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2011 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -670,7 +670,7 @@ static const flex_int16_t yy_chk[224] = {
 #define YY_RESTORE_YY_MORE_OFFSET
 /*
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -699,7 +699,15 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 #endif
 #if defined(__clang__)
 // Flex uses `/*FALLTHROUGH*/` instead of dedicated statements.
-#    pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#    pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#    if defined(__APPLE__)
+// Older clang versions don't have -Wextra-semi-stmt, and detecting Apple clang versions is
+// difficult because they use different yet overlapping version numbers vs. regular clang.
+#        pragma clang diagnostic ignored "-Wunknown-warning-option"
+#    endif
+// Flex isn't semi-colon clean.
+#    pragma clang diagnostic ignored "-Wextra-semi-stmt"
+#    pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
 // Workaround for flex using the register keyword, deprecated in C++11.

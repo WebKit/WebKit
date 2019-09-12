@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -38,6 +38,8 @@ class TransformFeedbackState final : angle::NonCopyable
     const OffsetBindingPointer<Buffer> &getIndexedBuffer(size_t idx) const;
     const std::vector<OffsetBindingPointer<Buffer>> &getIndexedBuffers() const;
     const Program *getBoundProgram() const { return mProgram; }
+    GLsizeiptr getVerticesDrawn() const { return mVerticesDrawn; }
+    GLsizeiptr getPrimitivesDrawn() const;
 
   private:
     friend class TransformFeedback;
@@ -58,7 +60,7 @@ class TransformFeedbackState final : angle::NonCopyable
 class TransformFeedback final : public RefCountObject, public LabeledObject
 {
   public:
-    TransformFeedback(rx::GLImplFactory *implFactory, GLuint id, const Caps &caps);
+    TransformFeedback(rx::GLImplFactory *implFactory, TransformFeedbackID id, const Caps &caps);
     ~TransformFeedback() override;
     void onDestroy(const Context *context) override;
 
@@ -83,7 +85,7 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
     // after the last vertex of the previous draw call.
     void onVerticesDrawn(const Context *context, GLsizei count, GLsizei primcount);
 
-    bool hasBoundProgram(GLuint program) const;
+    bool hasBoundProgram(ShaderProgramID program) const;
 
     angle::Result bindIndexedBuffer(const Context *context,
                                     size_t index,
@@ -93,13 +95,15 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
     const OffsetBindingPointer<Buffer> &getIndexedBuffer(size_t index) const;
     size_t getIndexedBufferCount() const;
 
+    GLsizeiptr getVerticesDrawn() const { return mState.getVerticesDrawn(); }
+    GLsizeiptr getPrimitivesDrawn() const { return mState.getPrimitivesDrawn(); }
+
     // Returns true if any buffer bound to this object is also bound to another target.
     bool buffersBoundForOtherUse() const;
 
     angle::Result detachBuffer(const Context *context, GLuint bufferName);
 
-    rx::TransformFeedbackImpl *getImplementation();
-    const rx::TransformFeedbackImpl *getImplementation() const;
+    rx::TransformFeedbackImpl *getImplementation() const;
 
     void onBindingChanged(const Context *context, bool bound);
 

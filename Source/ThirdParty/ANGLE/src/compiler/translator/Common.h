@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -71,6 +71,11 @@ class TVector : public std::vector<T, pool_allocator<T>>
     TVector() : std::vector<T, pool_allocator<T>>() {}
     TVector(const pool_allocator<T> &a) : std::vector<T, pool_allocator<T>>(a) {}
     TVector(size_type i) : std::vector<T, pool_allocator<T>>(i) {}
+    TVector(size_type i, const T &value) : std::vector<T, pool_allocator<T>>(i, value) {}
+    template <typename InputIt>
+    TVector(InputIt first, InputIt last) : std::vector<T, pool_allocator<T>>(first, last)
+    {}
+    TVector(std::initializer_list<T> init) : std::vector<T, pool_allocator<T>>(init) {}
 };
 
 template <class K, class D, class H = std::hash<K>, class CMP = std::equal_to<K>>

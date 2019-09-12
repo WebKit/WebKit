@@ -15,6 +15,7 @@
 
 namespace rx
 {
+class TransformFeedbackVk;
 
 class QueryVk : public QueryImpl
 {
@@ -33,13 +34,18 @@ class QueryVk : public QueryImpl
     angle::Result getResult(const gl::Context *context, GLuint64 *params) override;
     angle::Result isResultAvailable(const gl::Context *context, bool *available) override;
 
+    void onTransformFeedbackEnd(const gl::Context *context);
+
   private:
     angle::Result getResult(const gl::Context *context, bool wait);
 
-    // Used for AnySamples, AnySamplesConservative, Timestamp and TimeElapsed (end)
+    // Used for AnySamples, AnySamplesConservative, Timestamp and TimeElapsed (end).
     vk::QueryHelper mQueryHelper;
-    // An additional query used for TimeElapsed (begin), as it is implemented using Timestamp
+    // An additional query used for TimeElapsed (begin), as it is implemented using Timestamp.
     vk::QueryHelper mQueryHelperTimeElapsedBegin;
+    // Used with TransformFeedbackPrimitivesWritten when transform feedback is emulated.
+    size_t mTransformFeedbackPrimitivesDrawn;
+
     uint64_t mCachedResult;
     bool mCachedResultValid;
 };

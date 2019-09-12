@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -27,7 +27,7 @@ namespace
 class RewriteAssignToSwizzledTraverser : public TIntermTraverser
 {
   public:
-    static void rewrite(TIntermBlock *root);
+    ANGLE_NO_DISCARD static bool rewrite(TCompiler *compiler, TIntermBlock *root);
 
   private:
     RewriteAssignToSwizzledTraverser();
@@ -42,15 +42,20 @@ class RewriteAssignToSwizzledTraverser : public TIntermTraverser
 };
 
 // static
-void RewriteAssignToSwizzledTraverser::rewrite(TIntermBlock *root)
+bool RewriteAssignToSwizzledTraverser::rewrite(TCompiler *compiler, TIntermBlock *root)
 {
     RewriteAssignToSwizzledTraverser rewrite;
     do
     {
         rewrite.nextIteration();
         root->traverse(&rewrite);
-        rewrite.updateTree();
+        if (!rewrite.updateTree(compiler, root))
+        {
+            return false;
+        }
     } while (rewrite.didRewrite());
+
+    return true;
 }
 
 RewriteAssignToSwizzledTraverser::RewriteAssignToSwizzledTraverser()
@@ -84,9 +89,9 @@ bool RewriteAssignToSwizzledTraverser::visitBinary(Visit, TIntermBinary *node)
 
 }  // anonymous namespace
 
-void RewriteRepeatedAssignToSwizzled(TIntermBlock *root)
+bool RewriteRepeatedAssignToSwizzled(TCompiler *compiler, TIntermBlock *root)
 {
-    RewriteAssignToSwizzledTraverser::rewrite(root);
+    return RewriteAssignToSwizzledTraverser::rewrite(compiler, root);
 }
 
 }  // namespace sh

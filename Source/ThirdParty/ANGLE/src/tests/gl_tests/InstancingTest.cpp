@@ -46,19 +46,15 @@ class InstancingTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteBuffers(1, &mInstanceBuffer);
         glDeleteProgram(mProgram[0]);
         glDeleteProgram(mProgram[1]);
-
-        ANGLETest::TearDown();
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         for (unsigned i = 0; i < kMaxDrawn; ++i)
         {
             mInstanceData[i] = i * kDrawSize;
@@ -599,8 +595,6 @@ ANGLE_INSTANTIATE_TEST(InstancingTestES31, ES31_OPENGL(), ES31_OPENGLES(), ES31_
 ANGLE_INSTANTIATE_TEST(InstancingTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
-                       ES2_D3D11_FL9_3(),
-                       ES2_OPENGL(3, 0),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());

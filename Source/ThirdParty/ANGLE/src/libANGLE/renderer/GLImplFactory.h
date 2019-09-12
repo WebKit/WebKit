@@ -14,6 +14,7 @@
 
 #include "angle_gl.h"
 #include "libANGLE/Framebuffer.h"
+#include "libANGLE/Overlay.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramPipeline.h"
 #include "libANGLE/Renderbuffer.h"
@@ -36,12 +37,14 @@ class FenceNVImpl;
 class SyncImpl;
 class FramebufferImpl;
 class MemoryObjectImpl;
+class OverlayImpl;
 class PathImpl;
 class ProgramImpl;
 class ProgramPipelineImpl;
 class QueryImpl;
 class RenderbufferImpl;
 class SamplerImpl;
+class SemaphoreImpl;
 class ShaderImpl;
 class TextureImpl;
 class TransformFeedbackImpl;
@@ -92,6 +95,12 @@ class GLImplFactory : angle::NonCopyable
 
     // Memory object creation
     virtual MemoryObjectImpl *createMemoryObject() = 0;
+
+    // Semaphore creation
+    virtual SemaphoreImpl *createSemaphore() = 0;
+
+    // Overlay creation
+    virtual OverlayImpl *createOverlay(const gl::OverlayState &state) = 0;
 };
 
 }  // namespace rx

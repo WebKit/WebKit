@@ -18,7 +18,7 @@ namespace
 {
 struct IndexConversionPerfParams final : public RenderTestParams
 {
-    std::string suffix() const override
+    std::string story() const override
     {
         std::stringstream strstr;
 
@@ -27,7 +27,7 @@ struct IndexConversionPerfParams final : public RenderTestParams
             strstr << "_index_range";
         }
 
-        strstr << RenderTestParams::suffix();
+        strstr << RenderTestParams::story();
 
         return strstr.str();
     }
@@ -41,7 +41,7 @@ struct IndexConversionPerfParams final : public RenderTestParams
 // Provide a custom gtest parameter name function for IndexConversionPerfParams.
 std::ostream &operator<<(std::ostream &stream, const IndexConversionPerfParams &param)
 {
-    stream << param.suffix().substr(1);
+    stream << param.backendAndStory().substr(1);
     return stream;
 }
 

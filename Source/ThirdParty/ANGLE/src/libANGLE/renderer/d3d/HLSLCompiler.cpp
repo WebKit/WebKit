@@ -14,7 +14,7 @@
 #include "libANGLE/features.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/d3d/ContextD3D.h"
-#include "third_party/trace_event/trace_event.h"
+#include "libANGLE/trace.h"
 
 namespace
 {
@@ -120,7 +120,7 @@ angle::Result HLSLCompiler::ensureInitialized(d3d::Context *context)
         return angle::Result::Continue;
     }
 
-    TRACE_EVENT0("gpu.angle", "HLSLCompiler::initialize");
+    ANGLE_TRACE_EVENT0("gpu.angle", "HLSLCompiler::initialize");
 #if !defined(ANGLE_ENABLE_WINDOWS_STORE)
 #    if defined(ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES)
     // Find a D3DCompiler module that had already been loaded based on a predefined list of
@@ -219,15 +219,12 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
 #endif
     ASSERT(mD3DCompileFunc);
 
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
-    if (gl::DebugAnnotationsActive())
-    {
-        std::string sourcePath = getTempPath();
-        std::ostringstream stream;
-        stream << "#line 2 \"" << sourcePath << "\"\n\n" << hlsl;
-        std::string sourceText = stream.str();
-        writeFile(sourcePath.c_str(), sourceText.c_str(), sourceText.size());
-    }
+#if !defined(ANGLE_ENABLE_WINDOWS_STORE) && defined(ANGLE_ENABLE_DEBUG_TRACE)
+    std::string sourcePath = getTempPath();
+    std::ostringstream stream;
+    stream << "#line 2 \"" << sourcePath << "\"\n\n" << hlsl;
+    std::string sourceText = stream.str();
+    writeFile(sourcePath.c_str(), sourceText.c_str(), sourceText.size());
 #endif
 
     const D3D_SHADER_MACRO *macros = overrideMacros ? overrideMacros : nullptr;
@@ -239,7 +236,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
         HRESULT result         = S_OK;
 
         {
-            TRACE_EVENT0("gpu.angle", "D3DCompile");
+            ANGLE_TRACE_EVENT0("gpu.angle", "D3DCompile");
             SCOPED_ANGLE_HISTOGRAM_TIMER("GPU.ANGLE.D3DCompileMS");
             result = mD3DCompileFunc(hlsl.c_str(), hlsl.length(), gl::g_fakepath, macros, nullptr,
                                      "main", profile.c_str(), configs[i].flags, 0, &binary,

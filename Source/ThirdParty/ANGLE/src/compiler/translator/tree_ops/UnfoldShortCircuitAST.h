@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,12 +10,15 @@
 #ifndef COMPILER_TRANSLATOR_TREEOPS_UNFOLDSHORTCIRCUITAST_H_
 #define COMPILER_TRANSLATOR_TREEOPS_UNFOLDSHORTCIRCUITAST_H_
 
+#include "common/angleutils.h"
+
 namespace sh
 {
 
+class TCompiler;
 class TIntermBlock;
 
-void UnfoldShortCircuitAST(TIntermBlock *root);
+ANGLE_NO_DISCARD bool UnfoldShortCircuitAST(TCompiler *compiler, TIntermBlock *root);
 
 }  // namespace sh
 

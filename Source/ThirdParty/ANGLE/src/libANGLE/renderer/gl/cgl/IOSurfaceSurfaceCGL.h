@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -39,7 +39,7 @@ class IOSurfaceSurfaceCGL : public SurfaceGL
 
     egl::Error initialize(const egl::Display *display) override;
     egl::Error makeCurrent(const gl::Context *context) override;
-    egl::Error unMakeCurrent() override;
+    egl::Error unMakeCurrent(const gl::Context *context) override;
 
     egl::Error swap(const gl::Context *context) override;
     egl::Error postSubBuffer(const gl::Context *context,
@@ -64,14 +64,19 @@ class IOSurfaceSurfaceCGL : public SurfaceGL
     FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
                                               const gl::FramebufferState &state) override;
 
+    bool hasEmulatedAlphaChannel() const override;
+
   private:
+    angle::Result initializeAlphaChannel(const gl::Context *context, GLuint texture);
+
     CGLContextObj mCGLContext;
     IOSurfaceRef mIOSurface;
-    const gl::Context *mCurrentContext;
     int mWidth;
     int mHeight;
     int mPlane;
     int mFormatIndex;
+
+    bool mAlphaInitialized;
 };
 
 }  // namespace rx

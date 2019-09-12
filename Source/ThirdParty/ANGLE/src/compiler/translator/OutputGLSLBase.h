@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -40,7 +40,10 @@ class TOutputGLSLBase : public TIntermTraverser
     TInfoSinkBase &objSink() { return mObjSink; }
     void writeFloat(TInfoSinkBase &out, float f);
     void writeTriplet(Visit visit, const char *preStr, const char *inStr, const char *postStr);
+    std::string getCommonLayoutQualifiers(TIntermTyped *variable);
+    std::string getMemoryQualifiers(const TType &type);
     virtual void writeLayoutQualifier(TIntermTyped *variable);
+    virtual void writeFieldLayoutQualifier(const TField *field);
     void writeInvariantQualifier(const TType &type);
     virtual void writeVariableType(const TType &type, const TSymbol *symbol);
     virtual bool writeVariablePrecision(TPrecision precision) = 0;
@@ -77,7 +80,7 @@ class TOutputGLSLBase : public TIntermTraverser
     virtual ImmutableString translateTextureFunction(const ImmutableString &name) { return name; }
 
     void declareStruct(const TStructure *structure);
-    virtual void writeQualifier(TQualifier qualifier, const TSymbol *symbol);
+    virtual void writeQualifier(TQualifier qualifier, const TType &type, const TSymbol *symbol);
     bool structDeclared(const TStructure *structure) const;
 
   private:

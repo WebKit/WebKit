@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -38,12 +38,14 @@ class OutputHLSL : public TIntermTraverser
 {
   public:
     OutputHLSL(sh::GLenum shaderType,
+               ShShaderSpec shaderSpec,
                int shaderVersion,
                const TExtensionBehavior &extensionBehavior,
                const char *sourcePath,
                ShShaderOutput outputType,
                int numRenderTargets,
-               const std::vector<Uniform> &uniforms,
+               int maxDualSourceDrawBuffers,
+               const std::vector<ShaderVariable> &uniforms,
                ShCompileOptions compileOptions,
                sh::WorkGroupSize workGroupSize,
                TSymbolTable *symbolTable,
@@ -150,6 +152,7 @@ class OutputHLSL : public TIntermTraverser
     const char *generateOutputCall() const;
 
     sh::GLenum mShaderType;
+    ShShaderSpec mShaderSpec;
     int mShaderVersion;
     const TExtensionBehavior &mExtensionBehavior;
     const char *mSourcePath;
@@ -207,8 +210,10 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesNestedBreak;
     bool mRequiresIEEEStrictCompiling;
     mutable bool mUseZeroArray;
+    bool mUsesSecondaryColor;
 
     int mNumRenderTargets;
+    int mMaxDualSourceDrawBuffers;
 
     int mUniqueIndex;  // For creating unique names
 
@@ -264,7 +269,12 @@ class OutputHLSL : public TIntermTraverser
     TString generateStructMapping(const std::vector<MappedStruct> &std140Structs) const;
     ImmutableString samplerNamePrefixFromStruct(TIntermTyped *node);
     bool ancestorEvaluatesToSamplerInStruct();
+    // We need to do struct mapping when pass the struct to a function or copy the struct via
+    // assignment.
+    bool needStructMapping(TIntermTyped *node);
+
     ShaderStorageBlockOutputHLSL *mSSBOOutputHLSL;
+    bool mNeedStructMapping;
 };
 }  // namespace sh
 

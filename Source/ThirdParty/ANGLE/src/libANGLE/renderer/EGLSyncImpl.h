@@ -47,6 +47,8 @@ class EGLSyncImpl : angle::NonCopyable
                                   const gl::Context *context,
                                   EGLint flags)                                  = 0;
     virtual egl::Error getStatus(const egl::Display *display, EGLint *outStatus) = 0;
+
+    virtual egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *result) const = 0;
 };
 }  // namespace rx
 

@@ -27,10 +27,8 @@ class UnpackAlignmentTest : public ANGLETest
         mProgram = 0;
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kFS[] = R"(uniform sampler2D tex;
 void main()
 {
@@ -44,12 +42,7 @@ void main()
         }
     }
 
-    void TearDown() override
-    {
-        glDeleteProgram(mProgram);
-
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { glDeleteProgram(mProgram); }
 
     void getPixelSize(GLenum format, GLenum type, unsigned int *size)
     {

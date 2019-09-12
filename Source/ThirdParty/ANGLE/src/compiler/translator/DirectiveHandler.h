@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -41,7 +41,9 @@ class TDirectiveHandler : public angle::pp::DirectiveHandler, angle::NonCopyable
                          const std::string &name,
                          const std::string &behavior) override;
 
-    void handleVersion(const angle::pp::SourceLocation &loc, int version) override;
+    void handleVersion(const angle::pp::SourceLocation &loc,
+                       int version,
+                       ShShaderSpec spec) override;
 
   private:
     TPragma mPragma;

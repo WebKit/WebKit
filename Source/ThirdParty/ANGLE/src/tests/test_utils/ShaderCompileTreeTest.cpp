@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -153,13 +153,13 @@ bool ShaderCompileTreeTest::hasWarning() const
     return mInfoLog.find("WARNING: ") != std::string::npos;
 }
 
-const std::vector<sh::Uniform> &ShaderCompileTreeTest::getUniforms() const
+const std::vector<sh::ShaderVariable> &ShaderCompileTreeTest::getUniforms() const
 {
     ASSERT(mExtraCompileOptions & SH_VARIABLES);
     return mTranslator->getUniforms();
 }
 
-const std::vector<sh::Attribute> &ShaderCompileTreeTest::getAttributes() const
+const std::vector<sh::ShaderVariable> &ShaderCompileTreeTest::getAttributes() const
 {
     ASSERT(mExtraCompileOptions & SH_VARIABLES);
     return mTranslator->getAttributes();

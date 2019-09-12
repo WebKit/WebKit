@@ -75,13 +75,13 @@ template_undefined_case = """        case DXGI_FORMAT_{dxgi_format}:
             break;
 """
 
+
 def format_case(dxgi_format, result):
-    return template_format_case.format(
-        dxgi_format = dxgi_format,
-        result = result)
+    return template_format_case.format(dxgi_format=dxgi_format, result=result)
+
 
 def undefined_case(dxgi_format):
-    return template_undefined_case.format(dxgi_format = dxgi_format)
+    return template_undefined_case.format(dxgi_format=dxgi_format)
 
 
 def main():
@@ -146,11 +146,11 @@ def main():
 
     with open('dxgi_format_map_autogen.cpp', 'wt') as out_file:
         output_cpp = template_cpp.format(
-            script_name = sys.argv[0],
-            data_source_name = input_data,
-            copyright_year = date.today().year,
-            component_type_cases = component_cases,
-            format_cases = format_cases)
+            script_name=sys.argv[0],
+            data_source_name=input_data,
+            copyright_year=date.today().year,
+            component_type_cases=component_cases,
+            format_cases=format_cases)
         out_file.write(output_cpp)
         out_file.close()
     return 0

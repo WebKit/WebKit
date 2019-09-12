@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -345,6 +345,14 @@ EGLContext EGLWindow::createContext(EGLContext share) const
         return EGL_NO_CONTEXT;
     }
 
+    bool hasBackwardsCompatibleContextExtension =
+        strstr(displayExtensions, "EGL_ANGLE_create_context_backwards_compatible") != nullptr;
+    if (!hasProgramCacheControlExtension)
+    {
+        std::cerr << "EGL_ANGLE_create_context_backwards_compatible missing.\n";
+        return EGL_NO_CONTEXT;
+    }
+
     eglBindAPI(EGL_OPENGL_ES_API);
     if (eglGetError() != EGL_SUCCESS)
     {
@@ -411,6 +419,13 @@ EGLContext EGLWindow::createContext(EGLContext share) const
             contextAttributes.push_back(EGL_CONTEXT_PROGRAM_BINARY_CACHE_ENABLED_ANGLE);
             contextAttributes.push_back(
                 mConfigParams.contextProgramCacheEnabled.value() ? EGL_TRUE : EGL_FALSE);
+        }
+
+        if (hasBackwardsCompatibleContextExtension)
+        {
+            // Always request the exact context version that the config wants
+            contextAttributes.push_back(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+            contextAttributes.push_back(EGL_FALSE);
         }
 
         bool hasRobustResourceInit =

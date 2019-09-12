@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 #define LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 
+#include "common/debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Version.h"
 #include "libANGLE/angletypes.h"
@@ -19,13 +20,18 @@
 #include <string>
 #include <vector>
 
+namespace angle
+{
+struct FeaturesGL;
+struct FrontendFeatures;
+}  // namespace angle
+
 namespace gl
 {
 struct Caps;
 class TextureCapsMap;
 struct Extensions;
 struct Version;
-struct Workarounds;
 }  // namespace gl
 
 namespace rx
@@ -35,7 +41,6 @@ class ClearMultiviewGL;
 class ContextGL;
 class FunctionsGL;
 class StateManagerGL;
-struct WorkaroundsGL;
 enum class MultiviewImplementationTypeGL
 {
     NV_VIEWPORT_ARRAY2,
@@ -49,21 +54,44 @@ const FunctionsGL *GetFunctionsGL(const gl::Context *context);
 StateManagerGL *GetStateManagerGL(const gl::Context *context);
 BlitGL *GetBlitGL(const gl::Context *context);
 ClearMultiviewGL *GetMultiviewClearer(const gl::Context *context);
-const WorkaroundsGL &GetWorkaroundsGL(const gl::Context *context);
+const angle::FeaturesGL &GetFeaturesGL(const gl::Context *context);
+
+// Clear all errors on the stored context, emits console warnings
+void ClearErrors(const gl::Context *context,
+                 const char *file,
+                 const char *function,
+                 unsigned int line);
+
+// Check for a single error
+angle::Result CheckError(const gl::Context *context,
+                         const char *call,
+                         const char *file,
+                         const char *function,
+                         unsigned int line);
+
+#define ANGLE_GL_TRY_ALWAYS_CHECK(context, call)                      \
+    (ClearErrors(context, __FILE__, __FUNCTION__, __LINE__), (call)); \
+    ANGLE_TRY(CheckError(context, #call, __FILE__, __FUNCTION__, __LINE__))
+
+#if defined(ANGLE_ENABLE_ASSERTS)
+#    define ANGLE_GL_TRY(context, call) ANGLE_GL_TRY_ALWAYS_CHECK(context, call)
+#else
+#    define ANGLE_GL_TRY(context, call) call
+#endif
 
 namespace nativegl_gl
 {
 
 void GenerateCaps(const FunctionsGL *functions,
-                  const WorkaroundsGL &workarounds,
+                  const angle::FeaturesGL &features,
                   gl::Caps *caps,
                   gl::TextureCapsMap *textureCapsMap,
                   gl::Extensions *extensions,
                   gl::Version *maxSupportedESVersion,
                   MultiviewImplementationTypeGL *multiviewImplementationType);
 
-void GenerateWorkarounds(const FunctionsGL *functions, WorkaroundsGL *workarounds);
-void ApplyWorkarounds(const FunctionsGL *functions, gl::Workarounds *workarounds);
+void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *features);
+void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features);
 }  // namespace nativegl_gl
 
 namespace nativegl
@@ -73,8 +101,10 @@ bool SupportsOcclusionQueries(const FunctionsGL *functions);
 bool SupportsNativeRendering(const FunctionsGL *functions,
                              gl::TextureType type,
                              GLenum internalFormat);
+bool SupportsTexImage(gl::TextureType type);
 bool UseTexImage2D(gl::TextureType textureType);
 bool UseTexImage3D(gl::TextureType textureType);
+GLenum GetTextureBindingQuery(gl::TextureType textureType);
 }  // namespace nativegl
 
 bool CanMapBufferForRead(const FunctionsGL *functions);

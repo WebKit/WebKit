@@ -1,0 +1,12 @@
+{
+  "src/libANGLE/renderer/angle_format.py":
+    "eefe6befdc925574207746fa531165fd",
+  "src/libANGLE/renderer/vulkan/gen_vk_mandatory_format_support_table.py":
+    "dab4614bbee0c3fbc5b3ccaaa11ba9d3",
+  "src/libANGLE/renderer/vulkan/vk_mandatory_format_support_data.json":
+    "fa2bd54c1bb0ab2cf1d386061a4bc5c5",
+  "src/libANGLE/renderer/vulkan/vk_mandatory_format_support_table_autogen.cpp":
+    "d20e549634ef32d6ad4e9f0b28e52acf",
+  "third_party/vulkan-headers/src/registry/vk.xml":
+    "8af0f992bd45c2d9500eb5ed60c256d6"
+}

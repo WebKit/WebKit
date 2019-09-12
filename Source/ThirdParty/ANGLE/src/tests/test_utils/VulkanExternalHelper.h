@@ -35,6 +35,11 @@ class VulkanExternalHelper
                                    VkDeviceSize *deviceMemorySizeOut);
     VkResult exportMemoryOpaqueFd(VkDeviceMemory deviceMemory, int *fd);
 
+    // VK_KHR_external_semaphore_fd
+    bool canCreateSemaphoreOpaqueFd() const;
+    VkResult createSemaphoreOpaqueFd(VkSemaphore *semaphore);
+    VkResult exportSemaphoreOpaqueFd(VkSemaphore semaphore, int *fd);
+
   private:
     VkInstance mInstance             = VK_NULL_HANDLE;
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
@@ -49,7 +54,10 @@ class VulkanExternalHelper
     bool mHasExternalSemaphoreFd = false;
     PFN_vkGetPhysicalDeviceImageFormatProperties2 vkGetPhysicalDeviceImageFormatProperties2 =
         nullptr;
-    PFN_vkGetMemoryFdKHR vkGetMemoryFdKHR = nullptr;
+    PFN_vkGetMemoryFdKHR vkGetMemoryFdKHR       = nullptr;
+    PFN_vkGetSemaphoreFdKHR vkGetSemaphoreFdKHR = nullptr;
+    PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR
+        vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = nullptr;
 };
 
 }  // namespace angle

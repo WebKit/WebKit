@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -220,6 +220,7 @@ MSG kInvalidFramebufferTarget = "Invalid framebuffer target.";
 MSG kInvalidFramebufferTextureLevel = "Mipmap level must be 0 when attaching a texture.";
 MSG kInvalidHandleType = "Invalid handle type.";
 MSG kInvalidImageAccess = "access is not one of the supported tokens.";
+MSG kInvalidImageLayout = "Invalid image layout.";
 MSG kInvalidImageFormat = "format is not one of supported image unit formats.";
 MSG kInvalidIndentifier = "Invalid identifier.";
 MSG kInvalidIndirectOffset = "indirect must be a multiple of the size of uint in basic machine units.";
@@ -334,6 +335,7 @@ MSG kInvalidVertexPointerStride = "Invalid stride for built-in vertex attribute.
 MSG kInvalidVertexPointerType = "Invalid type for built-in vertex attribute.";
 MSG kInvalidWidth = "Invalid width.";
 MSG kInvalidWrapModeTexture = "Invalid wrap mode for texture type.";
+MSG kInvalidZOffset = "zoffset is larger than MAX_3D_TEXTURE_SIZE-1";
 MSG kLengthZero = "Length must not be zero.";
 MSG kLevelNotZero = "Texture level must be zero.";
 MSG kLightParameterOutOfRange = "Light parameter out of range.";

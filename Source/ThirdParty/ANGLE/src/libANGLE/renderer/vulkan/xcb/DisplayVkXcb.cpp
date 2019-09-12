@@ -65,7 +65,8 @@ bool DisplayVkXcb::isValidNativeWindow(EGLNativeWindowType window) const
 {
     // There doesn't appear to be an xcb function explicitly for checking the validity of a
     // window ID, but xcb_query_tree_reply will return nullptr if the window doesn't exist.
-    xcb_query_tree_cookie_t cookie = xcb_query_tree(mXcbConnection, window);
+    xcb_query_tree_cookie_t cookie =
+        xcb_query_tree(mXcbConnection, static_cast<xcb_window_t>(window));
     xcb_query_tree_reply_t *reply  = xcb_query_tree_reply(mXcbConnection, cookie, nullptr);
     if (reply)
     {
@@ -86,9 +87,7 @@ SurfaceImpl *DisplayVkXcb::createWindowSurfaceVk(const egl::SurfaceState &state,
 egl::ConfigSet DisplayVkXcb::generateConfigs()
 {
     constexpr GLenum kColorFormats[] = {GL_BGRA8_EXT, GL_BGRX8_ANGLEX};
-    constexpr EGLint kSampleCounts[] = {0};
-    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, kSampleCounts,
-                                   this);
+    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
 bool DisplayVkXcb::checkConfigSupport(egl::Config *config)

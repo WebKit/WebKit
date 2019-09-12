@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -24,7 +24,7 @@ class ResourcesHLSL : angle::NonCopyable
   public:
     ResourcesHLSL(StructureHLSL *structureHLSL,
                   ShShaderOutput outputType,
-                  const std::vector<Uniform> &uniforms,
+                  const std::vector<ShaderVariable> &uniforms,
                   unsigned int firstUniformRegister);
 
     void reserveUniformRegisters(unsigned int registerCount);
@@ -75,7 +75,7 @@ class ResourcesHLSL : angle::NonCopyable
     TString uniformBlockMembersString(const TInterfaceBlock &interfaceBlock,
                                       TLayoutBlockStorage blockStorage);
     TString uniformBlockStructString(const TInterfaceBlock &interfaceBlock);
-    const Uniform *findUniformByName(const ImmutableString &name) const;
+    const ShaderVariable *findUniformByName(const ImmutableString &name) const;
 
     void outputHLSL4_0_FL9_3Sampler(TInfoSinkBase &out,
                                     const TType &type,
@@ -127,7 +127,7 @@ class ResourcesHLSL : angle::NonCopyable
     StructureHLSL *mStructureHLSL;
     ShShaderOutput mOutputType;
 
-    const std::vector<Uniform> &mUniforms;
+    const std::vector<ShaderVariable> &mUniforms;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;

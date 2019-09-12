@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -23,7 +23,9 @@ namespace
 class Traverser : public TIntermTraverser
 {
   public:
-    static void Apply(TIntermNode *root, TSymbolTable *symbolTable);
+    ANGLE_NO_DISCARD static bool Apply(TCompiler *compiler,
+                                       TIntermNode *root,
+                                       TSymbolTable *symbolTable);
 
   private:
     Traverser(TSymbolTable *symbolTable);
@@ -34,7 +36,7 @@ class Traverser : public TIntermTraverser
 };
 
 // static
-void Traverser::Apply(TIntermNode *root, TSymbolTable *symbolTable)
+bool Traverser::Apply(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
 {
     Traverser traverser(symbolTable);
     do
@@ -43,9 +45,14 @@ void Traverser::Apply(TIntermNode *root, TSymbolTable *symbolTable)
         root->traverse(&traverser);
         if (traverser.mFound)
         {
-            traverser.updateTree();
+            if (!traverser.updateTree(compiler, root))
+            {
+                return false;
+            }
         }
     } while (traverser.mFound);
+
+    return true;
 }
 
 Traverser::Traverser(TSymbolTable *symbolTable) : TIntermTraverser(true, false, false, symbolTable)
@@ -79,7 +86,6 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
         return true;
     }
 
-    ASSERT(constantExponent->getBasicType() == EbtFloat);
     float exponentValue = constantExponent->getConstantValue()->getFConst();
 
     // Test 2: exponentValue is in the problematic range.
@@ -138,9 +144,9 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
 
 }  // anonymous namespace
 
-void ExpandIntegerPowExpressions(TIntermNode *root, TSymbolTable *symbolTable)
+bool ExpandIntegerPowExpressions(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
 {
-    Traverser::Apply(root, symbolTable);
+    return Traverser::Apply(compiler, root, symbolTable);
 }
 
 }  // namespace sh

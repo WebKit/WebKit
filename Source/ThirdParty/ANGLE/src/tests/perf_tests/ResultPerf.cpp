@@ -23,7 +23,7 @@ class ResultPerfTest : public ANGLEPerfTest
     void step() override;
 };
 
-ResultPerfTest::ResultPerfTest() : ANGLEPerfTest("ResultPerf", "_run", kIterationsPerStep) {}
+ResultPerfTest::ResultPerfTest() : ANGLEPerfTest("ResultPerf", "", "_run", kIterationsPerStep) {}
 
 ANGLE_NOINLINE angle::Result ExternalCall()
 {

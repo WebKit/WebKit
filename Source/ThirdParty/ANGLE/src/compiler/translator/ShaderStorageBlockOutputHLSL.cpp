@@ -228,8 +228,8 @@ class BlockInfoVisitor final : public BlockEncoderVisitor
         TraverseShaderVariables(structVar.fields, isRowMajor, &childVisitor);
         childVisitor.getEncoder(mStorage)->exitAggregateType(structVar);
 
-        int offset      = getEncoder(mStorage)->getCurrentOffset();
-        int arrayStride = childVisitor.getEncoder(mStorage)->getCurrentOffset();
+        int offset      = static_cast<int>(getEncoder(mStorage)->getCurrentOffset());
+        int arrayStride = static_cast<int>(childVisitor.getEncoder(mStorage)->getCurrentOffset());
 
         auto iter = mShaderVarToFieldMap.find(variableName);
         if (iter == mShaderVarToFieldMap.end())

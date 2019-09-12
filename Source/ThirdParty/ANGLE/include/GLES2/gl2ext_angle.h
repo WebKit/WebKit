@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -20,7 +20,7 @@
 #ifndef GL_ANGLE_request_extension
 #define GL_ANGLE_request_extension 1
 #define GL_REQUESTABLE_EXTENSIONS_ANGLE   0x93A8
-#define GL_NUM_REQUESTABLE_EXTENSIONS_ANGLE 0x93A8
+#define GL_NUM_REQUESTABLE_EXTENSIONS_ANGLE 0x93A9
 typedef void (GL_APIENTRYP PFNGLREQUESTEXTENSIONANGLEPROC) (const GLchar *name);
 #ifdef GL_GLEXT_PROTOTYPES
 GL_APICALL void GL_APIENTRY glRequestExtensionANGLE (const GLchar *name);
@@ -652,6 +652,20 @@ GL_APICALL void GL_APIENTRY glMultiDrawElementsInstancedANGLE (GLenum mode, cons
 #endif
 #endif /* GL_ANGLE_multi_draw */
 
+#ifndef GL_ANGLE_base_vertex_base_instance
+#define GL_ANGLE_base_vertex_base_instance 1
+typedef void (GL_APIENTRYP PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEANGLEPROC) (GLenum mode, GLint first, GLsizei count, GLsizei instanceCount, GLuint baseInstance);
+typedef void (GL_APIENTRYP PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEANGLEPROC) (GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instanceCount, GLint baseVertex, GLuint baseInstance);
+typedef void (GL_APIENTRYP PFNGLMULTIDRAWARRAYSINSTANCEDBASEINSTANCEANGLEPROC) (GLenum mode, GLsizei drawCount, const GLsizei *counts, const GLsizei *instanceCounts, const GLsizei *firsts, const GLuint *baseInstances);
+typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEANGLEPROC) (GLenum mode, GLenum type, GLsizei drawCount, const GLsizei *counts, const GLsizei *instanceCounts, const GLvoid* const *indices, const GLint *baseVertices, const GLuint *baseInstances);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glDrawArraysInstancedBaseInstanceANGLE (GLenum mode, GLint first, GLsizei count, GLsizei instanceCount, GLuint baseInstance);
+GL_APICALL void GL_APIENTRY glDrawElementsInstancedBaseVertexBaseInstanceANGLE (GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instanceCount, GLint baseVertex, GLuint baseInstance);
+GL_APICALL void GL_APIENTRY glMultiDrawArraysInstancedBaseInstanceANGLE (GLenum mode, GLsizei drawCount, const GLsizei *counts, const GLsizei *instanceCounts, const GLsizei *firsts, const GLuint *baseInstances);
+GL_APICALL void GL_APIENTRY glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE (GLenum mode, GLenum type, GLsizei drawCount, const GLsizei *counts, const GLsizei *instanceCounts, const GLvoid* const *indices, const GLint *baseVertices, const GLuint *baseInstances);
+#endif
+#endif
+
 #ifndef GL_CHROMIUM_bind_uniform_location
 #define GL_CHROMIUM_bind_uniform_location 1
 typedef void (GL_APIENTRYP PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC)(GLuint program, GLint location, const GLchar *name);
@@ -668,6 +682,17 @@ GL_APICALL void GL_APIENTRY glLoseContextCHROMIUM(GLenum current, GLenum other);
 #endif
 typedef void (GL_APIENTRYP PFNGLLOSECONTEXTCHROMIUMPROC) (GLenum current, GLenum other);
 #endif  /* GL_CHROMIUM_lose_context */
+
+#ifndef GL_ANGLE_texture_external_update
+#define GL_ANGLE_texture_external_update 1
+#define GL_TEXTURE_NATIVE_ID_ANGLE 0x3481
+typedef void (GL_APIENTRYP PFNGLTEXIMAGE2DEXTERNALANGLEPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
+typedef void (GL_APIENTRYP PFNGLINVALIDATETEXTUREANGLEPROC) (GLenum target);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glTexImage2DExternalANGLE (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
+GL_APICALL void GL_APIENTRY glInvalidateTextureANGLE (GLenum target);
+#endif
+#endif /* GL_ANGLE_texture_external_update */
 
 // clang-format on
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -606,8 +606,8 @@ TEST_F(FragmentShaderValidationTest, AssignUniformToGlobalESSL3)
 }
 
 // Global variable initializers need to be constant expressions (ESSL 1.00 section 4.3)
-// Initializing with an uniform should generate a warning
-// (we don't generate an error on ESSL 1.00 because of legacy compatibility)
+// Initializing with an uniform used to generate a warning on ESSL 1.00 because of legacy
+// compatibility, but that causes dEQP to fail (which expects an error)
 TEST_F(FragmentShaderValidationTest, AssignUniformToGlobalESSL1)
 {
     const std::string &shaderString =
@@ -619,15 +619,7 @@ TEST_F(FragmentShaderValidationTest, AssignUniformToGlobalESSL1)
         "}\n";
     if (compile(shaderString))
     {
-        if (!hasWarning())
-        {
-            FAIL() << "Shader compilation succeeded without warnings, expecting warning:\n"
-                   << mInfoLog;
-        }
-    }
-    else
-    {
-        FAIL() << "Shader compilation failed, expecting success with warning:\n" << mInfoLog;
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
     }
 }
 
@@ -1349,6 +1341,46 @@ TEST_F(WebGL2FragmentShaderValidationTest, IndexFragDataWithNonConstant)
     }
 }
 
+// Global variable initializers need to be constant expressions (ESSL 1.00 section 4.3)
+// Initializing with an uniform should generate a warning
+// (we don't generate an error on ESSL 1.00 because of WebGL compatibility)
+TEST_F(WebGL2FragmentShaderValidationTest, AssignUniformToGlobalESSL1)
+{
+    const std::string &shaderString =
+        "precision mediump float;\n"
+        "uniform float a;\n"
+        "float b = a * 2.0;\n"
+        "void main() {\n"
+        "   gl_FragColor = vec4(b);\n"
+        "}\n";
+    if (compile(shaderString))
+    {
+        if (!hasWarning())
+        {
+            FAIL() << "Shader compilation succeeded without warnings, expecting warning:\n"
+                   << mInfoLog;
+        }
+    }
+    else
+    {
+        FAIL() << "Shader compilation failed, expecting success with warning:\n" << mInfoLog;
+    }
+}
+
+// Test that deferring global variable init works with an empty main().
+TEST_F(WebGL2FragmentShaderValidationTest, DeferGlobalVariableInitWithEmptyMain)
+{
+    const std::string &shaderString =
+        "precision mediump float;\n"
+        "uniform float u;\n"
+        "float foo = u;\n"
+        "void main() {}\n";
+    if (!compile(shaderString))
+    {
+        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
+    }
+}
+
 // Test that a non-constant texture offset is not accepted for textureOffset.
 // ESSL 3.00 section 8.8
 TEST_F(FragmentShaderValidationTest, TextureOffsetNonConst)
@@ -1466,6 +1498,46 @@ TEST_F(WebGL1FragmentShaderValidationTest, NonConstantLoopIndex)
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Global variable initializers need to be constant expressions (ESSL 1.00 section 4.3)
+// Initializing with an uniform should generate a warning
+// (we don't generate an error on ESSL 1.00 because of WebGL compatibility)
+TEST_F(WebGL1FragmentShaderValidationTest, AssignUniformToGlobalESSL1)
+{
+    const std::string &shaderString =
+        "precision mediump float;\n"
+        "uniform float a;\n"
+        "float b = a * 2.0;\n"
+        "void main() {\n"
+        "   gl_FragColor = vec4(b);\n"
+        "}\n";
+    if (compile(shaderString))
+    {
+        if (!hasWarning())
+        {
+            FAIL() << "Shader compilation succeeded without warnings, expecting warning:\n"
+                   << mInfoLog;
+        }
+    }
+    else
+    {
+        FAIL() << "Shader compilation failed, expecting success with warning:\n" << mInfoLog;
+    }
+}
+
+// Test that deferring global variable init works with an empty main().
+TEST_F(WebGL1FragmentShaderValidationTest, DeferGlobalVariableInitWithEmptyMain)
+{
+    const std::string &shaderString =
+        "precision mediump float;\n"
+        "uniform float u;\n"
+        "float foo = u;\n"
+        "void main() {}\n";
+    if (!compile(shaderString))
+    {
+        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
     }
 }
 
@@ -2633,20 +2705,6 @@ TEST_F(FragmentShaderValidationTest, ShiftByNegative)
     else
     {
         FAIL() << "Shader compilation failed, expecting success with warning:\n" << mInfoLog;
-    }
-}
-
-// Test that deferring global variable init works with an empty main().
-TEST_F(FragmentShaderValidationTest, DeferGlobalVariableInitWithEmptyMain)
-{
-    const std::string &shaderString =
-        "precision mediump float;\n"
-        "uniform float u;\n"
-        "float foo = u;\n"
-        "void main() {}\n";
-    if (!compile(shaderString))
-    {
-        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
     }
 }
 

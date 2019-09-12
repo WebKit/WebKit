@@ -12,6 +12,7 @@
 #include "common/string_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/MemoryProgramCache.h"
+#include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
 #include "libANGLE/renderer/d3d/RenderbufferD3D.h"
 #include "libANGLE/renderer/d3d/SamplerD3D.h"
@@ -141,7 +142,7 @@ CompilerImpl *Context11::createCompiler()
 
 ShaderImpl *Context11::createShader(const gl::ShaderState &data)
 {
-    return new ShaderD3D(data, mRenderer->getWorkarounds(), mRenderer->getNativeExtensions());
+    return new ShaderD3D(data, mRenderer->getFeatures(), mRenderer->getNativeExtensions());
 }
 
 ProgramImpl *Context11::createProgram(const gl::ProgramState &data)
@@ -237,6 +238,18 @@ MemoryObjectImpl *Context11::createMemoryObject()
     return nullptr;
 }
 
+SemaphoreImpl *Context11::createSemaphore()
+{
+    UNREACHABLE();
+    return nullptr;
+}
+
+OverlayImpl *Context11::createOverlay(const gl::OverlayState &state)
+{
+    // Not implemented.
+    return new OverlayImpl(state);
+}
+
 angle::Result Context11::flush(const gl::Context *context)
 {
     return mRenderer->flush(this);
@@ -270,12 +283,24 @@ angle::Result Context11::drawArraysInstanced(const gl::Context *context,
     return mRenderer->drawArrays(context, mode, first, count, instanceCount);
 }
 
+angle::Result Context11::drawArraysInstancedBaseInstance(const gl::Context *context,
+                                                         gl::PrimitiveMode mode,
+                                                         GLint first,
+                                                         GLsizei count,
+                                                         GLsizei instanceCount,
+                                                         GLuint baseInstance)
+{
+    return drawArraysInstanced(context, mode, first, count, instanceCount);
+}
+
 ANGLE_INLINE angle::Result Context11::drawElementsImpl(const gl::Context *context,
                                                        gl::PrimitiveMode mode,
                                                        GLsizei indexCount,
                                                        gl::DrawElementsType indexType,
                                                        const void *indices,
-                                                       GLsizei instanceCount)
+                                                       GLsizei instanceCount,
+                                                       GLint baseVertex,
+                                                       GLuint baseInstance)
 {
     ASSERT(indexCount > 0);
 
@@ -285,16 +310,18 @@ ANGLE_INLINE angle::Result Context11::drawElementsImpl(const gl::Context *contex
         ANGLE_TRY(context->getState().getVertexArray()->getIndexRange(
             context, indexType, indexCount, indices, &indexRange));
         ANGLE_TRY(mRenderer->getStateManager()->updateState(
-            context, mode, indexRange.start, indexCount, indexType, indices, instanceCount, 0));
-        return mRenderer->drawElements(context, mode, indexRange.start, indexCount, indexType,
-                                       indices, instanceCount);
+            context, mode, static_cast<GLint>(indexRange.start), indexCount, indexType, indices,
+            instanceCount, baseVertex));
+        return mRenderer->drawElements(context, mode, static_cast<GLint>(indexRange.start),
+                                       indexCount, indexType, indices, instanceCount, baseVertex,
+                                       baseInstance);
     }
     else
     {
         ANGLE_TRY(mRenderer->getStateManager()->updateState(context, mode, 0, indexCount, indexType,
-                                                            indices, instanceCount, 0));
+                                                            indices, instanceCount, baseVertex));
         return mRenderer->drawElements(context, mode, 0, indexCount, indexType, indices,
-                                       instanceCount);
+                                       instanceCount, baseVertex, baseInstance);
     }
 }
 
@@ -304,7 +331,7 @@ angle::Result Context11::drawElements(const gl::Context *context,
                                       gl::DrawElementsType type,
                                       const void *indices)
 {
-    return drawElementsImpl(context, mode, count, type, indices, 0);
+    return drawElementsImpl(context, mode, count, type, indices, 0, 0, 0);
 }
 
 angle::Result Context11::drawElementsInstanced(const gl::Context *context,
@@ -314,7 +341,20 @@ angle::Result Context11::drawElementsInstanced(const gl::Context *context,
                                                const void *indices,
                                                GLsizei instances)
 {
-    return drawElementsImpl(context, mode, count, type, indices, instances);
+    return drawElementsImpl(context, mode, count, type, indices, instances, 0, 0);
+}
+
+angle::Result Context11::drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
+                                                                     gl::PrimitiveMode mode,
+                                                                     GLsizei count,
+                                                                     gl::DrawElementsType type,
+                                                                     const void *indices,
+                                                                     GLsizei instances,
+                                                                     GLint baseVertex,
+                                                                     GLuint baseInstance)
+{
+    return drawElementsImpl(context, mode, count, type, indices, instances, baseVertex,
+                            baseInstance);
 }
 
 angle::Result Context11::drawRangeElements(const gl::Context *context,
@@ -325,7 +365,7 @@ angle::Result Context11::drawRangeElements(const gl::Context *context,
                                            gl::DrawElementsType type,
                                            const void *indices)
 {
-    return drawElementsImpl(context, mode, count, type, indices, 0);
+    return drawElementsImpl(context, mode, count, type, indices, 0, 0, 0);
 }
 
 angle::Result Context11::drawArraysIndirect(const gl::Context *context,
@@ -379,8 +419,8 @@ angle::Result Context11::drawElementsIndirect(const gl::Context *context,
         ANGLE_TRY(mRenderer->getStateManager()->updateState(context, mode, startVertex, cmd->count,
                                                             type, indices, cmd->primCount,
                                                             cmd->baseVertex));
-        return mRenderer->drawElements(context, mode, indexRange.start, cmd->count, type, indices,
-                                       cmd->primCount);
+        return mRenderer->drawElements(context, mode, static_cast<GLint>(indexRange.start),
+                                       cmd->count, type, indices, cmd->primCount, 0, 0);
     }
     else
     {
@@ -430,7 +470,7 @@ void Context11::popGroupMarker()
 void Context11::pushDebugGroup(GLenum source, GLuint id, const std::string &message)
 {
     // Fall through to the EXT_debug_marker functions
-    pushGroupMarker(message.size(), message.c_str());
+    pushGroupMarker(static_cast<GLsizei>(message.size()), message.c_str());
 }
 
 void Context11::popDebugGroup()
@@ -650,7 +690,8 @@ angle::Result Context11::initializeMultisampleTextureToBlack(const gl::Context *
     TextureD3D *textureD3D        = GetImplAs<TextureD3D>(glTexture);
     gl::ImageIndex index          = gl::ImageIndex::Make2DMultisample();
     RenderTargetD3D *renderTarget = nullptr;
-    ANGLE_TRY(textureD3D->getRenderTarget(context, index, &renderTarget));
+    GLsizei texSamples            = textureD3D->getRenderToTextureSamples();
+    ANGLE_TRY(textureD3D->getRenderTarget(context, index, texSamples, &renderTarget));
     return mRenderer->clearRenderTarget(context, renderTarget, gl::ColorF(0.0f, 0.0f, 0.0f, 1.0f),
                                         1.0f, 0);
 }

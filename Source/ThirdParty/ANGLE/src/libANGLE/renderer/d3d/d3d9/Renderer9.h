@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -96,8 +96,11 @@ class Renderer9 : public RendererD3D
                                   EGLint samples) override;
     egl::Error getD3DTextureInfo(const egl::Config *configuration,
                                  IUnknown *d3dTexture,
+                                 const egl::AttributeMap &attribs,
                                  EGLint *width,
                                  EGLint *height,
+                                 GLsizei *samples,
+                                 gl::Format *glFormat,
                                  const angle::Format **angleFormat) const override;
     egl::Error validateShareHandle(const egl::Config *config,
                                    HANDLE shareHandle,
@@ -109,11 +112,11 @@ class Renderer9 : public RendererD3D
     void freeEventQuery(IDirect3DQuery9 *query);
 
     // resource creation
-    angle::Result createVertexShader(Context9 *context9,
+    angle::Result createVertexShader(d3d::Context *context,
                                      const DWORD *function,
                                      size_t length,
                                      IDirect3DVertexShader9 **outShader);
-    angle::Result createPixelShader(Context9 *context9,
+    angle::Result createPixelShader(d3d::Context *context,
                                     const DWORD *function,
                                     size_t length,
                                     IDirect3DPixelShader9 **outShader);
@@ -274,6 +277,10 @@ class Renderer9 : public RendererD3D
 
     // Image operations
     ImageD3D *createImage() override;
+    ExternalImageSiblingImpl *createExternalImageSibling(const gl::Context *context,
+                                                         EGLenum target,
+                                                         EGLClientBuffer buffer,
+                                                         const egl::AttributeMap &attribs) override;
     angle::Result generateMipmap(const gl::Context *context,
                                  ImageD3D *dest,
                                  ImageD3D *source) override;
@@ -400,6 +407,7 @@ class Renderer9 : public RendererD3D
     DebugAnnotator9 *getAnnotator() { return &mAnnotator; }
 
     gl::Version getMaxSupportedESVersion() const override;
+    gl::Version getMaxConformantESVersion() const override;
 
     angle::Result clearRenderTarget(const gl::Context *context,
                                     RenderTargetD3D *renderTarget,
@@ -438,7 +446,7 @@ class Renderer9 : public RendererD3D
                       gl::Extensions *outExtensions,
                       gl::Limitations *outLimitations) const override;
 
-    angle::WorkaroundsD3D generateWorkarounds() const override;
+    void initializeFeatures(angle::FeaturesD3D *features) const override;
 
     angle::Result setBlendDepthRasterStates(const gl::Context *context, gl::PrimitiveMode drawMode);
 

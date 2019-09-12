@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -39,7 +39,7 @@ struct TexturesParams final : public RenderTestParams
         webgl = false;
     }
 
-    std::string suffix() const override;
+    std::string story() const override;
     size_t numTextures;
     size_t textureRebindFrequency;
     size_t textureStateUpdateFrequency;
@@ -50,15 +50,15 @@ struct TexturesParams final : public RenderTestParams
 
 std::ostream &operator<<(std::ostream &os, const TexturesParams &params)
 {
-    os << params.suffix().substr(1);
+    os << params.backendAndStory().substr(1);
     return os;
 }
 
-std::string TexturesParams::suffix() const
+std::string TexturesParams::story() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::suffix();
+    strstr << RenderTestParams::story();
     strstr << "_" << numTextures << "_textures";
     strstr << "_" << textureRebindFrequency << "_rebind";
     strstr << "_" << textureStateUpdateFrequency << "_state";
@@ -292,7 +292,7 @@ TexturesParams D3D9Params(bool webglCompat)
 TexturesParams OpenGLOrGLESParams(bool webglCompat)
 {
     TexturesParams params;
-    params.eglParameters = egl_platform::OPENGL_OR_GLES(true);
+    params.eglParameters = egl_platform::OPENGL_OR_GLES_NULL();
     params.webgl         = webglCompat;
     return params;
 }

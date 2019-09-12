@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -69,8 +69,25 @@ const std::vector<OffsetBindingPointer<Buffer>> &TransformFeedbackState::getInde
     return mIndexedBuffers;
 }
 
-TransformFeedback::TransformFeedback(rx::GLImplFactory *implFactory, GLuint id, const Caps &caps)
-    : RefCountObject(id),
+GLsizeiptr TransformFeedbackState::getPrimitivesDrawn() const
+{
+    switch (mPrimitiveMode)
+    {
+        case gl::PrimitiveMode::Points:
+            return mVerticesDrawn;
+        case gl::PrimitiveMode::Lines:
+            return mVerticesDrawn / 2;
+        case gl::PrimitiveMode::Triangles:
+            return mVerticesDrawn / 3;
+        default:
+            return 0;
+    }
+}
+
+TransformFeedback::TransformFeedback(rx::GLImplFactory *implFactory,
+                                     TransformFeedbackID id,
+                                     const Caps &caps)
+    : RefCountObject(id.value),
       mState(caps.maxTransformFeedbackSeparateAttributes),
       mImplementation(implFactory->createTransformFeedback(mState))
 {
@@ -199,7 +216,7 @@ void TransformFeedback::onVerticesDrawn(const Context *context, GLsizei count, G
     {
         if (buffer.get() != nullptr)
         {
-            buffer->onTransformFeedback(context);
+            buffer->onDataChanged();
         }
     }
 }
@@ -220,9 +237,9 @@ void TransformFeedback::bindProgram(const Context *context, Program *program)
     }
 }
 
-bool TransformFeedback::hasBoundProgram(GLuint program) const
+bool TransformFeedback::hasBoundProgram(ShaderProgramID program) const
 {
-    return mState.mProgram != nullptr && mState.mProgram->id() == program;
+    return mState.mProgram != nullptr && mState.mProgram->id().value == program.value;
 }
 
 angle::Result TransformFeedback::detachBuffer(const Context *context, GLuint bufferName)
@@ -289,12 +306,7 @@ bool TransformFeedback::buffersBoundForOtherUse() const
     return false;
 }
 
-rx::TransformFeedbackImpl *TransformFeedback::getImplementation()
-{
-    return mImplementation;
-}
-
-const rx::TransformFeedbackImpl *TransformFeedback::getImplementation() const
+rx::TransformFeedbackImpl *TransformFeedback::getImplementation() const
 {
     return mImplementation;
 }

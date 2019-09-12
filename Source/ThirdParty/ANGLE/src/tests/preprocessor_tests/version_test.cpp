@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,11 +19,26 @@ TEST_F(VersionTest, Valid)
     const char *expected = "\n";
 
     using testing::_;
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
     preprocess(str, expected);
+}
+
+// Test for Desktop GL Shaders
+TEST_F(VersionTest, GLSpec)
+{
+    const char *str      = "#version 330 core\n";
+    const char *expected = "\n";
+
+    using testing::_;
+    EXPECT_CALL(mDirectiveHandler,
+                handleVersion(pp::SourceLocation(0, 1), 330, SH_GL_COMPATIBILITY_SPEC));
+    // No error or warning.
+    EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
+
+    preprocess(str, expected, SH_GL_COMPATIBILITY_SPEC);
 }
 
 TEST_F(VersionTest, CommentsIgnored)
@@ -41,7 +56,7 @@ TEST_F(VersionTest, CommentsIgnored)
     const char *expected = "\n";
 
     using testing::_;
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -55,7 +70,7 @@ TEST_F(VersionTest, MissingNewline)
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC));
     // Error reported about EOF.
     EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_EOF_IN_DIRECTIVE, _, _));
 
@@ -72,7 +87,7 @@ TEST_F(VersionTest, AfterComments)
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200, SH_GLES2_SPEC));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -89,7 +104,7 @@ TEST_F(VersionTest, AfterWhitespace)
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200, SH_GLES2_SPEC));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -183,7 +198,7 @@ TEST_P(InvalidVersionTest, Identified)
 
     using testing::_;
     // No handleVersion call.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(_, _)).Times(0);
+    EXPECT_CALL(mDirectiveHandler, handleVersion(_, _, _)).Times(0);
     // Invalid version directive call.
     EXPECT_CALL(mDiagnostics, print(param.id, pp::SourceLocation(0, 1), _));
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,6 +13,7 @@
 #include "image_util/generatemip.h"
 #include "image_util/loadimage.h"
 
+#include "anglebase/no_destructor.h"
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
 #include "libANGLE/renderer/d3d/d3d9/vertexconversion.h"
 
@@ -265,12 +266,12 @@ static inline void InsertD3D9FormatInfo(D3D9FormatMap *map,
     info.texFormat    = texFormat;
     info.renderFormat = renderFormat;
 
-    static const InternalFormatInitialzerMap dataInitializationMap =
-        BuildInternalFormatInitialzerMap();
+    static const angle::base::NoDestructor<InternalFormatInitialzerMap> dataInitializationMap(
+        BuildInternalFormatInitialzerMap());
     InternalFormatInitialzerMap::const_iterator dataInitIter =
-        dataInitializationMap.find(internalFormat);
+        dataInitializationMap->find(internalFormat);
     info.dataInitializerFunction =
-        (dataInitIter != dataInitializationMap.end()) ? dataInitIter->second : nullptr;
+        (dataInitIter != dataInitializationMap->end()) ? dataInitIter->second : nullptr;
 
     info.loadFunction = loadFunction;
 
@@ -331,10 +332,10 @@ static D3D9FormatMap BuildD3D9FormatMap()
     InsertD3D9FormatInfo(&map, GL_BGRA4_ANGLEX,                     D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadBGRA4ToBGRA8                          );
     InsertD3D9FormatInfo(&map, GL_BGR5_A1_ANGLEX,                   D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadBGR5A1ToBGRA8                         );
 
-    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGB_S3TC_DXT1_EXT,     D3DFMT_DXT1,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4,  8>          );
-    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,    D3DFMT_DXT1,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4,  8>          );
-    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE,  D3DFMT_DXT3,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 16>          );
-    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE,  D3DFMT_DXT5,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 16>          );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGB_S3TC_DXT1_EXT,     D3DFMT_DXT1,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1,  8>       );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,    D3DFMT_DXT1,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1,  8>       );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE,  D3DFMT_DXT3,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1, 16>       );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE,  D3DFMT_DXT5,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1, 16>       );
 
     // These formats require checking if the renderer supports D3DFMT_L8 or D3DFMT_A8L8 and
     // then changing the format and loading function appropriately.
@@ -347,9 +348,9 @@ static D3D9FormatMap BuildD3D9FormatMap()
 
 const TextureFormat &GetTextureFormatInfo(GLenum internalFormat)
 {
-    static const D3D9FormatMap formatMap = BuildD3D9FormatMap();
-    D3D9FormatMap::const_iterator iter   = formatMap.find(internalFormat);
-    if (iter != formatMap.end())
+    static const angle::base::NoDestructor<D3D9FormatMap> formatMap(BuildD3D9FormatMap());
+    D3D9FormatMap::const_iterator iter = formatMap->find(internalFormat);
+    if (iter != formatMap->end())
     {
         return iter->second;
     }

@@ -45,6 +45,7 @@ extern int yydebug;
 
 #define YYLTYPE TSourceLoc
 #define YYLTYPE_IS_DECLARED 1
+#define YYLTYPE_IS_TRIVIAL 1
 
 /* Token type.  */
 #ifndef YYTOKENTYPE

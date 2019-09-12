@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -41,25 +41,126 @@
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/SymbolTable_autogen.h"
 
+enum class Shader
+{
+    ALL,
+    FRAGMENT,      // GL_FRAGMENT_SHADER
+    VERTEX,        // GL_VERTEX_SHADER
+    COMPUTE,       // GL_COMPUTE_SHADER
+    GEOMETRY,      // GL_GEOMETRY_SHADER
+    GEOMETRY_EXT,  // GL_GEOMETRY_SHADER_EXT
+    NOT_COMPUTE
+};
+
 namespace sh
 {
-
-// Define ESymbolLevel as int rather than an enum so that we can do arithmetic on it.
-typedef int ESymbolLevel;
-const int COMMON_BUILTINS  = 0;
-const int ESSL1_BUILTINS   = 1;
-const int ESSL3_BUILTINS   = 2;
-const int ESSL3_1_BUILTINS = 3;
-// GLSL_BUILTINS are desktop GLSL builtins that don't exist in ESSL but are used to implement
-// features in ANGLE's GLSL backend. They're not visible to the parser.
-const int GLSL_BUILTINS      = 4;
-const int LAST_BUILTIN_LEVEL = GLSL_BUILTINS;
 
 struct UnmangledBuiltIn
 {
     constexpr UnmangledBuiltIn(TExtension extension) : extension(extension) {}
 
     TExtension extension;
+};
+
+using VarPointer = TSymbol *(TSymbolTableBase::*);
+
+using ValidateExtension = int(ShBuiltInResources::*);
+
+struct SymbolEntry
+{
+    constexpr SymbolEntry(ImmutableString &&name,
+                          const TSymbol *symbol,
+                          VarPointer var,
+                          int esslVersion,
+                          int glslVersion,
+                          Shader shaderType,
+                          const TSymbol *esslExtSymbol,
+                          VarPointer esslExtVar,
+                          int esslExtVersion,
+                          Shader esslExtShaderType,
+                          ValidateExtension esslExtension,
+                          const TSymbol *glslExtSymbol,
+                          VarPointer glslExtVar,
+                          int glslExtVersion,
+                          Shader glslExtShaderType,
+                          ValidateExtension glslExtension,
+                          const TSymbol *esslExtSymbol2    = nullptr,
+                          VarPointer esslExtVar2           = nullptr,
+                          int esslExtVersion2              = -1,
+                          Shader esslExtShaderType2        = Shader::ALL,
+                          ValidateExtension esslExtension2 = nullptr)
+        : name(std::move(name)),
+          symbol(symbol),
+          var(var),
+          esslVersion(esslVersion),
+          glslVersion(glslVersion),
+          shaderType(shaderType),
+          esslExtSymbol(esslExtSymbol),
+          esslExtVar(esslExtVar),
+          esslExtVersion(esslExtVersion),
+          esslExtShaderType(esslExtShaderType),
+          esslExtension(esslExtension),
+          glslExtSymbol(glslExtSymbol),
+          glslExtVar(glslExtVar),
+          glslExtVersion(glslExtVersion),
+          glslExtShaderType(glslExtShaderType),
+          glslExtension(glslExtension),
+          esslExtSymbol2(esslExtSymbol2),
+          esslExtVar2(esslExtVar2),
+          esslExtVersion2(esslExtVersion2),
+          esslExtShaderType2(esslExtShaderType2),
+          esslExtension2(esslExtension2)
+    {}
+
+    ImmutableString name;
+
+    const TSymbol *symbol;
+    VarPointer var;
+    int esslVersion;
+    int glslVersion;
+    Shader shaderType;
+
+    const TSymbol *esslExtSymbol;
+    VarPointer esslExtVar;
+    int esslExtVersion;
+    Shader esslExtShaderType;
+    ValidateExtension esslExtension;
+
+    const TSymbol *glslExtSymbol;
+    VarPointer glslExtVar;
+    int glslExtVersion;
+    Shader glslExtShaderType;
+    ValidateExtension glslExtension;
+
+    const TSymbol *esslExtSymbol2;
+    VarPointer esslExtVar2;
+    int esslExtVersion2;
+    Shader esslExtShaderType2;
+    ValidateExtension esslExtension2;
+};
+
+struct UnmangledEntry
+{
+    constexpr UnmangledEntry(ImmutableString &&name,
+                             const UnmangledBuiltIn *esslUnmangled,
+                             const UnmangledBuiltIn *glslUnmangled,
+                             int esslVersion,
+                             int glslVersion,
+                             Shader shaderType)
+        : name(std::move(name)),
+          esslUnmangled(esslUnmangled),
+          glslUnmangled(glslUnmangled),
+          esslVersion(esslVersion),
+          glslVersion(glslVersion),
+          shaderType(shaderType)
+    {}
+
+    ImmutableString name;
+    const UnmangledBuiltIn *esslUnmangled;
+    const UnmangledBuiltIn *glslUnmangled;
+    int esslVersion;
+    int glslVersion;
+    Shader shaderType;
 };
 
 class TSymbolTable : angle::NonCopyable, TSymbolTableBase
@@ -116,8 +217,11 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
     TFunction *findUserDefinedFunction(const ImmutableString &name) const;
 
     const TSymbol *findGlobal(const ImmutableString &name) const;
+    const TSymbol *findGlobalWithConversion(const std::vector<ImmutableString> &names) const;
 
     const TSymbol *findBuiltIn(const ImmutableString &name, int shaderVersion) const;
+    const TSymbol *findBuiltInWithConversion(const std::vector<ImmutableString> &names,
+                                             int shaderVersion) const;
 
     void setDefaultPrecision(TBasicType type, TPrecision prec);
 
@@ -169,6 +273,12 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
 
     VariableMetadata *getOrCreateVariableMetadata(const TVariable &variable);
 
+    const TSymbol *getSymbol(SymbolEntry entry, const ImmutableString &name, int version) const;
+
+    const UnmangledBuiltIn *getUnmangled(UnmangledEntry entry,
+                                         const ImmutableString &name,
+                                         int version) const;
+
     std::vector<std::unique_ptr<TSymbolTableLevel>> mTable;
 
     // There's one precision stack level for predefined precisions and then one level for each scope
@@ -183,6 +293,7 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
     static const int kLastBuiltInId;
 
     sh::GLenum mShaderType;
+    ShShaderSpec mShaderSpec;
     ShBuiltInResources mResources;
 
     // Indexed by unique id. Map instead of vector since the variables are fairly sparse.

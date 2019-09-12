@@ -33,10 +33,8 @@ class ProgramBinaryTest : public ANGLETest
         forceNewDisplay();
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
         if (mProgram == 0)
         {
@@ -51,11 +49,10 @@ class ProgramBinaryTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteProgram(mProgram);
         glDeleteBuffers(1, &mBuffer);
-        ANGLETest::TearDown();
     }
 
     GLint getAvailableProgramBinaryFormatCount() const
@@ -82,6 +79,62 @@ class ProgramBinaryTest : public ANGLETest
         }
 
         return true;
+    }
+
+    void saveAndLoadProgram(GLuint programToSave, GLuint loadedProgram)
+    {
+        GLint programLength = 0;
+        GLint writtenLength = 0;
+        GLenum binaryFormat = 0;
+
+        glGetProgramiv(programToSave, GL_PROGRAM_BINARY_LENGTH_OES, &programLength);
+        EXPECT_GL_NO_ERROR();
+
+        std::vector<uint8_t> binary(programLength);
+        glGetProgramBinaryOES(programToSave, programLength, &writtenLength, &binaryFormat,
+                              binary.data());
+        EXPECT_GL_NO_ERROR();
+
+        // The lengths reported by glGetProgramiv and glGetProgramBinaryOES should match
+        EXPECT_EQ(programLength, writtenLength);
+
+        if (writtenLength)
+        {
+            glProgramBinaryOES(loadedProgram, binaryFormat, binary.data(), writtenLength);
+
+            EXPECT_GL_NO_ERROR();
+
+            GLint linkStatus;
+            glGetProgramiv(loadedProgram, GL_LINK_STATUS, &linkStatus);
+            if (linkStatus == 0)
+            {
+                GLint infoLogLength;
+                glGetProgramiv(loadedProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+                if (infoLogLength > 0)
+                {
+                    std::vector<GLchar> infoLog(infoLogLength);
+                    glGetProgramInfoLog(loadedProgram, static_cast<GLsizei>(infoLog.size()),
+                                        nullptr, &infoLog[0]);
+                    FAIL() << "program link failed: " << &infoLog[0];
+                }
+                else
+                {
+                    FAIL() << "program link failed.";
+                }
+            }
+            else
+            {
+                glUseProgram(loadedProgram);
+                glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+
+                glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 8, nullptr);
+                glEnableVertexAttribArray(0);
+                glDrawArrays(GL_POINTS, 0, 1);
+
+                EXPECT_GL_NO_ERROR();
+            }
+        }
     }
 
     GLuint mProgram;
@@ -148,60 +201,32 @@ TEST_P(ProgramBinaryTest, SaveAndLoadBinary)
         return;
     }
 
-    GLint programLength = 0;
-    GLint writtenLength = 0;
-    GLenum binaryFormat = 0;
+    GLuint programToLoad = glCreateProgram();
 
-    glGetProgramiv(mProgram, GL_PROGRAM_BINARY_LENGTH_OES, &programLength);
+    saveAndLoadProgram(mProgram, programToLoad);
+
+    glDeleteProgram(programToLoad);
     EXPECT_GL_NO_ERROR();
+}
 
-    std::vector<uint8_t> binary(programLength);
-    glGetProgramBinaryOES(mProgram, programLength, &writtenLength, &binaryFormat, binary.data());
-    EXPECT_GL_NO_ERROR();
-
-    // The lengths reported by glGetProgramiv and glGetProgramBinaryOES should match
-    EXPECT_EQ(programLength, writtenLength);
-
-    if (writtenLength)
+// This tests the ability to successfully save and load a program binary and then
+// save and load from the same program that was loaded.
+TEST_P(ProgramBinaryTest, SaveAndLoadBinaryTwice)
+{
+    if (!supported())
     {
-        GLuint program2 = glCreateProgram();
-        glProgramBinaryOES(program2, binaryFormat, binary.data(), writtenLength);
-
-        EXPECT_GL_NO_ERROR();
-
-        GLint linkStatus;
-        glGetProgramiv(program2, GL_LINK_STATUS, &linkStatus);
-        if (linkStatus == 0)
-        {
-            GLint infoLogLength;
-            glGetProgramiv(program2, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-            if (infoLogLength > 0)
-            {
-                std::vector<GLchar> infoLog(infoLogLength);
-                glGetProgramInfoLog(program2, static_cast<GLsizei>(infoLog.size()), nullptr,
-                                    &infoLog[0]);
-                FAIL() << "program link failed: " << &infoLog[0];
-            }
-            else
-            {
-                FAIL() << "program link failed.";
-            }
-        }
-        else
-        {
-            glUseProgram(program2);
-            glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-
-            glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 8, nullptr);
-            glEnableVertexAttribArray(0);
-            glDrawArrays(GL_POINTS, 0, 1);
-
-            EXPECT_GL_NO_ERROR();
-        }
-
-        glDeleteProgram(program2);
+        return;
     }
+
+    GLuint programToLoad  = glCreateProgram();
+    GLuint programToLoad2 = glCreateProgram();
+
+    saveAndLoadProgram(mProgram, programToLoad);
+    saveAndLoadProgram(programToLoad, programToLoad2);
+
+    glDeleteProgram(programToLoad);
+    glDeleteProgram(programToLoad2);
+    EXPECT_GL_NO_ERROR();
 }
 
 // Ensures that we init the compiler before calling ProgramBinary.
@@ -227,8 +252,7 @@ TEST_P(ProgramBinaryTest, CallProgramBinaryBeforeLink)
     ASSERT_GL_NO_ERROR();
 
     // Shutdown and restart GL entirely.
-    TearDown();
-    SetUp();
+    recreateTestFixture();
 
     ANGLE_GL_BINARY_OES_PROGRAM(binaryProgram, binaryBlob, binaryFormat);
     ASSERT_GL_NO_ERROR();
@@ -256,7 +280,8 @@ ANGLE_INSTANTIATE_TEST(ProgramBinaryTest,
                        ES3_D3D11(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
-                       ES2_VULKAN());
+                       ES2_VULKAN(),
+                       ES3_VULKAN());
 
 class ProgramBinaryES3Test : public ANGLETest
 {
@@ -363,7 +388,243 @@ TEST_P(ProgramBinaryES3Test, UniformBlockBindingNoDraw)
     testBinaryAndUBOBlockIndexes(false);
 }
 
-ANGLE_INSTANTIATE_TEST(ProgramBinaryES3Test, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+// Tests the difference between uniform static and active use
+TEST_P(ProgramBinaryES3Test, ActiveUniformShader)
+{
+    // We can't run the test if no program binary formats are supported.
+    GLint binaryFormatCount = 0;
+    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
+    ANGLE_SKIP_TEST_IF(!binaryFormatCount);
+
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "in vec4 position;\n"
+        "void main() {\n"
+        "    gl_Position = position;\n"
+        "}";
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "uniform float values[2];\n"
+        "out vec4 color;\n"
+        "bool isZero(float value) {\n"
+        "    return value == 0.0f;\n"
+        "}\n"
+        "void main() {\n"
+        "    color = isZero(values[1]) ? vec4(1.0f,0.0f,0.0f,1.0f) : vec4(0.0f,1.0f,0.0f,1.0f);\n"
+        "}";
+
+    // Init and draw with the program.
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    GLint valuesLoc = glGetUniformLocation(program.get(), "values");
+    ASSERT_NE(-1, valuesLoc);
+
+    glUseProgram(program.get());
+    GLfloat values[2] = {0.5f, 1.0f};
+    glUniform1fv(valuesLoc, 2, values);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    drawQuad(program.get(), "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Read back the binary.
+    GLint programLength = 0;
+    glGetProgramiv(program.get(), GL_PROGRAM_BINARY_LENGTH_OES, &programLength);
+    ASSERT_GL_NO_ERROR();
+
+    GLsizei readLength  = 0;
+    GLenum binaryFormat = GL_NONE;
+    std::vector<uint8_t> binary(programLength);
+    glGetProgramBinary(program.get(), programLength, &readLength, &binaryFormat, binary.data());
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(static_cast<GLsizei>(programLength), readLength);
+
+    // Load a new program with the binary and draw.
+    ANGLE_GL_BINARY_ES3_PROGRAM(binaryProgram, binary, binaryFormat);
+
+    valuesLoc = glGetUniformLocation(program.get(), "values");
+    ASSERT_NE(-1, valuesLoc);
+
+    glUseProgram(binaryProgram.get());
+    GLfloat values2[2] = {0.1f, 1.0f};
+    glUniform1fv(valuesLoc, 2, values2);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    drawQuad(binaryProgram.get(), "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that uses many uniforms in the shaders
+TEST_P(ProgramBinaryES3Test, BinaryWithLargeUniformCount)
+{
+    // Suspecting AMD driver bug - failure seen on bots running on ATI GPU on Windows.
+    // http://anglebug.com/3721
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && IsWindows());
+
+    // We can't run the test if no program binary formats are supported.
+    GLint binaryFormatCount = 0;
+    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
+    ANGLE_SKIP_TEST_IF(!binaryFormatCount);
+
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "uniform float redVS; \n"
+        "uniform block0 {\n"
+        "    float val0;\n"
+        "};\n"
+        "uniform float greenVS; \n"
+        "uniform float blueVS; \n"
+        "in vec4 position;\n"
+        "out vec4 color;\n"
+        "void main() {\n"
+        "    gl_Position = position;\n"
+        "    color = vec4(redVS + val0, greenVS, blueVS, 1.0f);\n"
+        "}";
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "uniform float redFS; \n"
+        "uniform float greenFS; \n"
+        "uniform block1 {\n"
+        "    float val1;\n"
+        "    float val2;\n"
+        "};\n"
+        "uniform float blueFS; \n"
+        "in vec4 color;\n"
+        "out vec4 colorOut;\n"
+        "void main() {\n"
+        "    colorOut = vec4(color.r + redFS,\n"
+        "                    color.g + greenFS + val1,\n"
+        "                    color.b + blueFS + val2, \n"
+        "                    color.a);\n"
+        "}";
+
+    // Init and draw with the program.
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    float block0Data[4] = {-0.7f, 1.0f, 1.0f, 1.0f};
+    float block1Data[4] = {0.4f, -0.8f, 1.0f, 1.0f};
+    GLuint bindIndex0   = 5;
+    GLuint bindIndex1   = 2;
+
+    GLBuffer ubo0;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo0.get());
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(block0Data), &block0Data, GL_STATIC_DRAW);
+    glBindBufferRange(GL_UNIFORM_BUFFER, bindIndex0, ubo0.get(), 0, sizeof(block0Data));
+    ASSERT_GL_NO_ERROR();
+
+    GLBuffer ubo1;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo1.get());
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(block1Data), &block1Data, GL_STATIC_DRAW);
+    glBindBufferRange(GL_UNIFORM_BUFFER, bindIndex1, ubo1.get(), 0, sizeof(block1Data));
+    ASSERT_GL_NO_ERROR();
+
+    GLint block0Index = glGetUniformBlockIndex(program.get(), "block0");
+    ASSERT_NE(-1, block0Index);
+
+    GLint block1Index = glGetUniformBlockIndex(program.get(), "block1");
+    ASSERT_NE(-1, block1Index);
+
+    glUniformBlockBinding(program.get(), block0Index, bindIndex0);
+    glUniformBlockBinding(program.get(), block1Index, bindIndex1);
+    ASSERT_GL_NO_ERROR();
+
+    GLint redVSLoc = glGetUniformLocation(program.get(), "redVS");
+    ASSERT_NE(-1, redVSLoc);
+    GLint greenVSLoc = glGetUniformLocation(program.get(), "greenVS");
+    ASSERT_NE(-1, greenVSLoc);
+    GLint blueVSLoc = glGetUniformLocation(program.get(), "blueVS");
+    ASSERT_NE(-1, blueVSLoc);
+    GLint redFSLoc = glGetUniformLocation(program.get(), "redFS");
+    ASSERT_NE(-1, redFSLoc);
+    GLint greenFSLoc = glGetUniformLocation(program.get(), "greenFS");
+    ASSERT_NE(-1, greenFSLoc);
+    GLint blueFSLoc = glGetUniformLocation(program.get(), "blueFS");
+    ASSERT_NE(-1, blueFSLoc);
+
+    glUseProgram(program.get());
+    glUniform1f(redVSLoc, 0.6f);
+    glUniform1f(greenVSLoc, 0.2f);
+    glUniform1f(blueVSLoc, 1.1f);
+    glUniform1f(redFSLoc, 0.1f);
+    glUniform1f(greenFSLoc, 0.4f);
+    glUniform1f(blueFSLoc, 0.7f);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    drawQuad(program.get(), "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+
+    // Read back the binary.
+    GLint programLength = 0;
+    glGetProgramiv(program.get(), GL_PROGRAM_BINARY_LENGTH_OES, &programLength);
+    ASSERT_GL_NO_ERROR();
+
+    GLsizei readLength  = 0;
+    GLenum binaryFormat = GL_NONE;
+    std::vector<uint8_t> binary(programLength);
+    glGetProgramBinary(program.get(), programLength, &readLength, &binaryFormat, binary.data());
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(static_cast<GLsizei>(programLength), readLength);
+
+    // Load a new program with the binary and draw.
+    ANGLE_GL_BINARY_ES3_PROGRAM(binaryProgram, binary, binaryFormat);
+
+    redVSLoc = glGetUniformLocation(program.get(), "redVS");
+    ASSERT_NE(-1, redVSLoc);
+    greenVSLoc = glGetUniformLocation(program.get(), "greenVS");
+    ASSERT_NE(-1, greenVSLoc);
+    blueVSLoc = glGetUniformLocation(program.get(), "blueVS");
+    ASSERT_NE(-1, blueVSLoc);
+    redFSLoc = glGetUniformLocation(program.get(), "redFS");
+    ASSERT_NE(-1, redFSLoc);
+    greenFSLoc = glGetUniformLocation(program.get(), "greenFS");
+    ASSERT_NE(-1, greenFSLoc);
+    blueFSLoc = glGetUniformLocation(program.get(), "blueFS");
+    ASSERT_NE(-1, blueFSLoc);
+
+    glUseProgram(binaryProgram.get());
+    glUniform1f(redVSLoc, 0.2f);
+    glUniform1f(greenVSLoc, -0.6f);
+    glUniform1f(blueVSLoc, 1.0f);
+    glUniform1f(redFSLoc, 1.5f);
+    glUniform1f(greenFSLoc, 0.2f);
+    glUniform1f(blueFSLoc, 0.8f);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    drawQuad(binaryProgram.get(), "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+ANGLE_INSTANTIATE_TEST(ProgramBinaryES3Test,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_VULKAN());
 
 class ProgramBinaryES31Test : public ANGLETest
 {
@@ -476,7 +737,7 @@ void main() {
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
-    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
     void *mappedBuffer =
@@ -565,10 +826,8 @@ class ProgramBinaryTransformFeedbackTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] = R"(#version 300 es
 in vec4 inputAttribute;
 out vec4 outputVarying;
@@ -598,12 +857,7 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
-    {
-        glDeleteProgram(mProgram);
-
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { glDeleteProgram(mProgram); }
 
     GLint getAvailableProgramBinaryFormatCount() const
     {
@@ -622,6 +876,9 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_get_program_binary"));
 
     ANGLE_SKIP_TEST_IF(!getAvailableProgramBinaryFormatCount());
+
+    // http://anglebug.com/3690
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsPixel2() && IsVulkan());
 
     std::vector<uint8_t> binary(0);
     GLint programLength = 0;
@@ -665,7 +922,7 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(ProgramBinaryTransformFeedbackTest, ES3_D3D11(), ES3_OPENGL());
+ANGLE_INSTANTIATE_TEST(ProgramBinaryTransformFeedbackTest, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
 
 // For the ProgramBinariesAcrossPlatforms tests, we need two sets of params:
 // - a set to save the program binary
@@ -714,7 +971,8 @@ class ProgramBinariesAcrossPlatforms : public testing::TestWithParam<PlatformsWi
             FAIL() << "Failed to create OS window";
         }
 
-        mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME));
+        mEntryPointsLib.reset(
+            angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
     }
 
     EGLWindow *createAndInitEGLWindow(angle::PlatformParameters &param)
@@ -899,9 +1157,6 @@ ANGLE_INSTANTIATE_TEST(ProgramBinariesAcrossPlatforms,
                        //                     | using these params | using these params    | link result
                        PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D11(),            true         ), // Loading + reloading binary should work
                        PlatformsWithLinkResult(ES3_D3D11(),         ES3_D3D11(),            true         ), // Loading + reloading binary should work
-                       PlatformsWithLinkResult(ES2_D3D11_FL11_0(),  ES2_D3D11_FL9_3(),      false        ), // Switching feature level shouldn't work
-                       PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D11_WARP(),       false        ), // Switching from hardware to software shouldn't work
-                       PlatformsWithLinkResult(ES2_D3D11_FL9_3(),   ES2_D3D11_FL9_3_WARP(), false        ), // Switching from hardware to software shouldn't work for FL9 either
                        PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D9(),             false        ), // Switching from D3D11 to D3D9 shouldn't work
                        PlatformsWithLinkResult(ES2_D3D9(),          ES2_D3D11(),            false        ), // Switching from D3D9 to D3D11 shouldn't work
                        PlatformsWithLinkResult(ES2_D3D11(),         ES3_D3D11(),            false        ), // Switching to newer client version shouldn't work

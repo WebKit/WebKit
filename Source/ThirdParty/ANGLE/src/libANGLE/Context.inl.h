@@ -46,6 +46,18 @@ ANGLE_INLINE void MarkTransformFeedbackBufferUsage(const Context *context,
     }
 }
 
+ANGLE_INLINE void MarkShaderStorageBufferUsage(const Context *context)
+{
+    for (size_t index : context->getStateCache().getActiveShaderStorageBufferIndices())
+    {
+        gl::Buffer *buffer = context->getState().getIndexedShaderStorageBuffer(index).get();
+        if (buffer)
+        {
+            buffer->onDataChanged();
+        }
+    }
+}
+
 // Return true if the draw is a no-op, else return false.
 //  A no-op draw occurs if the count of vertices is less than the minimum required to
 //  have a valid primitive for this mode (0 for points, 0-1 for lines, 0-2 for tris).
@@ -122,7 +134,7 @@ ANGLE_INLINE void StateCache::onBufferBindingChange(Context *context)
     updateBasicDrawElementsError();
 }
 
-ANGLE_INLINE void Context::bindBuffer(BufferBinding target, GLuint buffer)
+ANGLE_INLINE void Context::bindBuffer(BufferBinding target, BufferID buffer)
 {
     Buffer *bufferObject =
         mState.mBufferManager->checkBufferAllocation(mImplementation.get(), buffer);

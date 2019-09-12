@@ -43,13 +43,13 @@ class DisplayGL : public DisplayImpl
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
+    gl::Version getMaxConformantESVersion() const override;
+
   protected:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 
   private:
     virtual egl::Error makeCurrentSurfaceless(gl::Context *context);
-
-    egl::Surface *mCurrentDrawSurface;
 };
 
 }  // namespace rx

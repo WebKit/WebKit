@@ -1,0 +1,85 @@
+{
+    "description": [
+        "Copyright 2019 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "overlay_widgets.json: Layout of Overlay widgets.",
+        "",
+        "Data for every overlay widget 'Widget' is a map with the following keys:",
+        "",
+        " - type: one of WidgetType types (with constructor params), such as 'PerSecond' or",
+        "         'RunningGraph(64)'",
+        " - color: in [R,G,B,A] format where every value is in [0,255]",
+        " - coords: in [X,Y] which is the distance from the edges of the window, with negative",
+        "           values representing distance from the right/bottom edge.  If a value is given",
+        "           in the form of 'Widget2.<edge>.<mode>', the calculated value for <edge> in",
+        "           Widget2 is used.  <edge> is one of:",
+        "            - 'left', 'right': valid for x",
+        "            - 'top', 'bottom': valid for y",
+        "           <mode> is one of:",
+        "            - 'align': the requested value is used",
+        "            - 'adjacent': the value is calculated such that two widgets become adjacent",
+        " - font: for Text widgets, one of 'large', 'medium' and 'small'",
+        " - length: for Text widgets, maximum number of characters for this widget",
+        " - bar_width: for Graph widgets, size of each graph bar.",
+        " - height: for Graph widgets, the height of the graph.",
+        " - text: for Graph widgets, data for the attached Text widget.  This is a map with the same",
+        "         Text keys as above except type, which is implicitly Text."
+    ],
+    "widgets": [
+        {
+            "name": "FPS",
+            "type": "PerSecond",
+            "color": [127, 191, 255, 255],
+            "coords": [10, 10],
+            "font": "medium",
+            "length": 12
+        },
+        {
+            "name": "VulkanLastValidationMessage",
+            "type": "Text",
+            "color": [255, 0, 0, 255],
+            "coords": [10, -10],
+            "font": "small",
+            "length": 150
+        },
+        {
+            "name": "VulkanValidationMessageCount",
+            "type": "Count",
+            "color": [255, 0, 0, 255],
+            "coords": [10, "VulkanLastValidationMessage.top.adjacent"],
+            "font": "small",
+            "length": 25
+        },
+        {
+            "name": "VulkanCommandGraphSize",
+            "type": "RunningGraph(60)",
+            "color": [75, 200, 0, 200],
+            "coords": [10, 100],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [75, 200, 0, 255],
+                "coords": ["VulkanCommandGraphSize.left.align", "VulkanCommandGraphSize.top.adjacent"],
+                "font": "small",
+                "length": 40
+            }
+        },
+        {
+            "name": "VulkanSecondaryCommandBufferPoolWaste",
+            "type": "RunningHistogram(50)",
+            "color": [255, 200, 75, 200],
+            "coords": [-50, 100],
+            "bar_width": 6,
+            "height": 100,
+            "description": {
+                "color": [255, 200, 75, 255],
+                "coords": ["VulkanSecondaryCommandBufferPoolWaste.left.align",
+                           "VulkanSecondaryCommandBufferPoolWaste.top.adjacent"],
+                "font": "small",
+                "length": 40
+            }
+        }
+    ]
+}

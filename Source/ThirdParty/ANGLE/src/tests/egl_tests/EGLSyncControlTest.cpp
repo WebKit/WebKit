@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -14,12 +14,6 @@
 #include "util/com_utils.h"
 
 using namespace angle;
-
-typedef EGLBoolean(EGLAPIENTRYP PFNEGLGETSYNCVALUESCHROMIUMPROC)(EGLDisplay dpy,
-                                                                 EGLSurface surface,
-                                                                 EGLuint64KHR *ust,
-                                                                 EGLuint64KHR *msc,
-                                                                 EGLuint64KHR *sbc);
 
 class EGLSyncControlTest : public testing::Test
 {
@@ -54,9 +48,6 @@ class EGLSyncControlTest : public testing::Test
                 mDeviceCreationD3D11ExtAvailable = true;
             }
         }
-
-        eglGetSyncValuesCHROMIUM = reinterpret_cast<PFNEGLGETSYNCVALUESCHROMIUMPROC>(
-            eglGetProcAddress("eglGetSyncValuesCHROMIUM"));
     }
 
     void TearDown() override
@@ -173,11 +164,10 @@ class EGLSyncControlTest : public testing::Test
 
     OSWindow *mOSWindow = nullptr;
 
-    EGLDisplay mDisplay                                      = EGL_NO_DISPLAY;
-    EGLSurface mSurface                                      = EGL_NO_SURFACE;
-    EGLContext mContext                                      = EGL_NO_CONTEXT;
-    EGLConfig mConfig                                        = 0;
-    PFNEGLGETSYNCVALUESCHROMIUMPROC eglGetSyncValuesCHROMIUM = nullptr;
+    EGLDisplay mDisplay = EGL_NO_DISPLAY;
+    EGLSurface mSurface = EGL_NO_SURFACE;
+    EGLContext mContext = EGL_NO_CONTEXT;
+    EGLConfig mConfig   = 0;
 };
 
 // Basic test for eglGetSyncValuesCHROMIUM extension. Verifies that eglGetSyncValuesCHROMIUM

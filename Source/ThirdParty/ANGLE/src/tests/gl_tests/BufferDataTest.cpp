@@ -31,10 +31,8 @@ class BufferDataTest : public ANGLETest
         mAttribLocation = -1;
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] = R"(attribute vec4 position;
 attribute float in_attrib;
 varying float v_attrib;
@@ -69,12 +67,10 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteBuffers(1, &mBuffer);
         glDeleteProgram(mProgram);
-
-        ANGLETest::TearDown();
     }
 
     GLuint mBuffer;
@@ -82,7 +78,14 @@ void main()
     GLint mAttribLocation;
 };
 
-TEST_P(BufferDataTest, NULLData)
+// Disabled in debug because it's way too slow.
+#if !defined(NDEBUG)
+#    define MAYBE_NULLData DISABLED_NULLData
+#else
+#    define MAYBE_NULLData NULLData
+#endif  // !defined(NDEBUG)
+
+TEST_P(BufferDataTest, MAYBE_NULLData)
 {
     glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
     EXPECT_GL_NO_ERROR();
@@ -233,10 +236,8 @@ class IndexedBufferCopyTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] = R"(attribute vec3 in_attrib;
 varying vec3 v_attrib;
 void main()
@@ -273,13 +274,11 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteBuffers(2, mBuffers);
         glDeleteBuffers(1, &mElementBuffer);
         glDeleteProgram(mProgram);
-
-        ANGLETest::TearDown();
     }
 
     GLuint mBuffers[2];
@@ -358,7 +357,7 @@ TEST_P(BufferDataTestES3, BufferResizing)
 
     // Resize the buffer
     // To trigger the bug, the buffer need to be big enough because some hardware copy buffers
-    // by chunks of pages instead of the minimum number of bytes neeeded.
+    // by chunks of pages instead of the minimum number of bytes needed.
     const size_t numBytes = 4096 * 4;
     glBufferData(GL_ARRAY_BUFFER, numBytes, nullptr, GL_STATIC_DRAW);
 
@@ -407,6 +406,68 @@ TEST_P(BufferDataTestES3, BufferResizing)
 
     glDeleteBuffers(1, &readBuffer);
 
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify the functionality of glMapBufferRange()'s GL_MAP_UNSYNCHRONIZED_BIT
+// NOTE: On Vulkan, if we ever use memory that's not `VK_MEMORY_PROPERTY_HOST_COHERENT_BIT`, then
+// this could incorrectly pass.
+TEST_P(BufferDataTestES3, MapBufferRangeUnsynchronizedBit)
+{
+    // We can currently only control the behavior of the Vulkan backend's synchronizing operation's
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    const size_t numElements = 10;
+    std::vector<uint8_t> srcData(numElements);
+    std::vector<uint8_t> dstData(numElements);
+
+    for (uint8_t i = 0; i < srcData.size(); i++)
+    {
+        srcData[i] = i;
+    }
+    for (uint8_t i = 0; i < dstData.size(); i++)
+    {
+        dstData[i] = static_cast<uint8_t>(i + dstData.size());
+    }
+
+    GLBuffer srcBuffer;
+    GLBuffer dstBuffer;
+
+    glBindBuffer(GL_COPY_READ_BUFFER, srcBuffer);
+    ASSERT_GL_NO_ERROR();
+    glBindBuffer(GL_COPY_WRITE_BUFFER, dstBuffer);
+    ASSERT_GL_NO_ERROR();
+
+    glBufferData(GL_COPY_READ_BUFFER, srcData.size(), srcData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+    glBufferData(GL_COPY_WRITE_BUFFER, dstData.size(), dstData.data(), GL_STATIC_READ);
+    ASSERT_GL_NO_ERROR();
+
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, numElements);
+
+    // With GL_MAP_UNSYNCHRONIZED_BIT, we expect the data to be stale and match dstData
+    // NOTE: We are specifying GL_MAP_WRITE_BIT so we can use GL_MAP_UNSYNCHRONIZED_BIT. This is
+    // venturing into undefined behavior, since we are actually planning on reading from this
+    // pointer.
+    auto *data = reinterpret_cast<uint8_t *>(glMapBufferRange(
+        GL_COPY_WRITE_BUFFER, 0, numElements, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+    EXPECT_GL_NO_ERROR();
+    for (size_t i = 0; i < numElements; ++i)
+    {
+        EXPECT_EQ(dstData[i], data[i]);
+    }
+    glUnmapBuffer(GL_COPY_WRITE_BUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    // Without GL_MAP_UNSYNCHRONIZED_BIT, we expect the data to be copied and match srcData
+    data = reinterpret_cast<uint8_t *>(
+        glMapBufferRange(GL_COPY_WRITE_BUFFER, 0, numElements, GL_MAP_READ_BIT));
+    EXPECT_GL_NO_ERROR();
+    for (size_t i = 0; i < numElements; ++i)
+    {
+        EXPECT_EQ(srcData[i], data[i]);
+    }
+    glUnmapBuffer(GL_COPY_WRITE_BUFFER);
     EXPECT_GL_NO_ERROR();
 }
 
@@ -483,8 +544,12 @@ ANGLE_INSTANTIATE_TEST(BufferDataTest,
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(BufferDataTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(IndexedBufferCopyTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(BufferDataTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(IndexedBufferCopyTest,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_VULKAN());
 
 #ifdef _WIN64
 
@@ -501,6 +566,9 @@ class BufferDataOverflowTest : public ANGLETest
 // See description above.
 TEST_P(BufferDataOverflowTest, VertexBufferIntegerOverflow)
 {
+    // http://anglebug.com/3786: flaky timeout on Win10 FYI x64 Release (NVIDIA GeForce GTX 1660)
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsD3D11());
+
     // These values are special, to trigger the rounding bug.
     unsigned int numItems       = 0x7FFFFFE;
     constexpr GLsizei bufferCnt = 8;

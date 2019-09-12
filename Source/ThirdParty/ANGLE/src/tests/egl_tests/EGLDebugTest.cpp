@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -17,11 +17,7 @@ namespace angle
 class EGLDebugTest : public ANGLETest
 {
   protected:
-    void TearDown() override
-    {
-        eglDebugMessageControlKHR(nullptr, nullptr);
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { eglDebugMessageControlKHR(nullptr, nullptr); }
 
     bool hasExtension() const { return IsEGLClientExtensionEnabled("EGL_KHR_debug"); }
 

@@ -6,17 +6,22 @@
 
 import("../../gni/angle.gni")
 
-glmark2_glad_common_sources = [
+_glmark2_glad_common_sources = [
   "src/src/glad/include/glad/egl.h",
+  "src/src/glad/include/glad/wgl.h",
   "src/src/glad/src/egl.c",
 ]
+
+if (is_win) {
+  _glmark2_glad_common_sources += [ "src/src/glad/src/wgl.c" ]
+}
 
 config("glmark2_glad_config") {
   include_dirs = [ "src/src/glad/include" ]
 }
 
 source_set("glmark2_glad_gles") {
-  sources = glmark2_glad_common_sources + [
+  sources = _glmark2_glad_common_sources + [
               "src/src/glad/include/glad/gles2.h",
               "src/src/glad/src/gles2.c",
             ]
@@ -24,7 +29,7 @@ source_set("glmark2_glad_gles") {
 }
 
 source_set("glmark2_glad_gl") {
-  sources = glmark2_glad_common_sources + [
+  sources = _glmark2_glad_common_sources + [
               "src/src/glad/include/glad/gl.h",
               "src/src/glad/src/gl.c",
             ]
@@ -104,6 +109,7 @@ source_set("glmark2_headers") {
     "src/src/gl-state.h",
     "src/src/gl-visual-config.h",
     "src/src/mesh.h",
+    "src/src/options.h",
     "src/src/scene.h",
     "src/src/shared-library.h",
     "src/src/texture.h",
@@ -274,7 +280,6 @@ template("glmark2_common") {
       "src/src/model.h",
       "src/src/native-state.h",
       "src/src/options.cpp",
-      "src/src/options.h",
       "src/src/scene-buffer.cpp",
       "src/src/scene-build.cpp",
       "src/src/scene-bump.cpp",

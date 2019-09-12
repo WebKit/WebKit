@@ -75,7 +75,7 @@ image_basic_template = """imageFormatID = {image};
 vkImageFormat = {vk_image_format};
 imageInitializerFunction = {image_initializer};"""
 
-image_struct_template="{{{image}, {vk_image_format}, {image_initializer}}}"
+image_struct_template = "{{{image}, {vk_image_format}, {image_initializer}}}"
 
 image_fallback_template = """{{
 static constexpr ImageFormatInitInfo kInfo[] = {{{image_list}}};
@@ -88,7 +88,7 @@ vkBufferFormatIsPacked = {vk_buffer_format_is_packed};
 vertexLoadFunction = {vertex_load_function};
 vertexLoadRequiresConversion = {vertex_load_converts};"""
 
-buffer_struct_template="""{{{buffer}, {vk_buffer_format}, {vk_buffer_format_is_packed}, 
+buffer_struct_template = """{{{buffer}, {vk_buffer_format}, {vk_buffer_format_is_packed}, 
 {vertex_load_function}, {vertex_load_converts}}}"""
 
 buffer_fallback_template = """{{
@@ -101,18 +101,52 @@ def is_packed(format_id):
     return "true" if "_PACK" in format_id else "false"
 
 
+def verify_vk_map_keys(angle_to_gl, vk_json_data):
+    """Verify that the keys in Vulkan format tables exist in the ANGLE table.  If they don't, the
+    entry in the Vulkan file is incorrect and needs to be fixed."""
+
+    no_error = True
+    for table in ["map", "overrides", "fallbacks"]:
+        for angle_format in vk_json_data[table].keys():
+            if not angle_format in angle_to_gl.keys():
+                print "Invalid format " + angle_format + " in vk_format_map.json in " + table
+                no_error = False
+
+    return no_error
+
+
+def get_vertex_copy_function(src_format, dst_format, vk_format):
+    if "_PACK" in vk_format:
+        pack_bits = int(re.search(r'_PACK(\d+)', vk_format).group(1))
+        base_type = None
+        if pack_bits == 8:
+            base_type = 'byte'
+        elif pack_bits == 16:
+            base_type = 'short'
+        elif pack_bits == 32:
+            base_type = 'int'
+        else:
+            return 'nullptr'
+        return 'CopyNativeVertexData<GLu%s, 1, 1, 0>' % base_type
+    if 'R10G10B10A2' in src_format:
+        # When the R10G10B10A2 type can't be used by the vertex buffer,
+        # it needs to be converted to the type which can be used by it.
+        is_signed = 'false' if 'UINT' in src_format or 'UNORM' in src_format or 'USCALED' in src_format else 'true'
+        normalized = 'true' if 'NORM' in src_format else 'false'
+        to_float = 'false' if 'INT' in src_format else 'true'
+        return 'CopyXYZ10W2ToXYZW32FVertexData<%s, %s, %s>' % (is_signed, normalized, to_float)
+    return angle_format.get_vertex_copy_function(src_format, dst_format)
+
+
 def gen_format_case(angle, internal_format, vk_json_data):
     vk_map = vk_json_data["map"]
     vk_overrides = vk_json_data["overrides"]
     vk_fallbacks = vk_json_data["fallbacks"]
     args = dict(
-        format_id=angle,
-        internal_format=internal_format,
-        image_template="",
-        buffer_template="")
+        format_id=angle, internal_format=internal_format, image_template="", buffer_template="")
 
     if ((angle not in vk_map) and (angle not in vk_overrides) and
-          (angle not in vk_fallbacks)) or angle == 'NONE':
+        (angle not in vk_fallbacks)) or angle == 'NONE':
         return empty_format_entry_template.format(**args)
 
     def get_formats(format, type):
@@ -132,12 +166,12 @@ def gen_format_case(angle, internal_format, vk_json_data):
                 internal_format, format))
 
     def buffer_args(format):
+        vk_buffer_format = vk_map[format]
         return dict(
             buffer="angle::FormatID::" + format,
-            vk_buffer_format=vk_map[format],
-            vk_buffer_format_is_packed=is_packed(vk_map[format]),
-            vertex_load_function=angle_format.get_vertex_copy_function(
-                angle, format),
+            vk_buffer_format=vk_buffer_format,
+            vk_buffer_format_is_packed=is_packed(vk_buffer_format),
+            vertex_load_function=get_vertex_copy_function(angle, format, vk_buffer_format),
             vertex_load_converts='false' if angle == format else 'true',
         )
 
@@ -148,9 +182,7 @@ def gen_format_case(angle, internal_format, vk_json_data):
     elif len(images) > 1:
         args.update(
             image_template=image_fallback_template,
-            image_list=", ".join(
-                image_struct_template.format(**image_args(i))
-                for i in images))
+            image_list=", ".join(image_struct_template.format(**image_args(i)) for i in images))
 
     buffers = get_formats(angle, "buffer")
     if len(buffers) == 1:
@@ -172,11 +204,7 @@ def main():
 
     # auto_script parameters.
     if len(sys.argv) > 1:
-        inputs = [
-            '../angle_format.py',
-            '../angle_format_map.json',
-            input_file_name
-        ]
+        inputs = ['../angle_format.py', '../angle_format_map.json', input_file_name]
         outputs = [out_file_name]
 
         if sys.argv[1] == 'inputs':
@@ -190,15 +218,20 @@ def main():
 
     angle_to_gl = angle_format.load_inverse_table(os.path.join('..', 'angle_format_map.json'))
     vk_json_data = angle_format.load_json(input_file_name)
-    vk_cases = [gen_format_case(angle, gl, vk_json_data)
-               for angle, gl in sorted(angle_to_gl.iteritems())]
+
+    if not verify_vk_map_keys(angle_to_gl, vk_json_data):
+        return 1
+
+    vk_cases = [
+        gen_format_case(angle, gl, vk_json_data) for angle, gl in sorted(angle_to_gl.iteritems())
+    ]
 
     output_cpp = template_table_autogen_cpp.format(
-        copyright_year = date.today().year,
-        format_case_data = "\n".join(vk_cases),
-        script_name = __file__,
-        out_file_name = out_file_name,
-        input_file_name = input_file_name)
+        copyright_year=date.today().year,
+        format_case_data="\n".join(vk_cases),
+        script_name=__file__,
+        out_file_name=out_file_name,
+        input_file_name=input_file_name)
 
     with open(out_file_name, 'wt') as out_file:
         out_file.write(output_cpp)

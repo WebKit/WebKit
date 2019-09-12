@@ -32,8 +32,14 @@ enum class CommandGraphResourceType
     Framebuffer,
     Image,
     Query,
+    Dispatcher,
+    // Transform feedback queries could be handled entirely on the CPU (if not using
+    // VK_EXT_transform_feedback), but still need to generate a command graph barrier node.
+    EmulatedQuery,
     FenceSync,
+    GraphBarrier,
     DebugMarker,
+    HostAvailabilityOperation,
 };
 
 // Certain functionality cannot be put in secondary command buffers, so they are special-cased in
@@ -44,26 +50,30 @@ enum class CommandGraphNodeFunction
     BeginQuery,
     EndQuery,
     WriteTimestamp,
+    BeginTransformFeedbackQuery,
+    EndTransformFeedbackQuery,
     SetFenceSync,
     WaitFenceSync,
+    GraphBarrier,
     InsertDebugMarker,
     PushDebugMarker,
     PopDebugMarker,
+    HostAvailabilityOperation,
 };
 
-// Receives notifications when a command buffer is no longer able to record. Can be used with
-// inheritance. Faster than using an interface class since it has inlined methods. Could be used
-// with composition by adding a getCommandBuffer method.
-class CommandBufferOwner
+// Receives notifications when a render pass command buffer is no longer able to record. Can be
+// used with inheritance. Faster than using an interface class since it has inlined methods. Could
+// be used with composition by adding a getCommandBuffer method.
+class RenderPassOwner
 {
   public:
-    CommandBufferOwner() = default;
-    virtual ~CommandBufferOwner() {}
+    RenderPassOwner() = default;
+    virtual ~RenderPassOwner() {}
 
-    ANGLE_INLINE void onCommandBufferFinished() { mCommandBuffer = nullptr; }
+    ANGLE_INLINE void onRenderPassFinished() { mRenderPassCommandBuffer = nullptr; }
 
   protected:
-    CommandBuffer *mCommandBuffer = nullptr;
+    CommandBuffer *mRenderPassCommandBuffer = nullptr;
 };
 
 // Only used internally in the command graph. Kept in the header for better inlining performance.
@@ -87,12 +97,12 @@ class CommandGraphNode final : angle::NonCopyable
     }
 
     // For outside the render pass (copies, transitions, etc).
-    angle::Result beginOutsideRenderPassRecording(Context *context,
+    angle::Result beginOutsideRenderPassRecording(ContextVk *context,
                                                   const CommandPool &commandPool,
                                                   CommandBuffer **commandsOut);
 
     // For rendering commands (draws).
-    angle::Result beginInsideRenderPassRecording(Context *context, CommandBuffer **commandsOut);
+    angle::Result beginInsideRenderPassRecording(ContextVk *context, CommandBuffer **commandsOut);
 
     // storeRenderPassInfo and append*RenderTarget store info relevant to the RenderPass.
     void storeRenderPassInfo(const Framebuffer &framebuffer,
@@ -117,6 +127,21 @@ class CommandGraphNode final : angle::NonCopyable
     {
         mRenderPassAttachmentOps[attachmentIndex].stencilLoadOp      = VK_ATTACHMENT_LOAD_OP_CLEAR;
         mRenderPassClearValues[attachmentIndex].depthStencil.stencil = stencil;
+    }
+
+    void invalidateRenderPassColorAttachment(size_t attachmentIndex)
+    {
+        mRenderPassAttachmentOps[attachmentIndex].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    }
+
+    void invalidateRenderPassDepthAttachment(size_t attachmentIndex)
+    {
+        mRenderPassAttachmentOps[attachmentIndex].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    }
+
+    void invalidateRenderPassStencilAttachment(size_t attachmentIndex)
+    {
+        mRenderPassAttachmentOps[attachmentIndex].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     }
 
     // Dependency commands order node execution in the command graph.
@@ -155,7 +180,9 @@ class CommandGraphNode final : angle::NonCopyable
 
     CommandGraphResourceType getResourceTypeForDiagnostics() const { return mResourceType; }
     uintptr_t getResourceIDForDiagnostics() const { return mResourceID; }
+    bool hasDiagnosticID() const;
     std::string dumpCommandsForDiagnostics(const char *separator) const;
+    void getMemoryUsageStatsForDiagnostics(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
 
     const gl::Rectangle &getRenderPassRenderArea() const { return mRenderPassRenderArea; }
 
@@ -168,26 +195,29 @@ class CommandGraphNode final : angle::NonCopyable
     void setDebugMarker(GLenum source, std::string &&marker);
     const std::string &getDebugMarker() const { return mDebugMarker; }
 
-    ANGLE_INLINE void addGlobalMemoryBarrier(VkFlags srcAccess, VkFlags dstAccess)
+    ANGLE_INLINE void addGlobalMemoryBarrier(VkFlags srcAccess,
+                                             VkFlags dstAccess,
+                                             VkPipelineStageFlags stages)
     {
         mGlobalMemoryBarrierSrcAccess |= srcAccess;
         mGlobalMemoryBarrierDstAccess |= dstAccess;
+        mGlobalMemoryBarrierStages |= stages;
     }
 
     // This can only be set for RenderPass nodes. Each RenderPass node can have at most one owner.
-    void setCommandBufferOwner(CommandBufferOwner *owner)
+    void setRenderPassOwner(RenderPassOwner *owner)
     {
-        ASSERT(mCommandBufferOwner == nullptr);
-        mCommandBufferOwner = owner;
+        ASSERT(mRenderPassOwner == nullptr);
+        mRenderPassOwner = owner;
     }
 
   private:
     ANGLE_INLINE void setHasChildren()
     {
         mHasChildren = true;
-        if (mCommandBufferOwner)
+        if (mRenderPassOwner)
         {
-            mCommandBufferOwner->onCommandBufferFinished();
+            mRenderPassOwner->onRenderPassFinished();
         }
     }
 
@@ -234,9 +264,10 @@ class CommandGraphNode final : angle::NonCopyable
     // For global memory barriers.
     VkFlags mGlobalMemoryBarrierSrcAccess;
     VkFlags mGlobalMemoryBarrierDstAccess;
+    VkPipelineStageFlags mGlobalMemoryBarrierStages;
 
-    // Command buffer notifications.
-    CommandBufferOwner *mCommandBufferOwner;
+    // Render pass command buffer notifications.
+    RenderPassOwner *mRenderPassOwner;
 };
 
 // This is a helper class for back-end objects used in Vk command buffers. It records a serial
@@ -251,7 +282,7 @@ class CommandGraphResource : angle::NonCopyable
     virtual ~CommandGraphResource();
 
     // Returns true if the resource is in use by the renderer.
-    bool isResourceInUse(RendererVk *renderer) const;
+    bool isResourceInUse(ContextVk *context) const;
 
     // Get the current queue serial for this resource. Used to release resources, and for
     // queries, to know if the queue they are submitted on has finished execution.
@@ -277,10 +308,14 @@ class CommandGraphResource : angle::NonCopyable
         }
     }
 
+    // Reset the current queue serial for this resource. Will clear dependencies if the resource
+    // was not used in this set of command nodes.
+    void resetQueueSerial();
+
     // Allocates a write node via getNewWriteNode and returns a started command buffer.
     // The started command buffer will render outside of a RenderPass.
     // Will append to an existing command buffer/graph node if possible.
-    angle::Result recordCommands(Context *context, CommandBuffer **commandBufferOut);
+    angle::Result recordCommands(ContextVk *context, CommandBuffer **commandBufferOut);
 
     // Begins a command buffer on the current graph node for in-RenderPass rendering.
     // Called from FramebufferVk::startNewRenderPass and UtilsVk functions.
@@ -323,7 +358,8 @@ class CommandGraphResource : angle::NonCopyable
     bool renderPassStartedButEmpty() const
     {
         return hasStartedRenderPass() &&
-               mCurrentWritingNode->getInsideRenderPassCommands()->empty();
+               (!vk::CommandBuffer::CanKnowIfEmpty() ||
+                mCurrentWritingNode->getInsideRenderPassCommands()->empty());
     }
 
     void clearRenderPassColorAttachment(size_t attachmentIndex, const VkClearColorValue &clearValue)
@@ -344,6 +380,24 @@ class CommandGraphResource : angle::NonCopyable
         mCurrentWritingNode->clearRenderPassStencilAttachment(attachmentIndex, stencil);
     }
 
+    void invalidateRenderPassColorAttachment(size_t attachmentIndex)
+    {
+        ASSERT(hasStartedRenderPass());
+        mCurrentWritingNode->invalidateRenderPassColorAttachment(attachmentIndex);
+    }
+
+    void invalidateRenderPassDepthAttachment(size_t attachmentIndex)
+    {
+        ASSERT(hasStartedRenderPass());
+        mCurrentWritingNode->invalidateRenderPassDepthAttachment(attachmentIndex);
+    }
+
+    void invalidateRenderPassStencilAttachment(size_t attachmentIndex)
+    {
+        ASSERT(hasStartedRenderPass());
+        mCurrentWritingNode->invalidateRenderPassStencilAttachment(attachmentIndex);
+    }
+
     // Accessor for RenderPass RenderArea.
     const gl::Rectangle &getRenderPassRenderArea() const
     {
@@ -352,13 +406,13 @@ class CommandGraphResource : angle::NonCopyable
     }
 
     // Called when 'this' object changes, but we'd like to start a new command buffer later.
-    void finishCurrentCommands(RendererVk *renderer);
+    void finishCurrentCommands(ContextVk *contextVk);
 
     // Store a deferred memory barrier. Will be recorded into a primary command buffer at submit.
-    void addGlobalMemoryBarrier(VkFlags srcAccess, VkFlags dstAccess)
+    void addGlobalMemoryBarrier(VkFlags srcAccess, VkFlags dstAccess, VkPipelineStageFlags stages)
     {
         ASSERT(mCurrentWritingNode);
-        mCurrentWritingNode->addGlobalMemoryBarrier(srcAccess, dstAccess);
+        mCurrentWritingNode->addGlobalMemoryBarrier(srcAccess, dstAccess, stages);
     }
 
   protected:
@@ -378,7 +432,7 @@ class CommandGraphResource : angle::NonCopyable
         return (mCurrentWritingNode != nullptr && !mCurrentWritingNode->hasChildren());
     }
 
-    void startNewCommands(RendererVk *renderer);
+    void startNewCommands(ContextVk *contextVk);
 
     void onWriteImpl(CommandGraphNode *writingNode, Serial currentSerial);
 
@@ -426,11 +480,10 @@ class CommandGraph final : angle::NonCopyable
     // dependencies between the previous barrier, the new barrier and all nodes in between.
     CommandGraphNode *allocateNode(CommandGraphNodeFunction function);
 
-    angle::Result submitCommands(Context *context,
+    angle::Result submitCommands(ContextVk *context,
                                  Serial serial,
                                  RenderPassCache *renderPassCache,
-                                 CommandPool *commandPool,
-                                 PrimaryCommandBuffer *primaryCommandBufferOut);
+                                 PrimaryCommandBuffer *primaryCommandBuffer);
     bool empty() const;
     void clear();
 
@@ -439,13 +492,19 @@ class CommandGraph final : angle::NonCopyable
     void beginQuery(const QueryPool *queryPool, uint32_t queryIndex);
     void endQuery(const QueryPool *queryPool, uint32_t queryIndex);
     void writeTimestamp(const QueryPool *queryPool, uint32_t queryIndex);
+    void beginTransformFeedbackEmulatedQuery();
+    void endTransformFeedbackEmulatedQuery();
     // GLsync and EGLSync:
     void setFenceSync(const vk::Event &event);
     void waitFenceSync(const vk::Event &event);
+    // Memory barriers:
+    void memoryBarrier(VkFlags srcAccess, VkFlags dstAccess, VkPipelineStageFlags stages);
     // Debug markers:
     void insertDebugMarker(GLenum source, std::string &&marker);
     void pushDebugMarker(GLenum source, std::string &&marker);
     void popDebugMarker();
+    // Host-visible buffer write availability operation:
+    void makeHostVisibleBufferWriteAvailable();
 
   private:
     CommandGraphNode *allocateBarrierNode(CommandGraphNodeFunction function,
@@ -456,6 +515,7 @@ class CommandGraph final : angle::NonCopyable
     void addDependenciesToNextBarrier(size_t begin, size_t end, CommandGraphNode *nextBarrier);
 
     void dumpGraphDotFile(std::ostream &out) const;
+    void updateOverlay(ContextVk *contextVk) const;
 
     std::vector<CommandGraphNode *> mNodes;
     bool mEnableGraphDiagnostics;

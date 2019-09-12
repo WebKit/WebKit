@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -228,13 +228,14 @@ int main(int argc, char *argv[])
                       case 'a': resources.ARM_shader_framebuffer_fetch = 1; break;
                       case 'm':
                           resources.OVR_multiview2 = 1;
+                          resources.OVR_multiview = 1;
                           compileOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
                           compileOptions |= SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER;
                           break;
                       case 'y': resources.EXT_YUV_target = 1; break;
                       default: failCode = EFailUsage;
                     }
-                        // clang-format on
+                    // clang-format on
                     }
                     else
                     {
@@ -661,11 +662,11 @@ void PrintVariable(const std::string &prefix, size_t index, const sh::ShaderVari
 
 static void PrintActiveVariables(ShHandle compiler)
 {
-    const std::vector<sh::Uniform> *uniforms       = sh::GetUniforms(compiler);
-    const std::vector<sh::Varying> *inputVaryings  = sh::GetInputVaryings(compiler);
-    const std::vector<sh::Varying> *outputVaryings = sh::GetOutputVaryings(compiler);
-    const std::vector<sh::Attribute> *attributes   = sh::GetAttributes(compiler);
-    const std::vector<sh::OutputVariable> *outputs = sh::GetOutputVariables(compiler);
+    const std::vector<sh::ShaderVariable> *uniforms       = sh::GetUniforms(compiler);
+    const std::vector<sh::ShaderVariable> *inputVaryings  = sh::GetInputVaryings(compiler);
+    const std::vector<sh::ShaderVariable> *outputVaryings = sh::GetOutputVaryings(compiler);
+    const std::vector<sh::ShaderVariable> *attributes     = sh::GetAttributes(compiler);
+    const std::vector<sh::ShaderVariable> *outputs        = sh::GetOutputVariables(compiler);
     for (size_t varCategory = 0; varCategory < 5; ++varCategory)
     {
         size_t numVars = 0;

@@ -2649,10 +2649,66 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
         ASSIGN("glDrawElementsInstancedEXT", drawElementsInstanced);
     }
 
+    if (extensions.count("GL_EXT_memory_object") != 0)
+    {
+        ASSIGN("glBufferStorageMemEXT", bufferStorageMemEXT);
+        ASSIGN("glCreateMemoryObjectsEXT", createMemoryObjectsEXT);
+        ASSIGN("glDeleteMemoryObjectsEXT", deleteMemoryObjectsEXT);
+        ASSIGN("glGetMemoryObjectParameterivEXT", getMemoryObjectParameterivEXT);
+        ASSIGN("glGetUnsignedBytei_vEXT", getUnsignedBytei_vEXT);
+        ASSIGN("glGetUnsignedBytevEXT", getUnsignedBytevEXT);
+        ASSIGN("glIsMemoryObjectEXT", isMemoryObjectEXT);
+        ASSIGN("glMemoryObjectParameterivEXT", memoryObjectParameterivEXT);
+        ASSIGN("glNamedBufferStorageMemEXT", namedBufferStorageMemEXT);
+        ASSIGN("glTexStorageMem2DEXT", texStorageMem2DEXT);
+        ASSIGN("glTexStorageMem2DMultisampleEXT", texStorageMem2DMultisampleEXT);
+        ASSIGN("glTexStorageMem3DEXT", texStorageMem3DEXT);
+        ASSIGN("glTexStorageMem3DMultisampleEXT", texStorageMem3DMultisampleEXT);
+        ASSIGN("glTextureStorageMem2DEXT", textureStorageMem2DEXT);
+        ASSIGN("glTextureStorageMem2DMultisampleEXT", textureStorageMem2DMultisampleEXT);
+        ASSIGN("glTextureStorageMem3DEXT", textureStorageMem3DEXT);
+        ASSIGN("glTextureStorageMem3DMultisampleEXT", textureStorageMem3DMultisampleEXT);
+    }
+
+    if (extensions.count("GL_EXT_memory_object_fd") != 0)
+    {
+        ASSIGN("glImportMemoryFdEXT", importMemoryFdEXT);
+    }
+
+    if (extensions.count("GL_EXT_memory_object_win32") != 0)
+    {
+        ASSIGN("glImportMemoryWin32HandleEXT", importMemoryWin32HandleEXT);
+        ASSIGN("glImportMemoryWin32NameEXT", importMemoryWin32NameEXT);
+    }
+
     if (extensions.count("GL_EXT_multi_draw_arrays") != 0)
     {
         ASSIGN("glMultiDrawArraysEXT", multiDrawArrays);
         ASSIGN("glMultiDrawElementsEXT", multiDrawElements);
+    }
+
+    if (extensions.count("GL_EXT_semaphore") != 0)
+    {
+        ASSIGN("glDeleteSemaphoresEXT", deleteSemaphoresEXT);
+        ASSIGN("glGenSemaphoresEXT", genSemaphoresEXT);
+        ASSIGN("glGetSemaphoreParameterui64vEXT", getSemaphoreParameterui64vEXT);
+        ASSIGN("glGetUnsignedBytei_vEXT", getUnsignedBytei_vEXT);
+        ASSIGN("glGetUnsignedBytevEXT", getUnsignedBytevEXT);
+        ASSIGN("glIsSemaphoreEXT", isSemaphoreEXT);
+        ASSIGN("glSemaphoreParameterui64vEXT", semaphoreParameterui64vEXT);
+        ASSIGN("glSignalSemaphoreEXT", signalSemaphoreEXT);
+        ASSIGN("glWaitSemaphoreEXT", waitSemaphoreEXT);
+    }
+
+    if (extensions.count("GL_EXT_semaphore_fd") != 0)
+    {
+        ASSIGN("glImportSemaphoreFdEXT", importSemaphoreFdEXT);
+    }
+
+    if (extensions.count("GL_EXT_semaphore_win32") != 0)
+    {
+        ASSIGN("glImportSemaphoreWin32HandleEXT", importSemaphoreWin32HandleEXT);
+        ASSIGN("glImportSemaphoreWin32NameEXT", importSemaphoreWin32NameEXT);
     }
 
     if (extensions.count("GL_EXT_separate_shader_objects") != 0)
@@ -5384,10 +5440,66 @@ void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> 
         drawElementsInstanced = &glDrawElementsInstancedNULL;
     }
 
+    if (extensions.count("GL_EXT_memory_object") != 0)
+    {
+        bufferStorageMemEXT               = &glBufferStorageMemEXTNULL;
+        createMemoryObjectsEXT            = &glCreateMemoryObjectsEXTNULL;
+        deleteMemoryObjectsEXT            = &glDeleteMemoryObjectsEXTNULL;
+        getMemoryObjectParameterivEXT     = &glGetMemoryObjectParameterivEXTNULL;
+        getUnsignedBytei_vEXT             = &glGetUnsignedBytei_vEXTNULL;
+        getUnsignedBytevEXT               = &glGetUnsignedBytevEXTNULL;
+        isMemoryObjectEXT                 = &glIsMemoryObjectEXTNULL;
+        memoryObjectParameterivEXT        = &glMemoryObjectParameterivEXTNULL;
+        namedBufferStorageMemEXT          = &glNamedBufferStorageMemEXTNULL;
+        texStorageMem2DEXT                = &glTexStorageMem2DEXTNULL;
+        texStorageMem2DMultisampleEXT     = &glTexStorageMem2DMultisampleEXTNULL;
+        texStorageMem3DEXT                = &glTexStorageMem3DEXTNULL;
+        texStorageMem3DMultisampleEXT     = &glTexStorageMem3DMultisampleEXTNULL;
+        textureStorageMem2DEXT            = &glTextureStorageMem2DEXTNULL;
+        textureStorageMem2DMultisampleEXT = &glTextureStorageMem2DMultisampleEXTNULL;
+        textureStorageMem3DEXT            = &glTextureStorageMem3DEXTNULL;
+        textureStorageMem3DMultisampleEXT = &glTextureStorageMem3DMultisampleEXTNULL;
+    }
+
+    if (extensions.count("GL_EXT_memory_object_fd") != 0)
+    {
+        importMemoryFdEXT = &glImportMemoryFdEXTNULL;
+    }
+
+    if (extensions.count("GL_EXT_memory_object_win32") != 0)
+    {
+        importMemoryWin32HandleEXT = &glImportMemoryWin32HandleEXTNULL;
+        importMemoryWin32NameEXT   = &glImportMemoryWin32NameEXTNULL;
+    }
+
     if (extensions.count("GL_EXT_multi_draw_arrays") != 0)
     {
         multiDrawArrays   = &glMultiDrawArraysNULL;
         multiDrawElements = &glMultiDrawElementsNULL;
+    }
+
+    if (extensions.count("GL_EXT_semaphore") != 0)
+    {
+        deleteSemaphoresEXT           = &glDeleteSemaphoresEXTNULL;
+        genSemaphoresEXT              = &glGenSemaphoresEXTNULL;
+        getSemaphoreParameterui64vEXT = &glGetSemaphoreParameterui64vEXTNULL;
+        getUnsignedBytei_vEXT         = &glGetUnsignedBytei_vEXTNULL;
+        getUnsignedBytevEXT           = &glGetUnsignedBytevEXTNULL;
+        isSemaphoreEXT                = &glIsSemaphoreEXTNULL;
+        semaphoreParameterui64vEXT    = &glSemaphoreParameterui64vEXTNULL;
+        signalSemaphoreEXT            = &glSignalSemaphoreEXTNULL;
+        waitSemaphoreEXT              = &glWaitSemaphoreEXTNULL;
+    }
+
+    if (extensions.count("GL_EXT_semaphore_fd") != 0)
+    {
+        importSemaphoreFdEXT = &glImportSemaphoreFdEXTNULL;
+    }
+
+    if (extensions.count("GL_EXT_semaphore_win32") != 0)
+    {
+        importSemaphoreWin32HandleEXT = &glImportSemaphoreWin32HandleEXTNULL;
+        importSemaphoreWin32NameEXT   = &glImportSemaphoreWin32NameEXTNULL;
     }
 
     if (extensions.count("GL_EXT_separate_shader_objects") != 0)

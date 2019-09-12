@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -62,9 +62,6 @@ struct SystemInfo
     // some platforms. On windows, this is accurate.
     int activeGPUIndex = -1;
 
-    // Deprecated, same as activeGPUIndex
-    int primaryGPUIndex = -1;
-
     bool isOptimus       = false;
     bool isAMDSwitchable = false;
     // Only true on dual-GPU Mac laptops.
@@ -110,6 +107,11 @@ bool IsQualcomm(VendorID vendorId);
 bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);
 bool IsVivante(VendorID vendorId);
+
+// Use a heuristic to attempt to find the GPU used for 3D graphics. Sets activeGPUIndex,
+// isOptimus, and isAMDSwitchable.
+// Always assumes the non-Intel GPU is active on dual-GPU machines.
+void GetDualGPUInfo(SystemInfo *info);
 
 // Dumps the system info to stdout.
 void PrintSystemInfo(const SystemInfo &info);

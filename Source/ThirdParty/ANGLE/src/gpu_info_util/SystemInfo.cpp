@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -238,7 +238,7 @@ bool CMDeviceIDToDeviceAndVendorID(const std::string &id, uint32_t *vendorId, ui
     return success;
 }
 
-void FindActiveGPU(SystemInfo *info)
+void GetDualGPUInfo(SystemInfo *info)
 {
     ASSERT(!info->gpus.empty());
 
@@ -259,7 +259,6 @@ void FindActiveGPU(SystemInfo *info)
 
     // Assume that a combination of NVIDIA or AMD with Intel means Optimus or AMD Switchable
     info->activeGPUIndex  = active;
-    info->primaryGPUIndex = active;
     info->isOptimus       = hasIntel && IsNVIDIA(info->gpus[active].vendorId);
     info->isAMDSwitchable = hasIntel && IsAMD(info->gpus[active].vendorId);
 }

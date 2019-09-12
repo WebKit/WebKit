@@ -42,10 +42,8 @@ class PBOExtensionTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         if (IsGLExtensionEnabled("NV_pixel_buffer_object"))
         {
             glGenBuffers(1, &mPBO);
@@ -64,10 +62,8 @@ class PBOExtensionTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
-        ANGLETest::TearDown();
-
         glDeleteBuffers(1, &mPBO);
         glDeleteProgram(mProgram);
     }

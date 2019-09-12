@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -17,10 +17,11 @@
 #include "libANGLE/Surface.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/Thread.h"
+#include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryutils.h"
 #include "libANGLE/validationEGL.h"
 #include "libGLESv2/global_state.h"
-#include "libGLESv2/proc_table.h"
+#include "libGLESv2/proc_table_egl.h"
 
 using namespace egl;
 
@@ -55,7 +56,7 @@ extern "C" {
 EGLint EGLAPIENTRY EGL_GetError(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     EGLint error = thread->getError();
@@ -66,7 +67,7 @@ EGLint EGLAPIENTRY EGL_GetError(void)
 EGLDisplay EGLAPIENTRY EGL_GetDisplay(EGLNativeDisplayType display_id)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLNativeDisplayType display_id = 0x%016" PRIxPTR ")", (uintptr_t)display_id);
+    FUNC_EVENT("EGLNativeDisplayType display_id = 0x%016" PRIxPTR, (uintptr_t)display_id);
 
     return egl::Display::GetDisplayFromNativeDisplay(display_id, AttributeMap());
 }
@@ -74,9 +75,9 @@ EGLDisplay EGLAPIENTRY EGL_GetDisplay(EGLNativeDisplayType display_id)
 EGLBoolean EGLAPIENTRY EGL_Initialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLint *major = 0x%016" PRIxPTR
-          ", EGLint *minor = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)major, (uintptr_t)minor);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLint *major = 0x%016" PRIxPTR
+               ", EGLint *minor = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)major, (uintptr_t)minor);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -98,7 +99,7 @@ EGLBoolean EGLAPIENTRY EGL_Initialize(EGLDisplay dpy, EGLint *major, EGLint *min
 EGLBoolean EGLAPIENTRY EGL_Terminate(EGLDisplay dpy)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ")", (uintptr_t)dpy);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR, (uintptr_t)dpy);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -118,7 +119,7 @@ EGLBoolean EGLAPIENTRY EGL_Terminate(EGLDisplay dpy)
 const char *EGLAPIENTRY EGL_QueryString(EGLDisplay dpy, EGLint name)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLint name = %d)", (uintptr_t)dpy, name);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLint name = %d", (uintptr_t)dpy, name);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -166,10 +167,10 @@ EGLBoolean EGLAPIENTRY EGL_GetConfigs(EGLDisplay dpy,
                                       EGLint *num_config)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig *configs = 0x%016" PRIxPTR
-          ", "
-          "EGLint config_size = %d, EGLint *num_config = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)configs, config_size, (uintptr_t)num_config);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig *configs = 0x%016" PRIxPTR
+               ", "
+               "EGLint config_size = %d, EGLint *num_config = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)configs, config_size, (uintptr_t)num_config);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -190,12 +191,12 @@ EGLBoolean EGLAPIENTRY EGL_ChooseConfig(EGLDisplay dpy,
                                         EGLint *num_config)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", const EGLint *attrib_list = 0x%016" PRIxPTR
-          ", "
-          "EGLConfig *configs = 0x%016" PRIxPTR
-          ", EGLint config_size = %d, EGLint *num_config = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)attrib_list, (uintptr_t)configs, config_size,
-          (uintptr_t)num_config);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", const EGLint *attrib_list = 0x%016" PRIxPTR
+               ", "
+               "EGLConfig *configs = 0x%016" PRIxPTR
+               ", EGLint config_size = %d, EGLint *num_config = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)attrib_list, (uintptr_t)configs, config_size,
+               (uintptr_t)num_config);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display  = static_cast<egl::Display *>(dpy);
@@ -216,10 +217,10 @@ EGLBoolean EGLAPIENTRY EGL_GetConfigAttrib(EGLDisplay dpy,
                                            EGLint *value)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", EGLint attribute = %d, EGLint "
-          "*value = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, attribute, (uintptr_t)value);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", EGLint attribute = %d, EGLint "
+               "*value = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, attribute, (uintptr_t)value);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -240,11 +241,11 @@ EGLSurface EGLAPIENTRY EGL_CreateWindowSurface(EGLDisplay dpy,
                                                const EGLint *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", EGLNativeWindowType win = 0x%016" PRIxPTR
-          ", "
-          "const EGLint *attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)win, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", EGLNativeWindowType win = 0x%016" PRIxPTR
+               ", "
+               "const EGLint *attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)win, (uintptr_t)attrib_list);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display   = static_cast<egl::Display *>(dpy);
@@ -268,10 +269,10 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferSurface(EGLDisplay dpy,
                                                 const EGLint *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", const EGLint *attrib_list = "
-          "0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", const EGLint *attrib_list = "
+               "0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)attrib_list);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display   = static_cast<egl::Display *>(dpy);
@@ -294,12 +295,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePixmapSurface(EGLDisplay dpy,
                                                const EGLint *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", EGLNativePixmapType pixmap = "
-          "0x%016" PRIxPTR
-          ", "
-          "const EGLint *attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)pixmap, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", EGLNativePixmapType pixmap = "
+               "0x%016" PRIxPTR
+               ", "
+               "const EGLint *attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)pixmap, (uintptr_t)attrib_list);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -317,8 +318,8 @@ EGLSurface EGLAPIENTRY EGL_CreatePixmapSurface(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_DestroySurface(EGLDisplay dpy, EGLSurface surface)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)surface);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)surface);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -340,10 +341,10 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface(EGLDisplay dpy,
                                         EGLint *value)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
-          ", EGLint attribute = %d, EGLint "
-          "*value = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)surface, attribute, (uintptr_t)value);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLint attribute = %d, EGLint "
+               "*value = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)surface, attribute, (uintptr_t)value);
     Thread *thread = egl::GetCurrentThread();
 
     const egl::Display *display = static_cast<const egl::Display *>(dpy);
@@ -364,12 +365,10 @@ EGLContext EGLAPIENTRY EGL_CreateContext(EGLDisplay dpy,
                                          const EGLint *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", EGLContext share_context = "
-          "0x%016" PRIxPTR
-          ", "
-          "const EGLint *attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)share_context, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", EGLContext share_context = %d, "
+               "const EGLint *attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, CID(dpy, share_context), (uintptr_t)attrib_list);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display        = static_cast<egl::Display *>(dpy);
@@ -382,9 +381,10 @@ EGLContext EGLAPIENTRY EGL_CreateContext(EGLDisplay dpy,
                          "eglCreateContext", GetDisplayIfValid(display), EGL_NO_CONTEXT);
 
     gl::Context *context = nullptr;
-    ANGLE_EGL_TRY_RETURN(
-        thread, display->createContext(configuration, sharedGLContext, attributes, &context),
-        "eglCreateContext", GetDisplayIfValid(display), EGL_NO_CONTEXT);
+    ANGLE_EGL_TRY_RETURN(thread,
+                         display->createContext(configuration, sharedGLContext, thread->getAPI(),
+                                                attributes, &context),
+                         "eglCreateContext", GetDisplayIfValid(display), EGL_NO_CONTEXT);
 
     thread->setSuccess();
     return static_cast<EGLContext>(context);
@@ -393,8 +393,8 @@ EGLContext EGLAPIENTRY EGL_CreateContext(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_DestroyContext(EGLDisplay dpy, EGLContext ctx)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLContext ctx = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)ctx);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLContext ctx = %d", (uintptr_t)dpy,
+               CID(dpy, ctx));
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -423,11 +423,11 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
                                        EGLContext ctx)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface draw = 0x%016" PRIxPTR
-          ", EGLSurface read = 0x%016" PRIxPTR
-          ", "
-          "EGLContext ctx = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)draw, (uintptr_t)read, (uintptr_t)ctx);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface draw = 0x%016" PRIxPTR
+               ", EGLSurface read = 0x%016" PRIxPTR
+               ", "
+               "EGLContext ctx = %d",
+               (uintptr_t)dpy, (uintptr_t)draw, (uintptr_t)read, CID(dpy, ctx));
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -459,7 +459,7 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
 EGLSurface EGLAPIENTRY EGL_GetCurrentSurface(EGLint readdraw)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLint readdraw = %d)", readdraw);
+    FUNC_EVENT("EGLint readdraw = %d", readdraw);
     Thread *thread = egl::GetCurrentThread();
 
     if (readdraw == EGL_READ)
@@ -482,7 +482,7 @@ EGLSurface EGLAPIENTRY EGL_GetCurrentSurface(EGLint readdraw)
 EGLDisplay EGLAPIENTRY EGL_GetCurrentDisplay(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     thread->setSuccess();
@@ -499,10 +499,11 @@ EGLBoolean EGLAPIENTRY EGL_QueryContext(EGLDisplay dpy,
                                         EGLint *value)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLContext ctx = 0x%016" PRIxPTR
-          ", EGLint attribute = %d, EGLint *value "
-          "= 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)ctx, attribute, (uintptr_t)value);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR
+               ", EGLContext ctx = %d"
+               ", EGLint attribute = %d, EGLint *value "
+               "= 0x%016" PRIxPTR,
+               (uintptr_t)dpy, CID(dpy, ctx), attribute, (uintptr_t)value);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -520,7 +521,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryContext(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_WaitGL(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = thread->getDisplay();
@@ -540,7 +541,7 @@ EGLBoolean EGLAPIENTRY EGL_WaitGL(void)
 EGLBoolean EGLAPIENTRY EGL_WaitNative(EGLint engine)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLint engine = %d)", engine);
+    FUNC_EVENT("EGLint engine = %d", engine);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = thread->getDisplay();
@@ -558,8 +559,8 @@ EGLBoolean EGLAPIENTRY EGL_WaitNative(EGLint engine)
 EGLBoolean EGLAPIENTRY EGL_SwapBuffers(EGLDisplay dpy, EGLSurface surface)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)surface);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)surface);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -580,10 +581,10 @@ EGLBoolean EGLAPIENTRY EGL_CopyBuffers(EGLDisplay dpy,
                                        EGLNativePixmapType target)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
-          ", EGLNativePixmapType target = "
-          "0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)target);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLNativePixmapType target = "
+               "0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)target);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -602,9 +603,9 @@ EGLBoolean EGLAPIENTRY EGL_CopyBuffers(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_BindTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
-          ", EGLint buffer = %d)",
-          (uintptr_t)dpy, (uintptr_t)surface, buffer);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLint buffer = %d",
+               (uintptr_t)dpy, (uintptr_t)surface, buffer);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display      = static_cast<egl::Display *>(dpy);
@@ -632,10 +633,10 @@ EGLBoolean EGLAPIENTRY EGL_SurfaceAttrib(EGLDisplay dpy,
                                          EGLint value)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
-          ", EGLint attribute = %d, EGLint "
-          "value = %d)",
-          (uintptr_t)dpy, (uintptr_t)surface, attribute, value);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLint attribute = %d, EGLint "
+               "value = %d",
+               (uintptr_t)dpy, (uintptr_t)surface, attribute, value);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -653,9 +654,9 @@ EGLBoolean EGLAPIENTRY EGL_SurfaceAttrib(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_ReleaseTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
-          ", EGLint buffer = %d)",
-          (uintptr_t)dpy, (uintptr_t)surface, buffer);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLint buffer = %d",
+               (uintptr_t)dpy, (uintptr_t)surface, buffer);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -680,7 +681,8 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseTexImage(EGLDisplay dpy, EGLSurface surface, E
 EGLBoolean EGLAPIENTRY EGL_SwapInterval(EGLDisplay dpy, EGLint interval)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLint interval = %d)", (uintptr_t)dpy, interval);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLint interval = %d", (uintptr_t)dpy,
+               interval);
     Thread *thread       = egl::GetCurrentThread();
     gl::Context *context = thread->getContext();
 
@@ -704,7 +706,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapInterval(EGLDisplay dpy, EGLint interval)
 EGLBoolean EGLAPIENTRY EGL_BindAPI(EGLenum api)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLenum api = 0x%X)", api);
+    FUNC_EVENT("EGLenum api = 0x%X", api);
     Thread *thread = egl::GetCurrentThread();
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateBindAPI(api), "eglBindAPI", GetThreadIfValid(thread),
@@ -719,7 +721,7 @@ EGLBoolean EGLAPIENTRY EGL_BindAPI(EGLenum api)
 EGLenum EGLAPIENTRY EGL_QueryAPI(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     EGLenum API = thread->getAPI();
@@ -735,11 +737,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferFromClientBuffer(EGLDisplay dpy,
                                                          const EGLint *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR
-          ", EGLenum buftype = 0x%X, EGLClientBuffer buffer = 0x%016" PRIxPTR
-          ", "
-          "EGLConfig config = 0x%016" PRIxPTR ", const EGLint *attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, buftype, (uintptr_t)buffer, (uintptr_t)config, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR
+               ", EGLenum buftype = 0x%X, EGLClientBuffer buffer = 0x%016" PRIxPTR
+               ", "
+               "EGLConfig config = 0x%016" PRIxPTR ", const EGLint *attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, buftype, (uintptr_t)buffer, (uintptr_t)config,
+               (uintptr_t)attrib_list);
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display   = static_cast<egl::Display *>(dpy);
@@ -764,7 +767,7 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferFromClientBuffer(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_ReleaseThread(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     Surface *previousDraw         = thread->getCurrentDrawSurface();
@@ -793,7 +796,7 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseThread(void)
 EGLBoolean EGLAPIENTRY EGL_WaitClient(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *display = thread->getDisplay();
@@ -813,7 +816,7 @@ EGLBoolean EGLAPIENTRY EGL_WaitClient(void)
 EGLContext EGLAPIENTRY EGL_GetCurrentContext(void)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("()");
+    EVENT(__FUNCTION__, "");
     Thread *thread = egl::GetCurrentThread();
 
     gl::Context *context = thread->getContext();
@@ -826,12 +829,12 @@ EGLContext EGLAPIENTRY EGL_GetCurrentContext(void)
 EGLSync EGLAPIENTRY EGL_CreateSync(EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR
-          ", EGLenum type = 0x%X, const EGLint* attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, type, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR
+               ", EGLenum type = 0x%X, const EGLint* attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, type, (uintptr_t)attrib_list);
 
-    Thread *thread        = egl::GetCurrentThread();
-    egl::Display *display = static_cast<egl::Display *>(dpy);
+    Thread *thread          = egl::GetCurrentThread();
+    egl::Display *display   = static_cast<egl::Display *>(dpy);
     AttributeMap attributes = AttributeMap::CreateFromAttribArray(attrib_list);
 
     gl::Context *currentContext  = thread->getContext();
@@ -852,8 +855,8 @@ EGLSync EGLAPIENTRY EGL_CreateSync(EGLDisplay dpy, EGLenum type, const EGLAttrib
 EGLBoolean EGLAPIENTRY EGL_DestroySync(EGLDisplay dpy, EGLSync sync)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSync sync = 0x%016" PRIxPTR ")", (uintptr_t)dpy,
-          (uintptr_t)sync);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSync sync = 0x%016" PRIxPTR, (uintptr_t)dpy,
+               (uintptr_t)sync);
 
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -871,23 +874,23 @@ EGLBoolean EGLAPIENTRY EGL_DestroySync(EGLDisplay dpy, EGLSync sync)
 EGLint EGLAPIENTRY EGL_ClientWaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags, EGLTime timeout)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSync sync = 0x%016" PRIxPTR
-          ", EGLint flags = 0x%X, EGLTime timeout = "
-          "%llu)",
-          (uintptr_t)dpy, (uintptr_t)sync, flags, static_cast<unsigned long long>(timeout));
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSync sync = 0x%016" PRIxPTR
+               ", EGLint flags = 0x%X, EGLTime timeout = "
+               "%llu",
+               (uintptr_t)dpy, (uintptr_t)sync, flags, static_cast<unsigned long long>(timeout));
 
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
     egl::Sync *syncObject = static_cast<Sync *>(sync);
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateClientWaitSync(display, syncObject, flags, timeout),
-                         "eglClientWaitSync", GetDisplayIfValid(display), EGL_FALSE);
+                         "eglClientWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
 
     gl::Context *currentContext = thread->getContext();
-    EGLint syncStatus = EGL_FALSE;
+    EGLint syncStatus           = EGL_FALSE;
     ANGLE_EGL_TRY_RETURN(
         thread, syncObject->clientWait(display, currentContext, flags, timeout, &syncStatus),
-        "eglClientWaitSync", GetDisplayIfValid(display), EGL_FALSE);
+        "eglClientWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
 
     thread->setSuccess();
     return syncStatus;
@@ -899,21 +902,21 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttrib(EGLDisplay dpy,
                                          EGLAttrib *value)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSync sync = 0x%016" PRIxPTR
-          ", EGLint attribute = 0x%X, EGLAttrib "
-          "*value = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)sync, attribute, (uintptr_t)value);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSync sync = 0x%016" PRIxPTR
+               ", EGLint attribute = 0x%X, EGLAttrib "
+               "*value = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)sync, attribute, (uintptr_t)value);
 
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
     egl::Sync *syncObject = static_cast<Sync *>(sync);
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateGetSyncAttrib(display, syncObject, attribute, value),
-                         "eglGetSyncAttrib", GetDisplayIfValid(display), EGL_FALSE);
+                         "eglGetSyncAttrib", GetSyncIfValid(display, syncObject), EGL_FALSE);
 
     EGLint valueExt;
     ANGLE_EGL_TRY_RETURN(thread, GetSyncAttrib(display, syncObject, attribute, &valueExt),
-                         "eglGetSyncAttrib", GetDisplayIfValid(display), EGL_FALSE);
+                         "eglGetSyncAttrib", GetSyncIfValid(display, syncObject), EGL_FALSE);
     *value = valueExt;
 
     thread->setSuccess();
@@ -927,33 +930,57 @@ EGLImage EGLAPIENTRY EGL_CreateImage(EGLDisplay dpy,
                                      const EGLAttrib *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLContext ctx = 0x%016" PRIxPTR
-          ", EGLenum target = 0x%X, "
-          "EGLClientBuffer buffer = 0x%016" PRIxPTR
-          ", const EGLAttrib *attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)ctx, target, (uintptr_t)buffer, (uintptr_t)attrib_list);
-    Thread *thread        = egl::GetCurrentThread();
-    egl::Display *display = static_cast<egl::Display *>(dpy);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR
+               ", EGLContext ctx = %d"
+               ", EGLenum target = 0x%X, "
+               "EGLClientBuffer buffer = 0x%016" PRIxPTR
+               ", const EGLAttrib *attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, CID(dpy, ctx), target, (uintptr_t)buffer, (uintptr_t)attrib_list);
+    Thread *thread = egl::GetCurrentThread();
 
-    UNIMPLEMENTED();
-    thread->setError(EglBadDisplay() << "eglCreateImage unimplemented.", GetDebug(),
-                     "eglCreateImage", GetDisplayIfValid(display));
-    return EGL_NO_IMAGE;
+    egl::Display *display   = static_cast<egl::Display *>(dpy);
+    gl::Context *context    = static_cast<gl::Context *>(ctx);
+    AttributeMap attributes = AttributeMap::CreateFromIntArray((const EGLint *)attrib_list);
+
+    Error error = ValidateCreateImage(display, context, target, buffer, attributes);
+    if (error.isError())
+    {
+        thread->setError(error, GetDebug(), "eglCreateImage", GetDisplayIfValid(display));
+        return EGL_NO_IMAGE;
+    }
+
+    Image *image = nullptr;
+    error        = display->createImage(context, target, buffer, attributes, &image);
+    if (error.isError())
+    {
+        thread->setError(error, GetDebug(), "eglCreateImage", GetDisplayIfValid(display));
+        return EGL_NO_IMAGE;
+    }
+
+    thread->setSuccess();
+    return static_cast<EGLImage>(image);
 }
 
 EGLBoolean EGLAPIENTRY EGL_DestroyImage(EGLDisplay dpy, EGLImage image)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLImage image = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)image);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLImage image = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)image);
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
-    Image *eglImage       = static_cast<Image *>(image);
+    Image *img            = static_cast<Image *>(image);
 
-    UNIMPLEMENTED();
-    thread->setError(EglBadDisplay() << "eglDestroyImage unimplemented.", GetDebug(),
-                     "eglDestroyImage", GetImageIfValid(display, eglImage));
-    return EGL_FALSE;
+    Error error = ValidateDestroyImage(display, img);
+    if (error.isError())
+    {
+        thread->setError(error, GetDebug(), "eglDestroyImage", GetImageIfValid(display, img));
+        return EGL_FALSE;
+    }
+
+    display->destroyImage(img);
+
+    thread->setSuccess();
+    return EGL_TRUE;
 }
 
 EGLDisplay EGLAPIENTRY EGL_GetPlatformDisplay(EGLenum platform,
@@ -961,10 +988,10 @@ EGLDisplay EGLAPIENTRY EGL_GetPlatformDisplay(EGLenum platform,
                                               const EGLAttrib *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLenum platform = %d, void* native_display = 0x%016" PRIxPTR
-          ", const EGLint* attrib_list = "
-          "0x%016" PRIxPTR ")",
-          platform, (uintptr_t)native_display, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLenum platform = %d, void* native_display = 0x%016" PRIxPTR
+               ", const EGLint* attrib_list = "
+               "0x%016" PRIxPTR,
+               platform, (uintptr_t)native_display, (uintptr_t)attrib_list);
     Thread *thread = egl::GetCurrentThread();
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateGetPlatformDisplay(platform, native_display, attrib_list),
@@ -994,11 +1021,11 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurface(EGLDisplay dpy,
                                                        const EGLAttrib *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", void* native_window = 0x%016" PRIxPTR
-          ", "
-          "const EGLint* attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_window, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", void* native_window = 0x%016" PRIxPTR
+               ", "
+               "const EGLint* attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_window, (uintptr_t)attrib_list);
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
 
@@ -1014,11 +1041,11 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurface(EGLDisplay dpy,
                                                        const EGLAttrib *attrib_list)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
-          ", void* native_pixmap = 0x%016" PRIxPTR
-          ", "
-          "const EGLint* attrib_list = 0x%016" PRIxPTR ")",
-          (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_pixmap, (uintptr_t)attrib_list);
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLConfig config = 0x%016" PRIxPTR
+               ", void* native_pixmap = 0x%016" PRIxPTR
+               ", "
+               "const EGLint* attrib_list = 0x%016" PRIxPTR,
+               (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_pixmap, (uintptr_t)attrib_list);
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
 
@@ -1031,9 +1058,9 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurface(EGLDisplay dpy,
 EGLBoolean EGLAPIENTRY EGL_WaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(EGLDisplay dpy =0x%016" PRIxPTR "p, EGLSync sync = 0x%016" PRIxPTR
-          ", EGLint flags = 0x%X)",
-          (uintptr_t)dpy, (uintptr_t)sync, flags);
+    FUNC_EVENT("EGLDisplay dpy =0x%016" PRIxPTR "p, EGLSync sync = 0x%016" PRIxPTR
+               ", EGLint flags = 0x%X",
+               (uintptr_t)dpy, (uintptr_t)sync, flags);
 
     Thread *thread        = egl::GetCurrentThread();
     egl::Display *display = static_cast<egl::Display *>(dpy);
@@ -1041,11 +1068,11 @@ EGLBoolean EGLAPIENTRY EGL_WaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags)
     egl::Sync *syncObject = static_cast<Sync *>(sync);
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateWaitSync(display, context, syncObject, flags),
-                         "eglWaitSync", GetDisplayIfValid(display), EGL_FALSE);
+                         "eglWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
 
     gl::Context *currentContext = thread->getContext();
     ANGLE_EGL_TRY_RETURN(thread, syncObject->serverWait(display, currentContext, flags),
-                         "eglWaitSync", GetDisplayIfValid(display), EGL_FALSE);
+                         "eglWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
 
     thread->setSuccess();
     return EGL_TRUE;
@@ -1054,7 +1081,7 @@ EGLBoolean EGLAPIENTRY EGL_WaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags)
 __eglMustCastToProperFunctionPointerType EGLAPIENTRY EGL_GetProcAddress(const char *procname)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    EVENT("(const char *procname = \"%s\")", procname);
+    FUNC_EVENT("const char *procname = \"%s\"", procname);
     Thread *thread = egl::GetCurrentThread();
 
     ProcEntry *entry =

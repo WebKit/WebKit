@@ -12,18 +12,21 @@
 #define COMPILER_TRANSLATOR_TREEOPS_USEINTERFACEBLOCKFIELDS_H_
 
 #include <GLSLANG/ShaderLang.h>
+#include "common/angleutils.h"
 
 namespace sh
 {
 
+class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
 using InterfaceBlockList = std::vector<sh::InterfaceBlock>;
 
-void UseInterfaceBlockFields(TIntermBlock *root,
-                             const InterfaceBlockList &blocks,
-                             const TSymbolTable &symbolTable);
+ANGLE_NO_DISCARD bool UseInterfaceBlockFields(TCompiler *compiler,
+                                              TIntermBlock *root,
+                                              const InterfaceBlockList &blocks,
+                                              const TSymbolTable &symbolTable);
 
 }  // namespace sh
 

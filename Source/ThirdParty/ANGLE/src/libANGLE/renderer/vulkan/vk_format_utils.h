@@ -28,6 +28,7 @@ class TextureCapsMap;
 namespace rx
 {
 class RendererVk;
+class ContextVk;
 
 namespace vk
 {
@@ -97,7 +98,6 @@ struct Format final : private angle::NonCopyable
 
     bool vertexLoadRequiresConversion;
     bool vkBufferFormatIsPacked;
-    bool vkSupportsStorageBuffer;
     bool vkFormatIsInt;
     bool vkFormatIsUnsigned;
 };
@@ -144,12 +144,18 @@ VkImageUsageFlags GetMaximalImageUsageFlags(RendererVk *renderer, VkFormat forma
 
 // Checks if a vkFormat supports all the features needed to use it as a GL texture format
 bool HasFullTextureFormatSupport(RendererVk *renderer, VkFormat vkFormat);
+// Checks if a vkFormat supports all the features except texture filtering
+bool HasNonFilterableTextureFormatSupport(RendererVk *renderer, VkFormat vkFormat);
+// Checks if a vkFormat supports all the features except rendering
+bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, VkFormat vkFormat);
 
 // Returns the alignment for a buffer to be used with the vertex input stage in Vulkan. This
 // calculation is listed in the Vulkan spec at the end of the section 'Vertex Input Description'.
 size_t GetVertexInputAlignment(const vk::Format &format);
 
-void MapSwizzleState(const vk::Format &format,
+void MapSwizzleState(const ContextVk *contextVk,
+                     const vk::Format &format,
+                     const bool sized,
                      const gl::SwizzleState &swizzleState,
                      gl::SwizzleState *swizzleStateOut);
 }  // namespace rx

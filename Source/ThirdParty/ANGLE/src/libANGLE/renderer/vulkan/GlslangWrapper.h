@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,26 +22,22 @@ class GlslangWrapper
     static void Initialize();
     static void Release();
 
-    static void GetShaderSource(const gl::ProgramState &programState,
+    static void GetShaderSource(bool useOldRewriteStructSamplers,
+                                const gl::ProgramState &programState,
                                 const gl::ProgramLinkedResources &resources,
-                                std::string *vertexSourceOut,
-                                std::string *fragmentSourceOut);
+                                gl::ShaderMap<std::string> *shaderSourcesOut);
 
     static angle::Result GetShaderCode(vk::Context *context,
                                        const gl::Caps &glCaps,
                                        bool enableLineRasterEmulation,
-                                       const std::string &vertexSource,
-                                       const std::string &fragmentSource,
-                                       std::vector<uint32_t> *vertexCodeOut,
-                                       std::vector<uint32_t> *fragmentCodeOut);
+                                       const gl::ShaderMap<std::string> &shaderSources,
+                                       gl::ShaderMap<std::vector<uint32_t>> *shaderCodesOut);
 
   private:
     static angle::Result GetShaderCodeImpl(vk::Context *context,
                                            const gl::Caps &glCaps,
-                                           const std::string &vertexSource,
-                                           const std::string &fragmentSource,
-                                           std::vector<uint32_t> *vertexCodeOut,
-                                           std::vector<uint32_t> *fragmentCodeOut);
+                                           const gl::ShaderMap<std::string> &shaderSources,
+                                           gl::ShaderMap<std::vector<uint32_t>> *shaderCodesOut);
 };
 }  // namespace rx
 

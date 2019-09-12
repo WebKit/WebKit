@@ -26,10 +26,8 @@ class CopyTexture3DTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         const char *vertexShaderSource   = getVertexShaderSource();
         const char *fragmentShaderSource = getFragmentShaderSource();
 
@@ -52,8 +50,6 @@ class CopyTexture3DTest : public ANGLETest
                "    texcoord = (position.xyz * 0.5) + 0.5;\n"
                "}\n";
     }
-
-    void TearDown() override { ANGLETest::TearDown(); }
 
     bool checkExtensions() const
     {
@@ -1273,9 +1269,6 @@ TEST_P(Texture2DArrayCopy, SnormFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    // http://anglebug.com/2865
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsD3D11());
-
     testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_R8_SNORM, GL_BYTE, false, false,
              false, GLColor(251, 0, 0, 255));
     testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_R8_SNORM, GL_BYTE, false, true,
@@ -1420,9 +1413,6 @@ TEST_P(Texture2DArrayCopy, UnsignedByteFormats)
 TEST_P(Texture2DArrayCopy, FloatFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
-
-    // http://anglebug.com/2865
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsD3D11());
 
     std::vector<GLenum> floatTypes = {GL_FLOAT, GL_HALF_FLOAT, GL_UNSIGNED_INT_10F_11F_11F_REV,
                                       GL_UNSIGNED_INT_5_9_9_9_REV};

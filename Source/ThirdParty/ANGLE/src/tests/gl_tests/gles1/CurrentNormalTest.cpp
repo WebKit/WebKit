@@ -66,4 +66,4 @@ TEST_P(CurrentNormalTest, Set)
     EXPECT_NEAR(1.0f / 3.0f, actualNormal[2], epsilon);
 }
 
-ANGLE_INSTANTIATE_TEST(CurrentNormalTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(CurrentNormalTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

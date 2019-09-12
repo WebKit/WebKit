@@ -26,9 +26,8 @@ namespace
 class D3D11EmulatedIndexedBufferTest : public ANGLETest
 {
   protected:
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
         ASSERT_EQ(EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE, GetParam().getRenderer());
 
         mContext                 = static_cast<gl::Context *>(getEGLWindow()->getContext());
@@ -56,11 +55,7 @@ class D3D11EmulatedIndexedBufferTest : public ANGLETest
         }
     }
 
-    void TearDown() override
-    {
-        SafeDelete(mSourceBuffer);
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { SafeDelete(mSourceBuffer); }
 
     void createMappableCompareBufferFromEmulatedBuffer(ID3D11Buffer *sourceBuffer,
                                                        GLuint size,

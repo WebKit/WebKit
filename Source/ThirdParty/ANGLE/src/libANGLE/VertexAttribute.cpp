@@ -48,10 +48,7 @@ void VertexBinding::onContainerBindingChanged(const Context *context, int incr) 
 
 VertexAttribute::VertexAttribute(GLuint bindingIndex)
     : enabled(false),
-      type(VertexAttribType::Float),
-      size(4u),
-      normalized(false),
-      pureInteger(false),
+      format(&angle::Format::Get(angle::FormatID::R32G32B32A32_FLOAT)),
       pointer(nullptr),
       relativeOffset(0),
       vertexAttribArrayStride(0),
@@ -61,10 +58,7 @@ VertexAttribute::VertexAttribute(GLuint bindingIndex)
 
 VertexAttribute::VertexAttribute(VertexAttribute &&attrib)
     : enabled(attrib.enabled),
-      type(attrib.type),
-      size(attrib.size),
-      normalized(attrib.normalized),
-      pureInteger(attrib.pureInteger),
+      format(attrib.format),
       pointer(attrib.pointer),
       relativeOffset(attrib.relativeOffset),
       vertexAttribArrayStride(attrib.vertexAttribArrayStride),
@@ -77,10 +71,7 @@ VertexAttribute &VertexAttribute::operator=(VertexAttribute &&attrib)
     if (this != &attrib)
     {
         enabled                 = attrib.enabled;
-        type                    = attrib.type;
-        size                    = attrib.size;
-        normalized              = attrib.normalized;
-        pureInteger             = attrib.pureInteger;
+        format                  = attrib.format;
         pointer                 = attrib.pointer;
         relativeOffset          = attrib.relativeOffset;
         vertexAttribArrayStride = attrib.vertexAttribArrayStride;

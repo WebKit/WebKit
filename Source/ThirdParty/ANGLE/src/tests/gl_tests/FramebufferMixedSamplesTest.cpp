@@ -33,10 +33,8 @@ class CHROMIUMFramebufferMixedSamplesTest : public ANGLETest
                IsGLExtensionEnabled("GL_OES_rgb8_rgba8");
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
 
         GLuint position_loc = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
@@ -56,14 +54,12 @@ class CHROMIUMFramebufferMixedSamplesTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteBuffers(1, &mVBO);
         glDeleteProgram(mProgram);
 
         ASSERT_GL_NO_ERROR();
-
-        ANGLETest::TearDown();
     }
 
     void prepareForDraw(SetupFBOType fbo_type)

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -65,7 +65,7 @@ TEST_F(FeatureSupportUtilTest, APIVersion)
 // Test the ANGLEAddDeviceInfoToSystemInfo function
 TEST_F(FeatureSupportUtilTest, SystemInfo)
 {
-    SystemInfo systemInfo = mSystemInfo;
+    SystemInfo systemInfo          = mSystemInfo;
     systemInfo.machineManufacturer = "BAD";
     systemInfo.machineModelName    = "BAD";
 
@@ -87,8 +87,8 @@ TEST_F(FeatureSupportUtilTest, ParseRules)
     ]
 }
 )rulefile";
-    RulesHandle rulesHandle = nullptr;
-    int rulesVersion        = 0;
+    RulesHandle rulesHandle             = nullptr;
+    int rulesVersion                    = 0;
     EXPECT_TRUE(ANGLEAndroidParseRulesString(kRulesFileContents, &rulesHandle, &rulesVersion));
     EXPECT_NE(nullptr, rulesHandle);
     ANGLEFreeRulesHandle(rulesHandle);
@@ -140,8 +140,8 @@ TEST_F(FeatureSupportUtilTest, TestRuleProcessing)
     ]
 }
 )rulefile";
-    RulesHandle rulesHandle = nullptr;
-    int rulesVersion        = 0;
+    RulesHandle rulesHandle             = nullptr;
+    int rulesVersion                    = 0;
     EXPECT_TRUE(ANGLEAndroidParseRulesString(kRulesFileContents, &rulesHandle, &rulesVersion));
     EXPECT_NE(nullptr, rulesHandle);
 

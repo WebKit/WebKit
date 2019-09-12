@@ -43,7 +43,7 @@ angle::Result WindowSurfaceVkAndroid::getCurrentWindowSize(vk::Context *context,
     int32_t height = ANativeWindow_getHeight(mNativeWindowType);
     ANGLE_VK_CHECK(context, width > 0 && height > 0, VK_ERROR_INITIALIZATION_FAILED);
 
-    *extentsOut = gl::Extents(width, height, 0);
+    *extentsOut = gl::Extents(width, height, 1);
     return angle::Result::Continue;
 }
 

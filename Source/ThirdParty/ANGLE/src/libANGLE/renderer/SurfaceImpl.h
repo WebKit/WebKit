@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -53,7 +53,9 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
     virtual egl::Error initialize(const egl::Display *display)                           = 0;
     virtual FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
                                                       const gl::FramebufferState &state) = 0;
-    virtual egl::Error swap(const gl::Context *context)                                  = 0;
+    virtual egl::Error makeCurrent(const gl::Context *context);
+    virtual egl::Error unMakeCurrent(const gl::Context *context);
+    virtual egl::Error swap(const gl::Context *context) = 0;
     virtual egl::Error swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects);
     virtual egl::Error postSubBuffer(const gl::Context *context,
                                      EGLint x,

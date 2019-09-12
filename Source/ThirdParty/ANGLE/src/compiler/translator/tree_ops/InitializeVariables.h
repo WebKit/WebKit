@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -14,6 +14,7 @@
 
 namespace sh
 {
+class TCompiler;
 class TSymbolTable;
 
 typedef std::vector<sh::ShaderVariable> InitVariableList;
@@ -29,11 +30,12 @@ TIntermSequence *CreateInitCode(const TIntermTyped *initializedSymbol,
                                 TSymbolTable *symbolTable);
 
 // Initialize all uninitialized local variables, so that undefined behavior is avoided.
-void InitializeUninitializedLocals(TIntermBlock *root,
-                                   int shaderVersion,
-                                   bool canUseLoopsToInitialize,
-                                   bool highPrecisionSupported,
-                                   TSymbolTable *symbolTable);
+ANGLE_NO_DISCARD bool InitializeUninitializedLocals(TCompiler *compiler,
+                                                    TIntermBlock *root,
+                                                    int shaderVersion,
+                                                    bool canUseLoopsToInitialize,
+                                                    bool highPrecisionSupported,
+                                                    TSymbolTable *symbolTable);
 
 // This function can initialize all the types that CreateInitCode is able to initialize. All
 // variables must be globals which can be found in the symbol table. For now it is used for the
@@ -43,13 +45,14 @@ void InitializeUninitializedLocals(TIntermBlock *root,
 // Note: The type of each lvalue in an initializer is retrieved from the symbol table. gl_FragData
 // requires special handling because the number of indices which can be initialized is determined by
 // enabled extensions.
-void InitializeVariables(TIntermBlock *root,
-                         const InitVariableList &vars,
-                         TSymbolTable *symbolTable,
-                         int shaderVersion,
-                         const TExtensionBehavior &extensionBehavior,
-                         bool canUseLoopsToInitialize,
-                         bool highPrecisionSupported);
+ANGLE_NO_DISCARD bool InitializeVariables(TCompiler *compiler,
+                                          TIntermBlock *root,
+                                          const InitVariableList &vars,
+                                          TSymbolTable *symbolTable,
+                                          int shaderVersion,
+                                          const TExtensionBehavior &extensionBehavior,
+                                          bool canUseLoopsToInitialize,
+                                          bool highPrecisionSupported);
 
 }  // namespace sh
 

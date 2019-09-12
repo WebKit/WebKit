@@ -49,12 +49,12 @@ bmp_file.close()
 # convert to YUV 4:4:4
 converted_pixels = bytearray(pixels)
 for i in range(0, width * height):
-    R, = struct.unpack("B", pixels[i*3+2])
-    G, = struct.unpack("B", pixels[i*3+1])
-    B, = struct.unpack("B", pixels[i*3])
-    converted_pixels[i*3] = ((66*R + 129*G + 25*B + 128) >> 8) + 16
-    converted_pixels[i*3+1] = ((-38*R - 74*G + 112*B + 128) >> 8) + 128
-    converted_pixels[i*3+2] = ((112*R - 94*G - 18*B + 128) >> 8) + 128
+    R, = struct.unpack("B", pixels[i * 3 + 2])
+    G, = struct.unpack("B", pixels[i * 3 + 1])
+    B, = struct.unpack("B", pixels[i * 3])
+    converted_pixels[i * 3] = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16
+    converted_pixels[i * 3 + 1] = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128
+    converted_pixels[i * 3 + 2] = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128
 
 # downsample to packed UV buffer
 uv_buffer = bytearray(width * height / 2)

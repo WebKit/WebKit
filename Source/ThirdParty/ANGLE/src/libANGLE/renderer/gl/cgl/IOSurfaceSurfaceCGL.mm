@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -7,21 +7,23 @@
 // PBufferSurfaceCGL.cpp: an implementation of PBuffers created from IOSurfaces using
 //                        EGL_ANGLE_iosurface_client_buffer
 
-#if __has_include(<OpenGL/CGLIOSurface.h>)
+#if __has_include(<Cocoa/Cocoa.h>)
 
-#include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
+#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
 
-#include <IOSurface/IOSurface.h>
-#include <OpenGL/CGLIOSurface.h>
+#    import <Cocoa/Cocoa.h>
+#    include <IOSurface/IOSurface.h>
+#    include <OpenGL/CGLIOSurface.h>
 
-#include "common/debug.h"
-#include "libANGLE/AttributeMap.h"
-#include "libANGLE/renderer/gl/FramebufferGL.h"
-#include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/RendererGL.h"
-#include "libANGLE/renderer/gl/StateManagerGL.h"
-#include "libANGLE/renderer/gl/TextureGL.h"
-#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#    include "common/debug.h"
+#    include "libANGLE/AttributeMap.h"
+#    include "libANGLE/renderer/gl/BlitGL.h"
+#    include "libANGLE/renderer/gl/FramebufferGL.h"
+#    include "libANGLE/renderer/gl/FunctionsGL.h"
+#    include "libANGLE/renderer/gl/RendererGL.h"
+#    include "libANGLE/renderer/gl/StateManagerGL.h"
+#    include "libANGLE/renderer/gl/TextureGL.h"
+#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
 namespace rx
 {
@@ -46,6 +48,7 @@ static const IOSurfaceFormatInfo kIOSurfaceFormats[] = {
     {GL_RED,      GL_UNSIGNED_BYTE,  1, GL_RED,  GL_RED,  GL_UNSIGNED_BYTE           },
     {GL_R16UI,    GL_UNSIGNED_SHORT, 2, GL_RED,  GL_RED,  GL_UNSIGNED_SHORT          },
     {GL_RG,       GL_UNSIGNED_BYTE,  2, GL_RG,   GL_RG,   GL_UNSIGNED_BYTE           },
+    {GL_RGB,      GL_UNSIGNED_BYTE,  4, GL_BGRA, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV},
     {GL_BGRA_EXT, GL_UNSIGNED_BYTE,  4, GL_BGRA, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV},
     {GL_RGBA,     GL_HALF_FLOAT,     8, GL_RGBA, GL_RGBA, GL_HALF_FLOAT              },
 };
@@ -73,11 +76,11 @@ IOSurfaceSurfaceCGL::IOSurfaceSurfaceCGL(const egl::SurfaceState &state,
     : SurfaceGL(state),
       mCGLContext(cglContext),
       mIOSurface(nullptr),
-      mCurrentContext(nullptr),
       mWidth(0),
       mHeight(0),
       mPlane(0),
-      mFormatIndex(-1)
+      mFormatIndex(-1),
+      mAlphaInitialized(false)
 {
     // Keep reference to the IOSurface so it doesn't get deleted while the pbuffer exists.
     mIOSurface = reinterpret_cast<IOSurfaceRef>(buffer);
@@ -90,8 +93,11 @@ IOSurfaceSurfaceCGL::IOSurfaceSurfaceCGL(const egl::SurfaceState &state,
 
     EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
     EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
-    mFormatIndex             = static_cast<int>(FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type)));
+    mFormatIndex =
+        FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
     ASSERT(mFormatIndex >= 0);
+
+    mAlphaInitialized = !hasEmulatedAlphaChannel();
 }
 
 IOSurfaceSurfaceCGL::~IOSurfaceSurfaceCGL()
@@ -110,16 +116,12 @@ egl::Error IOSurfaceSurfaceCGL::initialize(const egl::Display *display)
 
 egl::Error IOSurfaceSurfaceCGL::makeCurrent(const gl::Context *context)
 {
-    ASSERT(!mCurrentContext);
-    mCurrentContext = context;
     return egl::NoError();
 }
 
-egl::Error IOSurfaceSurfaceCGL::unMakeCurrent()
+egl::Error IOSurfaceSurfaceCGL::unMakeCurrent(const gl::Context *context)
 {
-    ASSERT(mCurrentContext);
-    GetFunctionsGL(mCurrentContext)->flush();
-    mCurrentContext = nullptr;
+    GetFunctionsGL(context)->flush();
     return egl::NoError();
 }
 
@@ -155,13 +157,18 @@ egl::Error IOSurfaceSurfaceCGL::bindTexImage(const gl::Context *context,
     stateManager->bindTexture(gl::TextureType::Rectangle, textureID);
 
     const auto &format = kIOSurfaceFormats[mFormatIndex];
-    auto error = CGLTexImageIOSurface2D(mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeFormat,
-                                        mWidth, mHeight, format.nativeInternalFormat,
-                                        format.nativeType, mIOSurface, mPlane);
+    CGLError error = CGLTexImageIOSurface2D(mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeFormat,
+                                            mWidth, mHeight, format.nativeInternalFormat,
+                                            format.nativeType, mIOSurface, mPlane);
 
     if (error != kCGLNoError)
     {
-        return egl::EglContextLost();
+        return egl::EglContextLost() << "CGLTexImageIOSurface2D failed: " << CGLErrorString(error);
+    }
+
+    if (IsError(initializeAlphaChannel(context, textureID)))
+    {
+        return egl::EglContextLost() << "Failed to initialize IOSurface alpha channel.";
     }
 
     return egl::NoError();
@@ -229,7 +236,8 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
     EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
     EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
 
-    int formatIndex = FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
+    int formatIndex =
+        FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
 
     if (formatIndex < 0)
     {
@@ -254,8 +262,9 @@ class IOSurfaceFramebuffer : public FramebufferGL
     IOSurfaceFramebuffer(const gl::FramebufferState &data,
                          GLuint id,
                          GLuint textureId,
-                         bool isDefault)
-        : FramebufferGL(data, id, isDefault), mTextureId(textureId)
+                         bool isDefault,
+                         bool emulatedAlpha)
+        : FramebufferGL(data, id, isDefault, emulatedAlpha), mTextureId(textureId)
     {}
     void destroy(const gl::Context *context) override
     {
@@ -280,7 +289,16 @@ FramebufferImpl *IOSurfaceSurfaceCGL::createDefaultFramebuffer(const gl::Context
     CGLError error = CGLTexImageIOSurface2D(mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeFormat,
                                             mWidth, mHeight, format.nativeInternalFormat,
                                             format.nativeType, mIOSurface, mPlane);
+    if (error != kCGLNoError)
+    {
+        ERR() << "CGLTexImageIOSurface2D failed: " << CGLErrorString(error);
+    }
     ASSERT(error == kCGLNoError);
+
+    if (IsError(initializeAlphaChannel(context, texture)))
+    {
+        ERR() << "Failed to initialize IOSurface alpha channel.";
+    }
 
     GLuint framebuffer = 0;
     functions->genFramebuffers(1, &framebuffer);
@@ -289,9 +307,29 @@ FramebufferImpl *IOSurfaceSurfaceCGL::createDefaultFramebuffer(const gl::Context
     functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE,
                                     texture, 0);
 
-    return new IOSurfaceFramebuffer(state, framebuffer, texture, true);
+    return new IOSurfaceFramebuffer(state, framebuffer, texture, true, hasEmulatedAlphaChannel());
+}
+
+angle::Result IOSurfaceSurfaceCGL::initializeAlphaChannel(const gl::Context *context,
+                                                          GLuint texture)
+{
+    if (mAlphaInitialized)
+    {
+        return angle::Result::Continue;
+    }
+
+    BlitGL *blitter = GetBlitGL(context);
+    ANGLE_TRY(blitter->clearRenderableTextureAlphaToOne(texture, gl::TextureTarget::Rectangle, 0));
+    mAlphaInitialized = true;
+    return angle::Result::Continue;
+}
+
+bool IOSurfaceSurfaceCGL::hasEmulatedAlphaChannel() const
+{
+    const auto &format = kIOSurfaceFormats[mFormatIndex];
+    return format.internalFormat == GL_RGB;
 }
 
 }  // namespace rx
 
-#endif // __has_include(<OpenGL/CGLIOSurface.h>)
+#endif  // __has_include(<Cocoa/Cocoa.h>)

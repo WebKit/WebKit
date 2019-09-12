@@ -32,13 +32,34 @@ void ImageVk::onDestroy(const egl::Display *display)
     DisplayVk *displayVk = vk::GetImpl(display);
     RendererVk *renderer = displayVk->getRenderer();
 
+    std::vector<vk::GarbageObjectBase> garbage;
+
     if (mImage != nullptr && mOwnsImage)
     {
-        mImage->releaseImage(renderer);
-        mImage->releaseStagingBuffer(renderer);
+        mImage->releaseImage(displayVk, &garbage);
+        mImage->releaseStagingBuffer(displayVk, &garbage);
         delete mImage;
     }
+    else if (egl::IsExternalImageTarget(mState.target))
+    {
+        ASSERT(mState.source != nullptr);
+        ExternalImageSiblingVk *externalImageSibling =
+            GetImplAs<ExternalImageSiblingVk>(GetAs<egl::ExternalImageSibling>(mState.source));
+        externalImageSibling->release(displayVk, &garbage);
+    }
     mImage = nullptr;
+
+    if (!garbage.empty())
+    {
+        renderer->addGarbage(std::move(mImageLastUseFences), std::move(garbage));
+    }
+    else
+    {
+        for (vk::Shared<vk::Fence> &fence : mImageLastUseFences)
+        {
+            fence.reset(displayVk->getDevice());
+        }
+    }
 }
 
 egl::Error ImageVk::initialize(const egl::Display *display)
@@ -73,7 +94,6 @@ egl::Error ImageVk::initialize(const egl::Display *display)
 
             ASSERT(mContext != nullptr);
             renderer = vk::GetImpl(mContext)->getRenderer();
-            ;
         }
         else if (egl::IsExternalImageTarget(mState.target))
         {
@@ -91,7 +111,8 @@ egl::Error ImageVk::initialize(const egl::Display *display)
         }
 
         // Make sure a staging buffer is ready to use to upload data
-        mImage->initStagingBuffer(renderer, mImage->getFormat());
+        mImage->initStagingBuffer(renderer, mImage->getFormat(), vk::kStagingBufferFlags,
+                                  vk::kStagingBufferSize);
 
         mOwnsImage = false;
 
@@ -99,6 +120,9 @@ egl::Error ImageVk::initialize(const egl::Display *display)
         mImageLevel       = 0;
         mImageLayer       = 0;
     }
+
+    // mContext is no longer needed, make sure it's not used by accident.
+    mContext = nullptr;
 
     return egl::NoError();
 }
@@ -127,6 +151,19 @@ angle::Result ImageVk::orphan(const gl::Context *context, egl::ImageSibling *sib
             ANGLE_VK_UNREACHABLE(vk::GetImpl(context));
             return angle::Result::Stop;
         }
+    }
+
+    // Grab a fence from the releasing context to know when the image is no longer used
+    ASSERT(context != nullptr);
+    ContextVk *contextVk = vk::GetImpl(context);
+
+    // Flush the context to make sure the fence has been submitted.
+    ANGLE_TRY(contextVk->flushImpl(nullptr));
+
+    vk::Shared<vk::Fence> fence = contextVk->getLastSubmittedFence();
+    if (fence.isReferenced())
+    {
+        mImageLastUseFences.push_back(std::move(fence));
     }
 
     return angle::Result::Continue;

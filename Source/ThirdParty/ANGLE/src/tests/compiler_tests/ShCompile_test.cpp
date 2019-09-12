@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -143,14 +143,39 @@ TEST_F(ShCompileTest, DecimalSepLocale)
 {
     // Locale names are platform dependent, add platform-specific names of locales to be tested here
     const std::string availableLocales[] = {
-        "de_DE", "de-DE", "de_DE.UTF-8", "de_DE.ISO8859-1", "de_DE.ISO8859-15", "de_DE@euro",
-        "de_DE.88591", "de_DE.88591.en", "de_DE.iso88591", "de_DE.ISO-8859-1", "de_DE.ISO_8859-1",
-        "de_DE.iso885915", "de_DE.ISO-8859-15", "de_DE.ISO_8859-15", "de_DE.8859-15",
-        "de_DE.8859-15@euro", "de_DE.ISO-8859-15@euro", "de_DE.UTF-8@euro", "de_DE.utf8",
-        "German_germany", "German_Germany", "German_Germany.1252", "German_Germany.UTF-8", "German",
+        "de_DE",
+        "de-DE",
+        "de_DE.UTF-8",
+        "de_DE.ISO8859-1",
+        "de_DE.ISO8859-15",
+        "de_DE@euro",
+        "de_DE.88591",
+        "de_DE.88591.en",
+        "de_DE.iso88591",
+        "de_DE.ISO-8859-1",
+        "de_DE.ISO_8859-1",
+        "de_DE.iso885915",
+        "de_DE.ISO-8859-15",
+        "de_DE.ISO_8859-15",
+        "de_DE.8859-15",
+        "de_DE.8859-15@euro",
+#if !defined(_WIN32)
+        // TODO(https://crbug.com/972372): Add this test back on Windows once the
+        // CRT no longer throws on code page sections ('ISO-8859-15@euro') that
+        // are >= 16 characters long.
+        "de_DE.ISO-8859-15@euro",
+#endif
+        "de_DE.UTF-8@euro",
+        "de_DE.utf8",
+        "German_germany",
+        "German_Germany",
+        "German_Germany.1252",
+        "German_Germany.UTF-8",
+        "German",
         // One ubuntu tester doesn't have a german locale, but da_DK.utf8 has similar float
         // representation
-        "da_DK.utf8"};
+        "da_DK.utf8"
+    };
 
     const auto localeExists = [](const std::string name) {
         return bool(setlocale(LC_ALL, name.c_str()));
@@ -200,4 +225,142 @@ TEST_F(ShCompileTest, DecimalSepLocale)
             testedLocales++;
         }
     }
+}
+
+// For testing Desktop GL Shaders
+class ShCompileDesktopGLTest : public ShCompileTest
+{
+  public:
+    ShCompileDesktopGLTest() {}
+
+  protected:
+    void SetUp() override
+    {
+        sh::InitBuiltInResources(&mResources);
+        mCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, SH_GL_COMPATIBILITY_SPEC,
+                                          SH_GLSL_330_CORE_OUTPUT, &mResources);
+        ASSERT_TRUE(mCompiler != nullptr) << "Compiler could not be constructed.";
+    }
+};
+
+// Test calling sh::Compile with fragment shader source string
+TEST_F(ShCompileDesktopGLTest, DesktopGLString)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330
+        void main()
+        {
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, true);
+}
+
+// Test calling sh::Compile with core version
+TEST_F(ShCompileDesktopGLTest, FragmentShaderCoreVersion)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330 core
+        void main()
+        {
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, true);
+}
+
+// Implicit conversions in basic operations
+TEST_F(ShCompileDesktopGLTest, ImplicitConversionBasicOperation)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330 core
+        void main()
+        {
+            //float a = 1 + 1.5;
+            //float b = 1 - 1.5;
+            //float c = 1 * 1.5;
+            //float d = 1 / 1.5;
+            //float e = 1.5 + 1;
+            //float f = 1.5 - 1;
+            float g = 1.5 * 1;
+            //float h = 1.5 / 1;
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, true);
+}
+
+// Implicit conversions when assigning
+TEST_F(ShCompileDesktopGLTest, ImplicitConversionAssign)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330 core
+        void main()
+        {
+            float a = 1;
+            uint b = 2u;
+            a = b;
+            a += b;
+            a -= b;
+            a *= b;
+            a /= b;
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, true);
+}
+
+// Implicit conversions for vectors
+TEST_F(ShCompileDesktopGLTest, ImplicitConversionVector)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330 core
+        void main()
+        {
+            vec3 a;
+            ivec3 b = ivec3(1, 1, 1);
+            a = b;
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, true);
+}
+
+// Implicit conversions should not convert between ints and uints
+TEST_F(ShCompileDesktopGLTest, ImplicitConversionAssignFailed)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330 core
+        void main()
+        {
+            int a = 1;
+            uint b = 2;
+            a = b;
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, false);
+}
+
+// GL shaders use implicit conversions between types
+// Testing internal implicit conversions
+TEST_F(ShCompileDesktopGLTest, ImplicitConversionFunction)
+{
+    constexpr char kFragmentShaderString[] =
+        R"(#version 330 core
+        void main()
+        {
+            float cosTheta = clamp(0.5,0,1);
+            float exp = pow(0.5,2);
+        })";
+
+    const char *shaderStrings[] = {kFragmentShaderString};
+
+    testCompile(shaderStrings, 1, true);
 }

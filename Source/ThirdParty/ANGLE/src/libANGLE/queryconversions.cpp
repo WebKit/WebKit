@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -69,14 +69,9 @@ NativeT CastQueryValueToInt(GLenum pname, QueryT value)
 
 }  // anonymous namespace
 
-// ES 3.10 Section 2.2.2
-// When querying bitmasks(such as SAMPLE_MASK_VALUE or STENCIL_WRITEMASK) with GetIntegerv, the
-// mask value is treated as a signed integer, so that mask values with the high bit set will not be
-// clamped when returned as signed integers.
-GLint CastMaskValue(const Context *context, GLuint value)
+GLint CastMaskValue(GLuint value)
 {
-    return (context->getClientVersion() >= Version(3, 1) ? static_cast<GLint>(value)
-                                                         : clampCast<GLint>(value));
+    return clampCast<GLint>(value);
 }
 
 template <typename QueryT, typename InternalT>

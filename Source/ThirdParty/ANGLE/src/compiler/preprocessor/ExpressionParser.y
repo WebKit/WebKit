@@ -1,6 +1,6 @@
 /*
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,7 +13,7 @@ WHICH GENERATES THE GLSL ES preprocessor expression parser.
 
 %{
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -29,6 +29,9 @@ WHICH GENERATES THE GLSL ES preprocessor expression parser.
 #endif
 #elif defined(_MSC_VER)
 #pragma warning(disable: 4065 4244 4701 4702)
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
 #include "ExpressionParser.h"

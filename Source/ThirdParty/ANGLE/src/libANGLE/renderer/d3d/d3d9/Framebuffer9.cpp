@@ -88,7 +88,7 @@ angle::Result Framebuffer9::readPixelsImpl(const gl::Context *context,
     ASSERT(colorbuffer);
 
     RenderTarget9 *renderTarget = nullptr;
-    ANGLE_TRY(colorbuffer->getRenderTarget(context, &renderTarget));
+    ANGLE_TRY(colorbuffer->getRenderTarget(context, 0, &renderTarget));
     ASSERT(renderTarget);
 
     IDirect3DSurface9 *surface = renderTarget->getSurface();
@@ -233,18 +233,19 @@ angle::Result Framebuffer9::blitImpl(const gl::Context *context,
 
     if (blitRenderTarget)
     {
-        const gl::FramebufferAttachment *readBuffer = sourceFramebuffer->getColorbuffer(0);
+        const gl::FramebufferAttachment *readBuffer = sourceFramebuffer->getColorAttachment(0);
         ASSERT(readBuffer);
 
         RenderTarget9 *readRenderTarget = nullptr;
-        ANGLE_TRY(readBuffer->getRenderTarget(context, &readRenderTarget));
+        ANGLE_TRY(readBuffer->getRenderTarget(context, 0, &readRenderTarget));
         ASSERT(readRenderTarget);
 
         const gl::FramebufferAttachment *drawBuffer = mState.getColorAttachment(0);
         ASSERT(drawBuffer);
 
         RenderTarget9 *drawRenderTarget = nullptr;
-        ANGLE_TRY(drawBuffer->getRenderTarget(context, &drawRenderTarget));
+        ANGLE_TRY(
+            drawBuffer->getRenderTarget(context, drawBuffer->getSamples(), &drawRenderTarget));
         ASSERT(drawRenderTarget);
 
         // The getSurface calls do an AddRef so save them until after no errors are possible
@@ -349,18 +350,20 @@ angle::Result Framebuffer9::blitImpl(const gl::Context *context,
 
     if (blitDepth || blitStencil)
     {
-        const gl::FramebufferAttachment *readBuffer = sourceFramebuffer->getDepthOrStencilbuffer();
+        const gl::FramebufferAttachment *readBuffer =
+            sourceFramebuffer->getDepthOrStencilAttachment();
         ASSERT(readBuffer);
 
         RenderTarget9 *readDepthStencil = nullptr;
-        ANGLE_TRY(readBuffer->getRenderTarget(context, &readDepthStencil));
+        ANGLE_TRY(readBuffer->getRenderTarget(context, 0, &readDepthStencil));
         ASSERT(readDepthStencil);
 
         const gl::FramebufferAttachment *drawBuffer = mState.getDepthOrStencilAttachment();
         ASSERT(drawBuffer);
 
         RenderTarget9 *drawDepthStencil = nullptr;
-        ANGLE_TRY(drawBuffer->getRenderTarget(context, &drawDepthStencil));
+        ANGLE_TRY(
+            drawBuffer->getRenderTarget(context, drawBuffer->getSamples(), &drawDepthStencil));
         ASSERT(drawDepthStencil);
 
         // The getSurface calls do an AddRef so save them until after no errors are possible

@@ -8,6 +8,8 @@
 #include <zircon/assert.h>
 #include <zircon/syscalls.h>
 
+#include <stdlib.h>
+
 #define FUCHSIA_EGL_WINDOW_MAGIC 0x80738870  // "FXIP"
 
 struct fuchsia_egl_window

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -688,6 +688,16 @@ WorkerContext *DisplayAndroid::createWorkerContext(std::string *infoLog,
         return nullptr;
     }
     return new WorkerContextAndroid(context, mEGL, mDummyPbuffer);
+}
+
+void DisplayAndroid::initializeFrontendFeatures(angle::FrontendFeatures *features) const
+{
+    mRenderer->initializeFrontendFeatures(features);
+}
+
+void DisplayAndroid::populateFeatureList(angle::FeatureList *features)
+{
+    mRenderer->getFeatures().populateFeatureList(features);
 }
 
 }  // namespace rx

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,11 +19,11 @@ class TIntermBlock;
 class TSymbolTable;
 
 void CollectVariables(TIntermBlock *root,
-                      std::vector<Attribute> *attributes,
-                      std::vector<OutputVariable> *outputVariables,
-                      std::vector<Uniform> *uniforms,
-                      std::vector<Varying> *inputVaryings,
-                      std::vector<Varying> *outputVaryings,
+                      std::vector<ShaderVariable> *attributes,
+                      std::vector<ShaderVariable> *outputVariables,
+                      std::vector<ShaderVariable> *uniforms,
+                      std::vector<ShaderVariable> *inputVaryings,
+                      std::vector<ShaderVariable> *outputVaryings,
                       std::vector<InterfaceBlock> *uniformBlocks,
                       std::vector<InterfaceBlock> *shaderStorageBlocks,
                       std::vector<InterfaceBlock> *inBlocks,

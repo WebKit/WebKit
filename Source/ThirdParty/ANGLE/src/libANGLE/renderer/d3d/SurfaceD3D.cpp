@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -105,8 +105,9 @@ egl::Error SurfaceD3D::initialize(const egl::Display *display)
 
     if (mBuftype == EGL_D3D_TEXTURE_ANGLE)
     {
-        ANGLE_TRY(mRenderer->getD3DTextureInfo(mState.config, mD3DTexture, &mFixedWidth,
-                                               &mFixedHeight, &mColorFormat));
+        ANGLE_TRY(mRenderer->getD3DTextureInfo(mState.config, mD3DTexture, mState.attributes,
+                                               &mFixedWidth, &mFixedHeight, nullptr, nullptr,
+                                               &mColorFormat));
         if (mState.attributes.contains(EGL_GL_COLORSPACE))
         {
             if (mColorFormat->id != angle::FormatID::R8G8B8A8_TYPELESS &&
@@ -431,6 +432,7 @@ const angle::Format *SurfaceD3D::getD3DTextureColorFormat() const
 angle::Result SurfaceD3D::getAttachmentRenderTarget(const gl::Context *context,
                                                     GLenum binding,
                                                     const gl::ImageIndex &imageIndex,
+                                                    GLsizei samples,
                                                     FramebufferAttachmentRenderTarget **rtOut)
 {
     if (binding == GL_BACK)

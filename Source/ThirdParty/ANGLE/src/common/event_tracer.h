@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,9 +10,9 @@
 
 namespace angle
 {
-
-const unsigned char *GetTraceCategoryEnabledFlag(const char *name);
-angle::TraceEventHandle AddTraceEvent(char phase,
+const unsigned char *GetTraceCategoryEnabledFlag(PlatformMethods *platform, const char *name);
+angle::TraceEventHandle AddTraceEvent(PlatformMethods *platform,
+                                      char phase,
                                       const unsigned char *categoryGroupEnabled,
                                       const char *name,
                                       unsigned long long id,

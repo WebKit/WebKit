@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -25,7 +25,7 @@ AndroidWindow::AndroidWindow() {}
 
 AndroidWindow::~AndroidWindow() {}
 
-bool AndroidWindow::initialize(const std::string &name, size_t width, size_t height)
+bool AndroidWindow::initialize(const std::string &name, int width, int height)
 {
     return resize(width, height);
 }

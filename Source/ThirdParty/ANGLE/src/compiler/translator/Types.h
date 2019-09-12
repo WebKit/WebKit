@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -214,6 +214,8 @@ class TType
 
     // Note that the array element type might still be an array type in GLSL ES version >= 3.10.
     void toArrayElementType();
+    // Removes all array sizes.
+    void toArrayBaseType();
 
     const TInterfaceBlock *getInterfaceBlock() const { return mInterfaceBlock; }
     void setInterfaceBlock(const TInterfaceBlock *interfaceBlockIn);
@@ -329,6 +331,8 @@ class TType
     void realize();
 
     bool isSampler() const { return IsSampler(type); }
+    bool isSamplerCube() const { return type == EbtSamplerCube; }
+    bool isAtomicCounter() const { return IsAtomicCounter(type); }
 
   private:
     void invalidateMangledName();

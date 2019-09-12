@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -273,15 +273,22 @@ bool VectorizeVectorScalarArithmeticTraverser::visitAggregate(Visit /*visit*/,
 
 }  // anonymous namespace
 
-void VectorizeVectorScalarArithmetic(TIntermBlock *root, TSymbolTable *symbolTable)
+bool VectorizeVectorScalarArithmetic(TCompiler *compiler,
+                                     TIntermBlock *root,
+                                     TSymbolTable *symbolTable)
 {
     VectorizeVectorScalarArithmeticTraverser traverser(symbolTable);
     do
     {
         traverser.nextIteration();
         root->traverse(&traverser);
-        traverser.updateTree();
+        if (!traverser.updateTree(compiler, root))
+        {
+            return false;
+        }
     } while (traverser.didReplaceScalarsWithVectors());
+
+    return true;
 }
 
 }  // namespace sh

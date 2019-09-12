@@ -31,8 +31,7 @@ import sys
 
 def get_json_description(gn_out, target_name):
     try:
-        text_desc = subprocess.check_output(
-            ['gn', 'desc', '--format=json', gn_out, target_name])
+        text_desc = subprocess.check_output(['gn', 'desc', '--format=json', gn_out, target_name])
     except subprocess.CalledProcessError as e:
         logging.error("e.retcode = %s" % e.returncode)
         logging.error("e.cmd = %s" % e.cmd)
@@ -40,11 +39,11 @@ def get_json_description(gn_out, target_name):
     try:
         json_out = json.loads(text_desc)
     except ValueError:
-        raise ValueError("Unable to decode JSON\ncmd: %s\noutput:\n%s" %
-                         (subprocess.list2cmdline(['gn', 'desc', '--format=json',
-                                                   gn_out, target_name]), text_desc))
+        raise ValueError("Unable to decode JSON\ncmd: %s\noutput:\n%s" % (subprocess.list2cmdline(
+            ['gn', 'desc', '--format=json', gn_out, target_name]), text_desc))
 
     return json_out
+
 
 def load_json_deps(desc, gn_out, target_name, all_desc, indent="  "):
     """Extracts dependencies from the given target json description
@@ -60,12 +59,13 @@ def load_json_deps(desc, gn_out, target_name, all_desc, indent="  "):
     text_descriptions = []
     for dep in target.get('deps', []):
         if dep not in all_desc:
-            logging.debug("dep: %s%s" % (indent,dep))
+            logging.debug("dep: %s%s" % (indent, dep))
             new_desc = get_json_description(gn_out, dep)
             all_desc[dep] = new_desc[dep]
-            load_json_deps(new_desc, gn_out, dep, all_desc, indent+"  ")
+            load_json_deps(new_desc, gn_out, dep, all_desc, indent + "  ")
         else:
-            logging.debug("dup: %s%s" % (indent,dep))
+            logging.debug("dup: %s%s" % (indent, dep))
+
 
 def create_build_description(gn_out, targets):
     """Creates the JSON build description by running GN."""
@@ -89,8 +89,7 @@ def main():
         description='Generate json build information from a GN description.')
     parser.add_argument(
         '--gn_out',
-        help=
-        'GN output config to use (e.g., out/Default or out/Debug.)',
+        help='GN output config to use (e.g., out/Default or out/Debug.)',
         default='out/Default',
     )
     parser.add_argument(
@@ -105,7 +104,7 @@ def main():
     args = parser.parse_args()
 
     desc = create_build_description(args.gn_out, args.targets)
-    fh = open(args.output,"w")
+    fh = open(args.output, "w")
     fh.write(json.dumps(desc, indent=4, sort_keys=True))
     fh.close()
 

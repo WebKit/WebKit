@@ -20,7 +20,6 @@
 #include <memory>
 
 #include "libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
-#include "test_utils/ANGLETest.h"
 #include "util/OSWindow.h"
 #include "util/com_utils.h"
 
@@ -39,7 +38,7 @@ class EGLDirectCompositionTest : public ANGLETest
   protected:
     EGLDirectCompositionTest() : mOSWindow(nullptr) {}
 
-    void SetUp() override
+    void testSetUp() override
     {
         if (!mRoHelper.SupportedWindowsRelease())
         {
@@ -192,7 +191,7 @@ class EGLDirectCompositionTest : public ANGLETest
         ASSERT_TRUE(eglMakeCurrent(mEglDisplay, surface, surface, mEglContext) != EGL_FALSE);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         if (!mRoHelper.SupportedWindowsRelease())
         {
@@ -290,4 +289,4 @@ TEST_P(EGLDirectCompositionTest, RenderSolidColor)
     ASSERT_EGL_TRUE(eglDestroyContext(mEglDisplay, mEglContext));
 }
 
-ANGLE_INSTANTIATE_TEST(EGLDirectCompositionTest, ES2_D3D11());
+ANGLE_INSTANTIATE_TEST(EGLDirectCompositionTest, WithNoFixture(ES2_D3D11()));

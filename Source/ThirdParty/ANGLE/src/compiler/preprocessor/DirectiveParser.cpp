@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2011-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2011 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <sstream>
 
+#include "GLSLANG/ShaderLang.h"
 #include "common/debug.h"
 #include "compiler/preprocessor/DiagnosticsBase.h"
 #include "compiler/preprocessor/DirectiveHandlerBase.h"
@@ -668,24 +669,16 @@ void DirectiveParser::parseExtension(Token *token)
     }
     if (valid && mSeenNonPreprocessorToken)
     {
-        if (mShaderVersion >= 300)
+        if (mSettings.shaderSpec == SH_WEBGL_SPEC && mShaderVersion < 300)
         {
-            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3,
+            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
                                  token->location, token->text);
-            valid = false;
         }
         else
         {
-            if (mSettings.shaderSpec == SH_WEBGL_SPEC)
-            {
-                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
-                                     token->location, token->text);
-            }
-            else
-            {
-                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
-                                     token->location, token->text);
-            }
+            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL,
+                                 token->location, token->text);
+            valid = false;
         }
     }
     if (valid)
@@ -707,7 +700,8 @@ void DirectiveParser::parseVersion(Token *token)
     enum State
     {
         VERSION_NUMBER,
-        VERSION_PROFILE,
+        VERSION_PROFILE_ES,
+        VERSION_PROFILE_GL,
         VERSION_ENDLINE
     };
 
@@ -735,11 +729,33 @@ void DirectiveParser::parseVersion(Token *token)
                 }
                 if (valid)
                 {
-                    state = (version < 300) ? VERSION_ENDLINE : VERSION_PROFILE;
+                    if (sh::IsDesktopGLSpec(mSettings.shaderSpec))
+                    {
+                        state = VERSION_PROFILE_GL;
+                    }
+                    else if (version < 300)
+                    {
+                        state = VERSION_ENDLINE;
+                    }
+                    else
+                    {
+                        state = VERSION_PROFILE_ES;
+                    }
                 }
                 break;
-            case VERSION_PROFILE:
+            case VERSION_PROFILE_ES:
+                ASSERT(!sh::IsDesktopGLSpec(mSettings.shaderSpec));
                 if (token->type != Token::IDENTIFIER || token->text != "es")
+                {
+                    mDiagnostics->report(Diagnostics::PP_INVALID_VERSION_DIRECTIVE, token->location,
+                                         token->text);
+                    valid = false;
+                }
+                state = VERSION_ENDLINE;
+                break;
+            case VERSION_PROFILE_GL:
+                ASSERT(sh::IsDesktopGLSpec(mSettings.shaderSpec));
+                if (token->type != Token::IDENTIFIER || token->text != "core")
                 {
                     mDiagnostics->report(Diagnostics::PP_INVALID_VERSION_DIRECTIVE, token->location,
                                          token->text);
@@ -755,6 +771,11 @@ void DirectiveParser::parseVersion(Token *token)
         }
 
         mTokenizer->lex(token);
+
+        if (token->type == '\n' && state == VERSION_PROFILE_GL)
+        {
+            state = VERSION_ENDLINE;
+        }
     }
 
     if (valid && (state != VERSION_ENDLINE))
@@ -773,7 +794,7 @@ void DirectiveParser::parseVersion(Token *token)
 
     if (valid)
     {
-        mDirectiveHandler->handleVersion(token->location, version);
+        mDirectiveHandler->handleVersion(token->location, version, mSettings.shaderSpec);
         mShaderVersion = version;
         PredefineMacro(mMacroSet, "__VERSION__", version);
     }

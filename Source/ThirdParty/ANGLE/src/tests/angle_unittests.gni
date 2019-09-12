@@ -1,4 +1,4 @@
-# Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+# Copyright 2015 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -57,6 +57,7 @@ angle_unittests_sources = [
   "../tests/compiler_tests/ConstantFoldingOverflow_test.cpp",
   "../tests/compiler_tests/ConstructCompiler_test.cpp",
   "../tests/compiler_tests/DebugShaderPrecision_test.cpp",
+  "../tests/compiler_tests/EmulateGLBaseVertexBaseInstance_test.cpp",
   "../tests/compiler_tests/EmulateGLDrawID_test.cpp",
   "../tests/compiler_tests/EmulateGLFragColorBroadcast_test.cpp",
   "../tests/compiler_tests/ExpressionLimit_test.cpp",
@@ -71,7 +72,6 @@ angle_unittests_sources = [
   "../tests/compiler_tests/GlFragDataNotModified_test.cpp",
   "../tests/compiler_tests/GeometryShader_test.cpp",
   "../tests/compiler_tests/ImmutableString_test.cpp",
-  "../tests/compiler_tests/ImmutableString_test_autogen.cpp",
   "../tests/compiler_tests/InitOutputVariables_test.cpp",
   "../tests/compiler_tests/IntermNode_test.cpp",
   "../tests/compiler_tests/NV_draw_buffers_test.cpp",
@@ -100,6 +100,7 @@ angle_unittests_sources = [
   "../tests/compiler_tests/UnfoldShortCircuitAST_test.cpp",
   "../tests/compiler_tests/VariablePacker_test.cpp",
   "../tests/compiler_tests/VectorizeVectorScalarArithmetic_test.cpp",
+  "../tests/compiler_tests/OVR_multiview_test.cpp",
   "../tests/compiler_tests/OVR_multiview2_test.cpp",
   "../tests/compiler_tests/WorkGroupSize_test.cpp",
   "../tests/test_expectations/GPUTestExpectationsParser_unittest.cpp",
@@ -141,3 +142,11 @@ angle_unittests_helper_sources = [
   "../common/system_utils_unittest_helper.cpp",
   "../common/system_utils_unittest_helper.h",
 ]
+
+if (is_android) {
+  angle_unittests_sources +=
+      [ "../tests/compiler_tests/ImmutableString_test_ESSL_autogen.cpp" ]
+} else {
+  angle_unittests_sources +=
+      [ "../tests/compiler_tests/ImmutableString_test_autogen.cpp" ]
+}

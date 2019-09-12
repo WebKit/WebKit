@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -45,8 +45,13 @@ void SimplePreprocessorTest::preprocess(const char *input)
 
 void SimplePreprocessorTest::preprocess(const char *input, const char *expected)
 {
+    preprocess(input, expected, SH_GLES2_SPEC);
+}
+
+void SimplePreprocessorTest::preprocess(const char *input, const char *expected, ShShaderSpec spec)
+{
     pp::Preprocessor preprocessor(&mDiagnostics, &mDirectiveHandler,
-                                  pp::PreprocessorSettings(SH_GLES2_SPEC));
+                                  pp::PreprocessorSettings(spec));
     std::stringstream output;
     preprocess(input, &output, &preprocessor);
 

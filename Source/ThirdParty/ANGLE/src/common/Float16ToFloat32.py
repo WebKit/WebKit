@@ -1,4 +1,4 @@
-# Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+# Copyright 2012 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 #
@@ -8,6 +8,7 @@
 # It is based on ftp://ftp.fox-toolkit.org/pub/fasthalffloatconversion.pdf.
 
 #include "common/mathutil.h"
+
 
 def convertMantissa(i):
     if i == 0:
@@ -24,6 +25,7 @@ def convertMantissa(i):
     else:
         return 0x38000000 + ((i - 1024) << 13)
 
+
 def convertExponent(i):
     if i == 0:
         return 0
@@ -38,14 +40,16 @@ def convertExponent(i):
     else:
         return 0xC7800000
 
+
 def convertOffset(i):
     if i == 0 or i == 32:
         return 0
     else:
         return 1024
 
+
 print """//
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //

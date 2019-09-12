@@ -397,7 +397,9 @@ void RewriteExpressionsWithShaderStorageBlockTraverser::nextIteration()
 
 }  // anonymous namespace
 
-void RewriteExpressionsWithShaderStorageBlock(TIntermNode *root, TSymbolTable *symbolTable)
+bool RewriteExpressionsWithShaderStorageBlock(TCompiler *compiler,
+                                              TIntermNode *root,
+                                              TSymbolTable *symbolTable)
 {
     RewriteExpressionsWithShaderStorageBlockTraverser traverser(symbolTable);
     do
@@ -405,7 +407,14 @@ void RewriteExpressionsWithShaderStorageBlock(TIntermNode *root, TSymbolTable *s
         traverser.nextIteration();
         root->traverse(&traverser);
         if (traverser.foundSSBO())
-            traverser.updateTree();
+        {
+            if (!traverser.updateTree(compiler, root))
+            {
+                return false;
+            }
+        }
     } while (traverser.foundSSBO());
+
+    return true;
 }
 }  // namespace sh

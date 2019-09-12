@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -36,68 +36,108 @@ TranslatorHLSL::TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutpu
     : TCompiler(type, spec, output)
 {}
 
-void TranslatorHLSL::translate(TIntermBlock *root,
+bool TranslatorHLSL::translate(TIntermBlock *root,
                                ShCompileOptions compileOptions,
                                PerformanceDiagnostics *perfDiagnostics)
 {
     const ShBuiltInResources &resources = getResources();
     int numRenderTargets                = resources.EXT_draw_buffers ? resources.MaxDrawBuffers : 1;
+    int maxDualSourceDrawBuffers =
+        resources.EXT_blend_func_extended ? resources.MaxDualSourceDrawBuffers : 0;
 
-    sh::AddDefaultReturnStatements(root);
+    if (!sh::AddDefaultReturnStatements(this, root))
+    {
+        return false;
+    }
 
     // Note that SimplifyLoopConditions needs to be run before any other AST transformations that
     // may need to generate new statements from loop conditions or loop expressions.
     // Note that SeparateDeclarations has already been run in TCompiler::compileTreeImpl().
-    SimplifyLoopConditions(root,
-                           IntermNodePatternMatcher::kExpressionReturningArray |
-                               IntermNodePatternMatcher::kUnfoldedShortCircuitExpression |
-                               IntermNodePatternMatcher::kDynamicIndexingOfVectorOrMatrixInLValue,
-                           &getSymbolTable());
+    if (!SimplifyLoopConditions(
+            this, root,
+            IntermNodePatternMatcher::kExpressionReturningArray |
+                IntermNodePatternMatcher::kUnfoldedShortCircuitExpression |
+                IntermNodePatternMatcher::kDynamicIndexingOfVectorOrMatrixInLValue,
+            &getSymbolTable()))
+    {
+        return false;
+    }
 
-    SplitSequenceOperator(root,
-                          IntermNodePatternMatcher::kExpressionReturningArray |
-                              IntermNodePatternMatcher::kUnfoldedShortCircuitExpression |
-                              IntermNodePatternMatcher::kDynamicIndexingOfVectorOrMatrixInLValue,
-                          &getSymbolTable());
+    if (!SplitSequenceOperator(
+            this, root,
+            IntermNodePatternMatcher::kExpressionReturningArray |
+                IntermNodePatternMatcher::kUnfoldedShortCircuitExpression |
+                IntermNodePatternMatcher::kDynamicIndexingOfVectorOrMatrixInLValue,
+            &getSymbolTable()))
+    {
+        return false;
+    }
 
     // Note that SeparateDeclarations needs to be run before UnfoldShortCircuitToIf.
-    UnfoldShortCircuitToIf(root, &getSymbolTable());
+    if (!UnfoldShortCircuitToIf(this, root, &getSymbolTable()))
+    {
+        return false;
+    }
 
-    SeparateArrayConstructorStatements(root);
+    if (!SeparateArrayConstructorStatements(this, root))
+    {
+        return false;
+    }
 
-    SeparateExpressionsReturningArrays(root, &getSymbolTable());
+    if (!SeparateExpressionsReturningArrays(this, root, &getSymbolTable()))
+    {
+        return false;
+    }
 
     // Note that SeparateDeclarations needs to be run before SeparateArrayInitialization.
-    SeparateArrayInitialization(root);
+    if (!SeparateArrayInitialization(this, root))
+    {
+        return false;
+    }
 
     // HLSL doesn't support arrays as return values, we'll need to make functions that have an array
     // as a return value to use an out parameter to transfer the array data instead.
-    ArrayReturnValueToOutParameter(root, &getSymbolTable());
+    if (!ArrayReturnValueToOutParameter(this, root, &getSymbolTable()))
+    {
+        return false;
+    }
 
     if (!shouldRunLoopAndIndexingValidation(compileOptions))
     {
         // HLSL doesn't support dynamic indexing of vectors and matrices.
-        RemoveDynamicIndexing(root, &getSymbolTable(), perfDiagnostics);
+        if (!RemoveDynamicIndexing(this, root, &getSymbolTable(), perfDiagnostics))
+        {
+            return false;
+        }
     }
 
     // Work around D3D9 bug that would manifest in vertex shaders with selection blocks which
     // use a vertex attribute as a condition, and some related computation in the else block.
     if (getOutputType() == SH_HLSL_3_0_OUTPUT && getShaderType() == GL_VERTEX_SHADER)
     {
-        sh::RewriteElseBlocks(root, &getSymbolTable());
+        if (!sh::RewriteElseBlocks(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
     }
 
     // Work around an HLSL compiler frontend aliasing optimization bug.
     // TODO(cwallez) The date is 2016-08-25, Microsoft said the bug would be fixed
     // in the next release of d3dcompiler.dll, it would be nice to detect the DLL
     // version and only apply the workaround if it is too old.
-    sh::BreakVariableAliasingInInnerLoops(root);
+    if (!sh::BreakVariableAliasingInInnerLoops(this, root))
+    {
+        return false;
+    }
 
     // WrapSwitchStatementsInBlocks should be called after any AST transformations that might
     // introduce variable declarations inside the main scope of any switch statement. It cannot
     // result in no-op cases at the end of switch statements, because unreferenced variables
     // have already been pruned.
-    WrapSwitchStatementsInBlocks(root);
+    if (!WrapSwitchStatementsInBlocks(this, root))
+    {
+        return false;
+    }
 
     bool precisionEmulation =
         getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
@@ -106,37 +146,57 @@ void TranslatorHLSL::translate(TIntermBlock *root,
     {
         EmulatePrecision emulatePrecision(&getSymbolTable());
         root->traverse(&emulatePrecision);
-        emulatePrecision.updateTree();
+        if (!emulatePrecision.updateTree(this, root))
+        {
+            return false;
+        }
         emulatePrecision.writeEmulationHelpers(getInfoSink().obj, getShaderVersion(),
                                                getOutputType());
     }
 
     if ((compileOptions & SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS) != 0)
     {
-        sh::ExpandIntegerPowExpressions(root, &getSymbolTable());
+        if (!sh::ExpandIntegerPowExpressions(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
     }
 
     if ((compileOptions & SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH) != 0)
     {
-        sh::RewriteTexelFetchOffset(root, getSymbolTable(), getShaderVersion());
+        if (!sh::RewriteTexelFetchOffset(this, root, getSymbolTable(), getShaderVersion()))
+        {
+            return false;
+        }
     }
 
     if (((compileOptions & SH_REWRITE_INTEGER_UNARY_MINUS_OPERATOR) != 0) &&
         getShaderType() == GL_VERTEX_SHADER)
     {
-        sh::RewriteUnaryMinusOperatorInt(root);
+        if (!sh::RewriteUnaryMinusOperatorInt(this, root))
+        {
+            return false;
+        }
     }
 
     if (getShaderVersion() >= 310)
     {
         // Due to ssbo also can be used as the argument of atomic memory functions, we should put
         // RewriteExpressionsWithShaderStorageBlock before RewriteAtomicFunctionExpressions.
-        sh::RewriteExpressionsWithShaderStorageBlock(root, &getSymbolTable());
-        sh::RewriteAtomicFunctionExpressions(root, &getSymbolTable(), getShaderVersion());
+        if (!sh::RewriteExpressionsWithShaderStorageBlock(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+        if (!sh::RewriteAtomicFunctionExpressions(this, root, &getSymbolTable(),
+                                                  getShaderVersion()))
+        {
+            return false;
+        }
     }
 
-    sh::OutputHLSL outputHLSL(getShaderType(), getShaderVersion(), getExtensionBehavior(),
-                              getSourcePath(), getOutputType(), numRenderTargets, getUniforms(),
+    sh::OutputHLSL outputHLSL(getShaderType(), getShaderSpec(), getShaderVersion(),
+                              getExtensionBehavior(), getSourcePath(), getOutputType(),
+                              numRenderTargets, maxDualSourceDrawBuffers, getUniforms(),
                               compileOptions, getComputeShaderLocalSize(), &getSymbolTable(),
                               perfDiagnostics, mShaderStorageBlocks);
 
@@ -148,6 +208,8 @@ void TranslatorHLSL::translate(TIntermBlock *root,
     mReadonlyImage2DRegisterIndex  = outputHLSL.getReadonlyImage2DRegisterIndex();
     mImage2DRegisterIndex          = outputHLSL.getImage2DRegisterIndex();
     mUsedImage2DFunctionNames      = outputHLSL.getUsedImage2DFunctionNames();
+
+    return true;
 }
 
 bool TranslatorHLSL::shouldFlattenPragmaStdglInvariantAll()

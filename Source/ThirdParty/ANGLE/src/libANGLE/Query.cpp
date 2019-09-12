@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -11,7 +11,7 @@
 
 namespace gl
 {
-Query::Query(rx::QueryImpl *impl, GLuint id) : RefCountObject(id), mQuery(impl), mLabel() {}
+Query::Query(rx::QueryImpl *impl, QueryID id) : RefCountObject(id.value), mQuery(impl), mLabel() {}
 
 Query::~Query()
 {
@@ -79,12 +79,7 @@ QueryType Query::getType() const
     return mQuery->getType();
 }
 
-rx::QueryImpl *Query::getImplementation()
-{
-    return mQuery;
-}
-
-const rx::QueryImpl *Query::getImplementation() const
+rx::QueryImpl *Query::getImplementation() const
 {
     return mQuery;
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2010-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2010 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,6 +13,7 @@
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
 #include "common/debug.h"
+#include "common/utilities.h"
 #include "compiler/translator/blocklayout.h"
 #include "libANGLE/angletypes.h"
 
@@ -31,7 +32,12 @@ struct ActiveVariable
     ShaderType getFirstShaderTypeWhereActive() const;
     void setActive(ShaderType shaderType, bool used);
     void unionReferencesWith(const ActiveVariable &other);
-    bool isActive(ShaderType shaderType) const;
+    bool isActive(ShaderType shaderType) const
+    {
+        ASSERT(shaderType != ShaderType::InvalidEnum);
+        return mActiveUseBits[shaderType];
+    }
+    ShaderBitSet activeShaders() const { return mActiveUseBits; }
     GLuint activeShaderCount() const;
 
   private:
@@ -39,7 +45,7 @@ struct ActiveVariable
 };
 
 // Helper struct representing a single shader uniform
-struct LinkedUniform : public sh::Uniform, public ActiveVariable
+struct LinkedUniform : public sh::ShaderVariable, public ActiveVariable
 {
     LinkedUniform();
     LinkedUniform(GLenum type,
@@ -51,24 +57,25 @@ struct LinkedUniform : public sh::Uniform, public ActiveVariable
                   const int location,
                   const int bufferIndex,
                   const sh::BlockMemberInfo &blockInfo);
-    LinkedUniform(const sh::Uniform &uniform);
+    LinkedUniform(const sh::ShaderVariable &uniform);
     LinkedUniform(const LinkedUniform &uniform);
     LinkedUniform &operator=(const LinkedUniform &uniform);
     ~LinkedUniform() override;
 
-    bool isSampler() const;
-    bool isImage() const;
-    bool isAtomicCounter() const;
-    bool isInDefaultBlock() const;
-    bool isField() const;
-    size_t getElementSize() const;
-    size_t getElementComponents() const;
+    bool isSampler() const { return typeInfo->isSampler; }
+    bool isImage() const { return typeInfo->isImageType; }
+    bool isAtomicCounter() const { return IsAtomicCounterType(type); }
+    bool isInDefaultBlock() const { return bufferIndex == -1; }
+    bool isField() const { return name.find('.') != std::string::npos; }
+    size_t getElementSize() const { return typeInfo->externalSize; }
+    size_t getElementComponents() const { return typeInfo->componentCount; }
 
     const UniformTypeInfo *typeInfo;
 
     // Identifies the containing buffer backed resource -- interface block or atomic counter buffer.
     int bufferIndex;
     sh::BlockMemberInfo blockInfo;
+    std::vector<unsigned int> outerArraySizes;
 };
 
 struct BufferVariable : public sh::ShaderVariable, public ActiveVariable

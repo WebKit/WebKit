@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -33,7 +33,8 @@ bool IsANGLEConfigSupported(const PlatformParameters &param, OSWindow *osWindow)
     std::unique_ptr<angle::Library> eglLibrary;
 
 #if defined(ANGLE_USE_UTIL_LOADER)
-    eglLibrary.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME));
+    eglLibrary.reset(
+        angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
 #endif
 
     EGLWindow *eglWindow = EGLWindow::New(param.majorVersion, param.minorVersion);
@@ -48,7 +49,8 @@ bool IsANGLEConfigSupported(const PlatformParameters &param, OSWindow *osWindow)
 bool IsWGLConfigSupported(const PlatformParameters &param, OSWindow *osWindow)
 {
 #if defined(ANGLE_PLATFORM_WINDOWS) && defined(ANGLE_USE_UTIL_LOADER)
-    std::unique_ptr<angle::Library> openglLibrary(angle::OpenSharedLibrary("opengl32"));
+    std::unique_ptr<angle::Library> openglLibrary(
+        angle::OpenSharedLibrary("opengl32", angle::SearchType::SystemDir));
 
     WGLWindow *wglWindow = WGLWindow::New(param.majorVersion, param.minorVersion);
     ConfigParameters configParams;
@@ -67,7 +69,37 @@ bool IsNativeConfigSupported(const PlatformParameters &param, OSWindow *osWindow
     // Not yet implemented.
     return false;
 }
+
+std::map<PlatformParameters, bool> gParamAvailabilityCache;
+
+bool IsAndroidDevice(const std::string &deviceName)
+{
+    if (!IsAndroid())
+    {
+        return false;
+    }
+    SystemInfo *systemInfo = GetTestSystemInfo();
+    if (systemInfo->machineModelName == deviceName)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool HasSystemVendorID(VendorID vendorID)
+{
+    SystemInfo *systemInfo = GetTestSystemInfo();
+    // Unfortunately sometimes GPU info collection can fail.
+    if (systemInfo->activeGPUIndex < 0 || systemInfo->gpus.empty())
+    {
+        return false;
+    }
+    return systemInfo->gpus[systemInfo->activeGPUIndex].vendorId == vendorID;
+}
 }  // namespace
+
+std::string gSelectedConfig;
+bool gSeparateProcessPerConfig = false;
 
 SystemInfo *GetTestSystemInfo()
 {
@@ -80,9 +112,19 @@ SystemInfo *GetTestSystemInfo()
             std::cerr << "Warning: incomplete system info collection.\n";
         }
 
+        // On dual-GPU Macs we want the active GPU to always appear to be the
+        // high-performance GPU for tests.
+        // We can call the generic GPU info collector which selects the
+        // non-Intel GPU as the active one on dual-GPU machines.
+        if (IsOSX())
+        {
+            GetDualGPUInfo(sSystemInfo);
+        }
+
         // Print complete system info when available.
         // Seems to trip up Android test expectation parsing.
-        if (!IsAndroid())
+        // Also don't print info when a config is selected to prevent test spam.
+        if (!IsAndroid() && gSelectedConfig.empty())
         {
             PrintSystemInfo(*sSystemInfo);
         }
@@ -144,20 +186,6 @@ bool IsFuchsia()
 #endif
 }
 
-bool IsAndroidDevice(const std::string &deviceName)
-{
-    if (!IsAndroid())
-    {
-        return false;
-    }
-    SystemInfo *systemInfo = GetTestSystemInfo();
-    if (systemInfo->machineModelName == deviceName)
-    {
-        return true;
-    }
-    return false;
-}
-
 bool IsNexus5X()
 {
     return IsAndroidDevice("Nexus 5X");
@@ -166,6 +194,11 @@ bool IsNexus5X()
 bool IsNexus6P()
 {
     return IsAndroidDevice("Nexus 6P");
+}
+
+bool IsNexus9()
+{
+    return IsAndroidDevice("Nexus 9");
 }
 
 bool IsPixelXL()
@@ -183,6 +216,28 @@ bool IsNVIDIAShield()
     return IsAndroidDevice("SHIELD Android TV");
 }
 
+bool IsIntel()
+{
+    return HasSystemVendorID(kVendorID_Intel);
+}
+
+bool IsAMD()
+{
+    return HasSystemVendorID(kVendorID_AMD);
+}
+
+bool IsNVIDIA()
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    // NVIDIA Shield cannot detect vendor ID (http://anglebug.com/3541)
+    if (IsNVIDIAShield())
+    {
+        return true;
+    }
+#endif
+    return HasSystemVendorID(kVendorID_NVIDIA);
+}
+
 bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters &param)
 {
     VendorID vendorID = systemInfo.gpus[systemInfo.activeGPUIndex].vendorId;
@@ -195,14 +250,6 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
         if (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE)
             return true;
     }
-
-#if ANGLE_VULKAN_CONFORMANT_CONFIGS_ONLY
-    // Vulkan ES 3.0 is not yet supported.
-    if (param.majorVersion > 2 && param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE)
-    {
-        return false;
-    }
-#endif
 
     if (IsWindows())
     {
@@ -231,7 +278,7 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
                 }
             case GLESDriverType::SystemWGL:
                 // AMD does not support the ES compatibility extensions.
-                return IsAMD(vendorID);
+                return !IsAMD(vendorID);
             default:
                 return false;
         }
@@ -406,37 +453,80 @@ bool IsPlatformAvailable(const PlatformParameters &param)
             return false;
     }
 
-    static std::map<PlatformParameters, bool> paramAvailabilityCache;
-    auto iter = paramAvailabilityCache.find(param);
-    if (iter != paramAvailabilityCache.end())
+    bool result = false;
+
+    auto iter = gParamAvailabilityCache.find(param);
+    if (iter != gParamAvailabilityCache.end())
     {
-        return iter->second;
+        result = iter->second;
     }
     else
     {
-        const SystemInfo *systemInfo = GetTestSystemInfo();
-
-        bool result = false;
-        if (systemInfo)
+        if (!gSelectedConfig.empty())
         {
-            result = IsConfigWhitelisted(*systemInfo, param);
+            std::stringstream strstr;
+            strstr << param;
+            if (strstr.str() == gSelectedConfig)
+            {
+                result = true;
+            }
         }
         else
         {
-            result = IsConfigSupported(param);
+            const SystemInfo *systemInfo = GetTestSystemInfo();
+
+            if (systemInfo)
+            {
+                result = IsConfigWhitelisted(*systemInfo, param);
+            }
+            else
+            {
+                result = IsConfigSupported(param);
+            }
         }
 
-        paramAvailabilityCache[param] = result;
+        gParamAvailabilityCache[param] = result;
 
-        if (!result)
+        // Enable this unconditionally to print available platforms.
+        if (!gSelectedConfig.empty())
+        {
+            if (result)
+            {
+                std::cout << "Test Config: " << param << "\n";
+            }
+        }
+        else if (!result)
         {
             std::cout << "Skipping tests using configuration " << param
-                      << " because it is not available." << std::endl;
+                      << " because it is not available.\n";
         }
-
-        // Uncomment this to print available platforms.
-        // std::cout << "Platform: " << param << " (" << paramAvailabilityCache.size() << ")\n";
-        return result;
     }
+
+    // Disable all tests in the parent process when running child processes.
+    if (gSeparateProcessPerConfig)
+    {
+        return false;
+    }
+    return result;
+}
+
+std::vector<std::string> GetAvailableTestPlatformNames()
+{
+    std::vector<std::string> platformNames;
+
+    for (const auto &iter : gParamAvailabilityCache)
+    {
+        if (iter.second)
+        {
+            std::stringstream strstr;
+            strstr << iter.first;
+            platformNames.push_back(strstr.str());
+        }
+    }
+
+    // Keep the list sorted.
+    std::sort(platformNames.begin(), platformNames.end());
+
+    return platformNames;
 }
 }  // namespace angle

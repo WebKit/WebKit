@@ -10,8 +10,18 @@
 # List of supported extensions. Add to this list to enable new extensions
 # available in gl.xml.
 
-import sys, os
+import sys
+import os
 import xml.etree.ElementTree as etree
+
+xml_inputs = [
+    'gl.xml',
+    'gl_angle_ext.xml',
+    'egl.xml',
+    'egl_angle_ext.xml',
+    'wgl.xml',
+    'registry_xml.py',
+]
 
 angle_extensions = [
     # ANGLE extensions
@@ -21,9 +31,11 @@ angle_extensions = [
     "GL_CHROMIUM_copy_texture",
     "GL_CHROMIUM_copy_compressed_texture",
     "GL_CHROMIUM_lose_context",
+    "GL_ANGLE_copy_texture_3d",
+    "GL_ANGLE_program_binary",
     "GL_ANGLE_request_extension",
     "GL_ANGLE_robust_client_memory",
-    "GL_ANGLE_copy_texture_3d",
+    "GL_ANGLE_texture_external_update",
 ]
 
 gles1_extensions = [
@@ -36,7 +48,7 @@ gles1_extensions = [
     "GL_OES_texture_cube_map",
 ]
 
-supported_extensions = sorted(angle_extensions + gles1_extensions + [
+gles_extensions = [
     # ES2+
     "GL_ANGLE_framebuffer_blit",
     "GL_ANGLE_framebuffer_multisample",
@@ -54,6 +66,7 @@ supported_extensions = sorted(angle_extensions + gles1_extensions + [
     "GL_EXT_map_buffer_range",
     "GL_EXT_memory_object",
     "GL_EXT_memory_object_fd",
+    "GL_EXT_multisampled_render_to_texture",
     "GL_EXT_occlusion_query_boolean",
     "GL_EXT_robustness",
     "GL_EXT_semaphore",
@@ -64,6 +77,7 @@ supported_extensions = sorted(angle_extensions + gles1_extensions + [
     "GL_OES_EGL_image",
     "GL_OES_get_program_binary",
     "GL_OES_mapbuffer",
+    "GL_OES_texture_3D",
     "GL_OES_texture_border_clamp",
     "GL_OES_texture_storage_multisample_2d_array",
     "GL_OES_vertex_array_object",
@@ -71,15 +85,21 @@ supported_extensions = sorted(angle_extensions + gles1_extensions + [
     "GL_OVR_multiview2",
     "GL_KHR_parallel_shader_compile",
     "GL_ANGLE_multi_draw",
-])
+    "GL_ANGLE_base_vertex_base_instance",
+]
+
+supported_extensions = sorted(angle_extensions + gles1_extensions + gles_extensions)
 
 supported_egl_extensions = [
     "EGL_ANDROID_blob_cache",
     "EGL_ANDROID_get_frame_timestamps",
+    "EGL_ANDROID_get_native_client_buffer",
+    "EGL_ANDROID_native_fence_sync",
     "EGL_ANDROID_presentation_time",
     "EGL_ANGLE_d3d_share_handle_client_buffer",
     "EGL_ANGLE_device_creation",
     "EGL_ANGLE_device_d3d",
+    "EGL_ANGLE_feature_control",
     "EGL_ANGLE_program_cache_control",
     "EGL_ANGLE_query_surface_pointer",
     "EGL_ANGLE_stream_producer_d3d_texture",
@@ -108,13 +128,36 @@ strip_suffixes = ["ANGLE", "EXT", "KHR", "OES", "CHROMIUM"]
 # Toggle generation here.
 support_EGL_ANGLE_explicit_context = True
 
+# For ungrouped GLenum types
+default_enum_group_name = "DefaultGroup"
+
+# Group names that appear in command/param, but not present in groups/group
+unsupported_enum_group_names = {
+    'GetMultisamplePNameNV',
+    'BufferPNameARB',
+    'BufferPointerNameARB',
+    'VertexAttribPointerPropertyARB',
+    'VertexAttribPropertyARB',
+    'FenceParameterNameNV',
+    'FenceConditionNV',
+    'BufferPointerNameARB',
+    'MatrixIndexPointerTypeARB',
+    'PointParameterNameARB',
+    'ClampColorTargetARB',
+    'ClampColorModeARB',
+}
+
+
 def script_relative(path):
     return os.path.join(os.path.dirname(sys.argv[0]), path)
+
 
 def path_to(folder, file):
     return os.path.join(script_relative(".."), "src", folder, file)
 
+
 class GLCommandNames:
+
     def __init__(self):
         self.command_names = {}
 
@@ -136,8 +179,10 @@ class GLCommandNames:
         # Add the commands that aren't duplicates
         self.command_names[version] += commands
 
+
 class RegistryXML:
-    def __init__(self, xml_file, ext_file = None):
+
+    def __init__(self, xml_file, ext_file=None):
         tree = etree.parse(script_relative(xml_file))
         self.root = tree.getroot()
         if (ext_file):

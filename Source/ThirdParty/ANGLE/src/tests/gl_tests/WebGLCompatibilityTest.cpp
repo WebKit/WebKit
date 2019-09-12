@@ -67,13 +67,6 @@ class WebGLCompatibilityTest : public ANGLETest
         setWebGLCompatibilityEnabled(true);
     }
 
-    void SetUp() override
-    {
-        ANGLETest::SetUp();
-        glRequestExtensionANGLE = reinterpret_cast<PFNGLREQUESTEXTENSIONANGLEPROC>(
-            eglGetProcAddress("glRequestExtensionANGLE"));
-    }
-
     template <typename T>
     void TestFloatTextureFormat(GLenum internalFormat,
                                 GLenum format,
@@ -285,8 +278,6 @@ void main()
                                                    GLsizei blockSize,
                                                    const std::string &extName,
                                                    bool subImageAllowed);
-
-    PFNGLREQUESTEXTENSIONANGLEPROC glRequestExtensionANGLE = nullptr;
 };
 
 class WebGL2CompatibilityTest : public WebGLCompatibilityTest
@@ -2844,7 +2835,8 @@ TEST_P(WebGLCompatibilityTest, RG32FTextures)
 
 TEST_P(WebGLCompatibilityTest, RGB32FTextures)
 {
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel());
+    // TODO(syoussefi): Missing format support.  http://anglebug.com/2898
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr float data[] = {1000.0f, -500.0f, 10.0f, 1.0f};
 
@@ -2880,6 +2872,9 @@ TEST_P(WebGLCompatibilityTest, RGB32FTextures)
 
 TEST_P(WebGLCompatibilityTest, RGBA32FTextures)
 {
+    // TODO(syoussefi): Missing format support.  http://anglebug.com/2898
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     constexpr float data[] = {7000.0f, 100.0f, 33.0f, -1.0f};
 
     for (auto extension : FloatingPointTextureExtensions)
@@ -3255,6 +3250,9 @@ TEST_P(WebGLCompatibilityTest, RG16FTextures)
 
 TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 {
+    // TODO(syoussefi): Missing format support.  http://anglebug.com/2898
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
 
     constexpr float readPixelsData[] = {7000.0f, 100.0f, 33.0f, 1.0f};
@@ -4070,6 +4068,9 @@ TEST_P(WebGLCompatibilityTest, FramebufferAttachmentQuery)
 // Tests WebGL reports INVALID_OPERATION for mismatch of drawbuffers and fragment output
 TEST_P(WebGLCompatibilityTest, DrawBuffers)
 {
+    // Fails on Intel Ubuntu 19.04 Mesa 19.0.2 Vulkan. http://anglebug.com/3616
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
+
     // Make sure we can use at least 4 attachments for the tests.
     bool useEXT = false;
     if (getClientMajorVersion() < 3)
@@ -4234,6 +4235,10 @@ void main()
             EXPECT_GL_ERROR(GL_INVALID_OPERATION);
         }
     }
+
+    // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
+    // http://anglebug.com/3423
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     // Test that attachments written to get the correct color from shader output but that even when
     // the extension is used, disabled attachments are not written at all and stay red.
@@ -4626,7 +4631,8 @@ ANGLE_INSTANTIATE_TEST(WebGLCompatibilityTest,
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
                        ES3_OPENGLES(),
-                       ES2_VULKAN());
+                       ES2_VULKAN(),
+                       ES3_VULKAN());
 
 ANGLE_INSTANTIATE_TEST(WebGL2CompatibilityTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 }  // namespace angle

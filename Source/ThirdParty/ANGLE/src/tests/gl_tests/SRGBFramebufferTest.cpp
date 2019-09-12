@@ -25,10 +25,8 @@ class SRGBFramebufferTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         ASSERT_NE(0u, mProgram);
 
@@ -36,12 +34,7 @@ class SRGBFramebufferTest : public ANGLETest
         ASSERT_NE(-1, mColorLocation);
     }
 
-    void TearDown() override
-    {
-        glDeleteProgram(mProgram);
-
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { glDeleteProgram(mProgram); }
 
     GLuint mProgram      = 0;
     GLint mColorLocation = -1;

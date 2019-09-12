@@ -23,10 +23,8 @@ class PbufferTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    virtual void SetUp()
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] =
             R"(precision highp float;
             attribute vec4 position;
@@ -93,14 +91,12 @@ class PbufferTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    virtual void TearDown()
+    void testTearDown() override
     {
         glDeleteProgram(mTextureProgram);
 
         EGLWindow *window = getEGLWindow();
         eglDestroySurface(window->getDisplay(), mPbuffer);
-
-        ANGLETest::TearDown();
     }
 
     GLuint mTextureProgram;
@@ -305,12 +301,9 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
     glDeleteTextures(1, &texture);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
 ANGLE_INSTANTIATE_TEST(PbufferTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_OPENGL(),
-                       ES2_D3D11_WARP(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());

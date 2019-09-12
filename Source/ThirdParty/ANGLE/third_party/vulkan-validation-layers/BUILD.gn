@@ -23,7 +23,7 @@ if (is_win) {
 }
 
 raw_root_out_dir = rebase_path(root_out_dir, root_build_dir)
-raw_data_dir = rebase_path("$root_out_dir/$data_dir", root_build_dir)
+raw_data_dir = rebase_path("$root_out_dir/$angle_data_dir", root_build_dir)
 
 raw_vulkan_headers_dir =
     rebase_path("$angle_root/third_party/vulkan-headers/src", root_build_dir)
@@ -419,11 +419,11 @@ if (!is_android) {
     outputs = []
     foreach(json_name, json_names) {
       sources += [ "src/layers/json/$json_name.in" ]
-      outputs += [ "$root_out_dir/$data_dir/$json_name" ]
+      outputs += [ "$root_out_dir/$angle_data_dir/$json_name" ]
     }
     args = [
              "$raw_vulkan_layers_dir/layers/json",
-             rebase_path("$root_out_dir/$data_dir", root_build_dir),
+             rebase_path("$root_out_dir/$angle_data_dir", root_build_dir),
            ] + rebase_path(sources, root_build_dir)
 
     # The layer JSON files are part of the necessary data deps.

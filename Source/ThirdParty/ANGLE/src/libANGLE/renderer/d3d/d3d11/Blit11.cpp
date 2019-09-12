@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,7 +19,7 @@
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 #include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
-#include "third_party/trace_event/trace_event.h"
+#include "libANGLE/trace.h"
 
 namespace rx
 {
@@ -576,7 +576,7 @@ angle::Result Blit11::initResources(const gl::Context *context)
         return angle::Result::Continue;
     }
 
-    TRACE_EVENT0("gpu.angle", "Blit11::initResources");
+    ANGLE_TRACE_EVENT0("gpu.angle", "Blit11::initResources");
 
     D3D11_BUFFER_DESC vbDesc;
     vbDesc.ByteWidth =
@@ -1310,7 +1310,7 @@ angle::Result Blit11::copyAndConvert(const gl::Context *context,
                                  copySize, srcPixelStride, destPixelStride, convertFunction));
 
     // Work around timeouts/TDRs in older NVIDIA drivers.
-    if (mRenderer->getWorkarounds().depthStencilBlitExtraCopy)
+    if (mRenderer->getFeatures().depthStencilBlitExtraCopy.enabled)
     {
         D3D11_MAPPED_SUBRESOURCE mapped;
         ANGLE_TRY(

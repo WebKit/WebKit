@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,6 +9,7 @@
 
 #include "compiler/translator/tree_ops/RewriteElseBlocks.h"
 
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
@@ -111,10 +112,12 @@ TIntermNode *ElseBlockRewriter::rewriteIfElse(TIntermIfElse *ifElse)
 
 }  // anonymous namespace
 
-void RewriteElseBlocks(TIntermNode *node, TSymbolTable *symbolTable)
+bool RewriteElseBlocks(TCompiler *compiler, TIntermNode *node, TSymbolTable *symbolTable)
 {
     ElseBlockRewriter rewriter(symbolTable);
     node->traverse(&rewriter);
+
+    return compiler->validateAST(node);
 }
 
 }  // namespace sh

@@ -26,10 +26,8 @@ class CopyTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         glGenTextures(2, mTextures);
         glBindTexture(GL_TEXTURE_2D, mTextures[1]);
 
@@ -42,22 +40,12 @@ class CopyTextureTest : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[1],
                                0);
-
-        if (IsGLExtensionEnabled("GL_CHROMIUM_copy_texture"))
-        {
-            glCopyTextureCHROMIUM = reinterpret_cast<PFNGLCOPYTEXTURECHROMIUMPROC>(
-                eglGetProcAddress("glCopyTextureCHROMIUM"));
-            glCopySubTextureCHROMIUM = reinterpret_cast<PFNGLCOPYSUBTEXTURECHROMIUMPROC>(
-                eglGetProcAddress("glCopySubTextureCHROMIUM"));
-        }
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteTextures(2, mTextures);
         glDeleteFramebuffers(1, &mFramebuffer);
-
-        ANGLETest::TearDown();
     }
 
     bool checkExtensions() const
@@ -124,9 +112,6 @@ class CopyTextureTest : public ANGLETest
         0,
     };
     GLuint mFramebuffer = 0;
-
-    PFNGLCOPYTEXTURECHROMIUMPROC glCopyTextureCHROMIUM       = nullptr;
-    PFNGLCOPYSUBTEXTURECHROMIUMPROC glCopySubTextureCHROMIUM = nullptr;
 };
 
 using CopyTextureVariationsTestParams =
@@ -210,10 +195,8 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETestWithParam::SetUp();
-
         glGenTextures(2, mTextures);
         glBindTexture(GL_TEXTURE_2D, mTextures[1]);
 
@@ -226,22 +209,12 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
         glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[1],
                                0);
-
-        if (IsGLExtensionEnabled("GL_CHROMIUM_copy_texture"))
-        {
-            glCopyTextureCHROMIUM = reinterpret_cast<PFNGLCOPYTEXTURECHROMIUMPROC>(
-                eglGetProcAddress("glCopyTextureCHROMIUM"));
-            glCopySubTextureCHROMIUM = reinterpret_cast<PFNGLCOPYSUBTEXTURECHROMIUMPROC>(
-                eglGetProcAddress("glCopySubTextureCHROMIUM"));
-        }
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteTextures(2, mTextures);
         glDeleteFramebuffers(1, &mFramebuffer);
-
-        ANGLETestWithParam::TearDown();
     }
 
     bool checkExtensions(GLenum sourceFormat, GLenum destFormat) const
@@ -259,8 +232,6 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
             return false;
         }
 
-        EXPECT_NE(nullptr, glCopyTextureCHROMIUM);
-        EXPECT_NE(nullptr, glCopySubTextureCHROMIUM);
         return true;
     }
 
@@ -551,9 +522,6 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
         0,
     };
     GLuint mFramebuffer = 0;
-
-    PFNGLCOPYTEXTURECHROMIUMPROC glCopyTextureCHROMIUM       = nullptr;
-    PFNGLCOPYSUBTEXTURECHROMIUMPROC glCopySubTextureCHROMIUM = nullptr;
 };
 
 class CopyTextureTestDest : public CopyTextureTest
@@ -1679,12 +1647,11 @@ TEST_P(CopyTextureTestES3, ES3UnormFormats)
         EXPECT_PIXEL_COLOR_NEAR(0, 0, expectedColor, 1.0);
     };
 
-    auto testCopyCombination = [this, testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
-                                                  GLenum sourceType, const GLColor &sourceColor,
-                                                  GLenum destInternalFormat, GLenum destType,
-                                                  bool flipY, bool premultiplyAlpha,
-                                                  bool unmultiplyAlpha,
-                                                  const GLColor &expectedColor) {
+    auto testCopyCombination = [testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
+                                            GLenum sourceType, const GLColor &sourceColor,
+                                            GLenum destInternalFormat, GLenum destType, bool flipY,
+                                            bool premultiplyAlpha, bool unmultiplyAlpha,
+                                            const GLColor &expectedColor) {
         GLTexture sourceTexture;
         glBindTexture(GL_TEXTURE_2D, sourceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, sourceInternalFormat, 1, 1, 0, sourceFormat, sourceType,
@@ -1700,12 +1667,11 @@ TEST_P(CopyTextureTestES3, ES3UnormFormats)
         testOutput(destTexture, expectedColor);
     };
 
-    auto testSubCopyCombination = [this, testOutput](
-                                      GLenum sourceInternalFormat, GLenum sourceFormat,
-                                      GLenum sourceType, const GLColor &sourceColor,
-                                      GLenum destInternalFormat, GLenum destFormat, GLenum destType,
-                                      bool flipY, bool premultiplyAlpha, bool unmultiplyAlpha,
-                                      const GLColor &expectedColor) {
+    auto testSubCopyCombination = [testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
+                                               GLenum sourceType, const GLColor &sourceColor,
+                                               GLenum destInternalFormat, GLenum destFormat,
+                                               GLenum destType, bool flipY, bool premultiplyAlpha,
+                                               bool unmultiplyAlpha, const GLColor &expectedColor) {
         GLTexture sourceTexture;
         glBindTexture(GL_TEXTURE_2D, sourceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, sourceInternalFormat, 1, 1, 0, sourceFormat, sourceType,
@@ -1818,12 +1784,11 @@ TEST_P(CopyTextureTestES3, ES3FloatFormats)
         EXPECT_PIXEL_COLOR32F_NEAR(0, 0, expectedColor, 0.05);
     };
 
-    auto testCopyCombination = [this, testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
-                                                  GLenum sourceType, const GLColor &sourceColor,
-                                                  GLenum destInternalFormat, GLenum destType,
-                                                  bool flipY, bool premultiplyAlpha,
-                                                  bool unmultiplyAlpha,
-                                                  const GLColor32F &expectedColor) {
+    auto testCopyCombination = [testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
+                                            GLenum sourceType, const GLColor &sourceColor,
+                                            GLenum destInternalFormat, GLenum destType, bool flipY,
+                                            bool premultiplyAlpha, bool unmultiplyAlpha,
+                                            const GLColor32F &expectedColor) {
         GLTexture sourceTexture;
         glBindTexture(GL_TEXTURE_2D, sourceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, sourceInternalFormat, 1, 1, 0, sourceFormat, sourceType,
@@ -1949,12 +1914,11 @@ TEST_P(CopyTextureTestES3, ES3UintFormats)
         EXPECT_NEAR(std::get<3>(expectedColor), pixel[3], 1);
     };
 
-    auto testCopyCombination = [this, testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
-                                                  GLenum sourceType, const GLColor &sourceColor,
-                                                  GLenum destInternalFormat, GLenum destType,
-                                                  bool flipY, bool premultiplyAlpha,
-                                                  bool unmultiplyAlpha,
-                                                  const GLColor32U &expectedColor) {
+    auto testCopyCombination = [testOutput](GLenum sourceInternalFormat, GLenum sourceFormat,
+                                            GLenum sourceType, const GLColor &sourceColor,
+                                            GLenum destInternalFormat, GLenum destType, bool flipY,
+                                            bool premultiplyAlpha, bool unmultiplyAlpha,
+                                            const GLColor32U &expectedColor) {
         GLTexture sourceTexture;
         glBindTexture(GL_TEXTURE_2D, sourceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, sourceInternalFormat, 1, 1, 0, sourceFormat, sourceType,
