@@ -341,18 +341,21 @@ bool MainWindow::toggleMenuItem(UINT menuID)
     return true;
 }
 
-LRESULT CALLBACK EditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK EditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
+    case WM_SETFOCUS:
+        PostMessage(hWnd, EM_SETSEL, 0, -1);
+        break;
     case WM_CHAR:
         if (wParam == 13) {
             // Enter Key
-            ::PostMessage(GetParent(hDlg), static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDC_URL_BAR, 0), 0);
+            ::PostMessage(GetParent(hWnd), static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDC_URL_BAR, 0), 0);
             return 0;
         }
-    default:
-        return CallWindowProc(DefEditProc, hDlg, message, wParam, lParam);
+        break;
     }
+    return CallWindowProc(DefEditProc, hWnd, message, wParam, lParam);
 }
 
 // Message handler for about box.
