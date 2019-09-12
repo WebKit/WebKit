@@ -31,7 +31,6 @@
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
-#include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkProcessMessages.h"
 #include "ServiceWorkerClientFetch.h"
@@ -41,7 +40,6 @@
 #include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
-#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
@@ -57,61 +55,77 @@ using namespace WebCore;
 
 WebSWClientConnection::WebSWClientConnection(SessionID sessionID)
     : m_sessionID(sessionID)
-    , m_identifier(Process::identifier())
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
     ASSERT(m_sessionID.isValid());
-    send(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection { sessionID });
+    initializeConnectionIfNeeded();
 }
 
 WebSWClientConnection::~WebSWClientConnection()
 {
-    clear();
+    if (m_connection)
+        WebProcess::singleton().ensureNetworkProcessConnection().removeSWClientConnection(*this);
 }
 
-IPC::Connection* WebSWClientConnection::messageSenderConnection() const
+void WebSWClientConnection::initializeConnectionIfNeeded()
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    if (m_connection)
+        return;
+
+    auto& networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection();
+
+    m_connection = &networkProcessConnection.connection();
+    m_identifier = networkProcessConnection.initializeSWClientConnection(*this);
+
+    updateThrottleState();
+}
+
+template<typename U>
+void WebSWClientConnection::ensureConnectionAndSend(const U& message)
+{
+    initializeConnectionIfNeeded();
+    if (m_connection)
+        send(message);
 }
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::ScheduleJobInServer(jobData));
 }
 
 void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
-    send(Messages::WebSWServerConnection::FinishFetchingScriptInServer { result });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::FinishFetchingScriptInServer(result));
 }
 
 void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    send(Messages::WebSWServerConnection::AddServiceWorkerRegistrationInServer { identifier });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::AddServiceWorkerRegistrationInServer(identifier));
 }
 
 void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer { identifier });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer(identifier));
 }
 
 void WebSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
 {
-    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), sourceIdentifier });
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkProcess::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), sourceIdentifier, serverConnectionIdentifier() }, 0);
 }
 
 void WebSWClientConnection::registerServiceWorkerClient(const SecurityOrigin& topOrigin, const WebCore::ServiceWorkerClientData& data, const Optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, const String& userAgent)
 {
-    send(Messages::WebSWServerConnection::RegisterServiceWorkerClient { topOrigin.data(), data, controllingServiceWorkerRegistrationIdentifier, userAgent });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::RegisterServiceWorkerClient { topOrigin.data(), data, controllingServiceWorkerRegistrationIdentifier, userAgent });
 }
 
 void WebSWClientConnection::unregisterServiceWorkerClient(DocumentIdentifier contextIdentifier)
 {
-    send(Messages::WebSWServerConnection::UnregisterServiceWorkerClient { ServiceWorkerClientIdentifier { serverConnectionIdentifier(), contextIdentifier } });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::UnregisterServiceWorkerClient { ServiceWorkerClientIdentifier { serverConnectionIdentifier(), contextIdentifier } });
 }
 
 void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
-    send(Messages::WebSWServerConnection::DidResolveRegistrationPromise { key });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::DidResolveRegistrationPromise(key));
 }
 
 bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData& origin) const
@@ -162,24 +176,25 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
     runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
         uint64_t callbackID = ++m_previousCallbackIdentifier;
         m_ongoingMatchRegistrationTasks.add(callbackID, WTFMove(callback));
-        send(Messages::WebSWServerConnection::MatchRegistration(callbackID, topOrigin, clientURL));
+        ensureConnectionAndSend(Messages::WebSWServerConnection::MatchRegistration(callbackID, topOrigin, clientURL));
     });
 }
 
-void WebSWClientConnection::runOrDelayTaskForImport(Function<void()>&& task)
+void WebSWClientConnection::runOrDelayTaskForImport(WTF::Function<void()>&& task)
 {
     if (m_swOriginTable->isImported()) {
         task();
         return;
     }
     m_tasksPendingOriginImport.append(WTFMove(task));
+    initializeConnectionIfNeeded();
 }
 
 void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
 {
     uint64_t callbackID = ++m_previousCallbackIdentifier;
     m_ongoingRegistrationReadyTasks.add(callbackID, WTFMove(callback));
-    send(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, topOrigin, clientURL));
+    ensureConnectionAndSend(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, topOrigin, clientURL));
 }
 
 void WebSWClientConnection::registrationReady(uint64_t callbackID, WebCore::ServiceWorkerRegistrationData&& registrationData)
@@ -201,32 +216,29 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
     runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
         uint64_t callbackID = ++m_previousCallbackIdentifier;
         m_ongoingGetRegistrationsTasks.add(callbackID, WTFMove(callback));
-        send(Messages::WebSWServerConnection::GetRegistrations { callbackID, topOrigin, clientURL });
+        ensureConnectionAndSend(Messages::WebSWServerConnection::GetRegistrations(callbackID, topOrigin, clientURL));
     });
 }
 
 void WebSWClientConnection::startFetch(FetchIdentifier fetchIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, const ResourceRequest& request, const FetchOptions& options, const String& referrer)
 {
-    send(Messages::WebSWServerConnection::StartFetch { serviceWorkerRegistrationIdentifier, fetchIdentifier, request, options, IPC::FormDataReference { request.httpBody() }, referrer });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::StartFetch { serviceWorkerRegistrationIdentifier, fetchIdentifier, request, options, IPC::FormDataReference { request.httpBody() }, referrer });
 }
 
 void WebSWClientConnection::cancelFetch(FetchIdentifier fetchIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier)
 {
-    send(Messages::WebSWServerConnection::CancelFetch { serviceWorkerRegistrationIdentifier, fetchIdentifier });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::CancelFetch { serviceWorkerRegistrationIdentifier, fetchIdentifier });
 }
 
 void WebSWClientConnection::continueDidReceiveFetchResponse(FetchIdentifier fetchIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier)
 {
-    send(Messages::WebSWServerConnection::ContinueDidReceiveFetchResponse { serviceWorkerRegistrationIdentifier, fetchIdentifier });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::ContinueDidReceiveFetchResponse { serviceWorkerRegistrationIdentifier, fetchIdentifier });
 }
 
 void WebSWClientConnection::connectionToServerLost()
 {
-    clear();
-}
+    m_connection = nullptr;
 
-void WebSWClientConnection::clear()
-{
     auto registrationTasks = WTFMove(m_ongoingMatchRegistrationTasks);
     for (auto& callback : registrationTasks.values())
         callback(WTF::nullopt);
@@ -235,26 +247,31 @@ void WebSWClientConnection::clear()
     for (auto& callback : getRegistrationTasks.values())
         callback({ });
 
-    auto registrationReadyTasks = WTFMove(m_ongoingRegistrationReadyTasks);
-    for (auto& callback : registrationReadyTasks.values())
-        callback({ });
-
     clearPendingJobs();
 }
 
 void WebSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
 {
-    sendSync(Messages::WebSWServerConnection::SyncTerminateWorkerFromClient { identifier }, Messages::WebSWServerConnection::SyncTerminateWorkerFromClient::Reply());
+    initializeConnectionIfNeeded();
+
+    sendSync(Messages::WebSWServerConnection::SyncTerminateWorkerFromClient(identifier), Messages::WebSWServerConnection::SyncTerminateWorkerFromClient::Reply());
+}
+
+WebCore::SWServerConnectionIdentifier WebSWClientConnection::serverConnectionIdentifier() const
+{
+    const_cast<WebSWClientConnection*>(this)->initializeConnectionIfNeeded();
+    return m_identifier;
 }
 
 void WebSWClientConnection::updateThrottleState()
 {
     m_isThrottleable = WebProcess::singleton().areAllPagesThrottleable();
-    send(Messages::WebSWServerConnection::SetThrottleState { m_isThrottleable });
+    ensureConnectionAndSend(Messages::WebSWServerConnection::SetThrottleState { m_isThrottleable });
 }
 
 void WebSWClientConnection::storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback)
 {
+    initializeConnectionIfNeeded();
     sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTFMove(callback));
 }
 

@@ -367,7 +367,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, PAL::SessionID);
+    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, PAL::SessionID);
     void registerServiceWorkerClients();
 #endif
 

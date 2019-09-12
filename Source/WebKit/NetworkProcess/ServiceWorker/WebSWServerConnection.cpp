@@ -61,8 +61,8 @@ using namespace WebCore;
 #define SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 #define SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 
-WebSWServerConnection::WebSWServerConnection(NetworkProcess& networkProcess, SWServer& server, IPC::Connection& connection, ProcessIdentifier processIdentifier, SessionID sessionID)
-    : SWServer::Connection(server, processIdentifier)
+WebSWServerConnection::WebSWServerConnection(NetworkProcess& networkProcess, SWServer& server, IPC::Connection& connection, SessionID sessionID)
+    : SWServer::Connection(server)
     , m_sessionID(sessionID)
     , m_contentConnection(connection)
     , m_networkProcess(networkProcess)
@@ -253,13 +253,13 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
     server().scheduleJob(WTFMove(jobData));
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void WebSWServerConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     auto* sourceServiceWorker = server().workerByID(sourceIdentifier);
     if (!sourceServiceWorker)
         return;
 
-    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin });
+    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, WTFMove(message), sourceServiceWorker->data(), sourceOrigin });
 }
 
 void WebSWServerConnection::matchRegistration(uint64_t registrationMatchRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL)

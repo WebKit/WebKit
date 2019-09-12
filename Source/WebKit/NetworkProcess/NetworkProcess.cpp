@@ -228,6 +228,17 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
     }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
+        ASSERT(parentProcessHasServiceWorkerEntitlement());
+        if (!parentProcessHasServiceWorkerEntitlement())
+            return;
+        if (auto* webSWConnection = connectionToContextProcessFromIPCConnection(connection)) {
+            webSWConnection->didReceiveMessage(connection, decoder);
+            return;
+        }
+    }
+#endif
     didReceiveNetworkProcessMessage(connection, decoder);
 }
 
@@ -418,7 +429,7 @@ static inline Optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> 
 #endif
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, bool isServiceWorkerProcess, WebCore::RegistrableDomain&& registrableDomain, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
 {
     auto ipcConnection = createIPCConnectionToWebProcess();
     if (!ipcConnection) {
@@ -435,6 +446,24 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     completionHandler(WTFMove(ipcConnection->second));
 
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
+    
+#if ENABLE(SERVICE_WORKER)
+    if (isServiceWorkerProcess) {
+        ASSERT(parentProcessHasServiceWorkerEntitlement());
+        ASSERT(m_waitingForServerToContextProcessConnection);
+        auto contextConnection = WebSWServerToContextConnection::create(*this, registrableDomain, connection.connection());
+        auto addResult = m_serverToContextConnections.add(WTFMove(registrableDomain), contextConnection.copyRef());
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+        m_waitingForServerToContextProcessConnection = false;
+
+        for (auto* server : SWServer::allServers())
+            server->serverToContextConnectionCreated(contextConnection);
+    }
+#else
+    UNUSED_PARAM(isServiceWorkerProcess);
+    UNUSED_PARAM(registrableDomain);
+#endif
 
     m_storageManagerSet->addConnection(connection.connection());
 }
@@ -2372,10 +2401,36 @@ void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& file
 #endif // ENABLE(SANDBOX_EXTENSIONS)
 
 #if ENABLE(SERVICE_WORKER)
-void NetworkProcess::forEachSWServer(const Function<void(SWServer&)>& callback)
+WebSWServerToContextConnection* NetworkProcess::connectionToContextProcessFromIPCConnection(IPC::Connection& connection)
 {
-    for (auto& server : m_swServers.values())
-        callback(*server);
+    for (auto& serverToContextConnection : m_serverToContextConnections.values()) {
+        if (serverToContextConnection->ipcConnection() == &connection)
+            return serverToContextConnection.get();
+    }
+    return nullptr;
+}
+
+void NetworkProcess::connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&& serverToContextConnection)
+{
+    auto& registrableDomain = serverToContextConnection->registrableDomain();
+    
+    serverToContextConnection->connectionClosed();
+    m_serverToContextConnections.remove(registrableDomain);
+    
+    for (auto& swServer : m_swServers.values())
+        swServer->markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
+    
+    if (needsServerToContextConnectionForRegistrableDomain(registrableDomain)) {
+        RELEASE_LOG(ServiceWorker, "Connection to service worker process was closed but is still needed, relaunching it");
+        createServerToContextConnection(registrableDomain, WTF::nullopt);
+    }
+}
+
+bool NetworkProcess::needsServerToContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain) const
+{
+    return WTF::anyOf(m_swServers.values(), [&](auto& swServer) {
+        return swServer->needsServerToContextConnectionForRegistrableDomain(registrableDomain);
+    });
 }
 
 SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
@@ -2403,36 +2458,40 @@ WebSWOriginStore* NetworkProcess::existingSWOriginStoreForSession(PAL::SessionID
     return &static_cast<WebSWOriginStore&>(swServer->originStore());
 }
 
-bool NetworkProcess::needsServerToContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain) const
-{
-    return WTF::anyOf(m_swServers.values(), [&](auto& swServer) {
-        return swServer->needsServerToContextConnectionForRegistrableDomain(registrableDomain);
-    });
-}
-
 WebSWServerToContextConnection* NetworkProcess::serverToContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain)
 {
     return m_serverToContextConnections.get(registrableDomain);
 }
 
-void NetworkProcess::createServerToContextConnection(const RegistrableDomain& registrableDomain, PAL::SessionID sessionID)
+void NetworkProcess::createServerToContextConnection(const RegistrableDomain& registrableDomain, Optional<PAL::SessionID> sessionID)
 {
-    if (m_pendingConnectionDomains.contains(registrableDomain))
+    if (m_waitingForServerToContextProcessConnection)
         return;
-
-    m_pendingConnectionDomains.add(registrableDomain);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
+    
+    m_waitingForServerToContextProcessConnection = true;
+    if (sessionID)
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcessForExplicitSession(registrableDomain, *sessionID), 0);
+    else
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess(registrableDomain), 0);
 }
 
-void NetworkProcess::postMessageToServiceWorkerClient(PAL::SessionID sessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void NetworkProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    if (auto* connection = swServerForSession(sessionID).connection(destinationIdentifier.serverConnectionIdentifier))
+    if (auto connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))
         connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
+}
+
+void NetworkProcess::postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&& message, const WebCore::ServiceWorkerOrClientIdentifier& source, SWServerConnectionIdentifier connectionIdentifier)
+{
+    if (auto connection = m_swServerConnections.get(connectionIdentifier))
+        connection->postMessageToServiceWorker(destination, WTFMove(message), source);
 }
 
 void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(parentProcessHasServiceWorkerEntitlement());
+    ASSERT(!m_swServerConnections.contains(connection.identifier()));
+    m_swServerConnections.add(connection.identifier(), makeWeakPtr(connection));
     auto* store = existingSWOriginStoreForSession(connection.sessionID());
     ASSERT(store);
     if (store)
@@ -2441,21 +2500,26 @@ void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connectio
 
 void NetworkProcess::unregisterSWServerConnection(WebSWServerConnection& connection)
 {
+    ASSERT(m_swServerConnections.get(connection.identifier()).get() == &connection);
+    m_swServerConnections.remove(connection.identifier());
     if (auto* store = existingSWOriginStoreForSession(connection.sessionID()))
         store->unregisterSWServerConnection(connection);
 }
 
-void NetworkProcess::registerSWContextConnection(WebSWServerToContextConnection& connection)
+void NetworkProcess::swContextConnectionMayNoLongerBeNeeded(WebSWServerToContextConnection& serverToContextConnection)
 {
-    ASSERT(!m_serverToContextConnections.contains(connection.registrableDomain()));
-    m_pendingConnectionDomains.remove(connection.registrableDomain());
-    m_serverToContextConnections.add(connection.registrableDomain(), &connection);
-}
-
-void NetworkProcess::unregisterSWContextConnection(WebSWServerToContextConnection& connection)
-{
-    ASSERT(m_serverToContextConnections.get(connection.registrableDomain()) == &connection);
-    m_serverToContextConnections.remove(connection.registrableDomain());
+    auto& registrableDomain = serverToContextConnection.registrableDomain();
+    if (needsServerToContextConnectionForRegistrableDomain(registrableDomain))
+        return;
+    
+    RELEASE_LOG(ServiceWorker, "Service worker process is no longer needed, terminating it");
+    serverToContextConnection.terminate();
+    
+    for (auto& swServer : m_swServers.values())
+        swServer->markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
+    
+    serverToContextConnection.connectionClosed();
+    m_serverToContextConnections.remove(registrableDomain);
 }
 
 void NetworkProcess::disableServiceWorkerProcessTerminationDelay()

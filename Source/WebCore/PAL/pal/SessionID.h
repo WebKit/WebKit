@@ -55,11 +55,6 @@ public:
     {
     }
 
-    explicit SessionID(uint64_t identifier)
-        : m_identifier(identifier)
-    {
-    }
-
     PAL_EXPORT static SessionID generateEphemeralSessionID();
     PAL_EXPORT static SessionID generatePersistentSessionID();
     PAL_EXPORT static void enableGenerationProtection();
@@ -81,6 +76,11 @@ public:
     explicit operator bool() const { return m_identifier; }
 
 private:
+    explicit SessionID(uint64_t identifier)
+        : m_identifier(identifier)
+    {
+    }
+
     static bool isValidSessionIDValue(uint64_t sessionID) { return sessionID != HashTableEmptyValueID && sessionID != HashTableDeletedValueID; }
 
     uint64_t m_identifier;

@@ -1,3 +1,16 @@
+2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r249801.
+
+        Caused two servier worker layout tests to become flaky.
+
+        Reverted changeset:
+
+        "Use WebProcess processIdentifier to identify Service Worker
+        connections"
+        https://bugs.webkit.org/show_bug.cgi?id=201459
+        https://trac.webkit.org/changeset/249801
+
 2019-09-12  Youenn Fablet  <youenn@apple.com>
 
         Use WebProcess processIdentifier to identify Service Worker connections

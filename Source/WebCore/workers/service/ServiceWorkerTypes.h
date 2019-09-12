@@ -28,7 +28,6 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "DocumentIdentifier.h"
-#include "ProcessIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Variant.h>
@@ -71,7 +70,7 @@ using ServiceWorkerJobIdentifier = ObjectIdentifier<ServiceWorkerJobIdentifierTy
 enum SWServerToContextConnectionIdentifierType { };
 using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
 
-using SWServerConnectionIdentifierType = ProcessIdentifierType;
+enum SWServerConnectionIdentifierType { };
 using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
 
 using DocumentOrWorkerIdentifier = Variant<DocumentIdentifier, ServiceWorkerIdentifier>;

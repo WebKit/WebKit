@@ -1499,9 +1499,9 @@ void WebProcessProxy::releaseBackgroundActivityTokenForFullscreenInput()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store)
+void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, PAL::SessionID sessionID)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_websiteDataStore->sessionID() }, 0);
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, sessionID }, 0);
 }
 
 void WebProcessProxy::setServiceWorkerUserAgent(const String& userAgent)
