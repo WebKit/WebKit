@@ -1,5 +1,34 @@
 2019-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: REGRESSION: Inspector Timeline always starts at about 500ms mark on a reload
+        https://bugs.webkit.org/show_bug.cgi?id=200637
+        <rdar://problem/54218967>
+
+        Reviewed by Devin Rousso.
+
+        The Timeline was getting a startTime value from before the user started
+        the timeline recording because of artificial adjustments that were made
+        to CPUTimelineRecords. Ignore adjusted values when updating the Timeline's
+        start and end times.
+
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.prototype._updateTimesIfNeeded):
+        Use unadjusted times, which should fall in the user started / stopped
+        timeline range.
+
+        * UserInterface/Models/TimelineRecord.js:
+        (WI.TimelineRecord.prototype.get unadjustedStartTime):
+        (WI.TimelineRecord.prototype.get unadjustedEndTime):
+        Default implementation uses startTime/endTime.
+
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord.prototype.get unadjustedStartTime):
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        (WI.MemoryTimelineRecord.prototype.get unadjustedStartTime):
+        Each of these adjusted their startTime.
+
+2019-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: REGRESSION: CPU: Overlay Markers for Thread views are off by 500ms
         https://bugs.webkit.org/show_bug.cgi?id=201709
         <rdar://problem/55289279>

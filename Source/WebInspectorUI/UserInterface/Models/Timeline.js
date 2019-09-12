@@ -140,15 +140,22 @@ WI.Timeline = class Timeline extends WI.Object
 
     _updateTimesIfNeeded(record)
     {
-        var changed = false;
+        let changed = false;
 
-        if (isNaN(this._startTime) || record.startTime < this._startTime) {
-            this._startTime = record.startTime;
+        // Some records adjust their start time / end time to values that may be before
+        // or after the bounds the recording actually ran. Use the unadjusted times for
+        // the Timeline's bounds. Otherwise we may extend the timeline graphs to a time
+        // that was conceptually before / after the user started / stopping recording.
+        let recordStartTime = record.unadjustedStartTime;
+        let recordEndTime = record.unadjustedEndTime;
+
+        if (isNaN(this._startTime) || recordStartTime < this._startTime) {
+            this._startTime = recordStartTime;
             changed = true;
         }
 
-        if (isNaN(this._endTime) || this._endTime < record.endTime) {
-            this._endTime = record.endTime;
+        if (isNaN(this._endTime) || this._endTime < recordEndTime) {
+            this._endTime = recordEndTime;
             changed = true;
         }
 

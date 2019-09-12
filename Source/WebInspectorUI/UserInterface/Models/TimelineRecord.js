@@ -93,10 +93,22 @@ WI.TimelineRecord = class TimelineRecord extends WI.Object
         return this._startTime;
     }
 
+    get unadjustedStartTime()
+    {
+        // Overridden by subclasses if needed.
+        return this.startTime;
+    }
+
     get endTime()
     {
         // Implemented by subclasses if needed.
         return this._endTime;
+    }
+
+    get unadjustedEndTime()
+    {
+        // Overridden by subclasses if needed.
+        return this.endTime;
     }
 
     get duration()

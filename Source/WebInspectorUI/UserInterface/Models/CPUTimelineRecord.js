@@ -98,6 +98,8 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
     get timestamp() { return this._timestamp; }
     get usage() { return this._usage; }
 
+    get unadjustedStartTime() { return this._timestamp; }
+
     get mainThreadUsage() { return this._mainThreadUsage; }
     get webkitThreadUsage() { return this._webkitThreadUsage; }
     get workerThreadUsage() { return this._workerThreadUsage; }

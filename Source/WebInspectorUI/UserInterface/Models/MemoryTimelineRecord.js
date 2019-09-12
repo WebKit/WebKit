@@ -109,6 +109,8 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
     get categories() { return this._categories; }
     get totalSize() { return this._totalSize; }
 
+    get unadjustedStartTime() { return this._timestamp; }
+
     adjustStartTime(startTime)
     {
         console.assert(startTime < this._endTime);
