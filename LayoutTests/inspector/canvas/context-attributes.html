@@ -27,7 +27,13 @@ function test() {
 
                     let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
                     InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be "${contextDisplayName}".`);
-                    InspectorTest.log(JSON.stringify(canvas.contextAttributes, null, 2));
+                    InspectorTest.json(canvas.contextAttributes, (key, value) => {
+                        if (key === "powerPreference") {
+                            InspectorTest.assert(value === "default" || value === "low-power" || value === "high-performance", `Unexpected "powerPreference" value: ${value}`);
+                            return "<filtered>";
+                        }
+                        return value;
+                    });
 
                     for (let name in contextAttributes)
                         InspectorTest.expectEqual(canvas.contextAttributes[name], contextAttributes[name], `Canvas context should have attribute "${name}" with value "${contextAttributes[name]}".`);
