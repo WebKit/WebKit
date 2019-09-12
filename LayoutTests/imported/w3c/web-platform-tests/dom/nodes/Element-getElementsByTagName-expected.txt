@@ -19,5 +19,6 @@ PASS Element in non-HTML namespace, non-ascii characters in name
 PASS Element in HTML namespace, prefix, non-ascii characters in name 
 PASS Element in non-HTML namespace, prefix, non-ascii characters in name 
 PASS getElementsByTagName('*') 
+PASS getElementsByTagName() should be a live collection 
 PASS Matching the context object 
 

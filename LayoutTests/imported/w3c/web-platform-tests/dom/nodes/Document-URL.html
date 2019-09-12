@@ -12,7 +12,7 @@ async_test(function() {
   this.add_cleanup(function() { document.body.removeChild(iframe); });
   iframe.onload = this.step_func_done(function() {
     assert_equals(iframe.contentDocument.URL,
-                  "http://{{host}}:{{ports[http][0]}}/common/blank.html");
+                  location.origin + "/common/blank.html");
   });
 })
 </script>

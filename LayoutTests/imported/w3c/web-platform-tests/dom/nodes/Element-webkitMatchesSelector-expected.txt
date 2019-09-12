@@ -38,6 +38,7 @@ PASS Detached Element.webkitMatchesSelector: Invalid [att=value] selector: [*|*=
 PASS Detached Element.webkitMatchesSelector: Invalid [att=value] selector: [class= space unquoted ] 
 PASS Detached Element.webkitMatchesSelector: Unknown pseudo-class: div:example 
 PASS Detached Element.webkitMatchesSelector: Unknown pseudo-class: :example 
+PASS Detached Element.webkitMatchesSelector: Unknown pseudo-class: div:linkexample 
 PASS Detached Element.webkitMatchesSelector: Unknown pseudo-element: div::example 
 PASS Detached Element.webkitMatchesSelector: Unknown pseudo-element: ::example 
 PASS Detached Element.webkitMatchesSelector: Invalid pseudo-element: :::before 
@@ -71,6 +72,7 @@ PASS In-document Element.webkitMatchesSelector: Invalid [att=value] selector: [*
 PASS In-document Element.webkitMatchesSelector: Invalid [att=value] selector: [class= space unquoted ] 
 PASS In-document Element.webkitMatchesSelector: Unknown pseudo-class: div:example 
 PASS In-document Element.webkitMatchesSelector: Unknown pseudo-class: :example 
+PASS In-document Element.webkitMatchesSelector: Unknown pseudo-class: div:linkexample 
 PASS In-document Element.webkitMatchesSelector: Unknown pseudo-element: div::example 
 PASS In-document Element.webkitMatchesSelector: Unknown pseudo-element: ::example 
 PASS In-document Element.webkitMatchesSelector: Invalid pseudo-element: :::before 
@@ -82,6 +84,7 @@ PASS In-document Element.webkitMatchesSelector: Invalid namespace: $|div
 PASS In-document Element.webkitMatchesSelector: Relative selector: >* 
 PASS In-document Element.webkitMatchesSelector: Type selector, matching html element (with no refNodes): html 
 PASS In-document Element.webkitMatchesSelector: Type selector, matching body element (with no refNodes): body 
+PASS In-document Element.webkitMatchesSelector: Universal selector, matching all elements (with no refNodes): * 
 PASS In-document Element.webkitMatchesSelector: Universal selector, matching all children of element with specified ID (with no refNodes): #universal>* 
 PASS In-document Element.webkitMatchesSelector: Universal selector, matching all grandchildren of element with specified ID (with no refNodes): #universal>*>* 
 PASS In-document Element.webkitMatchesSelector: Universal selector, matching all descendants of element with specified ID (with no refNodes): #universal * 
@@ -169,10 +172,13 @@ PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, mat
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with exact value (with no refNodes): #pseudo-lang-div2:lang(fr) 
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with partial value (with no refNodes): #pseudo-lang-div3:lang(en) 
 PASS In-document Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all enabled form controls (with no refNodes): #pseudo-ui :enabled 
-PASS In-document Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all disabled form controls (with no refNodes): #pseudo-ui :disabled 
+PASS In-document Element.webkitMatchesSelector: :enabled pseudo-class selector, not matching link elements (with no refNodes): #pseudo-link :enabled 
+PASS In-document Element.webkitMatchesSelector: :disabled pseudo-class selector, matching all disabled form controls (with no refNodes): #pseudo-ui :disabled 
+PASS In-document Element.webkitMatchesSelector: :disabled pseudo-class selector, not matching link elements (with no refNodes): #pseudo-link :disabled 
 PASS In-document Element.webkitMatchesSelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes (with no refNodes): #pseudo-ui :checked 
 PASS In-document Element.webkitMatchesSelector: :not pseudo-class selector, matching  (with no refNodes): #not>:not(div) 
 PASS In-document Element.webkitMatchesSelector: :not pseudo-class selector, matching  (with no refNodes): #not * :not(:first-child) 
+PASS In-document Element.webkitMatchesSelector: :not pseudo-class selector argument surrounded by spaces, matching  (with no refNodes): #not>:not( div ) 
 PASS In-document Element.webkitMatchesSelector: Class selector, matching element with specified class (with no refNodes): .class-p 
 PASS In-document Element.webkitMatchesSelector: Class selector, chained, matching only elements with all specified classes (with no refNodes): #class .apple.orange.banana 
 PASS In-document Element.webkitMatchesSelector: Class Selector, chained, with type selector (with no refNodes): div.apple.banana.orange 
@@ -245,6 +251,7 @@ PASS In-document Element.webkitMatchesSelector: Syntax, group of selectors separ
 PASS In-document Element.webkitMatchesSelector: Syntax, group of selectors separator, whitespace before (with no refNodes): #group em	\r
 ,#group strong 
 PASS In-document Element.webkitMatchesSelector: Syntax, group of selectors separator, no whitespace (with no refNodes): #group em,#group strong 
+PASS Detached Element.webkitMatchesSelector: Universal selector, matching all elements (with no refNodes): * 
 PASS Detached Element.webkitMatchesSelector: Universal selector, matching all children of element with specified ID (with no refNodes): #universal>* 
 PASS Detached Element.webkitMatchesSelector: Universal selector, matching all grandchildren of element with specified ID (with no refNodes): #universal>*>* 
 PASS Detached Element.webkitMatchesSelector: Universal selector, matching all descendants of element with specified ID (with no refNodes): #universal * 
@@ -328,10 +335,13 @@ PASS Detached Element.webkitMatchesSelector: :link and :visited pseudo-class sel
 PASS Detached Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with exact value (with no refNodes): #pseudo-lang-div2:lang(fr) 
 PASS Detached Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with partial value (with no refNodes): #pseudo-lang-div3:lang(en) 
 PASS Detached Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all enabled form controls (with no refNodes): #pseudo-ui :enabled 
-PASS Detached Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all disabled form controls (with no refNodes): #pseudo-ui :disabled 
+PASS Detached Element.webkitMatchesSelector: :enabled pseudo-class selector, not matching link elements (with no refNodes): #pseudo-link :enabled 
+PASS Detached Element.webkitMatchesSelector: :disabled pseudo-class selector, matching all disabled form controls (with no refNodes): #pseudo-ui :disabled 
+PASS Detached Element.webkitMatchesSelector: :disabled pseudo-class selector, not matching link elements (with no refNodes): #pseudo-link :disabled 
 PASS Detached Element.webkitMatchesSelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes (with no refNodes): #pseudo-ui :checked 
 PASS Detached Element.webkitMatchesSelector: :not pseudo-class selector, matching  (with no refNodes): #not>:not(div) 
 PASS Detached Element.webkitMatchesSelector: :not pseudo-class selector, matching  (with no refNodes): #not * :not(:first-child) 
+PASS Detached Element.webkitMatchesSelector: :not pseudo-class selector argument surrounded by spaces, matching  (with no refNodes): #not>:not( div ) 
 PASS Detached Element.webkitMatchesSelector: Class selector, matching element with specified class (with no refNodes): .class-p 
 PASS Detached Element.webkitMatchesSelector: Class selector, chained, matching only elements with all specified classes (with no refNodes): #class .apple.orange.banana 
 PASS Detached Element.webkitMatchesSelector: Class Selector, chained, with type selector (with no refNodes): div.apple.banana.orange 
@@ -403,6 +413,7 @@ PASS Detached Element.webkitMatchesSelector: Syntax, group of selectors separato
 PASS Detached Element.webkitMatchesSelector: Syntax, group of selectors separator, whitespace before (with no refNodes): #group em	\r
 ,#group strong 
 PASS Detached Element.webkitMatchesSelector: Syntax, group of selectors separator, no whitespace (with no refNodes): #group em,#group strong 
+PASS Fragment Element.webkitMatchesSelector: Universal selector, matching all elements (with no refNodes): * 
 PASS Fragment Element.webkitMatchesSelector: Universal selector, matching all children of element with specified ID (with no refNodes): #universal>* 
 PASS Fragment Element.webkitMatchesSelector: Universal selector, matching all grandchildren of element with specified ID (with no refNodes): #universal>*>* 
 PASS Fragment Element.webkitMatchesSelector: Universal selector, matching all descendants of element with specified ID (with no refNodes): #universal * 
@@ -486,10 +497,13 @@ PASS Fragment Element.webkitMatchesSelector: :link and :visited pseudo-class sel
 PASS Fragment Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with exact value (with no refNodes): #pseudo-lang-div2:lang(fr) 
 PASS Fragment Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with partial value (with no refNodes): #pseudo-lang-div3:lang(en) 
 PASS Fragment Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all enabled form controls (with no refNodes): #pseudo-ui :enabled 
-PASS Fragment Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all disabled form controls (with no refNodes): #pseudo-ui :disabled 
+PASS Fragment Element.webkitMatchesSelector: :enabled pseudo-class selector, not matching link elements (with no refNodes): #pseudo-link :enabled 
+PASS Fragment Element.webkitMatchesSelector: :disabled pseudo-class selector, matching all disabled form controls (with no refNodes): #pseudo-ui :disabled 
+PASS Fragment Element.webkitMatchesSelector: :disabled pseudo-class selector, not matching link elements (with no refNodes): #pseudo-link :disabled 
 PASS Fragment Element.webkitMatchesSelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes (with no refNodes): #pseudo-ui :checked 
 PASS Fragment Element.webkitMatchesSelector: :not pseudo-class selector, matching  (with no refNodes): #not>:not(div) 
 PASS Fragment Element.webkitMatchesSelector: :not pseudo-class selector, matching  (with no refNodes): #not * :not(:first-child) 
+PASS Fragment Element.webkitMatchesSelector: :not pseudo-class selector argument surrounded by spaces, matching  (with no refNodes): #not>:not( div ) 
 PASS Fragment Element.webkitMatchesSelector: Class selector, matching element with specified class (with no refNodes): .class-p 
 PASS Fragment Element.webkitMatchesSelector: Class selector, chained, matching only elements with all specified classes (with no refNodes): #class .apple.orange.banana 
 PASS Fragment Element.webkitMatchesSelector: Class Selector, chained, with type selector (with no refNodes): div.apple.banana.orange 
@@ -561,7 +575,6 @@ PASS Fragment Element.webkitMatchesSelector: Syntax, group of selectors separato
 PASS Fragment Element.webkitMatchesSelector: Syntax, group of selectors separator, whitespace before (with no refNodes): #group em	\r
 ,#group strong 
 PASS Fragment Element.webkitMatchesSelector: Syntax, group of selectors separator, no whitespace (with no refNodes): #group em,#group strong 
-FAIL In-document Element.webkitMatchesSelector: Universal selector, matching all descendants of the specified reference element (with refNode Element): * assert_false: The element #universal should not match the selector. expected false got true
 PASS In-document Element.webkitMatchesSelector: Attribute presence selector, matching align attribute with value (with refNode Element): .attr-presence-div1[align] 
 PASS In-document Element.webkitMatchesSelector: Attribute presence selector, matching align attribute with empty value (with refNode Element): .attr-presence-div2[align] 
 PASS In-document Element.webkitMatchesSelector: Attribute presence selector, matching title attribute, case insensitivity (with refNode Element): [TiTlE] 
@@ -611,7 +624,14 @@ PASS In-document Element.webkitMatchesSelector: Attribute contains selector with
 PASS In-document Element.webkitMatchesSelector: :nth-child selector, matching the third child element (with refNode Element): :nth-child(3) 
 PASS In-document Element.webkitMatchesSelector: :nth-child selector, matching every third child element (with refNode Element): li:nth-child(3n) 
 PASS In-document Element.webkitMatchesSelector: :nth-child selector, matching every second child element, starting from the fourth (with refNode Element): li:nth-child(2n+4) 
+PASS In-document Element.webkitMatchesSelector: :nth-child selector, matching every second child element, starting from the fourth, with whitespace (with refNode Element): li:nth-child(2n 	\r
++ 	\r
+4) 
 PASS In-document Element.webkitMatchesSelector: :nth-child selector, matching every fourth child element, starting from the third (with refNode Element): :nth-child(4n-1) 
+PASS In-document Element.webkitMatchesSelector: :nth-child selector, matching every fourth child element, starting from the third, with whitespace (with refNode Element): :nth-child(4n 	\r
+- 	\r
+1) 
+PASS In-document Element.webkitMatchesSelector: :nth-child selector used twice, matching  (with refNode Element): :nth-child(1) :nth-child(1) 
 PASS In-document Element.webkitMatchesSelector: :nth-last-child selector, matching the third last child element (with refNode Element): :nth-last-child(3) 
 PASS In-document Element.webkitMatchesSelector: :nth-last-child selector, matching every third child element from the end (with refNode Element): li:nth-last-child(3n) 
 PASS In-document Element.webkitMatchesSelector: :nth-last-child selector, matching every second child element from the end, starting from the fourth last (with refNode Element): li:nth-last-child(2n+4) 
@@ -643,7 +663,9 @@ PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, mat
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with exact value (1) (with no refNodes): #pseudo-lang-div2:lang(fr) 
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with partial value (1) (with no refNodes): #pseudo-lang-div3:lang(en) 
 PASS In-document Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all enabled form controls (1) (with no refNodes): #pseudo-ui :enabled 
-PASS In-document Element.webkitMatchesSelector: :enabled pseudo-class selector, matching all disabled form controls (1) (with no refNodes): #pseudo-ui :disabled 
+PASS In-document Element.webkitMatchesSelector: :enabled pseudo-class selector, not matching link elements (1) (with no refNodes): #pseudo-link :enabled 
+PASS In-document Element.webkitMatchesSelector: :disabled pseudo-class selector, matching all disabled form controls (1) (with no refNodes): #pseudo-ui :disabled 
+PASS In-document Element.webkitMatchesSelector: :disabled pseudo-class selector, not matching link elements (1) (with no refNodes): #pseudo-link :disabled 
 PASS In-document Element.webkitMatchesSelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes (1) (with no refNodes): #pseudo-ui :checked 
 PASS In-document Element.webkitMatchesSelector: :not pseudo-class selector, matching (1) (with no refNodes): #not>:not(div) 
 PASS In-document Element.webkitMatchesSelector: :not pseudo-class selector, matching (1) (with no refNodes): #not * :not(:first-child) 

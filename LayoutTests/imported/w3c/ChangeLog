@@ -1,3 +1,109 @@
+2019-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync dom web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201697
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync dom web-platform-tests from upstream ab331d317554a3ba61.
+
+        * web-platform-tests/dom/META.yml: Added.
+        * web-platform-tests/dom/OWNERS: Removed.
+        * web-platform-tests/dom/abort/w3c-import.log:
+        * web-platform-tests/dom/collections/HTMLCollection-as-proto-length-get-throws-expected.txt: Removed.
+        * web-platform-tests/dom/collections/HTMLCollection-as-proto-length-get-throws.html: Removed.
+        * web-platform-tests/dom/collections/HTMLCollection-as-prototype-expected.txt: Added.
+        * web-platform-tests/dom/collections/HTMLCollection-as-prototype.html: Added.
+        * web-platform-tests/dom/collections/HTMLCollection-delete-expected.txt: Added.
+        * web-platform-tests/dom/collections/HTMLCollection-delete.html: Added.
+        * web-platform-tests/dom/collections/w3c-import.log:
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/historical.html:
+        * web-platform-tests/dom/idlharness.any.html: Added.
+        * web-platform-tests/dom/idlharness.any.js: Added.
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt: Added.
+        * web-platform-tests/dom/idlharness.any.worker.html: Added.
+        * web-platform-tests/dom/idlharness.window-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/interfaces-expected.txt.
+        * web-platform-tests/dom/idlharness.window.html: Added.
+        * web-platform-tests/dom/idlharness.window.js: Added.
+        * web-platform-tests/dom/interfaces.html: Removed.
+        * web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes.html:
+        * web-platform-tests/dom/lists/w3c-import.log:
+        * web-platform-tests/dom/nodes/Comment-Text-constructor.js:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/Document-Element-getElementsByTagName.js:
+        (test_getElementsByTagName):
+        * web-platform-tests/dom/nodes/Document-Element-getElementsByTagNameNS.js:
+        (test_getElementsByTagNameNS):
+        * web-platform-tests/dom/nodes/Document-URL-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-URL.sub-expected.txt.
+        * web-platform-tests/dom/nodes/Document-URL.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-URL.sub.html.
+        * web-platform-tests/dom/nodes/Document-constructor-expected.txt:
+        * web-platform-tests/dom/nodes/Document-constructor-svg.svg: Removed.
+        * web-platform-tests/dom/nodes/Document-constructor.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-contentType/resources/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-contentType/support/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createAttribute-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createAttribute.html:
+        * web-platform-tests/dom/nodes/Document-createElement-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace.html:
+        * web-platform-tests/dom/nodes/Document-createElement.html:
+        * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElementNS.js:
+        * web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Document-createEvent.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.html.
+        * web-platform-tests/dom/nodes/Document-getElementsByClassName-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Document-getElementsByClassName.html: Added.
+        * web-platform-tests/dom/nodes/Document-getElementsByTagName-expected.txt:
+        * web-platform-tests/dom/nodes/Document-getElementsByTagNameNS-expected.txt:
+        * web-platform-tests/dom/nodes/Element-getElementsByClassName-expected.txt:
+        * web-platform-tests/dom/nodes/Element-getElementsByClassName.html:
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-expected.txt:
+        * web-platform-tests/dom/nodes/Element-getElementsByTagNameNS-expected.txt:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector-expected.txt:
+        * web-platform-tests/dom/nodes/Node-childNodes-expected.txt:
+        * web-platform-tests/dom/nodes/Node-childNodes.html:
+        * web-platform-tests/dom/nodes/Node-cloneNode-expected.txt:
+        * web-platform-tests/dom/nodes/Node-cloneNode.html:
+        * web-platform-tests/dom/nodes/Node-insertBefore-expected.txt:
+        * web-platform-tests/dom/nodes/Node-insertBefore.html:
+        * web-platform-tests/dom/nodes/Node-normalize-expected.txt:
+        * web-platform-tests/dom/nodes/Node-normalize.html:
+        * web-platform-tests/dom/nodes/Node-replaceChild-expected.txt:
+        * web-platform-tests/dom/nodes/Node-replaceChild.html:
+        * web-platform-tests/dom/nodes/Node-textContent.html:
+        * web-platform-tests/dom/nodes/ParentNode-children-expected.txt: Added.
+        * web-platform-tests/dom/nodes/ParentNode-children.html: Added.
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht.xht:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All.html:
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative-expected.txt: Added.
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative.html: Added.
+        * web-platform-tests/dom/nodes/attributes.html:
+        * web-platform-tests/dom/nodes/pre-insertion-checks.js: Added.
+        (getNonParentNodes):
+        (getNonInsertableNodes):
+        (getNonDocumentParentNodes):
+        (test):
+        * web-platform-tests/dom/nodes/productions.js:
+        * web-platform-tests/dom/nodes/query-target-in-load-event-expected.txt: Added.
+        * web-platform-tests/dom/nodes/query-target-in-load-event.html: Added.
+        * web-platform-tests/dom/nodes/query-target-in-load-event.part.html: Added.
+        * web-platform-tests/dom/nodes/remove-and-adopt-crash-expected.txt: Added.
+        * web-platform-tests/dom/nodes/remove-and-adopt-crash.html: Added.
+        * web-platform-tests/dom/nodes/rootNode-expected.txt:
+        * web-platform-tests/dom/nodes/rootNode.html:
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/dom/ranges/Range-intersectsNode-2-expected.txt: Added.
+        * web-platform-tests/dom/ranges/Range-intersectsNode-2.html: Added.
+        * web-platform-tests/dom/ranges/w3c-import.log:
+        * web-platform-tests/dom/w3c-import.log:
+
 2019-09-11  Chris Dumez  <cdumez@apple.com>
 
         Use same parser for <meta http-equiv="refresh"> and `Refresh` HTTP header

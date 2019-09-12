@@ -97,6 +97,8 @@ PASS Document.querySelector: Unknown pseudo-class: div:example
 PASS Document.querySelectorAll: Unknown pseudo-class: div:example 
 PASS Document.querySelector: Unknown pseudo-class: :example 
 PASS Document.querySelectorAll: Unknown pseudo-class: :example 
+PASS Document.querySelector: Unknown pseudo-class: div:linkexample 
+PASS Document.querySelectorAll: Unknown pseudo-class: div:linkexample 
 PASS Document.querySelector: Unknown pseudo-element: div::example 
 PASS Document.querySelectorAll: Unknown pseudo-element: div::example 
 PASS Document.querySelector: Unknown pseudo-element: ::example 
@@ -163,6 +165,8 @@ PASS Detached Element.querySelector: Unknown pseudo-class: div:example
 PASS Detached Element.querySelectorAll: Unknown pseudo-class: div:example 
 PASS Detached Element.querySelector: Unknown pseudo-class: :example 
 PASS Detached Element.querySelectorAll: Unknown pseudo-class: :example 
+PASS Detached Element.querySelector: Unknown pseudo-class: div:linkexample 
+PASS Detached Element.querySelectorAll: Unknown pseudo-class: div:linkexample 
 PASS Detached Element.querySelector: Unknown pseudo-element: div::example 
 PASS Detached Element.querySelectorAll: Unknown pseudo-element: div::example 
 PASS Detached Element.querySelector: Unknown pseudo-element: ::example 
@@ -229,6 +233,8 @@ PASS Fragment.querySelector: Unknown pseudo-class: div:example
 PASS Fragment.querySelectorAll: Unknown pseudo-class: div:example 
 PASS Fragment.querySelector: Unknown pseudo-class: :example 
 PASS Fragment.querySelectorAll: Unknown pseudo-class: :example 
+PASS Fragment.querySelector: Unknown pseudo-class: div:linkexample 
+PASS Fragment.querySelectorAll: Unknown pseudo-class: div:linkexample 
 PASS Fragment.querySelector: Unknown pseudo-element: div::example 
 PASS Fragment.querySelectorAll: Unknown pseudo-element: div::example 
 PASS Fragment.querySelector: Unknown pseudo-element: ::example 
@@ -295,6 +301,8 @@ PASS In-document Element.querySelector: Unknown pseudo-class: div:example
 PASS In-document Element.querySelectorAll: Unknown pseudo-class: div:example 
 PASS In-document Element.querySelector: Unknown pseudo-class: :example 
 PASS In-document Element.querySelectorAll: Unknown pseudo-class: :example 
+PASS In-document Element.querySelector: Unknown pseudo-class: div:linkexample 
+PASS In-document Element.querySelectorAll: Unknown pseudo-class: div:linkexample 
 PASS In-document Element.querySelector: Unknown pseudo-element: div::example 
 PASS In-document Element.querySelectorAll: Unknown pseudo-element: div::example 
 PASS In-document Element.querySelector: Unknown pseudo-element: ::example 
@@ -313,6 +321,74 @@ PASS In-document Element.querySelector: Invalid namespace: $|div
 PASS In-document Element.querySelectorAll: Invalid namespace: $|div 
 PASS In-document Element.querySelector: Relative selector: >* 
 PASS In-document Element.querySelectorAll: Relative selector: >* 
+PASS Empty Element.querySelector: Empty String:  
+PASS Empty Element.querySelectorAll: Empty String:  
+PASS Empty Element.querySelector: Invalid character: [ 
+PASS Empty Element.querySelectorAll: Invalid character: [ 
+PASS Empty Element.querySelector: Invalid character: ] 
+PASS Empty Element.querySelectorAll: Invalid character: ] 
+PASS Empty Element.querySelector: Invalid character: ( 
+PASS Empty Element.querySelectorAll: Invalid character: ( 
+PASS Empty Element.querySelector: Invalid character: ) 
+PASS Empty Element.querySelectorAll: Invalid character: ) 
+PASS Empty Element.querySelector: Invalid character: { 
+PASS Empty Element.querySelectorAll: Invalid character: { 
+PASS Empty Element.querySelector: Invalid character: } 
+PASS Empty Element.querySelectorAll: Invalid character: } 
+PASS Empty Element.querySelector: Invalid character: < 
+PASS Empty Element.querySelectorAll: Invalid character: < 
+PASS Empty Element.querySelector: Invalid character: > 
+PASS Empty Element.querySelectorAll: Invalid character: > 
+PASS Empty Element.querySelector: Invalid ID: # 
+PASS Empty Element.querySelectorAll: Invalid ID: # 
+PASS Empty Element.querySelector: Invalid group of selectors: div, 
+PASS Empty Element.querySelectorAll: Invalid group of selectors: div, 
+PASS Empty Element.querySelector: Invalid class: . 
+PASS Empty Element.querySelectorAll: Invalid class: . 
+PASS Empty Element.querySelector: Invalid class: .5cm 
+PASS Empty Element.querySelectorAll: Invalid class: .5cm 
+PASS Empty Element.querySelector: Invalid class: ..test 
+PASS Empty Element.querySelectorAll: Invalid class: ..test 
+PASS Empty Element.querySelector: Invalid class: .foo..quux 
+PASS Empty Element.querySelectorAll: Invalid class: .foo..quux 
+PASS Empty Element.querySelector: Invalid class: .bar. 
+PASS Empty Element.querySelectorAll: Invalid class: .bar. 
+PASS Empty Element.querySelector: Invalid combinator: div & address, p 
+PASS Empty Element.querySelectorAll: Invalid combinator: div & address, p 
+PASS Empty Element.querySelector: Invalid combinator: div ++ address, p 
+PASS Empty Element.querySelectorAll: Invalid combinator: div ++ address, p 
+PASS Empty Element.querySelector: Invalid combinator: div ~~ address, p 
+PASS Empty Element.querySelectorAll: Invalid combinator: div ~~ address, p 
+PASS Empty Element.querySelector: Invalid [att=value] selector: [*=test] 
+PASS Empty Element.querySelectorAll: Invalid [att=value] selector: [*=test] 
+PASS Empty Element.querySelector: Invalid [att=value] selector: [*|*=test] 
+PASS Empty Element.querySelectorAll: Invalid [att=value] selector: [*|*=test] 
+PASS Empty Element.querySelector: Invalid [att=value] selector: [class= space unquoted ] 
+PASS Empty Element.querySelectorAll: Invalid [att=value] selector: [class= space unquoted ] 
+PASS Empty Element.querySelector: Unknown pseudo-class: div:example 
+PASS Empty Element.querySelectorAll: Unknown pseudo-class: div:example 
+PASS Empty Element.querySelector: Unknown pseudo-class: :example 
+PASS Empty Element.querySelectorAll: Unknown pseudo-class: :example 
+PASS Empty Element.querySelector: Unknown pseudo-class: div:linkexample 
+PASS Empty Element.querySelectorAll: Unknown pseudo-class: div:linkexample 
+PASS Empty Element.querySelector: Unknown pseudo-element: div::example 
+PASS Empty Element.querySelectorAll: Unknown pseudo-element: div::example 
+PASS Empty Element.querySelector: Unknown pseudo-element: ::example 
+PASS Empty Element.querySelectorAll: Unknown pseudo-element: ::example 
+PASS Empty Element.querySelector: Invalid pseudo-element: :::before 
+PASS Empty Element.querySelectorAll: Invalid pseudo-element: :::before 
+PASS Empty Element.querySelector: Invalid pseudo-element: :: before 
+PASS Empty Element.querySelectorAll: Invalid pseudo-element: :: before 
+PASS Empty Element.querySelector: Undeclared namespace: ns|div 
+PASS Empty Element.querySelectorAll: Undeclared namespace: ns|div 
+PASS Empty Element.querySelector: Undeclared namespace: :not(ns|div) 
+PASS Empty Element.querySelectorAll: Undeclared namespace: :not(ns|div) 
+PASS Empty Element.querySelector: Invalid namespace: ^|div 
+PASS Empty Element.querySelectorAll: Invalid namespace: ^|div 
+PASS Empty Element.querySelector: Invalid namespace: $|div 
+PASS Empty Element.querySelectorAll: Invalid namespace: $|div 
+PASS Empty Element.querySelector: Relative selector: >* 
+PASS Empty Element.querySelectorAll: Relative selector: >* 
 PASS Document.querySelectorAll: Type selector, matching html element: html 
 PASS Document.querySelector: Type selector, matching html element: html 
 PASS Document.querySelectorAll: Type selector, matching body element: body 
@@ -533,8 +609,12 @@ PASS Document.querySelectorAll: :lang pseudo-class selector, not matching incorr
 PASS Document.querySelector: :lang pseudo-class selector, not matching incorrect language: #pseudo-lang-div4:lang(es-AR) 
 PASS Document.querySelectorAll: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
 PASS Document.querySelector: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
-PASS Document.querySelectorAll: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
-PASS Document.querySelector: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Document.querySelectorAll: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS Document.querySelector: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS Document.querySelectorAll: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Document.querySelector: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Document.querySelectorAll: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
+PASS Document.querySelector: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
 PASS Document.querySelectorAll: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS Document.querySelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS Document.querySelectorAll: :not pseudo-class selector, matching : #not>:not(div) 
@@ -545,6 +625,8 @@ PASS Document.querySelectorAll: :not pseudo-class selector, matching nothing: :n
 PASS Document.querySelector: :not pseudo-class selector, matching nothing: :not(*) 
 PASS Document.querySelectorAll: :not pseudo-class selector, matching nothing: :not(*|*) 
 PASS Document.querySelector: :not pseudo-class selector, matching nothing: :not(*|*) 
+PASS Document.querySelectorAll: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
+PASS Document.querySelector: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
 PASS Document.querySelectorAll: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS Document.querySelector: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS Document.querySelectorAll: ::first-line pseudo-element (two-colon syntax) selector, not matching any elements: #pseudo-element::first-line 
@@ -959,8 +1041,12 @@ PASS Detached Element.querySelectorAll: :lang pseudo-class selector, not matchin
 PASS Detached Element.querySelector: :lang pseudo-class selector, not matching incorrect language: #pseudo-lang-div4:lang(es-AR) 
 PASS Detached Element.querySelectorAll: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
 PASS Detached Element.querySelector: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
-PASS Detached Element.querySelectorAll: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
-PASS Detached Element.querySelector: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Detached Element.querySelectorAll: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS Detached Element.querySelector: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS Detached Element.querySelectorAll: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Detached Element.querySelector: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Detached Element.querySelectorAll: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
+PASS Detached Element.querySelector: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
 PASS Detached Element.querySelectorAll: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS Detached Element.querySelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS Detached Element.querySelectorAll: :not pseudo-class selector, matching : #not>:not(div) 
@@ -971,6 +1057,8 @@ PASS Detached Element.querySelectorAll: :not pseudo-class selector, matching not
 PASS Detached Element.querySelector: :not pseudo-class selector, matching nothing: :not(*) 
 PASS Detached Element.querySelectorAll: :not pseudo-class selector, matching nothing: :not(*|*) 
 PASS Detached Element.querySelector: :not pseudo-class selector, matching nothing: :not(*|*) 
+PASS Detached Element.querySelectorAll: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
+PASS Detached Element.querySelector: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
 PASS Detached Element.querySelectorAll: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS Detached Element.querySelector: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS Detached Element.querySelectorAll: ::first-line pseudo-element (two-colon syntax) selector, not matching any elements: #pseudo-element::first-line 
@@ -1383,8 +1471,12 @@ PASS Fragment.querySelectorAll: :lang pseudo-class selector, not matching incorr
 PASS Fragment.querySelector: :lang pseudo-class selector, not matching incorrect language: #pseudo-lang-div4:lang(es-AR) 
 PASS Fragment.querySelectorAll: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
 PASS Fragment.querySelector: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
-PASS Fragment.querySelectorAll: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
-PASS Fragment.querySelector: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Fragment.querySelectorAll: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS Fragment.querySelector: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS Fragment.querySelectorAll: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Fragment.querySelector: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS Fragment.querySelectorAll: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
+PASS Fragment.querySelector: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
 PASS Fragment.querySelectorAll: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS Fragment.querySelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS Fragment.querySelectorAll: :not pseudo-class selector, matching : #not>:not(div) 
@@ -1395,6 +1487,8 @@ PASS Fragment.querySelectorAll: :not pseudo-class selector, matching nothing: :n
 PASS Fragment.querySelector: :not pseudo-class selector, matching nothing: :not(*) 
 PASS Fragment.querySelectorAll: :not pseudo-class selector, matching nothing: :not(*|*) 
 PASS Fragment.querySelector: :not pseudo-class selector, matching nothing: :not(*|*) 
+PASS Fragment.querySelectorAll: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
+PASS Fragment.querySelector: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
 PASS Fragment.querySelectorAll: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS Fragment.querySelector: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS Fragment.querySelectorAll: ::first-line pseudo-element (two-colon syntax) selector, not matching any elements: #pseudo-element::first-line 
@@ -1807,8 +1901,12 @@ PASS In-document Element.querySelectorAll: :lang pseudo-class selector, not matc
 PASS In-document Element.querySelector: :lang pseudo-class selector, not matching incorrect language: #pseudo-lang-div4:lang(es-AR) 
 PASS In-document Element.querySelectorAll: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
 PASS In-document Element.querySelector: :enabled pseudo-class selector, matching all enabled form controls: #pseudo-ui :enabled 
-PASS In-document Element.querySelectorAll: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
-PASS In-document Element.querySelector: :enabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS In-document Element.querySelectorAll: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS In-document Element.querySelector: :enabled pseudo-class selector, not matching link elements: #pseudo-link :enabled 
+PASS In-document Element.querySelectorAll: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS In-document Element.querySelector: :disabled pseudo-class selector, matching all disabled form controls: #pseudo-ui :disabled 
+PASS In-document Element.querySelectorAll: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
+PASS In-document Element.querySelector: :disabled pseudo-class selector, not matching link elements: #pseudo-link :disabled 
 PASS In-document Element.querySelectorAll: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS In-document Element.querySelector: :checked pseudo-class selector, matching checked radio buttons and checkboxes: #pseudo-ui :checked 
 PASS In-document Element.querySelectorAll: :not pseudo-class selector, matching : #not>:not(div) 
@@ -1819,6 +1917,8 @@ PASS In-document Element.querySelectorAll: :not pseudo-class selector, matching 
 PASS In-document Element.querySelector: :not pseudo-class selector, matching nothing: :not(*) 
 PASS In-document Element.querySelectorAll: :not pseudo-class selector, matching nothing: :not(*|*) 
 PASS In-document Element.querySelector: :not pseudo-class selector, matching nothing: :not(*|*) 
+PASS In-document Element.querySelectorAll: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
+PASS In-document Element.querySelector: :not pseudo-class selector argument surrounded by spaces, matching : #not>:not( div ) 
 PASS In-document Element.querySelectorAll: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS In-document Element.querySelector: :first-line pseudo-element (one-colon syntax) selector, not matching any elements: #pseudo-element:first-line 
 PASS In-document Element.querySelectorAll: ::first-line pseudo-element (two-colon syntax) selector, not matching any elements: #pseudo-element::first-line 

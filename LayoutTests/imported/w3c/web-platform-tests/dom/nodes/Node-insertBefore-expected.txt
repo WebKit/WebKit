@@ -1,4 +1,9 @@
 
+PASS Should check the 'parent' type before checking whether 'child' is a child of 'parent' 
+PASS Should check that 'node' is not an ancestor of 'parent' before checking whether 'child' is a child of 'parent' 
+PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent. 
+PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent of the type that 'parent' is. 
+PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' can be inserted into the document given the kids the document has right now. 
 PASS Calling insertBefore with a non-Node first argument must throw TypeError. 
 PASS Calling insertBefore with a non-Node first argument on a leaf node DocumentType must throw TypeError. 
 PASS Calling insertBefore an a leaf node DocumentType must throw HIERARCHY_REQUEST_ERR. 

@@ -577,7 +577,6 @@ imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ ImageOnlyFai
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-021.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/hr-time/timeOrigin.html [ Failure ]
 imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-non-same-origin.htm [ Skip ]
@@ -892,7 +891,6 @@ webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 
 # Skip W3C tests that are too slow in debug builds.
-webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/interfaces.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-compareBoundaryPoints.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html [ Skip ]
@@ -1600,6 +1598,7 @@ imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html [ Skip
 imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-fire.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/iceGatheringState.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https.html [ Skip ]
+imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-crash.html [ Skip ]
 
 # Uses legacy WebRTC API.
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Skip ]

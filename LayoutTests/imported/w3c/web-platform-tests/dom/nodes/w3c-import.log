@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -36,7 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-hasFeature.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-Element-getElementsByTagName.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-Element-getElementsByTagNameNS.js
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-URL.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-URL.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-adoptNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg
@@ -49,7 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElementNS.js
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createProcessingInstruction-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createProcessingInstruction.html
@@ -58,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createTreeWalker.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-doctype.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-getElementById.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-getElementsByClassName.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-getElementsByTagName-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-getElementsByTagName.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-getElementsByTagNameNS.html
@@ -66,22 +67,30 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DocumentType-literal-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DocumentType-literal.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DocumentType-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElement-null-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElement-null-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElement-null.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-add-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-add-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-add.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-remove-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-remove-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-nochild-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-nochild-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-nochild.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-children.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-classlist.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-closest.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-entity-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-entity.svg
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-namespace-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-namespace-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-namespace.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-getElementsByClassName.html
@@ -92,17 +101,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-hasAttributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-insertAdjacentElement.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-insertAdjacentText.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-lastElementChild-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-lastElementChild-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-lastElementChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-matches-init.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-matches.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-matches.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-nextElementSibling-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-nextElementSibling-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-nextElementSibling.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-previousElementSibling-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-previousElementSibling-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-previousElementSibling.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-removeAttributeNS.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-tagName.html
@@ -144,6 +157,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-textContent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-Iterable.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-append.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-children.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-prepend.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.xht
@@ -156,6 +170,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-splitText.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/append-on-Document.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/aria-element-reflection.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/case.html
@@ -196,8 +211,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassNameFrame.htm
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insert-adjacent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/mutationobservers.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-checks.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.part.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/selectors.js

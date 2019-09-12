@@ -104,9 +104,9 @@ PASS createElement("1:foo") in XHTML document
 PASS createElement("fo o") in HTML document 
 PASS createElement("fo o") in XML document 
 PASS createElement("fo o") in XHTML document 
-PASS createElement("ெfoo") in HTML document 
-PASS createElement("ெfoo") in XML document 
-PASS createElement("ெfoo") in XHTML document 
+PASS createElement("̀foo") in HTML document 
+PASS createElement("̀foo") in XML document 
+PASS createElement("̀foo") in XHTML document 
 PASS createElement("}foo") in HTML document 
 PASS createElement("}foo") in XML document 
 PASS createElement("}foo") in XHTML document 
@@ -143,7 +143,7 @@ PASS createElement("-foo") in XHTML document
 PASS createElement(".foo") in HTML document 
 PASS createElement(".foo") in XML document 
 PASS createElement(".foo") in XHTML document 
-PASS createElement("ெ") in HTML document 
-PASS createElement("ெ") in XML document 
-PASS createElement("ெ") in XHTML document 
+PASS createElement("̀") in HTML document 
+PASS createElement("̀") in XML document 
+PASS createElement("̀") in XHTML document 
  

@@ -17,9 +17,12 @@ PASS createElementNS test in XHTML document: null,"f1oo",null
 PASS createElementNS test in HTML document: null,"foo1",null 
 PASS createElementNS test in XML document: null,"foo1",null 
 PASS createElementNS test in XHTML document: null,"foo1",null 
-PASS createElementNS test in HTML document: null,"ெfoo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in XML document: null,"ெfoo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in XHTML document: null,"ெfoo","INVALID_CHARACTER_ERR" 
+FAIL createElementNS test in HTML document: null,"ெfoo",null The string contains invalid characters.
+FAIL createElementNS test in XML document: null,"ெfoo",null The string contains invalid characters.
+FAIL createElementNS test in XHTML document: null,"ெfoo",null The string contains invalid characters.
+PASS createElementNS test in HTML document: null,";foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XML document: null,";foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XHTML document: null,";foo","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in HTML document: null,"}foo","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XML document: null,"}foo","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XHTML document: null,"}foo","INVALID_CHARACTER_ERR" 
@@ -206,12 +209,24 @@ PASS createElementNS test in XHTML document: "http://example.com/","0:a","INVALI
 PASS createElementNS test in HTML document: "http://example.com/","a:_",null 
 PASS createElementNS test in XML document: "http://example.com/","a:_",null 
 PASS createElementNS test in XHTML document: "http://example.com/","a:_",null 
-PASS createElementNS test in HTML document: "http://example.com/","a:ெ","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in XML document: "http://example.com/","a:ெ","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in XHTML document: "http://example.com/","a:ெ","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in HTML document: "http://example.com/","ெ:a","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in XML document: "http://example.com/","ெ:a","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in XHTML document: "http://example.com/","ெ:a","INVALID_CHARACTER_ERR" 
+FAIL createElementNS test in HTML document: "http://example.com/","a:ெ",null The string contains invalid characters.
+FAIL createElementNS test in XML document: "http://example.com/","a:ெ",null The string contains invalid characters.
+FAIL createElementNS test in XHTML document: "http://example.com/","a:ெ",null The string contains invalid characters.
+PASS createElementNS test in HTML document: "http://example.com/","a:;","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XML document: "http://example.com/","a:;","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XHTML document: "http://example.com/","a:;","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in HTML document: "http://example.com/","a:̀","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XML document: "http://example.com/","a:̀","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XHTML document: "http://example.com/","a:̀","INVALID_CHARACTER_ERR" 
+FAIL createElementNS test in HTML document: "http://example.com/","ெ:a",null The string contains invalid characters.
+FAIL createElementNS test in XML document: "http://example.com/","ெ:a",null The string contains invalid characters.
+FAIL createElementNS test in XHTML document: "http://example.com/","ெ:a",null The string contains invalid characters.
+PASS createElementNS test in HTML document: "http://example.com/","̀:a","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XML document: "http://example.com/","̀:a","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XHTML document: "http://example.com/","̀:a","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in HTML document: "http://example.com/",";:a","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XML document: "http://example.com/",";:a","INVALID_CHARACTER_ERR" 
+PASS createElementNS test in XHTML document: "http://example.com/",";:a","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in HTML document: "http://example.com/","a:aெ",null 
 PASS createElementNS test in XML document: "http://example.com/","a:aெ",null 
 PASS createElementNS test in XHTML document: "http://example.com/","a:aெ",null 

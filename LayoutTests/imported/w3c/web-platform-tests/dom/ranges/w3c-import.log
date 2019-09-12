@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-detach.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-insertNode.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-2.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-binding.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html
@@ -47,3 +48,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-test-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/StaticRange-constructor.html

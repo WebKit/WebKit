@@ -3,5 +3,5 @@ PASS new Document(): interfaces
 PASS new Document(): children 
 PASS new Document(): metadata 
 PASS new Document(): characterSet aliases 
-FAIL new Document(): URL parsing assert_equals: expected "http://example.org/?%C3%A4" but got "http://example.org/?ä"
+PASS new Document(): URL parsing 
 

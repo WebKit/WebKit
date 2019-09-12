@@ -16,7 +16,10 @@ PASS createDocument test: characterSet aliases for null,"f1oo",null
 PASS createDocument test: null,"foo1",null,null 
 PASS createDocument test: metadata for null,"foo1",null 
 PASS createDocument test: characterSet aliases for null,"foo1",null 
-PASS createDocument test: null,"ெfoo",null,"INVALID_CHARACTER_ERR" 
+FAIL createDocument test: null,"ெfoo",null,null The string contains invalid characters.
+FAIL createDocument test: metadata for null,"ெfoo",null The string contains invalid characters.
+FAIL createDocument test: characterSet aliases for null,"ெfoo",null The string contains invalid characters.
+PASS createDocument test: null,";foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"}foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"f}oo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"foo}",null,"INVALID_CHARACTER_ERR" 
@@ -109,8 +112,16 @@ PASS createDocument test: "http://example.com/","0:a",null,"INVALID_CHARACTER_ER
 PASS createDocument test: "http://example.com/","a:_",null,null 
 PASS createDocument test: metadata for "http://example.com/","a:_",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","a:_",null 
-PASS createDocument test: "http://example.com/","a:ெ",null,"INVALID_CHARACTER_ERR" 
-PASS createDocument test: "http://example.com/","ெ:a",null,"INVALID_CHARACTER_ERR" 
+FAIL createDocument test: "http://example.com/","a:ெ",null,null The string contains invalid characters.
+FAIL createDocument test: metadata for "http://example.com/","a:ெ",null The string contains invalid characters.
+FAIL createDocument test: characterSet aliases for "http://example.com/","a:ெ",null The string contains invalid characters.
+PASS createDocument test: "http://example.com/","a:;",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: "http://example.com/","a:̀",null,"INVALID_CHARACTER_ERR" 
+FAIL createDocument test: "http://example.com/","ெ:a",null,null The string contains invalid characters.
+FAIL createDocument test: metadata for "http://example.com/","ெ:a",null The string contains invalid characters.
+FAIL createDocument test: characterSet aliases for "http://example.com/","ெ:a",null The string contains invalid characters.
+PASS createDocument test: "http://example.com/","̀:a",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: "http://example.com/",";:a",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","a:aெ",null,null 
 PASS createDocument test: metadata for "http://example.com/","a:aெ",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","a:aெ",null 

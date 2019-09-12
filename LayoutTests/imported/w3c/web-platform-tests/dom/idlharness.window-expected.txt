@@ -1,7 +1,5 @@
-DOM IDL tests
 
-
-PASS Test driver 
+PASS idl_test setup 
 PASS Partial interface Window: original interface defined 
 PASS Event interface: existence and properties of interface object 
 PASS Event interface object length 
@@ -1765,6 +1763,28 @@ PASS XPathResult interface: attribute invalidIteratorState
 PASS XPathResult interface: attribute snapshotLength 
 PASS XPathResult interface: operation iterateNext() 
 FAIL XPathResult interface: operation snapshotItem(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathResult must be primary interface of document.evaluate("//*", document.body) 
+PASS Stringification of document.evaluate("//*", document.body) 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "ANY_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "NUMBER_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "STRING_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "BOOLEAN_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "UNORDERED_NODE_ITERATOR_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "ORDERED_NODE_ITERATOR_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "UNORDERED_NODE_SNAPSHOT_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "ORDERED_NODE_SNAPSHOT_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "ANY_UNORDERED_NODE_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "FIRST_ORDERED_NODE_TYPE" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "resultType" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "numberValue" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "stringValue" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "booleanValue" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "singleNodeValue" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "invalidIteratorState" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "snapshotLength" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "iterateNext()" with the proper type 
+PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "snapshotItem(unsigned long)" with the proper type 
+PASS XPathResult interface: calling snapshotItem(unsigned long) on document.evaluate("//*", document.body) with too few arguments must throw TypeError 
 PASS XPathExpression interface: existence and properties of interface object 
 PASS XPathExpression interface object length 
 PASS XPathExpression interface object name 
@@ -1772,6 +1792,10 @@ PASS XPathExpression interface: existence and properties of interface prototype 
 PASS XPathExpression interface: existence and properties of interface prototype object's "constructor" property 
 PASS XPathExpression interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XPathExpression interface: operation evaluate(Node, unsigned short, XPathResult) 
+PASS XPathExpression must be primary interface of document.createExpression("//*") 
+PASS Stringification of document.createExpression("//*") 
+PASS XPathExpression interface: document.createExpression("//*") must inherit property "evaluate(Node, unsigned short, XPathResult)" with the proper type 
+PASS XPathExpression interface: calling evaluate(Node, unsigned short, XPathResult) on document.createExpression("//*") with too few arguments must throw TypeError 
 PASS XPathNSResolver interface: existence and properties of interface object 
 PASS XPathNSResolver interface: existence and properties of interface prototype object 
 PASS XPathNSResolver interface: existence and properties of interface prototype object's "constructor" property 
@@ -1786,5 +1810,15 @@ PASS XPathEvaluator interface: existence and properties of interface prototype o
 PASS XPathEvaluator interface: operation createExpression(DOMString, XPathNSResolver) 
 FAIL XPathEvaluator interface: operation createNSResolver(Node) assert_equals: property has wrong .length expected 1 but got 0
 PASS XPathEvaluator interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) 
+PASS XPathEvaluator must be primary interface of new XPathEvaluator() 
+PASS Stringification of new XPathEvaluator() 
+PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "createExpression(DOMString, XPathNSResolver)" with the proper type 
+PASS XPathEvaluator interface: calling createExpression(DOMString, XPathNSResolver) on new XPathEvaluator() with too few arguments must throw TypeError 
+PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "createNSResolver(Node)" with the proper type 
+FAIL XPathEvaluator interface: calling createNSResolver(Node) on new XPathEvaluator() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult)" with the proper type 
+PASS XPathEvaluator interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on new XPathEvaluator() with too few arguments must throw TypeError 
 PASS Window interface: attribute event 
 

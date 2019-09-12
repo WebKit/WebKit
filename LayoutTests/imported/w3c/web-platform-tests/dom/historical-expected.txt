@@ -1,11 +1,13 @@
 
 PASS Historical DOM features must be removed: DOMConfiguration 
+PASS Historical DOM features must be removed: DOMCursor 
 PASS Historical DOM features must be removed: DOMError 
 PASS Historical DOM features must be removed: DOMErrorHandler 
 PASS Historical DOM features must be removed: DOMImplementationList 
 PASS Historical DOM features must be removed: DOMImplementationSource 
 PASS Historical DOM features must be removed: DOMLocator 
 PASS Historical DOM features must be removed: DOMObject 
+PASS Historical DOM features must be removed: DOMRequest 
 PASS Historical DOM features must be removed: DOMSettableTokenList 
 PASS Historical DOM features must be removed: DOMUserData 
 PASS Historical DOM features must be removed: Entity 
@@ -31,6 +33,7 @@ PASS Historical DOM features must be removed: commands
 PASS Historical DOM features must be removed: cssElementMap 
 PASS Historical DOM features must be removed: async 
 PASS document.load 
+PASS XMLDocument.load 
 PASS DOMImplementation.getFeature() must be nuked. 
 PASS Historical DOM features must be removed: schemaTypeInfo 
 PASS Historical DOM features must be removed: setIdAttribute 

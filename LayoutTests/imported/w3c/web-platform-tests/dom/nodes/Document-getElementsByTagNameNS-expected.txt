@@ -12,4 +12,5 @@ PASS BODY element in test namespace, prefix
 PASS getElementsByTagNameNS('http://www.w3.org/1999/xhtml', '*') 
 PASS getElementsByTagNameNS('*', '*') 
 PASS Empty lists 
+PASS getElementsByTagNameNS() should be a live collection 
 
