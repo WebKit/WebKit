@@ -1,3 +1,36 @@
+2019-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong
+        https://bugs.webkit.org/show_bug.cgi?id=201724
+        <rdar://problem/54622894>
+
+        Reviewed by Tim Horton.
+
+        When computing the bounds of the range (<a>, 0) to (<a>, 1) for a text indicator snapshot where <a> is a link
+        with a single non-breaking whitespace character, we currently use the text rect of the single space. This leads
+        to a confusing text indicator, as the resulting snapshot is a tiny blank square in the top left corner of the
+        link. This problem manifests when starting a drag or showing the system context menu on iOS, or force clicking
+        or three-finger tapping to show a preview on macOS.
+
+        To address this scenario, tweak the heuristic in the case where the text indicator option
+        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges is specified, such that we consider a range
+        containing only text with whitespaces to be "complex"; additionally, instead of falling back to the range's
+        bounding rect (which in this case is still tiny), fall back to the common ancestor container's bounding rect,
+        which encompasses not only the text inside the range but also the element containing the range (in this case,
+        the anchor element).
+
+        Test: fast/text-indicator/text-indicator-empty-link.html
+
+        * page/TextIndicator.cpp:
+        (WebCore::containsOnlyWhiteSpaceText):
+
+        Add a helper to determine whether a Range is comprised only of rendered text that only contains whitespace
+        characters.
+
+        (WebCore::initializeIndicator):
+
+        See ChangeLog entry above for more detail.
+
 2019-09-12  Brady Eidson  <beidson@apple.com>
 
         PDF exporting on iOS should include URL rects.

@@ -1,3 +1,16 @@
+2019-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong
+        https://bugs.webkit.org/show_bug.cgi?id=201724
+        <rdar://problem/54622894>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to exercise this scenario.
+
+        * fast/text-indicator/text-indicator-empty-link-expected.txt: Added.
+        * fast/text-indicator/text-indicator-empty-link.html: Added.
+
 2019-09-12  Chris Dumez  <cdumez@apple.com>
 
         Re-sync dom web-platform-tests from upstream
