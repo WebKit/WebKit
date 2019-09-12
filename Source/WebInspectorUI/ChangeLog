@@ -1,3 +1,16 @@
+2019-09-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Elements: don't show Changes panel when selecting text node
+        https://bugs.webkit.org/show_bug.cgi?id=201669
+
+        Reviewed by Joseph Pecoraro.
+
+        Show Changes panel only for elements regardless of "Show only for selected node" setting.
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype.supportsDOMNode):
+        (WI.ChangesDetailsSidebarPanel.prototype.inspect): Deleted.
+
 2019-09-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: instrument WebGPUDevice instead of GPUCanvasContext

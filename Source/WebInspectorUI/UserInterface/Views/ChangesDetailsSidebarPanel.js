@@ -35,24 +35,9 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
 
     // Public
 
-    inspect(objects)
-    {
-        let inspectable = super.inspect(objects);
-
-        if (WI.settings.cssChangesPerNode.value)
-            return inspectable;
-
-        // Display Changes panel regardless of the selected DOM node.
-        return true;
-    }
-
     supportsDOMNode(nodeToInspect)
     {
-        if (WI.settings.cssChangesPerNode.value)
-            return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
-
-        // Display Changes panel regardless of the selected DOM node.
-        return true;
+        return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
     shown()
