@@ -54,7 +54,7 @@ IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& dele
 {
 }
 
-uint64_t IDBConnectionToServer::identifier() const
+IDBConnectionIdentifier IDBConnectionToServer::identifier() const
 {
     return m_delegate->identifier();
 }

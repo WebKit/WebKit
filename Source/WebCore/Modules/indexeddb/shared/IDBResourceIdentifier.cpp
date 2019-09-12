@@ -53,7 +53,7 @@ IDBResourceIdentifier::IDBResourceIdentifier()
 {
 }
 
-IDBResourceIdentifier::IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier)
+IDBResourceIdentifier::IDBResourceIdentifier(IDBConnectionIdentifier connectionIdentifier, uint64_t resourceIdentifier)
     : m_idbConnectionIdentifier(connectionIdentifier)
     , m_resourceNumber(resourceIdentifier)
 {
@@ -84,25 +84,24 @@ IDBResourceIdentifier IDBResourceIdentifier::isolatedCopy() const
 
 IDBResourceIdentifier IDBResourceIdentifier::emptyValue()
 {
-    return IDBResourceIdentifier(0, 0);
+    return IDBResourceIdentifier({ }, 0);
 }
 
 IDBResourceIdentifier IDBResourceIdentifier::deletedValue()
 {
-    return IDBResourceIdentifier(std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max());
+    return IDBResourceIdentifier(IDBConnectionIdentifier { WTF::HashTableDeletedValue }, std::numeric_limits<uint64_t>::max());
 }
 
 bool IDBResourceIdentifier::isHashTableDeletedValue() const
 {
-    return m_idbConnectionIdentifier == std::numeric_limits<uint64_t>::max()
-        && m_resourceNumber == std::numeric_limits<uint64_t>::max();
+    return m_idbConnectionIdentifier.isHashTableDeletedValue() && m_resourceNumber == std::numeric_limits<uint64_t>::max();
 }
 
 #if !LOG_DISABLED
 
 String IDBResourceIdentifier::loggingString() const
 {
-    return makeString('<', m_idbConnectionIdentifier, ", ", m_resourceNumber, '>');
+    return makeString('<', m_idbConnectionIdentifier.toUInt64(), ", ", m_resourceNumber, '>');
 }
 
 #endif

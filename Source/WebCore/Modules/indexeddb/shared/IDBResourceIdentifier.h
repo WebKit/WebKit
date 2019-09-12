@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ProcessIdentifier.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -40,6 +41,8 @@ class IDBConnectionProxy;
 namespace IDBServer {
 class IDBConnectionToClient;
 }
+
+using IDBConnectionIdentifier = ProcessIdentifier;
 
 class IDBResourceIdentifier {
     WTF_MAKE_FAST_ALLOCATED;
@@ -59,7 +62,7 @@ public:
 
     unsigned hash() const
     {
-        uint64_t hashCodes[2] = { m_idbConnectionIdentifier, m_resourceNumber };
+        uint64_t hashCodes[2] = { m_idbConnectionIdentifier.toUInt64(), m_resourceNumber };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
     
@@ -69,7 +72,7 @@ public:
             && m_resourceNumber == other.m_resourceNumber;
     }
     
-    uint64_t connectionIdentifier() const { return m_idbConnectionIdentifier; }
+    IDBConnectionIdentifier connectionIdentifier() const { return m_idbConnectionIdentifier; }
 
     IDBResourceIdentifier isolatedCopy() const;
 
@@ -83,8 +86,8 @@ public:
     template<class Decoder> static bool decode(Decoder&, IDBResourceIdentifier&);
 
 private:
-    IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier);
-    uint64_t m_idbConnectionIdentifier { 0 };
+    IDBResourceIdentifier(IDBConnectionIdentifier, uint64_t resourceIdentifier);
+    IDBConnectionIdentifier m_idbConnectionIdentifier;
     uint64_t m_resourceNumber { 0 };
 };
 
@@ -145,6 +148,11 @@ template<> struct HashTraits<WebCore::IDBResourceIdentifier> : WebCore::IDBResou
 template<> struct DefaultHash<WebCore::IDBResourceIdentifier> {
     typedef WebCore::IDBResourceIdentifierHash Hash;
 };
+
+inline WebCore::IDBConnectionIdentifier crossThreadCopy(WebCore::IDBConnectionIdentifier identifier)
+{
+    return identifier;
+}
 
 } // namespace WTF
 

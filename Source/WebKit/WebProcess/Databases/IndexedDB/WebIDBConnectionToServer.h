@@ -43,7 +43,7 @@ public:
     virtual ~WebIDBConnectionToServer();
 
     WebCore::IDBClient::IDBConnectionToServer& coreConnectionToServer();
-    uint64_t identifier() const final;
+    WebCore::IDBConnectionIdentifier identifier() const final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void connectionToServerLost();

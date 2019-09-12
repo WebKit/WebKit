@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBResourceIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -34,7 +35,6 @@
 namespace WebCore {
 
 class IDBError;
-class IDBResourceIdentifier;
 class IDBResultData;
 
 namespace IDBServer {
@@ -45,7 +45,7 @@ class IDBConnectionToClientDelegate : public CanMakeWeakPtr<IDBConnectionToClien
 public:
     virtual ~IDBConnectionToClientDelegate() = default;
     
-    virtual uint64_t identifier() const = 0;
+    virtual IDBConnectionIdentifier identifier() const = 0;
 
     virtual void didDeleteDatabase(const IDBResultData&) = 0;
     virtual void didOpenDatabase(const IDBResultData&) = 0;

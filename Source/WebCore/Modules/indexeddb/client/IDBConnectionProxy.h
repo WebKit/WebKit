@@ -111,7 +111,7 @@ public:
 
     void completeOperation(const IDBResultData&);
 
-    uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
+    IDBConnectionIdentifier serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
     void ref();
     void deref();
@@ -153,7 +153,7 @@ private:
     void handleMainThreadTasks();
 
     IDBConnectionToServer& m_connectionToServer;
-    uint64_t m_serverConnectionIdentifier;
+    IDBConnectionIdentifier m_serverConnectionIdentifier;
 
     HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
     Lock m_databaseConnectionMapLock;

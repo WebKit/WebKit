@@ -55,7 +55,7 @@ class IDBConnectionToServer : public ThreadSafeRefCounted<IDBConnectionToServer>
 public:
     WEBCORE_EXPORT static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&);
 
-    WEBCORE_EXPORT uint64_t identifier() const;
+    WEBCORE_EXPORT IDBConnectionIdentifier identifier() const;
 
     IDBConnectionProxy& proxy();
 

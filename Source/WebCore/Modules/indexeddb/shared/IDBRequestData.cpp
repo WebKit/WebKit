@@ -109,7 +109,7 @@ void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& 
         destination.m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_cursorIdentifier);
 }
 
-uint64_t IDBRequestData::serverConnectionIdentifier() const
+IDBConnectionIdentifier IDBRequestData::serverConnectionIdentifier() const
 {
     ASSERT(m_serverConnectionIdentifier);
     return m_serverConnectionIdentifier;

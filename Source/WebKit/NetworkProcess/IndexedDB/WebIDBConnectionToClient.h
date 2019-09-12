@@ -56,12 +56,12 @@ class NetworkProcess;
 
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToClient> {
 public:
-    static Ref<WebIDBConnectionToClient> create(NetworkProcess&, IPC::Connection&, WebCore::ProcessIdentifier, PAL::SessionID);
+    static Ref<WebIDBConnectionToClient> create(NetworkProcess&, IPC::Connection&, WebCore::IDBConnectionIdentifier, PAL::SessionID);
 
     virtual ~WebIDBConnectionToClient();
 
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
-    uint64_t identifier() const final { return m_identifier.toUInt64(); }
+    WebCore::IDBConnectionIdentifier identifier() const final { return m_identifier; }
 
     void ref() override { RefCounted<WebIDBConnectionToClient>::ref(); }
     void deref() override { RefCounted<WebIDBConnectionToClient>::deref(); }
@@ -138,7 +138,7 @@ private:
     Ref<IPC::Connection> m_connection;
     Ref<NetworkProcess> m_networkProcess;
 
-    WebCore::ProcessIdentifier m_identifier;
+    WebCore::IDBConnectionIdentifier m_identifier;
     PAL::SessionID m_sessionID;
     RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
 };

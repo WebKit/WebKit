@@ -69,9 +69,9 @@ WebIDBConnectionToServer::~WebIDBConnectionToServer()
 {
 }
 
-uint64_t WebIDBConnectionToServer::identifier() const
+IDBConnectionIdentifier WebIDBConnectionToServer::identifier() const
 {
-    return Process::identifier().toUInt64();
+    return Process::identifier();
 }
 
 IPC::Connection* WebIDBConnectionToServer::messageSenderConnection() const

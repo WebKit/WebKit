@@ -95,7 +95,7 @@ public:
     void getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID) final;
 
     // IDBConnectionToClient
-    uint64_t identifier() const override;
+    IDBConnectionIdentifier identifier() const final;
     void didDeleteDatabase(const IDBResultData&) final;
     void didOpenDatabase(const IDBResultData&) final;
     void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) final;

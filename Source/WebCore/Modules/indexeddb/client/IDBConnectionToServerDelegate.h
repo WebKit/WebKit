@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBResourceIdentifier.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +38,6 @@ class IDBIndexInfo;
 class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBRequestData;
-class IDBResourceIdentifier;
 class IDBTransactionInfo;
 class IDBValue;
 
@@ -58,7 +58,7 @@ class IDBConnectionToServerDelegate : public CanMakeWeakPtr<IDBConnectionToServe
 public:
     virtual ~IDBConnectionToServerDelegate() = default;
 
-    virtual uint64_t identifier() const = 0;
+    virtual IDBConnectionIdentifier identifier() const = 0;
     virtual void deleteDatabase(const IDBRequestData&) = 0;
     virtual void openDatabase(const IDBRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;

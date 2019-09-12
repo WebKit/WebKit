@@ -43,7 +43,7 @@ IDBConnectionToClient::IDBConnectionToClient(IDBConnectionToClientDelegate& dele
 {
 }
 
-uint64_t IDBConnectionToClient::identifier() const
+IDBConnectionIdentifier IDBConnectionToClient::identifier() const
 {
     ASSERT(m_delegate);
     return m_delegate->identifier();

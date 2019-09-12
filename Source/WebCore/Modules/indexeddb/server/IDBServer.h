@@ -96,7 +96,7 @@ public:
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBRequestData&);
     WEBCORE_EXPORT void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 
-    WEBCORE_EXPORT void getAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
+    WEBCORE_EXPORT void getAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
 
     void postDatabaseTask(CrossThreadTask&&);
     void postDatabaseTaskReply(CrossThreadTask&&);
@@ -133,8 +133,8 @@ private:
     
     String databaseDirectoryPathIsolatedCopy() const { return m_databaseDirectoryPath.isolatedCopy(); }
 
-    void performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
-    void didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);
+    void performGetAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
+    void didGetAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);
 
     void performCloseAndDeleteDatabasesModifiedSince(WallTime, uint64_t callbackID);
     void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
@@ -185,7 +185,7 @@ private:
     void finishComputingSpaceUsedForOrigin(const ClientOrigin&, uint64_t spaceUsed);
 
     PAL::SessionID m_sessionID;
-    HashMap<uint64_t, RefPtr<IDBConnectionToClient>> m_connectionMap;
+    HashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
 
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;

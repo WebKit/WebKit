@@ -57,7 +57,7 @@ public:
     IDBRequestData(const IDBRequestData&, IsolatedCopyTag);
     IDBRequestData isolatedCopy() const;
 
-    uint64_t serverConnectionIdentifier() const;
+    IDBConnectionIdentifier serverConnectionIdentifier() const;
     IDBResourceIdentifier requestIdentifier() const;
     IDBResourceIdentifier transactionIdentifier() const;
     uint64_t objectStoreIdentifier() const;
@@ -81,7 +81,7 @@ public:
 private:
     static void isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
 
-    uint64_t m_serverConnectionIdentifier { 0 };
+    IDBConnectionIdentifier m_serverConnectionIdentifier;
     std::unique_ptr<IDBResourceIdentifier> m_requestIdentifier;
     std::unique_ptr<IDBResourceIdentifier> m_transactionIdentifier;
     std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
